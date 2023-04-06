@@ -2,6 +2,7 @@ package com.analysetool.modells;
 
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
     public class Company {
         @Id
         private String id;
+        @Indexed(unique = true)
         private String Firmaname;
         private Kontaktdaten Kontaktdaten;
         private List<String> Typ;
@@ -20,6 +22,7 @@ import java.util.List;
         public Company() {}
 
         public Company(String Firmaname, Kontaktdaten Kontaktdaten, List<String> Typ, String Groesse, List<String> Land, String MedienTyp) {
+            super();
             this.Firmaname = Firmaname;
             this.Kontaktdaten = Kontaktdaten;
             this.Typ = Typ;

@@ -1,4 +1,4 @@
-package main.java.com.analysetool;
+package com.analysetool;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

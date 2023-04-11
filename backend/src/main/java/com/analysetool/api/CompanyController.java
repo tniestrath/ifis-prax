@@ -16,6 +16,13 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
+    @GetMapping("companycount")
+    public String getCount(){
+        return "12"; // Integer.toString(companyService.findAll().size());
+
+    }
+
+
     @GetMapping("")
     public String list(Model model) {
         List<Company> companies = companyService.findAll();

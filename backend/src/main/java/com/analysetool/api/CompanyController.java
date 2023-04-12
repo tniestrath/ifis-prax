@@ -6,17 +6,26 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 import java.util.Optional;
 
-@Controller
-@RequestMapping("/company")
+@RestController
+//@RequestMapping("/company")
 public class CompanyController {
-
-    @Autowired
     private CompanyService companyService;
+    @Autowired
+   // private CompanyService companyService;
+    public CompanyController(CompanyService companyService){
+        this.companyService = companyService;
+    }
 
-    @GetMapping("companycount")
+    @GetMapping("/companycount")
     public String getCount(){
         String a = "12";
         return a; // Integer.toString(companyService.findAll().size());
@@ -24,7 +33,7 @@ public class CompanyController {
     }
 
 
-    @GetMapping("")
+    @GetMapping("/list")
     public String list(Model model) {
         List<Company> companies = companyService.findAll();
         model.addAttribute("companies", companies);

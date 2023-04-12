@@ -14,14 +14,14 @@ import java.util.List;
         @Indexed(unique = true)
         private String Firmaname;
         private Kontaktdaten Kontaktdaten;
-        private List<String> Typ;
+        private String Typ;
         private String Groesse;
-        private List<String> Land;
+        private String Land;
         private String MedienTyp;
 
         public Company() {}
 
-        public Company(String Firmaname, Kontaktdaten Kontaktdaten, List<String> Typ, String Groesse, List<String> Land, String MedienTyp) {
+        public Company(String Firmaname, Kontaktdaten Kontaktdaten, String Typ, String Groesse, String Land, String MedienTyp) {
             super();
             this.Firmaname = Firmaname;
             this.Kontaktdaten = Kontaktdaten;
@@ -55,11 +55,11 @@ import java.util.List;
             this.Kontaktdaten = Kontaktdaten;
         }
 
-        public List<String> getTyp() {
+        public String getTyp() {
             return Typ;
         }
 
-        public void setTyp(List<String> Typ) {
+        public void setTyp(String Typ) {
             this.Typ = Typ;
         }
 
@@ -71,11 +71,11 @@ import java.util.List;
             this.Groesse = Groesse;
         }
 
-        public List<String> getLand() {
+        public String getLand() {
             return Land;
         }
 
-        public void setLand(List<String> Land) {
+        public void setLand(String Land) {
             this.Land = Land;
         }
 

@@ -27,24 +27,26 @@ public class CompanyController {
 
     @GetMapping("/companycount")
     public String getCount(){
-        return  Integer.toString(companyService.findAll().size());
+
+        return Integer.toString(companyService.findAll().size());
 
     }
 
 
     @GetMapping("/list")
-    public String list(Model model) {
-        List<Company> companies = companyService.findAll();
-        model.addAttribute("companies", companies);
-        return "company/list";
+    public List<Company> list(Model model) {
+        //List<Company> companies =
+          return      companyService.findAll();
+       // model.addAttribute("companies", companies);
+        //return companies;
     }
-
+/*
     @GetMapping("/{id}")
     public String show(@PathVariable String id, Model model) {
         Optional<Company> company = companyService.findById(id);
         model.addAttribute("company", company.get());
-        return "company/show";}
-
+        return "company/show";
+    }*/
 
     @GetMapping("/create")
     public String create(Model model) {

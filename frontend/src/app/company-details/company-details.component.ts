@@ -1,5 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Company, Contact} from "./Company";
+import {HttpClient} from "@angular/common/http";
+import {CompanyService} from "../services/company.service";
 
 @Component({
   selector: 'dash-company-details',
@@ -11,19 +13,12 @@ export class CompanyDetailsComponent implements OnInit{
   @Input() company :Company = new Company("0", "Test Company", "200 Mitarbeiter", new Contact("example@company.com", "+49 123 456789", "example.de"),
     ["DE", "FR"], ["Unternehmen", "Hochschule"], "Presse");
 
-  constructor(){
+  constructor(private service : CompanyService){
   }
 
    ngOnInit(): void {
-     let comps  = this.getCompanies();
+     let comps  = this.service.getCompanies();
      console.log(comps);
-  }
-
-  async getCompanies(){
-    const response = await fetch("http://localhost:8080/list");
-    const data = await response.json();
-
-    return data;
   }
 
 }

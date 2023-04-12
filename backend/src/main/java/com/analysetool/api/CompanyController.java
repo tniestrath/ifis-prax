@@ -27,8 +27,7 @@ public class CompanyController {
 
     @GetMapping("/companycount")
     public String getCount(){
-        String a = "12";
-        return a; // Integer.toString(companyService.findAll().size());
+        return  Integer.toString(companyService.findAll().size());
 
     }
 
@@ -39,13 +38,13 @@ public class CompanyController {
         model.addAttribute("companies", companies);
         return "company/list";
     }
-/*
+
     @GetMapping("/{id}")
     public String show(@PathVariable String id, Model model) {
         Optional<Company> company = companyService.findById(id);
         model.addAttribute("company", company.get());
-        return "company/show";
-    }*/
+        return "company/show";}
+
 
     @GetMapping("/create")
     public String create(Model model) {

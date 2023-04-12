@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 //@RequestMapping("/company")
 public class CompanyController {

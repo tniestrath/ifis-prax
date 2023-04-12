@@ -14,8 +14,16 @@ export class CompanyDetailsComponent implements OnInit{
   constructor(){
   }
 
-  ngOnInit(): void {
+   ngOnInit(): void {
+     let comps  = this.getCompanies();
+     console.log(comps);
   }
 
+  async getCompanies(){
+    const response = await fetch("http://localhost:8080/list");
+    const data = await response.json();
+
+    return data;
+  }
 
 }

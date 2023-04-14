@@ -33,6 +33,7 @@ public class Application {
 
 		ApplicationContext context = SpringApplication.run(Application.class, args);
 		System.out.println("lel");
+		DataReader.dataindb(context);
 
 		// Get a bean instance from the application context
 		//CompanyService companyService = context.getBean(CompanyService.class);

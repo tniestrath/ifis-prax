@@ -6,12 +6,13 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Objects;
 
-    @Document(collection = "companies")
+@Document(collection = "companies")
     public class Company {
         @Id
         private String id;
-        @Indexed(unique = true)
+       // @Indexed(unique = true)
         private String Firmaname;
         private Kontaktdaten Kontaktdaten;
         private String Typ;
@@ -19,9 +20,19 @@ import java.util.List;
         private String Land;
         private String MedienTyp;
 
+        private String keywords;
+
         public Company() {}
 
-        public Company(String Firmaname, Kontaktdaten Kontaktdaten, String Typ, String Groesse, String Land, String MedienTyp) {
+        public String getKeywords() {
+            return keywords;
+        }
+
+        public void setKeywords(String keywords) {
+            this.keywords = keywords;
+        }
+
+        public Company(String Firmaname, Kontaktdaten Kontaktdaten, String Typ, String Groesse, String Land, String MedienTyp, String keywords) {
             super();
             this.Firmaname = Firmaname;
             this.Kontaktdaten = Kontaktdaten;
@@ -29,6 +40,7 @@ import java.util.List;
             this.Groesse = Groesse;
             this.Land = Land;
             this.MedienTyp = MedienTyp;
+            this.keywords = keywords;
         }
 
         public String getId() {
@@ -123,7 +135,55 @@ import java.util.List;
             public void setLink(String link) {
                 this.link = link;
             }
+
+            @Override
+            public String toString() {
+                return "Kontaktdaten{" +
+                        "email='" + email + '\'' +
+                        ", telefon='" + telefon + '\'' +
+                        ", link='" + link + '\'' +
+                        '}';
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (!(o instanceof Kontaktdaten that)) return false;
+                return Objects.equals(getEmail(), that.getEmail()) && Objects.equals(getTelefon(), that.getTelefon()) && Objects.equals(getLink(), that.getLink());
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(getEmail(), getTelefon(), getLink());
+            }
         }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "id='" + id + '\'' +
+                ", Firmaname='" + Firmaname + '\'' +
+                ", Kontaktdaten=" + Kontaktdaten +
+                ", Typ='" + Typ + '\'' +
+                ", Groesse='" + Groesse + '\'' +
+                ", Land='" + Land + '\'' +
+                ", MedienTyp='" + MedienTyp + '\'' +
+                ", keywords='" + keywords + '\'' +
+                '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Company company)) return false;
+        return Objects.equals(getId(), company.getId()) && Objects.equals(getFirmaname(), company.getFirmaname()) && Objects.equals(getKontaktdaten(), company.getKontaktdaten()) && Objects.equals(getTyp(), company.getTyp()) && Objects.equals(getGroesse(), company.getGroesse()) && Objects.equals(getLand(), company.getLand()) && Objects.equals(getMedienTyp(), company.getMedienTyp()) && Objects.equals(getKeywords(), company.getKeywords());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getFirmaname(), getKontaktdaten(), getTyp(), getGroesse(), getLand(), getMedienTyp(), getKeywords());
+    }
+
+}
 
 

@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext;
 
 public class DataReader {
     static String url = "jdbc:mysql://localhost:3306/companies"; // Replace 'databasename' with the name of your database
-    static String user = "root"; // Replace 'username' with your MySQL username
+    static String user = "user"; // Replace 'username' with your MySQL username
     static String password = "password"; // Replace 'password' with your MySQL password
 
 

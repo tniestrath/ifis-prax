@@ -5,12 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CompanyDetailsComponent } from './company-details/company-details.component';
 import { PolarChartComponent } from './polar-chart/polar-chart.component';
+import { CompanyListerComponent } from './company-lister/company-lister.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CompanyDetailsComponent,
-    PolarChartComponent
+    PolarChartComponent,
+    CompanyListerComponent
   ],
   imports: [
     BrowserModule,

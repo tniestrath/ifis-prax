@@ -1,3 +1,9 @@
-<h1>Test Dashboard Elements</h1>
-<dash-company-details ></dash-company-details>
-<dash-polar-chart></dash-polar-chart>
+<div class="page-header">
+  <h1>Dashboard Marktplatz IT-Sicherheit</h1>
+</div>
+<div class="page-content">
+  <button id="companie-list-toggle" (click)="this.companyListShown = !this.companyListShown">Toggle Company-List</button>
+  <dash-company-lister *ngIf="this.companyListShown"></dash-company-lister>
+  <dash-polar-chart></dash-polar-chart>
+</div>
+

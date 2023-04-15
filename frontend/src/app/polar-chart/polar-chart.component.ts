@@ -11,15 +11,15 @@ export class PolarChartComponent implements OnInit{
   chart : any;
 
   @Input() labels : string[] = [];
-  @Input() data : string[] = [];
+  @Input() data : number[] = [];
 
-  createChart(){
+  createChart(labels : string[], data : number[]){
     this.chart = new Chart("chart", {
       type: 'polarArea', data: {
-        labels: ["#Hardware", "#Software", "#Home", "#VoIP"],
+        labels: labels,
         datasets: [{
           label: "",
-          data: [3, 1, 2, 6],
+          data: data,
           backgroundColor: [
             "rgb(255, 0, 0)",
             "rgb(255, 255, 0)",
@@ -32,7 +32,7 @@ export class PolarChartComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.createChart();
+    this.createChart(["#Hardware", "#Software", "#Home", "#VoIP"], [3, 1, 2, 6]);
   }
 }
 

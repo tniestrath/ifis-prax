@@ -41,6 +41,14 @@ public class CompanyController {
        // model.addAttribute("companies", companies);
         //return companies;
     }
+
+    @GetMapping("/first")
+    public Company first(Model model) {
+        //List<Company> companies =
+        return      companyService.findAll().get(0);
+        // model.addAttribute("companies", companies);
+        //return companies;
+    }
 /*
     @GetMapping("/{id}")
     public String show(@PathVariable String id, Model model) {

@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {Injectable} from '@angular/core';
+import {Company} from "../company-details/Company";
 
 @Injectable({
   providedIn: 'root'
@@ -9,11 +8,17 @@ export class CompanyService {
 
   private dbUrl = "http://localhost:8080";
   private getAllUrl = "http://localhost:8080/list";
-  constructor(private http : HttpClient) {
+  private getFirstUrl = "http://localhost:8080/first";
+  constructor() {
 
   }
 
-  getCompanies() : Observable<String> {
-    return this.http.get<String>(this.getAllUrl);
+  async getFirstCompany() : Promise<Company> {
+    return await fetch(this.getFirstUrl).then(res => res.json());
   }
+
+  async getAllCompanies() : Promise<Company[]> {
+    return await fetch(this.getAllUrl).then(res => res.json());
+  }
+
 }

@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Company, Contact} from "./Company";
-import {HttpClient} from "@angular/common/http";
+import {Company} from "./Company";
 import {CompanyService} from "../services/company.service";
 
 @Component({
@@ -10,15 +9,12 @@ import {CompanyService} from "../services/company.service";
 })
 export class CompanyDetailsComponent implements OnInit{
 
-  @Input() company :Company = new Company("0", "Test Company", "200 Mitarbeiter", new Contact("example@company.com", "+49 123 456789", "example.de"),
-    ["DE", "FR"], ["Unternehmen", "Hochschule"], "Presse");
+  @Input() company? : Company;
 
   constructor(private service : CompanyService){
   }
 
    ngOnInit(): void {
-     let comps  = this.service.getCompanies();
-     console.log(comps);
   }
 
 }

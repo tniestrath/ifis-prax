@@ -1,0 +1,32 @@
+.card{
+  display: grid;
+  width: 50vw;
+  margin: 5px;
+  border: 1px solid black;
+  grid-template-columns: 70% 30%;
+  grid-template-rows: auto auto auto;
+}
+.head{
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row: 1;
+  border-bottom: 1px solid black;
+  text-align: center;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.col{
+  grid-row: 2;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.foot{
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row: 3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+h1{
+  margin: 0;
+}

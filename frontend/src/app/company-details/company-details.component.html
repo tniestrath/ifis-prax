@@ -1,10 +1,20 @@
-<h1>{{company.name}}</h1>
-<p>Größe des Unternehmens: {{company.size}}</p>
-<h3>Kontakt:</h3>
-<p>Email: {{company.contact.email}}</p>
-<p>Homepage: {{company.contact.link}}</p>
-<p>Telefon: {{company.contact.tel}}</p>
-<p>-------------------------------------------------</p>
-<p>Land: {{company.countries}}</p>
-<p>Typ: {{company.type}}</p>
-<p>MedienTyp: {{company.mediaType}}</p>
+<div class="card">
+  <div class="head">
+    <h1>{{company?.firmaname || "Firmenname Platzhalter"}}</h1>
+  </div>
+  <div class="col left">
+    <p>Größe des Unternehmens: {{company?.groesse || "N/A"}}</p>
+    <p>Land: {{company?.land || "N/A"}}</p>
+    <p>Typ: {{company?.typ || "N/A"}}</p>
+    <p>MedienTyp: {{company?.medienTyp || "N/A"}}</p>
+  </div>
+  <div class="col right">
+    <h3>Kontakt:</h3>
+    <p>Email: {{company?.kontaktdaten?.email || "N/A"}}</p>
+    <p>Homepage: {{company?.kontaktdaten?.link || "N/A"}}</p>
+    <p>Telefon: {{company?.kontaktdaten?.telefon || "N/A"}}</p>
+  </div>
+  <div class="foot" *ngIf="company?.keywords != ''">
+    <p>Keywords: {{company?.keywords || "N/A"}}</p>
+  </div>
+</div>

@@ -21,4 +21,5 @@ export class CompanyService {
     return await fetch(this.getAllUrl).then(res => res.json());
   }
 
+
 }

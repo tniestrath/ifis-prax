@@ -30,10 +30,13 @@ public class Application {
 	//private CompanyService companyService;
 
 	public static void main(String[] args) {
-
+		try{
 		ApplicationContext context = SpringApplication.run(Application.class, args);
 		System.out.println("lel");
-		//DataReader.dataindb(context);
+		//DataReader.dataindb(context);}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		// Get a bean instance from the application context
 		//CompanyService companyService = context.getBean(CompanyService.class);

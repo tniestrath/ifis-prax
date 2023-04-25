@@ -6,13 +6,19 @@ import { AppComponent } from './app.component';
 import { CompanyDetailsComponent } from './company-details/company-details.component';
 import { PolarChartComponent } from './polar-chart/polar-chart.component';
 import { CompanyListerComponent } from './company-lister/company-lister.component';
+import { HeaderComponent } from './header/header.component';
+import { ChartComponent } from './chart/chart.component';
+import { CounterComponent } from './counter/counter.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CompanyDetailsComponent,
     PolarChartComponent,
-    CompanyListerComponent
+    CompanyListerComponent,
+    HeaderComponent,
+    ChartComponent,
+    CounterComponent
   ],
   imports: [
     BrowserModule,

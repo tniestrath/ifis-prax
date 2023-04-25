@@ -1,0 +1,19 @@
+.counter-box{
+  background-color: white;
+  border-radius: 10px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.counter-box-center{
+  text-align: center;
+}
+.counter-number{
+  font-weight: bolder;
+  font-size: 3vw;
+}
+.counter-desc{
+  font-size: 1.3vw;
+  color: #951D40;
+}

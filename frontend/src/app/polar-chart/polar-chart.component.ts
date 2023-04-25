@@ -1,63 +1,45 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import { Chart } from 'chart.js/auto';
-import _default from "chart.js/dist/plugins/plugin.tooltip";
-import {CompanyService} from "../services/company.service";
-import {Company} from "../company-details/Company";
 
 @Component({
   selector: 'dash-polar-chart',
   templateUrl: './polar-chart.component.html',
   styleUrls: ['./polar-chart.component.css']
 })
-export class PolarChartComponent implements OnInit{
+export class PolarChartComponent implements OnInit, AfterViewInit{
   chart : any;
 
   @Input() labels : string[] = [];
   @Input() data : number[] = [];
+  @Input() desc : string = "";
+  canvas_id: string = "chart";
 
-  constructor(private service: CompanyService) {
+  colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148, 28, 62, 58)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
+
+  constructor() {
   }
 
   createChart(labels : string[], data : number[]){
-    this.chart = new Chart("chart", {
-      type: 'doughnut', data: {
+    this.chart = new Chart(this.canvas_id, {
+      type: 'polarArea', data: {
         labels: labels,
         datasets: [{
           label: "",
           data: data,
-          backgroundColor: [
-            "rgb(255, 0, 0)",
-            "rgb(255, 255, 0)",
-            "rgb(0, 255, 255)",
-            "rgb(0, 0, 255)"
-          ]
+          backgroundColor: this.colors
         }]
       }
     })
   }
 
   ngOnInit(): void {
-    //this.createChart(["#Hardware", "#Software", "#Home", "#VoIP"], [3, 1, 2, 6]);
-    let companies :Company[] = [];
-    let keywords : string[] = [];
-    let counts = {};
-    this.service.getAllCompanies().then(res => companies = res).finally(
-      () => {
-        for (const company of companies) {
-          let keys = company.keywords.split(",");
-          if (keys[0] == ""){
-            keys[0] = "None";
-          }
-          keys.forEach(key => keywords.push(key))
-        }
-        const map = keywords.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map());
-        map.delete("None");
-        map.forEach( (value, key, map) => {if(value < 0){map.delete(key)}})
-        this.createChart(Array.from(map.keys()), Array.from(map.values()));
-      }
-    );
+    if (this.desc != ""){
+      this.canvas_id = this.desc;
+    }
+  }
 
-
+  ngAfterViewInit(): void {
+    this.createChart(["#Hardware", "#Software", "#Home", "#VoIP"], this.data);
   }
 }
 

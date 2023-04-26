@@ -8,15 +8,13 @@ import {HttpClientModule} from "@angular/common/http";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-/*
-@NgModule({
-  imports: [
-    HttpClientModule
-  ]
-})*/
 export class AppComponent {
   title = 'Dashboard';
-  companyListShown = false;
+  selected : string = "kennzahlen";
+
+  select(selection : string) {
+    this.selected = selection;
+}
 }
 
 

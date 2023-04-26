@@ -9,6 +9,8 @@ import { CompanyListerComponent } from './company-lister/company-lister.componen
 import { HeaderComponent } from './header/header.component';
 import { ChartComponent } from './chart/chart.component';
 import { CounterComponent } from './counter/counter.component';
+import { PodiumComponent } from './podium/podium.component';
+import { PageKennzahlenComponent } from './page-kennzahlen/page-kennzahlen.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { CounterComponent } from './counter/counter.component';
     CompanyListerComponent,
     HeaderComponent,
     ChartComponent,
-    CounterComponent
+    CounterComponent,
+    PodiumComponent,
+    PageKennzahlenComponent
   ],
   imports: [
     BrowserModule,

@@ -1,3 +1,6 @@
-<div class="chart-box">
+<div class="chart-box" (click)="onToggle()">
   <canvas [attr.id]="canvas_id" >{{chart}}</canvas>
+  <div class="chart-details" [ngStyle]="{'display': displayDetails}">
+    {{details}}
+  </div>
 </div>

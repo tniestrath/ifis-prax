@@ -2,4 +2,28 @@
   background-color: white;
   border-radius: 10px;
   height: 100%;
+
+  display: flex;
+  overflow-x: clip;
+}
+
+.chart-box:hover{
+  background-color: #d7bebe;
+}
+:host.normal{
+  grid-area: span 1 / span 1;
+}
+:host.double{
+  grid-area: span 2 / span 2;
+}
+:host.big{
+  grid-area: span 1 / span 3;
+}
+:host.double-big{
+  grid-area: span 2 / span 4;
+}
+
+.chart-details{
+  padding: 5px;
+  grid-column: 2;
 }

@@ -14,7 +14,7 @@ export class AppComponent {
 
   select(selection : string) {
     this.selected = selection;
-}
+  }
 }
 
 

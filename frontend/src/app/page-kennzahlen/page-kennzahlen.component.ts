@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {ChartComponent} from "../chart/chart.component";
 
 @Component({
   selector: 'dash-page-kennzahlen',

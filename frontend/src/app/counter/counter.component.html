@@ -1,6 +1,9 @@
-<div class="counter-box">
+<div class="counter-box" (click)="onToggle()">
   <div class="counter-box-center">
     <div class="counter-number">{{number}}</div>
     <div class="counter-desc">{{desc}}</div>
+  </div>
+  <div class="counter-details" [ngStyle]="{'display': displayDetails}">
+    <div>{{details}}</div>
   </div>
 </div>

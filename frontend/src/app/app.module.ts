@@ -11,6 +11,11 @@ import { ChartComponent } from './chart/chart.component';
 import { CounterComponent } from './counter/counter.component';
 import { PodiumComponent } from './podium/podium.component';
 import { PageKennzahlenComponent } from './page-kennzahlen/page-kennzahlen.component';
+import { PageTagComponent } from './page-tag/page-tag.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {MatInputModule} from "@angular/material/input";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -22,11 +27,16 @@ import { PageKennzahlenComponent } from './page-kennzahlen/page-kennzahlen.compo
     ChartComponent,
     CounterComponent,
     PodiumComponent,
-    PageKennzahlenComponent
+    PageKennzahlenComponent,
+    PageTagComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,12 +1,16 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
 import {Chart, ChartConfiguration, ChartType, ChartTypeRegistry} from 'chart.js/auto';
+import _default from "chart.js/dist/plugins/plugin.tooltip";
 
 @Component({
   selector: 'dash-chart',
   templateUrl: './chart.component.html',
-  styleUrls: ['./chart.component.css']
+  styleUrls: ['./chart.component.css'],
 })
 export class ChartComponent implements OnInit, AfterViewInit{
+
+  toggle : boolean = true;
+  displayDetails : string = "none";
 
   chart : any;
   canvas_id: string = "chart";
@@ -16,6 +20,47 @@ export class ChartComponent implements OnInit, AfterViewInit{
   @Input() labels : string[] = [];
   @Input() data : number[] = [];
   @Input() desc : string = "";
+  @Input() details : string = "";
+  @Input() size : string = "small";
+
+  @HostBinding('class.big') get isBig() {
+    return this.size === "big"
+  }
+  @HostBinding('class.small') get isSmall() {
+    return this.size === "small"
+  }
+  @HostBinding('class.double-big') get isDoubleBig() {
+    return this.size === "double-big"
+  }
+  @HostBinding('class.double') get isDouble() {
+    return this.size === "double"
+  }
+
+  constructor() {
+
+  }
+
+  onToggle(){
+    if (this.toggle){
+      if (this.size == "small"){
+        this.size = "big";
+      }
+      if (this.size == "double") {
+        this.size = "double-big"
+      }
+      this.toggle = !this.toggle;
+      this.displayDetails = "flex";
+    } else {
+      if (this.size == "big"){
+        this.size = "small";
+      }
+      if (this.size == "double-big") {
+        this.size = "double"
+      }
+      this.toggle = !this.toggle;
+      this.displayDetails = "none";
+    }
+  }
 
   createChart(type: ChartType, labels : string[], data : number[]){
     Chart.defaults.color = "#000"
@@ -73,6 +118,9 @@ export class ChartComponent implements OnInit, AfterViewInit{
                 weight: "bold",
                 family: 'Times New Roman'
               }
+            },
+            legend: {
+              onClick: (e) => null
             }
           }
         }
@@ -88,9 +136,6 @@ export class ChartComponent implements OnInit, AfterViewInit{
     }
   }
   ngAfterViewInit(): void {
-    this.createChart(this.chartType,["#Hardware", "#Software", "#Home", "#VoIP"], this.data);
+    this.createChart(this.chartType,this.labels, this.data);
   }
-
-
-
 }

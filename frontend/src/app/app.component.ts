@@ -11,9 +11,18 @@ import {HttpClientModule} from "@angular/common/http";
 export class AppComponent {
   title = 'Dashboard';
   selected : string = "kennzahlen";
+  searchValue : string = "";
+  company : string = "";
 
   select(selection : string) {
     this.selected = selection;
+  }
+  search(searchValue :string){
+    this.searchValue = searchValue;
+  }
+  selectCompany(companyName : string){
+    this.company = companyName;
+    console.log(companyName)
   }
 }
 

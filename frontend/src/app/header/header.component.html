@@ -4,20 +4,8 @@
   <div *ngFor="let element of navElements">
     <div class="nav-element" [innerText]="element" (click)="setSelected(element)"></div>
   </div>
-    <form class="searchbar-box">
-      <mat-form-field class="" appearance="fill">
-        <mat-label>Number</mat-label>
-        <input type="text"
-               placeholder="Pick one"
-               aria-label="Number"
-               matInput
-               [formControl]="myControl"
-               [matAutocomplete]="auto">
-        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-            {{option}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </form>
+    <div class="searchbar-box">
+      <label id="page-search-input-label" for="page-search-input">Search</label>
+      <input id="page-search-input" #search class="searchbar" type="text" (keyup)="onKey(search.value)">
+    </div>
 </div>

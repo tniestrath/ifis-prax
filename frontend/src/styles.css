@@ -2,6 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   background-color: #E5E5E5;
+  height: 100vh;
   overflow: hidden;
   font-family: 'Times New Roman', serif;
 }
@@ -42,13 +43,17 @@ h1{
 }
 .searchbar-box{
   display: flex;
-  width: 100%;
-  height: 100%;
 }
 #page-search-input{
   margin: 5px 0;
   margin-right: 5px;
   width: 50%;
+}
+#page-search-input-label{
+  width: 50%;
+  text-align: end;
+  padding-right: 5px;
+  margin: auto 0;
 }
 
 

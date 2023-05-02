@@ -12,9 +12,7 @@ export class HeaderComponent implements OnInit{
 
   navElements = ["Kennzahlen", "Themen", "Einzelstatistiken"];
   @Output() selected = new EventEmitter<string>();
-  myControl = new FormControl('');
-  options: string[] = ['One', 'Two', 'Three'];
-  filteredOptions: Observable<string[]> = new Observable<string[]>();
+  @Output() searchInput = new EventEmitter<string>();
 
   constructor() {
   }
@@ -25,5 +23,9 @@ export class HeaderComponent implements OnInit{
 
   setSelected(page : string){
     this.selected.emit(page)
+  }
+
+  onKey(value : string) {
+    this.searchInput.emit(value);
   }
 }

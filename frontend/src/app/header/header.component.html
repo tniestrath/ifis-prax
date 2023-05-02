@@ -4,8 +4,4 @@
   <div *ngFor="let element of navElements">
     <div class="nav-element" [innerText]="element" (click)="setSelected(element)"></div>
   </div>
-    <div class="searchbar-box">
-      <label id="page-search-input-label" for="page-search-input">Search</label>
-      <input id="page-search-input" #search class="searchbar" type="text" (keyup)="onKey(search.value)">
-    </div>
 </div>

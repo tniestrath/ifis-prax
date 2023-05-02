@@ -1,1 +1,2 @@
-<p>page-tag works!</p>
+<dash-searchbar #searchbar></dash-searchbar>
+<dash-tag-lister [searchValue]="searchbar.searchInput" (selectedTag)="searchbar.onTagSelected($event)"></dash-tag-lister>

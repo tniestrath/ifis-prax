@@ -1,0 +1,36 @@
+.searchbar-box{
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  height: 50px;
+}
+.searchbar{
+  margin: 5px 0;
+  width: 25%;
+  font-size: 25px;
+}
+.selection-box{
+  position: fixed;
+  top: 0;
+  right: 5px;
+  height: 50px;
+
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+  align-items: center;
+  background-color: #d7bebe;
+  border-radius: 10px;
+}
+p {
+  font-size: 25px;
+  font-weight: bold;
+}
+button {
+  height: 30px;
+  width: 30px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+}

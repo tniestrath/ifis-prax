@@ -16,7 +16,7 @@ h1{
   background-color: white;
   padding: 5px;
   display: grid;
-  grid-template-columns: 50px 200px 180px 180px 180px auto;
+  grid-template-columns: 50px 200px 180px 180px 180px;
   height: 50px;
   top: 0;
   left: 0;
@@ -41,21 +41,6 @@ h1{
 .nav-element:hover{
   background-color: #E5E5E5;
 }
-.searchbar-box{
-  display: flex;
-}
-#page-search-input{
-  margin: 5px 0;
-  margin-right: 5px;
-  width: 50%;
-}
-#page-search-input-label{
-  width: 50%;
-  text-align: end;
-  padding-right: 5px;
-  margin: auto 0;
-}
-
 
 .page-content{
   height: calc(100vh - 70px);

@@ -1,4 +1,4 @@
-<dash-header (selected)="select($event)" (searchInput)="search($event)">
+<dash-header (selected)="select($event)" >
 
 </dash-header>
 <div [ngSwitch]="selected">
@@ -6,7 +6,7 @@
     <dash-page-kennzahlen></dash-page-kennzahlen>
   </div>
   <div *ngSwitchCase="'Themen'">
-    <dash-page-tag></dash-page-tag>
+  <dash-page-tag></dash-page-tag>
   </div>
   <div *ngSwitchCase="'Einzelstatistiken'">
     <dash-company-lister [searchValue]="searchValue"  (selectedCompany)="selectCompany($event)"></dash-company-lister>

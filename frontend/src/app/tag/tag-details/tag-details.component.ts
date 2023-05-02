@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 
 @Component({
   selector: 'dash-tag-details',
@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class TagDetailsComponent {
 
+  @Input() tag: string = "";
+  @Output() selectedTag = new EventEmitter<string>();
+
+
+  onClick() {
+    this.selectedTag.emit(this.tag);
+  }
 }

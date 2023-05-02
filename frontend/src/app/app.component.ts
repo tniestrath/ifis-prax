@@ -1,4 +1,4 @@
-import {Component, NgModule} from '@angular/core';
+import {Component, NgModule, Output} from '@angular/core';
 import {HttpClientModule} from "@angular/common/http";
 
 
@@ -13,6 +13,9 @@ export class AppComponent {
   selected : string = "kennzahlen";
   searchValue : string = "";
   company : string = "";
+  tag : string = "";
+
+  selectedSearch : string = "";
 
   select(selection : string) {
     this.selected = selection;
@@ -22,7 +25,15 @@ export class AppComponent {
   }
   selectCompany(companyName : string){
     this.company = companyName;
+    this.selectedSearch = companyName;
     console.log(companyName)
+  }
+
+  selectTag(tag: string) {
+    this.tag = tag;
+    this.selectedSearch = tag;
+    console.log(tag);
+
   }
 }
 

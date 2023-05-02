@@ -18,6 +18,7 @@ import {MatInputModule} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
 import { TagListerComponent } from './tag/tag-lister/tag-lister.component';
 import { TagDetailsComponent } from './tag/tag-details/tag-details.component';
+import { SearchbarComponent } from './component/searchbar/searchbar.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { TagDetailsComponent } from './tag/tag-details/tag-details.component';
     PageKennzahlenComponent,
     PageTagComponent,
     TagListerComponent,
-    TagDetailsComponent
+    TagDetailsComponent,
+    SearchbarComponent
   ],
   imports: [
     BrowserModule,

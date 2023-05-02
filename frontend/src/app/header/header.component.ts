@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {Observable} from "rxjs";
 
@@ -8,11 +8,11 @@ import {Observable} from "rxjs";
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit{
+export class HeaderComponent {
 
-  navElements = ["Kennzahlen", "Themen", "Einzelstatistiken"];
   @Output() selected = new EventEmitter<string>();
-  @Output() searchInput = new EventEmitter<string>();
+  navElements = ["Kennzahlen", "Themen", "Einzelstatistiken"];
+
 
   constructor() {
   }
@@ -23,9 +23,5 @@ export class HeaderComponent implements OnInit{
 
   setSelected(page : string){
     this.selected.emit(page)
-  }
-
-  onKey(value : string) {
-    this.searchInput.emit(value);
   }
 }

@@ -11,5 +11,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    // @Query("Select * FROM wp_posts ")
     //List<Post> getAllPosts();
+   @Query("SELECT p FROM Post p WHERE p.status = 'publish'")
+   List<Post> findPublishedPosts();
+
 }
 

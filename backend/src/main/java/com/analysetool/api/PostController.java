@@ -21,8 +21,10 @@ public class PostController {
 
     PostRepository postRepository;
     @Autowired
-    public PostController(PostRepository postRepository){
-        this.postRepository = postRepository;
+    public PostController(
+            PostRepository postRepository
+    ){
+       this.postRepository = postRepository;
     }
 
     @GetMapping("/posts/getall")
@@ -30,8 +32,8 @@ public class PostController {
         return postRepository.findAll();
     }
 
-    //@GetMapping("/posts/getall2")
-    //public List<Post> getAllPosts2(){return postRepository.getAllPosts();}
+    @GetMapping("/posts/publishedPosts")
+    public List<Post> getPublishedPosts(){return postRepository.findPublishedPosts();}
 
 
     @GetMapping("/{id}")

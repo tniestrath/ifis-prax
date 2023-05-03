@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.analysetool.repositories.WpTermTaxonomyRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +20,8 @@ public class WPTermController {
 
     @Autowired
     private WPTermRepository termRepository;
+    @Autowired
+    private WpTermTaxonomyRepository termTaxonomyRepository;
 
     @GetMapping("terms/{id}")
     public ResponseEntity<WPTerm> getTermById(@PathVariable Long id) {
@@ -32,6 +36,17 @@ public class WPTermController {
     @GetMapping("terms/getall")
     List<WPTerm> getall(){return termRepository.findAll();}
     // weitere REST-Endpunkte, falls benötigt
-
+    @GetMapping("terms/getPostTags")
+    List<WPTerm>getPostTags(){
+        List<Long> li = termTaxonomyRepository.getAllPostTags();
+        List<WPTerm> list = new ArrayList<WPTerm>();
+        for (Long l:li){
+            Optional <WPTerm> optTerm =termRepository.findById(l);
+             if(optTerm.isPresent()){
+                 list.add(optTerm.get());
+             }
+        }
+        return list;
+    }
 }
 

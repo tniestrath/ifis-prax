@@ -2,11 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 
 @Component({
-  selector: 'dash-page-tag',
-  templateUrl: './page-tag.component.html',
-  styleUrls: ['./page-tag.component.css']
+  selector: 'dash-page-einzel',
+  templateUrl: './page-einzel.component.html',
+  styleUrls: ['./page-einzel.component.css']
 })
-export class PageTagComponent implements OnInit{
+export class PageEinzelComponent implements OnInit {
   displayContent: string = "none";
 
   constructor(private cookieService : CookieService) {
@@ -20,7 +20,6 @@ export class PageTagComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.onSelected(this.cookieService.get("tag"));
+    this.onSelected(this.cookieService.get("einzel"));
   }
-
 }

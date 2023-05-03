@@ -1,0 +1,7 @@
+<div class="page-content" [ngStyle]="{'display': displayContent} ">
+  <dash-counter number="1235" desc="Artikel"></dash-counter>
+  <dash-counter number="987654321" desc="Clicks"></dash-counter>
+</div>
+<dash-searchbar #searchbar page="einzel" (selected)="onSelected($event)"></dash-searchbar>
+<dash-company-lister [searchValue]="searchbar.searchInput" (selectedCompany)="searchbar.onTagSelected($event)"></dash-company-lister>
+

@@ -19,6 +19,8 @@ import {ReactiveFormsModule} from "@angular/forms";
 import { TagListerComponent } from './tag/tag-lister/tag-lister.component';
 import { TagDetailsComponent } from './tag/tag-details/tag-details.component';
 import { SearchbarComponent } from './component/searchbar/searchbar.component';
+import { PageEinzelComponent } from './page/page-einzel/page-einzel.component';
+import {CookieService} from "ngx-cookie-service";
 
 @NgModule({
   declarations: [
@@ -34,7 +36,8 @@ import { SearchbarComponent } from './component/searchbar/searchbar.component';
     PageTagComponent,
     TagListerComponent,
     TagDetailsComponent,
-    SearchbarComponent
+    SearchbarComponent,
+    PageEinzelComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +47,7 @@ import { SearchbarComponent } from './component/searchbar/searchbar.component';
     MatInputModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

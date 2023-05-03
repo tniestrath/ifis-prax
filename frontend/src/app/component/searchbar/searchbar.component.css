@@ -3,10 +3,11 @@
   justify-content: center;
   background-color: white;
   height: 50px;
+  position: fixed;
+  top: 5px;
+  right: 5px;
 }
 .searchbar{
-  margin: 5px 0;
-  width: 25%;
   font-size: 25px;
 }
 .selection-box{

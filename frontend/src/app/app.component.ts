@@ -1,5 +1,5 @@
-import {Component, NgModule, Output} from '@angular/core';
-import {HttpClientModule} from "@angular/common/http";
+import {Component} from '@angular/core';
+import {CookieService} from "ngx-cookie-service";
 
 
 
@@ -16,6 +16,9 @@ export class AppComponent {
   tag : string = "";
 
   selectedSearch : string = "";
+
+  constructor() {
+  }
 
   select(selection : string) {
     this.selected = selection;

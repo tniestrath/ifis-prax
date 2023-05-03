@@ -1,21 +1,14 @@
 package com.analysetool.api;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 import java.util.Optional;
 import java.net.URI;
 import com.analysetool.repositories.WpTermRelationshipsRepository;
 import com.analysetool.modells.wp_term_relationships;
-
+@CrossOrigin
 @RestController
 //@RequestMapping("/wp_term_relationships")
 public class WpTermRelationshipsController {

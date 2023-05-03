@@ -18,7 +18,8 @@ export class CompanyListerComponent implements OnInit, OnChanges{
   }
 
   onClick(companyName : string){
-    this.selectedCompany.emit(companyName);
+    let name  = companyName.slice(0, 35);
+    this.selectedCompany.emit(name);
   }
 
   ngOnInit(): void {

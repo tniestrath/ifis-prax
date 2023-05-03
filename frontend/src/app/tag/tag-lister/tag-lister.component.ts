@@ -1,4 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {DbService} from "../../services/db.service";
+import {Tag} from "../Tag";
 
 @Component({
   selector: 'dash-tag-lister',
@@ -6,22 +8,26 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
   styleUrls: ['./tag-lister.component.css']
 })
 export class TagListerComponent implements OnInit, OnChanges{
-   tags: string[] = [];
-   allTags : string[] = [];
+   tags: Tag[] = [];
+   allTags : Tag[] = [];
   @Input() searchValue : string = "";
   @Output() selectedTag = new EventEmitter<string>();
 
-  onClick(value: string) {
-    this.selectedTag.emit(value);
+  constructor(private db : DbService) {
+  }
+
+  onClick(value: Tag) {
+    let val  = value.name.slice(0, 35);
+    this.selectedTag.emit(val);
   }
 
   ngOnInit(): void {
-    this.allTags = ["tag1", "tag2", "helloTag" , "someTag"];
+    this.db.getAllTags().then(res =>  this.allTags = res)
     this.tags = this.allTags;
   }
   ngOnChanges(changes: SimpleChanges): void {
 
     this.tags = this.allTags.filter(
-      value => value.toUpperCase().includes(this.searchValue.toUpperCase()));
+      value => value.name.toUpperCase().includes(this.searchValue.toUpperCase()));
   }
 }

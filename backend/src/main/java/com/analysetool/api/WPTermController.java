@@ -9,16 +9,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/terms")
+//@RequestMapping("/terms")
 public class WPTermController {
 
     @Autowired
     private WPTermRepository termRepository;
 
-    @GetMapping("/{id}")
+    @GetMapping("terms/{id}")
     public ResponseEntity<WPTerm> getTermById(@PathVariable Long id) {
         Optional<WPTerm> term = termRepository.findById(id);
         if (term.isPresent()) {
@@ -28,6 +29,8 @@ public class WPTermController {
         }
     }
 
+    @GetMapping("terms/getall")
+    List<WPTerm> getall(){return termRepository.findAll();}
     // weitere REST-Endpunkte, falls benötigt
 
 }

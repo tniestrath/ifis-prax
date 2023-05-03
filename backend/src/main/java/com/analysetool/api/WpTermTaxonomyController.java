@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/wp_term_taxonomy")
@@ -14,6 +15,10 @@ public class WpTermTaxonomyController {
 
     @Autowired
     private WpTermTaxonomyRepository wpTermTaxonomyRepository;
+
+
+    @GetMapping("/getall")
+    public List<WpTermTaxonomy> getAll(){return wpTermTaxonomyRepository.findAll();}
 
     @GetMapping("/{id}")
     public ResponseEntity<WpTermTaxonomy> getWpTermTaxonomy(@PathVariable Long id) {

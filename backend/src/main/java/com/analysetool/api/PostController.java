@@ -14,16 +14,25 @@ import com.analysetool.modells.Post;
 import com.analysetool.repositories.PostRepository;
 
 @RestController
-@RequestMapping("/api/posts")
+@CrossOrigin
+//@RequestMapping("/api/posts")
 public class PostController {
 
-    @Autowired
-    PostRepository postRepository;
 
-    @GetMapping("/")
+    PostRepository postRepository;
+    @Autowired
+    public PostController(PostRepository postRepository){
+        this.postRepository = postRepository;
+    }
+
+    @GetMapping("/posts/getall")
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
+
+    //@GetMapping("/posts/getall2")
+    //public List<Post> getAllPosts2(){return postRepository.getAllPosts();}
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Post> getPostById(@PathVariable("id") Long id) {
@@ -36,7 +45,7 @@ public class PostController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping("/create")
     public ResponseEntity<Post> createPost(@RequestBody Post post) {
         try {
             Post newPost = postRepository.save(post);

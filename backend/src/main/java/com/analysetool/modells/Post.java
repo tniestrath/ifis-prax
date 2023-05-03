@@ -2,16 +2,17 @@ package com.analysetool.modells;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
 @Table(name = "wp_posts")
-public class Post {
+public class Post implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 
@@ -108,6 +109,9 @@ public class Post {
         this.mimeType = mimeType;
         this.commentCount = commentCount;
     }
+
+    public Post(){}
+
 
     public Long getId() {
         return id;

@@ -56,6 +56,11 @@ public class WPUser {
         this.url = url;
     }
 
+    public WPUser() {
+        // default constructor
+    }
+
+
     public Long getId() {
         return id;
     }

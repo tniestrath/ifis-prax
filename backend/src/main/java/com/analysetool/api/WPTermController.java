@@ -5,6 +5,7 @@ import com.analysetool.repositories.WPTermRepository;
 import com.mysql.cj.xdevapi.JsonArray;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.analysetool.repositories.WpTermTaxonomyRepository;
@@ -48,14 +49,16 @@ public class WPTermController {
         }
         return list;
     }
-    @GetMapping("terms/getPostTagsIdName")
+
+    @GetMapping(value="terms/getPostTagsIdName", produces = MediaType.APPLICATION_JSON_VALUE)
     JSONArray getPostTagsIdName() throws JSONException {
         List<Long> li = termTaxonomyRepository.getAllPostTags();
         JSONArray list = new JSONArray();
-        JSONObject jsonObject = new JSONObject();
+
 
         for (Long l:li){
             Optional <WPTerm> optTerm =termRepository.findById(l);
+            JSONObject jsonObject = new JSONObject();
             if(optTerm.isPresent()){
                 jsonObject.put("id",optTerm.get().getId());
                 jsonObject.put("name",optTerm.get().getName());

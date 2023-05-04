@@ -1,4 +1,4 @@
-package com.analysetool;
+/*package com.analysetool;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -15,3 +15,4 @@ public class WebConfig implements WebMvcConfigurer {
         converters.add(new MappingJackson2HttpMessageConverter());
     }
 }
+*/

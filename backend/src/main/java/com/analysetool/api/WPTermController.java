@@ -72,7 +72,7 @@ public class WPTermController {
 @GetMapping(value="terms/getPostTagsIdName"
         , produces = MediaType.APPLICATION_JSON_VALUE
 )
-    JSONArray getPostTagsIdName() throws JSONException {
+    String getPostTagsIdName() throws JSONException {
     List<Long> li = termTaxonomyRepository.getAllPostTags();
     JSONArray list = new JSONArray();
 
@@ -88,7 +88,7 @@ public class WPTermController {
         }
     }
     System.out.println(list);
-    return list;
+    return list.toString();
 }
     }
 

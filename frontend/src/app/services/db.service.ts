@@ -11,7 +11,7 @@ export class DbService {
   private static port = ":8080";
 
 
-  private static getAllTags  = "/terms/getPostTags";
+  private static getAllTags  = "/terms/getPostTagsIdName";
 
 
   public static Tags : Tag[] = [];
@@ -27,14 +27,11 @@ export class DbService {
     if (DbService.Tags.length > 0){
       return;
     }
-      await fetch(DbService.getUrl(DbService.getAllTags)).then(res => res.json()).then(res => {
-        for (let term of res) {
-          let tag: Tag = {id: "0", name: ""};
-          tag.id = (term as WPTerm).id;
-          tag.name = (term as WPTerm).name;
-          DbService.Tags.push(tag);
-        }
-      });
+    await fetch(DbService.getUrl(DbService.getAllTags)).then(res => res.json()).then(res => {
+      for (let tag of res) {
+        DbService.Tags.push(tag);
+      }
+    });
   }
 
 }

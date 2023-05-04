@@ -69,27 +69,29 @@ public class WPTermController {
         return list;
     }
     */
-@GetMapping(value="terms/getPostTagsIdName"
-        , produces = MediaType.APPLICATION_JSON_VALUE
-)
+    @GetMapping("terms/getPostTagsIdName")
     String getPostTagsIdName() throws JSONException {
-    List<Long> li = termTaxonomyRepository.getAllPostTags();
-    JSONArray list = new JSONArray();
+        List<Long> li = termTaxonomyRepository.getAllPostTags();
+        JSONArray list = new JSONArray();
 
+        for (Long l:li){
+            Optional <WPTerm> optTerm =termRepository.findById(l);
+            JSONObject jsonObject = new JSONObject();
+            if(optTerm.isPresent()){
+                jsonObject.put("id",optTerm.get().getId());
+                jsonObject.put("name",optTerm.get().getName());
+                list.put(jsonObject);
 
-    for (Long l:li){
-        Optional <WPTerm> optTerm =termRepository.findById(l);
-        JSONObject jsonObject = new JSONObject();
-        if(optTerm.isPresent()){
-            jsonObject.put("id",optTerm.get().getId());
-            jsonObject.put("name",optTerm.get().getName());
-            list.put(jsonObject);
-
+            }
         }
+        System.out.println(list);
+        return list.toString();
     }
-    System.out.println(list);
-    return list.toString();
+
+    @GetMapping("terms/getPostcount")
+    String getPostCount(@RequestParam String id) {
+        return Long.toString(termRepository.getPostCount(id));
+    }
 }
-    }
 
 

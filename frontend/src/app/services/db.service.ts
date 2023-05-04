@@ -12,6 +12,7 @@ export class DbService {
 
 
   private static getAllTags  = "/terms/getPostTagsIdName";
+  private static getTagPostCount = "/terms/getPostcount?id="
 
 
   public static Tags : Tag[] = [];
@@ -32,6 +33,10 @@ export class DbService {
         DbService.Tags.push(tag);
       }
     });
+  }
+
+  async getTagPostCount(id : string){
+    return await fetch(DbService.getUrl(DbService.getTagPostCount + id)).then(res => res.json());
   }
 
 }

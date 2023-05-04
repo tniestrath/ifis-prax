@@ -2,5 +2,5 @@
   <dash-counter number="1235" desc="Artikel"></dash-counter>
   <dash-counter number="987654321" desc="Clicks"></dash-counter>
 </div>
-<dash-searchbar #searchbar page="tag" (selected)="onSelected($event)"></dash-searchbar>
-<dash-tag-lister [searchValue]="searchbar.searchInput" (selectedTag)="searchbar.onTagSelected($event)"></dash-tag-lister>
+<dash-searchbar #searchbar page="tag" (selected)="onSelected($event.id, $event.name)"></dash-searchbar>
+<dash-tag-lister [searchValue]="searchbar.searchInput" (selectedTag)="searchbar.onTagSelected($event.id, $event.name)"></dash-tag-lister>

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {ModuleWithProviders, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -21,6 +21,7 @@ import { TagDetailsComponent } from './tag/tag-details/tag-details.component';
 import { SearchbarComponent } from './component/searchbar/searchbar.component';
 import { PageEinzelComponent } from './page/page-einzel/page-einzel.component';
 import {CookieService} from "ngx-cookie-service";
+import {DbService} from "./services/db.service";
 
 @NgModule({
   declarations: [
@@ -50,4 +51,4 @@ import {CookieService} from "ngx-cookie-service";
   providers: [CookieService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

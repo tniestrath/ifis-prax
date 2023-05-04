@@ -1,5 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
+import {Tag} from "../../tag/Tag";
+import {DbObject} from "../../services/DbObject";
 
 @Component({
   selector: 'dash-searchbar',
@@ -9,37 +11,40 @@ import {CookieService} from "ngx-cookie-service";
 export class SearchbarComponent implements OnInit{
 
   @Output() searchInput :string = "";
-  @Output() selected = new EventEmitter<string>();
+  @Output() selected = new EventEmitter<DbObject>();
 
   @Input() page : string = "placeholder";
 
-  selectedSearch : string = "";
+  selectedSearch : DbObject = {id: "0", name: ""};
   displaySearchBox: string = "";
 
   constructor(private cookieService : CookieService) {
   }
 
   ngOnInit(): void {
-    this.onTagSelected(this.cookieService.get(this.page));
+    let object :string[]  = this.cookieService.get("tag").split(":");
+    this.onTagSelected(object[0], object[1]);
   }
 
   onKey(value : string) {
     this.searchInput = value;
   }
 
-  onTagSelected(tag : string){
-    if (tag != ""){
-      this.selectedSearch = tag;
+  onTagSelected(id: string, name: string){
+    let object : DbObject = {id, name};
+
+    if (id != "0"){
+      this.selectedSearch = object;
       this.displaySearchBox = "0";
     }
-    this.selected.emit(tag);
-    this.cookieService.set(this.page, tag);
+    this.selected.emit(object);
+    this.cookieService.set(this.page, object.id + ":" + object.name);
   }
 
   onCancelClick(){
-    this.selectedSearch = "";
+    this.selectedSearch = {id: "0", name: ""};
     this.displaySearchBox = "50px";
     this.onKey("");
-    this.onTagSelected("");
+    this.onTagSelected("0", "");
   }
 }

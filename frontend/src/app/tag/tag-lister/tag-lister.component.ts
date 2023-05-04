@@ -11,19 +11,17 @@ export class TagListerComponent implements OnInit, OnChanges{
    tags: Tag[] = [];
    allTags : Tag[] = [];
   @Input() searchValue : string = "";
-  @Output() selectedTag = new EventEmitter<string>();
+  @Output() selectedTag = new EventEmitter<Tag>();
 
   constructor(private db : DbService) {
   }
 
   onClick(value: Tag) {
-    let val  = value.name.slice(0, 35);
-    this.selectedTag.emit(val);
+    this.selectedTag.emit(value);
   }
 
   ngOnInit(): void {
-    this.db.getAllTags().then(res =>  this.allTags = res)
-    this.tags = this.allTags;
+    this.db.loadAllTags().then(() =>  this.allTags = DbService.Tags).then(() => this.tags = this.allTags);
   }
   ngOnChanges(changes: SimpleChanges): void {
 

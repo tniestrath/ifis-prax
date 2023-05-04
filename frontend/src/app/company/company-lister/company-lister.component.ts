@@ -29,7 +29,7 @@ export class CompanyListerComponent implements OnInit, OnChanges{
   ngOnChanges(changes: SimpleChanges): void {
 
     this.companies = this.allCompanies.filter(
-      value => value.firmaname.toUpperCase().includes(this.searchValue.toUpperCase()) ||
+      value => value.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||
         value.keywords.toUpperCase().includes(this.searchValue.toUpperCase()));
   }
 

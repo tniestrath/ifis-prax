@@ -11,7 +11,8 @@ export class PageEinzelComponent implements OnInit {
 
   constructor(private cookieService : CookieService) {
   }
-  onSelected(tag : string){
+
+  onSelected(tag: string, name: string){
     if (tag != ""){
       this.displayContent = "grid";
     } else {
@@ -20,6 +21,6 @@ export class PageEinzelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.onSelected(this.cookieService.get("einzel"));
+    this.onSelected(this.cookieService.get("einzel"), "");
   }
 }

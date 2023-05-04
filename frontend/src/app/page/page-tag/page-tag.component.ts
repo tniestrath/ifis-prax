@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
+import {Tag} from "../../tag/Tag";
 
 @Component({
   selector: 'dash-page-tag',
@@ -11,8 +12,8 @@ export class PageTagComponent implements OnInit{
 
   constructor(private cookieService : CookieService) {
   }
-  onSelected(tag : string){
-    if (tag != ""){
+  onSelected(id : string, name : string){
+    if (id != "0"){
       this.displayContent = "grid";
     } else {
       this.displayContent = "none";
@@ -20,7 +21,7 @@ export class PageTagComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.onSelected(this.cookieService.get("tag"));
+    this.onSelected(this.cookieService.get("tag_id"), this.cookieService.get("tag_name"));
   }
 
 }

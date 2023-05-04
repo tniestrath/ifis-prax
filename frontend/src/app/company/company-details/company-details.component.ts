@@ -19,6 +19,6 @@ export class CompanyDetailsComponent implements OnInit{
   }
 
   onClick(){
-    this.selectedCompany.emit(this.company?.firmaname);
+    this.selectedCompany.emit(this.company?.name);
   }
 }

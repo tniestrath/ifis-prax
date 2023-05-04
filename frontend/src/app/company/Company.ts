@@ -1,3 +1,5 @@
+import {DbObject} from "../services/DbObject";
+
 export interface Kontaktdaten {
   email : string;
   telefon : string;
@@ -6,8 +8,9 @@ export interface Kontaktdaten {
 
 }
 
-export interface Company{
-  firmaname : string;
+export interface Company extends DbObject{
+  id : string;
+  name : string;
   groesse : string;
   kontaktdaten : Kontaktdaten;
   land : string;

@@ -138,10 +138,13 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
 
             obj.put("id", i.getTitle());
             obj.put("date", formattedDate);
+            obj.put("count",1);
 
             if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
                 String currentId = list.getJSONObject(list.length() - 1).getString("id");
+                int currentCount = list.getJSONObject(list.length() - 1).getInt("count");
                 list.getJSONObject(list.length() - 1).put("id", currentId + "," + i.getTitle());
+                list.getJSONObject(list.length() - 1).put("count", currentCount + 1);
             } else {
                 list.put(obj);
             }
@@ -149,6 +152,7 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
     }
     return list.toString();
 }
+
 
 
 

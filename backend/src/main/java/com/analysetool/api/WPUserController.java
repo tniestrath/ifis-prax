@@ -1,6 +1,7 @@
 package com.analysetool.api;
 import com.analysetool.modells.WPUser;
 import com.analysetool.repositories.WPUserRepository;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +47,8 @@ public class WPUserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
 
     // weitere REST-Endpunkte, falls benötigt
 

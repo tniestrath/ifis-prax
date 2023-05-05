@@ -2,9 +2,18 @@ package com.analysetool.api;
 
 
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -90,5 +99,61 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+/*
+    @GetMapping("/getPostsByAuthorLine")
+    public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
+
+        JSONArray list = new JSONArray();
+        List<Post> posts = postRepository.findByAuthor(id);
+        DateFormat onlyDate = new SimpleDateFormat("dd/MM/yyyy");
+        if(!posts.isEmpty()){
+            for(Post i:posts) {
+
+                JSONObject obj = new JSONObject();
+                Date Tag = onlyDate.parse(i.getDate().toString());
+
+                if ( (!list.isNull(list.length()-1))   &&  (list.getJSONObject(list.length()-1).get("date") == Tag ))
+                    { list.getJSONObject(list.length()-1).put("id",list.getJSONObject(list.length()-1).get("id")+","+i.getTitle()) ;}
+
+                else{
+                obj.put("id", i.getTitle());
+                    obj.put("date", Tag);
+                    list.put(obj);}
+            }
+        }
+        return list.toString();
+    }*/
+@GetMapping("/getPostsByAuthorLine")
+public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
+
+    JSONArray list = new JSONArray();
+    List<Post> posts = postRepository.findByAuthor(id);
+    DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
+
+    if (!posts.isEmpty()) {
+        for (Post i : posts) {
+            JSONObject obj = new JSONObject();
+            Date date = onlyDate.parse(i.getDate().toString());
+            String formattedDate = new SimpleDateFormat("dd-MM-yyyy").format(date);
+
+            obj.put("id", i.getTitle());
+            obj.put("date", formattedDate);
+
+            if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
+                String currentId = list.getJSONObject(list.length() - 1).getString("id");
+                list.getJSONObject(list.length() - 1).put("id", currentId + "," + i.getTitle());
+            } else {
+                list.put(obj);
+            }
+        }
+    }
+    return list.toString();
+}
+
+
+
+
+
+
 }
 

@@ -101,8 +101,8 @@ public class WPTermController {
         JSONArray Antwort = new JSONArray();
        for (WpTermTaxonomy i:list){
            JSONObject jsonObject=new JSONObject();
-          jsonObject.put( "tagId",i.getTermId());
-          jsonObject.put("tag", termRepository.findById(i.getTermId()).get().getName());
+          jsonObject.put( "id",i.getTermId());
+          jsonObject.put("name", termRepository.findById(i.getTermId()).get().getName());
           jsonObject.put("count",i.getCount());
           Antwort.put(jsonObject);
        }

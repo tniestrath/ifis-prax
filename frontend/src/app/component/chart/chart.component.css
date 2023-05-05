@@ -6,6 +6,9 @@
   display: flex;
   overflow-x: clip;
 }
+.hidden{
+  visibility: hidden;
+}
 
 .chart-box:hover{
   background-color: #d7bebe;
@@ -17,10 +20,10 @@
   grid-area: span 2 / span 2;
 }
 :host.big{
-  grid-area: span 1 / span 3;
+  grid-area: span 2 / span 3;
 }
 :host.double-big{
-  grid-area: span 2 / span 4;
+  grid-area: span 3 / span 4;
 }
 
 .chart-details{

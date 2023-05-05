@@ -1,16 +1,20 @@
 import {AfterViewInit, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
 import {Chart, ChartConfiguration, ChartType, ChartTypeRegistry} from 'chart.js/auto';
 import _default from "chart.js/dist/plugins/plugin.tooltip";
+import {Observable, Subscription} from "rxjs";
 
 @Component({
   selector: 'dash-chart',
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.css'],
 })
-export class ChartComponent implements OnInit, AfterViewInit{
+export class ChartComponent implements OnInit{
 
   toggle : boolean = true;
   displayDetails : string = "none";
+  visibility: string = "hidden";
+
+  private sub = new Subscription();
 
   chart : any;
   canvas_id: string = "chart";
@@ -22,6 +26,8 @@ export class ChartComponent implements OnInit, AfterViewInit{
   @Input() desc : string = "";
   @Input() details : string = "";
   @Input() size : string = "small";
+  @Input() events = new Observable<void>;
+
 
   @HostBinding('class.big') get isBig() {
     return this.size === "big"
@@ -120,7 +126,8 @@ export class ChartComponent implements OnInit, AfterViewInit{
               }
             },
             legend: {
-              onClick: (e) => null
+              onClick: (e) => null,
+              display: false
             }
           }
         }
@@ -131,11 +138,15 @@ export class ChartComponent implements OnInit, AfterViewInit{
 
 
   ngOnInit(): void {
+    this.sub = this.events.subscribe(() => {
+      this.createChart(this.chartType,this.labels, this.data);
+      this.visibility = "visible";
+      console.log("visible");
+    })
     if (this.desc != ""){
       this.canvas_id = this.desc;
     }
-  }
-  ngAfterViewInit(): void {
-    this.createChart(this.chartType,this.labels, this.data);
+    this.visibility = "hidden";
+    console.log("hidden")
   }
 }

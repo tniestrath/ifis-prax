@@ -13,6 +13,7 @@ export class DbService {
 
   private static getAllTags  = "/terms/getPostTagsIdName";
   private static getTagPostCount = "/terms/getPostcount?id="
+  private static getTagRanking = "/terms/getTermRanking";
 
 
   public static Tags : Tag[] = [];
@@ -37,6 +38,10 @@ export class DbService {
 
   async getTagPostCount(id : string){
     return await fetch(DbService.getUrl(DbService.getTagPostCount + id)).then(res => res.json());
+  }
+
+  async getTagRanking() {
+    return await fetch(DbService.getUrl(DbService.getTagRanking)).then(res => res.json());
   }
 
 }

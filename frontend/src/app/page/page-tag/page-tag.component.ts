@@ -25,7 +25,8 @@ export class PageTagComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.onSelected(this.cookieService.get("tag_id"), this.cookieService.get("tag_name"));
+    let object :string[]  = this.cookieService.get("tag").split(":");
+    this.onSelected(object[0], object[1]);
 
   }
 

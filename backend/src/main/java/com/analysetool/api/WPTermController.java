@@ -1,6 +1,7 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.WPTerm;
+import com.analysetool.modells.WpTermTaxonomy;
 import com.analysetool.repositories.WPTermRepository;
 import com.mysql.cj.xdevapi.JsonArray;
 import org.json.JSONException;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 @CrossOrigin
 @RestController
@@ -91,6 +93,21 @@ public class WPTermController {
     @GetMapping("terms/getPostcount")
     String getPostCount(@RequestParam String id) {
         return Long.toString(termRepository.getPostCount(id));
+    }
+
+    @GetMapping("terms/getTermRanking")
+    String getTermRanking() throws JSONException {
+       List<WpTermTaxonomy> list= termTaxonomyRepository.findTop10TermIdsByCount();
+        JSONArray Antwort = new JSONArray();
+       for (WpTermTaxonomy i:list){
+           JSONObject jsonObject=new JSONObject();
+          jsonObject.put( "tagId",i.getTermId());
+          jsonObject.put("tag", termRepository.findById(i.getTermId()).get().getName());
+          jsonObject.put("count",i.getCount());
+          Antwort.put(jsonObject);
+       }
+       return Antwort.toString();
+
     }
 }
 

@@ -1,0 +1,16 @@
+.tag-box{
+  padding: 5px;
+  background-color: white;
+  border-radius: 5px;
+  height: calc(100% - 10px);
+}
+.tag-box:hover{
+  background-color: #EFEFEF;
+}
+
+.tag-center{
+  text-align: center;
+}
+p{
+  margin: 0;
+}

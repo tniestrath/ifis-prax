@@ -17,7 +17,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatInputModule} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
 import { TagListerComponent } from './tag/tag-lister/tag-lister.component';
-import { TagDetailsComponent } from './tag/tag-details/tag-details.component';
+import { TagComponent } from './tag/tag/tag.component';
 import { SearchbarComponent } from './component/searchbar/searchbar.component';
 import { PageEinzelComponent } from './page/page-einzel/page-einzel.component';
 import {CookieService} from "ngx-cookie-service";
@@ -40,7 +40,7 @@ import {NgOptimizedImage} from "@angular/common";
     PageKennzahlenComponent,
     PageTagComponent,
     TagListerComponent,
-    TagDetailsComponent,
+    TagComponent,
     SearchbarComponent,
     PageEinzelComponent,
     SelectorComponent,

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {SelectableDirective} from "./selectable.directive";
 import {SelectableComponent} from "./selectable.component";
-import {Observable, Subscription} from "rxjs";
+import {Observable, repeat, Subscription} from "rxjs";
 import {DbObject} from "../../services/DbObject";
 
 export class SelectorItem {
@@ -23,6 +23,7 @@ export class SelectorItem {
   styleUrls: ['./selector.component.css']
 })
 export class SelectorComponent implements OnInit{
+  @Input() columnsForm = "repeat(3, 1fr)";
   @Input() dataLoaded = new Observable<SelectorItem[]>();
 
   @Output() itemClick = new EventEmitter<DbObject>();
@@ -53,9 +54,6 @@ export class SelectorComponent implements OnInit{
   }
 
 
-
-
-
-
+  protected readonly repeat = repeat;
 }
 

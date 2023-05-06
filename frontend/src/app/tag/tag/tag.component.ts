@@ -3,10 +3,10 @@ import {Tag} from "../Tag";
 
 @Component({
   selector: 'dash-tag-details',
-  templateUrl: './tag-details.component.html',
-  styleUrls: ['./tag-details.component.css']
+  templateUrl: './tag.component.html',
+  styleUrls: ['./tag.component.css']
 })
-export class TagDetailsComponent {
+export class TagComponent {
 
   @Input() data : Tag = new Tag("0", "");
   @Input() clicked = new EventEmitter<Tag>();

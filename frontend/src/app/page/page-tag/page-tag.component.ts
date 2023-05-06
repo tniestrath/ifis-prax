@@ -5,7 +5,7 @@ import {DbService} from "../../services/db.service";
 import formatters from "chart.js/dist/core/core.ticks";
 import {SelectorItem} from "../../user/selector/selector.component";
 import {User, UserComponent} from "../../user/user/user.component";
-import {TagDetailsComponent} from "../../tag/tag-details/tag-details.component";
+import {TagComponent} from "../../tag/tag/tag.component";
 import {Subject} from "rxjs";
 
 @Component({
@@ -45,7 +45,7 @@ export class PageTagComponent implements OnInit{
     this.db.loadAllTags().then(() => {
       this.selectorItems = [];
       for (let t of DbService.Tags) {
-        this.selectorItems.push(new SelectorItem(TagDetailsComponent, new Tag(t.id, t.name)));
+        this.selectorItems.push(new SelectorItem(TagComponent, new Tag(t.id, t.name)));
       }
     }).then(() => {
       this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()))

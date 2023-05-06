@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TagDetailsComponent } from './tag-details.component';
+import { TagComponent } from './tag.component';
 
 describe('TagDetailsComponent', () => {
-  let component: TagDetailsComponent;
-  let fixture: ComponentFixture<TagDetailsComponent>;
+  let component: TagComponent;
+  let fixture: ComponentFixture<TagComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TagDetailsComponent ]
+      declarations: [ TagComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TagDetailsComponent);
+    fixture = TestBed.createComponent(TagComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

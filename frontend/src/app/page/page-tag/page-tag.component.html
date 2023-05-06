@@ -3,4 +3,4 @@
   <dash-counter number="987654321" desc="Clicks"></dash-counter>
 </div>
 <dash-searchbar #searchbar page="tag" (selected)="onSelected($event.id, $event.name)"></dash-searchbar>
-<dash-tag-lister [searchValue]="searchbar.searchInput" (selectedTag)="searchbar.onTagSelected($event.id, $event.name)"></dash-tag-lister>
+<dash-tag-lister [searchValue]="searchbar.searchInput" (selectedTag)="searchbar.onDbObjectSelected($event.id, $event.name)"></dash-tag-lister>

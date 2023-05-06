@@ -1,6 +1,7 @@
 import {Host, Injectable} from '@angular/core';
 import {Tag, WPTerm} from "../tag/Tag";
 import {Company} from "../company/Company";
+import {User} from "../user/user/user.component";
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +15,11 @@ export class DbService {
   private static getAllTags  = "/terms/getPostTagsIdName";
   private static getTagPostCount = "/terms/getPostcount?id="
   private static getTagRanking = "/terms/getTermRanking";
+  private static getAllUsers = "/users/getAll";
 
 
   public static Tags : Tag[] = [];
+  public static Users : User[] = [];
   public static Companies : Company[] = [];
 
   constructor() { }
@@ -44,4 +47,14 @@ export class DbService {
     return await fetch(DbService.getUrl(DbService.getTagRanking)).then(res => res.json());
   }
 
+  async loadAllUsers() {
+    if (DbService.Users.length > 0){
+      return;
+    }
+    await fetch(DbService.getUrl(DbService.getAllUsers)).then(res => res.json()).then(res => {
+      for (let user of res) {
+        DbService.Users.push(user);
+      }
+    });
+  }
 }

@@ -11,6 +11,7 @@ import {DbObject} from "../../services/DbObject";
 export class SearchbarComponent implements OnInit{
 
   @Output() searchInput :string = "";
+  @Output() currentSearch = new EventEmitter<string>();
   @Output() selected = new EventEmitter<DbObject>();
 
   @Input() page : string = "placeholder";
@@ -22,15 +23,16 @@ export class SearchbarComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    let object :string[]  = this.cookieService.get("tag").split(":");
-    this.onTagSelected(object[0], object[1]);
+    let object :string[]  = this.cookieService.get(this.page).split(":");
+    this.onDbObjectSelected(object[0], object[1]);
   }
 
   onKey(value : string) {
     this.searchInput = value;
+    this.currentSearch.emit(value);
   }
 
-  onTagSelected(id: string, name: string){
+  onDbObjectSelected(id: string, name: string){
     let object : DbObject = {id, name};
 
     if (id != "0"){
@@ -45,6 +47,6 @@ export class SearchbarComponent implements OnInit{
     this.selectedSearch = {id: "0", name: ""};
     this.displaySearchBox = "50px";
     this.onKey("");
-    this.onTagSelected("0", "");
+    this.onDbObjectSelected("0", "");
   }
 }

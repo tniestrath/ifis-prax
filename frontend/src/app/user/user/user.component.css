@@ -1,0 +1,29 @@
+.user-box{
+  height: 100px;
+  padding: 5px;
+
+  display: grid;
+  grid-template-columns: 95px auto;
+  grid-template-rows: 45px 45px;
+  grid-column-gap: 5px;
+
+  background-color: white;
+  border-radius: 5px;
+}
+.user-box:hover{
+  background-color: #EFEFEF;
+}
+
+.user-img-box {
+  grid-row: 1 / span 2;
+  grid-column: 1;
+}
+.user-name-box{
+  grid-row: 1;
+  grid-column: 2;
+  font-size: large;
+}
+.user-email-box{
+  grid-row: 2;
+  grid-column: 2;
+}

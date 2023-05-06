@@ -22,6 +22,10 @@ import { SearchbarComponent } from './component/searchbar/searchbar.component';
 import { PageEinzelComponent } from './page/page-einzel/page-einzel.component';
 import {CookieService} from "ngx-cookie-service";
 import {DbService} from "./services/db.service";
+import { SelectorComponent } from './user/selector/selector.component';
+import { SelectableDirective } from './user/selector/selectable.directive';
+import { UserComponent } from './user/user/user.component';
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -38,16 +42,20 @@ import {DbService} from "./services/db.service";
     TagListerComponent,
     TagDetailsComponent,
     SearchbarComponent,
-    PageEinzelComponent
+    PageEinzelComponent,
+    SelectorComponent,
+    SelectableDirective,
+    UserComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MatAutocompleteModule,
-    MatInputModule,
-    ReactiveFormsModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        NgOptimizedImage
+    ],
   providers: [CookieService],
   bootstrap: [AppComponent]
 })

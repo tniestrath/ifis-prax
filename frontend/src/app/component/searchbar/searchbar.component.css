@@ -9,6 +9,7 @@
 }
 .searchbar{
   font-size: 25px;
+  border-radius: 5px;
 }
 .selection-box{
   position: fixed;
@@ -21,8 +22,8 @@
   margin: 5px 0;
   padding-left: 5px;
   align-items: center;
-  background-color: #d7bebe;
-  border-radius: 10px;
+  background-color: #E5E5E5;
+  border-radius: 5px;
 }
 p {
   font-size: 25px;

@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {ChartComponent} from "../../component/chart/chart.component";
+import {ChartComponent, ChartElements} from "../../component/chart/chart.component";
 import {DbService} from "../../services/db.service";
 import {Subject} from "rxjs";
 
@@ -13,7 +13,7 @@ export class PageKennzahlenComponent implements OnInit{
   tagRatingLabel : string[] = [];
   tagRatingData : number[] = [];
 
-  tagRatingLoaded = new Subject<void>();
+  tagRatingLoaded = new Subject<ChartElements>();
 
   constructor(private db : DbService) {
   }
@@ -21,12 +21,14 @@ export class PageKennzahlenComponent implements OnInit{
   ngOnInit(): void {
     this.db.getTagRanking().then(res =>
     {
+      this.tagRatingLabel = [];
+      this.tagRatingData = [];
       for (let tr of res) {
         this.tagRatingLabel.push((tr as TagRating).name);
         this.tagRatingData.push((tr as TagRating).count);
       }
     }).finally(() =>
-      this.tagRatingLoaded.next());
+      this.tagRatingLoaded.next(new ChartElements(this.tagRatingLabel, this.tagRatingData)));
   }
 
 

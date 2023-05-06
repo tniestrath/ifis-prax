@@ -1,26 +1,27 @@
-import {Host, Injectable} from '@angular/core';
-import {Tag, WPTerm} from "../tag/Tag";
-import {Company} from "../company/Company";
+import {Injectable} from '@angular/core';
+import {Tag} from "../tag/Tag";
 import {User} from "../user/user/user.component";
+
+export enum dbUrl {
+  HOST = "http://localhost",
+  PORT = ":8080",
+  GET_ALL_TAGS = "http://localhost:8080/terms/getPostTagsIdName",
+  GET_TAG_POST_COUNT = "http://localhost:8080/terms/getPostcount?id=",
+  GET_TAG_RANKING = "http://localhost:8080/terms/getTermRanking",
+  GET_ALL_USERS = "http://localhost:8080/users/getAll",
+  GET_USER_POST_PER_DAY = "http://localhost:8080/getPostsByAuthorLine?id="
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class DbService {
 
-  private static host = "http://localhost"
-  private static port = ":8080";
-
-
-  private static getAllTags  = "/terms/getPostTagsIdName";
-  private static getTagPostCount = "/terms/getPostcount?id="
-  private static getTagRanking = "/terms/getTermRanking";
-  private static getAllUsers = "/users/getAll";
-
+  private static host = dbUrl.HOST;
+  private static port = dbUrl.PORT;
 
   public static Tags : Tag[] = [];
   public static Users : User[] = [];
-  public static Companies : Company[] = [];
 
   constructor() { }
 
@@ -32,7 +33,7 @@ export class DbService {
     if (DbService.Tags.length > 0){
       return;
     }
-    await fetch(DbService.getUrl(DbService.getAllTags)).then(res => res.json()).then(res => {
+    await fetch(dbUrl.GET_ALL_TAGS).then(res => res.json()).then(res => {
       for (let tag of res) {
         DbService.Tags.push(tag);
       }
@@ -40,21 +41,25 @@ export class DbService {
   }
 
   async getTagPostCount(id : string){
-    return await fetch(DbService.getUrl(DbService.getTagPostCount + id)).then(res => res.json());
+    return await fetch(dbUrl.GET_TAG_POST_COUNT + id).then(res => res.json());
   }
 
   async getTagRanking() {
-    return await fetch(DbService.getUrl(DbService.getTagRanking)).then(res => res.json());
+    return await fetch(dbUrl.GET_TAG_RANKING).then(res => res.json());
   }
 
   async loadAllUsers() {
     if (DbService.Users.length > 0){
       return;
     }
-    await fetch(DbService.getUrl(DbService.getAllUsers)).then(res => res.json()).then(res => {
+    await fetch(dbUrl.GET_ALL_USERS).then(res => res.json()).then(res => {
       for (let user of res) {
         DbService.Users.push(user);
       }
     });
+  }
+
+  async getUserPostsDay(id : string){
+    return await fetch(dbUrl.GET_USER_POST_PER_DAY + id).then(res => res.json());
   }
 }

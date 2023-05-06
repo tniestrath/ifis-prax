@@ -1,6 +1,5 @@
 import {
   Component,
-  Directive,
   EventEmitter,
   Input,
   OnChanges,
@@ -23,41 +22,33 @@ export class SelectorItem {
   templateUrl: './selector.component.html',
   styleUrls: ['./selector.component.css']
 })
-export class SelectorComponent implements OnInit, OnChanges{
-  @Input() items : SelectorItem[] = [];
-  @Input() dataLoaded = new Observable<void>();
+export class SelectorComponent implements OnInit{
+  @Input() dataLoaded = new Observable<SelectorItem[]>();
 
-  @Output() selection = new EventEmitter<DbObject>();
+  @Output() itemClick = new EventEmitter<DbObject>();
 
   @ViewChild(SelectableDirective, {static: true}) dashSelectable!: SelectableDirective;
 
   private sub = new Subscription();
-  private sub2 = new Subscription();
   private components : SelectableComponent[] = [];
-  private clickEmitter = new EventEmitter<DbObject>();
+
 
   ngOnInit(): void {
-    this.sub = (this.dataLoaded.subscribe(() =>{
-      this.loadItems();
+    console.log("Selector Component loaded");
+    this.sub = (this.dataLoaded.subscribe(s =>{
+      this.loadItems(s);
+      console.log("Selector Items loaded");
     }
     ));
-    this.sub2 = (this.clickEmitter.subscribe(object => {
-      let dbObject : DbObject = {id: object.id, name: object.name };
-      this.selection.emit(dbObject);
-      }
-    ));
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    this.loadItems();
   }
 
-  private loadItems() {
+  private loadItems(s : SelectorItem[]) {
     const viewContainerRef = this.dashSelectable.viewContainerRef;
     viewContainerRef.clear();
-    for (let item of this.items) {
+    for (let item of s) {
       const componentRef = viewContainerRef.createComponent<SelectableComponent>(item.component);
       componentRef.instance.data = item.data;
-      componentRef.setInput("clicked", this.clickEmitter);
+      componentRef.setInput("clicked", this.itemClick);
     }
   }
 

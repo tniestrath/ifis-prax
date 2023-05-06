@@ -1,7 +1,12 @@
 import {AfterViewInit, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
-import {Chart, ChartConfiguration, ChartType, ChartTypeRegistry} from 'chart.js/auto';
+import {Chart, ChartConfiguration, ChartData, ChartType, ChartTypeRegistry} from 'chart.js/auto';
 import _default from "chart.js/dist/plugins/plugin.tooltip";
 import {Observable, Subscription} from "rxjs";
+
+export class ChartElements {
+  constructor(public label : string[], public data : number[]) {
+  }
+}
 
 @Component({
   selector: 'dash-chart',
@@ -21,12 +26,10 @@ export class ChartComponent implements OnInit{
   colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148,28,62)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
 
   @Input() chartType : ChartType = 'bar';
-  @Input() labels : string[] = [];
-  @Input() data : number[] = [];
   @Input() desc : string = "";
   @Input() details : string = "";
   @Input() size : string = "small";
-  @Input() events = new Observable<void>;
+  @Input() elementsObservable = new Observable<ChartElements>;
 
 
   @HostBinding('class.big') get isBig() {
@@ -138,15 +141,16 @@ export class ChartComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.sub = this.events.subscribe(() => {
-      this.createChart(this.chartType,this.labels, this.data);
+    this.sub = this.elementsObservable.subscribe(ce  => {
+      if (this.chart){
+        this.chart.destroy();
+      }
+      this.createChart(this.chartType,ce.label, ce.data);
       this.visibility = "visible";
-      console.log("visible");
-    })
+    });
     if (this.desc != ""){
       this.canvas_id = this.desc;
     }
     this.visibility = "hidden";
-    console.log("hidden")
   }
 }

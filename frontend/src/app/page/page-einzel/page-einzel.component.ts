@@ -4,6 +4,8 @@ import {SelectorItem} from "../../user/selector/selector.component";
 import {DbService} from "../../services/db.service";
 import {User, UserComponent} from "../../user/user/user.component";
 import {Subject} from "rxjs";
+import {Post} from "../../Post";
+import {ChartElements} from "../../component/chart/chart.component";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -14,8 +16,12 @@ export class PageEinzelComponent implements OnInit {
   displayContent: string = "none";
 
   selectorItems : SelectorItem[] = [];
-  selectorItemsLoaded = new Subject<void>();
+  selectorItemsLoaded = new Subject<SelectorItem[]>();
   searchValue = "";
+
+  postPerDayLabel : string[] = []
+  postsPerDayData : number[]  = [];
+  postPerDayLoaded = new Subject<ChartElements>();
 
   constructor(private cookieService : CookieService, private db : DbService) {
   }
@@ -26,6 +32,15 @@ export class PageEinzelComponent implements OnInit {
     } else {
       this.displayContent = "none";
     }
+    this.db.getUserPostsDay(id).then(res => {
+      this.postPerDayLabel = [];
+      this.postsPerDayData = [];
+      for (let post of res) {
+        this.postPerDayLabel.push((post as Post).date);
+        this.postsPerDayData.push(Number((post as Post).count));
+      }
+    }).finally(() =>
+      this.postPerDayLoaded.next(new ChartElements(this.postPerDayLabel, this.postsPerDayData)));
   }
 
   onSearchInput(value : string){
@@ -47,6 +62,6 @@ export class PageEinzelComponent implements OnInit {
       this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||
                                                     (item.data as User).email.toUpperCase().includes(this.searchValue.toUpperCase()))
     }).finally(() =>
-      this.selectorItemsLoaded.next());
+      this.selectorItemsLoaded.next(this.selectorItems));
   }
 }

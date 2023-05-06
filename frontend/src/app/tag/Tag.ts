@@ -7,7 +7,7 @@ export interface WPTerm extends DbObject{
   termGroup : number;
 }
 
-export interface Tag extends DbObject{
-  id : string;
-  name : string;
+export class Tag implements DbObject{
+  constructor(public id : string, public name : string) {
+  }
 }

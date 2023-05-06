@@ -8,11 +8,11 @@ import {Tag} from "../Tag";
 })
 export class TagDetailsComponent {
 
-  @Input() tag: Tag | undefined;
-  @Output() selectedTag = new EventEmitter<Tag>();
+  @Input() data : Tag = new Tag("0", "");
+  @Input() clicked = new EventEmitter<Tag>();
 
 
   onClick() {
-    this.selectedTag.emit(this.tag);
+    this.clicked.emit(this.data);
   }
 }

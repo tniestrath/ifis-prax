@@ -2,7 +2,7 @@
   <!--<button id="companie-list-toggle" (click)="this.companyListShown = !this.companyListShown">Toggle Company-List</button>
   <dash-company-lister *ngIf="this.companyListShown"></dash-company-lister>-->
 
-  <dash-chart size="double" chartType="pie" desc="Beiträge pro #" [labels]="tagRatingLabel" [data]="tagRatingData" [events]="tagRatingLoaded.asObservable()" ></dash-chart>
+  <dash-chart size="double" chartType="pie" desc="Beiträge pro #" [elementsObservable]="tagRatingLoaded.asObservable()" ></dash-chart>
 
   <!--<dash-counter size="small" number="12341" desc="Angemeldete Firmen" details="Lorem ipsum solor sic adet"></dash-counter>
   <dash-chart size="double" chartType="doughnut" desc="Frimen pro Plan" [data]="[12, 6, 3]" details="Lorem ipsum solor sic adet, in dubio pro reo, canis lacet. Sol adet, ubi est Flavia?"></dash-chart>

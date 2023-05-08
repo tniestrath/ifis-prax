@@ -65,7 +65,9 @@ public class WPUserController {
         List<WPUser> list = userRepository.findAll();
         List<WPUser> li = new ArrayList<>();
         for(WPUser i : list){
-            li.add(new WPUser(i.getId(), i.getEmail(), i.getDisplayName(), getProfilePic(i.getId()).toString()));
+            li.add(new WPUser(i.getId(), i.getEmail(), i.getDisplayName(), //getProfilePic(i.getId()).toString()
+            "test"
+            ));
 
         }
         return li;

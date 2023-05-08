@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 @CrossOrigin
@@ -51,5 +52,10 @@ public class WPUserController {
 
 
     // weitere REST-Endpunkte, falls benötigt
-
+    @GetMapping("/profilePic")
+    public File getProfilePic(@RequestParam int id){
+        String path = "C:/Users/timni/"+id+"/profile_photo.jpg";
+        File cutePic = new File(path);
+        return cutePic;
+    }
 }

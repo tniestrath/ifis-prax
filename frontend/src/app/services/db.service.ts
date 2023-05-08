@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Tag} from "../tag/Tag";
 import {User} from "../user/user/user.component";
+import {DomSanitizer} from "@angular/platform-browser";
 
 export enum dbUrl {
   HOST = "http://localhost",
@@ -8,8 +9,9 @@ export enum dbUrl {
   GET_ALL_TAGS = "http://localhost:8080/terms/getPostTagsIdName",
   GET_TAG_POST_COUNT = "http://localhost:8080/terms/getPostcount?id=",
   GET_TAG_RANKING = "http://localhost:8080/terms/getTermRanking",
-  GET_ALL_USERS = "http://localhost:8080/users/getAll",
-  GET_USER_POST_PER_DAY = "http://localhost:8080/getPostsByAuthorLine?id="
+  GET_ALL_USERS = "http://localhost:8080/users/getAllNew",
+  GET_USER_POST_PER_DAY = "http://localhost:8080/getPostsByAuthorLine?id=",
+  GET_USER_IMG = "http://localhost:8080/users/profilePic?id="
 }
 
 @Injectable({
@@ -23,7 +25,7 @@ export class DbService {
   public static Tags : Tag[] = [];
   public static Users : User[] = [];
 
-  constructor() { }
+  constructor(private sanitizer : DomSanitizer) { }
 
   private static getUrl( prompt : string){
     return DbService.host + DbService.port + prompt;
@@ -63,7 +65,24 @@ export class DbService {
     return await fetch(dbUrl.GET_USER_POST_PER_DAY + id).then(res => res.json());
   }
 
-  getUserImgSrc(id : string){
-    return "../../assets/user_img/" + id + "_profile_photo.jpg"
+  async getUserImgSrc(id : string){
+    const blob = await fetch(dbUrl.GET_USER_IMG + id).then(res => res.blob());
+    if (blob.size == 0){
+      return "../../assets/user_img/404_img.jpg";
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    return new Promise<string>((resolve, reject) => {
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          resolve(reader.result);
+        } else {
+          reject(new Error('Failed to create data URL from blob'));
+        }
+      };
+      reader.onerror = () => {
+        reject(new Error('Failed to read blob data'));
+      };
+    }).then(dataUrl => this.sanitizer.bypassSecurityTrustUrl(dataUrl));
   }
 }

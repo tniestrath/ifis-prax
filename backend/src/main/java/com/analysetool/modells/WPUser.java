@@ -45,7 +45,7 @@ public class WPUser {
     private String img;
     // Konstruktoren, Getter und Setter
 
-    public WPUser(Long id, String displayName, String activationKey, String email, String login, String nicename, String password, LocalDateTime registered, Integer status, String url) {
+    /*public WPUser(Long id, String displayName, String activationKey, String email, String login, String nicename, String password, LocalDateTime registered, Integer status, String url) {
         this.id = id;
         this.displayName = displayName;
         this.activationKey = activationKey;
@@ -56,7 +56,7 @@ public class WPUser {
         this.registered = registered;
         this.status = status;
         this.url = url;
-    }
+    }*/
 
     public WPUser(Long id, String email, String displayName, String img){
         this.id=id;

@@ -3,6 +3,7 @@ import {CookieService} from "ngx-cookie-service";
 import {Tag} from "../../tag/Tag";
 import {DbObject} from "../../services/DbObject";
 import {DbService} from "../../services/db.service";
+import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 
 
 @Component({
@@ -20,8 +21,9 @@ export class SearchbarComponent implements OnInit{
 
   selectedSearch : DbObject = {id: "0", name: ""};
   displaySearchBox: string = "";
+  imgSrc: SafeUrl = "";
 
-  constructor(private cookieService : CookieService, private db : DbService) {
+  constructor(private cookieService : CookieService, private db : DbService, private sanitizer : DomSanitizer) {
   }
 
   ngOnInit(): void {
@@ -43,6 +45,8 @@ export class SearchbarComponent implements OnInit{
     }
     this.selected.emit({id, name});
     this.cookieService.set(this.page, object.id + ":" + object.name);
+
+    this.getImgSrc(this.selectedSearch.id);
   }
 
   onCancelClick(){
@@ -53,9 +57,8 @@ export class SearchbarComponent implements OnInit{
   }
 
   getImgSrc(id: string) {
-    if (this.page == "einzel") {
-      return this.db.getUserImgSrc(id);
-    }
-    return "";
+    this.db.getUserImgSrc(id).then(dataUrl => {
+      this.imgSrc = dataUrl;
+    });
   }
 }

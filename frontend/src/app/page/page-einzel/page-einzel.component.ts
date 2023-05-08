@@ -6,6 +6,7 @@ import {User, UserComponent} from "../../user/user/user.component";
 import {Subject} from "rxjs";
 import {Post} from "../../Post";
 import {ChartElements} from "../../component/chart/chart.component";
+import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -23,7 +24,7 @@ export class PageEinzelComponent implements OnInit {
   postsPerDayData : number[]  = [];
   postPerDayLoaded = new Subject<ChartElements>();
 
-  constructor(private cookieService : CookieService, private db : DbService) {
+  constructor(private cookieService : CookieService, private db : DbService, private sanitizer : DomSanitizer) {
   }
 
   onSelected(id: string, name: string){
@@ -56,7 +57,7 @@ export class PageEinzelComponent implements OnInit {
     this.db.loadAllUsers().then(() => {
       this.selectorItems = [];
       for (let u of DbService.Users) {
-        this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, this.db.getUserImgSrc(u.id))));
+        this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.img)));
       }
     }).then(() => {
       this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||

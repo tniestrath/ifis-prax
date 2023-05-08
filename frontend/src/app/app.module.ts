@@ -3,9 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { CompanyDetailsComponent } from './company/company-details/company-details.component';
 import { PolarChartComponent } from './component/polar-chart/polar-chart.component';
-import { CompanyListerComponent } from './company/company-lister/company-lister.component';
 import { HeaderComponent } from './header/header.component';
 import { ChartComponent } from './component/chart/chart.component';
 import { CounterComponent } from './component/counter/counter.component';
@@ -30,9 +28,7 @@ import {NgOptimizedImage} from "@angular/common";
 @NgModule({
   declarations: [
     AppComponent,
-    CompanyDetailsComponent,
     PolarChartComponent,
-    CompanyListerComponent,
     HeaderComponent,
     ChartComponent,
     CounterComponent,

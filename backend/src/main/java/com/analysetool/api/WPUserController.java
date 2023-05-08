@@ -58,7 +58,7 @@ public class WPUserController {
     // weitere REST-Endpunkte, falls benötigt
     /*@GetMapping("/profilePic")
     public File getProfilePic(@RequestParam long id){
-        String path = "C:/Users/timni/"+id+"/profile_photo.jpg";
+        String path = "../../assets/user_img/"+id+"_profile_photo.jpg";
         File cutePic = new File(path);
         return cutePic;
     }
@@ -88,7 +88,7 @@ public class WPUserController {
 
     @GetMapping("/profilePic")
     public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException {
-        String path = "C:/Users/timni/" + id + "/profile_photo.jpg";
+        String path = "C:\\Users\\Robin\\IdeaProjects\\ifis-prax\\frontend\\src\\assets\\user_img\\"+id+"_profile_photo.jpg";
         File cutePic = new File(path);
         if (!cutePic.exists()) {
             return ResponseEntity.notFound().build();

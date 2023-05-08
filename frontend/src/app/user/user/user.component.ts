@@ -1,9 +1,11 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {SelectableComponent} from "../selector/selectable.component";
 import {DbObject} from "../../services/DbObject";
+import {SafeUrl} from "@angular/platform-browser";
+import {DbService} from "../../services/db.service";
 
 export class User implements DbObject{
-  constructor(public id : string, public email : string, public displayName : string, public img_src : string) {}
+  constructor(public id : string, public email : string, public displayName : string, public img : SafeUrl) {}
   name: string = this.displayName;
 
 }
@@ -13,14 +15,32 @@ export class User implements DbObject{
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css']
 })
-export class UserComponent implements SelectableComponent{
+export class UserComponent implements SelectableComponent, OnInit {
   @Input() data: User = new User("", "", "", "");
 
-  @Input() clicked : EventEmitter<User> = new EventEmitter<User>();
+  @Input() clicked: EventEmitter<User> = new EventEmitter<User>();
+
+  user_img: SafeUrl = "";
+
+  constructor(private db: DbService) {
+  }
 
   onClick(): void {
     this.clicked?.emit(this.data);
   }
 
+  ngOnInit(): void {
+    this.db.getUserImgSrc(this.data.id).then(dataUrl => {
+      this.user_img = dataUrl;
+    });
+  }
+
+  getUserImg() {
+    if (this.user_img){
+      return this.user_img;
+    } else {
+      return "C:/Users/Robin/IdeaProjects/ifis-prax/frontend/src/assets/ifismpdashboard.png";
+    }
+  }
 
 }

@@ -62,4 +62,8 @@ export class DbService {
   async getUserPostsDay(id : string){
     return await fetch(dbUrl.GET_USER_POST_PER_DAY + id).then(res => res.json());
   }
+
+  getUserImgSrc(id : string){
+    return "../../assets/user_img/" + id + "_profile_photo.jpg"
+  }
 }

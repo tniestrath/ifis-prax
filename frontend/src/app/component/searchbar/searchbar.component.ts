@@ -2,6 +2,8 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {Tag} from "../../tag/Tag";
 import {DbObject} from "../../services/DbObject";
+import {DbService} from "../../services/db.service";
+
 
 @Component({
   selector: 'dash-searchbar',
@@ -19,7 +21,7 @@ export class SearchbarComponent implements OnInit{
   selectedSearch : DbObject = {id: "0", name: ""};
   displaySearchBox: string = "";
 
-  constructor(private cookieService : CookieService) {
+  constructor(private cookieService : CookieService, private db : DbService) {
   }
 
   ngOnInit(): void {
@@ -39,7 +41,7 @@ export class SearchbarComponent implements OnInit{
       this.selectedSearch = object;
       this.displaySearchBox = "0";
     }
-    this.selected.emit(object);
+    this.selected.emit({id, name});
     this.cookieService.set(this.page, object.id + ":" + object.name);
   }
 
@@ -48,5 +50,12 @@ export class SearchbarComponent implements OnInit{
     this.displaySearchBox = "50px";
     this.onKey("");
     this.onDbObjectSelected("0", "");
+  }
+
+  getImgSrc(id: string) {
+    if (this.page == "einzel") {
+      return this.db.getUserImgSrc(id);
+    }
+    return "";
   }
 }

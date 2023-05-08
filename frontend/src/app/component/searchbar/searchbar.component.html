@@ -1,6 +1,7 @@
 <div class="searchbar-box" [ngSwitch]="selectedSearch.id" [ngStyle]="{'height': displaySearchBox}">
   <input *ngSwitchCase="0" #search class="searchbar" type="text" (keyup)="onKey(search.value)" placeholder="Filter">
   <div *ngSwitchDefault class="selection-box" >
+    <img *ngIf="page == 'einzel'" [src]="getImgSrc(selectedSearch.id)" alt="">
     <p>{{selectedSearch.name}}</p>
     <button class="selection-cancel-button" (click)="onCancelClick()">X</button>
   </div>

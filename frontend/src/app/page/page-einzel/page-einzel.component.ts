@@ -56,7 +56,7 @@ export class PageEinzelComponent implements OnInit {
     this.db.loadAllUsers().then(() => {
       this.selectorItems = [];
       for (let u of DbService.Users) {
-        this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, "")));
+        this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, this.db.getUserImgSrc(u.id))));
       }
     }).then(() => {
       this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||

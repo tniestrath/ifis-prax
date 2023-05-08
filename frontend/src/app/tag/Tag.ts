@@ -8,6 +8,6 @@ export interface WPTerm extends DbObject{
 }
 
 export class Tag implements DbObject{
-  constructor(public id : string, public name : string) {
+  constructor(public id : string, public name : string, public  img_src : string) {
   }
 }

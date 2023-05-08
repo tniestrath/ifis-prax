@@ -45,7 +45,7 @@ export class PageTagComponent implements OnInit{
     this.db.loadAllTags().then(() => {
       this.selectorItems = [];
       for (let t of DbService.Tags) {
-        this.selectorItems.push(new SelectorItem(TagComponent, new Tag(t.id, t.name)));
+        this.selectorItems.push(new SelectorItem(TagComponent, new Tag(t.id, t.name, t.img_src)));
       }
     }).then(() => {
       this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()))

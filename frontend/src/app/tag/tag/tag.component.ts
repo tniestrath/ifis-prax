@@ -8,7 +8,7 @@ import {Tag} from "../Tag";
 })
 export class TagComponent {
 
-  @Input() data : Tag = new Tag("0", "");
+  @Input() data : Tag = new Tag("0", "", "");
   @Input() clicked = new EventEmitter<Tag>();
 
 

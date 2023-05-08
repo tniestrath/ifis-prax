@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @CrossOrigin
@@ -53,9 +54,21 @@ public class WPUserController {
 
     // weitere REST-Endpunkte, falls benötigt
     @GetMapping("/profilePic")
-    public File getProfilePic(@RequestParam int id){
+    public File getProfilePic(@RequestParam long id){
         String path = "C:/Users/timni/"+id+"/profile_photo.jpg";
         File cutePic = new File(path);
         return cutePic;
     }
+
+    @GetMapping("/getAllNew")
+    public List<WPUser> getAllNew(){
+        List<WPUser> list = userRepository.findAll();
+        List<WPUser> li = new ArrayList<>();
+        for(WPUser i : list){
+            li.add(new WPUser(i.getId(), i.getEmail(), i.getDisplayName(), getProfilePic(i.getId()).toString()));
+
+        }
+        return li;
+    }
+
 }

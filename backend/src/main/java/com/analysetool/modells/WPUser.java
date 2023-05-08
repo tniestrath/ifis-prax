@@ -2,6 +2,7 @@ package com.analysetool.modells;
 
 import jakarta.persistence.*;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -40,7 +41,8 @@ public class WPUser {
 
     @Column(name = "user_url")
     private String url;
-
+    @Transient
+    private String img;
     // Konstruktoren, Getter und Setter
 
     public WPUser(Long id, String displayName, String activationKey, String email, String login, String nicename, String password, LocalDateTime registered, Integer status, String url) {
@@ -55,6 +57,12 @@ public class WPUser {
         this.status = status;
         this.url = url;
     }
+
+    public WPUser(Long id, String email, String displayName, String img){
+        this.id=id;
+        this.email=email;
+        this.displayName=displayName;
+        this.img=img;}
 
     public WPUser() {
         // default constructor

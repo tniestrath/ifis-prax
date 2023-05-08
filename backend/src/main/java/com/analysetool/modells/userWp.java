@@ -6,10 +6,10 @@ public class userWp {
 
     private Long id;
     private String email;
-    private String img;
+    private byte[] img;
     private String displayName;
 
-    public userWp(Long id, String email, String displayName, String img){
+    public userWp(Long id, String email, String displayName, byte[] img){
         this.id=id;
         this.email=email;
         this.displayName=displayName;
@@ -31,11 +31,11 @@ public class userWp {
         this.email = email;
     }
 
-    public String getImg() {
+    public byte[] getImg() {
         return img;
     }
 
-    public void setImg(String img) {
+    public void setImg(byte[] img) {
         this.img = img;
     }
 

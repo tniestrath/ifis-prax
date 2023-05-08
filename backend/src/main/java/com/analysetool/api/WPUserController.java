@@ -3,10 +3,13 @@ import com.analysetool.modells.WPUser;
 import com.analysetool.repositories.WPUserRepository;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.analysetool.modells.userWp;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +56,7 @@ public class WPUserController {
 
 
     // weitere REST-Endpunkte, falls benötigt
-    @GetMapping("/profilePic")
+    /*@GetMapping("/profilePic")
     public File getProfilePic(@RequestParam long id){
         String path = "C:/Users/timni/"+id+"/profile_photo.jpg";
         File cutePic = new File(path);
@@ -71,6 +74,27 @@ public class WPUserController {
 
         }
         return li;
+    }*/
+
+    @GetMapping("/getAllNew")
+    public List<userWp> getAllNew() throws IOException {
+        List<WPUser> list = userRepository.findAll();
+        List<userWp> li = new ArrayList<>();
+        for (WPUser i : list) {
+            li.add(new userWp(i.getId(), i.getEmail(), i.getDisplayName(), getProfilePic(i.getId()).getBody()));
+        }
+        return li;
+    }
+
+    @GetMapping("/profilePic")
+    public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException {
+        String path = "C:/Users/timni/" + id + "/profile_photo.jpg";
+        File cutePic = new File(path);
+        if (!cutePic.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+        byte[] imageBytes = Files.readAllBytes(cutePic.toPath());
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
     }
 
 }

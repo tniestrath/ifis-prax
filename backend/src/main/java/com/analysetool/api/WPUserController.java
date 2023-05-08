@@ -5,7 +5,7 @@ import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.analysetool.modells.userWp;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,12 +61,12 @@ public class WPUserController {
     }
 
     @GetMapping("/getAllNew")
-    public List<WPUser> getAllNew(){
+    public List<userWp> getAllNew(){
         List<WPUser> list = userRepository.findAll();
-        List<WPUser> li = new ArrayList<>();
+        List<userWp> li = new ArrayList<>();
         for(WPUser i : list){
-            li.add(new WPUser(i.getId(), i.getEmail(), i.getDisplayName(), //getProfilePic(i.getId()).toString()
-            "test"
+            li.add(new userWp(i.getId(), i.getEmail(), i.getDisplayName(), getProfilePic(i.getId()).toString()
+            //"test"
             ));
 
         }

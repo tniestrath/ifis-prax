@@ -1,4 +1,4 @@
-<div class="chart-box" (click)="onToggle()">
+<div class="component-box chart-box" (click)="onToggle()">
   <canvas [attr.id]="canvas_id" [ngStyle]="{'visibility': visibility}">{{chart}}</canvas>
   <div class="chart-details" [ngStyle]="{'display': displayDetails, 'visibility': visibility}">
     {{details}}

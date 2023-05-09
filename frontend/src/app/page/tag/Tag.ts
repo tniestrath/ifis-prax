@@ -1,4 +1,4 @@
-import {DbObject} from "../services/DbObject";
+import {DbObject} from "../../services/DbObject";
 
 export interface WPTerm extends DbObject{
   id : string;

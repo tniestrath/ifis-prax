@@ -1,11 +1,12 @@
 import {Component, HostBinding, Input} from '@angular/core';
+import {DashBaseComponent} from "../dash-base/dash-base.component";
 
 @Component({
   selector: 'dash-counter',
   templateUrl: './counter.component.html',
-  styleUrls: ['./counter.component.css']
+  styleUrls: ['./counter.component.css', "../../component/dash-base/dash-base.component.css"]
 })
-export class CounterComponent {
+export class CounterComponent extends DashBaseComponent{
 
   toggle : boolean = true;
   displayDetails : string = "none";

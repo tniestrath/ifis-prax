@@ -1,17 +1,6 @@
 .chart-box {
-  background-color: white;
-  border-radius: 5px;
-  height: 100%;
-
   display: flex;
   overflow-x: clip;
-}
-.hidden{
-  visibility: hidden;
-}
-
-.chart-box:hover{
-  background-color: #d7bebe;
 }
 :host.normal{
   grid-area: span 1 / span 1;

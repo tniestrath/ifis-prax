@@ -1,12 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {CookieService} from "ngx-cookie-service";
 import {Tag} from "../Tag";
-import {DbService} from "../../services/db.service";
-import formatters from "chart.js/dist/core/core.ticks";
-import {SelectorItem} from "../../user/selector/selector.component";
-import {User, UserComponent} from "../../user/user/user.component";
 import {TagComponent} from "../tag/tag.component";
 import {Subject} from "rxjs";
+import {DbService} from "../../../services/db.service";
+import {SelectorItem} from "../../selector/selector.component";
 
 @Component({
   selector: 'dash-page-tag',

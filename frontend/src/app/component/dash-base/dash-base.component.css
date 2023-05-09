@@ -1,0 +1,12 @@
+.component-box {
+  background-color: white;
+  border-radius: 5px;
+  height: 100%;
+}
+.hidden{
+  visibility: hidden;
+}
+
+.component-box:hover{
+  background-color: #EFEFEF;
+}

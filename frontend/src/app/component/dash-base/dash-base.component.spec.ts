@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TagListerComponent } from './tag-lister.component';
+import { DashBaseComponent } from './dash-base.component';
 
-describe('TagListerComponent', () => {
-  let component: TagListerComponent;
-  let fixture: ComponentFixture<TagListerComponent>;
+describe('DashBaseComponent', () => {
+  let component: DashBaseComponent;
+  let fixture: ComponentFixture<DashBaseComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TagListerComponent ]
+      declarations: [ DashBaseComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TagListerComponent);
+    fixture = TestBed.createComponent(DashBaseComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

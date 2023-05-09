@@ -9,14 +9,13 @@ import { ChartComponent } from './component/chart/chart.component';
 import { CounterComponent } from './component/counter/counter.component';
 import { PodiumComponent } from './component/podium/podium.component';
 import { PageKennzahlenComponent } from './page/page-kennzahlen/page-kennzahlen.component';
-import { PageTagComponent } from './tag/page-tag/page-tag.component';
+import { PageTagComponent } from './page/tag/page-tag/page-tag.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatInputModule} from "@angular/material/input";
 import {ReactiveFormsModule} from "@angular/forms";
-import { TagListerComponent } from './tag/tag-lister/tag-lister.component';
-import { TagComponent } from './tag/tag/tag.component';
-import { SearchbarComponent } from './component/searchbar/searchbar.component';
+import { TagComponent } from './page/tag/tag/tag.component';
+import { SearchbarComponent } from './page/searchbar/searchbar.component';
 import { PageEinzelComponent } from './page/page-einzel/page-einzel.component';
 import {CookieService} from "ngx-cookie-service";
 import {DbService} from "./services/db.service";
@@ -24,6 +23,7 @@ import { SelectorComponent } from './page/selector/selector.component';
 import { SelectableDirective } from './page/selector/selectable.directive';
 import { UserComponent } from './page/page-einzel/user/user.component';
 import {NgOptimizedImage} from "@angular/common";
+import { DashBaseComponent } from './component/dash-base/dash-base.component';
 
 @NgModule({
   declarations: [
@@ -35,13 +35,13 @@ import {NgOptimizedImage} from "@angular/common";
     PodiumComponent,
     PageKennzahlenComponent,
     PageTagComponent,
-    TagListerComponent,
     TagComponent,
     SearchbarComponent,
     PageEinzelComponent,
     SelectorComponent,
     SelectableDirective,
-    UserComponent
+    UserComponent,
+    DashBaseComponent
   ],
     imports: [
         BrowserModule,

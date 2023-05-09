@@ -1,9 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
-import {Tag} from "../../tag/Tag";
 import {DbObject} from "../../services/DbObject";
 import {DbService} from "../../services/db.service";
-import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
+import {SafeUrl} from "@angular/platform-browser";
 
 
 @Component({

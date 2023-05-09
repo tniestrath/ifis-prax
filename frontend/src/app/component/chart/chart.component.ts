@@ -2,6 +2,7 @@ import {AfterViewInit, Component, EventEmitter, HostBinding, Input, OnInit, Outp
 import {Chart, ChartConfiguration, ChartData, ChartType, ChartTypeRegistry} from 'chart.js/auto';
 import _default from "chart.js/dist/plugins/plugin.tooltip";
 import {Observable, Subscription} from "rxjs";
+import {DashBaseComponent} from "../dash-base/dash-base.component";
 
 export class ChartElements {
   constructor(public label : string[], public data : number[]) {
@@ -11,9 +12,9 @@ export class ChartElements {
 @Component({
   selector: 'dash-chart',
   templateUrl: './chart.component.html',
-  styleUrls: ['./chart.component.css'],
+  styleUrls: ['./chart.component.css', "../../component/dash-base/dash-base.component.css"],
 })
-export class ChartComponent implements OnInit{
+export class ChartComponent extends DashBaseComponent implements OnInit{
 
   toggle : boolean = true;
   displayDetails : string = "none";
@@ -46,7 +47,7 @@ export class ChartComponent implements OnInit{
   }
 
   constructor() {
-
+    super();
   }
 
   onToggle(){

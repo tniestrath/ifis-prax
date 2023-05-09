@@ -6,7 +6,6 @@ import {User, UserComponent} from "./user/user.component";
 import {Subject} from "rxjs";
 import {Post} from "../../Post";
 import {ChartElements} from "../../component/chart/chart.component";
-import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -24,7 +23,7 @@ export class PageEinzelComponent implements OnInit {
   postsPerDayData : number[]  = [];
   postPerDayLoaded = new Subject<ChartElements>();
 
-  constructor(private cookieService : CookieService, private db : DbService, private sanitizer : DomSanitizer) {
+  constructor(private cookieService : CookieService, private db : DbService) {
   }
 
   onSelected(id: string, name: string){

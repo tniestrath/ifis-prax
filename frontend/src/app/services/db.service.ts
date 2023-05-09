@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Tag} from "../tag/Tag";
 import {User} from "../page/page-einzel/user/user.component";
 import {DomSanitizer} from "@angular/platform-browser";
+import {Tag} from "../page/tag/Tag";
 
 export enum dbUrl {
   HOST = "http://localhost",

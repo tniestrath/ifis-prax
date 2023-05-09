@@ -1,14 +1,8 @@
 .counter-box{
-  background-color: white;
-  border-radius: 10px;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-}
-.counter-box:hover{
-  background-color: #d7bebe;
 }
 
 .counter-box-center{

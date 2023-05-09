@@ -1,12 +1,13 @@
 import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import {Chart, ChartType} from "chart.js/auto";
+import {DashBaseComponent} from "../dash-base/dash-base.component";
 
 @Component({
   selector: 'dash-podium',
   templateUrl: './podium.component.html',
-  styleUrls: ['./podium.component.css']
+  styleUrls: ['./podium.component.css', "../../component/dash-base/dash-base.component.css"]
 })
-export class PodiumComponent implements OnInit{
+export class PodiumComponent extends DashBaseComponent implements OnInit{
 
   @Input() desc : string = "";
   @Input() winners : string[] = ["", "", ""];

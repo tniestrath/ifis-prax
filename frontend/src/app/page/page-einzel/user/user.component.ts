@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {SelectableComponent} from "../selector/selectable.component";
-import {DbObject} from "../../services/DbObject";
+import {SelectableComponent} from "../../selector/selectable.component";
+import {DbObject} from "../../../services/DbObject";
 import {SafeUrl} from "@angular/platform-browser";
-import {DbService} from "../../services/db.service";
+import {DbService} from "../../../services/db.service";
 
 export class User implements DbObject{
   constructor(public id : string, public email : string, public displayName : string, public img : SafeUrl) {}

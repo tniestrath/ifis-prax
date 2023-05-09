@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Tag} from "../tag/Tag";
-import {User} from "../user/user/user.component";
+import {User} from "../page/page-einzel/user/user.component";
 import {DomSanitizer} from "@angular/platform-browser";
 
 export enum dbUrl {

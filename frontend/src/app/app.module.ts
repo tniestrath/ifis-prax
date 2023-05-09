@@ -4,12 +4,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PolarChartComponent } from './component/polar-chart/polar-chart.component';
-import { HeaderComponent } from './header/header.component';
+import { HeaderComponent } from './page/header/header.component';
 import { ChartComponent } from './component/chart/chart.component';
 import { CounterComponent } from './component/counter/counter.component';
 import { PodiumComponent } from './component/podium/podium.component';
 import { PageKennzahlenComponent } from './page/page-kennzahlen/page-kennzahlen.component';
-import { PageTagComponent } from './page/page-tag/page-tag.component';
+import { PageTagComponent } from './tag/page-tag/page-tag.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatInputModule} from "@angular/material/input";
@@ -20,9 +20,9 @@ import { SearchbarComponent } from './component/searchbar/searchbar.component';
 import { PageEinzelComponent } from './page/page-einzel/page-einzel.component';
 import {CookieService} from "ngx-cookie-service";
 import {DbService} from "./services/db.service";
-import { SelectorComponent } from './user/selector/selector.component';
-import { SelectableDirective } from './user/selector/selectable.directive';
-import { UserComponent } from './user/user/user.component';
+import { SelectorComponent } from './page/selector/selector.component';
+import { SelectableDirective } from './page/selector/selectable.directive';
+import { UserComponent } from './page/page-einzel/user/user.component';
 import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({

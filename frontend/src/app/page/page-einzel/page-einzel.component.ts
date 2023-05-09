@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
-import {SelectorItem} from "../../user/selector/selector.component";
+import {SelectorItem} from "../selector/selector.component";
 import {DbService} from "../../services/db.service";
-import {User, UserComponent} from "../../user/user/user.component";
+import {User, UserComponent} from "./user/user.component";
 import {Subject} from "rxjs";
 import {Post} from "../../Post";
 import {ChartElements} from "../../component/chart/chart.component";

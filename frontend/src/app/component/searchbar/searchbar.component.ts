@@ -23,11 +23,15 @@ export class SearchbarComponent implements OnInit{
   displaySearchBox: string = "";
   imgSrc: SafeUrl = "";
 
-  constructor(private cookieService : CookieService, private db : DbService, private sanitizer : DomSanitizer) {
+  constructor(private cookieService : CookieService, private db : DbService) {
   }
 
   ngOnInit(): void {
-    let object :string[]  = this.cookieService.get(this.page).split(":");
+    let object :string[]  = ["0",""];
+    if(this.cookieService.check(this.page)){
+      object = this.cookieService.get(this.page).split(":");
+    }
+
     this.onDbObjectSelected(object[0], object[1]);
   }
 
@@ -44,7 +48,7 @@ export class SearchbarComponent implements OnInit{
       this.displaySearchBox = "0";
     }
     this.selected.emit({id, name});
-    this.cookieService.set(this.page, object.id + ":" + object.name);
+    this.cookieService.set(this.page, object.id + ":" + object.name, {expires : 7});
 
     this.getImgSrc(this.selectedSearch.id);
   }

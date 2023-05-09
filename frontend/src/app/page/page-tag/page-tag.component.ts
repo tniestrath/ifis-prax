@@ -21,7 +21,7 @@ export class PageTagComponent implements OnInit{
   selectorItems: SelectorItem[] = [];
   selectorItemsLoaded = new Subject<SelectorItem[]>();
 
-  constructor(private cookieService : CookieService, private db: DbService) {
+  constructor(private db: DbService) {
   }
   onSelected(id : string, name : string){
     if (id != "0"){

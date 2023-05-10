@@ -4,10 +4,10 @@ import {DbObject} from "../../../services/DbObject";
 import {SafeUrl} from "@angular/platform-browser";
 import {DbService} from "../../../services/db.service";
 
-export class User implements DbObject{
-  constructor(public id : string, public email : string, public displayName : string, public img : SafeUrl) {}
-  name: string = this.displayName;
-
+export class User extends DbObject{
+  constructor(public override id : string, public email : string, public displayName : string, public img : SafeUrl) {
+    super(id, displayName);
+  }
 }
 
 @Component({

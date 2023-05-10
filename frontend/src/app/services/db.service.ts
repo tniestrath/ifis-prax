@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {User} from "../page/page-einzel/user/user.component";
 import {DomSanitizer} from "@angular/platform-browser";
 import {Tag} from "../page/tag/Tag";
+import {DbObject} from "./DbObject";
 
 export enum dbUrl {
   HOST = "http://localhost",
@@ -84,5 +85,16 @@ export class DbService {
         reject(new Error('Failed to read blob data'));
       };
     }).then(dataUrl => this.sanitizer.bypassSecurityTrustUrl(dataUrl));
+  }
+
+  static sortAlphanumeric(input : DbObject[]){
+    input.sort((a, b) => {
+      return a.name.toLowerCase()
+        .replace("ü", "ue")
+        .replace("ä", "ae")
+        .replace("ö", "oe")
+        .replace(/[\W_]+/g,"")
+        .localeCompare(b.name.toLowerCase());
+    });
   }
 }

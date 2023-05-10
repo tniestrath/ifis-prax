@@ -18,7 +18,7 @@ export class SearchbarComponent implements OnInit{
 
   @Input() page : string = "placeholder";
 
-  selectedSearch : DbObject = {id: "0", name: ""};
+  selectedSearch : DbObject = new DbObject("0", "");
   displaySearchBox: string = "";
   imgSrc: SafeUrl = "";
 
@@ -40,20 +40,20 @@ export class SearchbarComponent implements OnInit{
   }
 
   onDbObjectSelected(id: string, name: string){
-    let object : DbObject = {id, name};
+    let object : DbObject = new DbObject("0", "");
 
     if (id != "0"){
       this.selectedSearch = object;
       this.displaySearchBox = "0";
     }
-    this.selected.emit({id, name});
+    this.selected.emit(new DbObject(id, name));
     this.cookieService.set(this.page, object.id + ":" + object.name, {expires : 7});
 
     this.getImgSrc(this.selectedSearch.id);
   }
 
   onCancelClick(){
-    this.selectedSearch = {id: "0", name: ""};
+    this.selectedSearch = new DbObject("0", "");
     this.displaySearchBox = "50px";
     this.onKey("");
     this.onDbObjectSelected("0", "");

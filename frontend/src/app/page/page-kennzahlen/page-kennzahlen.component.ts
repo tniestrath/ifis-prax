@@ -28,7 +28,7 @@ export class PageKennzahlenComponent implements OnInit{
         this.tagRatingData.push((tr as TagRating).count);
       }
     }).finally(() =>
-      this.tagRatingLoaded.next(new ChartElements(this.tagRatingLabel, this.tagRatingData)));
+      this.tagRatingLoaded.next(new ChartElements(this.tagRatingLabel, this.tagRatingData, [])));
   }
 
 

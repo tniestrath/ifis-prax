@@ -3,7 +3,7 @@ import {CookieService} from "ngx-cookie-service";
 import {SelectorItem} from "../selector/selector.component";
 import {DbService} from "../../services/db.service";
 import {User, UserComponent} from "./user/user.component";
-import {Subject} from "rxjs";
+import {Subject, Subscription} from "rxjs";
 import {Post} from "../../Post";
 import {ChartElements} from "../../component/chart/chart.component";
 
@@ -21,6 +21,7 @@ export class PageEinzelComponent implements OnInit {
 
   postPerDayLabel : string[] = []
   postsPerDayData : number[]  = [];
+  postsPerDayTitle : string[] = [];
   postPerDayLoaded = new Subject<ChartElements>();
 
   constructor(private cookieService : CookieService, private db : DbService) {
@@ -38,9 +39,10 @@ export class PageEinzelComponent implements OnInit {
       for (let post of res) {
         this.postPerDayLabel.push((post as Post).date);
         this.postsPerDayData.push(Number((post as Post).count));
+        this.postsPerDayTitle.push((post as Post).title);
       }
     }).finally(() =>
-      this.postPerDayLoaded.next(new ChartElements(this.postPerDayLabel, this.postsPerDayData)));
+      this.postPerDayLoaded.next(new ChartElements(this.postPerDayLabel, this.postsPerDayData, this.postsPerDayTitle)));
   }
 
   onSearchInput(value : string){

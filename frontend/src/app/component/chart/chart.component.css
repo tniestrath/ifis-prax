@@ -1,6 +1,5 @@
 .chart-box {
-  display: flex;
-  overflow-x: clip;
+  display: block;
 }
 :host.normal{
   grid-area: span 1 / span 1;
@@ -15,7 +14,32 @@
   grid-area: span 3 / span 4;
 }
 
+.chart-select{
+  height: 30px;
+  padding: 5px;
+  display: flex;
+}
+.chart-select > select{
+  width: 50%;
+  border-radius: 5px;
+
+}
+.chart-select > div{
+  display: flex;
+  width: 5%;
+  justify-content: center;
+  align-items: center;
+}
+.chart-select > div > p{
+  margin: 0;
+  font-size: 1vw;
+  text-align: center;
+  font-weight: bold;
+}
+
 .chart-details{
   padding: 5px;
   grid-column: 2;
 }
+
+

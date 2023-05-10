@@ -40,7 +40,7 @@ export class SearchbarComponent implements OnInit{
   }
 
   onDbObjectSelected(id: string, name: string){
-    let object : DbObject = new DbObject("0", "");
+    let object : DbObject = new DbObject(id, name);
 
     if (id != "0"){
       this.selectedSearch = object;

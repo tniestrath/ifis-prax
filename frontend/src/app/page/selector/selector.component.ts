@@ -2,9 +2,7 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   OnInit, Output,
-  SimpleChanges,
   Type,
   ViewChild
 } from '@angular/core';

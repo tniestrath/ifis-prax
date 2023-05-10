@@ -1,11 +1,10 @@
-import {AfterViewInit, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
-import {Chart, ChartConfiguration, ChartData, ChartType, ChartTypeRegistry} from 'chart.js/auto';
-import _default from "chart.js/dist/plugins/plugin.tooltip";
+import {Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
+import {ActiveElement, Chart, ChartEvent, ChartType} from 'chart.js/auto';
 import {Observable, Subscription} from "rxjs";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 
 export class ChartElements {
-  constructor(public label : string[], public data : number[]) {
+  constructor(public label: string[], public data: number[], data_context: string[]) {
   }
 }
 
@@ -21,6 +20,7 @@ export class ChartComponent extends DashBaseComponent implements OnInit{
   visibility: string = "hidden";
 
   private sub = new Subscription();
+  @Output() data_click = new EventEmitter<number>();
 
   chart : any;
   canvas_id: string = "chart";
@@ -32,47 +32,15 @@ export class ChartComponent extends DashBaseComponent implements OnInit{
   @Input() size : string = "small";
   @Input() elementsObservable = new Observable<ChartElements>;
 
+  @Input() x_axis_options : string[] = ["Datum"];
+  @Input() y_axis_options : string[] = ["Beitrag", "Clicks", ""];
 
-  @HostBinding('class.big') get isBig() {
-    return this.size === "big"
-  }
-  @HostBinding('class.small') get isSmall() {
-    return this.size === "small"
-  }
-  @HostBinding('class.double-big') get isDoubleBig() {
-    return this.size === "double-big"
-  }
-  @HostBinding('class.double') get isDouble() {
-    return this.size === "double"
-  }
 
   constructor() {
     super();
   }
 
-  onToggle(){
-    if (this.toggle){
-      if (this.size == "small"){
-        this.size = "big";
-      }
-      if (this.size == "double") {
-        this.size = "double-big"
-      }
-      this.toggle = !this.toggle;
-      this.displayDetails = "flex";
-    } else {
-      if (this.size == "big"){
-        this.size = "small";
-      }
-      if (this.size == "double-big") {
-        this.size = "double"
-      }
-      this.toggle = !this.toggle;
-      this.displayDetails = "none";
-    }
-  }
-
-  createChart(type: ChartType, labels : string[], data : number[]){
+  createChart(type: ChartType, labels : string[], data : number[], onClick : EventEmitter<number>){
     Chart.defaults.color = "#000"
     if (this.chartType == "bar" || this.chartType == "line" || this.chartType == "bubble"){
       this.chart = new Chart(this.canvas_id, {
@@ -101,6 +69,12 @@ export class ChartComponent extends DashBaseComponent implements OnInit{
             legend: {
               display: false
             }
+          },
+          interaction: {
+            mode: "nearest"
+          },
+          onClick(event: ChartEvent, elements: ActiveElement[], chart: Chart) {
+            onClick.emit(elements[0].index);
           }
         }
       })
@@ -142,11 +116,16 @@ export class ChartComponent extends DashBaseComponent implements OnInit{
 
 
   ngOnInit(): void {
+    this.data_click.subscribe((index) =>{
+
+    });
+
+
     this.sub = this.elementsObservable.subscribe(ce  => {
       if (this.chart){
         this.chart.destroy();
       }
-      this.createChart(this.chartType,ce.label, ce.data);
+      this.createChart(this.chartType,ce.label, ce.data, this.data_click);
       this.visibility = "visible";
     });
     if (this.desc != ""){
@@ -154,4 +133,5 @@ export class ChartComponent extends DashBaseComponent implements OnInit{
     }
     this.visibility = "hidden";
   }
+
 }

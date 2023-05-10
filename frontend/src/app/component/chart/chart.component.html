@@ -1,4 +1,13 @@
-<div class="component-box chart-box" (click)="onToggle()">
+<div class="component-box chart-box">
+  <div class="chart-select">
+    <select name="X">
+      <option *ngFor="let option of x_axis_options" [value]="option">{{option}}</option>
+    </select>
+    <div><p>X : Y</p></div>
+    <select name="Y">
+      <option *ngFor="let option of y_axis_options" [value]="option">{{option}}</option>
+    </select>
+  </div>
   <canvas [attr.id]="canvas_id" [ngStyle]="{'visibility': visibility}">{{chart}}</canvas>
   <div class="chart-details" [ngStyle]="{'display': displayDetails, 'visibility': visibility}">
     {{details}}

@@ -1,5 +1,10 @@
 <div class="page-content" [ngStyle]="{'display': displayContent} ">
   <dash-chart class="grid-1-1-2-5" chartType="line" [elementsObservable]="postPerDayLoaded.asObservable()"></dash-chart>
+  <dash-counter desc=""></dash-counter>
+  <dash-counter></dash-counter>
+  <dash-counter></dash-counter>
+  <dash-counter></dash-counter>
+
 </div>
 <dash-searchbar #searchbar page="einzel" (selected)="onSelected($event.id, $event.name)" (currentSearch)="onSearchInput($event)"></dash-searchbar>
 <dash-selector [dataLoaded]="selectorItemsLoaded.asObservable()" (itemClick)="searchbar.onDbObjectSelected($event.id, $event.name)"></dash-selector>

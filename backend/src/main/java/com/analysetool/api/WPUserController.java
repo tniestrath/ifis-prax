@@ -88,7 +88,7 @@ public class WPUserController {
 
     @GetMapping("/profilePic")
     public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException {
-        String path = "C:\\Users\\Robin\\IdeaProjects\\ifis-prax\\frontend\\src\\assets\\user_img\\"+id+"_profile_photo.jpg";
+        String path = "..\\..\\src\\assets\\user_img\\"+id+"_profile_photo.jpg";
         File cutePic = new File(path);
         if (!cutePic.exists()) {
             return ResponseEntity.notFound().build();

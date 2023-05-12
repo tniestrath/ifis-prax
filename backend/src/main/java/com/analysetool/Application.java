@@ -10,7 +10,7 @@ import org.springframework.context.annotation.FilterType;
 import com.analysetool.modells.Company;
 import com.analysetool.services.CompanyService;
 import com.analysetool.api.CompanyController;
-
+import com.analysetool.services.LogService;
 import java.util.List;
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
@@ -29,11 +29,14 @@ public class Application {
 	//@Autowired
 	//private CompanyService companyService;
 
+
 	public static void main(String[] args) {
 		try{
 		ApplicationContext context = SpringApplication.run(Application.class, args);
 		System.out.println("lel");
 		//DataReader.dataindb(context);}
+			LogService logService = context.getBean(LogService.class);
+			logService.run(true,"C:\\Users\\timni\\logdog\\access.log");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

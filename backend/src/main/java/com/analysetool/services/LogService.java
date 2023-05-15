@@ -73,11 +73,11 @@ public class LogService {
                     foundPattern = true;
                     if (matcher1_2.find()) {
                         // Do something with the matched 1.2 patterns
-                        System.out.println(line+"SEARCH FOUND");
+                        //System.out.println(line+"SEARCH FOUND");
                         processLine(line,2,matcher1_2);
                         foundPattern = true;
                     } else {//1.1 matched
-                        System.out.println(line+"NO SEARCH");
+                        //System.out.println(line+"NO SEARCH");
                         processLine(line,1,matcher1_1);
                         foundPattern = true;
                     }
@@ -93,12 +93,12 @@ public class LogService {
                             // Do something with the matched 2.2 patterns
                             processLine(line, 4, matcher2_2);
                             foundPattern = false;
-                            System.out.println(line+" SEARCH FOUND");
+                           // System.out.println(line+" SEARCH FOUND");
                         } else {
                             //2.1 match
                             processLine(line, 3, matcher2_1);
                             foundPattern = false;
-                            System.out.println(line+" NO SEARCH");
+                           // System.out.println(line+" NO SEARCH");
                         }
                     }
                     //}
@@ -115,16 +115,16 @@ public class LogService {
     public void processLine(String line,int patternNumber,Matcher matcher){
         lastLine=line;
         if (patternNumber==1){
-            System.out.println(matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.1");
+            System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.1");
         }
         if (patternNumber==2){
-            System.out.println(matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.2");
+            System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.2");
         }
         if (patternNumber==3){
-            System.out.println(matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.1");
+            System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.1");
         }
         if (patternNumber==4){
-            System.out.println(matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.2");
+            System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.2");
         }
     }
 }

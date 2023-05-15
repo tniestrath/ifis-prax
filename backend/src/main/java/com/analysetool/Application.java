@@ -36,7 +36,7 @@ public class Application {
 		System.out.println("lel");
 		//DataReader.dataindb(context);}
 			LogService logService = context.getBean(LogService.class);
-			logService.run(true,"C:\\Users\\timni\\logdog\\access.log");
+			logService.run(true,Application.class.getClassLoader().getResource("access.log").getPath());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -17,19 +17,18 @@ public class LogService {
     private statsRepository statsRepo;
     private BufferedReader br;
     private String path = "";
-    private String BlogSSPattern = "\\bGET \\/blog\\/\\w+\\/\\sHTTP\\/\\d.\\d\"\\s200\\s\\d+\\s\"\\S+\"\\s\\(\"http:\\/\\/\\S+\\?s=\\S+\"\\)\\s\\(\"\\S+\"\\s\\S+\\s\\S+\\s\\S+\\)\\s=\\ssearch\\s\n"; //search +1, view +1,(bei match) vor blog view pattern
-    private String ArtikelSSPattern = "\\bGET \\/artikel\\/\\w+\\/\\sHTTP\\/\\d.\\d\"\\s200\\s\\d+\\s\"\\S+\"\\s\\(\"http:\\/\\/\\S+\\?s=\\S+\"\\)\\s\\(\"\\S+\"\\s\\S+\\s\\S+\\s\\S+\\)\\s=\\ssearch\\s\n";//search +1, view +1,(bei match) vor artikel view pattern
-    //private String BlogViewPattern = "^.* GET /blog/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
-    private String BlogViewPattern = ".*GET /blog.*$"
-            ;
+    private String BlogSSPattern = ".*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
+    private String ArtikelSSPattern = ".*GET /artikel/(\\S+).*s=";//search +1, view +1,(bei match) vor artikel view pattern
+    //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
+    private String BlogViewPattern = ".*GET /blog/(\\S+)";
 
 
     //Blog view +1 bei match
-    private String ArtikelViewPattern = "^.* GET /artikel/.* HTTP/1\\.1\" 200 .*$\n";//Artikel view +1 bei match
-    Pattern pattern1_1 = Pattern.compile("Pattern1_1");
-    Pattern pattern1_2 = Pattern.compile("Pattern1_2");
-    Pattern pattern2_1 = Pattern.compile("Pattern2_1");
-    Pattern pattern2_2 = Pattern.compile("Pattern2_2");
+    private String ArtikelViewPattern = ".*GET /artikel/(\\S+)";//Artikel view +1 bei match
+    Pattern pattern1_1 = Pattern.compile(ArtikelViewPattern);
+    Pattern pattern1_2 = Pattern.compile(ArtikelSSPattern);
+    Pattern pattern2_1 = Pattern.compile(BlogViewPattern);
+    Pattern pattern2_2 = Pattern.compile(BlogSSPattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -65,46 +64,49 @@ public class LogService {
                 System.out.println("Counting up");
             }
 
-            if (!foundPattern) {
+           // if (foundPattern) {
                 Matcher matcher1_1 = pattern1_1.matcher(line);
 
                 if (matcher1_1.find()) {
                     Matcher matcher1_2 = pattern1_2.matcher(line);
 
-                    foundPattern = false;
+                    foundPattern = true;
                     if (matcher1_2.find()) {
                         // Do something with the matched 1.2 patterns
-                        System.out.println(line);
+                        System.out.println(line+"SEARCH FOUND");
                         processLine(line,2,matcher1_2);
-                        foundPattern = false;
+                        foundPattern = true;
                     } else {//1.1 matched
-                        System.out.println(line);
+                        System.out.println(line+"NO SEARCH");
                         processLine(line,1,matcher1_1);
-                        foundPattern = false;
+                        foundPattern = true;
                     }
                 }
-            } else {
-                Matcher matcher2_1 = pattern2_1.matcher(line);
-                if (matcher2_1.find()) {
-                    Matcher matcher2_2 = pattern2_2.matcher(line);
-                    if (matcher2_2.find()) {
-                        // Do something with the matched 2.2 patterns
-                        processLine(line,4,matcher2_2);
-                        foundPattern = false;
-                        System.out.println(line);
-                    } else {
-                        //2.1 match
-                        processLine(line,3,matcher2_1);
-                        foundPattern = false;
-                        System.out.println(line);
-                    }
-                }
-            }
+           // }
+            else {
+                    Matcher matcher2_1 = pattern2_1.matcher(line);
 
+                    if (matcher2_1.find()) {
+                        Matcher matcher2_2 = pattern2_2.matcher(line);
+
+                        if (matcher2_2.find()) {
+                            // Do something with the matched 2.2 patterns
+                            processLine(line, 4, matcher2_2);
+                            foundPattern = false;
+                            System.out.println(line+" SEARCH FOUND");
+                        } else {
+                            //2.1 match
+                            processLine(line, 3, matcher2_1);
+                            foundPattern = false;
+                            System.out.println(line+" NO SEARCH");
+                        }
+                    }
+                    //}
+                }
             lineCounter++;
             lastLineCounter++;
             //System.out.println(lineCounter+" "+lastLine);
-            br.readLine();
+            //br.readLine();
 
         }
     }
@@ -113,16 +115,16 @@ public class LogService {
     public void processLine(String line,int patternNumber,Matcher matcher){
         lastLine=line;
         if (patternNumber==1){
-            System.out.println(matcher.group(1));
+            System.out.println(matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.1");
         }
         if (patternNumber==2){
-            System.out.println(matcher.group(1));
+            System.out.println(matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.2");
         }
         if (patternNumber==3){
-            System.out.println(matcher.group(1));
+            System.out.println(matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.1");
         }
         if (patternNumber==4){
-            System.out.println(matcher.group(1));
+            System.out.println(matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.2");
         }
     }
 }

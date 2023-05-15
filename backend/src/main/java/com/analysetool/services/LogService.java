@@ -143,6 +143,8 @@ public class LogService {
         }
         if(patternNumber==5){
             System.out.println(matcher.group(3)+" PROCESSING 3");
+            //gibts das stats objekt? -nein = neues -ja = updaten
+
         }
     }
 }

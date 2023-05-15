@@ -21,6 +21,7 @@ public class LogService {
     private String ArtikelSSPattern = ".*GET /artikel/(\\S+).*s=";//search +1, view +1,(bei match) vor artikel view pattern
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
     private String BlogViewPattern = ".*GET /blog/(\\S+)";
+    private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog)/(\\S*)/)";
 
 
     //Blog view +1 bei match
@@ -29,6 +30,7 @@ public class LogService {
     Pattern pattern1_2 = Pattern.compile(ArtikelSSPattern);
     Pattern pattern2_1 = Pattern.compile(BlogViewPattern);
     Pattern pattern2_2 = Pattern.compile(BlogSSPattern);
+    Pattern pattern3=Pattern.compile(RedirectPattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -103,6 +105,12 @@ public class LogService {
                     }
                     //}
                 }
+
+            Matcher matcher3=pattern3.matcher(line);
+            if(matcher3.find()){
+                processLine(line,5,matcher3);
+                }
+
             lineCounter++;
             lastLineCounter++;
             //System.out.println(lineCounter+" "+lastLine);
@@ -115,16 +123,26 @@ public class LogService {
     public void processLine(String line,int patternNumber,Matcher matcher){
         lastLine=line;
         if (patternNumber==1){
+
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.1");
+
         }
         if (patternNumber==2){
+
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.2");
         }
         if (patternNumber==3){
+
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.1");
+
         }
         if (patternNumber==4){
+
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.2");
+
+        }
+        if(patternNumber==5){
+            System.out.println(matcher.group(3)+" PROCESSING 3");
         }
     }
 }

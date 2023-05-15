@@ -24,6 +24,10 @@ public class stats {
     @Column(name = "clicks")
     private Long clicks;
     // Constructor, getters, and setters
+    @Column(name="search_succes")
+    private long searchSucces;
+    @Column(name="refferings")
+    private long refferings;
     public stats(){}
     public stats(Long id, Long artId, Float searchSuccessRate, Float articleReferringRate, Long clicks) {
         this.id = id;

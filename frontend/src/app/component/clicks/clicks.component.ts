@@ -9,9 +9,10 @@ import {ActiveElement, Chart, ChartEvent, ChartType} from "chart.js/auto";
 })
 export class ClicksComponent extends DashBaseComponent implements OnInit{
 
-  canvas_id: string = "chart";
+  canvas_id: string = "clicks";
   colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148,28,62)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
   chart: any;
+
 
 
   createChart(labels : string[], data : number[], onClick : EventEmitter<number> | undefined){
@@ -29,12 +30,12 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
       options: {
         plugins: {
           title: {
-            display: false,
-            text: "",
-            position: "bottom",
+            display: true,
+            text: "Aufrufe: 123456",
+            position: "top",
             fullSize: true,
             font: {
-              size: 18,
+              size: 60,
               weight: "bold",
               family: 'Times New Roman'
             }
@@ -52,7 +53,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
     if (this.chart){
       this.chart.destroy();
     }
-    this.createChart(["Direkt", "Per Suche", "Per Register"], [12,34,56], undefined);
+    this.createChart(["Direkt", "Suche", "Register"], [12,34,56], undefined);
   }
 
 

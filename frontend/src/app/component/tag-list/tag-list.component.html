@@ -1,0 +1,10 @@
+<div class="component-box tag-list-box">
+  <form class="tag-search">
+  <input type="text" placeholder="Nach #Tag suchen">
+  <input type="radio" id="tag-sort-p" name="sort" value="P" checked>
+  <input type="radio" id="tag-sort-a" name="sort" value="A">
+  </form>
+  <div class="tag-list-selector-container">
+    <dash-selector [columnsForm]="'1fr'" padding="0 5px" [dataLoaded]="selectorItemsLoaded"></dash-selector>
+  </div>
+</div>

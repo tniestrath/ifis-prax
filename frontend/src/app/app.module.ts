@@ -25,6 +25,8 @@ import { UserComponent } from './page/page-einzel/user/user.component';
 import {NgOptimizedImage} from "@angular/common";
 import { DashBaseComponent } from './component/dash-base/dash-base.component';
 import { ClicksComponent } from './component/clicks/clicks.component';
+import { TagListComponent } from './component/tag-list/tag-list.component';
+import { TagListItemComponent } from './component/tag-list/tag-list-item/tag-list-item.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,9 @@ import { ClicksComponent } from './component/clicks/clicks.component';
     SelectableDirective,
     UserComponent,
     DashBaseComponent,
-    ClicksComponent
+    ClicksComponent,
+    TagListComponent,
+    TagListItemComponent
   ],
     imports: [
         BrowserModule,

@@ -22,6 +22,7 @@ export class SelectorItem {
 })
 export class SelectorComponent implements OnInit{
   @Input() columnsForm = "repeat(3, 1fr)";
+  @Input() padding : string = "5px 5vw";
   @Input() dataLoaded = new Observable<SelectorItem[]>();
 
   @Output() itemClick = new EventEmitter<DbObject>();
@@ -32,11 +33,12 @@ export class SelectorComponent implements OnInit{
   private components : SelectableComponent[] = [];
 
 
+
   ngOnInit(): void {
     console.log("Selector Component loaded");
     this.sub = (this.dataLoaded.subscribe(s =>{
       this.loadItems(s);
-      console.log("Selector Items loaded");
+      console.log("Selector Items loaded " + s.length);
     }
     ));
   }

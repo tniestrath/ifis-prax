@@ -12,3 +12,9 @@ export class Tag extends DbObject{
     super(id, name);
   }
 }
+
+export class TagRanking extends DbObject{
+  constructor(public override id : string, public override name : string, public rank : string, public count : string) {
+    super(id, name);
+  }
+}

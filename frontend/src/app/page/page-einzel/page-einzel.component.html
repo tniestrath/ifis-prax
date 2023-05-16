@@ -1,10 +1,11 @@
 <div class="page-content" [ngStyle]="{'display': displayContent} ">
-  <!--<dash-chart class="grid-1-1-2-5" chartType="line" [elementsObservable]="postPerDayLoaded.asObservable()"></dash-chart>
-  <dash-counter desc=""></dash-counter>
+  <dash-chart class="grid-1-3-2-7" chartType="line" [elementsObservable]="postPerDayLoaded.asObservable()"></dash-chart>
+  <!--<dash-counter desc=""></dash-counter>
   <dash-counter></dash-counter>
   <dash-counter></dash-counter>
   <dash-counter></dash-counter>-->
   <dash-clicks class="grid-1-1-2-3"></dash-clicks>
+  <dash-tag-list></dash-tag-list>
 
 </div>
 <dash-searchbar #searchbar page="einzel" (selected)="onSelected($event.id, $event.name)" (currentSearch)="onSearchInput($event)"></dash-searchbar>

@@ -1,0 +1,67 @@
+.tag-list-box{
+
+}
+.tag-search{
+  display: flex;
+  width: calc(100% - 10px);
+  height: 30px;
+  padding: 5px;
+}
+input[type="text"]{
+  box-sizing: border-box;
+  max-width: 75%;
+  border-radius: 5px 0 0 5px;
+  border: 1px solid black;
+}
+input[type="text"]:focus-visible{
+  outline-style: none;
+  border-radius: 5px 0 0 5px;
+  border: 2px solid black;
+}
+
+input[type="radio"]{
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: white;
+  margin: 0;
+  border: 1px solid black;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+}
+input[type="radio"]:hover{
+  border-width: 2px;
+}
+input[type="radio"]::before{
+  content: "P";
+  color: #951D40;
+  border-radius: 0 1px 1px 0;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+}
+#tag-sort-a::before{
+  content: "A";
+}
+
+input[type="radio"]:checked::before{
+  transform: scale(1);
+}
+
+#tag-sort-a{
+  border-radius: 0 5px 5px 0;
+}
+
+.tag-list-selector-container{
+  height: calc(100% - 45px);
+  width: calc(100% - 3px);
+  overflow-y: auto;
+}
+::-webkit-scrollbar{
+  width: 8px;
+}
+::-webkit-scrollbar-thumb{
+  background-color: #EFEFEF;
+  border-radius: 5px;
+}

@@ -1,0 +1,6 @@
+.tag-list-item-box{
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid black;
+  width: 100%;
+}

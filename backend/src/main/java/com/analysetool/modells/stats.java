@@ -26,18 +26,37 @@ public class stats {
     private Long clicks;
     // Constructor, getters, and setters
     @Column(name="search_succes")
-    private long searchSucces;
+    private long searchSuccess;
 
     @Column(name="refferings")
     private long refferings;
 
     public stats(){}
-    public stats(Long id, Long artId, Float searchSuccessRate, Float articleReferringRate, Long clicks) {
+
+    public long getSearchSucces() {
+        return searchSuccess;
+    }
+
+    public void setSearchSucces(long searchSuccess) {
+        this.searchSuccess = searchSuccess;
+    }
+
+    public long getRefferings() {
+        return refferings;
+    }
+
+    public void setRefferings(long refferings) {
+        this.refferings = refferings;
+    }
+
+    public stats( Long artId, Float searchSuccessRate, Float articleReferringRate, long clicks, long searchSuccess, long refferings) {
         this.id = id;
         this.artId = artId;
         this.searchSuccessRate = searchSuccessRate;
         this.articleReferringRate = articleReferringRate;
         this.clicks = clicks;
+        this.refferings=refferings;
+        this.searchSuccess=searchSuccess;
     }
 
     public Long getId() {

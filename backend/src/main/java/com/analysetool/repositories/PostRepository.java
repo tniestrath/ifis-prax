@@ -23,6 +23,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    List<Long> getIdByTitle(String title);
 
    @Query("SELECT p.id from Post p where p.slug =:name AND p.status='publish'")
-   List<Long> getIdByName(String name);
+   Long getIdByName(String name);
 }
 

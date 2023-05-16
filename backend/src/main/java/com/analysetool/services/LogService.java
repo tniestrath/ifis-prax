@@ -1,5 +1,6 @@
 package com.analysetool.services;
 
+import com.analysetool.modells.stats;
 import com.analysetool.repositories.PostRepository;
 import com.analysetool.repositories.statsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,6 +146,12 @@ public class LogService {
         if(patternNumber==5){
             System.out.println(matcher.group(3)+" PROCESSING 3");
             //gibts das stats objekt? -nein = neues -ja = updaten
+            long id =postRepository.getIdByName(matcher.group(3));
+            if (statsRepo.existsByArtId(id)){
+                long refferings =statsRepo.getReferringsByArtId(id);
+                refferings++;
+                statsRepo.updateRefferingsByArtId(refferings,id);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,0,0,1));}
 
         }
     }

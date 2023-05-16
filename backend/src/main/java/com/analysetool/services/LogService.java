@@ -141,6 +141,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.2");
 
         }
+
         if(patternNumber==5){
             System.out.println(matcher.group(3)+" PROCESSING 3");
             //gibts das stats objekt? -nein = neues -ja = updaten

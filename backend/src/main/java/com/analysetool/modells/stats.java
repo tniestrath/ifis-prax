@@ -8,6 +8,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "stats")
 public class stats {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,8 +27,10 @@ public class stats {
     // Constructor, getters, and setters
     @Column(name="search_succes")
     private long searchSucces;
+
     @Column(name="refferings")
     private long refferings;
+
     public stats(){}
     public stats(Long id, Long artId, Float searchSuccessRate, Float articleReferringRate, Long clicks) {
         this.id = id;

@@ -10,6 +10,8 @@ import {SelectableDirective} from "./selectable.directive";
 import {SelectableComponent} from "./selectable.component";
 import {Observable, Subscription} from "rxjs";
 import {DbObject} from "../../services/DbObject";
+import {TagRanking} from "../tag/Tag";
+import {TagListItemComponent} from "../../component/tag-list/tag-list-item/tag-list-item.component";
 
 export class SelectorItem {
   constructor(public component: Type<any>, public data: DbObject){}
@@ -37,16 +39,16 @@ export class SelectorComponent implements OnInit{
   ngOnInit(): void {
     console.log("Selector Component loaded");
     this.sub = (this.dataLoaded.subscribe(s =>{
-      this.loadItems(s);
+      this.loadItems(s, !(typeof TagListItemComponent == typeof s[0].component));
       console.log("Selector Items loaded " + s.length);
     }
     ));
   }
 
-  private loadItems(s : SelectorItem[]) {
+  private loadItems(s : SelectorItem[], sort : boolean) {
     const viewContainerRef = this.dashSelectable.viewContainerRef;
     viewContainerRef.clear();
-    s.sort((a, b) => a.data.compare(b.data));
+    if (sort){s.sort((a, b) => a.data.compare(b.data))}
     for (let item of s) {
       const componentRef = viewContainerRef.createComponent<SelectableComponent>(item.component);
       componentRef.instance.data = item.data;

@@ -126,22 +126,62 @@ public class LogService {
         if (patternNumber==1){
 
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.1");
-
+            try{
+                long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+                if (statsRepo.existsByArtId(id)){
+                long views = statsRepo.getClicksByArtId(id);
+                views ++;
+                statsRepo.updateClicksByArtId(views,id);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0));}}
+            catch(Exception e){
+                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getStackTrace());
+            }
         }
         if (patternNumber==2){
 
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.2");
-        }
+            try{
+                long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+
+            if (statsRepo.existsByArtId(id)){
+                long views = statsRepo.getClicksByArtId(id);
+                views ++;
+                long searchSuccess= statsRepo.getSearchSuccesByArtId(id);
+                searchSuccess ++;
+                statsRepo.updateClicksAndSearchSuccess(id,views,searchSuccess);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0));}}
+            catch(Exception e){
+                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getStackTrace());
+        }}
         if (patternNumber==3){
 
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.1");
-
-        }
+            try{
+                long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+                if (statsRepo.existsByArtId(id)){
+                long views = statsRepo.getClicksByArtId(id);
+                views ++;
+                statsRepo.updateClicksByArtId(views,id);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0));}}
+        catch(Exception e){
+                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getStackTrace());
+        }}
         if (patternNumber==4){
 
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.2");
+            try{
+                long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
 
-        }
+            if (statsRepo.existsByArtId(id)){
+                long views = statsRepo.getClicksByArtId(id);
+                views ++;
+                long searchSuccess= statsRepo.getSearchSuccesByArtId(id);
+                searchSuccess ++;
+                statsRepo.updateClicksAndSearchSuccess(id,views,searchSuccess);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0));}}
+        catch(Exception e){
+                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getStackTrace());
+        }}
 
         if(patternNumber==5){
             System.out.println(matcher.group(3)+" PROCESSING 3");

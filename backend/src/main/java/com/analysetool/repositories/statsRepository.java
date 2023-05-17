@@ -33,6 +33,7 @@ public interface statsRepository extends JpaRepository<stats, Long> {
     void updateArticleReferringRate( Long artId,  Float articleReferringRate);
 
     // Methode zum Aktualisieren der clicks-Spalte
+    @Transactional
     @Modifying
     @Query("UPDATE stats s SET s.clicks = :clicks WHERE s.artId = :artId")
     void updateClicks( Long artId,  Long clicks);
@@ -66,6 +67,7 @@ public interface statsRepository extends JpaRepository<stats, Long> {
     void updateArticleReferringRateByArtId( Float articleReferringRate, Long artId);
 
     // Aktualisiere die clicks-Spalte für einen bestimmten Artikel
+    @Transactional
     @Modifying
     @Query("UPDATE stats s SET s.clicks = :clicks WHERE s.artId = :artId")
     void updateClicksByArtId( Long clicks,  Long artId);
@@ -101,5 +103,8 @@ public interface statsRepository extends JpaRepository<stats, Long> {
     // Get the number of referrings for a given article ID
     @Query("SELECT s.refferings FROM stats s WHERE s.artId = :artId")
     public Long getReferringsByArtId( Long artId);
-
+    @Transactional
+    @Modifying
+    @Query("UPDATE stats s SET s.clicks = :clicks , s.searchSuccess =:searchSuccess WHERE s.artId = :artId")
+    void updateClicksAndSearchSuccess( Long artId,  Long clicks, Long searchSuccess);
 }

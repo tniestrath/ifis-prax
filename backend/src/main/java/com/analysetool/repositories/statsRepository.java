@@ -107,4 +107,9 @@ public interface statsRepository extends JpaRepository<stats, Long> {
     @Modifying
     @Query("UPDATE stats s SET s.clicks = :clicks , s.searchSuccess =:searchSuccess WHERE s.artId = :artId")
     void updateClicksAndSearchSuccess( Long artId,  Long clicks, Long searchSuccess);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE stats s SET s.refferings = :refferings , s.articleReferringRate=:rate WHERE s.artId = :artId")
+    void updateRefferingsAndRateByArtId( Float rate,Long refferings,  Long artId);
 }

@@ -118,6 +118,7 @@ public class LogService {
             //br.readLine();
 
         }
+        System.out.println("END OF LOG");
     }
 
 
@@ -188,9 +189,12 @@ public class LogService {
             //gibts das stats objekt? -nein = neues -ja = updaten
             long id =postRepository.getIdByName(matcher.group(3));
             if (statsRepo.existsByArtId(id)){
+                long views = statsRepo.getClicksByArtId(id);
                 long refferings =statsRepo.getReferringsByArtId(id);
                 refferings++;
-                statsRepo.updateRefferingsByArtId(refferings,id);
+                float article_reffering_rate= ((float)refferings/views)*100;
+                System.out.println("RefRate :"+article_reffering_rate);
+                statsRepo.updateRefferingsAndRateByArtId(article_reffering_rate,refferings,id);
             }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,0,0,1));}
 
         }

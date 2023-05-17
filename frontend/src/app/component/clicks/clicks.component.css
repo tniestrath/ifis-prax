@@ -1,6 +1,9 @@
 .clicks-box {
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  height: 100%;
 }
 .clicks-total{
   display: flex;
@@ -11,8 +14,21 @@
 }
 canvas{
   padding: 5px;
+  max-height: 50%;
+  max-width: 60%;
+}
+.legend-box{
+  padding: 5px;
+  height: calc(50% - 10px);
+  width: calc(40% - 10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 p{
   margin: 0;
+  font-weight: bold;
+  font-size: large;
 }
+

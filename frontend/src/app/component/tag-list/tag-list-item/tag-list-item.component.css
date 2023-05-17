@@ -1,6 +1,13 @@
 .tag-list-item-box{
   display: flex;
   justify-content: space-between;
-  border: 1px solid black;
   width: 100%;
+}
+.tag-rank{
+  width: 10%;
+  text-align: left;
+}
+.tag-count{
+  width: 10%;
+  text-align: right;
 }

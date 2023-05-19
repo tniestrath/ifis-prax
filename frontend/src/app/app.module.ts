@@ -27,6 +27,7 @@ import { DashBaseComponent } from './component/dash-base/dash-base.component';
 import { ClicksComponent } from './component/clicks/clicks.component';
 import { TagListComponent } from './component/tag-list/tag-list.component';
 import { TagListItemComponent } from './component/tag-list/tag-list-item/tag-list-item.component';
+import { PostChartComponent } from './component/post-chart/post-chart.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { TagListItemComponent } from './component/tag-list/tag-list-item/tag-lis
     DashBaseComponent,
     ClicksComponent,
     TagListComponent,
-    TagListItemComponent
+    TagListItemComponent,
+    PostChartComponent
   ],
     imports: [
         BrowserModule,

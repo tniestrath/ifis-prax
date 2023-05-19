@@ -1,20 +1,19 @@
-.tag-list-box{
-
-}
-.tag-search-form{
+.post-chart-form{
   display: flex;
   width: calc(100% - 10px);
   height: 30px;
   padding: 5px;
+  position: relative;
 }
-input[type="text"]{
+select{
   box-sizing: border-box;
-  min-width: 55%;
-  max-width: 75%;
+  max-width: 35%;
   border-radius: 5px 0 0 5px;
   border: 1px solid black;
 }
-input[type="text"]:focus-visible{
+
+select:focus-visible{
+  box-sizing: border-box;
   outline-style: none;
   border-radius: 5px 0 0 5px;
   border: 2px solid black;
@@ -27,7 +26,7 @@ input[type="radio"]{
   background-color: white;
   margin: 0;
   border: 1px solid black;
-  width: 100%;
+  width: 20%;
   height: 100%;
   display: grid;
   place-content: center;
@@ -36,44 +35,24 @@ input[type="radio"]:hover{
   border-width: 2px;
 }
 input[type="radio"]::before{
-  content: "Perf";
+  content: "Immer";
   color: #951D40;
   border-radius: 0 1px 1px 0;
   transform: scale(0);
   transition: 120ms transform ease-in-out;
 }
-#tag-sort-a::before{
-  content: "Anz";
+#post-range-halfyear::before{
+  content: "Sem";
 }
-
+#post-range-month::before{
+  content: "Monat";
+}
+#post-range-week::before{
+  content: "Woche";
+}
 input[type="radio"]:checked::before{
   transform: scale(1);
 }
-
-#tag-sort-a{
+#post-range-week{
   border-radius: 0 5px 5px 0;
-}
-
-.tag-list-selector-container{
-  margin-left: 5px;
-  height: calc(100% - 47px);
-  width: calc(100% - 8px);
-  overflow-y: auto;
-}
-#shadow {
-  position: relative;
-  left: 5px;
-  top: -8px;
-  width: calc(100% - 17px);
-  height: 10px;
-  box-shadow: inset 0 -10px 10px -10px #EEE;
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar{
-  width: 8px;
-}
-::-webkit-scrollbar-thumb{
-  background-color: #EFEFEF;
-  border-radius: 5px;
 }

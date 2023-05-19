@@ -69,20 +69,23 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
       const bgColor = dataset.fillStyle;
 
       const li = document.createElement("LI");
+      li.classList.add("clicks-item-li");
       li.style.display = "flex";
       li.style.alignItems = "center";
       li.style.flexDirection = "row";
       li.style.height = "20px";
       li.style.margin = "5px";
       const spanBox = document.createElement("SPAN");
+      spanBox.classList.add("clicks-item-span");
       spanBox.style.display = "inline-block";
-      spanBox.style.height = "20px";
+      spanBox.style.height = "100%";
       spanBox.style.width = "30px";
       spanBox.style.marginRight = "5px";
       spanBox.style.borderRadius = "5px";
       spanBox.style.backgroundColor = bgColor;
 
       const p = document.createElement("P");
+      p.classList.add("clicks-item-text");
       p.innerText = text + ": " + chart.data.datasets[0].data[datasetIndex];
 
       ul.appendChild(li);
@@ -90,12 +93,46 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
       li.appendChild(p);
     });
 
+    const media_ratio = window.matchMedia("(min-aspect-ratio: 5/4)");
+    const media_width = window.matchMedia("(min-width: 1500px)");
+    media_ratio.addEventListener( "change",(x) => { this.onMedia(x) });
+    media_width.addEventListener( "change",(x) => { this.onMedia(x) });
+
     legendBox?.appendChild(legendContainer);
-    console.log(legendBox)
     legendContainer.appendChild(ul);
+    this.onMedia(media_ratio)
   }
 
+  onMedia(x: MediaQueryListEvent | MediaQueryList) {
+    let lis = document.querySelectorAll(".clicks-item-li");
+    let spans = document.querySelectorAll(".clicks-item-span");
+    let ps = document.querySelectorAll(".clicks-item-text");
 
+    if(x.matches){
+      for (let i = 0; i < lis.length; i++) {
+        lis[i].setAttribute("style", "display: flex; align-items: center; flex-direction: row; height: 40px; margin: 5px;");
+      }
+      for (let i = 0; i < spans.length; i++) {
+        let color = spans[i].getAttribute("style")?.substring(88);
+        spans[i].setAttribute("style", "display: inline-block; height: 100%; width: 50px; margin-right: 5px; border-radius: 5px; " + color);
+      }
+      for (let i = 0; i < ps.length; i++) {
+        ps[i].setAttribute("style", "font-size: large");
+      }
+    }
+    else {
+      for (let i = 0; i < lis.length; i++) {
+        lis[i].setAttribute("style", "display: flex; align-items: center; flex-direction: row; height: 20px; margin: 5px;");
+      }
+      for (let i = 0; i < spans.length; i++) {
+        let color = spans[i].getAttribute("style")?.substring(88);
+        spans[i].setAttribute("style", "display: inline-block; height: 100%; width: 30px; margin-right: 5px; border-radius: 5px; " + color);
+      }
+      for (let i = 0; i < ps.length; i++) {
+        ps[i].setAttribute("style", "font-size: medium");
+      }
+    }
+  }
 
   ngOnInit(): void {
     if (this.c_chart || this.p_chart) {

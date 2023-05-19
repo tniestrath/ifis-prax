@@ -1,0 +1,14 @@
+<div class="component-box chart-box">
+  <form class="post-chart-form">
+    <select name="post_type">
+      <option value="article">Artikel</option>
+      <option value="blog">Blog</option>
+      <option value="press">Pressemitteilungen</option>
+    </select>
+    <input type="radio" name="time_range" value="all_time" checked>
+    <input type="radio" name="time_range" value="half_year" id="post-range-halfyear">
+    <input type="radio" name="time_range" value="month" id="post-range-month">
+    <input type="radio" name="time_range" value="week" id="post-range-week">
+  </form>
+  <canvas [attr.id]="canvas_id" [ngStyle]="{'visibility': visibility}">{{chart}}</canvas>
+</div>

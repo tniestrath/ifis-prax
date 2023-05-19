@@ -1,3 +1,26 @@
+@media (min-aspect-ratio: 16/10) {
+  #tag-sort-p::before{
+    content: "Performance";
+  }
+  #tag-sort-a::before{
+    content: "Anzahl" !important;
+  }
+  .clicks-item-head{
+    font-size: x-large !important;
+  }
+}
+@media (max-aspect-ratio: 5/4), (max-width: 1500px) {
+  #tag-sort-p::before{
+    content: "P";
+  }
+  #tag-sort-a::before{
+    content: "A" !important;
+  }
+  .clicks-item-head{
+    font-size: large !important;
+  }
+}
+
 html, body {
   margin: 0;
   padding: 0;

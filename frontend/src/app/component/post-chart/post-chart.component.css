@@ -36,22 +36,60 @@ input[type="radio"]:hover{
 }
 input[type="radio"]::before{
   content: "Immer";
-  color: #951D40;
+  color: #A0A0A0;
   border-radius: 0 1px 1px 0;
-  transform: scale(0);
+  transform: scale(1);
   transition: 120ms transform ease-in-out;
 }
+input[type="radio"]::after{
+  content: "Immer";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
+}
 #post-range-halfyear::before{
-  content: "Sem";
+  content: "Halb-Jahr";
+}
+#post-range-halfyear::after{
+  content: "Halb-Jahr";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
 }
 #post-range-month::before{
   content: "Monat";
 }
+#post-range-month::after{
+  content: "Monat";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
+}
 #post-range-week::before{
   content: "Woche";
 }
+#post-range-week::after{
+  content: "Woche";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
+}
 input[type="radio"]:checked::before{
-  transform: scale(1);
+  color: #A0A0A0;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  position: fixed;
+  bottom: 0;
+}
+input[type="radio"]:checked::after{
+  color: #951D40;
+  transform: scale(1) !important;
+  transition: 120ms transform ease-in-out;
+  position: inherit !important;
 }
 #post-range-week{
   border-radius: 0 5px 5px 0;

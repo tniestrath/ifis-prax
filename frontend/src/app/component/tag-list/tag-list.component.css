@@ -37,17 +37,38 @@ input[type="radio"]:hover{
 }
 input[type="radio"]::before{
   content: "Perf";
+  color: #A0A0A0;
+  border-radius: 0 1px 1px 0;
+  transform: scale(1);
+  transition: 120ms transform ease-in-out;
+}
+input[type="radio"]::after{
+  content: "Perf";
   color: #951D40;
   border-radius: 0 1px 1px 0;
   transform: scale(0);
-  transition: 120ms transform ease-in-out;
+  position: fixed;
+  bottom: 0;
 }
 #tag-sort-a::before{
   content: "Anz";
 }
+#tag-sort-a::after{
+  content: "Anz";
+}
 
 input[type="radio"]:checked::before{
-  transform: scale(1);
+  color: #A0A0A0;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  position: fixed;
+  bottom: 0;
+}
+input[type="radio"]:checked::after{
+  color: #951D40;
+  transform: scale(1) !important;
+  transition: 120ms transform ease-in-out;
+  position: inherit !important;
 }
 
 #tag-sort-a{

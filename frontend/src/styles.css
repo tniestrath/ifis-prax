@@ -2,7 +2,13 @@
   #tag-sort-p::before{
     content: "Performance";
   }
+  #tag-sort-p::after{
+    content: "Performance";
+  }
   #tag-sort-a::before{
+    content: "Anzahl" !important;
+  }
+  #tag-sort-a::after{
     content: "Anzahl" !important;
   }
   .clicks-item-head{
@@ -13,7 +19,13 @@
   #tag-sort-p::before{
     content: "P";
   }
+  #tag-sort-p::after{
+    content: "P";
+  }
   #tag-sort-a::before{
+    content: "A" !important;
+  }
+  #tag-sort-a::after{
     content: "A" !important;
   }
   .clicks-item-head{

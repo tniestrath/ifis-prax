@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,5 +25,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    @Query("SELECT p.id from Post p where p.slug =:name AND p.status='publish'")
    Long getIdByName(String name);
+
+   @Query("select p.date from Post p where p.id =:Id AND p.status= 'publish'")
+   LocalDateTime getPostDateById(long Id);
 }
 

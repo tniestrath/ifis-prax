@@ -31,6 +31,9 @@ public class stats {
     @Column(name="refferings")
     private long refferings;
 
+    @Column(name="performance")
+    private float performance;
+
     public stats(){}
 
     public long getSearchSucces() {
@@ -49,7 +52,7 @@ public class stats {
         this.refferings = refferings;
     }
 
-    public stats( Long artId, Float searchSuccessRate, Float articleReferringRate, long clicks, long searchSuccess, long refferings) {
+    public stats( Long artId, Float searchSuccessRate, Float articleReferringRate, long clicks, long searchSuccess, long refferings,float performance) {
         this.id = id;
         this.artId = artId;
         this.searchSuccessRate = searchSuccessRate;
@@ -57,6 +60,7 @@ public class stats {
         this.clicks = clicks;
         this.refferings=refferings;
         this.searchSuccess=searchSuccess;
+        this.performance = performance;
     }
 
     public Long getId() {
@@ -69,6 +73,34 @@ public class stats {
 
     public Long getArtId() {
         return artId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof stats stats)) return false;
+        return getSearchSuccess() == stats.getSearchSuccess() && getRefferings() == stats.getRefferings() && Float.compare(stats.getPerformance(), getPerformance()) == 0 && Objects.equals(getId(), stats.getId()) && Objects.equals(getArtId(), stats.getArtId()) && Objects.equals(getSearchSuccessRate(), stats.getSearchSuccessRate()) && Objects.equals(getArticleReferringRate(), stats.getArticleReferringRate()) && Objects.equals(getClicks(), stats.getClicks());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getArtId(), getSearchSuccessRate(), getArticleReferringRate(), getClicks(), getSearchSuccess(), getRefferings(), getPerformance());
+    }
+
+    public long getSearchSuccess() {
+        return searchSuccess;
+    }
+
+    public void setSearchSuccess(long searchSuccess) {
+        this.searchSuccess = searchSuccess;
+    }
+
+    public float getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(float performance) {
+        this.performance = performance;
     }
 
     public void setArtId(Long artId) {
@@ -100,18 +132,6 @@ public class stats {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof stats stats)) return false;
-        return Objects.equals(getId(), stats.getId()) && Objects.equals(getArtId(), stats.getArtId()) && Objects.equals(getSearchSuccessRate(), stats.getSearchSuccessRate()) && Objects.equals(getArticleReferringRate(), stats.getArticleReferringRate()) && Objects.equals(getClicks(), stats.getClicks());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getArtId(), getSearchSuccessRate(), getArticleReferringRate(), getClicks());
-    }
-
-    @Override
     public String toString() {
         return "stats{" +
                 "id=" + id +
@@ -119,6 +139,9 @@ public class stats {
                 ", searchSuccessRate=" + searchSuccessRate +
                 ", articleReferringRate=" + articleReferringRate +
                 ", clicks=" + clicks +
+                ", searchSuccess=" + searchSuccess +
+                ", refferings=" + refferings +
+                ", performance=" + performance +
                 '}';
     }
 }

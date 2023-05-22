@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import java.time.Duration;
 @Service
 public class LogService {
 
@@ -128,14 +129,25 @@ public class LogService {
 
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.1");
             try{
+
                 long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
                 if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
-                statsRepo.updateClicksByArtId(views,id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0));}}
+
+                LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
+                LocalDateTime Now =  LocalDateTime.now();
+                Duration duration = Duration.between(PostTimestamp, Now);
+                long diffInDays = duration.toDays();
+                float Performance = views;
+                if (diffInDays>0&&views > 0){
+                    Performance = (float)views/diffInDays;
+                }
+
+                statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 1));}}
             catch(Exception e){
-                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getStackTrace());
+                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
             }
         }
         if (patternNumber==2){
@@ -149,10 +161,19 @@ public class LogService {
                 views ++;
                 long searchSuccess= statsRepo.getSearchSuccesByArtId(id);
                 searchSuccess ++;
-                statsRepo.updateClicksAndSearchSuccess(id,views,searchSuccess);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0));}}
+                LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
+                LocalDateTime Now =  LocalDateTime.now();
+                Duration duration = Duration.between(PostTimestamp, Now);
+                long diffInDays = duration.toDays();
+                float Performance = views;
+                if (diffInDays>0&&views > 0){
+                    Performance = (float)views/diffInDays;
+                }
+                statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 1));}}
             catch(Exception e){
-                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getStackTrace());
+                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
+
         }}
         if (patternNumber==3){
 
@@ -162,10 +183,20 @@ public class LogService {
                 if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
-                statsRepo.updateClicksByArtId(views,id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0));}}
+                    LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
+                    LocalDateTime Now =  LocalDateTime.now();
+                    Duration duration = Duration.between(PostTimestamp, Now);
+                    long diffInDays = duration.toDays();
+                    float Performance = views;
+                    if (diffInDays>0&&views > 0){
+                        Performance = (float)views/diffInDays;
+                    }
+
+                    statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 1));}}
         catch(Exception e){
-                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getStackTrace());
+                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
+           // e.printStackTrace();
         }}
         if (patternNumber==4){
 
@@ -178,10 +209,19 @@ public class LogService {
                 views ++;
                 long searchSuccess= statsRepo.getSearchSuccesByArtId(id);
                 searchSuccess ++;
-                statsRepo.updateClicksAndSearchSuccess(id,views,searchSuccess);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0));}}
+                LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
+                LocalDateTime Now =  LocalDateTime.now();
+                Duration duration = Duration.between(PostTimestamp, Now);
+                long diffInDays = duration.toDays();
+                float Performance = views;
+                if (diffInDays>0&&views > 0){
+                    Performance = (float)views/diffInDays;
+                }
+                statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 1));}}
         catch(Exception e){
-                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getStackTrace());
+                
+                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
         }}
 
         if(patternNumber==5){
@@ -195,7 +235,7 @@ public class LogService {
                 float article_reffering_rate= ((float)refferings/views)*100;
                 System.out.println("RefRate :"+article_reffering_rate);
                 statsRepo.updateRefferingsAndRateByArtId(article_reffering_rate,refferings,id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,0,0,1));}
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,0,0,1,(float) 1));}
 
         }
     }

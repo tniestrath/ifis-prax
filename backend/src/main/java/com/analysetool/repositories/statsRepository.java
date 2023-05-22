@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.analysetool.modells.stats;
-
+//import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
@@ -112,4 +112,28 @@ public interface statsRepository extends JpaRepository<stats, Long> {
     @Modifying
     @Query("UPDATE stats s SET s.refferings = :refferings , s.articleReferringRate=:rate WHERE s.artId = :artId")
     void updateRefferingsAndRateByArtId( Float rate,Long refferings,  Long artId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE stats s SET s.clicks = :clicks , s.searchSuccess =:searchSuccess , s.performance=:performance WHERE s.artId = :artId")
+    void updateClicksSearchSuccessPerformance( Long artId,  Long clicks, Long searchSuccess, float performance);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE stats s SET s.clicks = :clicks , s.performance=:performance WHERE s.artId = :artId")
+    void updateClicksAndPerformanceByArtId( Long clicks,  Long artId, float performance);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE stats s SET s.clicks = :clicks, s.searchSuccess = :searchSuccess, s.performance = :performance, s.searchSuccessRate = :searchSuccessRate WHERE s.artId = :artId")
+    void updateClicksSearchSuccessAndRatePerformance(Long artId, Long clicks, Long searchSuccess, float performance, float searchSuccessRate);
+
+    default void updateClicksSearchSuccessRateAndPerformance(Long artId, Long clicks, Long searchSuccess, float performance) {
+        float searchSuccessRate = (float) clicks / searchSuccess;
+        updateClicksSearchSuccessAndRatePerformance(artId, clicks, searchSuccess, performance, searchSuccessRate);
+    }
+
+    // Beispiel für eine separate Methode zur Berechnung der Performance
+
+
 }

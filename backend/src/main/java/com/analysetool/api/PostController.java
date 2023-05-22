@@ -134,7 +134,7 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
         for (Post i : posts) {
             JSONObject obj = new JSONObject();
             Date date = onlyDate.parse(i.getDate().toString());
-            String formattedDate = new SimpleDateFormat("dd-MM-yyyy").format(date);
+            String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
             obj.put("title", i.getTitle());
             obj.put("date", formattedDate);

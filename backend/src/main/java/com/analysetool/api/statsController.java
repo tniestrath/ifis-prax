@@ -28,6 +28,17 @@ public class statsController {
     public List<stats> getAllStats() {
         return statRepository.findAll();
     }
+
+    @GetMapping("/maxPerformance")
+    public float getMaxPerformance(){
+        return statRepository.getMaxPerformance();
+    }
+
+    @GetMapping("getPerformanceByArtId")
+    public float getPerformanceByArtId(@RequestParam int id){
+        return statRepository.getPerformanceByArtID(id);
+    }
+
  /*
     @PutMapping("/{id}")
     public stats updateStat(@PathVariable Long id, @RequestBody stats stat) {

@@ -133,6 +133,13 @@ public interface statsRepository extends JpaRepository<stats, Long> {
         updateClicksSearchSuccessAndRatePerformance(artId, clicks, searchSuccess, performance, searchSuccessRate);
     }
 
+    @Query("select s.performance from stats s where s.artId=:artId")
+    public float getPerformanceByArtID(int artId);
+
+    @Query("SELECT MAX(s.performance) FROM stats s")
+    public float getMaxPerformance();
+
+
     // Beispiel für eine separate Methode zur Berechnung der Performance
 
 

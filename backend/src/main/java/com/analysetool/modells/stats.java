@@ -44,12 +44,12 @@ public class stats {
         this.searchSuccess = searchSuccess;
     }
 
-    public long getRefferings() {
+    public long getReferrings() {
         return refferings;
     }
 
-    public void setRefferings(long refferings) {
-        this.refferings = refferings;
+    public void setReferrings(long referrings) {
+        this.refferings = referrings;
     }
 
     public stats( Long artId, Float searchSuccessRate, Float articleReferringRate, long clicks, long searchSuccess, long refferings,float performance) {
@@ -79,12 +79,12 @@ public class stats {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof stats stats)) return false;
-        return getSearchSuccess() == stats.getSearchSuccess() && getRefferings() == stats.getRefferings() && Float.compare(stats.getPerformance(), getPerformance()) == 0 && Objects.equals(getId(), stats.getId()) && Objects.equals(getArtId(), stats.getArtId()) && Objects.equals(getSearchSuccessRate(), stats.getSearchSuccessRate()) && Objects.equals(getArticleReferringRate(), stats.getArticleReferringRate()) && Objects.equals(getClicks(), stats.getClicks());
+        return getSearchSuccess() == stats.getSearchSuccess() && getReferrings() == stats.getReferrings() && Float.compare(stats.getPerformance(), getPerformance()) == 0 && Objects.equals(getId(), stats.getId()) && Objects.equals(getArtId(), stats.getArtId()) && Objects.equals(getSearchSuccessRate(), stats.getSearchSuccessRate()) && Objects.equals(getArticleReferringRate(), stats.getArticleReferringRate()) && Objects.equals(getClicks(), stats.getClicks());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getArtId(), getSearchSuccessRate(), getArticleReferringRate(), getClicks(), getSearchSuccess(), getRefferings(), getPerformance());
+        return Objects.hash(getId(), getArtId(), getSearchSuccessRate(), getArticleReferringRate(), getClicks(), getSearchSuccess(), getReferrings(), getPerformance());
     }
 
     public long getSearchSuccess() {
@@ -140,7 +140,7 @@ public class stats {
                 ", articleReferringRate=" + articleReferringRate +
                 ", clicks=" + clicks +
                 ", searchSuccess=" + searchSuccess +
-                ", refferings=" + refferings +
+                ", referrings=" + refferings +
                 ", performance=" + performance +
                 '}';
     }

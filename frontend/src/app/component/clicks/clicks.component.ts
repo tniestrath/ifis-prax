@@ -26,7 +26,9 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
         datasets: [{
           label: "",
           data: data,
-          backgroundColor: this.colors
+          backgroundColor: this.colors,
+          borderRadius: 5,
+          borderWidth: 5
         }]
       },
       options: {

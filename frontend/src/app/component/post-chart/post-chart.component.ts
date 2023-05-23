@@ -2,8 +2,6 @@ import {AfterViewInit, Component, EventEmitter, OnInit} from '@angular/core';
 import {ActiveElement, Chart, ChartEvent, ChartType} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {DbService} from "../../services/db.service";
-import {Post} from "../../Post";
-import {ChartElements} from "../chart/chart.component";
 
 @Component({
   selector: 'dash-post-chart',
@@ -77,10 +75,11 @@ export class PostChartComponent extends DashBaseComponent implements OnInit, Aft
   }
 
 
-  getData(event: Event | null){
-    if ((event?.target as HTMLInputElement).type == "select-one") this.postType = (event?.target as HTMLInputElement).value;
-    if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
-
+  getData(event?: Event){
+    if (event !== undefined) {
+      if ((event?.target as HTMLInputElement).type == "select-one") this.postType = (event?.target as HTMLInputElement).value;
+      if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
+    }
     this.db.getUserPostsDay("1").then(res =>{
       var postLabel : string[] = [];
       var postData : number[] = [];
@@ -93,7 +92,9 @@ export class PostChartComponent extends DashBaseComponent implements OnInit, Aft
         var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
         return postDate >= calcDate;
       });
-
+      time_filtered.sort((a, b) => {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      })
 
 
       for (var post of time_filtered) {
@@ -102,13 +103,14 @@ export class PostChartComponent extends DashBaseComponent implements OnInit, Aft
       }
       this.createChart(postLabel, postData, null);
     })
+    .finally(() => this.visibility = "visible");
   }
 
 
   ngOnInit(): void {
+    this.getData();
   }
 
   ngAfterViewInit(): void {
-    this.visibility = "visible";
   }
 }

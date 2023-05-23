@@ -5,7 +5,7 @@ import {EmptyObject} from "chart.js/dist/types/basic";
 import {DbService} from "../../services/db.service";
 
 @Component({
-  selector: 'dash-podium',
+  selector: 'dash-performance',
   templateUrl: './performance.component.html',
   styleUrls: ['./performance.component.css', "../../component/dash-base/dash-base.component.css"]
 })
@@ -14,7 +14,7 @@ export class PerformanceComponent extends DashBaseComponent implements OnInit{
   canvas_id: string = "gauge";
   chart: any;
 
-  colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148,28,62)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
+  colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(229,229,229)"];
   cutout: string = "80%";
   postName: string = "";
 
@@ -46,10 +46,13 @@ export class PerformanceComponent extends DashBaseComponent implements OnInit{
         ctx.font = chart.chartArea.height/2 + "px sans-serif";
 
         //@ts-ignore
-        ctx.fillText(score.toFixed(), x, y);
-        ctx.font = chart.chartArea.height/6 + "px sans-serif";
+        ctx.fillText(score.toFixed(), x, y + chart.chartArea.height/8);
+        ctx.font = chart.chartArea.height/8 + "px sans-serif";
         ctx.textBaseline = "top";
-        ctx.fillText("/100", x, y);
+        ctx.textAlign = "left";
+        ctx.fillText("Score", 5, y);
+        ctx.textAlign = "right";
+        ctx.fillText("100", chart.chartArea.width-5, y);
       }
     }
 

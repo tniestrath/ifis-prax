@@ -7,7 +7,7 @@ import { PolarChartComponent } from './component/polar-chart/polar-chart.compone
 import { HeaderComponent } from './page/header/header.component';
 import { ChartComponent } from './component/chart/chart.component';
 import { CounterComponent } from './component/counter/counter.component';
-import { PodiumComponent } from './component/podium/podium.component';
+import { PerformanceComponent } from './component/podium/performance.component';
 import { PageKennzahlenComponent } from './page/page-kennzahlen/page-kennzahlen.component';
 import { PageTagComponent } from './page/tag/page-tag/page-tag.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -18,7 +18,6 @@ import { TagComponent } from './page/tag/tag/tag.component';
 import { SearchbarComponent } from './page/searchbar/searchbar.component';
 import { PageEinzelComponent } from './page/page-einzel/page-einzel.component';
 import {CookieService} from "ngx-cookie-service";
-import {DbService} from "./services/db.service";
 import { SelectorComponent } from './page/selector/selector.component';
 import { SelectableDirective } from './page/selector/selectable.directive';
 import { UserComponent } from './page/page-einzel/user/user.component';
@@ -36,7 +35,7 @@ import { PostChartComponent } from './component/post-chart/post-chart.component'
     HeaderComponent,
     ChartComponent,
     CounterComponent,
-    PodiumComponent,
+    PerformanceComponent,
     PageKennzahlenComponent,
     PageTagComponent,
     TagComponent,

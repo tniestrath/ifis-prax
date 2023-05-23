@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PodiumComponent } from './podium.component';
+import { PerformanceComponent } from './performance.component';
 
 describe('PodiumComponent', () => {
-  let component: PodiumComponent;
-  let fixture: ComponentFixture<PodiumComponent>;
+  let component: PerformanceComponent;
+  let fixture: ComponentFixture<PerformanceComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PodiumComponent ]
+      declarations: [ PerformanceComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PodiumComponent);
+    fixture = TestBed.createComponent(PerformanceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

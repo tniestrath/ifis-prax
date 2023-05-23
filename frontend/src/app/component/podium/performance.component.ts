@@ -2,19 +2,25 @@ import {AfterViewInit, Component, EventEmitter, Input, OnInit} from '@angular/co
 import {ActiveElement, Chart, ChartEvent, ChartType, Plugin} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {EmptyObject} from "chart.js/dist/types/basic";
+import {DbService} from "../../services/db.service";
 
 @Component({
   selector: 'dash-podium',
-  templateUrl: './podium.component.html',
-  styleUrls: ['./podium.component.css', "../../component/dash-base/dash-base.component.css"]
+  templateUrl: './performance.component.html',
+  styleUrls: ['./performance.component.css', "../../component/dash-base/dash-base.component.css"]
 })
-export class PodiumComponent extends DashBaseComponent implements OnInit{
+export class PerformanceComponent extends DashBaseComponent implements OnInit{
 
   canvas_id: string = "gauge";
   chart: any;
 
   colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148,28,62)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
   cutout: string = "80%";
+  postName: string = "";
+
+  constructor(private db : DbService) {
+    super();
+  }
 
   createChart(labels : string[], data : number[], onClick : EventEmitter<number> | null){
     Chart.defaults.color = "#000"
@@ -38,8 +44,12 @@ export class PodiumComponent extends DashBaseComponent implements OnInit{
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom";
         ctx.font = chart.chartArea.height/2 + "px sans-serif";
+
         //@ts-ignore
-        ctx.fillText(score,x, y+10);
+        ctx.fillText(score.toFixed(), x, y);
+        ctx.font = chart.chartArea.height/6 + "px sans-serif";
+        ctx.textBaseline = "top";
+        ctx.fillText("/100", x, y);
       }
     }
 
@@ -78,10 +88,14 @@ export class PodiumComponent extends DashBaseComponent implements OnInit{
           },
           tooltip: {
             enabled: false
-          }
+          },
         },
         interaction: {
           mode: "nearest"
+        },
+        events: [],
+        onHover(event: ChartEvent, elements: ActiveElement[], chart: Chart) {
+          return;
         },
         onClick(event: ChartEvent, elements: ActiveElement[], chart: Chart) {
           onClick?.emit(elements[0].index);
@@ -94,7 +108,10 @@ export class PodiumComponent extends DashBaseComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.createChart(["Score", "Grey"],[650, 350],null);
+    this.db.getPerformanceById("10445").then(data => {
+      this.createChart(["Score", "Grey"],[(data[0] / data[1])*100 , 100-((data[0] / data[1])*100)],null);
+    });
+    this.db.getPostById("10445").then(post => this.postName = post.title);
   }
 
 }

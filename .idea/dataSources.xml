@@ -8,12 +8,5 @@
       <jdbc-url>jdbc:mysql://localhost:3306/ifis</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="live" uuid="a06a4c7e-a504-4f78-80c4-19c01b79c27a">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://10.0.12.198:3306/wordpress</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
   </component>
 </project>

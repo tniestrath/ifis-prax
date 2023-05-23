@@ -3,6 +3,7 @@ import {User} from "../page/page-einzel/user/user.component";
 import {DomSanitizer} from "@angular/platform-browser";
 import {Tag} from "../page/tag/Tag";
 import {DbObject} from "./DbObject";
+import {Post} from "../Post";
 
 export enum dbUrl {
   HOST = "http://localhost",
@@ -12,7 +13,10 @@ export enum dbUrl {
   GET_TAG_RANKING = "http://localhost:8080/terms/getTermRanking",
   GET_ALL_USERS = "http://localhost:8080/users/getAllNew",
   GET_USER_POST_PER_DAY = "http://localhost:8080/getPostsByAuthorLine?id=",
-  GET_USER_IMG = "http://localhost:8080/users/profilePic?id="
+  GET_USER_IMG = "http://localhost:8080/users/profilePic?id=",
+  GET_POST = "http://localhost:8080/",
+  GET_POST_PERFORMANCE = "http://localhost:8080/stats/getPerformanceByArtId?id=",
+  GET_POST_MAX_PERFORMANCE = "http://localhost:8080/stats/maxPerformance"
 }
 
 @Injectable({
@@ -87,6 +91,14 @@ export class DbService {
     }).then(dataUrl => this.sanitizer.bypassSecurityTrustUrl(dataUrl));
   }
 
+  async getPerformanceById(id : string){
+    let performance : Promise<number> = await fetch(dbUrl.GET_POST_PERFORMANCE + id).then(res => res.json());
+    let max : Promise<number> = await fetch(dbUrl.GET_POST_MAX_PERFORMANCE).then(res => res.json());
+
+    return Promise.all([performance, max]);
+  }
+
+
   static sortAlphanumeric(input : DbObject[]){
     input.sort((a, b) => {
       return a.name.toLowerCase()
@@ -96,5 +108,9 @@ export class DbService {
         .replace(/[\W_]+/g,"")
         .localeCompare(b.name.toLowerCase());
     });
+  }
+
+  async getPostById(id: string) : Promise<Post> {
+    return await fetch(dbUrl.GET_POST + id).then(res => res.json());
   }
 }

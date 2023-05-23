@@ -1,6 +1,6 @@
 package com.analysetool.modells;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
+//import org.springframework.data.annotation.Id;
 
 
 @Entity

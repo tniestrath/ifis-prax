@@ -3,13 +3,13 @@
 }
 .tag-search-form{
   display: flex;
-  width: calc(100% - 10px);
+  width: calc(100% - 45px);
   height: 30px;
   padding: 5px;
 }
 input[type="text"]{
   box-sizing: border-box;
-  min-width: 55%;
+  min-width: 45%;
   max-width: 75%;
   border-radius: 5px 0 0 5px;
   border: 1px solid black;

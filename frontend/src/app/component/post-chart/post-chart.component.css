@@ -1,6 +1,6 @@
 .post-chart-form{
   display: flex;
-  width: calc(100% - 10px);
+  width: calc(100% - 45px);
   height: 30px;
   padding: 5px;
   position: relative;

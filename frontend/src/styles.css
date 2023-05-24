@@ -84,7 +84,7 @@ h1{
   grid-template-rows:    calc(calc(100vh - 80px) / 3)
                          calc(calc(100vh - 80px) / 3)
                          calc(calc(100vh - 80px) / 3);
-  grid-template-columns: calc(calc(100vw - 40px) / 6) calc(calc(100vw - 40px) / 6) calc(calc(100vw - 40px) / 6) calc(calc(100vw - 40px) / 6) calc(calc(100vw - 40px) / 6) calc(calc(100vw - 40px) / 6);
+  grid-template-columns: calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6);
   grid-gap: 5px;
 }
 .grid-1-1-2-5{

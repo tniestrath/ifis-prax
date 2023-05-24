@@ -40,13 +40,16 @@ export class DashBaseComponent{
       "  background-color: #fff;\n" +
       "  color: #000;\n" +
       "  border: 1px solid black;\n" +
-      "  text-align: center;\n" +
+      "  box-sizing: border-box;\n" +
+      "  text-align: left;\n" +
       "  font-size: 15px;\n" +
       "  padding: 5px;\n" +
       "  border-radius: 6px;\n" +
       "  position: absolute;\n" +
       "  top: -23px;\n" +
-      "  right: -9px;\n" +
+      "  right: -9.5px;\n" +
+      "  min-height: 30px;\n" +
+      "  min-width: 250px;\n" +
       "  z-index: 1;");
     tooltipContainer.appendChild(this.tooltip);
 

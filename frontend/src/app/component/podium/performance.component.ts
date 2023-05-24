@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit} from '@angular/core';
 import {ActiveElement, Chart, ChartEvent, ChartType, Plugin} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {EmptyObject} from "chart.js/dist/types/basic";
@@ -18,9 +18,7 @@ export class PerformanceComponent extends DashBaseComponent implements OnInit{
   cutout: string = "80%";
   postName: string = "";
 
-  constructor(private db : DbService) {
-    super();
-  }
+
 
   createChart(labels : string[], data : number[], onClick : EventEmitter<number> | null){
     Chart.defaults.color = "#000"
@@ -111,6 +109,8 @@ export class PerformanceComponent extends DashBaseComponent implements OnInit{
 
 
   ngOnInit(): void {
+    this.tooltip.innerText = "Ihr Beitrag mit der höchsten berechneten Performance (durchschnittliche Aufrufe der ersten 7 Tage)";
+
     this.db.getPerformanceById("10445").then(data => {
       this.createChart(["Score", "Grey"],[(data[0] / data[1])*100 , 100-((data[0] / data[1])*100)],null);
     });

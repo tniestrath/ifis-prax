@@ -36,10 +36,6 @@ export class ChartComponent extends DashBaseComponent implements OnInit{
   @Input() y_axis_options : string[] = ["Beitrag", "Clicks", ""];
 
 
-  constructor() {
-    super();
-  }
-
   createChart(type: ChartType, labels : string[], data : number[], onClick : EventEmitter<number>){
     Chart.defaults.color = "#000"
     if (this.chartType == "bar" || this.chartType == "line" || this.chartType == "bubble"){

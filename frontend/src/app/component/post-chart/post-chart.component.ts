@@ -9,7 +9,7 @@ import {DbService} from "../../services/db.service";
   styleUrls: ['./post-chart.component.css', "../../component/dash-base/dash-base.component.css"]
 })
 
-export class PostChartComponent extends DashBaseComponent implements OnInit, AfterViewInit{
+export class PostChartComponent extends DashBaseComponent implements OnInit{
 
   visibility: string = "hidden";
 
@@ -27,10 +27,6 @@ export class PostChartComponent extends DashBaseComponent implements OnInit, Aft
     ["week", 7]
   ]);
 
-
-  constructor(private db : DbService) {
-    super();
-  }
 
   createChart(labels : string[], data : number[], onClick : EventEmitter<number> | null){
     Chart.defaults.color = "#000"
@@ -111,6 +107,4 @@ export class PostChartComponent extends DashBaseComponent implements OnInit, Aft
     this.getData();
   }
 
-  ngAfterViewInit(): void {
-  }
 }

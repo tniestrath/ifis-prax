@@ -3,6 +3,8 @@ package com.analysetool.services;
 import com.analysetool.modells.stats;
 import com.analysetool.repositories.PostRepository;
 import com.analysetool.repositories.statsRepository;
+import com.analysetool.repositories.TagStatRepository;
+import com.analysetool.modells.TagStat;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class LogService {
 
     private PostRepository postRepository;
     private statsRepository statsRepo;
+    private TagStatRepository tagStatRepo;
     private BufferedReader br;
     private String path = "";
     private String BlogSSPattern = ".*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
@@ -43,9 +46,10 @@ public class LogService {
     private boolean liveScanning = false;
 
     @Autowired
-    public LogService(PostRepository postRepository, statsRepository StatsRepository) {
+    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo) {
         this.postRepository = postRepository;
         this.statsRepo = StatsRepository;
+        this.tagStatRepo=tagStatRepo;
     }
 
     public void run(boolean liveScanning, String path)  {

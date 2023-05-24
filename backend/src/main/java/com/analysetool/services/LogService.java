@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -139,6 +140,8 @@ public class LogService {
             try{
 
                 long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+                //hier nach TagSuchen WIP
+                //List<Long> tagIds=
                 if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
@@ -271,6 +274,27 @@ public class LogService {
         Stats.setViewsLastYear((Map<String,Long>) daily);
         statsRepo.save(Stats);
 
+    }
+
+    @Transactional
+    public void updateTagStats(long id,boolean searchSuccess){
+        TagStat Stats = tagStatRepo.getStatById((int)id);
+        HashMap<String,Long> daily = (HashMap<String, Long>) Stats.getViewsLastYear();
+        Calendar calendar = Calendar.getInstance();
+        int currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+        long views = daily.get(Integer.toString(currentDayOfYear));
+        views++;
+        daily.put(Integer.toString(currentDayOfYear),views);
+        Stats.setViewsLastYear((Map<String,Long>) daily);
+        views = Stats.getViews();
+        views ++;
+        Stats.setViews(views);
+        if(searchSuccess){
+            int searchS = Stats.getSearchSuccess();
+            searchS++;
+            Stats.setSearchSuccess(searchS);
+        }
+        tagStatRepo.save(Stats);
     }
 }
 

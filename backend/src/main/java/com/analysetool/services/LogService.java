@@ -3,12 +3,16 @@ package com.analysetool.services;
 import com.analysetool.modells.stats;
 import com.analysetool.repositories.PostRepository;
 import com.analysetool.repositories.statsRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.Duration;
@@ -145,7 +149,9 @@ public class LogService {
                 }
 
                 statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 1));}}
+                    updateDailyClicks(id);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 1)); updateDailyClicks(id);}
+               }
             catch(Exception e){
                 System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
             }
@@ -170,7 +176,9 @@ public class LogService {
                     Performance = (float)views/diffInDays;
                 }
                 statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 1));}}
+                updateDailyClicks(id);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 1)); updateDailyClicks(id);}
+               }
             catch(Exception e){
                 System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
 
@@ -193,7 +201,9 @@ public class LogService {
                     }
 
                     statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 1));}}
+                    updateDailyClicks(id);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 1));updateDailyClicks(id); }
+                }
         catch(Exception e){
                 System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
            // e.printStackTrace();
@@ -218,7 +228,11 @@ public class LogService {
                     Performance = (float)views/diffInDays;
                 }
                 statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 1));}}
+                updateDailyClicks(id);
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 1));
+                updateDailyClicks(id);
+            }
+                }
         catch(Exception e){
                 
                 System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
@@ -235,9 +249,24 @@ public class LogService {
                 float article_reffering_rate= ((float)refferings/views)*100;
                 System.out.println("RefRate :"+article_reffering_rate);
                 statsRepo.updateRefferingsAndRateByArtId(article_reffering_rate,refferings,id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,0,0,1,(float) 1));}
+
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,0,0,1,(float) 1));
+            }
 
         }
+    }
+    @Transactional
+    public void updateDailyClicks(long id){
+        stats Stats = statsRepo.getStatByArtID(id);
+        HashMap<String,Long> daily = (HashMap<String, Long>) Stats.getViewsLastYear();
+        Calendar calendar = Calendar.getInstance();
+        int currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+        long views = daily.get(Integer.toString(currentDayOfYear));
+        views++;
+        daily.put(Integer.toString(currentDayOfYear),views);
+        Stats.setViewsLastYear((Map<String,Long>) daily);
+        statsRepo.save(Stats);
+
     }
 }
 

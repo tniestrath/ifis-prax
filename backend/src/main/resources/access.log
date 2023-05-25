@@ -1,3 +1,4 @@
+10.0.36.82 - - [25/May/2023:13:14:36 +0200] "GET /user/alison+kurz+design/ HTTP/1.1" 200 48027 "http://10.0.12.198/user/alison+kurz+design/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36" "-"
 10.0.12.198 - - [09/May/2023:08:55:15 +0200] "POST /wp-cron.php?doing_wp_cron=1683615315.8669850826263427734375 HTTP/1.1" 200 5 "-" "WordPress/6.2; http://10.0.12.198" "-"
 10.0.36.82 - - [09/May/2023:08:55:17 +0200] "GET / HTTP/1.1" 200 44628 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36" "-"
 10.0.36.82 - - [09/May/2023:08:55:17 +0200] "GET /wp-content/uploads/elementor/css/post-10799.css?ver=1683368561 HTTP/1.1" 404 571 "http://10.0.12.198/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36" "-"

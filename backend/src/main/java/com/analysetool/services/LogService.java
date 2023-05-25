@@ -278,8 +278,19 @@ public class LogService {
         views++;
         daily.put(Integer.toString(currentDayOfYear),views);
         Stats.setViewsLastYear((Map<String,Long>) daily);
+        Stats.setRelevance(getRelevance(daily,currentDayOfYear,7));
         statsRepo.save(Stats);
 
+    }
+
+    public float getRelevance(HashMap<String,Long>viewsLastYear,int currentDayOfYear,int time){
+        int counter =currentDayOfYear-time;
+        long views=0;
+        while(counter<=currentDayOfYear){
+            views=views+(viewsLastYear.get(Integer.toString(counter)));
+            counter++;
+        }
+        return (float)views/time;
     }
 
     @Transactional
@@ -295,6 +306,7 @@ public class LogService {
         views = Stats.getViews();
         views ++;
         Stats.setViews(views);
+        Stats.setRelevance(getRelevance(daily,currentDayOfYear,7));
         if(searchSuccess){
             int searchS = Stats.getSearchSuccess();
             searchS++;

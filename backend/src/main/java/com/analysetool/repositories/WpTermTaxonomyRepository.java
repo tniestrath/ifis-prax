@@ -15,4 +15,8 @@ public interface WpTermTaxonomyRepository extends JpaRepository<WpTermTaxonomy, 
     @Query("SELECT p  FROM WpTermTaxonomy p GROUP BY p.termTaxonomyId ORDER BY p.count DESC LIMIT 10")
     List<WpTermTaxonomy> findTop10TermIdsByCount();
 
+    @Query("select p.termId from WpTermTaxonomy p where p.termTaxonomyId IN :ids")
+    List<Long> getTermIdByTaxId(List<Long> ids);
+
+
 }

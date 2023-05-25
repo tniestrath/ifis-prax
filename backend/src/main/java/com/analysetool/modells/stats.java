@@ -42,6 +42,9 @@ public class stats {
     @Column(name="performance")
     private float performance;
 
+    @Column(name="relevance")
+    private float relevance;
+
     @Lob
     @Column(name = "views_last_year", columnDefinition = "json")
     //@Type(type = "json")
@@ -68,7 +71,15 @@ public class stats {
         this.refferings = referrings;
     }
 
-    public stats( Long artId, Float searchSuccessRate, Float articleReferringRate, long clicks, long searchSuccess, long refferings,float performance) {
+    public float getRelevance() {
+        return relevance;
+    }
+
+    public void setRelevance(float relevance) {
+        this.relevance = relevance;
+    }
+
+    public stats(Long artId, Float searchSuccessRate, Float articleReferringRate, long clicks, long searchSuccess, long refferings, float performance) {
         this.id = id;
         this.artId = artId;
         this.searchSuccessRate = searchSuccessRate;
@@ -77,7 +88,7 @@ public class stats {
         this.refferings=refferings;
         this.searchSuccess=searchSuccess;
         this.performance = performance;
-
+        this.relevance=(float)0;
         this.viewsLastYear=setJson();
     }
 

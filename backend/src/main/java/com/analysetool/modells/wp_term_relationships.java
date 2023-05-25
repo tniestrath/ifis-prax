@@ -15,6 +15,7 @@ public class wp_term_relationships {
     @Column(name = "term_order")
     private Integer termOrder;
 
+
     public Long getObjectId() {
         return objectId;
     }

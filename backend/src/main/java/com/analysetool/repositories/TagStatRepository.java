@@ -38,5 +38,10 @@ public interface TagStatRepository extends JpaRepository<TagStat, Long> {
 
     @Query("SELECT MAX(s.performance) FROM TagStat s")
     public float getMaxPerformance();
+
+    @Query("Select s from TagStat s Where s.tagId =:id")
+    public TagStat getStatById(int id);
+
+    public boolean existsByTagId(int tagId);
 }
 

@@ -1,9 +1,7 @@
 package com.analysetool.services;
 
 import com.analysetool.modells.stats;
-import com.analysetool.repositories.PostRepository;
-import com.analysetool.repositories.statsRepository;
-import com.analysetool.repositories.TagStatRepository;
+import com.analysetool.repositories.*;
 import com.analysetool.modells.TagStat;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,6 +23,9 @@ public class LogService {
     private PostRepository postRepository;
     private statsRepository statsRepo;
     private TagStatRepository tagStatRepo;
+    private WpTermRelationshipsRepository termRelRepo;
+    private WPTermRepository termRepo;
+    private WpTermTaxonomyRepository termTaxRepo;
     private BufferedReader br;
     private String path = "";
     private String BlogSSPattern = ".*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
@@ -46,10 +48,13 @@ public class LogService {
     private boolean liveScanning = false;
 
     @Autowired
-    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo) {
+    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo) {
         this.postRepository = postRepository;
         this.statsRepo = StatsRepository;
         this.tagStatRepo=tagStatRepo;
+        this.termRelRepo=termRelRepo;
+        this.termRepo=termRepo;
+        this.termTaxRepo=termTaxRepo;
     }
 
     public void run(boolean liveScanning, String path)  {
@@ -139,6 +144,9 @@ public class LogService {
             try{
 
                 long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+                //hier nach TagSuchen WIP
+
+                checkTheTag(id,false);
                 if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
@@ -165,7 +173,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.2");
             try{
                 long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
-
+                checkTheTag(id,true);
             if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
@@ -192,6 +200,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.1");
             try{
                 long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+                checkTheTag(id,false);
                 if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
@@ -217,7 +226,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.2");
             try{
                 long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
-
+                checkTheTag(id,true);
             if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
@@ -269,9 +278,52 @@ public class LogService {
         views++;
         daily.put(Integer.toString(currentDayOfYear),views);
         Stats.setViewsLastYear((Map<String,Long>) daily);
+        Stats.setRelevance(getRelevance(daily,currentDayOfYear,7));
         statsRepo.save(Stats);
 
     }
+
+    public float getRelevance(HashMap<String,Long>viewsLastYear,int currentDayOfYear,int time){
+        int counter =currentDayOfYear-time;
+        long views=0;
+        while(counter<=currentDayOfYear){
+            views=views+(viewsLastYear.get(Integer.toString(counter)));
+            counter++;
+        }
+        return (float)views/time;
+    }
+
+    @Transactional
+    public void updateTagStats(long id,boolean searchSuccess){
+        TagStat Stats = tagStatRepo.getStatById((int)id);
+        HashMap<String,Long> daily = (HashMap<String, Long>) Stats.getViewsLastYear();
+        Calendar calendar = Calendar.getInstance();
+        int currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+        long views = daily.get(Integer.toString(currentDayOfYear));
+        views++;
+        daily.put(Integer.toString(currentDayOfYear),views);
+        Stats.setViewsLastYear((Map<String,Long>) daily);
+        views = Stats.getViews();
+        views ++;
+        Stats.setViews(views);
+        Stats.setRelevance(getRelevance(daily,currentDayOfYear,7));
+        if(searchSuccess){
+            int searchS = Stats.getSearchSuccess();
+            searchS++;
+            Stats.setSearchSuccess(searchS);
+        }
+        tagStatRepo.save(Stats);
+    }
+
+    public void checkTheTag(long id,boolean searchSuccess){
+        List<Long> tagTaxIds= termRelRepo.getTaxIdByObject(id);
+        List<Long> tagIds= termTaxRepo.getTermIdByTaxId(tagTaxIds);
+        for(Long l:tagIds){
+            if(tagStatRepo.existsByTagId(l.intValue())){
+                updateTagStats(l.intValue(),searchSuccess);}
+            else{ tagStatRepo.save(new TagStat(l.intValue(),0,0,(float)0,(float)0));
+                updateTagStats(l.intValue(),searchSuccess);}
+    }}
 }
 
 

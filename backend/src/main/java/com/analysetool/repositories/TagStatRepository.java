@@ -41,5 +41,7 @@ public interface TagStatRepository extends JpaRepository<TagStat, Long> {
 
     @Query("Select s from TagStat s Where s.tagId =:id")
     public TagStat getStatById(int id);
+
+    public boolean existsByTagId(int tagId);
 }
 

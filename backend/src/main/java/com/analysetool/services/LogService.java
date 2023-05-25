@@ -1,9 +1,7 @@
 package com.analysetool.services;
 
 import com.analysetool.modells.stats;
-import com.analysetool.repositories.PostRepository;
-import com.analysetool.repositories.statsRepository;
-import com.analysetool.repositories.TagStatRepository;
+import com.analysetool.repositories.*;
 import com.analysetool.modells.TagStat;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +23,9 @@ public class LogService {
     private PostRepository postRepository;
     private statsRepository statsRepo;
     private TagStatRepository tagStatRepo;
+    private WpTermRelationshipsRepository termRelRepo;
+    private WPTermRepository termRepo;
+    private WpTermTaxonomyRepository termTaxRepo;
     private BufferedReader br;
     private String path = "";
     private String BlogSSPattern = ".*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
@@ -47,10 +48,13 @@ public class LogService {
     private boolean liveScanning = false;
 
     @Autowired
-    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo) {
+    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo) {
         this.postRepository = postRepository;
         this.statsRepo = StatsRepository;
         this.tagStatRepo=tagStatRepo;
+        this.termRelRepo=termRelRepo;
+        this.termRepo=termRepo;
+        this.termTaxRepo=termTaxRepo;
     }
 
     public void run(boolean liveScanning, String path)  {
@@ -141,7 +145,8 @@ public class LogService {
 
                 long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
                 //hier nach TagSuchen WIP
-                //List<Long> tagIds=
+
+                checkTheTag(id,false);
                 if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
@@ -168,7 +173,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.2");
             try{
                 long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
-
+                checkTheTag(id,true);
             if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
@@ -195,6 +200,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.1");
             try{
                 long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+                checkTheTag(id,false);
                 if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
@@ -220,7 +226,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.2");
             try{
                 long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
-
+                checkTheTag(id,true);
             if (statsRepo.existsByArtId(id)){
                 long views = statsRepo.getClicksByArtId(id);
                 views ++;
@@ -296,6 +302,16 @@ public class LogService {
         }
         tagStatRepo.save(Stats);
     }
+
+    public void checkTheTag(long id,boolean searchSuccess){
+        List<Long> tagTaxIds= termRelRepo.getTaxIdByObject(id);
+        List<Long> tagIds= termTaxRepo.getTermIdByTaxId(tagTaxIds);
+        for(Long l:tagIds){
+            if(tagStatRepo.existsByTagId(l.intValue())){
+                updateTagStats(l.intValue(),searchSuccess);}
+            else{ tagStatRepo.save(new TagStat(l.intValue(),0,0,(float)0,(float)0));
+                updateTagStats(l.intValue(),searchSuccess);}
+    }}
 }
 
 

@@ -44,6 +44,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         }]
       },
       options: {
+        aspectRatio: 2.5,
         plugins: {
           title: {
             display: true,

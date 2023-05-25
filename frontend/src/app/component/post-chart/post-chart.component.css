@@ -5,6 +5,13 @@
   padding: 5px;
   position: relative;
 }
+.chart-canvas-box{
+  display: flex;
+  height: calc(100% - 40px);
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
 select{
   box-sizing: border-box;
   max-width: 35%;

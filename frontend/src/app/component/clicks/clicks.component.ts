@@ -32,6 +32,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
         }]
       },
       options: {
+        aspectRatio: 1,
         plugins: {
           title: {
             display: false,

@@ -10,5 +10,8 @@
     <input type="radio" name="time_range" value="month" id="post-range-month" (change)="getData($event)">
     <input type="radio" name="time_range" value="week" id="post-range-week" (change)="getData($event)">
   </form>
-  <canvas [attr.id]="canvas_id" [ngStyle]="{'visibility': visibility}">{{chart}}</canvas>
+  <div class="chart-canvas-box">
+    <canvas [attr.id]="canvas_id" [ngStyle]="{'visibility': visibility}">{{chart}}</canvas>
+  </div>
+
 </div>

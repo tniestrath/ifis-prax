@@ -27,6 +27,8 @@ import { ClicksComponent } from './component/clicks/clicks.component';
 import { TagListComponent } from './component/tag-list/tag-list.component';
 import { TagListItemComponent } from './component/tag-list/tag-list-item/tag-list-item.component';
 import { PostChartComponent } from './component/post-chart/post-chart.component';
+import { GridComponent } from './grid/grid.component';
+import { GridCardDirective } from './grid/grid-card.directive';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,9 @@ import { PostChartComponent } from './component/post-chart/post-chart.component'
     ClicksComponent,
     TagListComponent,
     TagListItemComponent,
-    PostChartComponent
+    PostChartComponent,
+    GridComponent,
+    GridCardDirective
   ],
     imports: [
         BrowserModule,

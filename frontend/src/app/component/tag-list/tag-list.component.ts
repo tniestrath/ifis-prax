@@ -29,14 +29,16 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
   selectorItemsBackup = this.selectorItems;
   selectorItemsLoaded = new Subject<SelectorItem[]>();
   search_input : any;
-  sorting_input_p : any;
+  sorting_input_r : any;
   sorting_input_a : any;
 
   sortByRank = true;
 
   ngOnInit(): void {
+    this.setToolTip("Auflistung aller #Tags, sortierbar nach Relevanz oder Anzahl der globalen Beiträge zu diesem Thema")
+
     this.search_input = document.getElementById("tag-search");
-    this.sorting_input_p = document.getElementById("tag-sort-p");
+    this.sorting_input_r = document.getElementById("tag-sort-r");
     this.sorting_input_a = document.getElementById("tag-sort-a");
 
     this.search_input.addEventListener("input", (event : any) => {
@@ -46,7 +48,7 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
       this.selectorItemsLoaded.next(this.selectorItems);
     })
 
-    this.sorting_input_p.addEventListener("change", () => {
+    this.sorting_input_r.addEventListener("change", () => {
       this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRank((b.data as TagRanking)));
       this.selectorItemsLoaded.next(this.selectorItems);
     });

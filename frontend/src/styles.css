@@ -1,9 +1,9 @@
 @media (min-aspect-ratio: 16/10) {
-  #tag-sort-p::before{
-    content: "Performance";
+  #tag-sort-r::before{
+    content: "Relevanz";
   }
-  #tag-sort-p::after{
-    content: "Performance";
+  #tag-sort-r::after{
+    content: "Relevanz";
   }
   #tag-sort-a::before{
     content: "Anzahl" !important;
@@ -16,11 +16,11 @@
   }
 }
 @media (max-aspect-ratio: 5/4), (max-width: 1500px) {
-  #tag-sort-p::before{
-    content: "P";
+  #tag-sort-r::before{
+    content: "R";
   }
-  #tag-sort-p::after{
-    content: "P";
+  #tag-sort-r::after{
+    content: "R";
   }
   #tag-sort-a::before{
     content: "A" !important;
@@ -38,7 +38,7 @@ html, body {
   padding: 0;
   background-color: #E5E5E5;
   height: 100%;
-  font-family: 'Times New Roman', serif;
+  font-family: 'Helvetica Neue', sans-serif;
   overflow: hidden;
 }
 h1{

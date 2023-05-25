@@ -3,9 +3,15 @@ import {CookieService} from "ngx-cookie-service";
 import {SelectorItem} from "../selector/selector.component";
 import {DbService} from "../../services/db.service";
 import {User, UserComponent} from "./user/user.component";
-import {Subject, Subscription} from "rxjs";
+import {Observable, Subject, Subscription} from "rxjs";
 import {Post} from "../../Post";
 import {ChartElements} from "../../component/chart/chart.component";
+import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
+import {ClicksComponent} from "../../component/clicks/clicks.component";
+import {PostChartComponent} from "../../component/post-chart/post-chart.component";
+import {PerformanceComponent} from "../../component/podium/performance.component";
+import {TagListComponent} from "../../component/tag-list/tag-list.component";
+import {GridCard} from "../../grid/GridCard";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -23,13 +29,25 @@ export class PageEinzelComponent implements OnInit {
   postsPerDayData : number[]  = [];
   postsPerDayTitle : string[] = [];
   postPerDayLoaded = new Subject<ChartElements>();
+  cardsLoaded = new Subject<GridCard[]>();
+  cards : GridCard[];
 
   constructor(private cookieService : CookieService, private db : DbService) {
+    this.cards = [
+      {type: ClicksComponent, row: 1, col: 1, height: 2, width: 2},
+      //@ts-ignore
+      {type: PostChartComponent, row: 1, col: 3, height: 1, width: 2},
+      //@ts-ignore
+      {type: PerformanceComponent, row: 1, col: 5, height: 1, width: 1},
+      //@ts-ignore
+      {type: TagListComponent, row: 1, col: 6, height: 1, width: 1}
+    ];
   }
 
   onSelected(id: string, name: string){
     if (id != "0"){
       this.displayContent = "grid";
+      this.cardsLoaded.next(this.cards);
     } else {
       this.displayContent = "none";
     }

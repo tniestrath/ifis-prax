@@ -1,12 +1,9 @@
 package com.analysetool.modells;
 
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Type;
 import org.hibernate.type.SqlTypes;
 
-import javax.print.attribute.IntegerSyntax;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

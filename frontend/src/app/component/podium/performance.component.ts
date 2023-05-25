@@ -109,7 +109,7 @@ export class PerformanceComponent extends DashBaseComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.tooltip.innerText = "Ihr Beitrag mit der höchsten berechneten Performance (aufg. Aufrufe der ersten 7 Tage)";
+    this.setToolTip("Ihr Beitrag mit der höchsten berechneten Performance (aufg. Aufrufe der ersten 7 Tage)");
 
     this.db.getPerformanceById("10445").then(data => {
       this.createChart(["Score", "Grey"],[(data[0] / data[1])*100 , 100-((data[0] / data[1])*100)],null);

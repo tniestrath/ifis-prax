@@ -33,7 +33,7 @@ public class LogService {
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
     private String BlogViewPattern = ".*GET /blog/(\\S+)";
     private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog)/(\\S*)/)";
-
+    private String UserViewPattern=".*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
     private String ArtikelViewPattern = ".*GET /artikel/(\\S+)";//Artikel view +1 bei match
@@ -42,6 +42,7 @@ public class LogService {
     Pattern pattern2_1 = Pattern.compile(BlogViewPattern);
     Pattern pattern2_2 = Pattern.compile(BlogSSPattern);
     Pattern pattern3=Pattern.compile(RedirectPattern);
+    Pattern pattern4=Pattern.compile(UserViewPattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -125,6 +126,10 @@ public class LogService {
             if(matcher3.find()){
                 processLine(line,5,matcher3);
                 }
+            Matcher matcher4=pattern4.matcher(line);
+            if(matcher4.find()){
+                processLine(line,6,matcher4);
+            }
 
             lineCounter++;
             lastLineCounter++;
@@ -266,6 +271,10 @@ public class LogService {
             }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,0,0,1,(float) 1));
             }
 
+        }
+
+        if(patternNumber==6){
+            System.out.println(matcher.group(1)+" PROCESSING 4");
         }
     }
     @Transactional

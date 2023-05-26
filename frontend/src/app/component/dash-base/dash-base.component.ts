@@ -15,6 +15,7 @@ export class DashBaseComponent {
 
   constructor(protected element : ElementRef, protected db : DbService) {
     this.helpButton = document.createElement("div");
+    this.helpButton.style.color = "#A0A0A0";
     this.helpButton.innerText = "?";
     this.helpButton.style.height = "30px";
     this.helpButton.style.width = "30px";

@@ -15,6 +15,7 @@
 select{
   box-sizing: border-box;
   max-width: 35%;
+  min-width: 25%;
   border-radius: 5px 0 0 5px;
   border: 1px solid #A0A0A0;
 }

@@ -8,7 +8,7 @@ import {Post} from "../../Post";
 import {ChartElements} from "../../component/chart/chart.component";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
 import {PostChartComponent} from "../../component/post-chart/post-chart.component";
-import {PerformanceComponent} from "../../component/podium/performance.component";
+import {PerformanceComponent} from "../../component/performance/performance.component";
 import {TagListComponent} from "../../component/tag-list/tag-list.component";
 import {GridCard} from "../../grid/GridCard";
 
@@ -38,6 +38,7 @@ export class PageEinzelComponent implements OnInit {
       {type: PostChartComponent, row: 1, col: 3, height: 1, width: 3},
       //@ts-ignore
       {type: PerformanceComponent, row: 2, col: 3, height: 1, width: 1},
+      {type: PerformanceComponent, row: 2, col: 4, height: 1, width: 1},
       //@ts-ignore
       {type: TagListComponent, row: 1, col: 6, height: 1, width: 1}
     ];

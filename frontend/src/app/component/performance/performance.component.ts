@@ -45,6 +45,7 @@ export class PerformanceComponent extends DashBaseComponent implements OnInit{
 
         //@ts-ignore
         ctx.fillText(score.toFixed(), x, y + chart.chartArea.height/8);
+
         ctx.font = chart.chartArea.height/8 + "px sans-serif";
         ctx.textBaseline = "top";
         ctx.textAlign = "left";

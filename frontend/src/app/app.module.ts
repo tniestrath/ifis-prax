@@ -7,7 +7,7 @@ import { PolarChartComponent } from './component/polar-chart/polar-chart.compone
 import { HeaderComponent } from './page/header/header.component';
 import { ChartComponent } from './component/chart/chart.component';
 import { CounterComponent } from './component/counter/counter.component';
-import { PerformanceComponent } from './component/podium/performance.component';
+import { PerformanceComponent } from './component/performance/performance.component';
 import { PageKennzahlenComponent } from './page/page-kennzahlen/page-kennzahlen.component';
 import { PageTagComponent } from './page/tag/page-tag/page-tag.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';

@@ -1,0 +1,24 @@
+.performance-box{
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+.performance-img-box{
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  right: 0;
+  top: 2.8vw;
+  height: 1.8vw;
+}
+img{
+  color: #951D40;
+}
+
+.performance-post-name{
+  width: 100%;
+  height: 40%;
+  text-align: center;
+  font-size: 120%;
+}

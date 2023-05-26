@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PerformanceComponent } from './performance.component';
+import { GaugeComponent } from './gauge.component';
 
 describe('PodiumComponent', () => {
-  let component: PerformanceComponent;
-  let fixture: ComponentFixture<PerformanceComponent>;
+  let component: GaugeComponent;
+  let fixture: ComponentFixture<GaugeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PerformanceComponent ]
+      declarations: [ GaugeComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PerformanceComponent);
+    fixture = TestBed.createComponent(GaugeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -6,19 +6,20 @@ import {DbService} from "../../services/db.service";
 
 @Component({
   selector: 'dash-performance',
-  templateUrl: './performance.component.html',
-  styleUrls: ['./performance.component.css', "../../component/dash-base/dash-base.component.css"]
+  templateUrl: './gauge.component.html',
+  styleUrls: ['./gauge.component.css', "../../component/dash-base/dash-base.component.css"]
 })
-export class PerformanceComponent extends DashBaseComponent implements OnInit{
+export class GaugeComponent extends DashBaseComponent implements OnInit{
 
   canvas_id: string = "gauge";
   chart: any;
 
-  colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(229,229,229)"];
-  cutout: string = "80%";
+  colors : string[] = ["rgb(149,29,64)", "rgb(229,229,229)"];
+  cutout: string = "60%";
+
+  type : string = "perf";
+  postID : string = "10445";
   postName: string = "";
-
-
 
   createChart(labels : string[], data : number[], onClick : EventEmitter<number> | null){
     Chart.defaults.color = "#000"
@@ -112,10 +113,10 @@ export class PerformanceComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.setToolTip("Ihr Beitrag mit der höchsten berechneten Performance (aufg. Aufrufe der ersten 7 Tage)");
 
-    this.db.getPerformanceById("10445").then(data => {
+    this.db.getPerformanceById(this.postID).then(data => {
       this.createChart(["Score", "Grey"],[(data[0] / data[1])*100 , 100-((data[0] / data[1])*100)],null);
     });
-    this.db.getPostById("10445").then(post => this.postName = post.title);
+    this.db.getPostById(this.postID).then(post => this.postName = post.title);
   }
 
 }

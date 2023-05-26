@@ -1,0 +1,13 @@
+.performance-box{
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.performance-post-name{
+  padding-top: 5px;
+  width: 100%;
+  height: 20%;
+  text-align: center;
+  font-size: 120%;
+}

@@ -7,7 +7,7 @@ import { PolarChartComponent } from './component/polar-chart/polar-chart.compone
 import { HeaderComponent } from './page/header/header.component';
 import { ChartComponent } from './component/chart/chart.component';
 import { CounterComponent } from './component/counter/counter.component';
-import { PerformanceComponent } from './component/performance/performance.component';
+import { GaugeComponent } from './component/gauge/gauge.component';
 import { PageKennzahlenComponent } from './page/page-kennzahlen/page-kennzahlen.component';
 import { PageTagComponent } from './page/tag/page-tag/page-tag.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,6 +29,7 @@ import { TagListItemComponent } from './component/tag-list/tag-list-item/tag-lis
 import { PostChartComponent } from './component/post-chart/post-chart.component';
 import { GridComponent } from './grid/grid.component';
 import { GridCardDirective } from './grid/grid-card.directive';
+import { RelevanceComponent } from './component/gauge/relevance/relevance.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,7 @@ import { GridCardDirective } from './grid/grid-card.directive';
     HeaderComponent,
     ChartComponent,
     CounterComponent,
-    PerformanceComponent,
+    GaugeComponent,
     PageKennzahlenComponent,
     PageTagComponent,
     TagComponent,
@@ -52,7 +53,8 @@ import { GridCardDirective } from './grid/grid-card.directive';
     TagListItemComponent,
     PostChartComponent,
     GridComponent,
-    GridCardDirective
+    GridCardDirective,
+    RelevanceComponent
   ],
     imports: [
         BrowserModule,

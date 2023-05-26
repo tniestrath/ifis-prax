@@ -8,9 +8,10 @@ import {Post} from "../../Post";
 import {ChartElements} from "../../component/chart/chart.component";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
 import {PostChartComponent} from "../../component/post-chart/post-chart.component";
-import {PerformanceComponent} from "../../component/performance/performance.component";
+import {GaugeComponent} from "../../component/gauge/gauge.component";
 import {TagListComponent} from "../../component/tag-list/tag-list.component";
 import {GridCard} from "../../grid/GridCard";
+import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -37,8 +38,8 @@ export class PageEinzelComponent implements OnInit {
       //@ts-ignore
       {type: PostChartComponent, row: 1, col: 3, height: 1, width: 3},
       //@ts-ignore
-      {type: PerformanceComponent, row: 2, col: 3, height: 1, width: 1},
-      {type: PerformanceComponent, row: 2, col: 4, height: 1, width: 1},
+      {type: GaugeComponent, row: 2, col: 3, height: 1, width: 1},
+      {type: RelevanceComponent, row: 2, col: 4, height: 1, width: 1},
       //@ts-ignore
       {type: TagListComponent, row: 1, col: 6, height: 1, width: 1}
     ];

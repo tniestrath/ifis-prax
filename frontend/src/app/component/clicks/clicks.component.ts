@@ -1,6 +1,7 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent, ChartType} from "chart.js/auto";
+import {EmptyObject} from "chart.js/dist/types/basic";
 
 @Component({
   selector: 'dash-clicks',
@@ -17,15 +18,66 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
   c_chart_total : number = 0;
   p_chart_total : number  = 0;
 
-  createChart(canvas_id : string, labels : string[], data : number[], onClick : EventEmitter<number> | undefined){
+  createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){
     Chart.defaults.color = "#000"
+
+    const donughtInner  = {
+      id: "donughtInner",
+      afterDatasetsDraw(chart: Chart, args: EmptyObject, options: 0, cancelable: false) {
+        const {ctx, data, chartArea: {top, bottom, left, right, width, height}, scales: {r}} = chart;
+        ctx.save();
+        const x = chart.getDatasetMeta(0).data[0].x;
+        const y = chart.getDatasetMeta(0).data[0].y;
+        // @ts-ignore
+        var max = Math.max(...realData);
+        // @ts-ignore
+        var maxColor: Color = chart.legend?.legendItems?.forEach((value) => {if (value.index == realData.indexOf(max)){
+          // @ts-ignore
+          ctx.fillStyle = value.fillStyle}
+        })
+        //@ts-ignore
+        const total : number = data.datasets[0].data.reduce((a, b) => a + b, 0);
+
+        ctx.beginPath();
+        ctx.arc(x, y, chart.chartArea.width / 6, 0, 2 * Math.PI, false);
+        ctx.closePath();
+        ctx.fill();
+
+
+        ctx.globalCompositeOperation = 'source-over';
+
+        var totalText
+        if (total > 1000){
+          totalText = +parseFloat(String(total / 1000)).toFixed( 1 ) + "K";
+        }
+        if (total > 9999){
+          totalText = (total/1000).toFixed() + "K";
+        }
+        if (total > 1000000){
+          totalText = (total/1000000).toFixed(1) + "M";
+        }
+        if (total > 9999999){
+          totalText = (total/10000000).toFixed() + "M";
+        }
+        ctx.font = (chart.chartArea.height / 6.5) + "px sans-serif";
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        // @ts-ignore
+        ctx.fillText(totalText, x, y);
+      }
+    }
+
+
+
+    // @ts-ignore
     return new Chart(canvas_id, {
-      type: "pie",
+      type: "doughnut",
       data: {
         labels: labels,
         datasets: [{
           label: "",
-          data: data,
+          data: realData,
           backgroundColor: this.colors,
           borderRadius: 5,
           borderWidth: 5
@@ -33,6 +85,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
       },
       options: {
         aspectRatio: 1,
+        cutout: "60%",
         plugins: {
           title: {
             display: false,
@@ -50,7 +103,9 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
             display: false
           }
         }
-      }
+      },
+      //@ts-ignore
+      plugins: [donughtInner]
     })
   }
 
@@ -144,8 +199,8 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
       this.c_chart_total = 0;
       this.p_chart_total = 0;
     }
-    this.c_chart = this.createChart("c_clicks", ["Direkt", "Suche", "Register"], [12,34,56], undefined);
-    this.p_chart = this.createChart("p_clicks", ["Direkt", "Suche", "Register", "Artikel"], [1,2,3,4], undefined);
+    this.c_chart = this.createChart("c_clicks", ["Direkt", "Suche", "Register"], [120,340,660], undefined);
+    this.p_chart = this.createChart("p_clicks", ["Direkt", "Suche", "Register", "Artikel"], [1000000,200000,30000,4000], undefined);
     this.createLegend("clicks-content-box", this.c_chart);
     this.createLegend("clicks-profile-box", this.p_chart);
     this.c_chart.data.datasets[0].data.forEach((item : number) => this.c_chart_total += item);

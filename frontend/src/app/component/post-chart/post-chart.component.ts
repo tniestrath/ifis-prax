@@ -33,6 +33,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
     if (this.chart){
       this.chart.destroy();
     }
+    // @ts-ignore
     this.chart = new Chart(this.canvas_id, {
       type: "line",
       data: {
@@ -45,6 +46,15 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       },
       options: {
         aspectRatio: 2.5,
+        scales: {
+          y: {
+            min: 0,
+            max: 40
+          },
+          x: {
+            display: false
+          }
+        },
         plugins: {
           title: {
             display: true,

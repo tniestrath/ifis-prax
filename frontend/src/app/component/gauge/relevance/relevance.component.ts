@@ -16,7 +16,7 @@ export class RelevanceComponent extends DashBaseComponent {
   cutout: string = "80%";
 
   type : string = "rel";
-  postID : string = "10445";
+  postID : string = "10720";
   postName: string = "";
 
   createChart(value : number, max : number){
@@ -25,7 +25,7 @@ export class RelevanceComponent extends DashBaseComponent {
     // @ts-ignore
     var ctx : CanvasRenderingContext2D = (canvas as HTMLCanvasElement).getContext("2d");
     let img = new Image();
-    img.src = "../../assets/flame.png";
+    img.src = "../../assets/flame_thicc.png";
 
     // @ts-ignore
     canvas.height = canvas.width*0.8;
@@ -43,7 +43,7 @@ export class RelevanceComponent extends DashBaseComponent {
     ctx.globalCompositeOperation = 'destination-in';
 
     // @ts-ignore
-    ctx.drawImage(img, canvas.width*0.1,5, canvas.height, canvas.height-5);
+    ctx.drawImage(img, canvas.width*0.1+5,5, canvas.height-10, canvas.height-5);
     ctx.save();
 
     ctx.globalCompositeOperation = 'source-over';

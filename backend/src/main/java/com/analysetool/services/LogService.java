@@ -1,8 +1,7 @@
 package com.analysetool.services;
 
-import com.analysetool.modells.stats;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
-import com.analysetool.modells.TagStat;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,8 @@ public class LogService {
     private WpTermRelationshipsRepository termRelRepo;
     private WPTermRepository termRepo;
     private WpTermTaxonomyRepository termTaxRepo;
+    private WPUserRepository wpUserRepo;
+    private UserStatsRepository userStatsRepo;
     private BufferedReader br;
     private String path = "";
     private String BlogSSPattern = ".*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
@@ -49,13 +50,15 @@ public class LogService {
     private boolean liveScanning = false;
 
     @Autowired
-    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo) {
+    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo,WPUserRepository wpUserRepo,UserStatsRepository userStatsRepo) {
         this.postRepository = postRepository;
         this.statsRepo = StatsRepository;
         this.tagStatRepo=tagStatRepo;
         this.termRelRepo=termRelRepo;
         this.termRepo=termRepo;
         this.termTaxRepo=termTaxRepo;
+        this.wpUserRepo=wpUserRepo;
+        this.userStatsRepo=userStatsRepo;
     }
 
     public void run(boolean liveScanning, String path)  {
@@ -274,8 +277,40 @@ public class LogService {
         }
 
         if(patternNumber==6){
-            System.out.println(matcher.group(1)+" PROCESSING 4");
+            System.out.println(matcher.group(1).replace("+","-")+" PROCESSING 4");
+            if(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).isPresent()){
+                updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
+            };
         }
+    }
+
+    @Transactional
+    public void updateUserStats(WPUser user){
+        if(userStatsRepo.existsByUserId(user.getId())){
+            UserStats Stats = userStatsRepo.findByUserId(user.getId());
+            long views = Stats.getProfileView() + 1 ;
+            Stats.setProfileView(views);
+            List<Post> list = postRepository.findByAuthor(user.getId().intValue());
+            int count = 0;
+            float relevance=0;
+            float performance=0;
+            for(Post p:list){
+                if(statsRepo.existsByArtId(p.getId())){
+                    stats PostStats = statsRepo.getStatByArtID(p.getId());
+                    count ++;
+                    relevance=relevance+PostStats.getRelevance();
+                    performance=performance+PostStats.getPerformance();
+                }
+            }
+            if(count !=0){
+            relevance=relevance/count;
+            performance=performance/count;
+            Stats.setAveragePerformance(performance);
+            Stats.setAverageRelevance(relevance);}
+            userStatsRepo.save(Stats);
+
+
+        }else{userStatsRepo.save(new UserStats(user.getId(), (float) 1,(float) 1, 1));}
     }
     @Transactional
     public void updateDailyClicks(long id){
@@ -333,6 +368,8 @@ public class LogService {
             else{ tagStatRepo.save(new TagStat(l.intValue(),0,0,(float)0,(float)0));
                 updateTagStats(l.intValue(),searchSuccess);}
     }}
+
+
 }
 
 

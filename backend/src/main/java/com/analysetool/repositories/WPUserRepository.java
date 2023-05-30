@@ -13,7 +13,7 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
     Optional<WPUser> findByLogin(String login);
     Optional<WPUser> findByEmail(String email);
 
-
+    Optional<WPUser> findByNicename(String nicename);
 
     // benutzerdefinierte Methoden, falls benötigt
 

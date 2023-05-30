@@ -16,7 +16,7 @@ export class RelevanceComponent extends DashBaseComponent {
   cutout: string = "80%";
 
   type : string = "rel";
-  postID : string = "10720";
+  postID : string = "10445";
   postName: string = "";
 
   createChart(value : number, max : number){
@@ -58,7 +58,7 @@ export class RelevanceComponent extends DashBaseComponent {
   }
 
   ngOnInit(): void {
-    this.setToolTip("Ihr Beitrag mit der höchsten berechneten Performance (aufg. Aufrufe der ersten 7 Tage)");
+    this.setToolTip("Ihr Beitrag mit der höchsten berechneten Relevanz (aufg. Aufrufe der letzten 7 Tage)");
 
     this.db.getPerformanceById(this.postID).then(data => {
       this.createChart(data[0], data[1]);

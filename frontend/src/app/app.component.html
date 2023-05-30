@@ -3,7 +3,7 @@
 </dash-header>
 <div [ngSwitch]="selected">
   <div *ngSwitchCase="'Kennzahlen'">
-    <dash-page-kennzahlen></dash-page-kennzahlen>
+    <dash-page-login (login_success)="select('Einzelstatistiken')"></dash-page-login>
   </div>
   <div *ngSwitchCase="'Themen'">
   <dash-page-tag></dash-page-tag>

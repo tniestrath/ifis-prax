@@ -199,7 +199,8 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
       this.c_chart_total = 0;
       this.p_chart_total = 0;
     }
-    this.c_chart = this.createChart("c_clicks", ["Direkt", "Suche", "Register"], [120,340,660], undefined);
+
+    this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "Pressemitteilung"], [120,340,660], undefined);
     this.p_chart = this.createChart("p_clicks", ["Direkt", "Suche", "Register", "Artikel"], [1000000,200000,30000,4000], undefined);
     this.createLegend("clicks-content-box", this.c_chart);
     this.createLegend("clicks-profile-box", this.p_chart);

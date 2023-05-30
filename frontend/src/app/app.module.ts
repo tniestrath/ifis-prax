@@ -13,7 +13,7 @@ import { PageTagComponent } from './page/tag/page-tag/page-tag.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatInputModule} from "@angular/material/input";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { TagComponent } from './page/tag/tag/tag.component';
 import { SearchbarComponent } from './page/searchbar/searchbar.component';
 import { PageEinzelComponent } from './page/page-einzel/page-einzel.component';
@@ -30,6 +30,8 @@ import { PostChartComponent } from './component/post-chart/post-chart.component'
 import { GridComponent } from './grid/grid.component';
 import { GridCardDirective } from './grid/grid-card.directive';
 import { RelevanceComponent } from './component/gauge/relevance/relevance.component';
+import { PageLoginComponent } from './page-login/page-login.component';
+import { PostComponent } from './component/post/post.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,9 @@ import { RelevanceComponent } from './component/gauge/relevance/relevance.compon
     PostChartComponent,
     GridComponent,
     GridCardDirective,
-    RelevanceComponent
+    RelevanceComponent,
+    PageLoginComponent,
+    PostComponent
   ],
     imports: [
         BrowserModule,
@@ -63,7 +67,8 @@ import { RelevanceComponent } from './component/gauge/relevance/relevance.compon
         MatAutocompleteModule,
         MatInputModule,
         ReactiveFormsModule,
-        NgOptimizedImage
+        NgOptimizedImage,
+        FormsModule
     ],
   providers: [CookieService],
   bootstrap: [AppComponent]

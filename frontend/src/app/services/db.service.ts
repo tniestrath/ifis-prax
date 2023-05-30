@@ -14,6 +14,8 @@ export enum dbUrl {
   GET_ALL_USERS = "http://localhost:8080/users/getAllNew",
   GET_USER_POST_PER_DAY = "http://localhost:8080/getPostsByAuthorLine?id=",
   GET_USER_IMG = "http://localhost:8080/users/profilePic?id=",
+  GET_USER_BY_LOGIN = "http://localhost:8080/users?login=",
+  GET_USER_BY_EMAIL = "http://localhost:8080/users?email=",
   GET_POST = "http://localhost:8080/",
   GET_POST_PERFORMANCE = "http://localhost:8080/stats/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "http://localhost:8080/stats/maxPerformance"
@@ -89,6 +91,13 @@ export class DbService {
         reject(new Error('Failed to read blob data'));
       };
     }).then(dataUrl => this.sanitizer.bypassSecurityTrustUrl(dataUrl));
+  }
+
+  async getUserByLogin(login : string){
+    return fetch(dbUrl.GET_USER_BY_LOGIN + login).then(res => res.json());
+  }
+  async getUserByEmail(email : string){
+    return fetch(dbUrl.GET_USER_BY_EMAIL + email).then(res => res.json());
   }
 
   async getPerformanceById(id : string){

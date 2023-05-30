@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, Type, ViewChild} from '@angular/core';
+import {Component, ComponentRef, EventEmitter, Input, OnInit, Output, Type, ViewChild} from '@angular/core';
 import {Observable, Subscription} from "rxjs";
 import {GridCardDirective} from "./grid-card.directive";
 import {DashBaseComponent} from "../component/dash-base/dash-base.component";
@@ -17,7 +17,9 @@ export class GridComponent implements OnInit{
 
   @Output() itemClick = new EventEmitter<DashBaseComponent>();
 
-  @ViewChild(GridCardDirective, {static: true}) dashGridCard!: GridCardDirective;
+  @ViewChild(GridCardDirective, {static: true}) dashGridCard!: GridCardDirective
+
+  private index = 0;
 
   private sub = new Subscription();
   ngOnInit(): void {
@@ -34,21 +36,28 @@ export class GridComponent implements OnInit{
     viewContainerRef.clear();
     for (let item of g) {
       // @ts-ignore
-      const componentRef = viewContainerRef.createComponent<typeof item.type>(item.type);
+      const componentRef = viewContainerRef.createComponent<typeof item.type>(item.type, {index: this.index});
       componentRef.setInput("clicked", this.itemClick);
+      componentRef.setInput("grid_reference", this);
+      // @ts-ignore
+      componentRef.setInput("grid_index", this.index);
       componentRef.location.nativeElement.style.gridArea = item.row +"/" + item.col + "/" + (item.row + item.height) + "/" + (item.col + item.width);
+      this.index++;
     }
   }
 
   public addCard(g : GridCard){
     // @ts-ignore
-    const componentRef = this.dashGridCard.viewContainerRef.createComponent<typeof g.type>(g.type);
+    const componentRef = this.dashGridCard.viewContainerRef.createComponent<typeof g.type>(g.type, {index: this.index});
     componentRef.setInput("clicked", this.itemClick);
-    componentRef.location.nativeElement.style.gridArea = g.row +"/" + g.col + "/" + (g.row + g.height) + "/" + (g.col + g.width);
-
+    componentRef.setInput("grid_reference", this);
+    componentRef.setInput("grid_index", this.index);
+    componentRef.location.nativeElement.style.gridArea = g.row + "/" + g.col + "/" + (g.row + g.height) + "/" + (g.col + g.width);
+    this.index++;
   }
 
   public removeCard(index : number){
+    // @ts-ignore
     this.dashGridCard.viewContainerRef.remove(index);
   }
 }

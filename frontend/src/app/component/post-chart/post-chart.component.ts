@@ -2,6 +2,7 @@ import {AfterViewInit, Component, EventEmitter, OnInit} from '@angular/core';
 import {ActiveElement, Chart, ChartEvent, ChartType} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {DbService} from "../../services/db.service";
+import {PostComponent} from "../post/post.component";
 
 @Component({
   selector: 'dash-post-chart',
@@ -28,7 +29,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
   ]);
 
 
-  createChart(labels : string[], data : number[], onClick : EventEmitter<number> | null){
+  createChart(labels: string[], data: number[], onClick: (index : number) => void){
     Chart.defaults.color = "#000"
     if (this.chart){
       this.chart.destroy();
@@ -41,7 +42,10 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         datasets: [{
           label: "",
           data: data,
-          backgroundColor: this.colors
+          backgroundColor: "rgb(148,28,62)",
+          borderColor: "rgb(148,28,62)",
+          borderJoinStyle: 'round',
+          tension: 0.5
         }]
       },
       options: {
@@ -75,7 +79,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
           mode: "nearest"
         },
         onClick(event: ChartEvent, elements: ActiveElement[], chart: Chart) {
-          onClick?.emit(elements[0].index);
+          onClick(elements[0].index);
         }
       }
     })
@@ -93,7 +97,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
 
 
-      let time_filtered : {date : string, count : string, title : string[]}[] = res.filter((post: {date : string, count : string, title : string[]}) => {
+      let time_filtered : {date : string, count : string, title : string[]}[] = res.filter((post: {date : string, clicks : string, title : string[]}) => {
         var postDate = new Date(Date.parse(post.date));
         console.log(post.date)
         var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
@@ -108,7 +112,11 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         postLabel.push(post.date);
         postData.push(Number(post.count));
       }
-      this.createChart(postLabel, postData, null);
+      this.createChart(postLabel, postData, (index) => {this.grid_reference?.addCard({
+        col: 0,
+        row: 0,
+        type: PostComponent,
+        height: 1, width: 2})});
     })
     .finally(() => this.visibility = "visible");
   }

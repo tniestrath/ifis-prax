@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
 import {DbService} from "../../services/db.service";
+import {GridComponent} from "../../grid/grid.component";
 
 @Component({
   selector: 'dash-dash-base',
@@ -8,7 +9,9 @@ import {DbService} from "../../services/db.service";
 })
 export class DashBaseComponent {
 
-  protected onClick(){}
+  @Input() protected clicked : {} | undefined;
+  @Input() protected grid_reference : GridComponent | undefined;
+  @Input() protected grid_index : number | undefined;
 
   protected tooltip : HTMLSpanElement;
   protected helpButton : HTMLElement;
@@ -53,7 +56,6 @@ export class DashBaseComponent {
       "  min-width: 250px;\n" +
       "  z-index: 1;");
     tooltipContainer.appendChild(this.tooltip);
-
     this.helpButton.addEventListener("mouseenter", () => {this.tooltip.style.visibility = "visible"});
     this.helpButton.addEventListener("mouseleave", () => {this.tooltip.style.visibility = "hidden"});
   }

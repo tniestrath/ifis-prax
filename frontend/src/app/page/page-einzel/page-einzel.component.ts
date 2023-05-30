@@ -12,6 +12,7 @@ import {GaugeComponent} from "../../component/gauge/gauge.component";
 import {TagListComponent} from "../../component/tag-list/tag-list.component";
 import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
+import {PostComponent} from "../../component/post/post.component";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -41,7 +42,8 @@ export class PageEinzelComponent implements OnInit {
       {type: GaugeComponent, row: 2, col: 3, height: 1, width: 1},
       {type: RelevanceComponent, row: 2, col: 4, height: 1, width: 1},
       //@ts-ignore
-      {type: TagListComponent, row: 1, col: 6, height: 1, width: 1}
+      {type: TagListComponent, row: 1, col: 6, height: 1, width: 1},
+      {type: PostComponent, row: 2, col: 5, height: 1, width: 2}
     ];
   }
 
@@ -57,7 +59,7 @@ export class PageEinzelComponent implements OnInit {
       this.postsPerDayData = [];
       for (let post of res) {
         this.postPerDayLabel.push((post as Post).date);
-        this.postsPerDayData.push(Number((post as Post).count));
+        this.postsPerDayData.push(Number((post as Post).clicks));
         this.postsPerDayTitle.push((post as Post).title);
       }
     }).finally(() =>

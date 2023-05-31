@@ -60,74 +60,74 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-    @PostMapping("/create")
-    public ResponseEntity<Post> createPost(@RequestBody Post post) {
-        try {
-            Post newPost = postRepository.save(post);
-            return new ResponseEntity<>(newPost, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Post> updatePost(@PathVariable("id") Long id, @RequestBody Post post) {
-        Optional<Post> postData = postRepository.findById(id);
-
-        if (postData.isPresent()) {
-            Post updatedPost = postData.get();
-            updatedPost.setTitle(post.getTitle());
-            updatedPost.setContent(post.getContent());
-            return new ResponseEntity<>(postRepository.save(updatedPost), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deletePost(@PathVariable("id") Long id) {
-        try {
-            postRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping("/")
-    public ResponseEntity<HttpStatus> deleteAllPosts() {
-        try {
-            postRepository.deleteAll();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-/*
-    @GetMapping("/getPostsByAuthorLine")
-    public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
-
-        JSONArray list = new JSONArray();
-        List<Post> posts = postRepository.findByAuthor(id);
-        DateFormat onlyDate = new SimpleDateFormat("dd/MM/yyyy");
-        if(!posts.isEmpty()){
-            for(Post i:posts) {
-
-                JSONObject obj = new JSONObject();
-                Date Tag = onlyDate.parse(i.getDate().toString());
-
-                if ( (!list.isNull(list.length()-1))   &&  (list.getJSONObject(list.length()-1).get("date") == Tag ))
-                    { list.getJSONObject(list.length()-1).put("id",list.getJSONObject(list.length()-1).get("id")+","+i.getTitle()) ;}
-
-                else{
-                obj.put("id", i.getTitle());
-                    obj.put("date", Tag);
-                    list.put(obj);}
+    /*
+        @PostMapping("/create")
+        public ResponseEntity<Post> createPost(@RequestBody Post post) {
+            try {
+                Post newPost = postRepository.save(post);
+                return new ResponseEntity<>(newPost, HttpStatus.CREATED);
+            } catch (Exception e) {
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        return list.toString();
-    }*/
+
+        @PutMapping("/{id}")
+        public ResponseEntity<Post> updatePost(@PathVariable("id") Long id, @RequestBody Post post) {
+            Optional<Post> postData = postRepository.findById(id);
+
+            if (postData.isPresent()) {
+                Post updatedPost = postData.get();
+                updatedPost.setTitle(post.getTitle());
+                updatedPost.setContent(post.getContent());
+                return new ResponseEntity<>(postRepository.save(updatedPost), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
+
+        @DeleteMapping("/{id}")
+        public ResponseEntity<HttpStatus> deletePost(@PathVariable("id") Long id) {
+            try {
+                postRepository.deleteById(id);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        @DeleteMapping("/")
+        public ResponseEntity<HttpStatus> deleteAllPosts() {
+            try {
+                postRepository.deleteAll();
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        @GetMapping("/getPostsByAuthorLine")
+        public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
+
+            JSONArray list = new JSONArray();
+            List<Post> posts = postRepository.findByAuthor(id);
+            DateFormat onlyDate = new SimpleDateFormat("dd/MM/yyyy");
+            if(!posts.isEmpty()){
+                for(Post i:posts) {
+
+                    JSONObject obj = new JSONObject();
+                    Date Tag = onlyDate.parse(i.getDate().toString());
+
+                    if ( (!list.isNull(list.length()-1))   &&  (list.getJSONObject(list.length()-1).get("date") == Tag ))
+                        { list.getJSONObject(list.length()-1).put("id",list.getJSONObject(list.length()-1).get("id")+","+i.getTitle()) ;}
+
+                    else{
+                    obj.put("id", i.getTitle());
+                        obj.put("date", Tag);
+                        list.put(obj);}
+                }
+            }
+            return list.toString();
+        }*/
 @GetMapping("/getPostsByAuthorLine")
 public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
 
@@ -226,6 +226,7 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
         }
         return list.toString();
     }
+
 
 
 

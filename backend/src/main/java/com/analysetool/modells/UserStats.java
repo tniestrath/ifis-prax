@@ -23,12 +23,23 @@ public class UserStats {
     @Column(name = "profile_view")
     private long profileView;
 
+    public float getPostFrequence() {
+        return postFrequence;
+    }
+
+    public void setPostFrequence(float postFrequence) {
+        this.postFrequence = postFrequence;
+    }
+
+    @Column(name = "post_freq")
+    private float postFrequence;
     public UserStats( long userId, float averagePerformance, float averageRelevance, long profileView) {
 
         this.userId = userId;
         this.averagePerformance = averagePerformance;
         this.averageRelevance = averageRelevance;
         this.profileView = profileView;
+        this.postFrequence=0;
     }
 
     public UserStats(){}

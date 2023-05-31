@@ -29,13 +29,11 @@ export class AppComponent {
   selectCompany(companyName : string){
     this.company = companyName;
     this.selectedSearch = companyName;
-    console.log(companyName)
   }
 
   selectTag(tag: string) {
     this.tag = tag;
     this.selectedSearch = tag;
-    console.log(tag);
 
   }
 }

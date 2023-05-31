@@ -4,6 +4,7 @@ import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {DbService} from "../../services/db.service";
 import {PostComponent} from "../post/post.component";
 import {Post} from "../../Post";
+import {UserService} from "../../services/user.service";
 
 
 @Component({
@@ -95,7 +96,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       if ((event?.target as HTMLInputElement).type == "select-one") this.postType = (event?.target as HTMLInputElement).value;
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
-    if (this.data == undefined){this.data = this.db.getUserPostsWithStats("1").then();}
+    if (this.data == undefined){this.data = this.db.getUserPostsWithStats(UserService.USER_ID).then();}
     this.data.then((res : Post[]) => {
       var postLabel : string[] = [];
       var postData : number[] = [];

@@ -13,6 +13,7 @@ import {TagListComponent} from "../../component/tag-list/tag-list.component";
 import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
 import {PostComponent} from "../../component/post/post.component";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -33,7 +34,7 @@ export class PageEinzelComponent implements OnInit {
   cardsLoaded = new Subject<GridCard[]>();
   cards : GridCard[];
 
-  constructor(private cookieService : CookieService, private db : DbService) {
+  constructor(private cookieService : CookieService, private db : DbService, private us : UserService) {
     this.cards = [
       {type: ClicksComponent, row: 1, col: 1, height: 2, width: 2},
       //@ts-ignore
@@ -54,16 +55,7 @@ export class PageEinzelComponent implements OnInit {
     } else {
       this.displayContent = "none";
     }
-    this.db.getUserPostsDay(id).then(res => {
-      this.postPerDayLabel = [];
-      this.postsPerDayData = [];
-      for (let post of res) {
-        this.postPerDayLabel.push((post as Post).date);
-        this.postsPerDayData.push(Number((post as Post).clicks));
-        this.postsPerDayTitle.push((post as Post).title);
-      }
-    }).finally(() =>
-      this.postPerDayLoaded.next(new ChartElements(this.postPerDayLabel, this.postsPerDayData, this.postsPerDayTitle)));
+    UserService.USER_ID = id;
   }
 
   onSearchInput(value : string){

@@ -34,6 +34,7 @@ export class GridComponent implements OnInit{
   public loadCards(g : GridCard[]) {
     const viewContainerRef = this.dashGridCard.viewContainerRef;
     viewContainerRef.clear();
+    this.index = 0;
     for (let item of g) {
       // @ts-ignore
       const componentRef = viewContainerRef.createComponent<typeof item.type>(item.type, {index: this.index});

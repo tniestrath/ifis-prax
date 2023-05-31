@@ -1,16 +1,17 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent, ChartType} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
+import _default from "chart.js/dist/plugins/plugin.decimation";
+import destroy = _default.destroy;
 
 @Component({
   selector: 'dash-clicks',
   templateUrl: './clicks.component.html',
   styleUrls: ['./clicks.component.css', "../../component/dash-base/dash-base.component.css"]
 })
-export class ClicksComponent extends DashBaseComponent implements OnInit{
+export class ClicksComponent extends DashBaseComponent implements OnInit, OnDestroy{
 
-  canvas_id: string = "clicks";
   colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148,28,62)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
   c_chart: any;
   p_chart: any;
@@ -193,19 +194,33 @@ export class ClicksComponent extends DashBaseComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    if (this.c_chart || this.p_chart) {
+    if (this.c_chart != undefined) {
       this.c_chart.destroy();
-      this.p_chart.destroy();
-      this.c_chart_total = 0;
-      this.p_chart_total = 0;
     }
+    if (this.p_chart != undefined){
+      this.p_chart.destroy();
+    }
+    this.c_chart_total = 0;
+    this.p_chart_total = 0;
 
     this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "Pressemitteilung"], [120,340,660], undefined);
-    this.p_chart = this.createChart("p_clicks", ["Direkt", "Suche", "Register", "Artikel"], [1000000,200000,30000,4000], undefined);
+    this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [100,30000], undefined);
     this.createLegend("clicks-content-box", this.c_chart);
     this.createLegend("clicks-profile-box", this.p_chart);
     this.c_chart.data.datasets[0].data.forEach((item : number) => this.c_chart_total += item);
     this.p_chart.data.datasets[0].data.forEach((item : number) => this.p_chart_total += item);
+  }
+
+  ngOnDestroy(): void {
+    if (this.c_chart != undefined) {
+      this.c_chart.destroy();
+    }
+    if (this.p_chart != undefined){
+      this.p_chart.destroy();
+    }
+    this.c_chart_total = 0;
+    this.p_chart_total = 0;
+
   }
 
 

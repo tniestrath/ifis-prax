@@ -7,12 +7,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import com.analysetool.modells.stats;
-import com.analysetool.repositories.statsRepository;
+import com.analysetool.modells.*;
+import com.analysetool.repositories.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,9 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.analysetool.modells.Post;
-import com.analysetool.repositories.PostRepository;
 
 @RestController
 @CrossOrigin
@@ -32,12 +27,18 @@ public class PostController {
 
     PostRepository postRepository;
     statsRepository statsRepo;
+    WpTermRelationshipsRepository termRelationRepo;
+    WPTermRepository wpTermRepo;
+    WpTermTaxonomyRepository wpTermTaxonomyRepo;
     @Autowired
     public PostController(
-            PostRepository postRepository, statsRepository statsRepo
+            PostRepository postRepository, statsRepository statsRepo, WpTermRelationshipsRepository termRelationRepo, WPTermRepository wpTermRepo, WpTermTaxonomyRepository wpTermTaxonomyRepo
     ){
        this.postRepository = postRepository;
        this.statsRepo=statsRepo;
+       this.termRelationRepo = termRelationRepo;
+       this.wpTermRepo = wpTermRepo;
+       this.wpTermTaxonomyRepo = wpTermTaxonomyRepo;
     }
 
     @GetMapping("/posts/getall")
@@ -164,32 +165,63 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
         List<Post> posts = postRepository.findByAuthor(id);
         DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
 
+        String type = "";
+
         if (!posts.isEmpty()) {
             for (Post i : posts) {
                 stats Stats = null;
                 if(statsRepo.existsByArtId(i.getId())){
                      Stats = statsRepo.getStatByArtID(i.getId());
                 }
+                List<Long> tagIDs = null;
+                if(termRelationRepo.existsByObjectId(i.getId())){
+                    tagIDs = termRelationRepo.getTaxIdByObject(i.getId());
+                }
+                List<WPTerm> terms = new ArrayList<>();
+                if (tagIDs != null) {
+                    for (long l : tagIDs) {
+                        if (wpTermRepo.existsById(l)) {
+                            if (wpTermRepo.findById(l).isPresent()) {
+                                terms.add(wpTermRepo.findById(l).get());
+                            }
+                        }
+                    }
+                }
+                for (WPTerm t: terms) {
+                    if (wpTermTaxonomyRepo.existsById(t.getId())){
+                        if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
+                            WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
+                            if (Objects.equals(tt.getTaxonomy(), "category") && tt.getTermId() != 1){
+                                if (wpTermRepo.findById(tt.getTermId()).isPresent()) {
+                                    type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
+                                }
+                            } else {type = "default";}
+                        }
+                    }
+                }
+
                 JSONObject obj = new JSONObject();
                 Date date = onlyDate.parse(i.getDate().toString());
                 String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
                 obj.put("title", i.getTitle());
                 obj.put("date", formattedDate);
+                obj.put("type", type);
                 if(Stats != null){
                 obj.put("performance",Stats.getPerformance());
                 obj.put("relevance",Stats.getRelevance());
-                }else {obj.put("perfornance",1);}
+                }else {obj.put("performance",1);}
 
 
-                if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
+               /* if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
                     String currentId = list.getJSONObject(list.length() - 1).getString("title");
                    // double currentCount = list.getJSONObject(list.length() - 1).getDouble("performance");
                     list.getJSONObject(list.length() - 1).put("title", currentId + "," + i.getTitle());
                     //list.getJSONObject(list.length() - 1).put("performance", currentCount + 1);
                 } else {
                     list.put(obj);
-                }
+                }*/
+                list.put(obj);
             }
         }
         return list.toString();

@@ -3,6 +3,8 @@ import {ActiveElement, Chart, ChartEvent, ChartType} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {DbService} from "../../services/db.service";
 import {PostComponent} from "../post/post.component";
+import {Post} from "../../Post";
+
 
 @Component({
   selector: 'dash-post-chart',
@@ -19,7 +21,9 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
   colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148,28,62)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
 
   timeSpan : string = "all_time";
-  postType : string = "article";
+  postType : string = "artikel";
+
+  data :any;
 
   timeSpanMap = new Map<string, number>([
     ["all_time", 365*2],
@@ -53,7 +57,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         scales: {
           y: {
             min: 0,
-            max: 40
+            max: 1
           },
           x: {
             display: false
@@ -91,27 +95,28 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       if ((event?.target as HTMLInputElement).type == "select-one") this.postType = (event?.target as HTMLInputElement).value;
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
-    this.db.getUserPostsDay("1").then(res =>{
+    if (this.data == undefined){this.data = this.db.getUserPostsWithStats("1").then();}
+    this.data.then((res : Post[]) => {
       var postLabel : string[] = [];
       var postData : number[] = [];
 
 
-
-      let time_filtered : {date : string, count : string, title : string[]}[] = res.filter((post: {date : string, clicks : string, title : string[]}) => {
+      let time_filtered : Post[] = res.filter((post : Post) => {
         var postDate = new Date(Date.parse(post.date));
-        console.log(post.date)
         var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
         return postDate >= calcDate;
-      });
+      }).filter((post : Post) => {
+        return post.type == this.postType;
+      })
       time_filtered.sort((a, b) => {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       })
 
-
       for (var post of time_filtered) {
-        postLabel.push(post.date);
-        postData.push(Number(post.count));
+        postLabel.push(post.title);
+        postData.push(Number(post.performance));
       }
+
       this.createChart(postLabel, postData, (index) => {this.grid_reference?.addCard({
         col: 0,
         row: 0,

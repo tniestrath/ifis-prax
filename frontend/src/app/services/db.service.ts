@@ -13,6 +13,7 @@ export enum dbUrl {
   GET_TAG_RANKING = "http://localhost:8080/terms/getTermRanking",
   GET_ALL_USERS = "http://localhost:8080/users/getAllNew",
   GET_USER_POST_PER_DAY = "http://localhost:8080/getPostsByAuthorLine?id=",
+  GET_USER_POSTS_WITH_STATS = "http://localhost:8080/getPostsByAuthorLine2?id=",
   GET_USER_IMG = "http://localhost:8080/users/profilePic?id=",
   GET_USER_BY_LOGIN = "http://localhost:8080/users?login=",
   GET_USER_BY_EMAIL = "http://localhost:8080/users?email=",
@@ -70,6 +71,9 @@ export class DbService {
 
   async getUserPostsDay(id : string){
     return await fetch(dbUrl.GET_USER_POST_PER_DAY + id).then(res => res.json());
+  }
+  async getUserPostsWithStats(id : string){
+    return await fetch(dbUrl.GET_USER_POSTS_WITH_STATS + id).then(res => res.json());
   }
 
   async getUserImgSrc(id : string){

@@ -139,6 +139,8 @@ public class LogService {
 
         }
         //updateuseraktivität
+        System.out.println("UPDATING USER ACTIVITY");
+        updateUserActivity();
         System.out.println("END OF LOG");
     }
 
@@ -371,14 +373,23 @@ public class LogService {
     public void updateUserActivity(){
         List<WPUser> users = wpUserRepo.findAll();
         List<Post> posts= new ArrayList<>();
+        UserStats stats = null ;
         float postfreq = 0 ;
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime postTime= now.minusMonths(1);
+        int counter =0;
         for(WPUser user: users){
             posts=postRepository.findByAuthor(user.getId().intValue());
             for (Post post:posts){
-                //postTime= post.
+                if(postTime.isBefore(post.getDate())&& post.getStatus().equals("publish")){counter ++;}
             }
+            if(counter!=0){
+            postfreq=(float)30/counter;}
+            if (userStatsRepo.existsByUserId(user.getId())){
+                stats = userStatsRepo.findByUserId(user.getId());
+            }else{stats = new UserStats(user.getId(), 1,1,1);}
+            stats.setPostFrequence(postfreq);
+            userStatsRepo.save(stats);
         }
     }
 

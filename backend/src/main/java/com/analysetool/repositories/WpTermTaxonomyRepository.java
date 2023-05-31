@@ -18,5 +18,6 @@ public interface WpTermTaxonomyRepository extends JpaRepository<WpTermTaxonomy, 
     @Query("select p.termId from WpTermTaxonomy p where p.termTaxonomyId IN :ids")
     List<Long> getTermIdByTaxId(List<Long> ids);
 
+    List<WpTermTaxonomy> findByTermTaxonomyId(Long termTaxonomyId);
 
 }

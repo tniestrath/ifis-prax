@@ -9,10 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.time.Duration;
@@ -27,6 +24,7 @@ public class LogService {
     private WpTermTaxonomyRepository termTaxRepo;
     private WPUserRepository wpUserRepo;
     private UserStatsRepository userStatsRepo;
+
     private BufferedReader br;
     private String path = "";
     private String BlogSSPattern = ".*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
@@ -140,6 +138,7 @@ public class LogService {
             //br.readLine();
 
         }
+        //updateuseraktivität
         System.out.println("END OF LOG");
     }
 
@@ -369,6 +368,19 @@ public class LogService {
                 updateTagStats(l.intValue(),searchSuccess);}
     }}
 
+    public void updateUserActivity(){
+        List<WPUser> users = wpUserRepo.findAll();
+        List<Post> posts= new ArrayList<>();
+        float postfreq = 0 ;
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime postTime= now.minusMonths(1);
+        for(WPUser user: users){
+            posts=postRepository.findByAuthor(user.getId().intValue());
+            for (Post post:posts){
+                //postTime= post.
+            }
+        }
+    }
 
 }
 

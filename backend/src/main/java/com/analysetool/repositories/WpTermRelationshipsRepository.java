@@ -14,4 +14,6 @@ public interface WpTermRelationshipsRepository extends JpaRepository<wp_term_rel
 
 
     boolean existsByObjectId(Long id);
+
+    wp_term_relationships findByTermTaxonomyId(Long termTaxonomyId);
 }

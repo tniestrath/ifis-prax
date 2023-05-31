@@ -13,5 +13,7 @@ public interface WPTermRepository extends JpaRepository<WPTerm, Long> {
 
     @Query("SELECT count(tr) from wp_term_relationships tr Where tr.termTaxonomyId = :id")
     long getPostCount(String id);
+
+    WPTerm findBySlug(String slug);
 }
 

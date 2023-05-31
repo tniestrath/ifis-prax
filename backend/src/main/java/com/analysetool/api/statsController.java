@@ -1,10 +1,16 @@
 package com.analysetool.api;
 
+import com.analysetool.modells.Post;
+import com.analysetool.modells.WPTerm;
+import com.analysetool.modells.WpTermTaxonomy;
 import com.analysetool.modells.stats;
-import com.analysetool.repositories.statsRepository;
+import com.analysetool.repositories.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +20,18 @@ import java.util.Optional;
 public class statsController {
     @Autowired
     private statsRepository statRepository;
+    @Autowired
+    private PostRepository postRepo;
+    @Autowired
+    private UserStatsRepository userStatsRepo;
+    @Autowired
+    private TagStatRepository tagStatRepo;
+    @Autowired
+    private WPTermRepository termRepo;
+    @Autowired
+    private WpTermRelationshipsRepository termRelRepo;
+    @Autowired
+    private WpTermTaxonomyRepository taxTermRepo;
 
     @PostMapping
     public stats createStat(@RequestBody stats stat) {
@@ -35,9 +53,46 @@ public class statsController {
         return statRepository.getMaxPerformance();
     }
 
-    @GetMapping("getPerformanceByArtId")
+    @GetMapping("/getPerformanceByArtId")
     public float getPerformanceByArtId(@RequestParam int id){
         return statRepository.getPerformanceByArtID(id);
+    }
+
+    @GetMapping("/getViewsBrokenDown")
+    public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
+        long viewsBlog = 0;
+        long viewsArtikel=0;
+        long viewsProfile=userStatsRepo.findByUserId(id).getProfileView();
+        int tagIdBlog= termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel= termRepo.findBySlug("artikel").getId().intValue();
+       // int tagIdPresse= termRepo.findBySlug("blog");
+        //long viewsPresse=0;
+        List <Post>posts= postRepo.findByAuthor(id.intValue());
+
+        List<Long> postTags = new ArrayList<>();
+        for(Post post : posts) {
+            if(statRepository.existsByArtId(post.getId())) {
+                stats Stat = statRepository.getStatByArtID(post.getId());
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
+                        if (termTax.getTermId() == tagIdBlog) {
+                        viewsBlog=viewsBlog+Stat.getClicks();
+                        }
+                        if (termTax.getTermId() == tagIdArtikel) {
+                            viewsArtikel=viewsArtikel+Stat.getClicks();
+                        }
+                    }
+
+
+                }
+            }
+        }
+        JSONObject obj= new JSONObject();
+        obj.put("viewsBlog",viewsBlog);
+        obj.put("viewsArtikel",0);
+        obj.put("viewsProfile",viewsProfile);
+        return obj.toString();
+
     }
 
  /*
@@ -56,4 +111,6 @@ public class statsController {
     public void deleteStat(@PathVariable Long id) {
         statRepository.deleteById(id);
     }*/
+
+
 }

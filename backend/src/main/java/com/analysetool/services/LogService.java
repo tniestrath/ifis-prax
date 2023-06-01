@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -140,7 +141,7 @@ public class LogService {
         }
         //updateuseraktivität
         System.out.println("UPDATING USER ACTIVITY");
-        updateUserActivity();
+        updateUserActivity((long)3);
         System.out.println("END OF LOG");
     }
 
@@ -370,13 +371,14 @@ public class LogService {
                 updateTagStats(l.intValue(),searchSuccess);}
     }}
 
-    public void updateUserActivity(){
+    public void updateUserActivity(Long period){
         List<WPUser> users = wpUserRepo.findAll();
         List<Post> posts= new ArrayList<>();
         UserStats stats = null ;
         float postfreq = 0 ;
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime postTime= now.minusMonths(1);
+        LocalDateTime postTime= now.minusMonths(period);
+        long daysDifference = ChronoUnit.DAYS.between(postTime, now);
         int counter =0;
         for(WPUser user: users){
             posts=postRepository.findByAuthor(user.getId().intValue());
@@ -384,7 +386,7 @@ public class LogService {
                 if(postTime.isBefore(post.getDate())&& post.getStatus().equals("publish")){counter ++;}
             }
             if(counter!=0){
-            postfreq=(float)30/counter;}
+            postfreq=(float)daysDifference/counter;}
             if (userStatsRepo.existsByUserId(user.getId())){
                 stats = userStatsRepo.findByUserId(user.getId());
             }else{stats = new UserStats(user.getId(), 1,1,1);}

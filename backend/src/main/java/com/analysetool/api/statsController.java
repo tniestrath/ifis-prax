@@ -32,12 +32,12 @@ public class statsController {
     private WpTermRelationshipsRepository termRelRepo;
     @Autowired
     private WpTermTaxonomyRepository taxTermRepo;
-
+/*
     @PostMapping
     public stats createStat(@RequestBody stats stat) {
         return statRepository.save(stat);
     }
-
+*/
     @GetMapping("/{id}")
     public Optional<stats> getStat(@PathVariable Long id) {
         return statRepository.findById(id);
@@ -111,6 +111,28 @@ public class statsController {
     public void deleteStat(@PathVariable Long id) {
         statRepository.deleteById(id);
     }*/
+    @GetMapping("/bestPost")
+    public String getBestPost(@RequestParam Long id, @RequestParam String type) throws JSONException {
+       List<Post> Posts = postRepo.findByAuthor(id.intValue());
+       stats Stats = null;
+       float max = 0;
+       long PostId=0;
+       for(Post post:Posts){
+           if(statRepository.existsByArtId(post.getId())){
+               Stats = statRepository.getStatByArtID(post.getId());
+               if(type.equals("relevance")){
+                   if(Stats.getRelevance()>max){max = Stats.getRelevance();PostId= Stats.getArtId();}
+               }
+               if(type.equals("performance")){
+                   if(Stats.getPerformance()>max){max = Stats.getPerformance();PostId= Stats.getArtId();}
+               }
+           }
+       }
+       JSONObject obj = new JSONObject();
+       obj.put("ID",PostId);
+       obj.put(type,max);
+       return obj.toString();
+    }
 
 
 }

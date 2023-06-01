@@ -4,6 +4,7 @@ import {ActiveElement, Chart, ChartEvent, ChartType} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import _default from "chart.js/dist/plugins/plugin.decimation";
 import destroy = _default.destroy;
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'dash-clicks',
@@ -38,7 +39,6 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
         })
         //@ts-ignore
         const total : number = data.datasets[0].data.reduce((a, b) => a + b, 0);
-
         ctx.beginPath();
         ctx.arc(x, y, chart.chartArea.width / 6, 0, 2 * Math.PI, false);
         ctx.closePath();
@@ -47,7 +47,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
 
         ctx.globalCompositeOperation = 'source-over';
 
-        var totalText
+        var totalText = String(total);
         if (total > 1000){
           totalText = +parseFloat(String(total / 1000)).toFixed( 1 ) + "K";
         }
@@ -203,12 +203,14 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
     this.c_chart_total = 0;
     this.p_chart_total = 0;
 
-    this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "Pressemitteilung"], [120,340,660], undefined);
-    this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [100,30000], undefined);
-    this.createLegend("clicks-content-box", this.c_chart);
-    this.createLegend("clicks-profile-box", this.p_chart);
-    this.c_chart.data.datasets[0].data.forEach((item : number) => this.c_chart_total += item);
-    this.p_chart.data.datasets[0].data.forEach((item : number) => this.p_chart_total += item);
+    this.db.getUserClicks(UserService.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number}) => {
+      this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "Pressemitteilung"], [res.viewsArtikel,res.viewsBlog,1], undefined);
+      this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + 1)], undefined);
+      this.createLegend("clicks-content-box", this.c_chart);
+      this.createLegend("clicks-profile-box", this.p_chart);
+      this.c_chart_total = res.viewsArtikel + res.viewsBlog + 1;
+      this.p_chart_total = res.viewsProfile + this.c_chart_total;
+    })
   }
 
   ngOnDestroy(): void {

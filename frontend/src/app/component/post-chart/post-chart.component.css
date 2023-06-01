@@ -11,6 +11,9 @@
   width: 100%;
   flex-direction: column;
   align-items: center;
+
+  box-sizing: border-box;
+  padding-bottom: 5px;
 }
 select{
   box-sizing: border-box;

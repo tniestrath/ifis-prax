@@ -1,10 +1,11 @@
 import {AfterViewInit, Component, EventEmitter, OnInit} from '@angular/core';
-import {ActiveElement, Chart, ChartEvent, ChartType} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent, ChartType, TooltipItem} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {DbService} from "../../services/db.service";
 import {PostComponent} from "../post/post.component";
 import {Post} from "../../Post";
 import {UserService} from "../../services/user.service";
+import {color} from "chart.js/helpers";
 
 
 @Component({
@@ -24,7 +25,9 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
   timeSpan : string = "all_time";
   postType : string = "artikel";
 
-  data :any;
+  data : Promise<Post[]> | undefined;
+  max_performance: Promise<number> |undefined;
+  max_relevance: Promise<number> |undefined;
 
   timeSpanMap = new Map<string, number>([
     ["all_time", 365*2],
@@ -34,7 +37,8 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
   ]);
 
 
-  createChart(labels: string[], data: number[], onClick: (index : number) => void){
+
+  createChart(labels: string[], data: number[], data2: number[], onClick: (index : number) => void){
     Chart.defaults.color = "#000"
     if (this.chart){
       this.chart.destroy();
@@ -45,20 +49,31 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       data: {
         labels: labels,
         datasets: [{
-          label: "",
+          label: "Performance",
           data: data,
-          backgroundColor: "rgb(148,28,62)",
-          borderColor: "rgb(148,28,62)",
-          borderJoinStyle: 'round',
-          tension: 0.5
+          backgroundColor: "rgb(224,43,94)",
+          borderColor: "rgb(224,43,94)",
+          borderJoinStyle: 'round'
+        },
+        {
+          label: "Relevanz",
+          data: data2,
+          backgroundColor: "rgb(84,16,35)",
+          borderColor: "rgb(84,16,35)",
+          borderJoinStyle: 'round'
         }]
       },
       options: {
-        aspectRatio: 2.5,
+        aspectRatio: 2.8,
+        layout: {
+          padding: {
+            bottom: -50
+          }
+        },
         scales: {
           y: {
             min: 0,
-            max: 1
+            max: 100,
           },
           x: {
             display: false
@@ -77,8 +92,22 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
             }
           },
           legend: {
-            display: false
-          }
+            display: true,
+            position: "bottom"
+          },
+          tooltip: {
+
+            callbacks: {
+              //@ts-ignore
+              label: ((tooltipItem) => {
+                if (tooltipItem.datasetIndex == 0){
+                  return "Performance: " + data[tooltipItem.dataIndex].toFixed();
+                }else if (tooltipItem.datasetIndex == 1){
+                  return "Relevanz: " + data2[tooltipItem.dataIndex].toFixed();
+                }
+              })
+            }
+          },
         },
         interaction: {
           mode: "nearest"
@@ -96,35 +125,37 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       if ((event?.target as HTMLInputElement).type == "select-one") this.postType = (event?.target as HTMLInputElement).value;
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
-    if (this.data == undefined){this.data = this.db.getUserPostsWithStats(UserService.USER_ID).then();}
-    this.data.then((res : Post[]) => {
-      var postLabel : string[] = [];
-      var postData : number[] = [];
+    if (this.data == undefined){this.data = this.db.getUserPostsWithStats(UserService.USER_ID)}
+    if (this.max_performance == undefined){this.max_performance = this.db.getMaxPerformance()}
+    if (this.max_relevance == undefined){this.max_relevance = this.db.getMaxRelevance()}
+    Promise.all([this.max_performance, this.max_relevance]).then((value) => {
+      // @ts-ignore
+      this.data.then((res : Post[]) => {
+        var postLabel : string[] = [];
+        var postData : number[] = [];
+        var postDataRelevance : number[] = [];
 
+        let time_filtered : Post[] = res.filter((post : Post) => {
+          var postDate = new Date(Date.parse(post.date));
+          var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
+          return postDate >= calcDate;
+        }).filter((post : Post) => {
+          return post.type == this.postType;
+        })
+        time_filtered.sort((a, b) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        })
 
-      let time_filtered : Post[] = res.filter((post : Post) => {
-        var postDate = new Date(Date.parse(post.date));
-        var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
-        return postDate >= calcDate;
-      }).filter((post : Post) => {
-        return post.type == this.postType;
+        for (var post of time_filtered) {
+          postLabel.push(post.title);
+          postData.push((post.performance / value[0])*100)
+          postDataRelevance.push((post.relevance / value[1])*100)
+        }
+        this.createChart(postLabel, postData, postDataRelevance, (index) => {
+        });
       })
-      time_filtered.sort((a, b) => {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      })
-
-      for (var post of time_filtered) {
-        postLabel.push(post.title);
-        postData.push(Number(post.performance));
-      }
-
-      this.createChart(postLabel, postData, (index) => {this.grid_reference?.addCard({
-        col: 0,
-        row: 0,
-        type: PostComponent,
-        height: 1, width: 2})});
-    })
-    .finally(() => this.visibility = "visible");
+        .finally(() => {this.visibility = "visible"});
+    });
   }
 
 

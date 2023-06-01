@@ -3,6 +3,8 @@ import {ActiveElement, Chart, ChartEvent, ChartType, Plugin} from "chart.js/auto
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import {DbService} from "../../services/db.service";
+import {UserService} from "../../services/user.service";
+import {Post} from "../../Post";
 
 @Component({
   selector: 'dash-performance',
@@ -74,6 +76,12 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
       options: {
         cutout: this.cutout,
         aspectRatio: 1.5,
+        layout: {
+          padding: {
+            bottom: -30,
+            top: 30
+          }
+        },
         plugins: {
           title: {
             display: true,
@@ -113,10 +121,13 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.setToolTip("Ihr Beitrag mit der höchsten berechneten Performance (aufg. Aufrufe der ersten 7 Tage)");
 
-    this.db.getPerformanceById(this.postID).then(data => {
-      this.createChart(["Score", "Grey"],[(data[0] / data[1])*100 , 100-((data[0] / data[1])*100)],null);
-    });
-    this.db.getPostById(this.postID).then(post => this.postName = post.title);
+    this.db.getMaxPerformance().then(max => {
+      this.db.getUserBestPost(UserService.USER_ID, "performance").then(data => {
+        let post : Post = data;
+        this.createChart(["Score", "Grey"],[(post.performance / max)*100 , 100-((post.performance / max)*100)],null);
+        this.postName = post.title;
+      });
+    })
   }
 
 }

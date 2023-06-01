@@ -2,6 +2,8 @@ import {AfterViewInit, Component, EventEmitter} from '@angular/core';
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
+import {UserService} from "../../../services/user.service";
+import {Post} from "../../../Post";
 
 @Component({
   selector: 'dash-relevance',
@@ -60,10 +62,14 @@ export class RelevanceComponent extends DashBaseComponent {
   ngOnInit(): void {
     this.setToolTip("Ihr Beitrag mit der höchsten berechneten Relevanz (aufg. Aufrufe der letzten 7 Tage)");
 
-    this.db.getPerformanceById(this.postID).then(data => {
-      this.createChart(data[0], data[1]);
-    });
-    this.db.getPostById(this.postID).then(post => this.postName = post.title);
+    this.db.getMaxRelevance().then(max => {
+      this.db.getUserBestPost(UserService.USER_ID, "relevance").then(data => {
+        let post : Post = data;
+        console.log(max)
+        this.createChart(post.relevance, max);
+        this.postName = post.title;
+      });
+    })
   }
 
 }

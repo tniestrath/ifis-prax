@@ -93,7 +93,7 @@ public class statsController {
         }
         JSONObject obj= new JSONObject();
         obj.put("viewsBlog",viewsBlog);
-        obj.put("viewsArtikel",0);
+        obj.put("viewsArtikel",viewsArtikel);
         obj.put("viewsProfile",viewsProfile);
         return obj.toString();
 
@@ -135,7 +135,7 @@ public class statsController {
        JSONObject obj = new JSONObject();
        obj.put("ID",PostId);
        obj.put(type,max);
-       obj.put("titel",postRepo.findById(PostId).get().getTitle());
+       obj.put("title",postRepo.findById(PostId).get().getTitle());
        return obj.toString();
     }
 

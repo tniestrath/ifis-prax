@@ -210,7 +210,7 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
                 if(Stats != null){
                 obj.put("performance",Stats.getPerformance());
                 obj.put("relevance",Stats.getRelevance());
-                }else {obj.put("performance",1);}
+                }else {obj.put("performance",0);obj.put("relevance",0);}
 
 
                /* if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {

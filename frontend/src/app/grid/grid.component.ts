@@ -1,4 +1,15 @@
-import {Component, ComponentRef, EventEmitter, Input, OnInit, Output, Type, ViewChild} from '@angular/core';
+import {
+  Component,
+  ComponentRef,
+  createComponent,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  Type,
+  ViewChild,
+  ViewRef
+} from '@angular/core';
 import {Observable, Subscription} from "rxjs";
 import {GridCardDirective} from "./grid-card.directive";
 import {DashBaseComponent} from "../component/dash-base/dash-base.component";
@@ -57,8 +68,7 @@ export class GridComponent implements OnInit{
     this.index++;
   }
 
-  public removeCard(index : number){
-    // @ts-ignore
-    this.dashGridCard.viewContainerRef.remove(index);
+  public removeCard(C : Type<DashBaseComponent>){
+    //NO
   }
 }

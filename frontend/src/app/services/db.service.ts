@@ -17,9 +17,12 @@ export enum dbUrl {
   GET_USER_IMG = "http://localhost:8080/users/profilePic?id=",
   GET_USER_BY_LOGIN = "http://localhost:8080/users?login=",
   GET_USER_BY_EMAIL = "http://localhost:8080/users?email=",
+  GET_USER_CLICKS = "http://localhost:8080/stats/getViewsBrokenDown?id=",
+  GET_USER_BEST_POST = "http://localhost:8080/stats/bestPost?id=",
   GET_POST = "http://localhost:8080/",
   GET_POST_PERFORMANCE = "http://localhost:8080/stats/getPerformanceByArtId?id=",
-  GET_POST_MAX_PERFORMANCE = "http://localhost:8080/stats/maxPerformance"
+  GET_POST_MAX_PERFORMANCE = "http://localhost:8080/stats/maxPerformance",
+  GET_POST_MAX_RELEVANCE = "http://localhost:8080/stats/maxRelevance"
 }
 
 @Injectable({
@@ -104,11 +107,21 @@ export class DbService {
     return fetch(dbUrl.GET_USER_BY_EMAIL + email).then(res => res.json());
   }
 
-  async getPerformanceById(id : string){
-    let performance : Promise<number> = await fetch(dbUrl.GET_POST_PERFORMANCE + id).then(res => res.json());
-    let max : Promise<number> = await fetch(dbUrl.GET_POST_MAX_PERFORMANCE).then(res => res.json());
+  async getUserClicks(id : string){
+    return fetch(dbUrl.GET_USER_CLICKS + id).then(res => res.json());
+  }
 
-    return Promise.all([performance, max]);
+  async getUserBestPost(id: string, type: string){
+    return fetch(dbUrl.GET_USER_BEST_POST + id + "&type=" + type).then(res => res.json());
+  }
+
+  async getMaxPerformance(){
+    let max : Promise<number> = await fetch(dbUrl.GET_POST_MAX_PERFORMANCE).then(res => res.json());
+    return max;
+  }
+  async getMaxRelevance(){
+    let max : Promise<number> = await fetch(dbUrl.GET_POST_MAX_RELEVANCE).then(res => res.json());
+    return max;
   }
 
 

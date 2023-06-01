@@ -172,7 +172,7 @@ public class LogService {
 
                 statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
                     updateDailyClicks(id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 1)); updateDailyClicks(id);}
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 0)); updateDailyClicks(id);}
                }
             catch(Exception e){
                 System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
@@ -199,7 +199,7 @@ public class LogService {
                 }
                 statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
                 updateDailyClicks(id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 1)); updateDailyClicks(id);}
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 0)); updateDailyClicks(id);}
                }
             catch(Exception e){
                 System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
@@ -225,7 +225,7 @@ public class LogService {
 
                     statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
                     updateDailyClicks(id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 1));updateDailyClicks(id); }
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 0));updateDailyClicks(id); }
                 }
         catch(Exception e){
                 System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
@@ -252,7 +252,7 @@ public class LogService {
                 }
                 statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
                 updateDailyClicks(id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 1));
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 0));
                 updateDailyClicks(id);
             }
                 }
@@ -273,7 +273,7 @@ public class LogService {
                 System.out.println("RefRate :"+article_reffering_rate);
                 statsRepo.updateRefferingsAndRateByArtId(article_reffering_rate,refferings,id);
 
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,0,0,1,(float) 1));
+            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,0,0,1,(float) 0));
             }
 
         }
@@ -389,7 +389,7 @@ public class LogService {
             postfreq=(float)daysDifference/counter;}
             if (userStatsRepo.existsByUserId(user.getId())){
                 stats = userStatsRepo.findByUserId(user.getId());
-            }else{stats = new UserStats(user.getId(), 1,1,1);}
+            }else{stats = new UserStats(user.getId(), 0,0,1);}
             stats.setPostFrequence(postfreq);
             userStatsRepo.save(stats);
         }

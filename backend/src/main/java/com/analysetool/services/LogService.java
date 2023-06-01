@@ -26,6 +26,7 @@ public class LogService {
     private WPUserRepository wpUserRepo;
     private UserStatsRepository userStatsRepo;
 
+    private CommentsRepository commentRepo;
     private BufferedReader br;
     private String path = "";
     private String BlogSSPattern = ".*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
@@ -49,7 +50,7 @@ public class LogService {
     private boolean liveScanning = false;
 
     @Autowired
-    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo,WPUserRepository wpUserRepo,UserStatsRepository userStatsRepo) {
+    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo,WPUserRepository wpUserRepo,UserStatsRepository userStatsRepo,CommentsRepository commentRepo) {
         this.postRepository = postRepository;
         this.statsRepo = StatsRepository;
         this.tagStatRepo=tagStatRepo;
@@ -58,6 +59,7 @@ public class LogService {
         this.termTaxRepo=termTaxRepo;
         this.wpUserRepo=wpUserRepo;
         this.userStatsRepo=userStatsRepo;
+        this.commentRepo=commentRepo;
     }
 
     public void run(boolean liveScanning, String path)  {
@@ -392,8 +394,37 @@ public class LogService {
             }else{stats = new UserStats(user.getId(), 0,0,1);}
             stats.setPostFrequence(postfreq);
             userStatsRepo.save(stats);
+            updateInteractionRate(user,stats,posts);
         }
+
     }
+
+    public void updateInteractionRate(WPUser user,UserStats stats, List<Post>posts){
+        int commentCount=0;
+        int answeredComments=0;
+        float interactionRate=0;
+        List<Comments> comments = new ArrayList<>();
+        for(Post post:posts){
+            if(post.getStatus().equals("publish") && post.getType().equals("post")){
+                comments=commentRepo.findByPostId(post.getId());
+                for(Comments comment:comments){
+                    if (comment.getUserId() == user.getId()) {
+                        if (commentRepo.findByCommentId(comment.getParentCommentId()).getUserId() != user.getId()) {
+                            answeredComments++;
+                        }
+                    } else {
+                        commentCount++;
+                    }
+                }
+            }
+
+        }
+        if(answeredComments!=0){
+        interactionRate=(float)commentCount/answeredComments;}
+        stats.setInteractionRate(interactionRate);
+       // System.out.println("Interaktionsrate: "+interactionRate+" id: "+user.getId());
+    }
+
 
 }
 

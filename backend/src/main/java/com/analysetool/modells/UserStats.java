@@ -23,6 +23,17 @@ public class UserStats {
     @Column(name = "profile_view")
     private long profileView;
 
+    @Column(name = "interaction_rate")
+    private float interactionRate;
+
+    public float getInteractionRate() {
+        return interactionRate;
+    }
+
+    public void setInteractionRate(float interactionRate) {
+        this.interactionRate = interactionRate;
+    }
+
     public float getPostFrequence() {
         return postFrequence;
     }
@@ -40,6 +51,7 @@ public class UserStats {
         this.averageRelevance = averageRelevance;
         this.profileView = profileView;
         this.postFrequence=0;
+        this.interactionRate=0;
     }
 
     public UserStats(){}

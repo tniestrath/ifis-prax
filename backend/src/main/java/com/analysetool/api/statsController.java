@@ -131,6 +131,7 @@ public class statsController {
        JSONObject obj = new JSONObject();
        obj.put("ID",PostId);
        obj.put(type,max);
+       obj.put("titel",postRepo.findById(PostId).get().getTitle());
        return obj.toString();
     }
 

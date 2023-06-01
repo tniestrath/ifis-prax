@@ -51,15 +51,15 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         datasets: [{
           label: "Performance",
           data: data,
-          backgroundColor: "rgb(224,43,94)",
-          borderColor: "rgb(224,43,94)",
+          backgroundColor: "rgb(148,28,62)",
+          borderColor: "rgb(148,28,62)",
           borderJoinStyle: 'round'
         },
         {
           label: "Relevanz",
           data: data2,
-          backgroundColor: "rgb(84,16,35)",
-          borderColor: "rgb(84,16,35)",
+          backgroundColor: "rgb(229,229,229)",
+          borderColor: "rgb(229,229,229)",
           borderJoinStyle: 'round'
         }]
       },

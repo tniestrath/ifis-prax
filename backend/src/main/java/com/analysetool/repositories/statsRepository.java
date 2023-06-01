@@ -139,6 +139,9 @@ public interface statsRepository extends JpaRepository<stats, Long> {
     @Query("SELECT MAX(s.performance) FROM stats s")
     public float getMaxPerformance();
 
+    @Query("SELECT MAX(s.relevance) FROM stats s")
+    public float getMaxRelevance();
+
 
     // Beispiel für eine separate Methode zur Berechnung der Performance
 

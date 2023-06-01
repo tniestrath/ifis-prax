@@ -53,6 +53,10 @@ public class statsController {
         return statRepository.getMaxPerformance();
     }
 
+    @GetMapping("/maxRelevance")
+    public float getMaxRelevance(){
+        return statRepository.getMaxRelevance();
+    }
     @GetMapping("/getPerformanceByArtId")
     public float getPerformanceByArtId(@RequestParam int id){
         return statRepository.getPerformanceByArtID(id);

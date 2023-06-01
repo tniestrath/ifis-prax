@@ -269,7 +269,7 @@ public class LogService {
                 long views = statsRepo.getClicksByArtId(id);
                 long refferings =statsRepo.getReferringsByArtId(id);
                 refferings++;
-                float article_reffering_rate= ((float)refferings/views)*100;
+                float article_reffering_rate= ((float)refferings/views);
                 System.out.println("RefRate :"+article_reffering_rate);
                 statsRepo.updateRefferingsAndRateByArtId(article_reffering_rate,refferings,id);
 

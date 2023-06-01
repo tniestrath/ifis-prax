@@ -383,7 +383,7 @@ public class LogService {
         for(WPUser user: users){
             posts=postRepository.findByAuthor(user.getId().intValue());
             for (Post post:posts){
-                if(postTime.isBefore(post.getDate())&& post.getStatus().equals("publish")){counter ++;}
+                if(postTime.isBefore(post.getDate())&& post.getStatus().equals("publish") && post.getType().equals("post")){counter ++;}
             }
             if(counter!=0){
             postfreq=(float)daysDifference/counter;}

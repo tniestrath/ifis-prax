@@ -26,7 +26,7 @@ public class WpTermTaxonomyController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
+/*
     @PostMapping("/")
     public ResponseEntity<WpTermTaxonomy> createWpTermTaxonomy(@RequestBody WpTermTaxonomy wpTermTaxonomy) {
         WpTermTaxonomy savedWpTermTaxonomy = wpTermTaxonomyRepository.save(wpTermTaxonomy);
@@ -51,5 +51,6 @@ public class WpTermTaxonomyController {
         }
         wpTermTaxonomyRepository.deleteById(id);
         return ResponseEntity.noContent().build();
-    }
+    }*/
+
 }

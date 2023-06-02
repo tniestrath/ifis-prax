@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   height: 100%;
 }
 .clicks-total{
@@ -15,12 +15,12 @@
 canvas{
   padding: 5px;
   max-height: 50%;
-  max-width: 60%;
+  max-width: 100%;
 }
 .legend-box{
   padding: 5px;
-  height: calc(50% - 10px);
-  width: calc(40% - 10px);
+  height: calc(25% - 10px);
+  width: calc(100% - 10px);
   display: flex;
   flex-direction: column;
   justify-content: center;

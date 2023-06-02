@@ -96,7 +96,12 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
             position: "bottom"
           },
           tooltip: {
-
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            },
             callbacks: {
               //@ts-ignore
               label: ((tooltipItem) => {

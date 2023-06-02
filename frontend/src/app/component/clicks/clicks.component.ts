@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent, ChartType} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent, ChartType, PointStyle, TooltipItem} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import _default from "chart.js/dist/plugins/plugin.decimation";
 import destroy = _default.destroy;
@@ -102,7 +102,16 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
           legend: {
             onClick: (e) => null,
             display: false
-          }
+          },
+          tooltip: {
+            displayColors: false,
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            }
+          },
         }
       },
       //@ts-ignore
@@ -138,7 +147,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
       spanBox.classList.add("clicks-item-span");
       spanBox.style.display = "inline-block";
       spanBox.style.height = "100%";
-      spanBox.style.width = "30px";
+      spanBox.style.width = "20px";
       spanBox.style.marginRight = "5px";
       spanBox.style.borderRadius = "5px";
       spanBox.style.backgroundColor = bgColor;
@@ -169,11 +178,11 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
 
     if(x.matches){
       for (let i = 0; i < lis.length; i++) {
-        lis[i].setAttribute("style", "display: flex; align-items: center; flex-direction: row; height: 40px; margin: 5px;");
+        lis[i].setAttribute("style", "display: flex; align-items: center; flex-direction: row; height: 30px; margin: 5px;");
       }
       for (let i = 0; i < spans.length; i++) {
         let color = spans[i].getAttribute("style")?.substring(88);
-        spans[i].setAttribute("style", "display: inline-block; height: 100%; width: 50px; margin-right: 5px; border-radius: 5px; " + color);
+        spans[i].setAttribute("style", "display: inline-block; height: 100%; width: 30px; margin-right: 5px; border-radius: 5px; " + color);
       }
       for (let i = 0; i < ps.length; i++) {
         ps[i].setAttribute("style", "font-size: large");
@@ -185,7 +194,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
       }
       for (let i = 0; i < spans.length; i++) {
         let color = spans[i].getAttribute("style")?.substring(88);
-        spans[i].setAttribute("style", "display: inline-block; height: 100%; width: 30px; margin-right: 5px; border-radius: 5px; " + color);
+        spans[i].setAttribute("style", "display: inline-block; height: 100%; width: 20px; margin-right: 5px; border-radius: 5px; " + color);
       }
       for (let i = 0; i < ps.length; i++) {
         ps[i].setAttribute("style", "font-size: medium");

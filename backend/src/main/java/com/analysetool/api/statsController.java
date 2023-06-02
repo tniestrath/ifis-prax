@@ -149,6 +149,7 @@ public class statsController {
         JSONObject obj = new JSONObject();
         if(tax.getTaxonomy().equals("post_tag")){
             obj.put("name",termRepo.findById(tax.getTermId()).get().getName());
+            obj.put("id", tax.getTermId());
             if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) { obj.put("relevance", tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance());}
             else {obj.put("relevance", 0);}
             obj.put("count",tax.getCount());

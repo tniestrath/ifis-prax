@@ -9,6 +9,7 @@ export enum dbUrl {
   HOST = "http://localhost",
   PORT = ":8080",
   GET_ALL_TAGS = "http://localhost:8080/terms/getPostTagsIdName",
+  GET_ALL_TAGS_WITH_COUNT_AND_RELEVANCE = "http://localhost:8080/stats/allTermsRelevanceAndCount",
   GET_TAG_POST_COUNT = "http://localhost:8080/terms/getPostcount?id=",
   GET_TAG_RANKING = "http://localhost:8080/terms/getTermRanking",
   GET_ALL_USERS = "http://localhost:8080/users/getAllNew",
@@ -51,6 +52,9 @@ export class DbService {
         DbService.Tags.push(tag);
       }
     });
+  }
+  async getAllTagsWithCountAndRelevance(){
+    return await fetch(dbUrl.GET_ALL_TAGS_WITH_COUNT_AND_RELEVANCE).then(res => res.json());
   }
 
   async getTagPostCount(id : string){

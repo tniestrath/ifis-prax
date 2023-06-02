@@ -13,19 +13,7 @@ import {TagListItemComponent} from "./tag-list-item/tag-list-item.component";
   styleUrls: ['./tag-list.component.css', "../../component/dash-base/dash-base.component.css"]
 })
 export class TagListComponent extends DashBaseComponent implements AfterViewInit{
-  selectorItems : SelectorItem[] = [new SelectorItem(TagListItemComponent, new TagRanking("0", "test1", "1", "1")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("1", "test2", "2", "99")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("2", "test3", "3", "101")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("3", "test4", "4", "102")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("4", "test5", "5", "103")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("5", "test6", "6", "110")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("6", "test7", "7", "98")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("7", "test8", "10", "97")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("8", "test9", "8", "96")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("9", "test10", "9", "5")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("10", "test11", "13", "7")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("11", "test12", "12", "88")),
-                                    new SelectorItem(TagListItemComponent, new TagRanking("12", "test13", "11", "100"))];
+  selectorItems : SelectorItem[] = [];
   selectorItemsBackup = this.selectorItems;
   selectorItemsLoaded = new Subject<SelectorItem[]>();
   search_input : any;
@@ -36,6 +24,14 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
 
   ngOnInit(): void {
     this.setToolTip("Auflistung aller #Tags, sortierbar nach Relevanz oder Anzahl der globalen Beiträge zu diesem Thema")
+
+    this.db.getAllTagsWithCountAndRelevance().then(res => {
+      for (var tag of res) {
+        console.log(tag)
+        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.relevance, tag.count)));
+      }
+      this.selectorItemsLoaded.next(this.selectorItems)
+    })
 
     this.search_input = document.getElementById("tag-search");
     this.sorting_input_r = document.getElementById("tag-sort-r");
@@ -60,7 +56,6 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
 
   ngAfterViewInit(): void {
     this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRank((b.data as TagRanking)));
-    this.selectorItemsLoaded.next(this.selectorItems);
   }
 
 

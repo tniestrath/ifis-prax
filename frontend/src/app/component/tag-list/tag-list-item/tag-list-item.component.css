@@ -2,10 +2,21 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ffffff00;
 }
+.tag-list-item-box:hover{
+  border: 1px solid black;
+}
+
 .tag-rank{
   width: 10%;
   text-align: left;
+}
+.tag-name{
+  width: 80%;
+  text-align: center;
 }
 .tag-count{
   width: 10%;

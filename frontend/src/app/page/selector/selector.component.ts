@@ -47,12 +47,18 @@ export class SelectorComponent implements OnInit{
 
   private loadItems(s : SelectorItem[], sort : boolean) {
     const viewContainerRef = this.dashSelectable.viewContainerRef;
+    var index = 0;
+
     viewContainerRef.clear();
     if (sort){s.sort((a, b) => a.data.compare(b.data))}
     for (let item of s) {
       const componentRef = viewContainerRef.createComponent<SelectableComponent>(item.component);
       componentRef.instance.data = item.data;
       componentRef.setInput("clicked", this.itemClick);
+      if (index % 2 == 0){
+        componentRef.location.nativeElement.setAttribute("style", "background : #EFEFEF");
+      }
+      index++;
     }
   }
 }

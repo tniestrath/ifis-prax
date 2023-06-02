@@ -14,10 +14,12 @@ public class ProvidersControler {
     @Autowired
     private ProvidersService PS;
 
+/*
     @RequestMapping("/create")
        public String create(@RequestParam String id){
            providers p= PS.create(id);
            return p.getId();}
+*/
 
     @RequestMapping("/getAll")
         public List<providers> getAll(){

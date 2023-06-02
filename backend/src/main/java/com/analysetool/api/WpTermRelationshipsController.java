@@ -23,7 +23,7 @@ public class WpTermRelationshipsController {
         Optional<wp_term_relationships> wpTermRelationships = wpTermRelationshipsRepository.findById(id);
         return wpTermRelationships.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
-
+/*
     @PostMapping("wp_term_rel/create")
     public ResponseEntity<wp_term_relationships> create(@RequestBody wp_term_relationships wpTermRelationships) {
         wp_term_relationships createdWpTermRelationships = wpTermRelationshipsRepository.save(wpTermRelationships);
@@ -46,6 +46,6 @@ public class WpTermRelationshipsController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         wpTermRelationshipsRepository.deleteById(id);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 }
 

@@ -56,7 +56,7 @@ public class CompanyController {
         model.addAttribute("company", company.get());
         return "company/show";
     }*/
-
+/*
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("company", new Company());
@@ -80,5 +80,5 @@ public class CompanyController {
     public String delete(@PathVariable String id) {
         companyService.deleteById(id);
         return "redirect:/company";
-    }
+    }*/
 }

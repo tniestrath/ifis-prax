@@ -10,11 +10,11 @@ public class CommentController {
 
     @Autowired
     private CommentsRepository commentRepository;
-
+    /*
     @GetMapping("")
     public Iterable<Comments> getAllComments() {
         return commentRepository.findAll();
-    }
+    }*/
     /*
     @GetMapping("/{id}")
     public ResponseEntity<Comments> getCommentById(@PathVariable("id") Long id) {

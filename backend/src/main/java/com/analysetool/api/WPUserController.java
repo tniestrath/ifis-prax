@@ -20,7 +20,7 @@ public class WPUserController {
 
     @Autowired
     private WPUserRepository userRepository;
-
+/*
     @GetMapping("/{id}")
     public ResponseEntity<WPUser> getUserById(@PathVariable Long id) {
         Optional<WPUser> user = userRepository.findById(id);
@@ -50,7 +50,7 @@ public class WPUserController {
             return ResponseEntity.ok(user.get());
         } else {
             return ResponseEntity.notFound().build();
-        }
+        }*/
     }
 
 

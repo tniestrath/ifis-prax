@@ -422,6 +422,7 @@ public class LogService {
         if(answeredComments!=0){
         interactionRate=(float)commentCount/answeredComments;}
         stats.setInteractionRate(interactionRate);
+        userStatsRepo.save(stats);
        // System.out.println("Interaktionsrate: "+interactionRate+" id: "+user.getId());
     }
 

@@ -5,6 +5,7 @@ import com.analysetool.modells.WPTerm;
 import com.analysetool.modells.WpTermTaxonomy;
 import com.analysetool.modells.stats;
 import com.analysetool.repositories.*;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class statsController {
     private WpTermRelationshipsRepository termRelRepo;
     @Autowired
     private WpTermTaxonomyRepository taxTermRepo;
+
 /*
     @PostMapping
     public stats createStat(@RequestBody stats stat) {
@@ -137,6 +139,23 @@ public class statsController {
        obj.put(type,max);
        obj.put("title",postRepo.findById(PostId).get().getTitle());
        return obj.toString();
+    }
+
+    @GetMapping("/allTermsRelevanceAndCount")
+    public String getTermsRelevanceCount() throws JSONException {
+    List<WpTermTaxonomy> termTaxs = taxTermRepo.findAll();
+    JSONArray response = new JSONArray();
+    for(WpTermTaxonomy tax:termTaxs){
+        JSONObject obj = new JSONObject();
+        if(tax.getTaxonomy().equals("post_tag")){
+            obj.put("name",termRepo.findById(tax.getTermId()).get().getName());
+            if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) { obj.put("relevance", tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance());}
+            else {obj.put("relevance", 0);}
+            obj.put("count",tax.getCount());
+            response.put(obj);
+        }
+    }
+    return response.toString();
     }
 
 

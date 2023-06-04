@@ -1,13 +1,15 @@
 <div class="component-box post-box">
   <div class="post-select-info">
-    <p id="selected-post-identifier">Ausgewählter Beitrag:</p>
+    <p id="selected-post-identifier">Aktueller Beitrag</p>
     <div id="remove" (click)="removePost()">X</div>
   </div>
   <div class="post-details">
     <p>{{post.title}}</p>
-    <p>Clicks: {{post.clicks}}</p>
+    <div class="post-stats">
+      <p>Clicks: {{post.clicks}}</p>
+      <p>Performance: {{post.performance}}</p>
+      <p>Relevanz: {{post.relevance}}</p>
+    </div>
     <p>Themen: {{post.tags}}</p>
-    <p>Performance: {{post.performance}}</p>
-    <p>Relevanz: {{post.relevance}}</p>
   </div>
 </div>

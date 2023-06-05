@@ -1,9 +1,12 @@
 package com.analysetool.services;
 
+import com.analysetool.Application;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -67,7 +70,65 @@ public class LogService {
         this.commentRepo=commentRepo;
         this.sysVarRepo=sysVarRepo;
     }
+    @PostConstruct
+    public void init() {
+        SysVar SystemVariabeln = new SysVar();
+        if(sysVarRepo.findAll().isEmpty()){
 
+
+            SystemVariabeln.setDate(LocalDateTime.now());
+            SystemVariabeln.setDayInYear(LocalDateTime.now().getDayOfYear());
+            SystemVariabeln.setDayInWeek(LocalDateTime.now().getDayOfWeek().getValue());
+            SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
+            SystemVariabeln.setLastLine("");
+            SystemVariabeln.setLastLineCount(0);
+
+        }else {SystemVariabeln = sysVarRepo.findAll().get(sysVarRepo.findAll().size()-1);
+
+            if(SystemVariabeln.getDate().getDayOfYear()!=(LocalDateTime.now().getDayOfYear())){
+                SystemVariabeln.setDate(LocalDateTime.now());
+                SystemVariabeln.setDayInYear(LocalDateTime.now().getDayOfYear());
+                SystemVariabeln.setDayInWeek(LocalDateTime.now().getDayOfWeek().getValue());
+                SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
+                SystemVariabeln.setLastLine("");
+                SystemVariabeln.setLastLineCount(0);
+            }
+
+        }
+
+
+        run(true,Application.class.getClassLoader().getResource("access.log").getPath(), SystemVariabeln);
+
+    }
+    @Scheduled(cron = "0 0 * * * *")
+    public void runScheduled() {
+        SysVar SystemVariabeln = new SysVar();
+        if(sysVarRepo.findAll().isEmpty()){
+
+
+            SystemVariabeln.setDate(LocalDateTime.now());
+            SystemVariabeln.setDayInYear(LocalDateTime.now().getDayOfYear());
+            SystemVariabeln.setDayInWeek(LocalDateTime.now().getDayOfWeek().getValue());
+            SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
+            SystemVariabeln.setLastLine("");
+            SystemVariabeln.setLastLineCount(0);
+
+        }else {SystemVariabeln = sysVarRepo.findAll().get(sysVarRepo.findAll().size()-1);
+
+            if(SystemVariabeln.getDate().getDayOfYear()!=(LocalDateTime.now().getDayOfYear())){
+                SystemVariabeln.setDate(LocalDateTime.now());
+                SystemVariabeln.setDayInYear(LocalDateTime.now().getDayOfYear());
+                SystemVariabeln.setDayInWeek(LocalDateTime.now().getDayOfWeek().getValue());
+                SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
+                SystemVariabeln.setLastLine("");
+                SystemVariabeln.setLastLineCount(0);
+            }
+
+        }
+
+
+        run(true,Application.class.getClassLoader().getResource("access.log").getPath(), SystemVariabeln);
+    }
     public void run(boolean liveScanning, String path,SysVar SystemVariabeln)  {
         this.liveScanning = liveScanning;
         this.path = path;

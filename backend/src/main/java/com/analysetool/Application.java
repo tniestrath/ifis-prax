@@ -28,7 +28,7 @@ public class Application {
 		ApplicationContext context = SpringApplication.run(Application.class, args);
 		System.out.println("lel");
 		//DataReader.dataindb(context);}
-			SysVarService sysVarService = context.getBean(SysVarService.class);
+			/*SysVarService sysVarService = context.getBean(SysVarService.class);
 			SysVar SystemVariabeln = new SysVar();
 			if(sysVarService.getAllSysVars().isEmpty()){
 
@@ -54,7 +54,7 @@ public class Application {
 			}
 
 			LogService logService = context.getBean(LogService.class);
-			logService.run(true,Application.class.getClassLoader().getResource("access.log").getPath(), SystemVariabeln);
+			logService.run(true,Application.class.getClassLoader().getResource("access.log").getPath(), SystemVariabeln);*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

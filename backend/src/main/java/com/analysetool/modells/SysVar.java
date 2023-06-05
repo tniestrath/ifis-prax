@@ -1,5 +1,8 @@
 package com.analysetool.modells;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
 //import org.springframework.data.annotation.Id;
 
 
@@ -25,8 +28,30 @@ public class SysVar {
 
     @Column(name = "lastline", length = 500)
     private String lastLine;
+    @Column(name = "date")
+    private LocalDateTime date;
 
-    // Konstruktor, Getter und Setter
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    @Override
+    public String toString() {
+        return "SysVar{" +
+                "id=" + id +
+                ", dayInWeek=" + dayInWeek +
+                ", dayInMonth=" + dayInMonth +
+                ", dayInYear=" + dayInYear +
+                ", lastLineCount=" + lastLineCount +
+                ", lastLine='" + lastLine + '\'' +
+                ", date=" + date +
+                '}';
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+// Konstruktor, Getter und Setter
 
     public SysVar() {
     }
@@ -88,4 +113,17 @@ public class SysVar {
     public void setLastLine(String lastLine) {
         this.lastLine = lastLine;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SysVar sysVar)) return false;
+        return getId() == sysVar.getId() && getDayInWeek() == sysVar.getDayInWeek() && getDayInMonth() == sysVar.getDayInMonth() && getDayInYear() == sysVar.getDayInYear() && getLastLineCount() == sysVar.getLastLineCount() && Objects.equals(getLastLine(), sysVar.getLastLine()) && Objects.equals(getDate(), sysVar.getDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getDayInWeek(), getDayInMonth(), getDayInYear(), getLastLineCount(), getLastLine(), getDate());
+    }
+
 }

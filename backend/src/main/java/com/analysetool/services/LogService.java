@@ -27,6 +27,7 @@ public class LogService {
     private UserStatsRepository userStatsRepo;
 
     private CommentsRepository commentRepo;
+    private SysVarRepository sysVarRepo;
     private BufferedReader br;
     private String path = "";
     private String BlogSSPattern = ".*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
@@ -54,7 +55,7 @@ public class LogService {
     private boolean liveScanning = false;
 
     @Autowired
-    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo,WPUserRepository wpUserRepo,UserStatsRepository userStatsRepo,CommentsRepository commentRepo) {
+    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo,WPUserRepository wpUserRepo,UserStatsRepository userStatsRepo,CommentsRepository commentRepo,SysVarRepository sysVarRepo) {
         this.postRepository = postRepository;
         this.statsRepo = StatsRepository;
         this.tagStatRepo=tagStatRepo;
@@ -64,17 +65,23 @@ public class LogService {
         this.wpUserRepo=wpUserRepo;
         this.userStatsRepo=userStatsRepo;
         this.commentRepo=commentRepo;
+        this.sysVarRepo=sysVarRepo;
     }
 
-    public void run(boolean liveScanning, String path)  {
+    public void run(boolean liveScanning, String path,SysVar SystemVariabeln)  {
         this.liveScanning = liveScanning;
         this.path = path;
+        lastLineCounter=SystemVariabeln.getLastLineCount();
+        lastLine = SystemVariabeln.getLastLine();
         try  {
             br = new BufferedReader(new FileReader(path));
             findAMatch();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        SystemVariabeln.setLastLineCount(lastLineCounter);
+        SystemVariabeln.setLastLine(lastLine);
+        sysVarRepo.save(SystemVariabeln);
     }
 
     public void findAMatch() throws IOException {

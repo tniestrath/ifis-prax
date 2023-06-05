@@ -81,9 +81,10 @@ h1{
   height: calc(100% - 70px);
   padding: 5px;
   display: grid;
-  grid-template-rows:    calc(calc(100vh - 80px) / 3)
-                         calc(calc(100vh - 80px) / 3)
-                         calc(calc(100vh - 80px) / 3);
+  grid-template-rows:    calc(calc(100vh - 85px) / 4)
+                         calc(calc(100vh - 85px) / 4)
+                         calc(calc(100vh - 85px) / 4)
+                         calc(calc(100vh - 85px) / 4);
   grid-template-columns: calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6);
   grid-gap: 5px;
 }

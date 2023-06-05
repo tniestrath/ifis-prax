@@ -204,6 +204,7 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
                 Date date = onlyDate.parse(i.getDate().toString());
                 String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
+                obj.put("id", i.getId());
                 obj.put("title", i.getTitle());
                 obj.put("date", formattedDate);
                 obj.put("type", type);
@@ -227,8 +228,63 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
         return list.toString();
     }
 
+    @GetMapping("/getPostWithStatsById")
+    public String PostsById2(@RequestParam int id) throws JSONException, ParseException {
+        Post post = postRepository.findById((long) id).get();
+        List<String> tags = new ArrayList<>();
+        String type = "default";
 
+        stats Stats = null;
+        if(statsRepo.existsByArtId(post.getId())){
+            Stats = statsRepo.getStatByArtID(post.getId());
+        }
+        List<Long> tagIDs = null;
+        if(termRelationRepo.existsByObjectId(post.getId())){
+            tagIDs = termRelationRepo.getTaxIdByObject(post.getId());
+        }
+        List<WPTerm> terms = new ArrayList<>();
+        if (tagIDs != null) {
+            for (long l : tagIDs) {
+                if (wpTermRepo.existsById(l)) {
+                    if (wpTermRepo.findById(l).isPresent()) {
+                        terms.add(wpTermRepo.findById(l).get());
+                    }
+                }
+            }
+        }
+        for (WPTerm t: terms) {
+            if (wpTermTaxonomyRepo.existsById(t.getId())){
+                if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
+                    WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
+                    if (Objects.equals(tt.getTaxonomy(), "category")){
+                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1) {
+                            type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
+                        }
+                    } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
+                        tags.add(wpTermRepo.findById(tt.getTermId()).get().getSlug());
+                    }
+                }
+            }
+        }
 
+        JSONObject obj = new JSONObject();
+        DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = onlyDate.parse(post.getDate().toString());
+        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
+        obj.put("id", post.getId());
+        obj.put("title", post.getTitle());
+        obj.put("date", formattedDate);
+        obj.put("tags", tags);
+        obj.put("type", type);
+        if(Stats != null){
+            obj.put("performance",Stats.getPerformance());
+            obj.put("relevance",Stats.getRelevance());
+            obj.put("clicks", Stats.getClicks().toString());
+        }else {obj.put("performance",0);obj.put("relevance",0);obj.put("clicks", "0");}
+
+        return obj.toString();
+    }
 
 
 

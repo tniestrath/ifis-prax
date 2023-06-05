@@ -20,7 +20,7 @@ export enum dbUrl {
   GET_USER_BY_EMAIL = "http://localhost:8080/users?email=",
   GET_USER_CLICKS = "http://localhost:8080/stats/getViewsBrokenDown?id=",
   GET_USER_BEST_POST = "http://localhost:8080/stats/bestPost?id=",
-  GET_POST = "http://localhost:8080/",
+  GET_POST = "http://localhost:8080/getPostWithStatsById?id=",
   GET_POST_PERFORMANCE = "http://localhost:8080/stats/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "http://localhost:8080/stats/maxPerformance",
   GET_POST_MAX_RELEVANCE = "http://localhost:8080/stats/maxRelevance"
@@ -140,7 +140,7 @@ export class DbService {
     });
   }
 
-  async getPostById(id: string) : Promise<Post> {
+  async getPostById(id: number) : Promise<Post> {
     return await fetch(dbUrl.GET_POST + id).then(res => res.json());
   }
 }

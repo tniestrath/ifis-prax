@@ -142,6 +142,8 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         var postData : number[] = [];
         var postDataRelevance : number[] = [];
 
+        var postIds :number[] = [];
+
         let time_filtered : Post[] = res.filter((post : Post) => {
           var postDate = new Date(Date.parse(post.date));
           var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
@@ -155,10 +157,13 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
         for (var post of time_filtered) {
           postLabel.push(post.title);
-          postData.push((post.performance / value[0])*100)
-          postDataRelevance.push((post.relevance / value[1])*100)
+          postData.push((post.performance / value[0])*100);
+          postDataRelevance.push((post.relevance / value[1])*100);
+          // @ts-ignore
+          postIds.push(post.id);
         }
         this.createChart(postLabel, postData, postDataRelevance, (index) => {
+          UserService.SELECTED_POST_ID.emit(postIds[index]);
         });
       })
         .finally(() => {this.visibility = "visible"});

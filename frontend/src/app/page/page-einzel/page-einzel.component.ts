@@ -36,15 +36,14 @@ export class PageEinzelComponent implements OnInit {
 
   constructor(private cookieService : CookieService, private db : DbService, private us : UserService) {
     this.cards = [
-      {type: ClicksComponent, row: 1, col: 1, height: 3, width: 1},
+      {type: ClicksComponent, row: 1, col: 1, height: 4, width: 1},
       //@ts-ignore
       {type: PostChartComponent, row: 1, col: 2, height: 2, width: 4},
       //@ts-ignore
-      {type: GaugeComponent, row: 3, col: 6, height: 1, width: 1},
-      {type: RelevanceComponent, row: 1, col: 6, height: 1, width: 1},
+      {type: GaugeComponent, row: 4, col: 6, height: 1, width: 1},
+      {type: RelevanceComponent, row: 3, col: 6, height: 1, width: 1},
       //@ts-ignore
-      {type: TagListComponent, row: 2, col: 6, height: 1, width: 1},
-      {type: PostComponent, row: 3, col: 2, height: 1, width: 4}
+      {type: PostComponent, row: 1, col: 6, height: 2, width: 1}
     ];
   }
 

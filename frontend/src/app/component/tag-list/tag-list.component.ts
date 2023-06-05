@@ -27,7 +27,6 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
 
     this.db.getAllTagsWithCountAndRelevance().then(res => {
       for (var tag of res) {
-        console.log(tag)
         this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.relevance, tag.count)));
       }
       this.selectorItemsLoaded.next(this.selectorItems)

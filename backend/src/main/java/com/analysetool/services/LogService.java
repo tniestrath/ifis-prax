@@ -33,17 +33,21 @@ public class LogService {
     private String ArtikelSSPattern = ".*GET /artikel/(\\S+).*s=";//search +1, view +1,(bei match) vor artikel view pattern
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
     private String BlogViewPattern = ".*GET /blog/(\\S+)";
-    private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog)/(\\S*)/)";
+    private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
     private String UserViewPattern=".*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
     private String ArtikelViewPattern = ".*GET /artikel/(\\S+)";//Artikel view +1 bei match
+    private String PresseViewPatter = ".*GET /pressemitteilung/(\\S+)/";
+    private String PresseSSViewPatter = ".*GET /pressemitteilung/(\\S+)/*s=";
     Pattern pattern1_1 = Pattern.compile(ArtikelViewPattern);
     Pattern pattern1_2 = Pattern.compile(ArtikelSSPattern);
     Pattern pattern2_1 = Pattern.compile(BlogViewPattern);
     Pattern pattern2_2 = Pattern.compile(BlogSSPattern);
     Pattern pattern3=Pattern.compile(RedirectPattern);
     Pattern pattern4=Pattern.compile(UserViewPattern);
+    Pattern pattern5_1 = Pattern.compile(PresseViewPatter);
+    Pattern pattern5_2= Pattern.compile(PresseSSViewPatter);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -122,8 +126,25 @@ public class LogService {
                             foundPattern = false;
                            // System.out.println(line+" NO SEARCH");
                         }
+                    }else {
+                        Matcher matcher5_1 = pattern5_1.matcher(line);
+
+                        if (matcher5_1.find()) {
+                            Matcher matcher5_2 = pattern5_2.matcher(line);
+
+                            if (matcher5_2.find()) {
+                                // Do something with the matched 2.2 patterns
+                                processLine(line, 8, matcher5_2);
+                                foundPattern = false;
+                                // System.out.println(line+" SEARCH FOUND");
+                            } else {
+                                //2.1 match
+                                processLine(line, 7, matcher5_1);
+                                foundPattern = false;
+                                // System.out.println(line+" NO SEARCH");
+                            }
+                        }
                     }
-                    //}
                 }
 
             Matcher matcher3=pattern3.matcher(line);
@@ -286,6 +307,65 @@ public class LogService {
                 updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
             };
         }
+        if (patternNumber==7){
+
+            System.out.println(postRepository.getIdByName(matcher.group(1)+" "+matcher.group(1))+" PROCESSING 5.1");
+            try{
+
+                long id =postRepository.getIdByName(matcher.group(1));
+                //hier nach TagSuchen WIP
+
+                checkTheTag(id,false);
+                if (statsRepo.existsByArtId(id)){
+                    long views = statsRepo.getClicksByArtId(id);
+                    views ++;
+
+                    LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
+                    LocalDateTime Now =  LocalDateTime.now();
+                    Duration duration = Duration.between(PostTimestamp, Now);
+                    long diffInDays = duration.toDays();
+                    float Performance = views;
+                    if (diffInDays>0&&views > 0){
+                        Performance = (float)views/diffInDays;
+                    }
+
+                    statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
+                    updateDailyClicks(id);
+                }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 0)); updateDailyClicks(id);}
+            }
+            catch(Exception e){
+                System.out.println("IGNORE "+matcher.group(1)+" BECAUSE: "+e.getMessage());
+            }
+        }
+        if (patternNumber==8){
+
+            System.out.println(postRepository.getIdByName(matcher.group(1))+matcher.group(1)+" PROCESSING 5.2");
+            try{
+                long id =postRepository.getIdByName(matcher.group(1));
+                checkTheTag(id,true);
+                if (statsRepo.existsByArtId(id)){
+                    long views = statsRepo.getClicksByArtId(id);
+                    views ++;
+                    long searchSuccess= statsRepo.getSearchSuccesByArtId(id);
+                    searchSuccess ++;
+                    LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
+                    LocalDateTime Now =  LocalDateTime.now();
+                    Duration duration = Duration.between(PostTimestamp, Now);
+                    long diffInDays = duration.toDays();
+                    float Performance = views;
+                    if (diffInDays>0&&views > 0){
+                        Performance = (float)views/diffInDays;
+                    }
+                    statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
+                    updateDailyClicks(id);
+                }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 0)); updateDailyClicks(id);}
+            }
+            catch(Exception e){
+                System.out.println("IGNORE "+matcher.group(1)+" BECAUSE: "+e.getMessage());
+
+            }}
+
+
     }
 
     @Transactional
@@ -388,7 +468,7 @@ public class LogService {
                 if(postTime.isBefore(post.getDate())&& post.getStatus().equals("publish") && post.getType().equals("post")){counter ++;}
             }
             if(counter!=0){
-            postfreq=(float)daysDifference/counter;}
+            postfreq=(float)counter/daysDifference;}
             if (userStatsRepo.existsByUserId(user.getId())){
                 stats = userStatsRepo.findByUserId(user.getId());
             }else{stats = new UserStats(user.getId(), 0,0,1);}
@@ -420,7 +500,7 @@ public class LogService {
 
         }
         if(answeredComments!=0){
-        interactionRate=(float)commentCount/answeredComments;}
+        interactionRate=(float)answeredComments/commentCount;}
         stats.setInteractionRate(interactionRate);
         userStatsRepo.save(stats);
        // System.out.println("Interaktionsrate: "+interactionRate+" id: "+user.getId());

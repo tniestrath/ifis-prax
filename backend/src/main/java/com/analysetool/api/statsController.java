@@ -67,39 +67,43 @@ public class statsController {
     @GetMapping("/getViewsBrokenDown")
     public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
         long viewsBlog = 0;
-        long viewsArtikel=0;
-        long viewsProfile=userStatsRepo.findByUserId(id).getProfileView();
-        int tagIdBlog= termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel= termRepo.findBySlug("artikel").getId().intValue();
-       // int tagIdPresse= termRepo.findBySlug("blog");
-        //long viewsPresse=0;
-        List <Post>posts= postRepo.findByAuthor(id.intValue());
+        long viewsArtikel = 0;
+        long viewsProfile = userStatsRepo.findByUserId(id).getProfileView();
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+
+        int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
+        long viewsPresse = 0;
+        List<Post> posts = postRepo.findByAuthor(id.intValue());
 
         List<Long> postTags = new ArrayList<>();
-        for(Post post : posts) {
-            if(statRepository.existsByArtId(post.getId())) {
+        for (Post post : posts) {
+            if (statRepository.existsByArtId(post.getId())) {
                 stats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
                         if (termTax.getTermId() == tagIdBlog) {
-                        viewsBlog=viewsBlog+Stat.getClicks();
+                            viewsBlog = viewsBlog + Stat.getClicks();
                         }
                         if (termTax.getTermId() == tagIdArtikel) {
-                            viewsArtikel=viewsArtikel+Stat.getClicks();
+                            viewsArtikel = viewsArtikel + Stat.getClicks();
                         }
+                        if (termTax.getTermId() == tagIdPresse) {
+                            viewsPresse = viewsPresse + Stat.getClicks();
+                        }}
+
+
                     }
-
-
                 }
             }
-        }
-        JSONObject obj= new JSONObject();
-        obj.put("viewsBlog",viewsBlog);
-        obj.put("viewsArtikel",viewsArtikel);
-        obj.put("viewsProfile",viewsProfile);
-        return obj.toString();
+            JSONObject obj = new JSONObject();
+            obj.put("viewsBlog", viewsBlog);
+            obj.put("viewsArtikel", viewsArtikel);
+            obj.put("viewsPresse", viewsPresse);
+            obj.put("viewsProfile", viewsProfile);
+            return obj.toString();
 
-    }
+        }
 
  /*
     @PutMapping("/{id}")

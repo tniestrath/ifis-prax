@@ -1,11 +1,8 @@
-import {AfterViewInit, Component, EventEmitter, OnInit} from '@angular/core';
-import {ActiveElement, Chart, ChartEvent, ChartType, TooltipItem} from "chart.js/auto";
+import {Component, OnInit} from '@angular/core';
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {DbService} from "../../services/db.service";
-import {PostComponent} from "../post/post.component";
 import {Post} from "../../Post";
 import {UserService} from "../../services/user.service";
-import {color} from "chart.js/helpers";
 
 
 @Component({
@@ -20,7 +17,6 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
   chart : any;
   canvas_id: string = "chart";
-  colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148,28,62)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
 
   timeSpan : string = "all_time";
   postType : string = "artikel";
@@ -119,7 +115,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         interaction: {
           mode: "nearest"
         },
-        onClick(event: ChartEvent, elements: ActiveElement[], chart: Chart) {
+        onClick(event: ChartEvent, elements: ActiveElement[]) {
           onClick(elements[0].index);
         }
       }

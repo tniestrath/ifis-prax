@@ -536,7 +536,7 @@ public class LogService {
                 if(postTime.isBefore(post.getDate())&& post.getStatus().equals("publish") && post.getType().equals("post")){counter ++;}
             }
             if(counter!=0){
-            postfreq=(float)counter/daysDifference;}
+            postfreq=(float)daysDifference/counter;}
             if (userStatsRepo.existsByUserId(user.getId())){
                 stats = userStatsRepo.findByUserId(user.getId());
             }else{stats = new UserStats(user.getId(), 0,0,1);}

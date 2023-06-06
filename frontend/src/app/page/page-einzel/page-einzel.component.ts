@@ -14,6 +14,7 @@ import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
 import {PostComponent} from "../../component/post/post.component";
 import {UserService} from "../../services/user.service";
+import {PotentialComponent} from "../../component/potential/potential.component";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -43,7 +44,8 @@ export class PageEinzelComponent implements OnInit {
       {type: GaugeComponent, row: 4, col: 6, height: 1, width: 1},
       {type: RelevanceComponent, row: 3, col: 6, height: 1, width: 1},
       //@ts-ignore
-      {type: PostComponent, row: 1, col: 6, height: 2, width: 1}
+      {type: PostComponent, row: 1, col: 6, height: 2, width: 1},
+      {type: PotentialComponent, row: 3, col: 2, height: 2, width: 4}
     ];
   }
 

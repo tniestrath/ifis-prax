@@ -32,6 +32,7 @@ import { GridCardDirective } from './grid/grid-card.directive';
 import { RelevanceComponent } from './component/gauge/relevance/relevance.component';
 import { PageLoginComponent } from './page-login/page-login.component';
 import { PostComponent } from './component/post/post.component';
+import { PotentialComponent } from './component/potential/potential.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { PostComponent } from './component/post/post.component';
     GridCardDirective,
     RelevanceComponent,
     PageLoginComponent,
-    PostComponent
+    PostComponent,
+    PotentialComponent
   ],
     imports: [
         BrowserModule,

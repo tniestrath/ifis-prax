@@ -1,0 +1,90 @@
+import {Component, EventEmitter, OnInit} from '@angular/core';
+import {DashBaseComponent} from "../dash-base/dash-base.component";
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
+import {EmptyObject} from "chart.js/dist/types/basic";
+
+@Component({
+  selector: 'dash-potential',
+  templateUrl: './potential.component.html',
+  styleUrls: ['./potential.component.css', "../../component/dash-base/dash-base.component.html"]
+})
+export class PotentialComponent extends DashBaseComponent implements OnInit{
+  chart: any;
+  canvas_id : string = "potential-chart";
+  colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148,28,62)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
+
+  createChart(labels : string[], data : number[], data2 : number[], onClick : EventEmitter<number> | null){
+    Chart.defaults.color = "#000"
+    if (this.chart){
+      this.chart.destroy();
+    }
+
+    this.chart = new Chart(this.canvas_id, {
+      type: "radar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Genutztes Potential",
+          data: data,
+          backgroundColor: "#ffffff00",
+          //@ts-ignore
+          borderWidth: 5,
+          borderColor: this.colors[1]
+        },
+          {
+            label: "Durchschnittliches Potential",
+            data: data2,
+            backgroundColor: "#ffffff00",
+            //@ts-ignore
+            borderWidth: 5,
+            borderColor: this.colors[3]
+          }]
+      },
+      options: {
+        layout: {
+          padding: {
+          }
+        },
+        scales: {
+          r: {
+            angleLines: {
+            },
+            suggestedMin: 0,
+            suggestedMax: 10,
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: "",
+            position: "bottom",
+            fullSize: true,
+            font: {
+              size: 18,
+              weight: "bold",
+              family: 'Times New Roman'
+            }
+          },
+          legend: {
+            display: true
+          },
+          tooltip: {
+            enabled: true
+          },
+        },
+        interaction: {
+          mode: "nearest"
+        },
+        onClick(event: ChartEvent, elements: ActiveElement[], chart: Chart) {
+          onClick?.emit(elements[0].index);
+        }
+      }
+    })
+  }
+
+  ngOnInit(): void {
+    this.createChart(["Artikel","Blogeinträge", "Pressemitteilungen", "Interaktion"], [1,2,3, 4], [2,2,2,2], null);
+  }
+
+
+}

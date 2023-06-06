@@ -194,8 +194,19 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
                             if (Objects.equals(tt.getTaxonomy(), "category") && tt.getTermId() != 1){
                                 if (wpTermRepo.findById(tt.getTermId()).isPresent()) {
                                     type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
+                                    switch (type) {
+                                        case "artikel":
+                                            break;
+                                        case "blog":
+                                            break;
+                                        case "pressemitteilung":
+                                            break;
+                                        default:
+                                            type = "default";
+                                            break;
+                                    }
                                 }
-                            } else {type = "default";}
+                            }
                         }
                     }
                 }

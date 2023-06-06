@@ -2,4 +2,10 @@
   height: 100%;
   background-color: white;
   border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+}
+canvas{
+  max-width: 50%;
+  max-height: 80%;
 }

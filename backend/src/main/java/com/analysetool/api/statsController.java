@@ -143,7 +143,7 @@ public class statsController {
     }
 
     @GetMapping("/getPostStat")
-    public String getStat(@RequestParam Long id) throws JSONException {
+    public String getStat2(@RequestParam Long id) throws JSONException {
         stats Stat = statRepository.getStatByArtID(id);
         JSONObject obj = new JSONObject();
         obj.put("Post-Id",Stat.getArtId());

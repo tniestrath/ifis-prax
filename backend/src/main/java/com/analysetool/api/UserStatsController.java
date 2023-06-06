@@ -4,6 +4,8 @@ import com.analysetool.modells.UserStats;
 import com.analysetool.modells.WPUser;
 import com.analysetool.repositories.UserStatsRepository;
 import com.analysetool.repositories.WPUserRepository;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,18 @@ public class UserStatsController {
     @GetMapping("/{userId}")
     public UserStats getUserStats(@PathVariable("userId") Long userId) {
         return userStatsRepository.findByUserId(userId);
+    }
+
+    @GetMapping("/getUserStats")
+    public String getUserStat(@RequestParam Long id) throws JSONException {
+        JSONObject obj = new JSONObject();
+        UserStats user = userStatsRepository.findByUserId(id);
+        obj.put("Interaktionsrate",user.getInteractionRate());
+        obj.put("Average Performance",user.getAveragePerformance());
+        obj.put("Average Relevance",user.getAverageRelevance());
+        obj.put("Postfrequenz",user.getPostFrequence());
+        obj.put("Profilaufrufe",user.getProfileView());
+        return obj.toString();
     }
 /*
     @PostMapping("/{userId}/update")

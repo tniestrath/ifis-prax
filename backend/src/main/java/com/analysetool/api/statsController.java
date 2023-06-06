@@ -1,9 +1,6 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.Post;
-import com.analysetool.modells.WPTerm;
-import com.analysetool.modells.WpTermTaxonomy;
-import com.analysetool.modells.stats;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -143,6 +140,32 @@ public class statsController {
        obj.put(type,max);
        obj.put("title",postRepo.findById(PostId).get().getTitle());
        return obj.toString();
+    }
+
+    @GetMapping("/getPostStat")
+    public String getStat(@RequestParam Long id) throws JSONException {
+        stats Stat = statRepository.getStatByArtID(id);
+        JSONObject obj = new JSONObject();
+        obj.put("Post-Id",Stat.getArtId());
+        obj.put("Relevanz",Stat.getRelevance());
+        obj.put("Performance",Stat.getPerformance());
+        obj.put("Views",Stat.getClicks());
+        obj.put("Refferings",Stat.getReferrings());
+        obj.put("Article Reffering Rate",Stat.getArticleReferringRate());
+        obj.put("Search Successes",Stat.getSearchSucces());
+        obj.put("Search Success Rate",Stat.getSearchSuccessRate());
+
+        return obj.toString();
+    }
+    @GetMapping("getTagStat")
+    public String getTagStat(@RequestParam Long id)throws JSONException{
+        TagStat tagStat = tagStatRepo.getStatById(id.intValue());
+        JSONObject obj = new JSONObject();
+        obj.put("Tag-Id",tagStat.getTagId());
+        obj.put("Relevance",tagStat.getRelevance());
+        obj.put("Search Successes",tagStat.getSearchSuccess());
+        obj.put("Views",tagStat.getViews());
+        return obj.toString();
     }
 
     @GetMapping("/allTermsRelevanceAndCount")

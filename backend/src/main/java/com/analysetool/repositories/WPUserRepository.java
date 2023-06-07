@@ -15,6 +15,10 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
 
     Optional<WPUser> findByNicename(String nicename);
 
+    Optional<WPUser> findByActivationKey(String ActivationKey);
+
+    boolean existsByActivationKey(String ActivationKey);
+
     // benutzerdefinierte Methoden, falls benötigt
 
 }

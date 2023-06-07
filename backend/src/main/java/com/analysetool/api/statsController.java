@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -184,6 +185,50 @@ public class statsController {
         }
     }
     return response.toString();
+    }
+
+    @GetMapping("/getNewestStatsByAuthor")
+    public String getNewestStatsByAuthor(@RequestParam Long id) throws JSONException{
+        List<Post> posts =postRepo.findByAuthor(id.intValue()) ;
+        long newestId = 0 ;
+        LocalDateTime newestTime = null ;
+        for(Post post : posts){
+            if(newestTime == null || newestTime.isBefore(post.getDate())){
+                newestTime = post.getDate();
+                newestId = post.getId();
+            }
+        }
+        long views = 0;
+        long searchSuccesses = 0;
+        float SearchSuccessRate = 0 ;
+        long refferings = 0;
+        float refrate = 0;
+        float relevanz = 0;
+        float performance = 0 ;
+
+        if(statRepository.existsByArtId(newestId)){
+            stats Stats = statRepository.getStatByArtID(newestId);
+            views = Stats.getClicks();
+            searchSuccesses = Stats.getSearchSuccess();
+            SearchSuccessRate = Stats.getSearchSuccessRate();
+            refferings = Stats.getRefferings();
+            refrate = Stats.getArticleReferringRate();
+            relevanz = Stats.getRelevance();
+            performance = Stats.getPerformance();
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("ID",newestId);
+        obj.put("views",views);
+        obj.put("Search Successes",searchSuccesses);
+        obj.put("Search Success Rate",SearchSuccessRate);
+        obj.put("refferings",refferings);
+        obj.put("article reffering rate",refrate);
+        obj.put("relevanz",relevanz);
+        obj.put("performance",performance);
+
+
+        return obj.toString();
+
     }
 
 

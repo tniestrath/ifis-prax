@@ -14,7 +14,7 @@ export class RelevanceComponent extends DashBaseComponent {
   canvas_id: string = "rel";
   chart: any;
 
-  colors : string[] = ["rgb(149,29,64)", "rgb(229,229,229)"];
+  colors : string[] = ["rgb(149,29,64)", "#5A7995"];
   cutout: string = "80%";
 
   type : string = "rel";
@@ -32,13 +32,13 @@ export class RelevanceComponent extends DashBaseComponent {
     // @ts-ignore
     canvas.height = canvas.width*0.8;
 
-    ctx.fillStyle = "#E5E5E5FF";
+    ctx.fillStyle = this.colors[1];
     // @ts-ignore
     let fillHeight = (value / max) * canvas.height;
     // @ts-ignore
     ctx.fillRect(0, 0, canvas.width , canvas.height - fillHeight - 5);
 
-    ctx.fillStyle = "#951D40FF";
+    ctx.fillStyle = this.colors[0];
     // @ts-ignore
     ctx.fillRect(0, canvas.height - fillHeight, canvas.width , canvas.height);
 
@@ -54,7 +54,7 @@ export class RelevanceComponent extends DashBaseComponent {
     ctx.textAlign = "center";
     ctx.textBaseline = "bottom";
     // @ts-ignore
-    ctx.font = canvas.height/3.5 + "px sans-serif";
+    ctx.font = canvas.height/3 + "px sans-serif";
     // @ts-ignore
     ctx.fillText(  ((value / max) * 100).toFixed(), canvas.width/2, canvas.height+5);
   }

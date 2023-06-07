@@ -16,6 +16,7 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   }
 
   ngOnInit(): void {
+
     UserService.SELECTED_POST_ID.subscribe( id => {
       Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value =>
       {

@@ -4,12 +4,25 @@
     <div id="remove" (click)="removePost()">X</div>
   </div>
   <div class="post-details">
-    <p>{{post.title}}</p>
-    <div class="post-stats">
-      <p>Clicks: {{post.clicks}}</p>
-      <p>Performance: {{post.performance.toFixed()}}</p>
-      <p>Relevanz: {{post.relevance.toFixed()}}</p>
+    <div class="post-detail">
+      <div class="post-label">Titel</div>
+      <p>{{post.title}}</p>
     </div>
-    <p>Themen: {{post.tags}}</p>
+    <div class="post-detail">
+      <div class="post-label" >Clicks</div>
+      <p>{{post.clicks}}</p>
+    </div>
+    <div class="post-detail">
+      <div class="post-label" >Performance</div>
+      <p>{{post.performance.toFixed()}}</p>
+    </div>
+    <div class="post-detail">
+      <div class="post-label" >Relevanz</div>
+      <p>{{post.relevance.toFixed()}}</p>
+    </div>
+    <div class="post-detail">
+      <div class="post-label" >Themen</div>
+      <p>{{post.tags}}</p>
+    </div>
   </div>
 </div>

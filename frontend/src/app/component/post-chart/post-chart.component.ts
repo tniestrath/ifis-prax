@@ -3,6 +3,7 @@ import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Post} from "../../Post";
 import {UserService} from "../../services/user.service";
+import {EmptyObject} from "chart.js/dist/types/basic";
 
 
 @Component({
@@ -39,6 +40,35 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
     if (this.chart){
       this.chart.destroy();
     }
+
+    const lineConnection  = {
+      id: "lineConnection",
+      afterDatasetsDraw(chart: Chart, args: EmptyObject, options: 0, cancelable: false) {
+        const { ctx, data, chartArea: {top, bottom, left, right, width, height}, scales: {r} } = chart;
+        ctx.save();
+        for (let i = 0; i < chart.getDatasetMeta(0).data.length; i++) {
+          let x = chart.getDatasetMeta(0).data[i].x;
+          let y = chart.getDatasetMeta(0).data[i].y;
+          let x2 = chart.getDatasetMeta(1).data[i].x;
+          let y2 = chart.getDatasetMeta(1).data[i].y;
+
+          if (y-y2 > 20){
+            ctx.strokeStyle = "rgb(148,28,62)";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x,y);
+            ctx.lineTo(x, y+((y2-y)/2));
+            ctx.stroke();
+            ctx.strokeStyle = "#5A7995";
+            ctx.beginPath();
+            ctx.moveTo(x, y+((y2-y)/2));
+            ctx.lineTo(x, y2);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
     // @ts-ignore
     this.chart = new Chart(this.canvas_id, {
       type: "line",
@@ -55,8 +85,8 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         {
           label: "Relevanz",
           data: data2,
-          backgroundColor: "rgb(229,229,229)",
-          borderColor: "rgb(229,229,229)",
+          backgroundColor: "#5A7995",
+          borderColor: "#5A7995",
           borderJoinStyle: 'round',
           borderWidth: 5
         }]
@@ -103,22 +133,24 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
             callbacks: {
               //@ts-ignore
               label: ((tooltipItem) => {
-                if (tooltipItem.datasetIndex == 0){
+                if (tooltipItem.datasetIndex == 0) {
                   return "Performance: " + data[tooltipItem.dataIndex].toFixed();
-                }else if (tooltipItem.datasetIndex == 1){
+                } else if (tooltipItem.datasetIndex == 1) {
                   return "Relevanz: " + data2[tooltipItem.dataIndex].toFixed();
                 }
               })
             }
-          },
+          }
         },
         interaction: {
           mode: "nearest"
         },
         onClick(event: ChartEvent, elements: ActiveElement[]) {
           onClick(elements[0].index);
-        }
-      }
+        },
+      },
+      // @ts-ignore
+      plugins: [lineConnection]
     })
   }
 

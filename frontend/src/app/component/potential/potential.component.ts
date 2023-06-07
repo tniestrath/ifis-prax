@@ -104,7 +104,7 @@ export class PotentialComponent extends DashBaseComponent implements OnInit{
         {
           label: "Durchschnittliches Potential",
           data: [2,2,2,2],
-          backgroundColor: this.colors[3],
+          backgroundColor: "#5A7995",
           //@ts-ignore
           borderWidth: 0
         }]

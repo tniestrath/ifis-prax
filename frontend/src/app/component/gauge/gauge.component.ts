@@ -16,7 +16,7 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
   canvas_id: string = "gauge";
   chart: any;
 
-  colors : string[] = ["rgb(149,29,64)", "rgb(229,229,229)"];
+  colors : string[] = ["rgb(149,29,64)", "#5A7995"];
   cutout: string = "60%";
 
   type : string = "perf";

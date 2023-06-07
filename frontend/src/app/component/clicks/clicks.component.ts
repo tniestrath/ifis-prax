@@ -13,7 +13,7 @@ import {UserService} from "../../services/user.service";
 })
 export class ClicksComponent extends DashBaseComponent implements OnInit, OnDestroy{
 
-  colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148,28,62)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
+  colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
   c_chart: any;
   p_chart: any;
 

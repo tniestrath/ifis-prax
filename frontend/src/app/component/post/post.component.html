@@ -9,6 +9,10 @@
       <p>{{post.title}}</p>
     </div>
     <div class="post-detail">
+      <div class="post-label" >Themen</div>
+      <p>{{post.tags}}</p>
+    </div>
+    <div class="post-detail">
       <div class="post-label" >Clicks</div>
       <p>{{post.clicks}}</p>
     </div>
@@ -21,8 +25,12 @@
       <p>{{post.relevance.toFixed()}}</p>
     </div>
     <div class="post-detail">
-      <div class="post-label" >Themen</div>
-      <p>{{post.tags}}</p>
+      <div class="post-label" >Weiterleitungsrate</div>
+      <p>{{post.referrings}}%</p>
+    </div>
+    <div class="post-detail">
+      <div class="post-label" >Erfolgreiche Suchanfragen</div>
+      <p>{{post.searchSuccessRate}}%</p>
     </div>
   </div>
 </div>

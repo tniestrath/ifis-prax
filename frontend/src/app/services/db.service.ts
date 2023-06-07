@@ -15,6 +15,7 @@ export enum dbUrl {
   GET_ALL_USERS = "http://localhost:8080/users/getAllNew",
   GET_USER_POST_PER_DAY = "http://localhost:8080/getPostsByAuthorLine?id=",
   GET_USER_POSTS_WITH_STATS = "http://localhost:8080/getPostsByAuthorLine2?id=",
+  GET_USER_NEWEST_POST_WITH_STATS = "http://localhost:8080/getNewestPostWithStatsByAuthor?id=",
   GET_USER_IMG = "http://localhost:8080/users/profilePic?id=",
   GET_USER_BY_LOGIN = "http://localhost:8080/users?login=",
   GET_USER_BY_EMAIL = "http://localhost:8080/users?email=",
@@ -117,6 +118,10 @@ export class DbService {
 
   async getUserBestPost(id: string, type: string){
     return fetch(dbUrl.GET_USER_BEST_POST + id + "&type=" + type).then(res => res.json());
+  }
+
+  async getUserNewestPost(id: string): Promise<Post> {
+    return fetch(dbUrl.GET_USER_NEWEST_POST_WITH_STATS + id).then(res => res.json());
   }
 
   async getMaxPerformance(){

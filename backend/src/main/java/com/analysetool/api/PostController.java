@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -169,60 +170,64 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
 
         if (!posts.isEmpty()) {
             for (Post i : posts) {
-                stats Stats = null;
-                if(statsRepo.existsByArtId(i.getId())){
-                     Stats = statsRepo.getStatByArtID(i.getId());
-                }
-                List<Long> tagIDs = null;
-                if(termRelationRepo.existsByObjectId(i.getId())){
-                    tagIDs = termRelationRepo.getTaxIdByObject(i.getId());
-                }
-                List<WPTerm> terms = new ArrayList<>();
-                if (tagIDs != null) {
-                    for (long l : tagIDs) {
-                        if (wpTermRepo.existsById(l)) {
-                            if (wpTermRepo.findById(l).isPresent()) {
-                                terms.add(wpTermRepo.findById(l).get());
+                if (i.getType().equals("post")) {
+                    stats Stats = null;
+                    if (statsRepo.existsByArtId(i.getId())) {
+                        Stats = statsRepo.getStatByArtID(i.getId());
+                    }
+                    List<Long> tagIDs = null;
+                    if (termRelationRepo.existsByObjectId(i.getId())) {
+                        tagIDs = termRelationRepo.getTaxIdByObject(i.getId());
+                    }
+                    List<WPTerm> terms = new ArrayList<>();
+                    if (tagIDs != null) {
+                        for (long l : tagIDs) {
+                            if (wpTermRepo.existsById(l)) {
+                                if (wpTermRepo.findById(l).isPresent()) {
+                                    terms.add(wpTermRepo.findById(l).get());
+                                }
                             }
                         }
                     }
-                }
-                for (WPTerm t: terms) {
-                    if (wpTermTaxonomyRepo.existsById(t.getId())){
-                        if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
-                            WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
-                            if (Objects.equals(tt.getTaxonomy(), "category") && tt.getTermId() != 1){
-                                if (wpTermRepo.findById(tt.getTermId()).isPresent()) {
-                                    type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
-                                    switch (type) {
-                                        case "artikel":
-                                            break;
-                                        case "blog":
-                                            break;
-                                        case "pressemitteilung":
-                                            break;
-                                        default:
-                                            type = "default";
-                                            break;
+                    for (WPTerm t : terms) {
+                        if (wpTermTaxonomyRepo.existsById(t.getId())) {
+                            if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()) {
+                                WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
+                                if (Objects.equals(tt.getTaxonomy(), "category") && tt.getTermId() != 1) {
+                                    if (wpTermRepo.findById(tt.getTermId()).isPresent()) {
+                                        type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
+                                        switch (type) {
+                                            case "artikel":
+                                                break;
+                                            case "blog":
+                                                break;
+                                            case "pressemitteilung":
+                                                break;
+                                            default:
+                                                type = "default";
+                                                break;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                JSONObject obj = new JSONObject();
-                Date date = onlyDate.parse(i.getDate().toString());
-                String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                    JSONObject obj = new JSONObject();
+                    Date date = onlyDate.parse(i.getDate().toString());
+                    String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-                obj.put("id", i.getId());
-                obj.put("title", i.getTitle());
-                obj.put("date", formattedDate);
-                obj.put("type", type);
-                if(Stats != null){
-                obj.put("performance",Stats.getPerformance());
-                obj.put("relevance",Stats.getRelevance());
-                }else {obj.put("performance",0);obj.put("relevance",0);}
+                    obj.put("id", i.getId());
+                    obj.put("title", i.getTitle());
+                    obj.put("date", formattedDate);
+                    obj.put("type", type);
+                    if (Stats != null) {
+                        obj.put("performance", Stats.getPerformance());
+                        obj.put("relevance", Stats.getRelevance());
+                    } else {
+                        obj.put("performance", 0);
+                        obj.put("relevance", 0);
+                    }
 
 
                /* if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
@@ -233,15 +238,34 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
                 } else {
                     list.put(obj);
                 }*/
-                list.put(obj);
+                    if (!obj.get("type").equals("default")) {
+                        list.put(obj);
+                    }
+                }
             }
         }
         return list.toString();
     }
 
+    @GetMapping("/getNewestPostWithStatsByAuthor")
+    public String getNewestPostWithStatsByAuthor(@RequestParam Long id) throws JSONException, ParseException {
+        List<Post> posts = postRepository.findByAuthor(id.intValue());
+        long newestId = 0;
+        LocalDateTime newestTime = null;
+        for (Post post : posts) {
+            if (newestTime == null || newestTime.isBefore(post.getDate())) {
+                if (post.getType().equals("post")){
+                    newestTime = post.getDate();
+                    newestId = post.getId();
+                }
+            }
+        }
+        return PostsById2(newestId);
+    }
+
     @GetMapping("/getPostWithStatsById")
-    public String PostsById2(@RequestParam int id) throws JSONException, ParseException {
-        Post post = postRepository.findById((long) id).get();
+    public String PostsById2(@RequestParam long id) throws JSONException, ParseException {
+        Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
         String type = "default";
 
@@ -292,7 +316,18 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
             obj.put("performance",Stats.getPerformance());
             obj.put("relevance",Stats.getRelevance());
             obj.put("clicks", Stats.getClicks().toString());
-        }else {obj.put("performance",0);obj.put("relevance",0);obj.put("clicks", "0");}
+            obj.put("searchSuccesses",Stats.getSearchSuccess());
+            obj.put("SearchSuccessRate",Stats.getSearchSuccessRate());
+            obj.put("referrings",Stats.getRefferings());
+            obj.put("refferingRate",Stats.getArticleReferringRate());
+        }else {
+            obj.put("performance",0);
+            obj.put("relevance",0);
+            obj.put("clicks", "0");
+            obj.put("searchSuccesses",0);
+            obj.put("SearchSuccessRate",0);
+            obj.put("referrings",0);
+            obj.put("refferingRate",0);}
 
         return obj.toString();
     }

@@ -104,7 +104,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
             max: 100,
           },
           x: {
-            display: false
+            display: true
           }
         },
         plugins: {
@@ -184,7 +184,22 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         })
 
         for (var post of time_filtered) {
-          postLabel.push(post.title);
+          let label = post.title;
+          let space_index = label.indexOf(" ");
+          let sec_space_index = label.indexOf(" ", space_index+1);
+          if (label.length > 10){
+            if (sec_space_index < 10){
+              label = label.slice(0, sec_space_index);
+            }
+            if (space_index < 10 !&& sec_space_index < 10){
+              label = label.slice(0, space_index);
+            }
+            else {
+              label = label.slice(0, 10)
+            }
+            label += "...";
+          }
+          postLabel.push(label);
           postData.push((post.performance / value[0])*100);
           postDataRelevance.push((post.relevance / value[1])*100);
           // @ts-ignore

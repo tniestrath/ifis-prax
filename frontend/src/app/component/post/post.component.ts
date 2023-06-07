@@ -16,6 +16,11 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.db.getUserNewestPost(UserService.USER_ID).then(res => {
+      Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value => {
+        this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, ((res.performance / value[0]) * 100), (res.relevance / value[1]) * 100, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate);
+      });
+    });
 
     UserService.SELECTED_POST_ID.subscribe( id => {
       Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value =>
@@ -29,7 +34,7 @@ export class PostComponent extends DashBaseComponent implements OnInit{
             case "pressemitteilung": res.type = "Ausgewählte Pressemitteilung";
             break;
           }
-          this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, ((res.performance / value[0])*100), (res.relevance / value[1])*100);
+          this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, ((res.performance / value[0])*100), (res.relevance / value[1])*100, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate);
         })
       })
 

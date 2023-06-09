@@ -35,7 +35,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
 
 
-  createChart(labels: string[], data: number[], data2: number[], onClick: (index : number) => void){
+  createChart(labels: string[], fullLabels : string[], data: number[], data2: number[], onClick: (index : number) => void){
     Chart.defaults.color = "#000"
     if (this.chart){
       this.chart.destroy();
@@ -51,20 +51,36 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
           let y = chart.getDatasetMeta(0).data[i].y;
           let x2 = chart.getDatasetMeta(1).data[i].x;
           let y2 = chart.getDatasetMeta(1).data[i].y;
-
-          if (y-y2 > 20){
-            ctx.strokeStyle = "rgb(148,28,62)";
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(x,y);
-            ctx.lineTo(x, y+((y2-y)/2));
-            ctx.stroke();
-            ctx.strokeStyle = "#5A7995";
-            ctx.beginPath();
-            ctx.moveTo(x, y+((y2-y)/2));
-            ctx.lineTo(x, y2);
-            ctx.stroke();
+          if (y > y2){
+            if (y-y2 > 10){
+              ctx.strokeStyle = "rgb(148,28,62)";
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              ctx.moveTo(x,y);
+              ctx.lineTo(x, y+((y2-y)/2));
+              ctx.stroke();
+              ctx.strokeStyle = "#5A7995";
+              ctx.beginPath();
+              ctx.moveTo(x, y+((y2-y)/2));
+              ctx.lineTo(x, y2);
+              ctx.stroke();
+            }
+          } else {
+            if (y2-y > 10){
+              ctx.strokeStyle = "rgb(148,28,62)";
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              ctx.moveTo(x,y);
+              ctx.lineTo(x, y-((y-y2)/2));
+              ctx.stroke();
+              ctx.strokeStyle = "#5A7995";
+              ctx.beginPath();
+              ctx.moveTo(x, y-((y-y2)/2));
+              ctx.lineTo(x, y2);
+              ctx.stroke();
+            }
           }
+
         }
       }
     }
@@ -132,6 +148,11 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
             },
             callbacks: {
               //@ts-ignore
+              title(tooltipItems): string {
+                // @ts-ignore
+                return fullLabels[tooltipItems.at(0).dataIndex];
+              },
+              //@ts-ignore
               label: ((tooltipItem) => {
                 if (tooltipItem.datasetIndex == 0) {
                   return "Performance: " + data[tooltipItem.dataIndex].toFixed();
@@ -143,7 +164,8 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
           }
         },
         interaction: {
-          mode: "nearest"
+          mode: "nearest",
+          intersect: true
         },
         onClick(event: ChartEvent, elements: ActiveElement[]) {
           onClick(elements[0].index);
@@ -182,9 +204,10 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         time_filtered.sort((a, b) => {
           return new Date(a.date).getTime() - new Date(b.date).getTime();
         })
-
+        let fullLabels : string[] = [];
         for (var post of time_filtered) {
           let label = post.title;
+          fullLabels.push(post.title);
           let space_index = label.indexOf(" ");
           let sec_space_index = label.indexOf(" ", space_index+1);
           if (label.length > 10){
@@ -205,7 +228,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
           // @ts-ignore
           postIds.push(post.id);
         }
-        this.createChart(postLabel, postData, postDataRelevance, (index) => {
+        this.createChart(postLabel, fullLabels, postData, postDataRelevance, (index) => {
           UserService.SELECTED_POST_ID.emit(postIds[index]);
         });
       })
@@ -215,7 +238,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.setToolTip("Diese Grafik zeigt die Performance all ihrer Beiträge, im angegebenen Zeitraum.")
+    this.setToolTip("Diese Grafik zeigt die Performance / Relevanz all ihrer Beiträge, im angegebenen Zeitraum.")
     this.getData();
   }
 

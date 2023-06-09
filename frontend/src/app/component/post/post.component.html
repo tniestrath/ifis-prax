@@ -1,7 +1,6 @@
 <div class="component-box post-box">
   <div class="post-select-info">
     <p id="selected-post-identifier">{{post.type}}</p>
-    <div id="remove" (click)="removePost()">X</div>
   </div>
   <div class="post-details">
     <div class="post-detail">
@@ -10,7 +9,7 @@
     </div>
     <div class="post-detail">
       <div class="post-label" >Themen</div>
-      <p>{{post.tags}}</p>
+      <p>{{formattedTags}}</p>
     </div>
     <div class="post-detail">
       <div class="post-label" >Clicks</div>
@@ -18,19 +17,19 @@
     </div>
     <div class="post-detail">
       <div class="post-label" >Performance</div>
-      <p>{{post.performance.toFixed()}}</p>
+      <p>{{formattedPerformance.toFixed()}}</p>
     </div>
     <div class="post-detail">
       <div class="post-label" >Relevanz</div>
-      <p>{{post.relevance.toFixed()}}</p>
+      <p>{{formattedRelevanz.toFixed()}}</p>
     </div>
     <div class="post-detail">
       <div class="post-label" >Weiterleitungsrate</div>
-      <p>{{post.referrings}}%</p>
+      <p>{{post.referrings.toFixed()}}%</p>
     </div>
     <div class="post-detail">
-      <div class="post-label" >Erfolgreiche Suchanfragen</div>
-      <p>{{post.searchSuccessRate}}%</p>
+      <div class="post-label" >Clicks durch Suchanfragen</div>
+      <p>{{formattedSSR.toFixed()}}%</p>
     </div>
   </div>
 </div>

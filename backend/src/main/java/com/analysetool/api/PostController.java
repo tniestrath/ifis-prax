@@ -296,7 +296,7 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
                             type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
                         }
                     } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
-                        tags.add(wpTermRepo.findById(tt.getTermId()).get().getSlug());
+                        tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
                     }
                 }
             }
@@ -317,17 +317,17 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
             obj.put("relevance",Stats.getRelevance());
             obj.put("clicks", Stats.getClicks().toString());
             obj.put("searchSuccesses",Stats.getSearchSuccess());
-            obj.put("SearchSuccessRate",Stats.getSearchSuccessRate());
+            obj.put("searchSuccessRate",Stats.getSearchSuccessRate());
             obj.put("referrings",Stats.getRefferings());
-            obj.put("refferingRate",Stats.getArticleReferringRate());
+            obj.put("articleReferringRate",Stats.getArticleReferringRate());
         }else {
             obj.put("performance",0);
             obj.put("relevance",0);
             obj.put("clicks", "0");
             obj.put("searchSuccesses",0);
-            obj.put("SearchSuccessRate",0);
+            obj.put("searchSuccessRate",0);
             obj.put("referrings",0);
-            obj.put("refferingRate",0);}
+            obj.put("articleReferringRate",0);}
 
         return obj.toString();
     }

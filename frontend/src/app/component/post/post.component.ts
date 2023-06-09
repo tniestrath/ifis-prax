@@ -10,35 +10,58 @@ import {UserService} from "../../services/user.service";
 })
 export class PostComponent extends DashBaseComponent implements OnInit{
   post: Post = new Post("Superlanger titel der super lang ist um lange titel zu testen, is aber noch nicht lang genug", "10/10/2010", "article", "1", ["tag1", "tag2"], 2, 0.1);
-
-
-  removePost() {
-  }
+  formattedTags : string = "";
+  formattedPerformance: number = 0;
+  formattedRelevanz: number = 0;
+  formattedSSR: number = 0;
+  formattedARR: number = 0;
 
   ngOnInit(): void {
     this.db.getUserNewestPost(UserService.USER_ID).then(res => {
       Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value => {
-        this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, ((res.performance / value[0]) * 100), (res.relevance / value[1]) * 100, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate);
-      });
+        this.formatPost(res, value[0], value[1], true)
+      })
     });
 
     UserService.SELECTED_POST_ID.subscribe( id => {
       Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value =>
       {
         this.db.getPostById(id).then(res => {
-          switch (res.type) {
-            case "artikel": res.type = "Ausgewählter Artikel";
-              break;
-            case "blog": res.type = "Ausgewählter Blog Eintrag";
-              break;
-            case "pressemitteilung": res.type = "Ausgewählte Pressemitteilung";
-            break;
-          }
-          this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, ((res.performance / value[0])*100), (res.relevance / value[1])*100, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate);
-        })
+          this.formatPost(res, value[0], value[1], true)})
       })
 
-    })
+    });
+  }
 
+  formatPost(res : Post, maxPerf : number, maxRel : number, isSelected : boolean){
+    if (isSelected){
+      switch (res.type) {
+        case "artikel": res.type = "Ausgewählter Artikel";
+          break;
+        case "blog": res.type = "Ausgewählter Blog Eintrag";
+          break;
+        case "pressemitteilung": res.type = "Ausgewählte Pressemitteilung";
+          break;
+      }
+    } else {
+      switch (res.type) {
+        case "artikel": res.type = "Ihr aktuellster Artikel";
+          break;
+        case "blog": res.type = "Ihr aktuellster Blog Eintrag";
+          break;
+        case "pressemitteilung": res.type = "Ihre aktuellste Pressemitteilung";
+          break;
+      }
+    }
+    this.formattedTags = res.tags.toString().replace("[", "").replace("]", "");
+    this.formattedPerformance = (res.performance / maxPerf) * 100;
+    this.formattedRelevanz = (res.relevance / maxRel) * 100;
+    // @ts-ignore
+    this.formattedSSR = res.searchSuccessRate * 100;
+    // @ts-ignore
+    this.formattedARR = res.articleReferringRate * 100;
+
+    // @ts-ignore
+    this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, res.performance, res.relevance, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate);
   }
 }

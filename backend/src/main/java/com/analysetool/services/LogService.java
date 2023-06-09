@@ -101,6 +101,7 @@ public class LogService {
 
     }
     @Scheduled(cron = "0 0 * * * *")
+    //@Scheduled(cron = "0 */2 * * * *")
     public void runScheduled() {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
@@ -233,6 +234,7 @@ public class LogService {
         //updateuseraktivität
         System.out.println("UPDATING USER ACTIVITY");
         updateUserActivity((long)3);
+        lineCounter = 0 ;
         System.out.println("END OF LOG");
     }
 

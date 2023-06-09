@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import com.analysetool.modells.Company;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
+@EnableScheduling
 
 public class Application {
 

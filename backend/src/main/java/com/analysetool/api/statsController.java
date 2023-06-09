@@ -187,6 +187,7 @@ public class statsController {
         }
     }
     return response.toString();
+
     }
 
     @GetMapping("/getNewestStatsByAuthor")

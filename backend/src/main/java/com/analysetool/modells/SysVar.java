@@ -31,6 +31,29 @@ public class SysVar {
     @Column(name = "date")
     private LocalDateTime date;
 
+    public LocalDateTime getLogDate() {
+        return logDate;
+    }
+
+    public void setLogDate(LocalDateTime logDate) {
+        this.logDate = logDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SysVar sysVar)) return false;
+        return getId() == sysVar.getId() && getDayInWeek() == sysVar.getDayInWeek() && getDayInMonth() == sysVar.getDayInMonth() && getDayInYear() == sysVar.getDayInYear() && getLastLineCount() == sysVar.getLastLineCount() && Objects.equals(getLastLine(), sysVar.getLastLine()) && Objects.equals(getDate(), sysVar.getDate()) && Objects.equals(getLogDate(), sysVar.getLogDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getDayInWeek(), getDayInMonth(), getDayInYear(), getLastLineCount(), getLastLine(), getDate(), getLogDate());
+    }
+
+    @Column(name="log_date")
+    private LocalDateTime logDate;
+
     public LocalDateTime getDate() {
         return date;
     }
@@ -45,6 +68,7 @@ public class SysVar {
                 ", lastLineCount=" + lastLineCount +
                 ", lastLine='" + lastLine + '\'' +
                 ", date=" + date +
+                ", logDate=" + logDate +
                 '}';
     }
 
@@ -112,18 +136,6 @@ public class SysVar {
 
     public void setLastLine(String lastLine) {
         this.lastLine = lastLine;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SysVar sysVar)) return false;
-        return getId() == sysVar.getId() && getDayInWeek() == sysVar.getDayInWeek() && getDayInMonth() == sysVar.getDayInMonth() && getDayInYear() == sysVar.getDayInYear() && getLastLineCount() == sysVar.getLastLineCount() && Objects.equals(getLastLine(), sysVar.getLastLine()) && Objects.equals(getDate(), sysVar.getDate());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getDayInWeek(), getDayInMonth(), getDayInYear(), getLastLineCount(), getLastLine(), getDate());
     }
 
 }

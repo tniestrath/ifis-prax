@@ -11,7 +11,13 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -55,10 +61,12 @@ public class LogService {
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
-    private boolean liveScanning = false;
+    private boolean liveScanning ;
+    //private String Pfad=Application.class.getClassLoader().getResource("access.log").getPath();
+    private String Pfad = Paths.get(Application.class.getClassLoader().getResource("access.log").toURI()).toString();
 
     @Autowired
-    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo,WPUserRepository wpUserRepo,UserStatsRepository userStatsRepo,CommentsRepository commentRepo,SysVarRepository sysVarRepo) {
+    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo,WPUserRepository wpUserRepo,UserStatsRepository userStatsRepo,CommentsRepository commentRepo,SysVarRepository sysVarRepo) throws URISyntaxException {
         this.postRepository = postRepository;
         this.statsRepo = StatsRepository;
         this.tagStatRepo=tagStatRepo;
@@ -70,6 +78,19 @@ public class LogService {
         this.commentRepo=commentRepo;
         this.sysVarRepo=sysVarRepo;
     }
+    public LocalDateTime getCreationDateOfAccessLog(String filePath) {
+        try {
+            Path file = Paths.get(filePath);
+            BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+            System.out.println(LocalDateTime.ofInstant(attrs.creationTime().toInstant(), ZoneId.systemDefault()));
+            return LocalDateTime.ofInstant(attrs.creationTime().toInstant(), ZoneId.systemDefault());
+        } catch (Exception e) {
+            // Fehlerbehandlung, falls das Erstelldatum nicht geladen werden kann
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @PostConstruct
     public void init() {
         SysVar SystemVariabeln = new SysVar();
@@ -82,26 +103,32 @@ public class LogService {
             SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
             SystemVariabeln.setLastLine("");
             SystemVariabeln.setLastLineCount(0);
+            SystemVariabeln.setLogDate(getCreationDateOfAccessLog(Pfad));
+            liveScanning = false ;
 
         }else {SystemVariabeln = sysVarRepo.findAll().get(sysVarRepo.findAll().size()-1);
 
-            if(SystemVariabeln.getDate().getDayOfYear()!=(LocalDateTime.now().getDayOfYear())){
+            //if(SystemVariabeln.getDate().getDayOfYear()!=(LocalDateTime.now().getDayOfYear())){
+                liveScanning= (getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0).equals(SystemVariabeln.getLogDate().withSecond(0).withNano(0)));
+                System.out.println(getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0)+ "  "+SystemVariabeln.getLogDate().withSecond(0).withNano(0));
+
                 SystemVariabeln.setDate(LocalDateTime.now());
                 SystemVariabeln.setDayInYear(LocalDateTime.now().getDayOfYear());
                 SystemVariabeln.setDayInWeek(LocalDateTime.now().getDayOfWeek().getValue());
                 SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
                 SystemVariabeln.setLastLine("");
-                SystemVariabeln.setLastLineCount(0);
-            }
+                if(!liveScanning){SystemVariabeln.setLastLineCount(0);}
+                SystemVariabeln.setLogDate(getCreationDateOfAccessLog(Pfad));
+           // }
 
         }
 
 
-        run(true,Application.class.getClassLoader().getResource("access.log").getPath(), SystemVariabeln);
+        run(liveScanning,Pfad, SystemVariabeln);
 
     }
-    @Scheduled(cron = "0 0 * * * *")
-    //@Scheduled(cron = "0 */2 * * * *")
+    @Scheduled(cron = "0 0 * * * *") //einmal die Stunde
+    //@Scheduled(cron = "0 */2 * * * *") //alle 2min
     public void runScheduled() {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
@@ -113,28 +140,33 @@ public class LogService {
             SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
             SystemVariabeln.setLastLine("");
             SystemVariabeln.setLastLineCount(0);
+            SystemVariabeln.setLogDate(getCreationDateOfAccessLog(Pfad));
+            liveScanning = false;
 
         }else {SystemVariabeln = sysVarRepo.findAll().get(sysVarRepo.findAll().size()-1);
 
-            if(SystemVariabeln.getDate().getDayOfYear()!=(LocalDateTime.now().getDayOfYear())){
+           // if(SystemVariabeln.getDate().getDayOfYear()!=(LocalDateTime.now().getDayOfYear())){
+            liveScanning= (getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0).equals(SystemVariabeln.getLogDate().withSecond(0).withNano(0)));
                 SystemVariabeln.setDate(LocalDateTime.now());
                 SystemVariabeln.setDayInYear(LocalDateTime.now().getDayOfYear());
                 SystemVariabeln.setDayInWeek(LocalDateTime.now().getDayOfWeek().getValue());
                 SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
                 SystemVariabeln.setLastLine("");
-                SystemVariabeln.setLastLineCount(0);
-            }
+                if(!liveScanning){SystemVariabeln.setLastLineCount(0);}
+                SystemVariabeln.setLogDate(getCreationDateOfAccessLog(Pfad));
+          //  }
 
         }
 
 
-        run(true,Application.class.getClassLoader().getResource("access.log").getPath(), SystemVariabeln);
+        run(liveScanning,Pfad, SystemVariabeln);
     }
     public void run(boolean liveScanning, String path,SysVar SystemVariabeln)  {
         this.liveScanning = liveScanning;
         this.path = path;
         lastLineCounter=SystemVariabeln.getLastLineCount();
         lastLine = SystemVariabeln.getLastLine();
+        lineCounter = 0 ;
         try  {
             br = new BufferedReader(new FileReader(path));
             findAMatch();
@@ -150,10 +182,10 @@ public class LogService {
         String line;
 
         boolean foundPattern = false;
+        System.out.println(lineCounter+" "+lastLineCounter+" "+liveScanning);
+        while ((line = br.readLine()) != null ) {
 
-        while ((line = br.readLine()) != null) {
-
-            while(lineCounter!=lastLineCounter){
+            while(lineCounter!=lastLineCounter && liveScanning){
                 br.readLine();
                 lineCounter++;
                 System.out.println("Counting up");

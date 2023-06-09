@@ -76,6 +76,7 @@ public class WPUserController {
         return li;
     }*/
 
+
     @GetMapping("/getAllNew")
     public List<userWp> getAllNew() throws IOException {
         List<WPUser> list = userRepository.findAll();

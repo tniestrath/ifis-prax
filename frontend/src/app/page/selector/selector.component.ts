@@ -26,6 +26,7 @@ export class SelectorComponent implements OnInit{
   @Input() columnsForm = "repeat(3, 1fr)";
   @Input() padding : string = "5px 5vw";
   @Input() dataLoaded = new Observable<SelectorItem[]>();
+  @Input() zebraColorMode: boolean = false;
 
   @Output() itemClick = new EventEmitter<DbObject>();
 
@@ -55,7 +56,7 @@ export class SelectorComponent implements OnInit{
       const componentRef = viewContainerRef.createComponent<SelectableComponent>(item.component);
       componentRef.instance.data = item.data;
       componentRef.setInput("clicked", this.itemClick);
-      if (index % 2 == 0){
+      if (index % 2 == 0 && this.zebraColorMode){
         componentRef.location.nativeElement.setAttribute("style", "background : #EFEFEF");
       }
       index++;

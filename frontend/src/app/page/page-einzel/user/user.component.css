@@ -1,6 +1,7 @@
 .user-box{
   height: 100px;
   padding: 5px;
+  margin: 5px;
 
   display: grid;
   grid-template-columns: 100px auto;

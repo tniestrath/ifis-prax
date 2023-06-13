@@ -5,7 +5,7 @@ import {SafeUrl} from "@angular/platform-browser";
 import {DbService} from "../../../services/db.service";
 
 export class User extends DbObject{
-  constructor(public override id : string, public email : string, public displayName : string, public img : SafeUrl) {
+  constructor(public override id : string, public email : string, public displayName : string, public accountType: string, public postCount: number, public img : SafeUrl) {
     super(id, displayName);
   }
 }
@@ -16,7 +16,7 @@ export class User extends DbObject{
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements SelectableComponent, OnInit {
-  @Input() data: User = new User("", "", "", "");
+  @Input() data: User = new User("", "", "", "", 0, "");
 
   @Input() clicked: EventEmitter<User> = new EventEmitter<User>();
 

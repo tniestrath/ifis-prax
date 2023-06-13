@@ -1,4 +1,5 @@
 package com.analysetool.api;
+import com.analysetool.Application;
 import com.analysetool.modells.WPUser;
 import com.analysetool.repositories.WPUserRepository;
 import org.json.JSONArray;
@@ -9,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import com.analysetool.modells.userWp;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -78,7 +81,7 @@ public class WPUserController {
 
 
     @GetMapping("/getAllNew")
-    public List<userWp> getAllNew() throws IOException {
+    public List<userWp> getAllNew() throws IOException, URISyntaxException {
         List<WPUser> list = userRepository.findAll();
         List<userWp> li = new ArrayList<>();
         for (WPUser i : list) {
@@ -88,8 +91,8 @@ public class WPUserController {
     }
 
     @GetMapping("/profilePic")
-    public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException {
-        String path = "../../assets/user_img/"+id+"_profile_photo.jpg";
+    public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException, URISyntaxException {
+        String path = Paths.get(Application.class.getClassLoader().getResource("user_img").toURI()).toString() +"/"+id+"_profile_photo.jpg";
         File cutePic = new File(path);
         if (!cutePic.exists()) {
             return ResponseEntity.notFound().build();

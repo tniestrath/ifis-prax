@@ -13,7 +13,7 @@ export class PotentialComponent extends DashBaseComponent implements OnInit{
   bar_chart: any;
   canvas_id : string = "potential-chart";
   bar_canvas_id : string = "bar-chart";
-  colors : string[] = ["rgb(224, 43, 94, 88)", "rgb(148,28,62)", "rgb(84, 16, 35, 33)", "rgb(0, 0, 0)"];
+  colors : string[] = ["#5A7995", "rgb(148,28,62)"];
 
   createChart(labels : string[], data : number[], data2 : number[], onClick : EventEmitter<number> | null){
     Chart.defaults.color = "#000"
@@ -39,7 +39,7 @@ export class PotentialComponent extends DashBaseComponent implements OnInit{
             backgroundColor: "#ffffff00",
             //@ts-ignore
             borderWidth: 5,
-            borderColor: this.colors[3]
+            borderColor: this.colors[0]
           }]
       },
       options: {
@@ -104,7 +104,7 @@ export class PotentialComponent extends DashBaseComponent implements OnInit{
         {
           label: "Durchschnittliches Potential",
           data: [2,2,2,2],
-          backgroundColor: "#5A7995",
+          backgroundColor: this.colors[0],
           //@ts-ignore
           borderWidth: 0
         }]

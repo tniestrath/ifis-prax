@@ -5,7 +5,7 @@
 
   display: grid;
   grid-template-columns: 100px auto 100px;
-  grid-template-rows: 33px 33px 33px;
+  grid-template-rows: 25px 25px 25px 25px;
   grid-column-gap: 10px;
 
   background-color: white;
@@ -40,8 +40,23 @@ img {
   grid-column: 2;
   font-style: italic;
 }
-.user-email-box{
+.user-potential-box{
   grid-row: 3;
+  grid-column-start: 2;
+  grid-column-end: 4;
+  display: flex;
+}
+.potential-background{
+  height: 10px;
+  width: 100%;
+  background-color: #5A7995;
+}
+.potential-value{
+  background-color: #951D40;
+  height: 10px;
+}
+.user-email-box{
+  grid-row: 4;
   grid-column: 2;
   display: flex;
   align-items: end;

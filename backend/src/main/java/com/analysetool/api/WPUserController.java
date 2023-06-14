@@ -1,8 +1,13 @@
 package com.analysetool.api;
 import com.analysetool.Application;
 import com.analysetool.modells.WPUser;
+import com.analysetool.modells.UserStats;
 import com.analysetool.repositories.WPUserRepository;
+import com.analysetool.repositories.UserStatsRepository;
+
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +28,10 @@ public class WPUserController {
 
     @Autowired
     private WPUserRepository userRepository;
+    @Autowired
+    private UserStatsRepository userStatsRepo;
+    @Autowired
+    private statsController StatsController;
 /*
     @GetMapping("/{id}")
     public ResponseEntity<WPUser> getUserById(@PathVariable Long id) {
@@ -81,13 +90,36 @@ public class WPUserController {
 
 
     @GetMapping("/getAllNew")
-    public List<userWp> getAllNew() throws IOException, URISyntaxException {
+    public String getAllNew() throws IOException, URISyntaxException, JSONException {
         List<WPUser> list = userRepository.findAll();
-        List<userWp> li = new ArrayList<>();
+
+        JSONArray response = new JSONArray();
+        //JSONObject obj = new JSONObject();
         for (WPUser i : list) {
-            li.add(new userWp(i.getId(), i.getEmail(), i.getDisplayName(), getProfilePic(i.getId()).getBody()));
+            JSONObject obj = new JSONObject();
+            if(userStatsRepo.existsByUserId(i.getId())){
+                UserStats statsUser = userStatsRepo.findByUserId(i.getId());
+                obj.put("ID",i.getId());
+                obj.put("Email",i.getEmail());
+                obj.put("Display Name",i.getDisplayName());
+                obj.put( "type" ,"extra Premium ultra User");
+                obj.put("Profile-Views ", statsUser.getProfileView());
+                obj.put("Post-Views",StatsController.getViewsOfUserById(i.getId()));
+                obj.put ("avg_perf",statsUser.getAveragePerformance());
+
+            }
+            else {obj.put("ID",i.getId());
+                obj.put("Email",i.getEmail());
+                obj.put("Display Name",i.getDisplayName());
+                obj.put( "type" ,"extra Premium ultra User");
+                obj.put("Profile-Views ", 0);
+                obj.put("Post-Views",0);
+                obj.put ("avg_perf",0);
+
+            }
+            response.put(obj);
         }
-        return li;
+        return response.toString();
     }
 
     @GetMapping("/profilePic")

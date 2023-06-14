@@ -5,7 +5,15 @@ import {SafeUrl} from "@angular/platform-browser";
 import {DbService} from "../../../services/db.service";
 
 export class User extends DbObject{
-  constructor(public override id : string, public email : string, public displayName : string, public accountType: string, public postCount: number, public potential : number, public performance: number, public img : SafeUrl) {
+  constructor(public override id : string,
+              public email : string,
+              public displayName : string,
+              public accountType: string,
+              public postCount: number,
+              public potential : number,
+              public performance: number,
+              public postViews: number,
+              public img : SafeUrl) {
     super(id, displayName);
   }
 }
@@ -16,7 +24,7 @@ export class User extends DbObject{
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements SelectableComponent, OnInit {
-  @Input() data: User = new User("", "", "", "", 0, 50, 66, "");
+  @Input() data: User = new User("", "", "", "", 0, 50, 66, 0, "");
 
   @Input() clicked: EventEmitter<User> = new EventEmitter<User>();
 
@@ -39,7 +47,7 @@ export class UserComponent implements SelectableComponent, OnInit {
     if (this.user_img){
       return this.user_img;
     } else {
-      return "C:/Users/Robin/IdeaProjects/ifis-prax/frontend/src/assets/ifismpdashboard.png";
+      return "../../assets/user_img/404_img.png";
     }
   }
 

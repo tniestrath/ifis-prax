@@ -69,15 +69,26 @@ export class PageEinzelComponent implements OnInit {
   }
 
   loadSelector(){
-    this.db.loadAllUsers().then(() => {
-      this.selectorItems = [];
-      for (let u of DbService.Users) {
-        this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, "Premium", 0, 50, 66, u.img)));
-      }
-    }).then(() => {
-      this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||
-                                                    (item.data as User).email.toUpperCase().includes(this.searchValue.toUpperCase()))
-    }).finally(() =>
-      this.selectorItemsLoaded.next(this.selectorItems));
+    this.db.getMaxPerformance().then(res => {
+      const max_performance = res;
+      this.db.loadAllUsers().then(() => {
+        this.selectorItems = [];
+        for (let u of DbService.Users) {
+          let performance = (u.performance / max_performance)*100;
+          if (performance <= 33){
+            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.accountType, u.postViews, 50, 33, u.postViews, u.img)));
+          } if (performance > 33 && performance <= 66){
+            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.accountType, u.postViews, 50, 66, u.postViews, u.img)));
+          } if (performance > 66){
+            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.accountType, u.postViews, 50, 100, u.postViews, u.img)));
+          }
+
+        }
+      }).then(() => {
+        this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||
+          (item.data as User).email.toUpperCase().includes(this.searchValue.toUpperCase()))
+      }).finally(() =>
+        this.selectorItemsLoaded.next(this.selectorItems));
+    })
   }
 }

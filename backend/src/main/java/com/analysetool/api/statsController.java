@@ -89,6 +89,31 @@ public class statsController {
         return views ;
     }
 
+    @GetMapping("/getPostCountOfUser")
+    public long getPostCountOfUserById(@RequestParam Long id){
+        List<Post> posts = postRepo.findByAuthor(id.intValue());
+        long PostCount = 0 ;
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+
+        int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
+        for (Post post : posts) {
+            if (statRepository.existsByArtId(post.getId())) {
+                stats Stat = statRepository.getStatByArtID(post.getId());
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
+                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse) {
+                            PostCount++ ;
+                        }
+                    }
+
+
+                }
+            }
+        }
+        return PostCount ;
+    }
+
     @GetMapping("/getViewsBrokenDown")
     public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
         long viewsBlog = 0;

@@ -13,7 +13,7 @@ export class PotentialComponent extends DashBaseComponent implements OnInit{
   bar_chart: any;
   canvas_id : string = "potential-chart";
   bar_canvas_id : string = "bar-chart";
-  colors : string[] = ["#5A7995", "rgb(148,28,62)"];
+  colors : string[] = ["#5A7995", "#941C3E"];
 
   createChart(labels : string[], data : number[], data2 : number[], onClick : EventEmitter<number> | null){
     Chart.defaults.color = "#000"
@@ -28,7 +28,7 @@ export class PotentialComponent extends DashBaseComponent implements OnInit{
         datasets: [{
           label: "Genutztes Potential",
           data: data,
-          backgroundColor: "#ffffff00",
+          backgroundColor: this.colors[1] + "88",
           //@ts-ignore
           borderWidth: 5,
           borderColor: this.colors[1]
@@ -36,7 +36,7 @@ export class PotentialComponent extends DashBaseComponent implements OnInit{
           {
             label: "Durchschnittliches Potential",
             data: data2,
-            backgroundColor: "#ffffff00",
+            backgroundColor: this.colors[0] + "88",
             //@ts-ignore
             borderWidth: 5,
             borderColor: this.colors[0]
@@ -84,7 +84,7 @@ export class PotentialComponent extends DashBaseComponent implements OnInit{
     })
   }
 
-  createBarChart(labels : string[], data : number[], onClick : EventEmitter<number> | null){
+  /*createBarChart(labels : string[], data : number[], onClick : EventEmitter<number> | null){
     Chart.defaults.color = "#000"
     if (this.bar_chart){
       this.bar_chart.destroy();
@@ -149,11 +149,11 @@ export class PotentialComponent extends DashBaseComponent implements OnInit{
         }
       }
     })
-  }
+  }*/
 
   ngOnInit(): void {
-    this.createChart(["Artikel","Blogeinträge", "Pressemitteilungen", "Interaktion"], [1,2,3, 4], [2,2,2,2], null);
-    this.createBarChart(["Artikel","Blogeinträge", "Pressemitteilungen", "Interaktion"], [1,2,3, 4], null);
+    this.createChart(["Artikel","Blogeinträge", "Pressemitteilungen", "Interaktion"], [2,4,5, 8], [5,5,5,5], null);
+    /*this.createBarChart(["Artikel","Blogeinträge", "Pressemitteilungen", "Interaktion"], [1,2,3, 4], null);*/
   }
 
 

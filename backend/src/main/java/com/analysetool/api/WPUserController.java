@@ -99,22 +99,22 @@ public class WPUserController {
             JSONObject obj = new JSONObject();
             if(userStatsRepo.existsByUserId(i.getId())){
                 UserStats statsUser = userStatsRepo.findByUserId(i.getId());
-                obj.put("ID",i.getId());
-                obj.put("Email",i.getEmail());
-                obj.put("Display Name",i.getDisplayName());
-                obj.put( "type" ,"extra Premium ultra User");
-                obj.put("Profile-Views ", statsUser.getProfileView());
-                obj.put("Post-Views",StatsController.getViewsOfUserById(i.getId()));
-                obj.put ("avg_perf",statsUser.getAveragePerformance());
+                obj.put("id",i.getId());
+                obj.put("email",i.getEmail());
+                obj.put("displayName",i.getDisplayName());
+                obj.put( "accountType" ,"extra Premium ultra User");
+                obj.put("profileViews ", statsUser.getProfileView());
+                obj.put("postViews",StatsController.getViewsOfUserById(i.getId()));
+                obj.put ("performance",statsUser.getAveragePerformance());
 
             }
-            else {obj.put("ID",i.getId());
-                obj.put("Email",i.getEmail());
-                obj.put("Display Name",i.getDisplayName());
-                obj.put( "type" ,"extra Premium ultra User");
-                obj.put("Profile-Views ", 0);
-                obj.put("Post-Views",0);
-                obj.put ("avg_perf",0);
+            else {obj.put("id",i.getId());
+                obj.put("email",i.getEmail());
+                obj.put("displayName",i.getDisplayName());
+                obj.put( "accountType" ,"extra Premium ultra User");
+                obj.put("profileViews ", 0);
+                obj.put("postViews",0);
+                obj.put ("performance",0);
 
             }
             response.put(obj);

@@ -65,7 +65,6 @@ export class RelevanceComponent extends DashBaseComponent {
     this.db.getMaxRelevance().then(max => {
       this.db.getUserBestPost(UserService.USER_ID, "relevance").then(data => {
         let post : Post = data;
-        console.log(max)
         this.createChart(post.relevance || 0, max);
         this.postName = post.title;
       });

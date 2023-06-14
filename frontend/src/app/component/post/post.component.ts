@@ -53,7 +53,7 @@ export class PostComponent extends DashBaseComponent implements OnInit{
           break;
       }
     }
-    this.formattedTags = res.tags.toString().replace("[", "").replace("]", "");
+    this.formattedTags = res.tags?.toString().replace("[", "").replace("]", "");
     this.formattedPerformance = (res.performance / maxPerf) * 100;
     this.formattedRelevanz = (res.relevance / maxRel) * 100;
     // @ts-ignore

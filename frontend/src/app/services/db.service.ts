@@ -73,7 +73,6 @@ export class DbService {
     await fetch(dbUrl.GET_ALL_USERS).then(res => res.json()).then(res => {
       for (let user of res) {
         DbService.Users.push(user);
-        console.log(user)
       }
     });
   }

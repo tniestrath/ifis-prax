@@ -105,6 +105,7 @@ public class WPUserController {
                 obj.put( "accountType" ,"extra Premium ultra User");
                 obj.put("profileViews ", statsUser.getProfileView());
                 obj.put("postViews",StatsController.getViewsOfUserById(i.getId()));
+                obj.put("postCount",StatsController.getPostCountOfUserById(i.getId()));
                 obj.put ("performance",statsUser.getAveragePerformance());
 
             }
@@ -114,6 +115,7 @@ public class WPUserController {
                 obj.put( "accountType" ,"extra Premium ultra User");
                 obj.put("profileViews ", 0);
                 obj.put("postViews",0);
+                obj.put("postCount",0);
                 obj.put ("performance",0);
 
             }

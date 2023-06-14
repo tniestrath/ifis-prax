@@ -124,7 +124,7 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
     this.db.getMaxPerformance().then(max => {
       this.db.getUserBestPost(UserService.USER_ID, "performance").then(data => {
         let post : Post = data;
-        this.createChart(["Score", "Grey"],[(post.performance / max)*100 , 100-((post.performance / max)*100)],null);
+        this.createChart(["Score", "Grey"],[(post.performance || 0 / max)*100 , 100-((post.performance || 0 / max)*100)],null);
         this.postName = post.title;
       });
     })

@@ -50,6 +50,7 @@ img {
   height: 10px;
   width: 100%;
   background-color: #5A7995;
+  border-radius: 5px 0 0 5px;
 }
 .potential-value{
   background-color: #951D40;

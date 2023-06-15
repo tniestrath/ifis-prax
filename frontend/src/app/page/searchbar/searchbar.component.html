@@ -1,5 +1,11 @@
 <div class="searchbar-box" [ngSwitch]="selectedSearch.id" [ngStyle]="{'height': displaySearchBox}">
-  <input *ngSwitchCase="0" #search class="searchbar" type="text" (keyup)="onKey(search.value)" placeholder="Filter">
+
+  <div *ngSwitchCase="0" class="searchbar-input-box">
+    <div class="searchbar-filter" id="searchbar-filter-button" (click)="onFilterClick()">
+      <img src="assets/filter_icon.png">
+    </div>
+    <input #search class="searchbar" type="text" (keyup)="onKey(search.value)" placeholder="Filter">
+  </div>
   <div *ngSwitchDefault class="selection-box" >
     <img *ngIf="page == 'einzel'" [src]="imgSrc" alt="">
     <p>{{selectedSearch.name}}</p>

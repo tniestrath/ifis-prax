@@ -11,7 +11,7 @@ import {Observable} from "rxjs";
 export class HeaderComponent {
 
   @Output() selected = new EventEmitter<string>();
-  navElements = ["Kennzahlen", "Themen", "Einzelstatistiken"];
+  navElements = ["Kennzahlen", "Admin", "Einzelstatistiken"];
 
 
   constructor() {

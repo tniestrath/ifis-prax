@@ -266,6 +266,7 @@ public class LogService {
         //updateuseraktivität
         System.out.println("UPDATING USER ACTIVITY");
         updateUserActivity((long)3);
+        updateUserStatsForAllUsers();
         lineCounter = 0 ;
         System.out.println("END OF LOG");
     }
@@ -499,6 +500,44 @@ public class LogService {
         }else{userStatsRepo.save(new UserStats(user.getId(), (float) 0,(float) 0, 0));}
     }
     @Transactional
+    public void updateUserStatsForAllUsers() {
+        List<WPUser> allUsers = wpUserRepo.findAll();
+
+        for (WPUser user : allUsers) {
+            if (userStatsRepo.existsByUserId(user.getId())) {
+                UserStats stats = userStatsRepo.findByUserId(user.getId());
+                long views = stats.getProfileView() + 1;
+                stats.setProfileView(views);
+
+                List<Post> posts = postRepository.findByAuthor(user.getId().intValue());
+                int count = 0;
+                float relevance = 0;
+                float performance = 0;
+
+                for (Post post : posts) {
+                    if (statsRepo.existsByArtId(post.getId())) {
+                        stats postStats = statsRepo.getStatByArtID(post.getId());
+                        count++;
+                        relevance += postStats.getRelevance();
+                        performance += postStats.getPerformance();
+                    }
+                }
+
+                if (count != 0) {
+                    relevance = relevance / count;
+                    performance = performance / count;
+                    stats.setAveragePerformance(performance);
+                    stats.setAverageRelevance(relevance);
+                }
+
+                userStatsRepo.save(stats);
+            } else {
+                userStatsRepo.save(new UserStats(user.getId(), (float) 0, (float) 0, 0));
+            }
+        }
+    }
+
+    @Transactional
     public void updateDailyClicks(long id){
         stats Stats = statsRepo.getStatByArtID(id);
         HashMap<String,Long> daily = (HashMap<String, Long>) Stats.getViewsLastYear();
@@ -566,11 +605,14 @@ public class LogService {
         int counter =0;
         for(WPUser user: users){
             posts=postRepository.findByAuthor(user.getId().intValue());
+            counter = 0 ;
+            if(!posts.isEmpty()){
             for (Post post:posts){
                 if(postTime.isBefore(post.getDate())&& post.getStatus().equals("publish") && post.getType().equals("post")){counter ++;}
             }
             if(counter!=0){
-            postfreq=(float)daysDifference/counter;}
+            postfreq=(float)daysDifference/counter;
+            }}else{postfreq=0;}
             if (userStatsRepo.existsByUserId(user.getId())){
                 stats = userStatsRepo.findByUserId(user.getId());
             }else{stats = new UserStats(user.getId(), 0,0,1);}

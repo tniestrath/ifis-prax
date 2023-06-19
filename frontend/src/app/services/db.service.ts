@@ -117,7 +117,7 @@ export class DbService {
   }
 
   async getUserBestPost(id: string, type: string){
-    return fetch(dbUrl.GET_USER_BEST_POST + id + "&type=" + type).then(res => res.json());
+    return fetch(dbUrl.GET_USER_BEST_POST + id + "&type=" + type).then(res => res.json()).catch(reason => {return new Post()});
   }
 
   async getUserNewestPost(id: string): Promise<Post> {

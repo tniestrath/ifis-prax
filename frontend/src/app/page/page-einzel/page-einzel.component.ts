@@ -85,7 +85,7 @@ export class PageEinzelComponent implements OnInit {
       this.db.loadAllUsers().then(() => {
         this.selectorItems = [];
         for (let u of DbService.Users) {
-          let performance = (u.performance / max_performance)*100;
+          let performance = ((u.performance || 0) / max_performance)*100;
           if (performance <= 33){
             this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.accountType, u.postViews, 50, 33, u.postViews, u.img)));
           } if (performance > 33 && performance <= 66){

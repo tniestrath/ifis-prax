@@ -217,7 +217,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
       this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsPresse)], undefined);
       this.createLegend("clicks-content-box", this.c_chart);
       this.createLegend("clicks-profile-box", this.p_chart);
-      this.c_chart_total = res.viewsArtikel + res.viewsBlog + 1;
+      this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsPresse;
       this.p_chart_total = res.viewsProfile + this.c_chart_total;
     })
   }

@@ -2,6 +2,7 @@
   display: flex;
   justify-content: center;
   background-color: white;
+  flex-direction: row;
   height: 50px;
   position: fixed;
   top: 5px;
@@ -9,7 +10,31 @@
 }
 .searchbar{
   font-size: 25px;
-  border-radius: 5px;
+  border-radius: 0 5px 5px 0;
+  height: 100%;
+  box-sizing: border-box;
+  border: 2px solid #A0A0A0;
+  border-left: 0;
+}
+.searchbar-input-box{
+  display: flex;
+}
+.searchbar-filter{
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 2px solid #A0A0A0;
+  border-radius: 5px 0 0 5px;
+}
+.searchbar-filter > img{
+  object-fit: contain;
+}
+.searchbar-filter:hover{
+  border-color: black;
+  border-width: 3px;
 }
 .selection-box{
   position: fixed;

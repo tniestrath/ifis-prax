@@ -9,7 +9,7 @@ import {UserService} from "../../services/user.service";
   styleUrls: ['./post.component.css', "../../component/dash-base/dash-base.component.html"]
 })
 export class PostComponent extends DashBaseComponent implements OnInit{
-  post: Post = new Post("Superlanger titel der super lang ist um lange titel zu testen, is aber noch nicht lang genug", "10/10/2010", "article", "1", ["tag1", "tag2"], 2, 0.1);
+  post: Post = new Post();
   formattedTags : string = "";
   formattedPerformance: number = 0;
   formattedRelevanz: number = 0;

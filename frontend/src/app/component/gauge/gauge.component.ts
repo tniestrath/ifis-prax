@@ -1,8 +1,7 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit} from '@angular/core';
-import {ActiveElement, Chart, ChartEvent, ChartType, Plugin} from "chart.js/auto";
+import {Component, EventEmitter, OnInit} from '@angular/core';
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {EmptyObject} from "chart.js/dist/types/basic";
-import {DbService} from "../../services/db.service";
 import {UserService} from "../../services/user.service";
 import {Post} from "../../Post";
 
@@ -124,7 +123,7 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
     this.db.getMaxPerformance().then(max => {
       this.db.getUserBestPost(UserService.USER_ID, "performance").then(data => {
         let post : Post = data;
-        this.createChart(["Score", "Grey"],[(post.performance || 0 / max)*100 , 100-((post.performance || 0 / max)*100)],null);
+        this.createChart(["Score", "Grey"],[((post.performance || 0) / max)*100 , 100-(((post.performance || 0) / max)*100)],null);
         this.postName = post.title;
       });
     })

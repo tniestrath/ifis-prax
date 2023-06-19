@@ -173,26 +173,36 @@ public class statsController {
     }*/
     @GetMapping("/bestPost")
     public String getBestPost(@RequestParam Long id, @RequestParam String type) throws JSONException {
-       List<Post> Posts = postRepo.findByAuthor(id.intValue());
-       stats Stats = null;
-       float max = 0;
-       long PostId=0;
-       for(Post post:Posts){
-           if(statRepository.existsByArtId(post.getId())){
-               Stats = statRepository.getStatByArtID(post.getId());
-               if(type.equals("relevance")){
-                   if(Stats.getRelevance()>max){max = Stats.getRelevance();PostId= Stats.getArtId();}
-               }
-               if(type.equals("performance")){
-                   if(Stats.getPerformance()>max){max = Stats.getPerformance();PostId= Stats.getArtId();}
-               }
-           }
-       }
-       JSONObject obj = new JSONObject();
-       obj.put("ID",PostId);
-       obj.put(type,max);
-       obj.put("title",postRepo.findById(PostId).get().getTitle());
-       return obj.toString();
+        List<Post> Posts = postRepo.findByAuthor(id.intValue());
+        if (Posts.size() == 0) {
+            return null;
+        }
+        stats Stats = null;
+        float max = 0;
+        long PostId = 0;
+        for (Post post : Posts) {
+            if (statRepository.existsByArtId(post.getId())) {
+                Stats = statRepository.getStatByArtID(post.getId());
+                if (type.equals("relevance")) {
+                    if (Stats.getRelevance() > max) {
+                        max = Stats.getRelevance();
+                        PostId = Stats.getArtId();
+                    }
+                }
+                if (type.equals("performance")) {
+                    if (Stats.getPerformance() > max) {
+                        max = Stats.getPerformance();
+                        PostId = Stats.getArtId();
+                    }
+                }
+            }
+        }
+
+        JSONObject obj = new JSONObject();
+        obj.put("ID", PostId);
+        obj.put(type, max);
+        obj.put("title", postRepo.findById(PostId).get().getTitle());
+        return obj.toString();
     }
 
     @GetMapping("/getPostStat")

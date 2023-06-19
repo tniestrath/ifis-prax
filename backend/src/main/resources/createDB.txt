@@ -1,0 +1,46 @@
+CREATE TABLE `user_stats` (
+  `iduser_stats` int NOT NULL AUTO_INCREMENT,
+  `user_id` bigint NOT NULL,
+  `avg_perf` float DEFAULT NULL,
+  `avg_rel` float DEFAULT NULL,
+  `profile_view` bigint DEFAULT NULL,
+  `post_freq` float DEFAULT NULL,
+  `interaction_rate` float DEFAULT NULL,
+  PRIMARY KEY (`iduser_stats`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `tag_stat` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tag_id` int NOT NULL,
+  `views` bigint DEFAULT NULL,
+  `search_success` int DEFAULT NULL,
+  `relevance` float DEFAULT NULL,
+  `performance` float DEFAULT NULL,
+  `views_last_year` json NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `sys_var` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `dayinweek` int DEFAULT NULL,
+  `dayinmonth` int DEFAULT NULL,
+  `dayinyear` int DEFAULT NULL,
+  `lastlinecount` int DEFAULT NULL,
+  `lastline` varchar(500) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `log_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `stats` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `art_id` bigint NOT NULL,
+  `search_success_rate` float DEFAULT NULL,
+  `article_referring_rate` float DEFAULT NULL,
+  `clicks` bigint DEFAULT NULL,
+  `search_succes` bigint DEFAULT NULL,
+  `refferings` bigint DEFAULT NULL,
+  `performance` float DEFAULT NULL,
+  `views_last_year` json DEFAULT NULL,
+  `relevance` float DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `art_id_UNIQUE` (`art_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

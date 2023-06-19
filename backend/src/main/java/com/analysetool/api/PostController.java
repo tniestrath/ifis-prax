@@ -265,6 +265,7 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
 
     @GetMapping("/getPostWithStatsById")
     public String PostsById2(@RequestParam long id) throws JSONException, ParseException {
+        if(!postRepository.findById(id).isPresent()) {return null;}
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
         String type = "default";

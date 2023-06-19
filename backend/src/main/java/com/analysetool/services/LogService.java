@@ -496,7 +496,7 @@ public class LogService {
             userStatsRepo.save(Stats);
 
 
-        }else{userStatsRepo.save(new UserStats(user.getId(), (float) 1,(float) 1, 1));}
+        }else{userStatsRepo.save(new UserStats(user.getId(), (float) 0,(float) 0, 0));}
     }
     @Transactional
     public void updateDailyClicks(long id){

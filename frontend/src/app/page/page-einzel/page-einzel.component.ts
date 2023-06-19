@@ -15,6 +15,7 @@ import {RelevanceComponent} from "../../component/gauge/relevance/relevance.comp
 import {PostComponent} from "../../component/post/post.component";
 import {UserService} from "../../services/user.service";
 import {PotentialComponent} from "../../component/potential/potential.component";
+import {CounterComponent} from "../../component/counter/counter.component";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -35,8 +36,12 @@ export class PageEinzelComponent implements OnInit {
   cardsLoaded = new Subject<GridCard[]>();
   cards : GridCard[];
 
-  constructor(private cookieService : CookieService, private db : DbService, private us : UserService) {
-    this.cards = [
+  constructor(private cookieService : CookieService, private db : DbService) {
+    this.cards = this.getUserPageCards();
+  }
+
+  getUserPageCards() : GridCard[] {
+    return [
       {type: ClicksComponent, row: 1, col: 1, height: 4, width: 1},
       //@ts-ignore
       {type: PostChartComponent, row: 1, col: 2, height: 2, width: 4},
@@ -48,6 +53,12 @@ export class PageEinzelComponent implements OnInit {
       {type: PotentialComponent, row: 3, col: 2, height: 2, width: 4}
     ];
   }
+  getAdminPageCards() : GridCard[] {
+    return [
+      {type: CounterComponent, row: 1, col: 1, height: 1, width: 1},
+    ];
+  }
+
 
   onSelected(id: string, name: string){
     if (id != "0"){

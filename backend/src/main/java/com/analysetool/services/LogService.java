@@ -182,13 +182,16 @@ public class LogService {
         String line;
 
         boolean foundPattern = false;
-        System.out.println(lineCounter+" "+lastLineCounter+" "+liveScanning);
-        while ((line = br.readLine()) != null ) {
 
+        while ((line = br.readLine()) != null ) {
+            if(lineCounter!=lastLineCounter){
+                System.out.println("Counting up");
             while(lineCounter!=lastLineCounter && liveScanning){
                 br.readLine();
                 lineCounter++;
-                System.out.println("Counting up");
+
+            }
+            System.out.println("reached final position");
             }
 
            // if (foundPattern) {

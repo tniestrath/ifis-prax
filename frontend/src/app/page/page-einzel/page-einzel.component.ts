@@ -29,10 +29,6 @@ export class PageEinzelComponent implements OnInit {
   selectorItemsLoaded = new Subject<SelectorItem[]>();
   searchValue = "";
 
-  postPerDayLabel : string[] = []
-  postsPerDayData : number[]  = [];
-  postsPerDayTitle : string[] = [];
-  postPerDayLoaded = new Subject<ChartElements>();
   cardsLoaded = new Subject<GridCard[]>();
   cards : GridCard[];
 

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit} from '@angular/core';
 import {SelectableComponent} from "../../selector/selectable.component";
 import {DbObject} from "../../../services/DbObject";
 import {SafeUrl} from "@angular/platform-browser";

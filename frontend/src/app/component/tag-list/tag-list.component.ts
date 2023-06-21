@@ -1,8 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {SelectorItem} from "../../page/selector/selector.component";
-import {TagComponent} from "../../page/tag/tag/tag.component";
-import {DbObject} from "../../services/DbObject";
 import {Subject} from "rxjs";
 import {TagRanking} from "../../page/tag/Tag";
 import {TagListItemComponent} from "./tag-list-item/tag-list-item.component";
@@ -19,15 +17,13 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
   search_input : any;
   sorting_input_r : any;
   sorting_input_a : any;
-
-  sortByRank = true;
-
   ngOnInit(): void {
     this.setToolTip("Auflistung aller #Tags, sortierbar nach Relevanz oder Anzahl der globalen Beiträge zu diesem Thema")
 
     this.db.getAllTagsWithCountAndRelevance().then(res => {
       for (var tag of res) {
         this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.relevance, tag.count)));
+        this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRelevance((b.data as TagRanking)));
       }
       this.selectorItemsLoaded.next(this.selectorItems)
     })
@@ -44,7 +40,7 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
     })
 
     this.sorting_input_r.addEventListener("change", () => {
-      this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRank((b.data as TagRanking)));
+      this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRelevance((b.data as TagRanking)));
       this.selectorItemsLoaded.next(this.selectorItems);
     });
     this.sorting_input_a.addEventListener("change", () => {
@@ -54,7 +50,7 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
   }
 
   ngAfterViewInit(): void {
-    this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRank((b.data as TagRanking)));
+    this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRelevance((b.data as TagRanking)));
   }
 
 

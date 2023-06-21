@@ -51,6 +51,11 @@ export class PotentialComponent extends DashBaseComponent implements OnInit, OnD
             },
             suggestedMin: 0,
             suggestedMax: 10,
+            pointLabels: {
+              font: {
+                size: 15
+              }
+            }
           }
         },
         plugins: {

@@ -77,7 +77,6 @@ input[type="radio"]:checked::after{
   margin-left: 5px;
   height: calc(100% - 47px);
   width: calc(100% - 8px);
-  overflow-y: auto;
 }
 #shadow {
   position: relative;
@@ -95,4 +94,10 @@ input[type="radio"]:checked::after{
 ::-webkit-scrollbar-thumb{
   background-color: #EFEFEF;
   border-radius: 5px;
+}
+.tag-list-selector-container dash-selector{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
 }

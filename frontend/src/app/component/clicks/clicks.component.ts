@@ -1,9 +1,7 @@
 import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent, ChartType, PointStyle, TooltipItem} from "chart.js/auto";
+import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
-import _default from "chart.js/dist/plugins/plugin.decimation";
-import destroy = _default.destroy;
 import {UserService} from "../../services/user.service";
 
 @Component({

@@ -14,12 +14,12 @@ export class Tag extends DbObject{
 }
 
 export class TagRanking extends DbObject{
-  constructor(public override id : string, public override name : string, public rank : string, public count : string) {
+  constructor(public override id : string, public override name : string, public relevance : string, public count : string) {
     super(id, name);
   }
 
-  compareByRank(other: TagRanking): number {
-    return Number.parseFloat(this.rank) - Number.parseFloat(other.rank);
+  compareByRelevance(other: TagRanking): number {
+    return Number.parseFloat(other.relevance) - Number.parseFloat(this.relevance);
   }
 
   compareByCount(other: TagRanking): number {

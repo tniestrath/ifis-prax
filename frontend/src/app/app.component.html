@@ -1,20 +1,8 @@
 <dash-header (selected)="select($event)" >
 
 </dash-header>
-<div [ngSwitch]="selected">
-  <div *ngSwitchCase="'Kennzahlen'">
-    <dash-page-login (login_success)="select('Einzelstatistiken')"></dash-page-login>
-  </div>
-  <div *ngSwitchCase="'Admin'">
-  <dash-page-kennzahlen></dash-page-kennzahlen>
-  </div>
-  <div *ngSwitchCase="'Einzelstatistiken'">
-    <dash-page-einzel></dash-page-einzel>
-  </div>
-  <div *ngSwitchDefault>
-    <dash-page-einzel></dash-page-einzel>
-  </div>
-</div>
+  <!--<dash-page-login (login_success)="select('Users')"></dash-page-login>-->
+  <dash-page-einzel [pageSelected]="selected.asObservable()"></dash-page-einzel>
 <div class="page-footer">
 
 </div>

@@ -8,5 +8,5 @@ import {TagRanking} from "../../../page/tag/Tag";
 })
 export class TagListItemComponent {
   data : TagRanking = new TagRanking("" ,"","","");
-
+  protected readonly parseFloat = parseFloat;
 }

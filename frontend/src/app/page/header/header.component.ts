@@ -1,6 +1,5 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {FormControl} from "@angular/forms";
-import {Observable} from "rxjs";
+import {Component, EventEmitter, Output} from '@angular/core';
+import {Subject} from "rxjs";
 
 
 @Component({
@@ -10,8 +9,8 @@ import {Observable} from "rxjs";
 })
 export class HeaderComponent {
 
-  @Output() selected = new EventEmitter<string>();
-  navElements = ["Kennzahlen", "Admin", "Einzelstatistiken"];
+  @Output() selected = new Subject<string>();
+  navElements = ["Posts", "Tags", "Users"];
 
 
   constructor() {
@@ -22,6 +21,6 @@ export class HeaderComponent {
   }
 
   setSelected(page : string){
-    this.selected.emit(page)
+    this.selected.next(page);
   }
 }

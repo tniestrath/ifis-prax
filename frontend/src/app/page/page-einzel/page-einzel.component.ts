@@ -1,21 +1,19 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {SelectorItem} from "../selector/selector.component";
 import {DbService} from "../../services/db.service";
 import {User, UserComponent} from "./user/user.component";
-import {Subject} from "rxjs";
-import {Post} from "../../Post";
-import {ChartElements} from "../../component/chart/chart.component";
+import {Observable, Subject} from "rxjs";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
 import {PostChartComponent} from "../../component/post-chart/post-chart.component";
 import {GaugeComponent} from "../../component/gauge/gauge.component";
-import {TagListComponent} from "../../component/tag-list/tag-list.component";
 import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
 import {PostComponent} from "../../component/post/post.component";
 import {UserService} from "../../services/user.service";
 import {PotentialComponent} from "../../component/potential/potential.component";
-import {CounterComponent} from "../../component/counter/counter.component";
+import {TagListComponent} from "../../component/tag-list/tag-list.component";
+import {TagComponent} from "../tag/tag/tag.component";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -29,14 +27,13 @@ export class PageEinzelComponent implements OnInit {
   selectorItemsLoaded = new Subject<SelectorItem[]>();
   searchValue = "";
 
+  @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
-  cards : GridCard[];
 
   constructor(private cookieService : CookieService, private db : DbService) {
-    this.cards = this.getUserPageCards();
   }
 
-  getUserPageCards() : GridCard[] {
+  getUserPageCards() {
     return [
       {type: ClicksComponent, row: 1, col: 1, height: 4, width: 1},
       //@ts-ignore
@@ -46,20 +43,27 @@ export class PageEinzelComponent implements OnInit {
       {type: RelevanceComponent, row: 3, col: 6, height: 1, width: 1},
       //@ts-ignore
       {type: PostComponent, row: 1, col: 6, height: 2, width: 1},
-      {type: PotentialComponent, row: 3, col: 2, height: 2, width: 4}
+      {type: PotentialComponent, row: 3, col: 2, height: 2, width: 2},
+      {type: TagListComponent, row: 3, col: 4, height: 2, width: 2}
     ];
   }
-  getAdminPageCards() : GridCard[] {
+  getTagsPageCards() {
     return [
-      {type: CounterComponent, row: 1, col: 1, height: 1, width: 1},
+      {type: TagComponent, row: 1, col: 1, height: 1, width: 1},
     ];
   }
+  getPostsPageCards() {
+    return [
+      {type: PostComponent, row: 1, col: 1, height: 3, width: 2},
+    ];
+  }
+
 
 
   onSelected(id: string, name: string){
     if (id != "0"){
       this.displayContent = "grid";
-      this.cardsLoaded.next(this.cards);
+      this.cardsLoaded.next(this.getUserPageCards());
     } else {
       this.displayContent = "none";
     }
@@ -72,6 +76,27 @@ export class PageEinzelComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.pageSelected.subscribe(page => {
+      console.log(page)
+      switch (page) {
+        case "Users":{
+          this.cardsLoaded.next(this.getUserPageCards());
+          break;
+        }
+        case "Tags":{
+          this.cardsLoaded.next(this.getTagsPageCards());
+          break;
+        }
+        case "Posts":{
+          this.cardsLoaded.next(this.getPostsPageCards());
+          break;
+        }
+        default: {
+          this.cardsLoaded.next(this.getUserPageCards());
+          break;
+        }
+      }
+    })
     this.loadSelector();
   }
 

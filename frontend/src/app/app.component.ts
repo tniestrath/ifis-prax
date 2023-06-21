@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
+import {Component, EventEmitter} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
+import {Observable, Subject} from "rxjs";
 
 
 
@@ -10,9 +11,7 @@ import {CookieService} from "ngx-cookie-service";
 })
 export class AppComponent {
   title = 'Dashboard';
-  selected : string = "kennzahlen";
-  searchValue : string = "";
-  company : string = "";
+  selected = new Subject<string>();
   tag : string = "";
 
   selectedSearch : string = "";
@@ -21,20 +20,7 @@ export class AppComponent {
   }
 
   select(selection : string) {
-    this.selected = selection;
-  }
-  search(searchValue :string){
-    this.searchValue = searchValue;
-  }
-  selectCompany(companyName : string){
-    this.company = companyName;
-    this.selectedSearch = companyName;
-  }
-
-  selectTag(tag: string) {
-    this.tag = tag;
-    this.selectedSearch = tag;
-
+    this.selected.next(selection);
   }
 }
 

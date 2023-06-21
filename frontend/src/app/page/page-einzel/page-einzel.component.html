@@ -1,10 +1,3 @@
-<!--<div class="page-content" [ngStyle]="{'display': displayContent} ">
-  <dash-post-chart class="grid-1-3-1-4"></dash-post-chart>
-  <dash-performance></dash-performance>
-  <dash-clicks class="grid-1-1-2-2"></dash-clicks>
-  <dash-tag-list></dash-tag-list>
-
-</div>-->
 <dash-grid [dataLoaded]="cardsLoaded.asObservable()" [style]="{'display': displayContent}"></dash-grid>
-<dash-searchbar #searchbar page="einzel" (selected)="onSelected($event.id, $event.name)" (currentSearch)="onSearchInput($event)"></dash-searchbar>
+<dash-searchbar #searchbar page="user" (selected)="onSelected($event.id, $event.name)" (currentSearch)="onSearchInput($event)"></dash-searchbar>
 <dash-selector [dataLoaded]="selectorItemsLoaded.asObservable()" columnsForm="1fr 1fr" (itemClick)="searchbar.onDbObjectSelected($event.id, $event.name)"></dash-selector>

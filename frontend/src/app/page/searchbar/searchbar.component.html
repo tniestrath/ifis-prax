@@ -7,7 +7,7 @@
     <input #search class="searchbar" type="text" (keyup)="onKey(search.value)" placeholder="Filter">
   </div>
   <div *ngSwitchDefault class="selection-box" >
-    <img *ngIf="page == 'einzel'" [src]="imgSrc" alt="">
+    <img *ngIf="page == 'user'" [src]="imgSrc" alt="">
     <p>{{selectedSearch.name}}</p>
     <button class="selection-cancel-button" (click)="onCancelClick()">X</button>
   </div>

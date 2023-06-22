@@ -26,6 +26,39 @@ public class UserStats {
     @Column(name = "interaction_rate")
     private float interactionRate;
 
+    @Column(name = "refferings")
+    private Long refferings;
+    @Column(name = "ref_rate")
+    private float refferingRate;
+
+    public Long getRefferings() {
+        return refferings;
+    }
+
+    public void setRefferings(Long refferings) {
+        this.refferings = refferings;
+    }
+
+    public UserStats(long userId, float averagePerformance, float averageRelevance, long profileView, float interactionRate, float refferingRate, float postFrequence, Long refferings) {
+
+        this.userId = userId;
+        this.averagePerformance = averagePerformance;
+        this.averageRelevance = averageRelevance;
+        this.profileView = profileView;
+        this.interactionRate = interactionRate;
+        this.refferingRate = refferingRate;
+        this.postFrequence = postFrequence;
+        this.refferings=refferings;
+    }
+
+    public float getRefferingRate() {
+        return refferingRate;
+    }
+
+    public void setRefferingRate(float refferingRate) {
+        this.refferingRate = refferingRate;
+    }
+
     public float getInteractionRate() {
         return interactionRate;
     }
@@ -44,17 +77,34 @@ public class UserStats {
 
     @Column(name = "post_freq")
     private float postFrequence;
-    public UserStats( long userId, float averagePerformance, float averageRelevance, long profileView) {
 
-        this.userId = userId;
-        this.averagePerformance = averagePerformance;
-        this.averageRelevance = averageRelevance;
-        this.profileView = profileView;
-        this.postFrequence=0;
-        this.interactionRate=0;
+    @Override
+    public String toString() {
+        return "UserStats{" +
+                "iduser_stats=" + iduser_stats +
+                ", userId=" + userId +
+                ", averagePerformance=" + averagePerformance +
+                ", averageRelevance=" + averageRelevance +
+                ", profileView=" + profileView +
+                ", interactionRate=" + interactionRate +
+                ", refferingRate=" + refferingRate +
+                ", postFrequence=" + postFrequence +
+                '}';
     }
 
     public UserStats(){}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserStats userStats)) return false;
+        return getIduser_stats() == userStats.getIduser_stats() && getUserId() == userStats.getUserId() && Float.compare(userStats.getAveragePerformance(), getAveragePerformance()) == 0 && Float.compare(userStats.getAverageRelevance(), getAverageRelevance()) == 0 && getProfileView() == userStats.getProfileView() && Float.compare(userStats.getInteractionRate(), getInteractionRate()) == 0 && Float.compare(userStats.getRefferingRate(), getRefferingRate()) == 0 && Float.compare(userStats.getPostFrequence(), getPostFrequence()) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIduser_stats(), getUserId(), getAveragePerformance(), getAverageRelevance(), getProfileView(), getInteractionRate(), getRefferingRate(), getPostFrequence());
+    }
 
     public int getIduser_stats() {
         return iduser_stats;
@@ -94,29 +144,6 @@ public class UserStats {
 
     public void setProfileView(long profileView) {
         this.profileView = profileView;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserStats userStats)) return false;
-        return getIduser_stats() == userStats.getIduser_stats() && getUserId() == userStats.getUserId() && Float.compare(userStats.getAveragePerformance(), getAveragePerformance()) == 0 && Float.compare(userStats.getAverageRelevance(), getAverageRelevance()) == 0 && getProfileView() == userStats.getProfileView();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getIduser_stats(), getUserId(), getAveragePerformance(), getAverageRelevance(), getProfileView());
-    }
-
-    @Override
-    public String toString() {
-        return "UserStats{" +
-                "iduser_stats=" + iduser_stats +
-                ", userId=" + userId +
-                ", averagePerformance=" + averagePerformance +
-                ", averageReliability=" + averageRelevance +
-                ", profileView=" + profileView +
-                '}';
     }
 
     // Constructors, getters, and setters

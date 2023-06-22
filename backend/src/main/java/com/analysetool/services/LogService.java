@@ -44,6 +44,7 @@ public class LogService {
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
     private String BlogViewPattern = ".*GET /blog/(\\S+)";
     private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
+    private String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
     private String UserViewPattern=".*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
@@ -58,6 +59,7 @@ public class LogService {
     Pattern pattern4=Pattern.compile(UserViewPattern);
     Pattern pattern5_1 = Pattern.compile(PresseViewPatter);
     Pattern pattern5_2= Pattern.compile(PresseSSViewPatter);
+    Pattern pattern4_2=Pattern.compile(RedirectUserPattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -259,6 +261,12 @@ public class LogService {
             if(matcher4.find()){
                 processLine(line,6,matcher4);
             }
+            Matcher matcher4_2=pattern4_2.matcher(line);
+            if(matcher4_2.find()){
+                processLine(line,9,matcher4);
+            }
+
+
 
             lineCounter++;
             lastLineCounter++;
@@ -471,6 +479,27 @@ public class LogService {
 
             }}
 
+        if(patternNumber==9){
+            System.out.println(matcher.group(1).replace("+","-")+" PROCESSING 4_2");
+            if(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).isPresent()){
+                WPUser wpUser=wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get();
+                if(userStatsRepo.existsByUserId(wpUser.getId())){
+                    UserStats userStats = userStatsRepo.findByUserId(wpUser.getId());
+                    long refferings = userStats.getRefferings();
+                    long views = userStats.getProfileView();
+                    refferings ++;
+                    userStats.setRefferings(refferings);
+                    if(views!=0){
+                        userStats.setRefferingRate((float)refferings/views);
+                    }
+                    userStatsRepo.save(userStats);
+                }else{
+                    userStatsRepo.save(new UserStats(wpUser.getId(), (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)1));
+                }
+
+            };
+        }
+
 
     }
 
@@ -500,7 +529,7 @@ public class LogService {
             userStatsRepo.save(Stats);
 
 
-        }else{userStatsRepo.save(new UserStats(user.getId(), (float) 0,(float) 0, 0));}
+        }else{userStatsRepo.save(new UserStats(user.getId(), (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)0));}
     }
     @Transactional
     public void updateUserStatsForAllUsers() {
@@ -535,7 +564,7 @@ public class LogService {
 
                 userStatsRepo.save(stats);
             } else {
-                userStatsRepo.save(new UserStats(user.getId(), (float) 0, (float) 0, 0));
+                userStatsRepo.save(new UserStats(user.getId(), (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)0));
             }
         }
     }
@@ -618,7 +647,7 @@ public class LogService {
             }}else{postfreq=0;}
             if (userStatsRepo.existsByUserId(user.getId())){
                 stats = userStatsRepo.findByUserId(user.getId());
-            }else{stats = new UserStats(user.getId(), 0,0,1);}
+            }else{stats = new UserStats(user.getId(), (float) 0,(float) 0, 1,(float) 0,(float) 0,(float)0,(long)0);}
             stats.setPostFrequence(postfreq);
             userStatsRepo.save(stats);
             updateInteractionRate(user,stats,posts);

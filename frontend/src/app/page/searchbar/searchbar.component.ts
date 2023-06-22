@@ -15,6 +15,7 @@ export class SearchbarComponent implements OnInit{
   @Output() searchInput :string = "";
   @Output() currentSearch = new EventEmitter<string>();
   @Output() selected = new EventEmitter<DbObject>();
+  @Output() filter = new EventEmitter<{ accType : string, perf : string }>();
 
   @Input() page : string = "placeholder";
 
@@ -23,6 +24,7 @@ export class SearchbarComponent implements OnInit{
   imgSrc: SafeUrl = "";
 
   filter_dropdown: HTMLDivElement | null = null;
+  shown = false;
   constructor(protected element : ElementRef, private cookieService : CookieService, private db : DbService) {
   }
 
@@ -33,6 +35,9 @@ export class SearchbarComponent implements OnInit{
     }
     this.onDbObjectSelected(object[0], object[1]);
 
+    this.filter.subscribe(filter => {
+
+    })
   }
 
   onKey(value : string) {
@@ -52,7 +57,9 @@ export class SearchbarComponent implements OnInit{
 
     this.getImgSrc(this.selectedSearch.id);
 
-    this.filter_dropdown?.remove();
+    // @ts-ignore
+    this.filter_dropdown.style.display = "none";
+    this.shown = false;
   }
 
   onCancelClick(){
@@ -69,7 +76,7 @@ export class SearchbarComponent implements OnInit{
   }
 
   onFilterClick() {
-    if (!document.getElementById("filter_dropdown")){
+    if (!document.getElementById("filter_dropdown")) {
       this.filter_dropdown = document.createElement("div");
       this.filter_dropdown.id = "filter_dropdown";
       this.filter_dropdown.style.width = "370px";
@@ -127,6 +134,8 @@ export class SearchbarComponent implements OnInit{
         filter_accountTypePremium.style.color = "black";
         filter_accountTypeAll.style.color = "black";
         selected_account_filter = "basic";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
       })
       this.filter_dropdown.appendChild(filter_accountTypeBasic);
 
@@ -144,6 +153,8 @@ export class SearchbarComponent implements OnInit{
         filter_accountTypePremium.style.color = "black";
         filter_accountTypeAll.style.color = "black";
         selected_account_filter = "plus";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
       })
       this.filter_dropdown.appendChild(filter_accountTypePlus);
 
@@ -161,6 +172,8 @@ export class SearchbarComponent implements OnInit{
         filter_accountTypePremium.style.color = "#951D40";
         filter_accountTypeAll.style.color = "black";
         selected_account_filter = "premium";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
       })
       this.filter_dropdown.appendChild(filter_accountTypePremium);
 
@@ -177,6 +190,8 @@ export class SearchbarComponent implements OnInit{
         filter_accountTypePremium.style.color = "black";
         filter_accountTypeAll.style.color = "#951D40";
         selected_account_filter = "all";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
       })
       filter_accountTypeAll.style.color = "#951D40";
       this.filter_dropdown.appendChild(filter_accountTypeAll);
@@ -197,7 +212,9 @@ export class SearchbarComponent implements OnInit{
         filter_peformance66.style.color = "black";
         filter_peformance100.style.color = "black";
         filter_peformanceAll.style.color = "black";
-        selected_performance_filter = "p33";
+        selected_performance_filter = "low";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
       })
       this.filter_dropdown.appendChild(filter_peformance33);
 
@@ -213,7 +230,9 @@ export class SearchbarComponent implements OnInit{
         filter_peformance66.style.color = "#951D40";
         filter_peformance100.style.color = "black";
         filter_peformanceAll.style.color = "black";
-        selected_performance_filter = "p66";
+        selected_performance_filter = "medium";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
       })
       this.filter_dropdown.appendChild(filter_peformance66);
 
@@ -229,7 +248,9 @@ export class SearchbarComponent implements OnInit{
         filter_peformance66.style.color = "black";
         filter_peformance100.style.color = "#951D40";
         filter_peformanceAll.style.color = "black";
-        selected_performance_filter = "p66";
+        selected_performance_filter = "high";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
       })
       this.filter_dropdown.appendChild(filter_peformance100);
 
@@ -245,14 +266,23 @@ export class SearchbarComponent implements OnInit{
         filter_peformance66.style.color = "black";
         filter_peformance100.style.color = "black";
         filter_peformanceAll.style.color = "#951D40";
-        selected_performance_filter = "pAll";
+        selected_performance_filter = "all";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
       })
       filter_peformanceAll.style.color = "#951D40";
       this.filter_dropdown.appendChild(filter_peformanceAll);
 
       this.element.nativeElement.appendChild(this.filter_dropdown);
+    }
+    if (this.shown) {
+      // @ts-ignore
+      this.filter_dropdown.style.display = "none";
+      this.shown = !this.shown;
     } else {
-      this.filter_dropdown?.remove();
+      // @ts-ignore
+      this.filter_dropdown.style.display = "flex";
+      this.shown = !this.shown;
     }
   }
 }

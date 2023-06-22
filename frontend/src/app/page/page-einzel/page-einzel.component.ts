@@ -26,6 +26,7 @@ export class PageEinzelComponent implements OnInit {
   selectorItems : SelectorItem[] = [];
   selectorItemsLoaded = new Subject<SelectorItem[]>();
   searchValue = "";
+  filterValues : { accType : string, perf : string } = {accType: "all", perf : "all"};
 
   @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
@@ -58,8 +59,6 @@ export class PageEinzelComponent implements OnInit {
     ];
   }
 
-
-
   onSelected(id: string, name: string){
     if (id != "0"){
       this.displayContent = "grid";
@@ -72,7 +71,12 @@ export class PageEinzelComponent implements OnInit {
 
   onSearchInput(value : string){
     this.searchValue = value;
-    this.loadSelector();
+    this.loadSelector(this.filterValues);
+  }
+
+  onFilterChange(filter : {accType : string, perf : string}){
+    this.filterValues = {accType : filter.accType, perf : filter.perf};
+    this.loadSelector(this.filterValues)
   }
 
   ngOnInit(): void {
@@ -97,10 +101,10 @@ export class PageEinzelComponent implements OnInit {
         }
       }
     })
-    this.loadSelector();
+    this.loadSelector(this.filterValues);
   }
 
-  loadSelector(){
+  loadSelector(filter: {accType : string, perf : string}){
     this.db.getMaxPerformance().then(res => {
       const max_performance = res;
       this.db.loadAllUsers().then(() => {
@@ -119,6 +123,26 @@ export class PageEinzelComponent implements OnInit {
       }).then(() => {
         this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||
           (item.data as User).email.toUpperCase().includes(this.searchValue.toUpperCase()))
+      }).then(() => {
+        // @ts-ignore
+        if (filter.accType != "all"){
+          this.selectorItems = this.selectorItems.filter((item ) => (item.data as User).accountType == filter.accType);
+        }
+        switch (filter.perf) {
+          case "low": {
+            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance <= 33);
+            break;
+          }
+          case "medium": {
+            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance >= 33 && (item.data as User).performance < 66);
+            break;
+          }
+          case "high": {
+            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance >= 66);
+            break;
+          }
+          default: break;
+        }
       }).finally(() =>
         this.selectorItemsLoaded.next(this.selectorItems));
     })

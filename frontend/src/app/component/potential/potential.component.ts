@@ -1,7 +1,6 @@
 import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import {EmptyObject} from "chart.js/dist/types/basic";
 
 @Component({
   selector: 'dash-potential',

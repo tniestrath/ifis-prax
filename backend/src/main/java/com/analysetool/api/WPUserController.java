@@ -114,7 +114,7 @@ public class WPUserController {
 
             }
             if (wpUserMetaRepository.existsByUserId(i.getId())){
-                WPUserMeta wpUserMeta = wpUserMetaRepository.findByUserId(i.getId());
+                String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(i.getId());
                 obj.put("accountType", wpUserMeta);
             }
             else {obj.put("id",i.getId());

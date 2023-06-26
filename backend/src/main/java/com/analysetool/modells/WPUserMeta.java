@@ -13,7 +13,7 @@ public class WPUserMeta {
     private Long id;
 
     @Column(name = "user_id")
-    private String userId;
+    private Long userId;
 
     @Column(name = "meta_key")
     private String key;

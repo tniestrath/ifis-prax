@@ -2,6 +2,8 @@ package com.analysetool.api;
 import com.analysetool.Application;
 import com.analysetool.modells.WPUser;
 import com.analysetool.modells.UserStats;
+import com.analysetool.modells.WPUserMeta;
+import com.analysetool.repositories.WPUserMetaRepository;
 import com.analysetool.repositories.WPUserRepository;
 import com.analysetool.repositories.UserStatsRepository;
 
@@ -32,6 +34,8 @@ public class WPUserController {
     private UserStatsRepository userStatsRepo;
     @Autowired
     private statsController StatsController;
+    @Autowired
+    private WPUserMetaRepository wpUserMetaRepository;
 /*
     @GetMapping("/{id}")
     public ResponseEntity<WPUser> getUserById(@PathVariable Long id) {
@@ -102,12 +106,16 @@ public class WPUserController {
                 obj.put("id",i.getId());
                 obj.put("email",i.getEmail());
                 obj.put("displayName",i.getDisplayName());
-                obj.put( "accountType" ,"extra Premium ultra User");
+                //obj.put( "accountType" ,"extra Premium ultra User");
                 obj.put("profileViews ", statsUser.getProfileView());
                 obj.put("postViews",StatsController.getViewsOfUserById(i.getId()));
                 obj.put("postCount",StatsController.getPostCountOfUserById(i.getId()));
                 obj.put ("performance",statsUser.getAveragePerformance());
 
+            }
+            if (wpUserMetaRepository.existsByUser_id(i.getId())){
+                WPUserMeta wpUserMeta = wpUserMetaRepository.findByUser_id(i.getId());
+                obj.put("accountType", wpUserMeta);
             }
             else {obj.put("id",i.getId());
                 obj.put("email",i.getEmail());

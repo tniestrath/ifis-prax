@@ -2,7 +2,6 @@ package com.analysetool.modells;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "wp_usermeta")
@@ -14,7 +13,7 @@ public class WPUserMeta {
     private Long id;
 
     @Column(name = "user_id")
-    private String user_id;
+    private String userId;
 
     @Column(name = "meta_key")
     private String key;

@@ -40,7 +40,7 @@ export class SelectorComponent implements OnInit{
   ngOnInit(): void {
     console.log("Selector Component loaded");
     this.sub = (this.dataLoaded.subscribe(s =>{
-      this.loadItems(s, !(typeof TagListItemComponent == typeof s[0].component));
+      this.loadItems(s, !(typeof TagListItemComponent == typeof s[0]?.component));
       console.log("Selector Items loaded " + s.length);
     }
     ));

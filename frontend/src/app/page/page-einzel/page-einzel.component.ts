@@ -130,7 +130,7 @@ export class PageEinzelComponent implements OnInit {
         }
         switch (filter.perf) {
           case "low": {
-            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance <= 33);
+            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance < 33);
             break;
           }
           case "medium": {

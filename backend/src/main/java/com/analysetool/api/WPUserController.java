@@ -115,7 +115,10 @@ public class WPUserController {
             }
             if (wpUserMetaRepository.existsByUserId(i.getId())){
                 String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(i.getId());
-                obj.put("accountType", wpUserMeta);
+                if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
+                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
+                if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
+                if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
             }
             else {obj.put("id",i.getId());
                 obj.put("email",i.getEmail());

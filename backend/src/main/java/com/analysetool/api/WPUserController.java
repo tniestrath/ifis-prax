@@ -113,8 +113,8 @@ public class WPUserController {
                 obj.put ("performance",statsUser.getAveragePerformance());
 
             }
-            if (wpUserMetaRepository.existsByUser_id(i.getId())){
-                WPUserMeta wpUserMeta = wpUserMetaRepository.findByUser_id(i.getId());
+            if (wpUserMetaRepository.existsByUserId(i.getId())){
+                WPUserMeta wpUserMeta = wpUserMetaRepository.findByUserId(i.getId());
                 obj.put("accountType", wpUserMeta);
             }
             else {obj.put("id",i.getId());

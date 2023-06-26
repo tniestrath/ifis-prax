@@ -10,9 +10,9 @@ import java.util.Optional;
 @Repository
 public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
 
-    boolean existsByUser_id(Long user_id);
+    boolean existsByUserId(Long user_id);
 
-    WPUserMeta findByUser_id(Long user_id);
+    WPUserMeta findByUserId(Long user_id);
 
 }
 

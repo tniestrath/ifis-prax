@@ -8,23 +8,23 @@ import {Post} from "../Post";
 export enum dbUrl {
   HOST = "http://localhost",
   PORT = ":8080",
-  GET_ALL_TAGS = "http://localhost:8080/terms/getPostTagsIdName",
-  GET_ALL_TAGS_WITH_COUNT_AND_RELEVANCE = "http://localhost:8080/stats/allTermsRelevanceAndCount",
-  GET_TAG_POST_COUNT = "http://localhost:8080/terms/getPostcount?id=",
-  GET_TAG_RANKING = "http://localhost:8080/terms/getTermRanking",
-  GET_ALL_USERS = "http://localhost:8080/users/getAllNew",
-  GET_USER_POST_PER_DAY = "http://localhost:8080/getPostsByAuthorLine?id=",
-  GET_USER_POSTS_WITH_STATS = "http://localhost:8080/getPostsByAuthorLine2?id=",
-  GET_USER_NEWEST_POST_WITH_STATS = "http://localhost:8080/getNewestPostWithStatsByAuthor?id=",
-  GET_USER_IMG = "http://localhost:8080/users/profilePic?id=",
-  GET_USER_BY_LOGIN = "http://localhost:8080/users?login=",
-  GET_USER_BY_EMAIL = "http://localhost:8080/users?email=",
-  GET_USER_CLICKS = "http://localhost:8080/stats/getViewsBrokenDown?id=",
-  GET_USER_BEST_POST = "http://localhost:8080/stats/bestPost?id=",
-  GET_POST = "http://localhost:8080/getPostWithStatsById?id=",
-  GET_POST_PERFORMANCE = "http://localhost:8080/stats/getPerformanceByArtId?id=",
-  GET_POST_MAX_PERFORMANCE = "http://localhost:8080/stats/maxPerformance",
-  GET_POST_MAX_RELEVANCE = "http://localhost:8080/stats/maxRelevance"
+  GET_ALL_TAGS = "/terms/getPostTagsIdName",
+  GET_ALL_TAGS_WITH_COUNT_AND_RELEVANCE = "/stats/allTermsRelevanceAndCount",
+  GET_TAG_POST_COUNT = "/terms/getPostcount?id=",
+  GET_TAG_RANKING = "/terms/getTermRanking",
+  GET_ALL_USERS = "/users/getAllNew",
+  GET_USER_POST_PER_DAY = "/getPostsByAuthorLine?id=",
+  GET_USER_POSTS_WITH_STATS = "/getPostsByAuthorLine2?id=",
+  GET_USER_NEWEST_POST_WITH_STATS = "/getNewestPostWithStatsByAuthor?id=",
+  GET_USER_IMG = "/users/profilePic?id=",
+  GET_USER_BY_LOGIN = "/users?login=",
+  GET_USER_BY_EMAIL = "/users?email=",
+  GET_USER_CLICKS = "/stats/getViewsBrokenDown?id=",
+  GET_USER_BEST_POST = "/stats/bestPost?id=",
+  GET_POST = "/getPostWithStatsById?id=",
+  GET_POST_PERFORMANCE = "/stats/getPerformanceByArtId?id=",
+  GET_POST_MAX_PERFORMANCE = "/stats/maxPerformance",
+  GET_POST_MAX_RELEVANCE = "/stats/maxRelevance"
 }
 
 @Injectable({
@@ -48,29 +48,29 @@ export class DbService {
     if (DbService.Tags.length > 0){
       return;
     }
-    await fetch(dbUrl.GET_ALL_TAGS).then(res => res.json()).then(res => {
+    await fetch(DbService.getUrl(dbUrl.GET_ALL_TAGS)).then(res => res.json()).then(res => {
       for (let tag of res) {
         DbService.Tags.push(tag);
       }
     });
   }
   async getAllTagsWithCountAndRelevance(){
-    return await fetch(dbUrl.GET_ALL_TAGS_WITH_COUNT_AND_RELEVANCE).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_ALL_TAGS_WITH_COUNT_AND_RELEVANCE)).then(res => res.json());
   }
 
   async getTagPostCount(id : string){
-    return await fetch(dbUrl.GET_TAG_POST_COUNT + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_TAG_POST_COUNT) + id).then(res => res.json());
   }
 
   async getTagRanking() {
-    return await fetch(dbUrl.GET_TAG_RANKING).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_TAG_RANKING)).then(res => res.json());
   }
 
   async loadAllUsers() {
     if (DbService.Users.length > 0){
       return;
     }
-    await fetch(dbUrl.GET_ALL_USERS).then(res => res.json()).then(res => {
+    await fetch(DbService.getUrl(dbUrl.GET_ALL_USERS)).then(res => res.json()).then(res => {
       for (let user of res) {
         DbService.Users.push(user);
       }
@@ -78,14 +78,14 @@ export class DbService {
   }
 
   async getUserPostsDay(id : string){
-    return await fetch(dbUrl.GET_USER_POST_PER_DAY + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_POST_PER_DAY) + id).then(res => res.json());
   }
   async getUserPostsWithStats(id : string){
-    return await fetch(dbUrl.GET_USER_POSTS_WITH_STATS + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_POSTS_WITH_STATS) + id).then(res => res.json());
   }
 
   async getUserImgSrc(id : string){
-    const blob = await fetch(dbUrl.GET_USER_IMG + id).then(res => res.blob());
+    const blob = await fetch(DbService.getUrl(dbUrl.GET_USER_IMG) + id).then(res => res.blob());
     if (blob.size == 0){
       return "../../assets/user_img/404_img.jpg";
     }
@@ -106,30 +106,30 @@ export class DbService {
   }
 
   async getUserByLogin(login : string){
-    return fetch(dbUrl.GET_USER_BY_LOGIN + login).then(res => res.json());
+    return fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGIN + login)).then(res => res.json());
   }
   async getUserByEmail(email : string){
-    return fetch(dbUrl.GET_USER_BY_EMAIL + email).then(res => res.json());
+    return fetch(DbService.getUrl(dbUrl.GET_USER_BY_EMAIL + email)).then(res => res.json());
   }
 
   async getUserClicks(id : string){
-    return fetch(dbUrl.GET_USER_CLICKS + id).then(res => res.json());
+    return fetch(DbService.getUrl(dbUrl.GET_USER_CLICKS + id)).then(res => res.json());
   }
 
   async getUserBestPost(id: string, type: string){
-    return fetch(dbUrl.GET_USER_BEST_POST + id + "&type=" + type).then(res => res.json()).catch(reason => {return new Post()});
+    return fetch(DbService.getUrl(dbUrl.GET_USER_BEST_POST) + id + "&type=" + type).then(res => res.json()).catch(reason => {return new Post()});
   }
 
   async getUserNewestPost(id: string): Promise<Post> {
-    return fetch(dbUrl.GET_USER_NEWEST_POST_WITH_STATS + id).then(res => res.json());
+    return fetch(DbService.getUrl(dbUrl.GET_USER_NEWEST_POST_WITH_STATS) + id).then(res => res.json());
   }
 
   async getMaxPerformance(){
-    let max : Promise<number> = await fetch(dbUrl.GET_POST_MAX_PERFORMANCE).then(res => res.json());
+    let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_PERFORMANCE)).then(res => res.json());
     return max;
   }
   async getMaxRelevance(){
-    let max : Promise<number> = await fetch(dbUrl.GET_POST_MAX_RELEVANCE).then(res => res.json());
+    let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_RELEVANCE)).then(res => res.json());
     return max;
   }
 
@@ -146,6 +146,6 @@ export class DbService {
   }
 
   async getPostById(id: number) : Promise<Post> {
-    return await fetch(dbUrl.GET_POST + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_POST) + id).then(res => res.json());
   }
 }

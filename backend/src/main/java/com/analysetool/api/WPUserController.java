@@ -115,6 +115,7 @@ public class WPUserController {
             }
             if (wpUserMetaRepository.existsByUserId(i.getId())){
                 String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(i.getId());
+                if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
                 if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
                 if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
                 if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");

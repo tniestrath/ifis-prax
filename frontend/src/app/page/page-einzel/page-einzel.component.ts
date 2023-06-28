@@ -81,10 +81,16 @@ export class PageEinzelComponent implements OnInit {
 
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
-      console.log(page)
+      console.log(page + " : "+ UserService.USER_ID);
+      this.displayContent = "grid";
       switch (page) {
         case "Users":{
-          this.cardsLoaded.next(this.getUserPageCards());
+          if (UserService.USER_ID != "0"){
+            this.displayContent = "grid";
+            this.cardsLoaded.next(this.getUserPageCards());
+          } else {
+            this.displayContent = "none";
+          }
           break;
         }
         case "Tags":{

@@ -44,11 +44,7 @@ export class UserComponent implements SelectableComponent, OnInit {
   }
 
   getUserImg() {
-    if (this.user_img){
-      return this.user_img;
-    } else {
-      return "../../assets/user_img/404_img.png";
-    }
+    return this.user_img;
   }
 
 }

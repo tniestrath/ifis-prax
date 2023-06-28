@@ -86,9 +86,6 @@ export class DbService {
 
   async getUserImgSrc(id : string){
     const blob = await fetch(DbService.getUrl(dbUrl.GET_USER_IMG) + id).then(res => res.blob());
-    if (blob.size == 0){
-      return "../../assets/user_img/404_img.jpg";
-    }
     const reader = new FileReader();
     reader.readAsDataURL(blob);
     return new Promise<string>((resolve, reject) => {

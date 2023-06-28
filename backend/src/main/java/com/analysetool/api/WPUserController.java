@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 @CrossOrigin
 @RestController
@@ -94,11 +95,10 @@ public class WPUserController {
 
 
     @GetMapping("/getAllNew")
-    public String getAllNew() throws IOException, URISyntaxException, JSONException {
+    public String getAllNew() throws JSONException {
         List<WPUser> list = userRepository.findAll();
 
         JSONArray response = new JSONArray();
-        //JSONObject obj = new JSONObject();
         for (WPUser i : list) {
             JSONObject obj = new JSONObject();
             if(userStatsRepo.existsByUserId(i.getId())){
@@ -106,7 +106,6 @@ public class WPUserController {
                 obj.put("id",i.getId());
                 obj.put("email",i.getEmail());
                 obj.put("displayName",i.getDisplayName());
-                //obj.put( "accountType" ,"extra Premium ultra User");
                 obj.put("profileViews ", statsUser.getProfileView());
                 obj.put("postViews",StatsController.getViewsOfUserById(i.getId()));
                 obj.put("postCount",StatsController.getPostCountOfUserById(i.getId()));
@@ -124,7 +123,7 @@ public class WPUserController {
             else {obj.put("id",i.getId());
                 obj.put("email",i.getEmail());
                 obj.put("displayName",i.getDisplayName());
-                obj.put( "accountType" ,"extra Premium ultra User");
+                obj.put( "accountType" ,"undefined");
                 obj.put("profileViews ", 0);
                 obj.put("postViews",0);
                 obj.put("postCount",0);
@@ -138,10 +137,10 @@ public class WPUserController {
 
     @GetMapping("/profilePic")
     public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException, URISyntaxException {
-        String path = Paths.get(Application.class.getClassLoader().getResource("user_img").toURI()).toString() +"/"+id+"_profile_photo.jpg";
+        String path = Paths.get(Objects.requireNonNull(Application.class.getClassLoader().getResource("user_img")).toURI()).toString() +"/"+id+"_profile_photo.jpg";
         File cutePic = new File(path);
         if (!cutePic.exists()) {
-            return ResponseEntity.notFound().build();
+            cutePic = new File(Paths.get(Objects.requireNonNull(Application.class.getClassLoader().getResource("user_img/404_img.jpg")).toURI()).toUri());
         }
         byte[] imageBytes = Files.readAllBytes(cutePic.toPath());
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);

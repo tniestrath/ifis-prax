@@ -59,6 +59,14 @@ export class PageEinzelComponent implements OnInit {
     ];
   }
 
+  getAdminPageCards() {
+    return [
+      {type: ClicksComponent, row: 1, col: 1, height: 4, width: 1},
+      {type: PostChartComponent, row: 1, col: 2, height: 2, width: 4},
+
+    ];
+  }
+
   onSelected(id: string, name: string){
     if (id != "0"){
       this.displayContent = "grid";
@@ -99,6 +107,10 @@ export class PageEinzelComponent implements OnInit {
         }
         case "Posts":{
           this.cardsLoaded.next(this.getPostsPageCards());
+          break;
+        }
+        case "Overview":{
+          this.cardsLoaded.next(this.getAdminPageCards());
           break;
         }
         default: {

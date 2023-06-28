@@ -33,6 +33,7 @@ import { RelevanceComponent } from './component/gauge/relevance/relevance.compon
 import { PageLoginComponent } from './page-login/page-login.component';
 import { PostComponent } from './component/post/post.component';
 import { PotentialComponent } from './component/potential/potential.component';
+import { UserPlanComponent } from './component/user-plan/user-plan.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { PotentialComponent } from './component/potential/potential.component';
     RelevanceComponent,
     PageLoginComponent,
     PostComponent,
-    PotentialComponent
+    PotentialComponent,
+    UserPlanComponent
   ],
     imports: [
         BrowserModule,

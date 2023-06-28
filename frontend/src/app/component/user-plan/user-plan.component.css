@@ -1,0 +1,26 @@
+.user-plan-box {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  height: 100%;
+}
+canvas{
+  padding: 5px;
+  max-height: 100%;
+  max-width: 100%;
+}
+.legend-box{
+  padding: 5px;
+  height: calc(25% - 10px);
+  width: calc(100% - 10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.clicks-item-head{
+  margin: 0;
+  font-weight: bold;
+  font-size: large;
+}

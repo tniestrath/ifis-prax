@@ -10,7 +10,7 @@ import {Subject} from "rxjs";
 export class HeaderComponent {
 
   @Output() selected = new Subject<string>();
-  navElements = ["Posts", "Tags", "Users"];
+  navElements = ["Overview", "Posts", "Tags", "Users"];
 
 
   constructor() {

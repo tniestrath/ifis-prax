@@ -65,7 +65,7 @@ public class LogService {
     private int lastLineCounter = 0;
     private boolean liveScanning ;
     //private String Pfad=Application.class.getClassLoader().getResource("access.log").getPath();
-    private final String Pfad = Paths.get(Application.class.getClassLoader().getResource("access.log").toURI()).toString();
+    private final String Pfad = Paths.get("../../var/log/nginx/access.log").toString();
 
     @Autowired
     public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo,WPUserRepository wpUserRepo,UserStatsRepository userStatsRepo,CommentsRepository commentRepo,SysVarRepository sysVarRepo) throws URISyntaxException {

@@ -11,9 +11,13 @@ import {EmptyObject} from "chart.js/dist/types/basic";
 export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
   colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
+  chart: any;
+  chart_total: any;
 
   ngOnInit(): void {
-    //this.createChart()
+    this.chart = this.createChart("user_plan_chart", ["Basic", "Plus", "Premium"],[1173,223,35], undefined);
+    this.createLegend("user-plan-content-box", this.chart);
+    this.chart_total = 1173 + 223 + 35;
   }
 
   createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){
@@ -157,45 +161,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       li.appendChild(p);
     });
 
-    const media_ratio = window.matchMedia("(min-aspect-ratio: 5/4)");
-    const media_width = window.matchMedia("(min-width: 1500px)");
-    media_ratio.addEventListener( "change",(x) => { this.onMedia(x) });
-    media_width.addEventListener( "change",(x) => { this.onMedia(x) });
-
     legendBox?.appendChild(legendContainer);
     legendContainer.appendChild(ul);
-    this.onMedia(media_ratio)
   }
-
-  onMedia(x: MediaQueryListEvent | MediaQueryList) {
-    let lis = document.querySelectorAll(".clicks-item-li");
-    let spans = document.querySelectorAll(".clicks-item-span");
-    let ps = document.querySelectorAll(".clicks-item-text");
-
-    if(x.matches){
-      for (let i = 0; i < lis.length; i++) {
-        lis[i].setAttribute("style", "display: flex; align-items: center; flex-direction: row; height: 30px; margin: 5px;");
-      }
-      for (let i = 0; i < spans.length; i++) {
-        let color = spans[i].getAttribute("style")?.substring(88);
-        spans[i].setAttribute("style", "display: inline-block; height: 100%; width: 30px; margin-right: 5px; border-radius: 5px; " + color);
-      }
-      for (let i = 0; i < ps.length; i++) {
-        ps[i].setAttribute("style", "font-size: large");
-      }
-    }
-    else {
-      for (let i = 0; i < lis.length; i++) {
-        lis[i].setAttribute("style", "display: flex; align-items: center; flex-direction: row; height: 20px; margin: 5px;");
-      }
-      for (let i = 0; i < spans.length; i++) {
-        let color = spans[i].getAttribute("style")?.substring(88);
-        spans[i].setAttribute("style", "display: inline-block; height: 100%; width: 20px; margin-right: 5px; border-radius: 5px; " + color);
-      }
-      for (let i = 0; i < ps.length; i++) {
-        ps[i].setAttribute("style", "font-size: medium");
-      }
-    }
-  }
-
 }

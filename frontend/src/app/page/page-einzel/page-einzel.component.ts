@@ -14,6 +14,7 @@ import {UserService} from "../../services/user.service";
 import {PotentialComponent} from "../../component/potential/potential.component";
 import {TagListComponent} from "../../component/tag-list/tag-list.component";
 import {TagComponent} from "../tag/tag/tag.component";
+import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -61,7 +62,7 @@ export class PageEinzelComponent implements OnInit {
 
   getAdminPageCards() {
     return [
-      {type: ClicksComponent, row: 1, col: 1, height: 4, width: 1},
+      {type: UserPlanComponent, row: 1, col: 1, height: 2, width: 1},
       {type: PostChartComponent, row: 1, col: 2, height: 2, width: 4},
 
     ];

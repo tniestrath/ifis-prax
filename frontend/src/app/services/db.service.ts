@@ -6,8 +6,8 @@ import {DbObject} from "./DbObject";
 import {Post} from "../Post";
 
 export enum dbUrl {
-  HOST = "http://localhost",
-  PORT = ":8080",
+  HOST = "http://analyse.it-sicherheit.de",
+  PORT = "",
   GET_ALL_TAGS = "/terms/getPostTagsIdName",
   GET_ALL_TAGS_WITH_COUNT_AND_RELEVANCE = "/stats/allTermsRelevanceAndCount",
   GET_TAG_POST_COUNT = "/terms/getPostcount?id=",

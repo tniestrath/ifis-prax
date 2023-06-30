@@ -2,7 +2,6 @@ package com.analysetool.api;
 import com.analysetool.Application;
 import com.analysetool.modells.WPUser;
 import com.analysetool.modells.UserStats;
-import com.analysetool.modells.WPUserMeta;
 import com.analysetool.repositories.WPUserMetaRepository;
 import com.analysetool.repositories.WPUserRepository;
 import com.analysetool.repositories.UserStatsRepository;
@@ -14,84 +13,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.analysetool.modells.userWp;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/users")
-public class WPUserController {
+public class UserController {
 
     @Autowired
     private WPUserRepository userRepository;
     @Autowired
-    private UserStatsRepository userStatsRepo;
+    private UserStatsRepository userStatsRepository;
     @Autowired
-    private statsController StatsController;
+    private PostController StatsController;
     @Autowired
     private WPUserMetaRepository wpUserMetaRepository;
-/*
-    @GetMapping("/{id}")
-    public ResponseEntity<WPUser> getUserById(@PathVariable Long id) {
-        Optional<WPUser> user = userRepository.findById(id);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    @GetMapping("/getAll")
-    public List<WPUser> getAll(){return userRepository.findAll();}
-
-    @GetMapping(params = "login")
-    public ResponseEntity<WPUser> getUserByLogin(@RequestParam String login) {
-        Optional<WPUser> user = userRepository.findByLogin(login);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping(params = "email")
-    public ResponseEntity<WPUser> getUserByEmail(@RequestParam String email) {
-        Optional<WPUser> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }*/
 
 
-
-
-    // weitere REST-Endpunkte, falls benötigt
-    /*@GetMapping("/profilePic")
-    public File getProfilePic(@RequestParam long id){
-        String path = "../../assets/user_img/"+id+"_profile_photo.jpg";
-        File cutePic = new File(path);
-        return cutePic;
-    }
-
-    @GetMapping("/getAllNew")
-    public List<userWp> getAllNew(){
-        List<WPUser> list = userRepository.findAll();
-        List<userWp> li = new ArrayList<>();
-        for(WPUser i : list){
-            li.add(new userWp(i.getId(), i.getEmail(), i.getDisplayName(), getProfilePic(i.getId()).toString()
-            //"test"
-            ));
-
-        }
-        return li;
-    }*/
 
 
     @GetMapping("/getAllNew")
@@ -101,8 +46,8 @@ public class WPUserController {
         JSONArray response = new JSONArray();
         for (WPUser i : list) {
             JSONObject obj = new JSONObject();
-            if(userStatsRepo.existsByUserId(i.getId())){
-                UserStats statsUser = userStatsRepo.findByUserId(i.getId());
+            if(userStatsRepository.existsByUserId(i.getId())){
+                UserStats statsUser = userStatsRepository.findByUserId(i.getId());
                 obj.put("id",i.getId());
                 obj.put("email",i.getEmail());
                 obj.put("displayName",i.getDisplayName());
@@ -144,6 +89,27 @@ public class WPUserController {
         }
         byte[] imageBytes = Files.readAllBytes(cutePic.toPath());
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
+    }
+
+    //STATS
+
+
+
+    @GetMapping("/{userId}")
+    public UserStats getUserStats(@PathVariable("userId") Long userId) {
+        return userStatsRepository.findByUserId(userId);
+    }
+
+    @GetMapping("/getUserStats")
+    public String getUserStat(@RequestParam Long id) throws JSONException {
+        JSONObject obj = new JSONObject();
+        UserStats user = userStatsRepository.findByUserId(id);
+        obj.put("Interaktionsrate",user.getInteractionRate());
+        obj.put("Average Performance",user.getAveragePerformance());
+        obj.put("Average Relevance",user.getAverageRelevance());
+        obj.put("Postfrequenz",user.getPostFrequence());
+        obj.put("Profilaufrufe",user.getProfileView());
+        return obj.toString();
     }
 
 }

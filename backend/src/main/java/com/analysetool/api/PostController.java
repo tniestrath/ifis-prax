@@ -25,12 +25,28 @@ import org.springframework.web.bind.annotation.*;
 //@RequestMapping("/api/posts")
 public class PostController {
 
-
+    @Autowired
+    private statsRepository statRepository;
+    @Autowired
+    private PostRepository postRepo;
+    @Autowired
+    private UserStatsRepository userStatsRepo;
+    @Autowired
+    private TagStatRepository tagStatRepo;
+    @Autowired
+    private WPTermRepository termRepo;
+    @Autowired
+    private WpTermRelationshipsRepository termRelRepo;
+    @Autowired
+    private WpTermTaxonomyRepository taxTermRepo;
+    @Autowired
+    private WPUserRepository userRepo;
     PostRepository postRepository;
     statsRepository statsRepo;
     WpTermRelationshipsRepository termRelationRepo;
     WPTermRepository wpTermRepo;
     WpTermTaxonomyRepository wpTermTaxonomyRepo;
+
     @Autowired
     public PostController(
             PostRepository postRepository, statsRepository statsRepo, WpTermRelationshipsRepository termRelationRepo, WPTermRepository wpTermRepo, WpTermTaxonomyRepository wpTermTaxonomyRepo
@@ -51,7 +67,7 @@ public class PostController {
     public List<Post> getPublishedPosts(){return postRepository.findPublishedPosts();}
 
 
-    @GetMapping("/{id}")
+/*    @GetMapping("/{id}")
     public ResponseEntity<Post> getPostById(@PathVariable("id") Long id) {
         Optional<Post> postData = postRepository.findById(id);
 
@@ -60,51 +76,9 @@ public class PostController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
+    }*/
     /*
-        @PostMapping("/create")
-        public ResponseEntity<Post> createPost(@RequestBody Post post) {
-            try {
-                Post newPost = postRepository.save(post);
-                return new ResponseEntity<>(newPost, HttpStatus.CREATED);
-            } catch (Exception e) {
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
 
-        @PutMapping("/{id}")
-        public ResponseEntity<Post> updatePost(@PathVariable("id") Long id, @RequestBody Post post) {
-            Optional<Post> postData = postRepository.findById(id);
-
-            if (postData.isPresent()) {
-                Post updatedPost = postData.get();
-                updatedPost.setTitle(post.getTitle());
-                updatedPost.setContent(post.getContent());
-                return new ResponseEntity<>(postRepository.save(updatedPost), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        }
-
-        @DeleteMapping("/{id}")
-        public ResponseEntity<HttpStatus> deletePost(@PathVariable("id") Long id) {
-            try {
-                postRepository.deleteById(id);
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } catch (Exception e) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        @DeleteMapping("/")
-        public ResponseEntity<HttpStatus> deleteAllPosts() {
-            try {
-                postRepository.deleteAll();
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } catch (Exception e) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
 
         @GetMapping("/getPostsByAuthorLine")
         public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
@@ -333,6 +307,265 @@ public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseExc
         return obj.toString();
     }
 
+    //STATS
+
+   /* @GetMapping("/{id}")
+    public Optional<stats> getStat(@PathVariable Long id) {
+        return statRepository.findById(id);
+    }*/
+
+    @GetMapping
+    public List<stats> getAllStats() {
+        return statRepository.findAll();
+    }
+
+    @GetMapping("/maxPerformance")
+    public float getMaxPerformance(){
+        return statRepository.getMaxPerformance();
+    }
+
+    @GetMapping("/maxRelevance")
+    public float getMaxRelevance(){
+        return statRepository.getMaxRelevance();
+    }
+    @GetMapping("/getPerformanceByArtId")
+    public float getPerformanceByArtId(@RequestParam int id){
+        return statRepository.getPerformanceByArtID(id);
+    }
+
+    @GetMapping("/getViewsOfUser")
+    public long getViewsOfUserById(@RequestParam Long id){
+        List<Post> posts = postRepo.findByAuthor(id.intValue());
+        long views = 0 ;
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+
+        int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
+        for (Post post : posts) {
+            if (statRepository.existsByArtId(post.getId())) {
+                stats Stat = statRepository.getStatByArtID(post.getId());
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
+                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse) {
+                            views = views + Stat.getClicks();
+                        }
+                    }
+
+
+                }
+            }
+        }
+        return views ;
+    }
+
+    @GetMapping("/getPostCountOfUser")
+    public long getPostCountOfUserById(@RequestParam Long id){
+        List<Post> posts = postRepo.findByAuthor(id.intValue());
+        long PostCount = 0 ;
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+
+        int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
+        for (Post post : posts) {
+            if (statRepository.existsByArtId(post.getId())) {
+                stats Stat = statRepository.getStatByArtID(post.getId());
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
+                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse) {
+                            PostCount++ ;
+                        }
+                    }
+
+
+                }
+            }
+        }
+        return PostCount ;
+    }
+
+    @GetMapping("/getViewsBrokenDown")
+    public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
+        long viewsBlog = 0;
+        long viewsArtikel = 0;
+        long viewsProfile = userStatsRepo.findByUserId(id).getProfileView();
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+
+        int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
+        long viewsPresse = 0;
+        List<Post> posts = postRepo.findByAuthor(id.intValue());
+
+        List<Long> postTags = new ArrayList<>();
+        for (Post post : posts) {
+            if (statRepository.existsByArtId(post.getId())) {
+                stats Stat = statRepository.getStatByArtID(post.getId());
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
+                        if (termTax.getTermId() == tagIdBlog) {
+                            viewsBlog = viewsBlog + Stat.getClicks();
+                        }
+                        if (termTax.getTermId() == tagIdArtikel) {
+                            viewsArtikel = viewsArtikel + Stat.getClicks();
+                        }
+                        if (termTax.getTermId() == tagIdPresse) {
+                            viewsPresse = viewsPresse + Stat.getClicks();
+                        }}
+
+
+                }
+            }
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("viewsBlog", viewsBlog);
+        obj.put("viewsArtikel", viewsArtikel);
+        obj.put("viewsPresse", viewsPresse);
+        obj.put("viewsProfile", viewsProfile);
+        return obj.toString();
+
+    }
+
+
+    @GetMapping("/bestPost")
+    public String getBestPost(@RequestParam Long id, @RequestParam String type) throws JSONException {
+        List<Post> Posts = postRepo.findByAuthor(id.intValue());
+        if (Posts.size() == 0) {
+            return null;
+        }
+        stats Stats = null;
+        float max = 0;
+        long PostId = 0;
+        for (Post post : Posts) {
+            if (statRepository.existsByArtId(post.getId())) {
+                Stats = statRepository.getStatByArtID(post.getId());
+                if (type.equals("relevance")) {
+                    if (Stats.getRelevance() > max) {
+                        max = Stats.getRelevance();
+                        PostId = Stats.getArtId();
+                    }
+                }
+                if (type.equals("performance")) {
+                    if (Stats.getPerformance() > max) {
+                        max = Stats.getPerformance();
+                        PostId = Stats.getArtId();
+                    }
+                }
+            }
+        }
+
+        JSONObject obj = new JSONObject();
+        obj.put("ID", PostId);
+        obj.put(type, max);
+        obj.put("title", postRepo.findById(PostId).get().getTitle());
+        return obj.toString();
+    }
+
+    @GetMapping("/getPostStat")
+    public String getStat2(@RequestParam Long id) throws JSONException {
+        stats Stat = statRepository.getStatByArtID(id);
+        JSONObject obj = new JSONObject();
+        obj.put("Post-Id",Stat.getArtId());
+        obj.put("Relevanz",Stat.getRelevance());
+        obj.put("Performance",Stat.getPerformance());
+        obj.put("Views",Stat.getClicks());
+        obj.put("Refferings",Stat.getReferrings());
+        obj.put("Article Reffering Rate",Stat.getArticleReferringRate());
+        obj.put("Search Successes",Stat.getSearchSucces());
+        obj.put("Search Success Rate",Stat.getSearchSuccessRate());
+
+        return obj.toString();
+    }
+
+
+    @GetMapping("/getNewestStatsByAuthor")
+    public String getNewestStatsByAuthor(@RequestParam Long id) throws JSONException{
+        List<Post> posts =postRepo.findByAuthor(id.intValue()) ;
+        long newestId = 0 ;
+        LocalDateTime newestTime = null ;
+        for(Post post : posts){
+            if(newestTime == null || newestTime.isBefore(post.getDate())){
+                newestTime = post.getDate();
+                newestId = post.getId();
+            }
+        }
+        long views = 0;
+        long searchSuccesses = 0;
+        float SearchSuccessRate = 0 ;
+        long refferings = 0;
+        float refrate = 0;
+        float relevanz = 0;
+        float performance = 0 ;
+
+        if(statRepository.existsByArtId(newestId)){
+            stats Stats = statRepository.getStatByArtID(newestId);
+            views = Stats.getClicks();
+            searchSuccesses = Stats.getSearchSuccess();
+            SearchSuccessRate = Stats.getSearchSuccessRate();
+            refferings = Stats.getRefferings();
+            refrate = Stats.getArticleReferringRate();
+            relevanz = Stats.getRelevance();
+            performance = Stats.getPerformance();
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("ID",newestId);
+        obj.put("views",views);
+        obj.put("Search Successes",searchSuccesses);
+        obj.put("Search Success Rate",SearchSuccessRate);
+        obj.put("refferings",refferings);
+        obj.put("article reffering rate",refrate);
+        obj.put("relevanz",relevanz);
+        obj.put("performance",performance);
+
+
+        return obj.toString();
+
+    }
+
+    @GetMapping("/getNewestStatsByAuthorSessionId")
+    public String getNewestStatsByAuthorSessionId(@RequestParam String SessionId) throws JSONException{
+        if(userRepo.existsByActivationKey(SessionId)){
+            Long id = userRepo.findByActivationKey(SessionId).get().getId();
+            List<Post> posts =postRepo.findByAuthor(id.intValue()) ;
+            long newestId = 0 ;
+            LocalDateTime newestTime = null ;
+            for(Post post : posts){
+                if(newestTime == null || newestTime.isBefore(post.getDate())){
+                    newestTime = post.getDate();
+                    newestId = post.getId();
+                }
+            }
+            long views = 0;
+            long searchSuccesses = 0;
+            float SearchSuccessRate = 0 ;
+            long refferings = 0;
+            float refrate = 0;
+            float relevanz = 0;
+            float performance = 0 ;
+
+            if(statRepository.existsByArtId(newestId)){
+                stats Stats = statRepository.getStatByArtID(newestId);
+                views = Stats.getClicks();
+                searchSuccesses = Stats.getSearchSuccess();
+                SearchSuccessRate = Stats.getSearchSuccessRate();
+                refferings = Stats.getRefferings();
+                refrate = Stats.getArticleReferringRate();
+                relevanz = Stats.getRelevance();
+                performance = Stats.getPerformance();
+            }
+            JSONObject obj = new JSONObject();
+            obj.put("ID",newestId);
+            obj.put("views",views);
+            obj.put("Search Successes",searchSuccesses);
+            obj.put("Search Success Rate",SearchSuccessRate);
+            obj.put("refferings",refferings);
+            obj.put("article reffering rate",refrate);
+            obj.put("relevanz",relevanz);
+            obj.put("performance",performance);
+
+
+            return obj.toString();}
+        else{return "SESSION ID WRONG";}
+
+    }
 
 
 }

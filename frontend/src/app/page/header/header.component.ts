@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Subject} from "rxjs";
 import {DbService} from "../../services/db.service";
 
@@ -8,7 +8,7 @@ import {DbService} from "../../services/db.service";
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
+export class HeaderComponent implements AfterViewInit{
 
   @Output() selected = new Subject<string>();
   navElements = ["Overview", "Posts", "Tags", "Users"];
@@ -18,9 +18,14 @@ export class HeaderComponent {
   }
 
   ngOnInit(): void {
+
   }
 
   setSelected(page : string){
     this.selected.next(page);
+  }
+
+  ngAfterViewInit(): void {
+    this.selected.next("Landing");
   }
 }

@@ -1,8 +1,7 @@
-<dash-header (selected)="select($event)" >
+<dash-header (selected)="select($event)" ></dash-header>
 
-</dash-header>
-  <!--<dash-page-login (login_success)="select('Users')"></dash-page-login>-->
-  <dash-page-einzel [pageSelected]="selected.asObservable()"></dash-page-einzel>
+<dash-page-einzel [pageSelected]="selected.asObservable()"></dash-page-einzel>
+
 <div class="page-footer">
 
 </div>

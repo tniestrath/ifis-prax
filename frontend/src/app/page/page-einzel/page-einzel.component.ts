@@ -35,6 +35,12 @@ export class PageEinzelComponent implements OnInit {
   constructor(private cookieService : CookieService, private db : DbService) {
   }
 
+  getLandingPageCards(){
+    return [
+      {type: ClicksComponent, row: 2, col: 2, height: 2, width: 4},
+    ];
+  }
+
   getUserPageCards() {
     return [
       {type: ClicksComponent, row: 1, col: 1, height: 4, width: 1},
@@ -99,6 +105,7 @@ export class PageEinzelComponent implements OnInit {
             this.cardsLoaded.next(this.getUserPageCards());
           } else {
             this.displayContent = "none";
+            this.loadSelector(this.filterValues);
           }
           break;
         }
@@ -114,13 +121,20 @@ export class PageEinzelComponent implements OnInit {
           this.cardsLoaded.next(this.getAdminPageCards());
           break;
         }
+        case "Landing":{
+          this.displayContent = "grid";
+          console.log("LANDING")
+          this.cardsLoaded.next(this.getLandingPageCards());
+          break;
+        }
         default: {
-          this.cardsLoaded.next(this.getUserPageCards());
+          this.displayContent = "grid";
+          this.cardsLoaded.next(this.getLandingPageCards());
           break;
         }
       }
     })
-    this.loadSelector(this.filterValues);
+
   }
 
   loadSelector(filter: {accType : string, perf : string}){

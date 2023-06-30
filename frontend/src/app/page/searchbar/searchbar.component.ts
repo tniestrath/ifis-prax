@@ -30,14 +30,13 @@ export class SearchbarComponent implements OnInit{
 
   ngOnInit(): void {
     let object :string[]  = ["0",""];
-    if(this.cookieService.check(this.page)){
-      object = this.cookieService.get(this.page).split(":");
+    if (this.cookieService.check("wordpress_cookie")) {
+      if (this.cookieService.check(this.page)) {
+        object = this.cookieService.get(this.page).split(":");
+      }
+      this.onDbObjectSelected(object[0], object[1]);
     }
-    this.onDbObjectSelected(object[0], object[1]);
 
-    this.filter.subscribe(filter => {
-
-    })
   }
 
   onKey(value : string) {

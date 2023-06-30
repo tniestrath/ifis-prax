@@ -10,7 +10,6 @@ import {SelectableDirective} from "./selectable.directive";
 import {SelectableComponent} from "./selectable.component";
 import {Observable, Subscription} from "rxjs";
 import {DbObject} from "../../services/DbObject";
-import {TagRanking} from "../tag/Tag";
 import {TagListItemComponent} from "../../component/tag-list/tag-list-item/tag-list-item.component";
 
 export class SelectorItem {
@@ -33,7 +32,6 @@ export class SelectorComponent implements OnInit{
   @ViewChild(SelectableDirective, {static: true}) dashSelectable!: SelectableDirective;
 
   private sub = new Subscription();
-  private components : SelectableComponent[] = [];
 
 
 

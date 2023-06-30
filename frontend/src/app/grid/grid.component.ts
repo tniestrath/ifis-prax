@@ -57,18 +57,4 @@ export class GridComponent implements OnInit{
       this.index++;
     }
   }
-
-  public addCard(g : GridCard){
-    // @ts-ignore
-    const componentRef = this.dashGridCard.viewContainerRef.createComponent<typeof g.type>(g.type, {index: this.index});
-    componentRef.setInput("clicked", this.itemClick);
-    componentRef.setInput("grid_reference", this);
-    componentRef.setInput("grid_index", this.index);
-    componentRef.location.nativeElement.style.gridArea = g.row + "/" + g.col + "/" + (g.row + g.height) + "/" + (g.col + g.width);
-    this.index++;
-  }
-
-  public removeCard(C : Type<DashBaseComponent>){
-    //NO
-  }
 }

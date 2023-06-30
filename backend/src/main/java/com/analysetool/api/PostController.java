@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-//@RequestMapping("/api/posts")
+@RequestMapping("/posts")
 public class PostController {
 
     @Autowired
@@ -58,12 +58,12 @@ public class PostController {
        this.wpTermTaxonomyRepo = wpTermTaxonomyRepo;
     }
 
-    @GetMapping("/posts/getall")
+    @GetMapping("/getall")
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
 
-    @GetMapping("/posts/publishedPosts")
+    @GetMapping("/publishedPosts")
     public List<Post> getPublishedPosts(){return postRepository.findPublishedPosts();}
 
 

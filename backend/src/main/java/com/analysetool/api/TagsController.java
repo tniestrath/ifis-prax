@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 @CrossOrigin
 @RestController
-//@RequestMapping("/terms")
+@RequestMapping("/tags")
 public class TagsController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class TagsController {
     @Autowired
     private WpTermRelationshipsRepository termRelRepo;
 
-    @GetMapping("terms/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<WPTerm> getTermById(@PathVariable Long id) {
         Optional<WPTerm> term = termRepository.findById(id);
         if (term.isPresent()) {
@@ -40,10 +40,10 @@ public class TagsController {
         }
     }
 
-    @GetMapping("terms/getall")
+    @GetMapping("/getall")
     List<WPTerm> getall(){return termRepository.findAll();}
     // weitere REST-Endpunkte, falls benötigt
-    @GetMapping("terms/getPostTags")
+    @GetMapping("/getPostTags")
     List<WPTerm>getPostTags(){
         List<Long> li = termTaxonomyRepository.getAllPostTags();
         List<WPTerm> list = new ArrayList<WPTerm>();
@@ -75,7 +75,7 @@ public class TagsController {
         return list;
     }
     */
-    @GetMapping("terms/getPostTagsIdName")
+    @GetMapping("/getPostTagsIdName")
     String getPostTagsIdName() throws JSONException {
         List<Long> li = termTaxonomyRepository.getAllPostTags();
         JSONArray list = new JSONArray();
@@ -94,12 +94,12 @@ public class TagsController {
         return list.toString();
     }
 
-    @GetMapping("terms/getPostcount")
+    @GetMapping("/getPostcount")
     String getPostCount(@RequestParam String id) {
         return Long.toString(termRepository.getPostCount(id));
     }
 
-    @GetMapping("terms/getTermRanking")
+    @GetMapping("/getTermRanking")
     String getTermRanking() throws JSONException {
        List<WpTermTaxonomy> list= termTaxonomyRepository.findTop10TermIdsByCount();
         JSONArray Antwort = new JSONArray();
@@ -114,7 +114,7 @@ public class TagsController {
 
     }
 
-    @GetMapping("getTagStat")
+    @GetMapping("/getTagStat")
     public String getTagStat(@RequestParam Long id)throws JSONException{
         TagStat tagStat = tagStatRepo.getStatById(id.intValue());
         JSONObject obj = new JSONObject();

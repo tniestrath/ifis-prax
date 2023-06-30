@@ -5,9 +5,7 @@ package com.analysetool.api;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.analysetool.modells.*;
@@ -16,8 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     @Autowired
-    private statsRepository statRepository;
+    private StatsRepository statRepository;
     @Autowired
     private PostRepository postRepo;
     @Autowired
@@ -42,14 +38,14 @@ public class PostController {
     @Autowired
     private WPUserRepository userRepo;
     PostRepository postRepository;
-    statsRepository statsRepo;
+    StatsRepository statsRepo;
     WpTermRelationshipsRepository termRelationRepo;
     WPTermRepository wpTermRepo;
     WpTermTaxonomyRepository wpTermTaxonomyRepo;
 
     @Autowired
     public PostController(
-            PostRepository postRepository, statsRepository statsRepo, WpTermRelationshipsRepository termRelationRepo, WPTermRepository wpTermRepo, WpTermTaxonomyRepository wpTermTaxonomyRepo
+            PostRepository postRepository, StatsRepository statsRepo, WpTermRelationshipsRepository termRelationRepo, WPTermRepository wpTermRepo, WpTermTaxonomyRepository wpTermTaxonomyRepo
     ){
        this.postRepository = postRepository;
        this.statsRepo=statsRepo;
@@ -66,72 +62,35 @@ public class PostController {
     @GetMapping("/publishedPosts")
     public List<Post> getPublishedPosts(){return postRepository.findPublishedPosts();}
 
+    @GetMapping("/getPostsByAuthorLine")
+    public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
 
-/*    @GetMapping("/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable("id") Long id) {
-        Optional<Post> postData = postRepository.findById(id);
+        JSONArray list = new JSONArray();
+        List<Post> posts = postRepository.findByAuthor(id);
+        DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
 
-        if (postData.isPresent()) {
-            return new ResponseEntity<>(postData.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }*/
-    /*
+        if (!posts.isEmpty()) {
+            for (Post i : posts) {
+                JSONObject obj = new JSONObject();
+                Date date = onlyDate.parse(i.getDate().toString());
+                String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
+                obj.put("title", i.getTitle());
+                obj.put("date", formattedDate);
+                obj.put("count",1);
 
-        @GetMapping("/getPostsByAuthorLine")
-        public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
-
-            JSONArray list = new JSONArray();
-            List<Post> posts = postRepository.findByAuthor(id);
-            DateFormat onlyDate = new SimpleDateFormat("dd/MM/yyyy");
-            if(!posts.isEmpty()){
-                for(Post i:posts) {
-
-                    JSONObject obj = new JSONObject();
-                    Date Tag = onlyDate.parse(i.getDate().toString());
-
-                    if ( (!list.isNull(list.length()-1))   &&  (list.getJSONObject(list.length()-1).get("date") == Tag ))
-                        { list.getJSONObject(list.length()-1).put("id",list.getJSONObject(list.length()-1).get("id")+","+i.getTitle()) ;}
-
-                    else{
-                    obj.put("id", i.getTitle());
-                        obj.put("date", Tag);
-                        list.put(obj);}
+                if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
+                    String currentId = list.getJSONObject(list.length() - 1).getString("title");
+                    int currentCount = list.getJSONObject(list.length() - 1).getInt("count");
+                    list.getJSONObject(list.length() - 1).put("title", currentId + "," + i.getTitle());
+                    list.getJSONObject(list.length() - 1).put("count", currentCount + 1);
+                } else {
+                    list.put(obj);
                 }
             }
-            return list.toString();
-        }*/
-@GetMapping("/getPostsByAuthorLine")
-public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
-
-    JSONArray list = new JSONArray();
-    List<Post> posts = postRepository.findByAuthor(id);
-    DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
-
-    if (!posts.isEmpty()) {
-        for (Post i : posts) {
-            JSONObject obj = new JSONObject();
-            Date date = onlyDate.parse(i.getDate().toString());
-            String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-            obj.put("title", i.getTitle());
-            obj.put("date", formattedDate);
-            obj.put("count",1);
-
-            if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
-                String currentId = list.getJSONObject(list.length() - 1).getString("title");
-                int currentCount = list.getJSONObject(list.length() - 1).getInt("count");
-                list.getJSONObject(list.length() - 1).put("title", currentId + "," + i.getTitle());
-                list.getJSONObject(list.length() - 1).put("count", currentCount + 1);
-            } else {
-                list.put(obj);
-            }
         }
+        return list.toString();
     }
-    return list.toString();
-}
 
     @GetMapping("/getPostsByAuthorLine2")
     public String PostsByAuthor2(@RequestParam int id) throws JSONException, ParseException {

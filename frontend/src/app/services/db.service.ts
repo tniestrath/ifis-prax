@@ -41,21 +41,6 @@ export class DbService {
 
   constructor(private sanitizer : DomSanitizer) { }
 
-  async login(){
-    return await fetch('http://test.it-sicherheit.de/anmelden', {
-      method: 'POST',
-      headers: {
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': '_gid=GA1.2.623550920.1687944953; _ga=GA1.1.2145831199.1680522460; _ga_GL2G070SB4=GS1.1.1687944953.3.1.1687944997.0.0.0',
-
-      },
-      body: "username-1384=philipAlbers&user_password-1384=KL22n2aKldGMKIxTU3Hg%241Qz&form_id=1384&um_request=&_wpnonce=b01c06ce2a&_wp_http_referer=%2Fanmelden%2F&rememberme=1"
-    })
-      .then(response => response.json())
-      .then(response => console.log(JSON.stringify(response)))
-  }
-
   private static getUrl( prompt : string){
     return DbService.host + DbService.port + prompt;
   }

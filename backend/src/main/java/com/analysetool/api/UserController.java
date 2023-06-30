@@ -1,9 +1,7 @@
 package com.analysetool.api;
 import com.analysetool.Application;
 import com.analysetool.modells.*;
-import com.analysetool.repositories.WPUserMetaRepository;
-import com.analysetool.repositories.WPUserRepository;
-import com.analysetool.repositories.UserStatsRepository;
+import com.analysetool.repositories.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,8 +32,17 @@ public class UserController {
     @Autowired
     private PostController postController;
     @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    private StatsRepository statRepository;
+    @Autowired
     private WPUserMetaRepository wpUserMetaRepository;
-
+    @Autowired
+    private WPTermRepository termRepo;
+    @Autowired
+    private WpTermRelationshipsRepository termRelRepo;
+    @Autowired
+    private WpTermTaxonomyRepository termTaxRepo;
 
 
 
@@ -122,14 +129,14 @@ public class UserController {
 
         int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
         long viewsPresse = 0;
-        List<Post> posts = postController.findByAuthor(id.intValue());
+        List<Post> posts = postRepository.findByAuthor(id.intValue());
 
         List<Long> postTags = new ArrayList<>();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 stats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
-                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
+                    for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
                         if (termTax.getTermId() == tagIdBlog) {
                             viewsBlog = viewsBlog + Stat.getClicks();
                         }

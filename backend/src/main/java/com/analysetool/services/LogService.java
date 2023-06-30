@@ -27,7 +27,7 @@ import java.time.Duration;
 public class LogService {
 
     private PostRepository postRepository;
-    private statsRepository statsRepo;
+    private StatsRepository statsRepo;
     private TagStatRepository tagStatRepo;
     private WpTermRelationshipsRepository termRelRepo;
     private WPTermRepository termRepo;
@@ -68,7 +68,7 @@ public class LogService {
     private String Pfad = Paths.get(Application.class.getClassLoader().getResource("access.log").toURI()).toString();
 
     @Autowired
-    public LogService(PostRepository postRepository, statsRepository StatsRepository,TagStatRepository tagStatRepo,WpTermRelationshipsRepository termRelRepo,WPTermRepository termRepo,WpTermTaxonomyRepository termTaxRepo,WPUserRepository wpUserRepo,UserStatsRepository userStatsRepo,CommentsRepository commentRepo,SysVarRepository sysVarRepo) throws URISyntaxException {
+    public LogService(PostRepository postRepository, StatsRepository StatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo) throws URISyntaxException {
         this.postRepository = postRepository;
         this.statsRepo = StatsRepository;
         this.tagStatRepo=tagStatRepo;

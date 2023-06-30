@@ -8,24 +8,24 @@ import {Post} from "../Post";
 export enum dbUrl {
   HOST = "http://localhost",
   PORT = ":8080",
-  GET_ALL_TAGS = "/terms/getPostTagsIdName",
-  GET_ALL_TAGS_WITH_COUNT_AND_RELEVANCE = "/stats/allTermsRelevanceAndCount",
-  GET_TAG_POST_COUNT = "/terms/getPostcount?id=",
-  GET_TAG_RANKING = "/terms/getTermRanking",
-  GET_ALL_USERS = "/users/getAllNew",
-  GET_USER_POST_PER_DAY = "/getPostsByAuthorLine?id=",
-  GET_USER_POSTS_WITH_STATS = "/getPostsByAuthorLine2?id=",
-  GET_USER_NEWEST_POST_WITH_STATS = "/getNewestPostWithStatsByAuthor?id=",
+  GET_ALL_TAGS = "/tags/getPostTagsIdName",
+  GET_ALL_TAGS_WITH_COUNT_AND_RELEVANCE = "/tags/allTermsRelevanceAndCount",
+  GET_TAG_POST_COUNT = "/tags/getPostcount?id=",
+  GET_TAG_RANKING = "/tags/getTermRanking",
+
+  GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
+  GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
+  GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
+  GET_POST_BY_USERS_BEST = "/posts/bestPost?id=",
+
+  GET_USERS_ALL = "/users/getAllNew",
   GET_USER_IMG = "/users/profilePic?id=",
-  GET_USER_BY_LOGIN = "/users?login=",
-  GET_USER_BY_EMAIL = "/users?email=",
-  GET_USER_CLICKS = "/stats/getViewsBrokenDown?id=",
-  GET_USER_BEST_POST = "/stats/bestPost?id=",
-  GET_POST = "/getPostWithStatsById?id=",
-  GET_POST_PERFORMANCE = "/stats/getPerformanceByArtId?id=",
-  GET_POST_MAX_PERFORMANCE = "/stats/maxPerformance",
-  GET_POST_MAX_RELEVANCE = "/stats/maxRelevance",
-  LOGIN = "http://test.it-sicherheit.de/anmelden"
+  GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
+
+  GET_POST = "posts/getPostWithStatsById?id=",
+  GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
+  GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
+  GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
 }
 
 @Injectable({
@@ -86,7 +86,7 @@ export class DbService {
     if (DbService.Users.length > 0){
       return;
     }
-    await fetch(DbService.getUrl(dbUrl.GET_ALL_USERS)).then(res => res.json()).then(res => {
+    await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL)).then(res => res.json()).then(res => {
       for (let user of res) {
         DbService.Users.push(user);
       }
@@ -94,10 +94,10 @@ export class DbService {
   }
 
   async getUserPostsDay(id : string){
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_POST_PER_DAY) + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_PER_DAY) + id).then(res => res.json());
   }
   async getUserPostsWithStats(id : string){
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_POSTS_WITH_STATS) + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_WITH_STATS) + id).then(res => res.json());
   }
 
   async getUserImgSrc(id : string){
@@ -118,23 +118,16 @@ export class DbService {
     }).then(dataUrl => this.sanitizer.bypassSecurityTrustUrl(dataUrl));
   }
 
-  async getUserByLogin(login : string){
-    return fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGIN + login)).then(res => res.json());
-  }
-  async getUserByEmail(email : string){
-    return fetch(DbService.getUrl(dbUrl.GET_USER_BY_EMAIL + email)).then(res => res.json());
-  }
-
   async getUserClicks(id : string){
     return fetch(DbService.getUrl(dbUrl.GET_USER_CLICKS + id)).then(res => res.json());
   }
 
   async getUserBestPost(id: string, type: string){
-    return fetch(DbService.getUrl(dbUrl.GET_USER_BEST_POST) + id + "&type=" + type).then(res => res.json()).catch(reason => {return new Post()});
+    return fetch(DbService.getUrl(dbUrl.GET_POST_BY_USERS_BEST) + id + "&type=" + type).then(res => res.json()).catch(reason => {return new Post()});
   }
 
   async getUserNewestPost(id: string): Promise<Post> {
-    return fetch(DbService.getUrl(dbUrl.GET_USER_NEWEST_POST_WITH_STATS) + id).then(res => res.json());
+    return fetch(DbService.getUrl(dbUrl.GET_POSTS_NEWEST_BY_USER_WITH_STATS) + id).then(res => res.json());
   }
 
   async getMaxPerformance(){

@@ -30,7 +30,6 @@ import { PostChartComponent } from './component/post-chart/post-chart.component'
 import { GridComponent } from './grid/grid.component';
 import { GridCardDirective } from './grid/grid-card.directive';
 import { RelevanceComponent } from './component/gauge/relevance/relevance.component';
-import { PageLoginComponent } from './page-login/page-login.component';
 import { PostComponent } from './component/post/post.component';
 import { PotentialComponent } from './component/potential/potential.component';
 import { UserPlanComponent } from './component/user-plan/user-plan.component';
@@ -59,7 +58,6 @@ import { UserPlanComponent } from './component/user-plan/user-plan.component';
     GridComponent,
     GridCardDirective,
     RelevanceComponent,
-    PageLoginComponent,
     PostComponent,
     PotentialComponent,
     UserPlanComponent

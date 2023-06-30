@@ -1,7 +1,6 @@
 package com.analysetool.api;
 import com.analysetool.Application;
-import com.analysetool.modells.WPUser;
-import com.analysetool.modells.UserStats;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.WPUserMetaRepository;
 import com.analysetool.repositories.WPUserRepository;
 import com.analysetool.repositories.UserStatsRepository;
@@ -19,6 +18,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +32,7 @@ public class UserController {
     @Autowired
     private UserStatsRepository userStatsRepository;
     @Autowired
-    private PostController StatsController;
+    private PostController postController;
     @Autowired
     private WPUserMetaRepository wpUserMetaRepository;
 
@@ -52,8 +52,8 @@ public class UserController {
                 obj.put("email",i.getEmail());
                 obj.put("displayName",i.getDisplayName());
                 obj.put("profileViews ", statsUser.getProfileView());
-                obj.put("postViews",StatsController.getViewsOfUserById(i.getId()));
-                obj.put("postCount",StatsController.getPostCountOfUserById(i.getId()));
+                obj.put("postViews", postController.getViewsOfUserById(i.getId()));
+                obj.put("postCount", postController.getPostCountOfUserById(i.getId()));
                 obj.put ("performance",statsUser.getAveragePerformance());
 
             }
@@ -112,4 +112,44 @@ public class UserController {
         return obj.toString();
     }
 
+    @GetMapping("/getViewsBrokenDown")
+    public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
+        long viewsBlog = 0;
+        long viewsArtikel = 0;
+        long viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+
+        int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
+        long viewsPresse = 0;
+        List<Post> posts = postController.findByAuthor(id.intValue());
+
+        List<Long> postTags = new ArrayList<>();
+        for (Post post : posts) {
+            if (statRepository.existsByArtId(post.getId())) {
+                stats Stat = statRepository.getStatByArtID(post.getId());
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
+                        if (termTax.getTermId() == tagIdBlog) {
+                            viewsBlog = viewsBlog + Stat.getClicks();
+                        }
+                        if (termTax.getTermId() == tagIdArtikel) {
+                            viewsArtikel = viewsArtikel + Stat.getClicks();
+                        }
+                        if (termTax.getTermId() == tagIdPresse) {
+                            viewsPresse = viewsPresse + Stat.getClicks();
+                        }}
+
+
+                }
+            }
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("viewsBlog", viewsBlog);
+        obj.put("viewsArtikel", viewsArtikel);
+        obj.put("viewsPresse", viewsPresse);
+        obj.put("viewsProfile", viewsProfile);
+        return obj.toString();
+
+    }
 }

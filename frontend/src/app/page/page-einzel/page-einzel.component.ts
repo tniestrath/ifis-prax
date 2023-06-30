@@ -122,13 +122,10 @@ export class PageEinzelComponent implements OnInit {
           break;
         }
         case "Landing":{
-          this.displayContent = "grid";
-          console.log("LANDING")
           this.cardsLoaded.next(this.getLandingPageCards());
           break;
         }
         default: {
-          this.displayContent = "grid";
           this.cardsLoaded.next(this.getLandingPageCards());
           break;
         }

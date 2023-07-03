@@ -16,15 +16,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.time.Duration;
+
 @Service
 public class LogService {
 
@@ -579,7 +577,7 @@ public class LogService {
     public void erhoeheWertFuerHeutigesDatum(long id) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
         // I'm assuming PostStats is a class, first letter should be lowercase for the instance
-        PostStats postStats = statsRepo.getStatByArtID(id);
+        PostStats postStats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
         HashMap<String, Long> daily = (HashMap<String, Long>) postStats.getViewsLastYear();
 
         // Das heutige Datum im Format dd.MM abrufen
@@ -588,13 +586,26 @@ public class LogService {
         // Den Wert für das heutige Datum in der HashMap um 1 erhöhen
         long aktuellerWert = daily.getOrDefault(heutigesDatum, 0L);
         daily.put(heutigesDatum, aktuellerWert + 1);
-
+        postStats.setViewsPerHour(erhoeheViewsPerHour(postStats));
         postStats.setViewsLastYear(daily);
         postStats.setRelevance(getRelevance2(daily, heutigesDatum, 7));
 
         statsRepo.save(postStats);
     }
 
+    @Transactional
+    public Map<String,Long> erhoeheViewsPerHour(PostStats stats){
+        Map<String,Long> viewsPerHour =stats.getViewsPerHour();
+        LocalTime jetzt = LocalTime.now();
+        int stunde = jetzt.getHour();
+        if(stunde != 0){stunde--;}
+        long views= viewsPerHour.getOrDefault(Integer.toString(stunde),0L);
+        views++;
+        viewsPerHour.put(Integer.toString(stunde),views);
+        stats.setViewsPerHour(viewsPerHour);
+
+        return viewsPerHour;
+    }
     public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd.MM");
 

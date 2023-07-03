@@ -194,6 +194,18 @@ public class PostController {
         return PostsById2(newestId);
     }
 
+    @GetMapping("/getViewsOfPostDirstributedByHour")
+    public String getViewsOfPostDistributedByHour(@RequestParam Long id)throws JSONException,ParseException{
+        //wip
+        String leViews="";
+        if(statsRepo.existsByArtId(id)){
+            PostStats stats = statsRepo.getStatByArtID(id);
+            leViews=stats.getViewsPerDay().toString();
+
+        }
+        return leViews;
+    }
+
     @GetMapping("/getPostWithStatsById")
     public String PostsById2(@RequestParam long id) throws JSONException, ParseException {
         if(!postRepository.findById(id).isPresent()) {return null;}

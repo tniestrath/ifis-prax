@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core
 import {DbService} from "../../services/db.service";
 import {GridComponent} from "../../grid/grid.component";
 import {UserService} from "../../services/user.service";
+import {CookieService} from "ngx-cookie-service";
 
 @Component({
   selector: 'dash-dash-base',
@@ -17,7 +18,7 @@ export class DashBaseComponent {
   protected tooltip : HTMLSpanElement;
   protected helpButton : HTMLElement;
 
-  constructor(protected element : ElementRef, protected db : DbService, protected us : UserService) {
+  constructor(protected element : ElementRef, protected db : DbService, protected us : UserService, protected cs : CookieService) {
     this.helpButton = document.createElement("div");
     this.helpButton.style.color = "#A0A0A0";
     this.helpButton.innerText = "?";

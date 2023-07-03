@@ -1,6 +1,8 @@
 import {AfterViewInit, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Subject} from "rxjs";
 import {DbService} from "../../services/db.service";
+import {UserService} from "../../services/user.service";
+import {CookieService} from "ngx-cookie-service";
 
 
 @Component({
@@ -14,7 +16,11 @@ export class HeaderComponent implements AfterViewInit{
   navElements = ["Overview", "Posts", "Tags", "Users"];
 
 
-  constructor() {
+  constructor(private cs : CookieService) {
+    UserService.login.subscribe(value => {
+      cs.set("user", "1:ifisAdmin");
+      this.selected.next("Users");
+    })
   }
 
   ngOnInit(): void {

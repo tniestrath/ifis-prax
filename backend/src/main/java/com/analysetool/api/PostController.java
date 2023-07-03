@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     @Autowired
-    private StatsRepository statRepository;
+    private PostStatsRepository statRepository;
     @Autowired
     private PostRepository postRepo;
     @Autowired
@@ -36,14 +36,14 @@ public class PostController {
     @Autowired
     private WPUserRepository userRepo;
     PostRepository postRepository;
-    StatsRepository statsRepo;
+    PostStatsRepository statsRepo;
     WpTermRelationshipsRepository termRelationRepo;
     WPTermRepository wpTermRepo;
     WpTermTaxonomyRepository wpTermTaxonomyRepo;
 
     @Autowired
     public PostController(
-            PostRepository postRepository, StatsRepository statsRepo, WpTermRelationshipsRepository termRelationRepo, WPTermRepository wpTermRepo, WpTermTaxonomyRepository wpTermTaxonomyRepo
+            PostRepository postRepository, PostStatsRepository statsRepo, WpTermRelationshipsRepository termRelationRepo, WPTermRepository wpTermRepo, WpTermTaxonomyRepository wpTermTaxonomyRepo
     ){
        this.postRepository = postRepository;
        this.statsRepo=statsRepo;
@@ -102,9 +102,9 @@ public class PostController {
         if (!posts.isEmpty()) {
             for (Post i : posts) {
                 if (i.getType().equals("post")) {
-                    stats Stats = null;
+                    PostStats PostStats = null;
                     if (statsRepo.existsByArtId(i.getId())) {
-                        Stats = statsRepo.getStatByArtID(i.getId());
+                        PostStats = statsRepo.getStatByArtID(i.getId());
                     }
                     List<Long> tagIDs = null;
                     if (termRelationRepo.existsByObjectId(i.getId())) {
@@ -152,9 +152,9 @@ public class PostController {
                     obj.put("title", i.getTitle());
                     obj.put("date", formattedDate);
                     obj.put("type", type);
-                    if (Stats != null) {
-                        obj.put("performance", Stats.getPerformance());
-                        obj.put("relevance", Stats.getRelevance());
+                    if (PostStats != null) {
+                        obj.put("performance", PostStats.getPerformance());
+                        obj.put("relevance", PostStats.getRelevance());
                     } else {
                         obj.put("performance", 0);
                         obj.put("relevance", 0);
@@ -201,9 +201,9 @@ public class PostController {
         List<String> tags = new ArrayList<>();
         String type = "default";
 
-        stats Stats = null;
+        PostStats PostStats = null;
         if(statsRepo.existsByArtId(post.getId())){
-            Stats = statsRepo.getStatByArtID(post.getId());
+            PostStats = statsRepo.getStatByArtID(post.getId());
         }
         List<Long> tagIDs = null;
         if(termRelationRepo.existsByObjectId(post.getId())){
@@ -244,14 +244,14 @@ public class PostController {
         obj.put("date", formattedDate);
         obj.put("tags", tags);
         obj.put("type", type);
-        if(Stats != null){
-            obj.put("performance",Stats.getPerformance());
-            obj.put("relevance",Stats.getRelevance());
-            obj.put("clicks", Stats.getClicks().toString());
-            obj.put("searchSuccesses",Stats.getSearchSuccess());
-            obj.put("searchSuccessRate",Stats.getSearchSuccessRate());
-            obj.put("referrings",Stats.getRefferings());
-            obj.put("articleReferringRate",Stats.getArticleReferringRate());
+        if(PostStats != null){
+            obj.put("performance", PostStats.getPerformance());
+            obj.put("relevance", PostStats.getRelevance());
+            obj.put("clicks", PostStats.getClicks().toString());
+            obj.put("searchSuccesses", PostStats.getSearchSuccess());
+            obj.put("searchSuccessRate", PostStats.getSearchSuccessRate());
+            obj.put("referrings", PostStats.getRefferings());
+            obj.put("articleReferringRate", PostStats.getArticleReferringRate());
         }else {
             obj.put("performance",0);
             obj.put("relevance",0);
@@ -267,12 +267,12 @@ public class PostController {
     //STATS
 
    /* @GetMapping("/{id}")
-    public Optional<stats> getStat(@PathVariable Long id) {
+    public Optional<PostStats> getStat(@PathVariable Long id) {
         return statRepository.findById(id);
     }*/
 
     @GetMapping
-    public List<stats> getAllStats() {
+    public List<PostStats> getAllStats() {
         return statRepository.findAll();
     }
 
@@ -300,7 +300,7 @@ public class PostController {
         int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
-                stats Stat = statRepository.getStatByArtID(post.getId());
+                PostStats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
                         if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse) {
@@ -325,7 +325,7 @@ public class PostController {
         int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
-                stats Stat = statRepository.getStatByArtID(post.getId());
+                PostStats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
                         if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse) {
@@ -349,22 +349,22 @@ public class PostController {
         if (Posts.size() == 0) {
             return null;
         }
-        stats Stats = null;
+        PostStats PostStats = null;
         float max = 0;
         long PostId = 0;
         for (Post post : Posts) {
             if (statRepository.existsByArtId(post.getId())) {
-                Stats = statRepository.getStatByArtID(post.getId());
+                PostStats = statRepository.getStatByArtID(post.getId());
                 if (type.equals("relevance")) {
-                    if (Stats.getRelevance() > max) {
-                        max = Stats.getRelevance();
-                        PostId = Stats.getArtId();
+                    if (PostStats.getRelevance() > max) {
+                        max = PostStats.getRelevance();
+                        PostId = PostStats.getArtId();
                     }
                 }
                 if (type.equals("performance")) {
-                    if (Stats.getPerformance() > max) {
-                        max = Stats.getPerformance();
-                        PostId = Stats.getArtId();
+                    if (PostStats.getPerformance() > max) {
+                        max = PostStats.getPerformance();
+                        PostId = PostStats.getArtId();
                     }
                 }
             }
@@ -379,7 +379,7 @@ public class PostController {
 
     @GetMapping("/getPostStat")
     public String getStat2(@RequestParam Long id) throws JSONException {
-        stats Stat = statRepository.getStatByArtID(id);
+        PostStats Stat = statRepository.getStatByArtID(id);
         JSONObject obj = new JSONObject();
         obj.put("Post-Id",Stat.getArtId());
         obj.put("Relevanz",Stat.getRelevance());
@@ -414,14 +414,14 @@ public class PostController {
         float performance = 0 ;
 
         if(statRepository.existsByArtId(newestId)){
-            stats Stats = statRepository.getStatByArtID(newestId);
-            views = Stats.getClicks();
-            searchSuccesses = Stats.getSearchSuccess();
-            SearchSuccessRate = Stats.getSearchSuccessRate();
-            refferings = Stats.getRefferings();
-            refrate = Stats.getArticleReferringRate();
-            relevanz = Stats.getRelevance();
-            performance = Stats.getPerformance();
+            PostStats PostStats = statRepository.getStatByArtID(newestId);
+            views = PostStats.getClicks();
+            searchSuccesses = PostStats.getSearchSuccess();
+            SearchSuccessRate = PostStats.getSearchSuccessRate();
+            refferings = PostStats.getRefferings();
+            refrate = PostStats.getArticleReferringRate();
+            relevanz = PostStats.getRelevance();
+            performance = PostStats.getPerformance();
         }
         JSONObject obj = new JSONObject();
         obj.put("ID",newestId);
@@ -460,14 +460,14 @@ public class PostController {
             float performance = 0 ;
 
             if(statRepository.existsByArtId(newestId)){
-                stats Stats = statRepository.getStatByArtID(newestId);
-                views = Stats.getClicks();
-                searchSuccesses = Stats.getSearchSuccess();
-                SearchSuccessRate = Stats.getSearchSuccessRate();
-                refferings = Stats.getRefferings();
-                refrate = Stats.getArticleReferringRate();
-                relevanz = Stats.getRelevance();
-                performance = Stats.getPerformance();
+                PostStats PostStats = statRepository.getStatByArtID(newestId);
+                views = PostStats.getClicks();
+                searchSuccesses = PostStats.getSearchSuccess();
+                SearchSuccessRate = PostStats.getSearchSuccessRate();
+                refferings = PostStats.getRefferings();
+                refrate = PostStats.getArticleReferringRate();
+                relevanz = PostStats.getRelevance();
+                performance = PostStats.getPerformance();
             }
             JSONObject obj = new JSONObject();
             obj.put("ID",newestId);

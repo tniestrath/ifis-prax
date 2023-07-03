@@ -16,8 +16,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -27,7 +29,7 @@ import java.time.Duration;
 public class LogService {
 
     private PostRepository postRepository;
-    private StatsRepository statsRepo;
+    private PostStatsRepository statsRepo;
     private TagStatRepository tagStatRepo;
     private WpTermRelationshipsRepository termRelRepo;
     private WPTermRepository termRepo;
@@ -67,10 +69,13 @@ public class LogService {
     //private String Pfad=Application.class.getClassLoader().getResource("access.log").getPath();
     private String Pfad = Paths.get(Application.class.getClassLoader().getResource("access.log").toURI()).toString();
 
+    private Calendar kalender = Calendar.getInstance();
+    private int aktuellesJahr = kalender.get(Calendar.YEAR);
+
     @Autowired
-    public LogService(PostRepository postRepository, StatsRepository StatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo) throws URISyntaxException {
+    public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo) throws URISyntaxException {
         this.postRepository = postRepository;
-        this.statsRepo = StatsRepository;
+        this.statsRepo = PostStatsRepository;
         this.tagStatRepo=tagStatRepo;
         this.termRelRepo=termRelRepo;
         this.termRepo=termRepo;
@@ -288,129 +293,41 @@ public class LogService {
         if (patternNumber==1){
 
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.1");
-            try{
-
-                long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
-                //hier nach TagSuchen WIP
-
-                checkTheTag(id,false);
-                if (statsRepo.existsByArtId(id)){
-                long views = statsRepo.getClicksByArtId(id);
-                views ++;
-
-                LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-                LocalDateTime Now =  LocalDateTime.now();
-                Duration duration = Duration.between(PostTimestamp, Now);
-                long diffInDays = duration.toDays();
-                float Performance = views;
-                if (diffInDays>0&&views > 0){
-                    Performance = (float)views/diffInDays;
-                }
-
-                statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
-                    updateDailyClicks(id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 0)); updateDailyClicks(id);}
-               }
-            catch(Exception e){
-                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
-            }
+            UpdatePerformanceAndViews(matcher);
         }
         if (patternNumber==2){
 
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.2");
-            try{
-                long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
-                checkTheTag(id,true);
-            if (statsRepo.existsByArtId(id)){
-                long views = statsRepo.getClicksByArtId(id);
-                views ++;
-                long searchSuccess= statsRepo.getSearchSuccesByArtId(id);
-                searchSuccess ++;
-                LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-                LocalDateTime Now =  LocalDateTime.now();
-                Duration duration = Duration.between(PostTimestamp, Now);
-                long diffInDays = duration.toDays();
-                float Performance = views;
-                if (diffInDays>0&&views > 0){
-                    Performance = (float)views/diffInDays;
-                }
-                statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
-                updateDailyClicks(id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 0)); updateDailyClicks(id);}
-               }
-            catch(Exception e){
-                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
-
-        }}
+            updatePerformanceViewsSearchSuccess(matcher);
+        }
         if (patternNumber==3){
 
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.1");
-            try{
-                long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
-                checkTheTag(id,false);
-                if (statsRepo.existsByArtId(id)){
-                long views = statsRepo.getClicksByArtId(id);
-                views ++;
-                    LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-                    LocalDateTime Now =  LocalDateTime.now();
-                    Duration duration = Duration.between(PostTimestamp, Now);
-                    long diffInDays = duration.toDays();
-                    float Performance = views;
-                    if (diffInDays>0&&views > 0){
-                        Performance = (float)views/diffInDays;
-                    }
-
-                    statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
-                    updateDailyClicks(id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 0));updateDailyClicks(id); }
-                }
-        catch(Exception e){
-                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
-           // e.printStackTrace();
-        }}
+            UpdatePerformanceAndViews(matcher);
+        }
         if (patternNumber==4){
 
             System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.2");
-            try{
-                long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
-                checkTheTag(id,true);
-            if (statsRepo.existsByArtId(id)){
-                long views = statsRepo.getClicksByArtId(id);
-                views ++;
-                long searchSuccess= statsRepo.getSearchSuccesByArtId(id);
-                searchSuccess ++;
-                LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-                LocalDateTime Now =  LocalDateTime.now();
-                Duration duration = Duration.between(PostTimestamp, Now);
-                long diffInDays = duration.toDays();
-                float Performance = views;
-                if (diffInDays>0&&views > 0){
-                    Performance = (float)views/diffInDays;
-                }
-                statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
-                updateDailyClicks(id);
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 0));
-                updateDailyClicks(id);
-            }
-                }
-        catch(Exception e){
-                
-                System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
-        }}
+            updatePerformanceViewsSearchSuccess(matcher);
+        }
 
         if(patternNumber==5){
             System.out.println(matcher.group(3)+" PROCESSING 3");
-            //gibts das stats objekt? -nein = neues -ja = updaten
+            //gibts das PostStats objekt? -nein = neues -ja = updaten
             long id =postRepository.getIdByName(matcher.group(3));
-            if (statsRepo.existsByArtId(id)){
-                long views = statsRepo.getClicksByArtId(id);
-                long refferings =statsRepo.getReferringsByArtId(id);
+            if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
+                PostStats stats=statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
+                long views = stats.getClicks();
+                long refferings =stats.getRefferings();
                 refferings++;
                 float article_reffering_rate= ((float)refferings/views);
                 System.out.println("RefRate :"+article_reffering_rate);
-                statsRepo.updateRefferingsAndRateByArtId(article_reffering_rate,refferings,id);
+                stats.setClicks(views);
+                stats.setReferrings(refferings);
+                statsRepo.save(stats);
+                //statsRepo.updateRefferingsAndRateByArtId(article_reffering_rate,refferings,id);
 
-            }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,0,0,1,(float) 0));
+            }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,0,0,1,(float) 0));
             }
 
         }
@@ -430,8 +347,9 @@ public class LogService {
                 //hier nach TagSuchen WIP
 
                 checkTheTag(id,false);
-                if (statsRepo.existsByArtId(id)){
-                    long views = statsRepo.getClicksByArtId(id);
+                if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
+                    PostStats stats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
+                    long views = stats.getClicks();
                     views ++;
 
                     LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
@@ -442,10 +360,15 @@ public class LogService {
                     if (diffInDays>0&&views > 0){
                         Performance = (float)views/diffInDays;
                     }
+                    stats.setClicks(views);
+                    stats.setPerformance(Performance);
 
-                    statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
-                    updateDailyClicks(id);
-                }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,0,0,(float) 0)); updateDailyClicks(id);}
+                    //statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
+                    //updateDailyClicks(id);
+                    statsRepo.save(stats);
+                    erhoeheWertFuerHeutigesDatum( id);
+                }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,1,0,0,(float) 0)); //updateDailyClicks(id);
+                    erhoeheWertFuerHeutigesDatum( id);}
             }
             catch(Exception e){
                 System.out.println("IGNORE "+matcher.group(1)+" BECAUSE: "+e.getMessage());
@@ -457,10 +380,11 @@ public class LogService {
             try{
                 long id =postRepository.getIdByName(matcher.group(1));
                 checkTheTag(id,true);
-                if (statsRepo.existsByArtId(id)){
-                    long views = statsRepo.getClicksByArtId(id);
+                if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
+                    PostStats stats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
+                    long views = stats.getClicks();
                     views ++;
-                    long searchSuccess= statsRepo.getSearchSuccesByArtId(id);
+                    long searchSuccess= stats.getSearchSuccess();
                     searchSuccess ++;
                     LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
                     LocalDateTime Now =  LocalDateTime.now();
@@ -470,9 +394,16 @@ public class LogService {
                     if (diffInDays>0&&views > 0){
                         Performance = (float)views/diffInDays;
                     }
-                    statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
-                    updateDailyClicks(id);
-                }else{  statsRepo.save(new stats(id,(float) 0,(float) 0,1,1,0,(float) 0)); updateDailyClicks(id);}
+                    stats.setPerformance(Performance);
+                    stats.setSearchSucces(searchSuccess);
+                    stats.setClicks(views);
+                    stats.setSearchSuccessRate((float)searchSuccess/views);
+                    statsRepo.save(stats);
+                   // statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
+                   // updateDailyClicks(id);
+                    erhoeheWertFuerHeutigesDatum( id);
+                }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,1,1,0,(float) 0)); //updateDailyClicks(id);
+                    erhoeheWertFuerHeutigesDatum( id);}
             }
             catch(Exception e){
                 System.out.println("IGNORE "+matcher.group(1)+" BECAUSE: "+e.getMessage());
@@ -503,6 +434,66 @@ public class LogService {
 
     }
 
+    public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
+        try{
+            long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+            checkTheTag(id,true);
+            if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
+                PostStats stats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
+                long views = stats.getClicks();
+                views ++;
+                long searchSuccess= stats.getSearchSuccess();
+            searchSuccess ++;
+            LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
+            LocalDateTime Now =  LocalDateTime.now();
+            Duration duration = Duration.between(PostTimestamp, Now);
+            long diffInDays = duration.toDays();
+            float Performance = views;
+            if (diffInDays>0&&views > 0){
+                Performance = (float)views/diffInDays;
+            }
+            statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
+           // updateDailyClicks(id);
+            erhoeheWertFuerHeutigesDatum( id);
+        }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,1,1,0,(float) 0));
+            //updateDailyClicks(id);
+            erhoeheWertFuerHeutigesDatum( id);
+        }
+            }
+    catch(Exception e){
+
+            System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
+    }
+    }
+
+    public void UpdatePerformanceAndViews(Matcher matcher) {
+        try{
+            long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+            checkTheTag(id,false);
+            if (statsRepo.existsByArtId(id)){
+            long views = statsRepo.getClicksByArtId(id);
+            views ++;
+                LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
+                LocalDateTime Now =  LocalDateTime.now();
+                Duration duration = Duration.between(PostTimestamp, Now);
+                long diffInDays = duration.toDays();
+                float Performance = views;
+                if (diffInDays>0&&views > 0){
+                    Performance = (float)views/diffInDays;
+                }
+
+                statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
+                //updateDailyClicks(id);
+                erhoeheWertFuerHeutigesDatum( id);
+        }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,1,0,0,(float) 0));//updateDailyClicks(id);
+                erhoeheWertFuerHeutigesDatum( id);}
+            }
+    catch(Exception e){
+            System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
+       // e.printStackTrace();
+    }
+    }
+
     @Transactional
     public void updateUserStats(WPUser user){
         if(userStatsRepo.existsByUserId(user.getId())){
@@ -515,7 +506,7 @@ public class LogService {
             float performance=0;
             for(Post p:list){
                 if(statsRepo.existsByArtId(p.getId())){
-                    stats PostStats = statsRepo.getStatByArtID(p.getId());
+                    PostStats PostStats = statsRepo.getStatByArtID(p.getId());
                     count ++;
                     relevance=relevance+PostStats.getRelevance();
                     performance=performance+PostStats.getPerformance();
@@ -548,7 +539,7 @@ public class LogService {
 
                 for (Post post : posts) {
                     if (statsRepo.existsByArtId(post.getId())) {
-                        stats postStats = statsRepo.getStatByArtID(post.getId());
+                        PostStats postStats = statsRepo.getStatByArtID(post.getId());
                         count++;
                         relevance += postStats.getRelevance();
                         performance += postStats.getPerformance();
@@ -571,18 +562,57 @@ public class LogService {
 
     @Transactional
     public void updateDailyClicks(long id){
-        stats Stats = statsRepo.getStatByArtID(id);
-        HashMap<String,Long> daily = (HashMap<String, Long>) Stats.getViewsLastYear();
+        PostStats PostStats = statsRepo.getStatByArtID(id);
+        HashMap<String,Long> daily = (HashMap<String, Long>) PostStats.getViewsLastYear();
         Calendar calendar = Calendar.getInstance();
         int currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
         long views = daily.get(Integer.toString(currentDayOfYear));
         views++;
         daily.put(Integer.toString(currentDayOfYear),views);
-        Stats.setViewsLastYear((Map<String,Long>) daily);
-        Stats.setRelevance(getRelevance(daily,currentDayOfYear,7));
-        statsRepo.save(Stats);
+        PostStats.setViewsLastYear((Map<String,Long>) daily);
+        PostStats.setRelevance(getRelevance(daily,currentDayOfYear,7));
+        statsRepo.save(PostStats);
 
     }
+
+    @Transactional
+    public void erhoeheWertFuerHeutigesDatum(long id) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
+        // I'm assuming PostStats is a class, first letter should be lowercase for the instance
+        PostStats postStats = statsRepo.getStatByArtID(id);
+        HashMap<String, Long> daily = (HashMap<String, Long>) postStats.getViewsLastYear();
+
+        // Das heutige Datum im Format dd.MM abrufen
+        String heutigesDatum = LocalDate.now().format(formatter);
+
+        // Den Wert für das heutige Datum in der HashMap um 1 erhöhen
+        long aktuellerWert = daily.getOrDefault(heutigesDatum, 0L);
+        daily.put(heutigesDatum, aktuellerWert + 1);
+
+        postStats.setViewsLastYear(daily);
+        postStats.setRelevance(getRelevance2(daily, heutigesDatum, 7));
+
+        statsRepo.save(postStats);
+    }
+
+    public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd.MM");
+
+        // Add the current year to the date string
+        String year = String.valueOf(LocalDate.now().getYear());
+        LocalDate currentDate = LocalDate.parse(year + "-" + currentDateString, formatter);
+
+        long views = 0;
+
+        for (int i = 0; i < time; i++) {
+            String dateKey = currentDate.minusDays(i).format(DateTimeFormatter.ofPattern("dd.MM"));
+            views += viewsLastYear.getOrDefault(dateKey, 0L);
+        }
+
+        return (float) views / time;
+    }
+
+
 
     public float getRelevance(HashMap<String,Long>viewsLastYear,int currentDayOfYear,int time){
         int counter =currentDayOfYear-time;

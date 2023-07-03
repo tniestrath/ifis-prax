@@ -34,7 +34,7 @@ public class UserController {
     @Autowired
     private PostRepository postRepository;
     @Autowired
-    private StatsRepository statRepository;
+    private PostStatsRepository statRepository;
     @Autowired
     private WPUserMetaRepository wpUserMetaRepository;
     @Autowired
@@ -134,7 +134,7 @@ public class UserController {
         List<Long> postTags = new ArrayList<>();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
-                stats Stat = statRepository.getStatByArtID(post.getId());
+                PostStats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
                         if (termTax.getTermId() == tagIdBlog) {

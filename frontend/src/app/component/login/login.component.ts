@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'dash-login',
@@ -10,10 +9,16 @@ import {UserService} from "../../services/user.service";
 export class LoginComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit(): void {
-    if (this.cs.check("login_token")){
-      UserService.login.next("ifis-admin:1:token");
-    }
+
   }
 
+  onSubmit(username: string, userpass: string) {
+    this.db.login(username, userpass).then(res => {
+      res.text().then(ans => {
+        ans = decodeURIComponent(ans);
+        this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));
+      });
 
+    });
+  }
 }

@@ -26,6 +26,8 @@ export enum dbUrl {
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
+
+  LOGIN = "/login"
 }
 
 @Injectable({
@@ -43,6 +45,10 @@ export class DbService {
 
   private static getUrl( prompt : string){
     return DbService.host + DbService.port + prompt;
+  }
+
+  async login(username : string, userpass : string) {
+    return await fetch(DbService.getUrl(dbUrl.LOGIN) + "?user=" + username + "&pass=" + userpass).then(res => res.blob());
   }
 
   async loadAllTags(){

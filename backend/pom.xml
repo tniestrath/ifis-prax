@@ -95,6 +95,11 @@
 			<artifactId>hibernate-commons-annotations</artifactId>
 			<version>6.0.6.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>com.maxmind.geoip2</groupId>
+			<artifactId>geoip2</artifactId>
+			<version>4.0.1</version>
+		</dependency>
 
 
 	</dependencies>

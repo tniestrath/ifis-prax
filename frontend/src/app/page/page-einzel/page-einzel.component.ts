@@ -17,6 +17,7 @@ import {TagComponent} from "../tag/tag/tag.component";
 import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
 import {User} from "./user/user";
+import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
 
 @Component({
   selector: 'dash-page-einzel',
@@ -39,7 +40,7 @@ export class PageEinzelComponent implements OnInit {
 
   getLandingPageCards(){
     return [
-      {type: LoginComponent, row: 2, col: 2, height: 2, width: 4},
+      {type: LoginComponent, row: 2, col: 2, height: 2, width: 2},
     ];
   }
 

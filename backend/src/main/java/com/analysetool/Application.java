@@ -80,56 +80,6 @@ public class Application {
 			e.printStackTrace();
 		}*/
 
-
-
-		/*HttpClient httpClient = HttpClients.createDefault();
-		HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-json/server_variables/custom-endpoint");
-
-
-		String username = "rest_api_test";
-		String password = "test_api_rest";
-		// Set the login credentials
-		try {
-			String jsonPayload = "{\"log\":Backend-Admin|1688636807|rl2LROuS4Vs8n1lY32WD3TWP90XXMwGn4H3pmE7J12F|46e814f1ee012aec275d189ba9baefcf51aae1efe494cb6b69e1d9ed4e1c42bd}";
-			StringEntity strEntity = new StringEntity(jsonPayload, "UTF-8");
-			strEntity.setContentType("application/json");
-			httpPost.setEntity(strEntity);
-
-			*//*List<NameValuePair> params = new ArrayList<>();
-			params.add(new BasicNameValuePair("log", username));
-			params.add(new BasicNameValuePair("pwd", password));
-
-
-			httpPost.setEntity(new UrlEncodedFormEntity(params));*//*
-
-			HttpResponse response2 = httpClient.execute(httpPost);
-			HttpEntity entity = response2.getEntity();
-			Header[] headers = response2.getAllHeaders();
-			// Get the session cookie from the response headers
-			String sessionCookie = response2.getFirstHeader("Set-Cookie").getValue();
-			Header[] allSetCookie = response2.getHeaders("Set-Cookie");
-
-			// Process the response
-			String responseBody = EntityUtils.toString(entity);
-			System.out.println(responseBody);
-		for (int i = 0; i < allSetCookie.length; i++) {
-			System.out.println("Name: " + allSetCookie[i].getName() + ", Value: " + allSetCookie[i].getValue());
-		}
-			for (int i = 0; i < headers.length; i++) {
-				System.out.println("Name: " + headers[i].getName() + ", Value: " + headers[i].getValue());
-			}
-
-			// Use the sessionCookie for further requests
-			//System.out.println("Session Cookie: " + sessionCookie);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
-
-
-
-
-
 		System.out.println("lel");
 
 	} catch (Exception e) {

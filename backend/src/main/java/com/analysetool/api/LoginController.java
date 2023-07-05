@@ -9,6 +9,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -69,6 +70,28 @@ public class LoginController {
         }
 
         return responseCookie;
+    }
+    @GetMapping("/validate")
+    public String validateCookie(@RequestParam String cookie){
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-json/server_variables/custom-endpoint");
+
+        String responseBody = "INVALID";
+        try {
+            String jsonPayload = "{\"log\":\""+ cookie +"\"}";
+            StringEntity strEntity = new StringEntity(jsonPayload, "UTF-8");
+            strEntity.setContentType("application/json");
+            httpPost.setEntity(strEntity);
+
+            HttpResponse response2 = httpClient.execute(httpPost);
+            HttpEntity entity = response2.getEntity();
+
+            responseBody = EntityUtils.toString(entity);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return responseBody;
     }
 
 }

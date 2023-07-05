@@ -28,7 +28,8 @@ export enum dbUrl {
   GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
 
-  LOGIN = "/login"
+  LOGIN = "/login",
+  VALIDATE = "/validate"
 }
 
 @Injectable({
@@ -53,6 +54,10 @@ export class DbService {
   }
   async getUserByLogin(login : string) : Promise<User> {
     return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGINNAME) + login).then(res => res.json());
+  }
+
+  async validate(cookie : string) : Promise<{"user id":string}>{
+    return await fetch(DbService.getUrl(dbUrl.VALIDATE) + "?cookie=" + cookie).then(res => res.json());
   }
 
   async loadAllTags(){

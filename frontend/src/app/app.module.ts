@@ -34,6 +34,7 @@ import { PostComponent } from './component/post/post.component';
 import { PotentialComponent } from './component/potential/potential.component';
 import { UserPlanComponent } from './component/user-plan/user-plan.component';
 import { LoginComponent } from './component/login/login.component';
+import { OriginMapComponent } from './component/origin-map/origin-map.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { LoginComponent } from './component/login/login.component';
     PostComponent,
     PotentialComponent,
     UserPlanComponent,
-    LoginComponent
+    LoginComponent,
+    OriginMapComponent
   ],
     imports: [
         BrowserModule,

@@ -1,5 +1,7 @@
 package com.analysetool;
 
+import com.maxmind.db.CHMCache;
+import com.maxmind.geoip2.DatabaseReader;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,6 +26,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,20 +44,19 @@ public class Application {
 		ApplicationContext context = SpringApplication.run(Application.class, args);
 
 		//Erstellung des WebClients mit meiner accountID und einem erstellten licenseKey
-		WebServiceClient client =
-				new WebServiceClient.Builder(885598, "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").host("geolite.info").build();
+			DatabaseReader cityReader = new DatabaseReader.Builder(new File(Application.class.getClassLoader().getResource("iplocationdbs/city.mmdb").toURI())).withCache(new CHMCache()).build();
 
 		//Ist halt ne IP, wenn du nicht weißt was das ist, brich das Studium ab
 		InetAddress ipAddress = InetAddress.getByName("194.94.127.7");
 
 		//This looks up a country for the IP address above
-		CountryResponse response = client.country(ipAddress);
+		CountryResponse response = cityReader.country(ipAddress);
 		Country country = response.getCountry();
 		System.out.println(country.getName()); //Voller Name des Landes z.B. United States
 		System.out.println(country.getIsoCode()); //Nur der Code des Landes z.B. US
 
 		//This should look up country and city for the IP address
-		CityResponse cityResponse = client.city(ipAddress);
+		CityResponse cityResponse = cityReader.city(ipAddress);
 		Country countryWithCity = cityResponse.getCountry();
 		System.out.println(country.getIsoCode());
 		Subdivision subdivision = cityResponse.getMostSpecificSubdivision(); //Sammelt die geschätzt nächste Subdivision aus der DB

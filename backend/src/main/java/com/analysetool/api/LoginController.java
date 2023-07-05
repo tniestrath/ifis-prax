@@ -57,9 +57,8 @@ public class LoginController {
 
             // Process the response
             String responseBody = EntityUtils.toString(entity);
-            System.out.println(responseBody);
             for (int i = 0; i < allSetCookie.length; i++) {
-                System.out.println("Name: " + allSetCookie[i].getName() + ", Value: " + allSetCookie[i].getValue());
+                System.out.println(responseCookie);
             }
             /*for (int i = 0; i < headers.length; i++) {
                 System.out.println("Name: " + headers[i].getName() + ", Value: " + headers[i].getValue());

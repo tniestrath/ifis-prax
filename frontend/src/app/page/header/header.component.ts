@@ -17,8 +17,13 @@ export class HeaderComponent implements AfterViewInit{
 
 
   constructor(private cs : CookieService) {
-    UserService.login.subscribe(value => {
-      cs.set("user", "1:ifisAdmin");
+    this.navElements = [];
+    UserService.login.subscribe(user => {
+      if (user.accountType == "admin"){
+        this.navElements = ["Overview", "Posts", "Tags", "Users"];
+      }else {
+        cs.set("user", user.id + ":" + user.displayName);
+      }
       this.selected.next("Users");
     })
   }

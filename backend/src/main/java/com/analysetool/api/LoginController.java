@@ -46,7 +46,15 @@ public class LoginController {
             //Header[] headers = response.getAllHeaders();
 
             Header[] allSetCookie = response.getHeaders("Set-Cookie");
-            responseCookie = allSetCookie[4].getValue();
+            for (Header h: allSetCookie) {
+                if (h.getValue().contains("wordpress_logged_in")){
+                    responseCookie = h.getValue();
+                }
+            }
+            if (responseCookie.isEmpty()){
+                responseCookie = "LOGIN REJECTED";
+            }
+
             // Process the response
             String responseBody = EntityUtils.toString(entity);
             System.out.println(responseBody);

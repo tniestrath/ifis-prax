@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'dash-login',
@@ -16,9 +17,22 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
     this.db.login(username, userpass).then(res => {
       res.text().then(ans => {
         ans = decodeURIComponent(ans);
-        this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));
-      });
+        this.cs.deleteAll();
+        //CHECK LOGIN
+        if (ans.includes("LOGIN REJECTED")){
+          return;
+        }
 
+        this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")), {expires: 2});
+        this.db.getUserByLogin(ans.substring(ans.indexOf("=") + 1, ans.indexOf("|"))).then(res => {
+          UserService.login.next(res);
+        })
+      });
     });
   }
+
+  alertFailedLogin(){
+
+  }
+
 }

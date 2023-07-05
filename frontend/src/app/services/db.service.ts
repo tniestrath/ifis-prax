@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {User} from "../page/page-einzel/user/user.component";
 import {DomSanitizer} from "@angular/platform-browser";
 import {Tag} from "../page/tag/Tag";
 import {DbObject} from "./DbObject";
 import {Post} from "../Post";
+import {User} from "../page/page-einzel/user/user";
 
 export enum dbUrl {
   HOST = "http://localhost",
@@ -21,6 +21,7 @@ export enum dbUrl {
   GET_USERS_ALL = "/users/getAllNew",
   GET_USER_IMG = "/users/profilePic?id=",
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
+  GET_USER_BY_LOGINNAME = "/users/getByLogin?u=",
 
   GET_POST = "posts/getPostWithStatsById?id=",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
@@ -49,6 +50,9 @@ export class DbService {
 
   async login(username : string, userpass : string) {
     return await fetch(DbService.getUrl(dbUrl.LOGIN) + "?user=" + username + "&pass=" + userpass).then(res => res.blob());
+  }
+  async getUserByLogin(login : string) : Promise<User> {
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGINNAME) + login).then(res => res.json());
   }
 
   async loadAllTags(){

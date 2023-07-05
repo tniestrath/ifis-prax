@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {SelectorItem} from "../selector/selector.component";
 import {DbService} from "../../services/db.service";
-import {User, UserComponent} from "./user/user.component";
+import {UserComponent} from "./user/user.component";
 import {Observable, Subject} from "rxjs";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
 import {PostChartComponent} from "../../component/post-chart/post-chart.component";
@@ -16,6 +16,7 @@ import {TagListComponent} from "../../component/tag-list/tag-list.component";
 import {TagComponent} from "../tag/tag/tag.component";
 import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
+import {User} from "./user/user";
 
 @Component({
   selector: 'dash-page-einzel',

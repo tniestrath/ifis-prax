@@ -1,22 +1,8 @@
 import {Component, EventEmitter, Input, OnInit} from '@angular/core';
 import {SelectableComponent} from "../../selector/selectable.component";
-import {DbObject} from "../../../services/DbObject";
 import {SafeUrl} from "@angular/platform-browser";
 import {DbService} from "../../../services/db.service";
-
-export class User extends DbObject{
-  constructor(public override id : string,
-              public email : string,
-              public displayName : string,
-              public accountType: string,
-              public postCount: number,
-              public potential : number,
-              public performance: number,
-              public postViews: number,
-              public img : SafeUrl) {
-    super(id, displayName);
-  }
-}
+import {User} from "./user";
 
 @Component({
   selector: 'dash-user',

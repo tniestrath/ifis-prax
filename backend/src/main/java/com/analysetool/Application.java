@@ -42,28 +42,6 @@ public class Application {
 	public static void main(String[] args) {
 		try{
 		ApplicationContext context = SpringApplication.run(Application.class, args);
-
-		//Erstellung des WebClients mit meiner accountID und einem erstellten licenseKey
-			DatabaseReader cityReader = new DatabaseReader.Builder(new File(Application.class.getClassLoader().getResource("iplocationdbs/city.mmdb").toURI())).withCache(new CHMCache()).build();
-
-		//Ist halt ne IP, wenn du nicht weißt was das ist, brich das Studium ab
-		InetAddress ipAddress = InetAddress.getByName("194.94.127.7");
-
-		//This looks up a country for the IP address above
-		CountryResponse response = cityReader.country(ipAddress);
-		Country country = response.getCountry();
-		System.out.println(country.getName()); //Voller Name des Landes z.B. United States
-		System.out.println(country.getIsoCode()); //Nur der Code des Landes z.B. US
-
-		//This should look up country and city for the IP address
-		CityResponse cityResponse = cityReader.city(ipAddress);
-		Country countryWithCity = cityResponse.getCountry();
-		System.out.println(country.getIsoCode());
-		Subdivision subdivision = cityResponse.getMostSpecificSubdivision(); //Sammelt die geschätzt nächste Subdivision aus der DB
-			//Erklärung Subdivision: Land -> Bundesland -> Stadt, also immer so nah die DB das ganze bestimmen kann halt.
-		System.out.println(subdivision.getName()); //Gibt den vollen Namen der Subdivision aus
-		System.out.println(subdivision.getIsoCode()); //Gibt den Code der Subdivision aus (Sofern einer vorhanden ist, bei NRW ist es NW -> vlt fraglich im Nutzen)
-
 		/*HttpClient httpClient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-login.php");
 

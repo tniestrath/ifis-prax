@@ -8,6 +8,7 @@ import {UserService} from "../../services/user.service";
   styleUrls: ['./login.component.css', "../../component/dash-base/dash-base.component.css"]
 })
 export class LoginComponent extends DashBaseComponent implements OnInit{
+  incorrect = false;
 
   ngOnInit(): void {
 
@@ -18,8 +19,10 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
       res.text().then(ans => {
         ans = decodeURIComponent(ans);
         this.cs.deleteAll();
+        this.styleLogin(false);
         //CHECK LOGIN
         if (ans.includes("LOGIN REJECTED")){
+          this.styleLogin(true);
           return;
         }
 
@@ -31,8 +34,16 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
     });
   }
 
-  alertFailedLogin(){
+  styleLogin(incorrect : boolean){
+    this.incorrect = incorrect;
+    if (incorrect){
+      var inputs = document.getElementsByTagName("input");
+      for (let i = 0; i < inputs.length ; i++) {
+        inputs[i].style.borderRadius = "5px";
+        inputs[i].style.border = "1px solid red";
+      }
 
+    }
   }
 
 }

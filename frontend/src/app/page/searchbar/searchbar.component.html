@@ -1,4 +1,4 @@
-<div class="searchbar-box" [ngSwitch]="selectedSearch.id" [ngStyle]="{'height': displaySearchBox}">
+<div *ngIf="logged_in" id="searchbar-box" class="searchbar-box" [ngSwitch]="selectedSearch.id" [ngStyle]="{'height': displaySearchBox}">
 
   <div *ngSwitchCase="0" class="searchbar-input-box">
     <div class="searchbar-filter" id="searchbar-filter-button" (click)="onFilterClick()">

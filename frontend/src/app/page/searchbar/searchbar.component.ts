@@ -3,6 +3,7 @@ import {CookieService} from "ngx-cookie-service";
 import {DbObject} from "../../services/DbObject";
 import {DbService} from "../../services/db.service";
 import {SafeUrl} from "@angular/platform-browser";
+import {UserService} from "../../services/user.service";
 
 
 @Component({
@@ -25,18 +26,19 @@ export class SearchbarComponent implements OnInit{
 
   filter_dropdown: HTMLDivElement | null = null;
   shown = false;
+  logged_in = false;
   constructor(protected element : ElementRef, private cookieService : CookieService, private db : DbService) {
+    UserService.login.subscribe(user => {
+      this.logged_in = true;
+    })
   }
 
   ngOnInit(): void {
     let object :string[]  = ["0",""];
-    if (this.cookieService.check("wordpress_cookie")) {
       if (this.cookieService.check(this.page)) {
         object = this.cookieService.get(this.page).split(":");
       }
       this.onDbObjectSelected(object[0], object[1]);
-    }
-
   }
 
   onKey(value : string) {

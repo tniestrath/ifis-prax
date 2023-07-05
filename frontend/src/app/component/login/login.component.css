@@ -19,6 +19,9 @@ form > input{
   margin-bottom: 10px;
   font-size: large;
 }
+#login-submit-label{
+  color: red;
+}
 
 #login-submit{
   border: 1px solid #ffffff00;

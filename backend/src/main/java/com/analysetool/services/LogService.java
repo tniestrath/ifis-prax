@@ -732,10 +732,10 @@ public class LogService {
     public void updateViewsByLocation(Matcher matcher){
         String ip = matcher.group(1);
         long id = postRepository.getIdByName(matcher.group(2).substring(0, matcher.group(2).length() - 1));
-        IPHelper ipHelper = IPHelper.getInstance();
-        String country = ipHelper.getCountryISO(ip);
-        String region = ipHelper.getSubISO(ip);
-        String city = ipHelper.getCityName(ip);
+        IPHelper.getInstance();
+        String country = IPHelper.getCountryISO(ip);
+        String region = IPHelper.getSubISO(ip);
+        String city = IPHelper.getCityName(ip);
 
         if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
             PostStats stats = statsRepo.getStatByArtID(id);

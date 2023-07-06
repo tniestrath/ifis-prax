@@ -50,32 +50,44 @@ public final class IPHelper {
     }
 
     public static String getCountryName(String ip) {
-        Country country = getResponse(ip).getCountry();
-        return country.getName();
+        if(getResponse(ip) != null) {
+            return getResponse(ip).getCountry().getName();
+        }
+        return "";
     }
 
     public static String getCountryISO(String ip) {
-        Country country = getResponse(ip).getCountry();
-        return country.getIsoCode();
+        if(getResponse(ip) != null) {
+            return getResponse(ip).getCountry().getIsoCode();
+        }
+        return "";
     }
 
     public static String getSubName(String ip) {
-        Subdivision sub = getResponse(ip).getMostSpecificSubdivision();
-        return sub.getName();
+        if(getResponse(ip) != null) {
+            return getResponse(ip).getMostSpecificSubdivision().getName();
+        }
+        return "";
     }
 
     public static String getSubISO(String ip) {
-        Subdivision sub = getResponse(ip).getMostSpecificSubdivision();
-        return sub.getIsoCode();
+        if(getResponse(ip) != null) {
+            return getResponse(ip).getMostSpecificSubdivision().getIsoCode();
+        }
+        return "";
     }
 
     public static String getCityName(String ip) {
-        City city = getResponse(ip).getCity();
-        return city.getName();
+        if(getResponse(ip) != null) {
+            return getResponse(ip).getCity().getName();
+        }
+        return "";
     }
 
     public static Long getCityNameId(String ip) {
-        City city = getResponse(ip).getCity();
-        return city.getGeoNameId();
+        if(getResponse(ip) != null) {
+            return getResponse(ip).getCity().getGeoNameId();
+        }
+        return 0L;
     }
 }

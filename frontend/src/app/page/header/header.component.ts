@@ -19,6 +19,7 @@ export class HeaderComponent implements AfterViewInit{
   constructor(private cs : CookieService, private db : DbService) {
     this.navElements = [];
     this.db.validate().then(res => {
+      if (res["user id"].includes("Invalid")) return;
       this.db.getUserById(res["user id"]).then(res => {
         UserService.login.next(res);
       })

@@ -16,8 +16,14 @@ export class HeaderComponent implements AfterViewInit{
   navElements = ["Overview", "Posts", "Tags", "Users"];
 
 
-  constructor(private cs : CookieService) {
+  constructor(private cs : CookieService, private db : DbService) {
     this.navElements = [];
+    this.db.validate().then(res => {
+      this.db.getUserById(res["user id"]).then(res => {
+        UserService.login.next(res);
+      })
+    })
+
     UserService.login.subscribe(user => {
       if (user.accountType == "admin"){
         this.navElements = ["Overview", "Posts", "Tags", "Users"];

@@ -54,7 +54,7 @@ export class SearchbarComponent implements OnInit{
       this.displaySearchBox = "0";
     }
     this.selected.emit(new DbObject(id, name));
-    this.cookieService.set(this.page, object.id + ":" + object.name, {expires : 7});
+    this.cookieService.set(this.page, object.id + ":" + object.name, {expires : 2});
 
     this.getImgSrc(this.selectedSearch.id);
 

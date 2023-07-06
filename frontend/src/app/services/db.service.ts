@@ -22,6 +22,7 @@ export enum dbUrl {
   GET_USER_IMG = "/users/profilePic?id=",
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
   GET_USER_BY_LOGINNAME = "/users/getByLogin?u=",
+  GET_USER_BY_ID = "/users/getById?id=",
 
   GET_POST = "posts/getPostWithStatsById?id=",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
@@ -55,9 +56,12 @@ export class DbService {
   async getUserByLogin(login : string) : Promise<User> {
     return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGINNAME) + login).then(res => res.json());
   }
+  async getUserById(id : string){
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_ID) + id).then(res => res.json());
+  }
 
-  async validate(cookie : string) : Promise<{"user id":string}>{
-    return await fetch(DbService.getUrl(dbUrl.VALIDATE) + "?cookie=" + cookie).then(res => res.json());
+  async validate() : Promise<{"user id":string}>{
+    return await fetch(DbService.getUrl(dbUrl.VALIDATE), {credentials: "include"}).then(res => res.json());
   }
 
   async loadAllTags(){

@@ -1,11 +1,9 @@
 package com.analysetool.api;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -14,18 +12,17 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 public class LoginController {
 
     @GetMapping("/login")
@@ -72,13 +69,21 @@ public class LoginController {
         return responseCookie;
     }
     @GetMapping("/validate")
-    public String validateCookie(@RequestParam String cookie){
+    public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-json/server_variables/custom-endpoint");
 
         String responseBody = "INVALID";
         try {
-            String jsonPayload = "{\"log\":\""+ cookie +"\"}";
+            String cookieValue = "";
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().contains("wordpress_logged_in")) {
+                    cookieValue = java.net.URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
+                    System.out.println(cookieValue);
+                }
+            }
+
+            String jsonPayload = "{\"log\":\""+ cookieValue +"\"}";
             StringEntity strEntity = new StringEntity(jsonPayload, "UTF-8");
             strEntity.setContentType("application/json");
             httpPost.setEntity(strEntity);

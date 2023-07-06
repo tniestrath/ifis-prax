@@ -24,7 +24,7 @@ export enum dbUrl {
   GET_USER_BY_LOGINNAME = "/users/getByLogin?u=",
   GET_USER_BY_ID = "/users/getById?id=",
 
-  GET_POST = "posts/getPostWithStatsById?id=",
+  GET_POST = "/posts/getPostWithStatsById?id=",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",

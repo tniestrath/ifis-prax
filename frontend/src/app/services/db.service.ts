@@ -60,7 +60,7 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_ID) + id).then(res => res.json());
   }
 
-  async validate() : Promise<{"user id":string}>{
+  async validate() : Promise<{"user_id":string}>{
     return await fetch(DbService.getUrl(dbUrl.VALIDATE), {credentials: "include"}).then(res => res.json());
   }
 

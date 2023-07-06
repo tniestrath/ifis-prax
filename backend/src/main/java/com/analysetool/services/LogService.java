@@ -294,25 +294,25 @@ public class LogService {
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
             System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 1.1");
             UpdatePerformanceAndViews(matcher);
-            //updateViewsByLocation(matcher);
+            updateViewsByLocation(matcher);
         }
         if (patternNumber==2){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
             System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 1.2");
             updatePerformanceViewsSearchSuccess(matcher);
-           // updateViewsByLocation(matcher);
+            updateViewsByLocation(matcher);
         }
         if (patternNumber==3){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
             System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 2.1");
             UpdatePerformanceAndViews(matcher);
-           // updateViewsByLocation(matcher);
+            updateViewsByLocation(matcher);
         }
         if (patternNumber==4){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
             System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 2.2");
             updatePerformanceViewsSearchSuccess(matcher);
-           // updateViewsByLocation(matcher);
+            updateViewsByLocation(matcher);
         }
 
         if(patternNumber==5){
@@ -731,11 +731,14 @@ public class LogService {
     @Transactional
     public void updateViewsByLocation(Matcher matcher){
         String ip = matcher.group(1);
+        System.out.println(ip);
+        try{
         long id = postRepository.getIdByName(matcher.group(2).substring(0, matcher.group(2).length() - 1));
         IPHelper.getInstance();
         String country = IPHelper.getCountryISO(ip);
         String region = IPHelper.getSubISO(ip);
         String city = IPHelper.getCityName(ip);
+
 
         if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
             PostStats stats = statsRepo.getStatByArtID(id);
@@ -770,7 +773,7 @@ public class LogService {
 
             // Persistieren der Änderungen
             statsRepo.save(stats);
-    }
+    }}catch (Exception e){System.out.println(e.getMessage());}
     }
 
 

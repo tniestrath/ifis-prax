@@ -22,6 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.analysetool.IPHelper;
 
 @Service
 public class LogService {
@@ -40,18 +41,18 @@ public class LogService {
     private BufferedReader br;
     private String path = "";
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
-    private String BlogSSPattern = ".*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
-    private String ArtikelSSPattern = ".*GET /artikel/(\\S+).*s=";//search +1, view +1,(bei match) vor artikel view pattern
+    private String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
+    private String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+).*s=";//search +1, view +1,(bei match) vor artikel view pattern
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
-    private String BlogViewPattern = ".*GET /blog/(\\S+)";
+    private String BlogViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /blog/(\\S+)";
     private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
     private String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
     private String UserViewPattern=".*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
-    private String ArtikelViewPattern = ".*GET /artikel/(\\S+)";//Artikel view +1 bei match
-    private String PresseViewPatter = ".*GET /pressemitteilung/(\\S+)/";
-    private String PresseSSViewPatter = ".*GET /pressemitteilung/(\\S+)/*s=";
+    private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+)";//Artikel view +1 bei match
+    private String PresseViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /pressemitteilung/(\\S+)/";
+    private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /pressemitteilung/(\\S+)/*s=";
     Pattern pattern1_1 = Pattern.compile(ArtikelViewPattern);
     Pattern pattern1_2 = Pattern.compile(ArtikelSSPattern);
     Pattern pattern2_1 = Pattern.compile(BlogViewPattern);
@@ -290,24 +291,28 @@ public class LogService {
     public void processLine(String line,int patternNumber,Matcher matcher){
         lastLine=line;
         if (patternNumber==1){
-
-            System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.1");
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
+            System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 1.1");
             UpdatePerformanceAndViews(matcher);
+            //updateViewsByLocation(matcher);
         }
         if (patternNumber==2){
-
-            System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 1.2");
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
+            System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 1.2");
             updatePerformanceViewsSearchSuccess(matcher);
+           // updateViewsByLocation(matcher);
         }
         if (patternNumber==3){
-
-            System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.1");
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
+            System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 2.1");
             UpdatePerformanceAndViews(matcher);
+           // updateViewsByLocation(matcher);
         }
         if (patternNumber==4){
-
-            System.out.println(postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1))+matcher.group(1).substring(0,matcher.group(1).length()-1)+" PROCESSING 2.2");
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
+            System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 2.2");
             updatePerformanceViewsSearchSuccess(matcher);
+           // updateViewsByLocation(matcher);
         }
 
         if(patternNumber==5){
@@ -435,7 +440,7 @@ public class LogService {
 
     public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
         try{
-            long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+            long id =postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1));
             checkTheTag(id,true);
             if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
                 PostStats stats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
@@ -461,13 +466,13 @@ public class LogService {
             }
     catch(Exception e){
 
-            System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
+            System.out.println("IGNORE "+matcher.group(2).substring(0,matcher.group(2).length()-1)+" BECAUSE: "+e.getMessage());
     }
     }
 
     public void UpdatePerformanceAndViews(Matcher matcher) {
         try{
-            long id =postRepository.getIdByName(matcher.group(1).substring(0,matcher.group(1).length()-1));
+            long id =postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1));
             checkTheTag(id,false);
             if (statsRepo.existsByArtId(id)){
             long views = statsRepo.getClicksByArtId(id);
@@ -488,7 +493,7 @@ public class LogService {
                 erhoeheWertFuerHeutigesDatum( id);}
             }
     catch(Exception e){
-            System.out.println("IGNORE "+matcher.group(1).substring(0,matcher.group(1).length()-1)+" BECAUSE: "+e.getMessage());
+            System.out.println("IGNORE "+matcher.group(2).substring(0,matcher.group(2).length()-1)+" BECAUSE: "+e.getMessage());
        // e.printStackTrace();
     }
     }
@@ -722,6 +727,50 @@ public class LogService {
         stats.setInteractionRate(interactionRate);
         userStatsRepo.save(stats);
        // System.out.println("Interaktionsrate: "+interactionRate+" id: "+user.getId());
+    }
+    @Transactional
+    public void updateViewsByLocation(Matcher matcher){
+        String ip = matcher.group(1);
+        long id = postRepository.getIdByName(matcher.group(2).substring(0, matcher.group(2).length() - 1));
+        IPHelper.getInstance();
+        String country = IPHelper.getCountryISO(ip);
+        String region = IPHelper.getSubISO(ip);
+        String city = IPHelper.getCityName(ip);
+
+        if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
+            PostStats stats = statsRepo.getStatByArtID(id);
+
+            // Holt die aktuelle Map oder erstellt eine neue, falls sie null ist.
+            Map<String, Map<String, Map<String, Long>>> viewsByLocation = stats.getViewsByLocation();
+            if (viewsByLocation == null) {
+                viewsByLocation = new HashMap<>();
+                stats.setViewsByLocation(viewsByLocation);
+            }
+
+            // Schlüssel wählen
+            String countryKey = (country != null && !country.isEmpty()) ? country : "global";
+            String regionKey = (region != null && !region.isEmpty()) ? region : "gesamt";
+            String cityKey = (city != null && !city.isEmpty()) ? city : "gesamt";
+
+            // Map der Regionen für das gegebene Land holen
+            Map<String, Map<String, Long>> regions = viewsByLocation.computeIfAbsent(countryKey, k -> new HashMap<>());
+
+            // Map der Städte für die gegebene Region holen
+            Map<String, Long> cities = regions.computeIfAbsent(regionKey, k -> new HashMap<>());
+
+            // Aktualisieren der Anzahl der Views für die Stadt/Region
+            cities.merge(cityKey, 1L, Long::sum);
+
+            // Aktualisieren der "gesamt" Views für Region
+            cities.merge("gesamt", 1L, Long::sum);
+
+            // Aktualisieren der "gesamt" Views für Land
+            Map<String, Long> countryTotal = regions.computeIfAbsent("gesamt", k -> new HashMap<>());
+            countryTotal.merge("gesamt", 1L, Long::sum);
+
+            // Persistieren der Änderungen
+            statsRepo.save(stats);
+    }
     }
 
 

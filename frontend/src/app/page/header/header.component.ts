@@ -19,7 +19,10 @@ export class HeaderComponent implements AfterViewInit{
   constructor(private cs : CookieService, private db : DbService) {
     this.navElements = [];
     this.db.validate().then(res  => {
-      if (res.user_id.toString().includes("Invalid")) return;
+      if (res.user_id.toString().includes("Invalid")) {
+        UserService.USER_ID = "0";
+        return;
+      }
       this.db.getUserById(res.user_id).then(res => {
         UserService.login.next(res);
       })
@@ -31,6 +34,7 @@ export class HeaderComponent implements AfterViewInit{
       }else {
         cs.set("user", user.id + ":" + user.displayName);
       }
+      UserService.USER_ID = user.id;
       this.selected.next("Users");
     })
   }

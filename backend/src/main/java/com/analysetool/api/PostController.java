@@ -497,11 +497,18 @@ public class PostController {
 
     }
 
-    @GetMapping("/maxviews")
-    public String getMaxViewsByLocation() {
+
+    @GetMapping("/maxViewsByLocation")
+    public Map<String, Long> getMaxViewsByLocation(@RequestParam(defaultValue = "true") boolean includeCountry,
+                                                     @RequestParam(defaultValue = "true") boolean includeRegion,
+                                                     @RequestParam(defaultValue = "true") boolean includeCity) {
         List<PostStats> allPostStats = statsRepo.findAll();
-        long maxViews = 0;
-        String maxLocation = null;
+        long maxViewsCountry = 0;
+        long maxViewsRegion = 0;
+        long maxViewsCity = 0;
+        String maxLocationCountry = null;
+        String maxLocationRegion = null;
+        String maxLocationCity = null;
 
         for (PostStats postStats : allPostStats) {
             Map<String, Map<String, Map<String, Long>>> viewsByLocation = postStats.getViewsByLocation();
@@ -509,33 +516,53 @@ public class PostController {
             for (String country : viewsByLocation.keySet()) {
                 if ("global".equals(country)) continue;
 
+                long countryTotal = 0;
                 Map<String, Map<String, Long>> regions = viewsByLocation.get(country);
 
                 for (String region : regions.keySet()) {
                     if ("gesamt".equals(region)) continue;
 
+                    long regionTotal = 0;
                     Map<String, Long> cities = regions.get(region);
 
                     for (String city : cities.keySet()) {
-                        // Ignoriere "gesamt" auch bei den Städten
                         if ("gesamt".equals(city)) continue;
 
                         long views = cities.get(city);
+                        regionTotal += views;
 
-                        if (views > maxViews) {
-                            maxViews = views;
-                            maxLocation = country + ", " + region + ", " + city;
+                        if (includeCity && views > maxViewsCity) {
+                            maxViewsCity = views;
+                            maxLocationCity = city;
                         }
                     }
+
+                    if (includeRegion && regionTotal > maxViewsRegion) {
+                        maxViewsRegion = regionTotal;
+                        maxLocationRegion = region;
+                    }
+
+                    countryTotal += regionTotal;
+                }
+
+                if (includeCountry && countryTotal > maxViewsCountry) {
+                    maxViewsCountry = countryTotal;
+                    maxLocationCountry = country;
                 }
             }
         }
 
-        if (maxLocation == null) {
-            return "Keine Standorte gefunden.";
-        } else {
-            return  maxLocation + " : " + maxViews ;
+        Map<String, Long> result = new HashMap<>();
+        if (maxLocationCountry != null) {
+            result.put(maxLocationCountry, maxViewsCountry);
         }
+        if (maxLocationRegion != null) {
+            result.put(maxLocationRegion, maxViewsRegion);
+        }
+        if (maxLocationCity != null) {
+            result.put(maxLocationCity, maxViewsCity);
+        }
+        return result;
     }
 
 

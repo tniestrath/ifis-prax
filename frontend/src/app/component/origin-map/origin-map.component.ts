@@ -120,6 +120,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       tooltip.style.display = 'block';
       tooltip.style.left = pathCenterX - tooltip.offsetWidth / 2 + 'px';
       tooltip.style.top = pathCenterY - tooltip.offsetHeight / 2 + 'px';
+      tooltipHeader.style.paddingBottom = "5px";
       tooltipHeader.innerText = this.getRegionFullName(region);
 
       tooltipCities.replaceChildren();
@@ -131,6 +132,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         cityElement.style.display = "flex";
         cityElement.style.flexDirection = "row";
         cityElement.style.justifyContent = "space-between";
+        if (city.name == "gesamt"){
+          cityElement.style.paddingTop = "10px";
+        }
         cityName.innerText = city.name;
         if (city.clicks >= 1000000){
           cttyClicks.innerText = String((city.clicks/1000000).toFixed(1) + "M");

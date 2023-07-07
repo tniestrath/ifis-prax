@@ -497,6 +497,47 @@ public class PostController {
 
     }
 
+    @GetMapping("/maxviews")
+    public String getMaxViewsByLocation() {
+        List<PostStats> allPostStats = statsRepo.findAll();
+        long maxViews = 0;
+        String maxLocation = null;
+
+        for (PostStats postStats : allPostStats) {
+            Map<String, Map<String, Map<String, Long>>> viewsByLocation = postStats.getViewsByLocation();
+
+            for (String country : viewsByLocation.keySet()) {
+                if ("global".equals(country)) continue;
+
+                Map<String, Map<String, Long>> regions = viewsByLocation.get(country);
+
+                for (String region : regions.keySet()) {
+                    if ("gesamt".equals(region)) continue;
+
+                    Map<String, Long> cities = regions.get(region);
+
+                    for (String city : cities.keySet()) {
+                        // Ignoriere "gesamt" auch bei den Städten
+                        if ("gesamt".equals(city)) continue;
+
+                        long views = cities.get(city);
+
+                        if (views > maxViews) {
+                            maxViews = views;
+                            maxLocation = country + ", " + region + ", " + city;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (maxLocation == null) {
+            return "Keine Standorte gefunden.";
+        } else {
+            return  maxLocation + " : " + maxViews ;
+        }
+    }
+
 
 }
 

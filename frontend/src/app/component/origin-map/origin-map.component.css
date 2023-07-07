@@ -1,6 +1,40 @@
 .origin-map-box{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 #Ebene_1{
   height: 90%;
+  max-width: 90%;
   margin: 5px;
+}
+
+#tooltip {
+  position: fixed;
+  width: 130px;
+  border-radius: 5px;
+  background-color: #0009;
+  color: #fff;
+  display: none;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+#tooltip-header{
+  width: 100%;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+#tooltip-cities{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.tooltip-city{
+  width: 100%;
+  height: 20px;
+  font-size: 10px;
 }

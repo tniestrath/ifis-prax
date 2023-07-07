@@ -582,7 +582,7 @@ public class LogService {
     @Transactional
     public void erhoeheWertFuerHeutigesDatum(long id) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
-        // I'm assuming PostStats is a class, first letter should be lowercase for the instance
+
         PostStats postStats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
         HashMap<String, Long> daily = (HashMap<String, Long>) postStats.getViewsLastYear();
 
@@ -604,7 +604,7 @@ public class LogService {
         Map<String,Long> viewsPerHour =stats.getViewsPerHour();
         LocalTime jetzt = LocalTime.now();
         int stunde = jetzt.getHour();
-        if(stunde != 0){stunde--;}
+        if(stunde != 0){stunde--;}else{stunde=23;}
         long views= viewsPerHour.getOrDefault(Integer.toString(stunde),0L);
         views++;
         viewsPerHour.put(Integer.toString(stunde),views);

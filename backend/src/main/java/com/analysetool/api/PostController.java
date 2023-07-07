@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RequestMapping("/posts")
 public class PostController {
-
+    private Calendar kalender = Calendar.getInstance();
+    private int aktuellesJahr = kalender.get(Calendar.YEAR);
     @Autowired
     private PostStatsRepository statRepository;
     @Autowired
@@ -496,7 +497,12 @@ public class PostController {
         else{return "SESSION ID WRONG";}
 
     }
-
+    @GetMapping("/getViewsOfPostDistributedByHours")
+    public Map<String,Long>getViewsDistributedByHour(@RequestParam Long PostId){
+        PostStats postStats= statsRepo.findByArtIdAndAndYear(PostId,aktuellesJahr);
+        Map<String,Long>viewsPerHour=postStats.getViewsPerHour();
+        return viewsPerHour;
+    }
 
     @GetMapping("/maxViewsByLocation")
     public Map<String, Long> getMaxViewsByLocation(@RequestParam(defaultValue = "true") boolean includeCountry,

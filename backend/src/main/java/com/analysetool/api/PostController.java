@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RequestMapping("/posts")
 public class PostController {
-
+    private Calendar kalender = Calendar.getInstance();
+    private int aktuellesJahr = kalender.get(Calendar.YEAR);
     @Autowired
     private PostStatsRepository statRepository;
     @Autowired
@@ -495,6 +496,79 @@ public class PostController {
             return obj.toString();}
         else{return "SESSION ID WRONG";}
 
+    }
+    @GetMapping("/getViewsOfPostDistributedByHours")
+    public Map<String,Long>getViewsDistributedByHour(@RequestParam Long PostId){
+        PostStats postStats= statsRepo.findByArtIdAndAndYear(PostId,aktuellesJahr);
+        Map<String,Long>viewsPerHour=postStats.getViewsPerHour();
+        return viewsPerHour;
+    }
+
+    @GetMapping("/maxViewsByLocation")
+    public Map<String, Long> getMaxViewsByLocation(@RequestParam(defaultValue = "true") boolean includeCountry,
+                                                     @RequestParam(defaultValue = "true") boolean includeRegion,
+                                                     @RequestParam(defaultValue = "true") boolean includeCity) {
+        List<PostStats> allPostStats = statsRepo.findAll();
+        long maxViewsCountry = 0;
+        long maxViewsRegion = 0;
+        long maxViewsCity = 0;
+        String maxLocationCountry = null;
+        String maxLocationRegion = null;
+        String maxLocationCity = null;
+
+        for (PostStats postStats : allPostStats) {
+            Map<String, Map<String, Map<String, Long>>> viewsByLocation = postStats.getViewsByLocation();
+
+            for (String country : viewsByLocation.keySet()) {
+                if ("global".equals(country)) continue;
+
+                long countryTotal = 0;
+                Map<String, Map<String, Long>> regions = viewsByLocation.get(country);
+
+                for (String region : regions.keySet()) {
+                    if ("gesamt".equals(region)) continue;
+
+                    long regionTotal = 0;
+                    Map<String, Long> cities = regions.get(region);
+
+                    for (String city : cities.keySet()) {
+                        if ("gesamt".equals(city)) continue;
+
+                        long views = cities.get(city);
+                        regionTotal += views;
+
+                        if (includeCity && views > maxViewsCity) {
+                            maxViewsCity = views;
+                            maxLocationCity = city;
+                        }
+                    }
+
+                    if (includeRegion && regionTotal > maxViewsRegion) {
+                        maxViewsRegion = regionTotal;
+                        maxLocationRegion = region;
+                    }
+
+                    countryTotal += regionTotal;
+                }
+
+                if (includeCountry && countryTotal > maxViewsCountry) {
+                    maxViewsCountry = countryTotal;
+                    maxLocationCountry = country;
+                }
+            }
+        }
+
+        Map<String, Long> result = new HashMap<>();
+        if (maxLocationCountry != null) {
+            result.put(maxLocationCountry, maxViewsCountry);
+        }
+        if (maxLocationRegion != null) {
+            result.put(maxLocationRegion, maxViewsRegion);
+        }
+        if (maxLocationCity != null) {
+            result.put(maxLocationCity, maxViewsCity);
+        }
+        return result;
     }
 
 

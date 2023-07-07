@@ -582,7 +582,7 @@ public class LogService {
     @Transactional
     public void erhoeheWertFuerHeutigesDatum(long id) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
-        // I'm assuming PostStats is a class, first letter should be lowercase for the instance
+
         PostStats postStats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
         HashMap<String, Long> daily = (HashMap<String, Long>) postStats.getViewsLastYear();
 
@@ -604,7 +604,7 @@ public class LogService {
         Map<String,Long> viewsPerHour =stats.getViewsPerHour();
         LocalTime jetzt = LocalTime.now();
         int stunde = jetzt.getHour();
-        if(stunde != 0){stunde--;}
+        if(stunde != 0){stunde--;}else{stunde=23;}
         long views= viewsPerHour.getOrDefault(Integer.toString(stunde),0L);
         views++;
         viewsPerHour.put(Integer.toString(stunde),views);
@@ -729,51 +729,62 @@ public class LogService {
        // System.out.println("Interaktionsrate: "+interactionRate+" id: "+user.getId());
     }
     @Transactional
-    public void updateViewsByLocation(Matcher matcher){
+    public void updateViewsByLocation(Matcher matcher) {
         String ip = matcher.group(1);
-        System.out.println(ip);
-        try{
-        long id = postRepository.getIdByName(matcher.group(2).substring(0, matcher.group(2).length() - 1));
-        IPHelper.getInstance();
-        String country = IPHelper.getCountryISO(ip);
-        String region = IPHelper.getSubISO(ip);
-        String city = IPHelper.getCityName(ip);
+        try {
+            long id = postRepository.getIdByName(matcher.group(2).substring(0, matcher.group(2).length() - 1));
+            IPHelper.getInstance();
+            String country = IPHelper.getCountryISO(ip);
+            String region = IPHelper.getSubISO(ip);
+            String city = IPHelper.getCityName(ip);
 
+            if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
+                PostStats stats = statsRepo.getStatByArtID(id);
 
-        if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
-            PostStats stats = statsRepo.getStatByArtID(id);
+                // Holt die aktuelle Map oder erstellt eine neue, falls sie null ist.
+                Map<String, Map<String, Map<String, Long>>> viewsByLocation = stats.getViewsByLocation();
+                if (viewsByLocation == null) {
+                    viewsByLocation = new HashMap<>();
+                    stats.setViewsByLocation(viewsByLocation);
+                }
 
-            // Holt die aktuelle Map oder erstellt eine neue, falls sie null ist.
-            Map<String, Map<String, Map<String, Long>>> viewsByLocation = stats.getViewsByLocation();
-            if (viewsByLocation == null) {
-                viewsByLocation = new HashMap<>();
-                stats.setViewsByLocation(viewsByLocation);
+                // Standard Schlüssel setzen
+                String countryKey = "global";
+                String regionKey = "gesamt";
+
+                if (country != null && !country.isEmpty()) {
+                    countryKey = country;
+                    regionKey = (region != null && !region.isEmpty()) ? region : "gesamt";
+
+                    // Map der Regionen für das gegebene Land holen
+                    Map<String, Map<String, Long>> regions = viewsByLocation.computeIfAbsent(countryKey, k -> new HashMap<>());
+
+                    // Map der Städte für die gegebene Region holen
+                    Map<String, Long> cities = regions.computeIfAbsent(regionKey, k -> new HashMap<>());
+
+                    // Aktualisieren der Anzahl der Views für die Stadt
+                    if (city != null && !city.isEmpty()) {
+                        cities.merge(city, 1L, Long::sum);
+                    }
+
+                    // Aktualisieren der "gesamt" Views für Region
+                    cities.merge("gesamt", 1L, Long::sum);
+
+                    // Aktualisieren der "gesamt" Views für Land
+                    Map<String, Long> countryTotal = regions.computeIfAbsent("gesamt", k -> new HashMap<>());
+                    countryTotal.merge("gesamt", 1L, Long::sum);
+                }
+
+                // Aktualisieren der "gesamt" Views für Global
+                Map<String, Map<String, Long>> globalTotal = viewsByLocation.computeIfAbsent("global", k -> new HashMap<>());
+                globalTotal.computeIfAbsent("gesamt", k -> new HashMap<>()).merge("gesamt", 1L, Long::sum);
+
+                // Persistieren der Änderungen
+                statsRepo.save(stats);
             }
-
-            // Schlüssel wählen
-            String countryKey = (country != null && !country.isEmpty()) ? country : "global";
-            String regionKey = (region != null && !region.isEmpty()) ? region : "gesamt";
-            String cityKey = (city != null && !city.isEmpty()) ? city : "gesamt";
-
-            // Map der Regionen für das gegebene Land holen
-            Map<String, Map<String, Long>> regions = viewsByLocation.computeIfAbsent(countryKey, k -> new HashMap<>());
-
-            // Map der Städte für die gegebene Region holen
-            Map<String, Long> cities = regions.computeIfAbsent(regionKey, k -> new HashMap<>());
-
-            // Aktualisieren der Anzahl der Views für die Stadt/Region
-            cities.merge(cityKey, 1L, Long::sum);
-
-            // Aktualisieren der "gesamt" Views für Region
-            cities.merge("gesamt", 1L, Long::sum);
-
-            // Aktualisieren der "gesamt" Views für Land
-            Map<String, Long> countryTotal = regions.computeIfAbsent("gesamt", k -> new HashMap<>());
-            countryTotal.merge("gesamt", 1L, Long::sum);
-
-            // Persistieren der Änderungen
-            statsRepo.save(stats);
-    }}catch (Exception e){System.out.println(e.getMessage());}
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 

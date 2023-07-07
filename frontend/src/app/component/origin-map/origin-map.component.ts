@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 
 
@@ -27,51 +27,84 @@ export enum Region {
   templateUrl: './origin-map.component.html',
   styleUrls: ['./origin-map.component.css', "../../component/dash-base/dash-base.component.css"]
 })
-export class OriginMapComponent extends DashBaseComponent implements AfterViewInit{
+export class OriginMapComponent extends DashBaseComponent implements OnInit{
   totalDE: number = 0;
   totalGlobal: number = 0;
 
-  getRegionFullName(shortcode: string): string {
-    const enumKeys = Object.keys(Region);
-    const enumKey = enumKeys.find(key => key === shortcode);
-    return enumKey ? Region[enumKey as keyof typeof Region] : "NONE";
-  }
-
-  ngAfterViewInit() {
+  ngOnInit() {
     const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
     if (svgElement) {
-      this.totalDE = 100;
-      this.totalGlobal = 10;
-      this.setRegionColor(svgElement, "HH", "15");
-      this.setRegionColor(svgElement, "BE", "15");
-      this.setRegionColor(svgElement, "NW", "30");
-      this.setRegionColor(svgElement, "BY", "5");
-      this.setRegionColor(svgElement, "BW", "35");
-      this.setRegionTooltip(svgElement, "BW", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "BB", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "SN", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "ST", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "BY", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "SL", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "RP", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "SH", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "HH", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "TH", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "NB", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "HB", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "HE", {name: "", clicks: ""});
-      this.setRegionTooltip(svgElement, "NW", {name: "Oberhausen", clicks: "12341234"}, {name: "Bottrop", clicks: "3000"});
-      this.setRegionTooltip(svgElement, "MV", {name: "", clicks: ""});
+      const ip_map = {
+        "DE": {
+          "gesamt": {
+            "gesamt": 5210
+          },
+          "NW": {
+            "Oberhausen": 200,
+            "Bottrop": 1000,
+            "gesamt": 1200
+          },
+          "BY": {
+            "München": 10,
+            "gesamt": 1010
+          }
+        },
+        "global": {
+          "gesamt": {
+            "gesamt": 5300
+          }
+        }
+      }
+      var global_gesamt = 0;
+      for (const country in ip_map) {
+        var country_gesamt = 0;
+        if (ip_map.hasOwnProperty(country)) {
+          // @ts-ignore
+          const regions = ip_map[country];
+          for (const region in regions) {
+            if (regions.hasOwnProperty(region)) {
+              const cities = regions[region];
+
+              var cityArray = [];
+              var region_gesamt = 0;
+              for (const name in cities) {
+                if (cities.hasOwnProperty(name)) {
+                  const clicks: number = cities[name];
+                  cityArray.push({name, clicks})
+                  if (name == "gesamt") {
+                    region_gesamt = clicks;
+                  }
+                }
+              }
+              if (country == "DE"){
+                if (region == "gesamt"){
+                  this.totalDE = region_gesamt;
+                }
+              }
+              else {
+                this.totalGlobal = region_gesamt - this.totalDE;
+
+              }
+              if (region != "gesamt"){
+                console.log(this.totalDE)
+                this.setRegionTooltip(svgElement, region, cityArray);
+                this.setRegionColor(svgElement, region, region_gesamt);
+              }
+            }
+          }
+        }
+      }
+      this.cdr.detectChanges();
     }
   }
 
-  setRegionColor(svg : any, region : string, clicks : string){
+  setRegionColor(svg : any, region : string, clicks : number){
     var pathElement = svg.querySelector("#" + region);
-    console.log(Math.min(Number.parseInt(clicks)/this.totalDE, 1));
-    pathElement.style = "fill:rgba(122, 24, 51, " + (Math.min(Number.parseInt(clicks)/this.totalDE, .5)*2+.3)  + ");stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
+    console.log("REGION COLOR CALC" + (Math.min(clicks/this.totalDE, .5)*2+.3));
+    pathElement.style = "fill:rgba(122, 24, 51, " + (Math.min(clicks/this.totalDE, .5)*2+.3)  + ");stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
   }
 
-  setRegionTooltip(svg: any, region : string, ...cities : {name : string, clicks : string}[]){
+  setRegionTooltip(svg: any, region : string, cities : {name : string, clicks : number}[]){
     var pathElement = svg.querySelector("#" + region);
     var tooltip = document.getElementById('tooltip') ?? new HTMLDivElement();
     var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLDivElement();
@@ -99,14 +132,14 @@ export class OriginMapComponent extends DashBaseComponent implements AfterViewIn
         cityElement.style.flexDirection = "row";
         cityElement.style.justifyContent = "space-between";
         cityName.innerText = city.name;
-        if (Number.parseInt(city.clicks) >= 1000000){
-          cttyClicks.innerText = String((Number.parseInt(city.clicks)/1000000).toFixed(1) + "M");
+        if (city.clicks >= 1000000){
+          cttyClicks.innerText = String((city.clicks/1000000).toFixed(1) + "M");
         }
-        else if (Number.parseInt(city.clicks) >= 1000){
-          cttyClicks.innerText = String((Number.parseInt(city.clicks)/1000).toFixed(1) + "K");
+        else if (city.clicks >= 1000){
+          cttyClicks.innerText = String((city.clicks/1000).toFixed(1) + "K");
         }
         else {
-          cttyClicks.innerText = city.clicks;
+          cttyClicks.innerText = String(city.clicks);
         }
 
 
@@ -126,6 +159,12 @@ export class OriginMapComponent extends DashBaseComponent implements AfterViewIn
     tooltip.addEventListener('mouseleave', () => {
       tooltip.style.display = 'none';
     })
+  }
+
+  getRegionFullName(shortcode: string): string {
+    const enumKeys = Object.keys(Region);
+    const enumKey = enumKeys.find(key => key === shortcode);
+    return enumKey ? Region[enumKey as keyof typeof Region] : "NONE";
   }
 
 }

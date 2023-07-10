@@ -112,7 +112,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
 
 
-    pathElement.addEventListener('mouseenter', () => {
+    pathElement.addEventListener('click', () => {
       var pathBoundingBox = pathElement.getBoundingClientRect();
       var pathCenterX = pathBoundingBox.x + pathBoundingBox.width / 2;
       var pathCenterY = pathBoundingBox.y + pathBoundingBox.height / 2;
@@ -153,16 +153,21 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       }
 
     });
-    tooltip.addEventListener('mouseenter', () => {
+    pathElement.addEventListener('mouseenter', () => {
+      pathElement.style.strokeWidth = "10px";
+    });
+
+    tooltip.addEventListener('click', () => {
       tooltip.style.display = 'block';
     })
 
     pathElement.addEventListener('mouseleave', () => {
-      tooltip.style.display = 'none';
+      pathElement.style.strokeWidth = "1px";
     });
     tooltip.addEventListener('mouseleave', () => {
       tooltip.style.display = 'none';
-    })
+      pathElement.style.strokeWidth = "1px";
+    });
   }
 
   getRegionFullName(shortcode: string): string {

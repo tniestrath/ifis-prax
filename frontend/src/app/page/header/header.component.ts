@@ -26,6 +26,7 @@ export class HeaderComponent implements AfterViewInit{
       }
       this.db.getUserById(res.user_id).then(res => {
         UserService.login.next(res);
+        UserService.USER_ID = "0";
         UserService.ADMIN = res.accountType == "admin";
       })
     })

@@ -103,7 +103,7 @@ export class PageEinzelComponent implements OnInit {
       this.displayContent = "grid";
       switch (page) {
         case "Users":{
-          if (UserService.USER_ID != "0"){
+          if (UserService.USER_ID != "0" && UserService.ADMIN){
             this.displayContent = "grid";
             this.cardsLoaded.next(this.getUserPageCards());
           } else {

@@ -1,14 +1,10 @@
 import {
   Component,
-  ComponentRef,
-  createComponent,
   EventEmitter,
   Input,
   OnInit,
   Output,
-  Type,
-  ViewChild,
-  ViewRef
+  ViewChild
 } from '@angular/core';
 import {Observable, Subscription} from "rxjs";
 import {GridCardDirective} from "./grid-card.directive";

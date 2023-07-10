@@ -20,11 +20,11 @@ import {User} from "./user/user";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
 
 @Component({
-  selector: 'dash-page-einzel',
-  templateUrl: './page-einzel.component.html',
-  styleUrls: ['./page-einzel.component.css']
+  selector: 'dash-page',
+  templateUrl: './page.component.html',
+  styleUrls: ['./page.component.css']
 })
-export class PageEinzelComponent implements OnInit {
+export class PageComponent implements OnInit {
   displayContent: string = "none";
 
   selectorItems : SelectorItem[] = [];

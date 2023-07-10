@@ -16,7 +16,7 @@ import {MatInputModule} from "@angular/material/input";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { TagComponent } from './page/tag/tag/tag.component';
 import { SearchbarComponent } from './page/searchbar/searchbar.component';
-import { PageEinzelComponent } from './page/page-einzel/page-einzel.component';
+import { PageComponent } from './page/page-einzel/page.component';
 import {CookieService} from "ngx-cookie-service";
 import { SelectorComponent } from './page/selector/selector.component';
 import { SelectableDirective } from './page/selector/selectable.directive';
@@ -48,7 +48,7 @@ import { OriginMapComponent } from './component/origin-map/origin-map.component'
     PageTagComponent,
     TagComponent,
     SearchbarComponent,
-    PageEinzelComponent,
+    PageComponent,
     SelectorComponent,
     SelectableDirective,
     UserComponent,

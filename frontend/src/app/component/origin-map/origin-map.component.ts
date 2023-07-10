@@ -162,11 +162,11 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     })
 
     pathElement.addEventListener('mouseleave', () => {
-      pathElement.style.strokeWidth = "1px";
+      pathElement.style.strokeWidth = "2px";
     });
     tooltip.addEventListener('mouseleave', () => {
       tooltip.style.display = 'none';
-      pathElement.style.strokeWidth = "1px";
+      pathElement.style.strokeWidth = "2px";
     });
   }
 

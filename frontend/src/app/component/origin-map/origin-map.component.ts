@@ -56,7 +56,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           }
         },
         "NL": {
-          "NL": {
+          "ZH": {
             "Amsterdam": 420,
             "gesamt": 820
           },
@@ -64,9 +64,27 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
             "gesamt": 820
           }
         },
+        "AT": {
+          "district": {
+            "Bern": 200,
+            "gesamt": 2000
+          },
+          "gesamt": {
+            "gesamt": 2000
+          }
+        },
+        "BE": {
+          "district": {
+            "Brüssel": 200,
+            "gesamt": 200
+          },
+          "gesamt": {
+            "gesamt": 200
+          }
+        },
         "global": {
           "gesamt": {
-            "gesamt": 3530
+            "gesamt": 5730
           }
         }
       }
@@ -101,7 +119,14 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
               }
               if (region != "gesamt"){
-                console.log(this.totalDE)
+                if (country == "BE"){
+                  this.setRegionTooltip(svgElement, "BG", cityArray);
+                  this.setRegionColor(svgElement, "BG", region_gesamt);
+                }
+                if (country != "DE"){
+                  this.setRegionTooltip(svgElement, country, cityArray);
+                  this.setRegionColor(svgElement, country, region_gesamt);
+                }
                 this.setRegionTooltip(svgElement, region, cityArray);
                 this.setRegionColor(svgElement, region, region_gesamt);
               }
@@ -114,8 +139,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   }
 
   setRegionColor(svg : any, region : string, clicks : number){
-    var pathElement = svg.querySelector("#" + region);
-    console.log("REGION COLOR CALC" + clicks/this.totalDE*100);
+    var pathElement = svg.querySelector("#" + region) ?? null;
+    if (pathElement == null){return}
     pathElement.style =
       "fill:" + this.interpolateColor( "rgb(90, 121, 149)", "rgb(122, 24, 51)", 100, Math.max(Math.min(clicks/this.totalDE, .5), .1)*200) +
       ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
@@ -123,12 +148,12 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   }
 
   setRegionTooltip(svg: any, region : string, cities : {name : string, clicks : number}[]){
-    var pathElement = svg.querySelector("#" + region);
+    var pathElement = svg.querySelector("#" + region) ?? null;
     var tooltip = document.getElementById('tooltip') ?? new HTMLDivElement();
     var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLDivElement();
     var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLDivElement();
 
-
+    if (pathElement == null){return}
 
     pathElement.addEventListener('click', () => {
       var pathBoundingBox = pathElement.getBoundingClientRect();

@@ -41,18 +41,19 @@ public class LogService {
     private BufferedReader br;
     private String path = "";
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
-    private String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /blog/(\\S+).*s="; //search +1, view +1,(bei match) vor blog view pattern
-    private String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+).*s=";//search +1, view +1,(bei match) vor artikel view pattern
+    private String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/.*s="; //search +1, view +1,(bei match) vor blog view pattern
+    private String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/.*s=";//search +1, view +1,(bei match) vor artikel view pattern
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
-    private String BlogViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /blog/(\\S+)";
+    private String BlogViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/";
     private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
     private String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
     private String UserViewPattern=".*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
-    private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+)";//Artikel view +1 bei match
-    private String PresseViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /pressemitteilung/(\\S+)/";
-    private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /pressemitteilung/(\\S+)/*s=";
+    //private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+)";//Artikel view +1 bei match
+    private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/";
+    private String PresseViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2})*GET /pressemitteilung/(\\S+)/";
+    private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/*s=";
     Pattern pattern1_1 = Pattern.compile(ArtikelViewPattern);
     Pattern pattern1_2 = Pattern.compile(ArtikelSSPattern);
     Pattern pattern2_1 = Pattern.compile(BlogViewPattern);
@@ -291,26 +292,26 @@ public class LogService {
     public void processLine(String line,int patternNumber,Matcher matcher){
         lastLine=line;
         if (patternNumber==1){
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
-            System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 1.1");
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
+            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.1");
             UpdatePerformanceAndViews(matcher);
             updateViewsByLocation(matcher);
         }
         if (patternNumber==2){
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
-            System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 1.2");
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
+            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
         }
         if (patternNumber==3){
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
-            System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 2.1");
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
+            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 2.1");
             UpdatePerformanceAndViews(matcher);
             updateViewsByLocation(matcher);
         }
         if (patternNumber==4){
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2));
-            System.out.println(postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1))+matcher.group(2).substring(0,matcher.group(2).length()-1)+" PROCESSING 2.2");
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
+            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 2.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
         }
@@ -345,7 +346,7 @@ public class LogService {
         if (patternNumber==7){
 
             System.out.println(postRepository.getIdByName(matcher.group(1)+" "+matcher.group(1))+" PROCESSING 5.1");
-            try{
+           /* try{
 
                 long id =postRepository.getIdByName(matcher.group(1));
                 //hier nach TagSuchen WIP
@@ -376,12 +377,14 @@ public class LogService {
             }
             catch(Exception e){
                 System.out.println("IGNORE "+matcher.group(1)+" BECAUSE: "+e.getMessage());
-            }
+            }*/
+            UpdatePerformanceAndViews(matcher);
+            updateViewsByLocation(matcher);
         }
         if (patternNumber==8){
 
             System.out.println(postRepository.getIdByName(matcher.group(1))+matcher.group(1)+" PROCESSING 5.2");
-            try{
+            /*try{
                 long id =postRepository.getIdByName(matcher.group(1));
                 checkTheTag(id,true);
                 if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
@@ -412,7 +415,10 @@ public class LogService {
             catch(Exception e){
                 System.out.println("IGNORE "+matcher.group(1)+" BECAUSE: "+e.getMessage());
 
-            }}
+            }*/
+            updatePerformanceViewsSearchSuccess(matcher);
+            updateViewsByLocation(matcher);
+        }
 
         if(patternNumber==9){
             System.out.println(matcher.group(1).replace("+","-")+" PROCESSING 4_2");
@@ -437,10 +443,94 @@ public class LogService {
 
 
     }
-
     public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
+
+        // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
+        String logDay = matcher.group(2);
+        String logMonth = matcher.group(3);
+        String logYear = matcher.group(4);
+        String logHourMinuteSecond = matcher.group(5);
+
+        // Trenne Stunden, Minuten und Sekunden
+        String[] timeParts = logHourMinuteSecond.split(":");
+        String logHour = timeParts[0];
+        String logMinute = timeParts[1];
+        String logSecond = timeParts[2];
+
+        // Konvertiere den Monat in eine Zahl
+        int monthNumber = Integer.parseInt(getMonthNumber(logMonth));
+
+        // Erstelle LocalDate und LocalTime Objekte
+        LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), monthNumber, Integer.parseInt(logDay));
+        LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
+
+        try {
+            long id = postRepository.getIdByName(matcher.group(6));
+            checkTheTag(id, true);
+
+            if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
+                PostStats stats = statsRepo.findByArtIdAndAndYear(id, aktuellesJahr);
+                long views = stats.getClicks();
+                views++;
+                long searchSuccess = stats.getSearchSuccess();
+                searchSuccess++;
+
+
+
+                LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
+                LocalDateTime Now =  LocalDateTime.now();
+                Duration duration = Duration.between(PostTimestamp, Now);
+                long diffInDays = duration.toDays();
+                float performance = views;
+                if (diffInDays>0&&views > 0){
+                    performance = (float)views/diffInDays;
+                }
+                statsRepo.updateClicksSearchSuccessRateAndPerformance(id, views, searchSuccess, performance);
+
+                // Rufe die angepasste Methode mit dem extrahierten Datum und der Uhrzeit auf
+                erhoeheWertFuerLogDatum(id, logDate, logTime);
+            } else {
+                statsRepo.save(new PostStats(id, (float) 0, (float) 0, 1, 1, 0, (float) 0));
+                //erhoeheWertFuerHeutigesDatum(id);
+                erhoeheWertFuerLogDatum(id, logDate, logTime);
+            }
+        } catch (Exception e) {
+            System.out.println("IGNORE " + matcher.group(2).substring(0, matcher.group(2).length() - 1) + " BECAUSE: " + e.getMessage());
+        }
+    }
+    @Transactional
+    public void erhoeheWertFuerLogDatum(long id, LocalDate logDatum, LocalTime logUhrzeit) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
+        String logDatumString = logDatum.format(formatter);
+
+        PostStats postStats = statsRepo.findByArtIdAndAndYear(id, logDatum.getYear());
+
+        HashMap<String, Long> daily = (HashMap<String, Long>) postStats.getViewsLastYear();
+        long aktuellerWert = daily.getOrDefault(logDatumString, 0L);
+        daily.put(logDatumString, aktuellerWert + 1);
+
+        Map<String, Long> viewsPerHour = erhoeheViewsPerHour2(postStats, logUhrzeit);
+        postStats.setViewsPerHour(viewsPerHour);
+
+        postStats.setViewsLastYear(daily);
+        postStats.setRelevance(getRelevance2(daily, logDatumString, 7));
+
+        statsRepo.save(postStats);
+    }
+
+    public Map<String, Long> erhoeheViewsPerHour2(PostStats stats, LocalTime logUhrzeit) {
+        Map<String, Long> viewsPerHour = stats.getViewsPerHour();
+        int stunde = logUhrzeit.getHour();
+        long views = viewsPerHour.getOrDefault(Integer.toString(stunde), 0L);
+        views++;
+        viewsPerHour.put(Integer.toString(stunde), views);
+
+        return viewsPerHour;
+    }
+
+  /*  public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
         try{
-            long id =postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1));
+            long id =postRepository.getIdByName(matcher.group(6));
             checkTheTag(id,true);
             if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
                 PostStats stats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
@@ -468,11 +558,11 @@ public class LogService {
 
             System.out.println("IGNORE "+matcher.group(2).substring(0,matcher.group(2).length()-1)+" BECAUSE: "+e.getMessage());
     }
-    }
+    }*/
 
-    public void UpdatePerformanceAndViews(Matcher matcher) {
+   /* public void UpdatePerformanceAndViews(Matcher matcher) {
         try{
-            long id =postRepository.getIdByName(matcher.group(2).substring(0,matcher.group(2).length()-1));
+            long id =postRepository.getIdByName(matcher.group(6));
             checkTheTag(id,false);
             if (statsRepo.existsByArtId(id)){
             long views = statsRepo.getClicksByArtId(id);
@@ -496,7 +586,61 @@ public class LogService {
             System.out.println("IGNORE "+matcher.group(2).substring(0,matcher.group(2).length()-1)+" BECAUSE: "+e.getMessage());
        // e.printStackTrace();
     }
-    }
+    }*/
+   public void UpdatePerformanceAndViews(Matcher matcher) {
+
+       // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
+       String logDay = matcher.group(2);
+       String logMonth = matcher.group(3);
+       String logYear = matcher.group(4);
+       String logHourMinuteSecond = matcher.group(5);
+
+       // Trenne Stunden, Minuten und Sekunden
+       String[] timeParts = logHourMinuteSecond.split(":");
+       String logHour = timeParts[0];
+       String logMinute = timeParts[1];
+       String logSecond = timeParts[2];
+
+       // Konvertiere den Monat in eine Zahl
+       int monthNumber = Integer.parseInt(getMonthNumber(logMonth));
+
+       // Erstelle LocalDate und LocalTime Objekte
+       LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), monthNumber, Integer.parseInt(logDay));
+       LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
+
+       try {
+           long id = postRepository.getIdByName(matcher.group(6));
+           checkTheTag(id, false);
+
+           if (statsRepo.existsByArtId(id)) {
+               long views = statsRepo.getClicksByArtId(id);
+               views++;
+
+
+
+               LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
+               LocalDateTime Now =  LocalDateTime.now();
+               Duration duration = Duration.between(PostTimestamp, Now);
+               long diffInDays = duration.toDays();
+               float performance = views;
+               if (diffInDays>0&&views > 0){
+                   performance = (float)views/diffInDays;
+               }
+
+               statsRepo.updateClicksAndPerformanceByArtId(views, id, performance);
+
+               // Rufe die angepasste Methode mit dem extrahierten Datum und der Uhrzeit auf
+               erhoeheWertFuerLogDatum(id, logDate, logTime);
+           } else {
+               statsRepo.save(new PostStats(id, (float) 0, (float) 0, 1, 0, 0, (float) 0));
+               //erhoeheWertFuerHeutigesDatum(id);
+               erhoeheWertFuerLogDatum(id, logDate, logTime);
+           }
+       } catch (Exception e) {
+           System.out.println("IGNORE " + matcher.group(6) + " BECAUSE: " + e.getMessage());
+       }
+   }
+
 
     @Transactional
     public void updateUserStats(WPUser user){
@@ -732,7 +876,7 @@ public class LogService {
     public void updateViewsByLocation(Matcher matcher) {
         String ip = matcher.group(1);
         try {
-            long id = postRepository.getIdByName(matcher.group(2).substring(0, matcher.group(2).length() - 1));
+            long id = postRepository.getIdByName(matcher.group(6));
             IPHelper.getInstance();
             String country = IPHelper.getCountryISO(ip);
             String region = IPHelper.getSubISO(ip);
@@ -785,6 +929,24 @@ public class LogService {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private static String getMonthNumber(String monthName) {
+        Map<String, String> months = new HashMap<>();
+        months.put("Jan", "01");
+        months.put("Feb", "02");
+        months.put("Mar", "03");
+        months.put("Apr", "04");
+        months.put("May", "05");
+        months.put("Jun", "06");
+        months.put("Jul", "07");
+        months.put("Aug", "08");
+        months.put("Sep", "09");
+        months.put("Oct", "10");
+        months.put("Nov", "11");
+        months.put("Dec", "12");
+
+        return months.getOrDefault(monthName.substring(0, 3), "00");
     }
 
 

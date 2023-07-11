@@ -6,9 +6,10 @@
   align-items: center;
 }
 #Ebene_1{
-  height: 90%;
+  max-height: 90%;
   max-width: 90%;
   margin: 5px;
+  border-radius: 5px;
 }
 
 #tooltip {

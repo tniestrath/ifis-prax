@@ -32,7 +32,10 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
           UserService.login.next(res);
           console.log("admin?" + res.accountType)
           UserService.ADMIN = res.accountType == "admin";
-        })
+
+          this.cdr.detectChanges();
+        });
+        this.cdr.detectChanges();
       });
     });
   }

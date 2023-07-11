@@ -166,7 +166,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
 
     legendBox?.appendChild(legendContainer);
     legendContainer.appendChild(ul);
-    this.onMedia(media_ratio)
+    this.onMedia(media_ratio);
   }
 
   onMedia(x: MediaQueryListEvent | MediaQueryList) {
@@ -217,7 +217,10 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
       this.createLegend("clicks-profile-box", this.p_chart);
       this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsPresse;
       this.p_chart_total = res.viewsProfile + this.c_chart_total;
+
+      this.cdr.detectChanges();
     })
+    this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {
@@ -229,7 +232,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
     }
     this.c_chart_total = 0;
     this.p_chart_total = 0;
-
+    this.cdr.detectChanges();
   }
 
 

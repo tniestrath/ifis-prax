@@ -18,7 +18,13 @@ export enum Region {
   NB = "Niedersachsen",
   HE = "Hessen",
   BW = "Baden-Württemberg",
-  NW = "Nordrhein-Westfalen"
+  NW = "Nordrhein-Westfalen",
+
+  NL = "Niederlande",
+  BG = "Belgien",
+  SW = "Schweiz",
+  AT = "Österreich",
+  LU = "Luxemburg"
 }
 
 
@@ -37,7 +43,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       const ip_map = {
         "DE": {
           "gesamt": {
-            "gesamt": 5210
+            "gesamt": 2710
           },
           "NW": {
             "Oberhausen": 200,
@@ -46,12 +52,21 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           },
           "BY": {
             "München": 10,
-            "gesamt": 1010
+            "gesamt": 510
+          }
+        },
+        "NL": {
+          "NL": {
+            "Amsterdam": 420,
+            "gesamt": 820
+          },
+          "gesamt": {
+            "gesamt": 820
           }
         },
         "global": {
           "gesamt": {
-            "gesamt": 5300
+            "gesamt": 3530
           }
         }
       }
@@ -100,8 +115,11 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
   setRegionColor(svg : any, region : string, clicks : number){
     var pathElement = svg.querySelector("#" + region);
-    console.log("REGION COLOR CALC" + (Math.min(clicks/this.totalDE, .5)*2+.3));
-    pathElement.style = "fill:rgba(122, 24, 51, " + (Math.min(clicks/this.totalDE, .5)*2+.3)  + ");stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
+    console.log("REGION COLOR CALC" + clicks/this.totalDE*100);
+    pathElement.style =
+      "fill:" + this.interpolateColor( "rgb(90, 121, 149)", "rgb(122, 24, 51)", 100, Math.max(Math.min(clicks/this.totalDE, .5), .1)*200) +
+      ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
+
   }
 
   setRegionTooltip(svg: any, region : string, cities : {name : string, clicks : number}[]){
@@ -174,6 +192,19 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     const enumKeys = Object.keys(Region);
     const enumKey = enumKeys.find(key => key === shortcode);
     return enumKey ? Region[enumKey as keyof typeof Region] : "NONE";
+  }
+
+  interpolateColor(color1 : string, color2 : string, steps : number, step : number) {
+    // @ts-ignore
+    var color1Arr = color1.match(/\d+/g).map(Number);
+    // @ts-ignore
+    var color2Arr = color2.match(/\d+/g).map(Number);
+
+    var r = Math.round(color1Arr[0] + (color2Arr[0] - color1Arr[0]) * (step / steps));
+    var g = Math.round(color1Arr[1] + (color2Arr[1] - color1Arr[1]) * (step / steps));
+    var b = Math.round(color1Arr[2] + (color2Arr[2] - color1Arr[2]) * (step / steps));
+
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
   }
 
 }

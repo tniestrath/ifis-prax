@@ -125,6 +125,8 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
         let post : Post = data;
         this.createChart(["Score", "Grey"],[((post.performance || 0) / max)*100 , 100-(((post.performance || 0) / max)*100)],null);
         this.postName = post.title;
+
+        this.cdr.detectChanges();
       });
     })
   }

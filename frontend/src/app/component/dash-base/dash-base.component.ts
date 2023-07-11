@@ -58,8 +58,8 @@ export class DashBaseComponent {
       "  min-width: 250px;\n" +
       "  z-index: 1;");
     tooltipContainer.appendChild(this.tooltip);
-    this.helpButton.addEventListener("mouseenter", () => {this.tooltip.style.visibility = "visible"});
-    this.helpButton.addEventListener("mouseleave", () => {this.tooltip.style.visibility = "hidden"});
+    this.helpButton.addEventListener("mouseenter", () => {this.tooltip.style.visibility = "visible"; this.cdr.detectChanges()});
+    this.helpButton.addEventListener("mouseleave", () => {this.tooltip.style.visibility = "hidden"; this.cdr.detectChanges()});
   }
 
   protected setToolTip(text?: string, enabled = true){

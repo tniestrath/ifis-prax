@@ -18,6 +18,8 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     this.chart = this.createChart("user_plan_chart", ["Basic", "Plus", "Premium"],[1173,223,35], undefined);
     this.createLegend("user-plan-content-box", this.chart);
     this.chart_total = 1173 + 223 + 35;
+
+    this.cdr.detectChanges();
   }
 
   createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){

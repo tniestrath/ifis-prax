@@ -67,6 +67,8 @@ export class RelevanceComponent extends DashBaseComponent {
         let post : Post = data;
         this.createChart(post.relevance || 0, max);
         this.postName = post.title;
+
+        this.cdr.detectChanges();
       });
     })
   }

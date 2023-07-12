@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@CrossOrigin
+@CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
 @RequestMapping("/users")
 public class UserController {

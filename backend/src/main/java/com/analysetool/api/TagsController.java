@@ -16,7 +16,7 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-@CrossOrigin
+@CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
 @RequestMapping("/tags")
 public class TagsController {

@@ -9,6 +9,9 @@
   <div *ngSwitchDefault class="selection-box" >
     <img *ngIf="page == 'user'" [src]="imgSrc" alt="">
     <p>{{selectedSearch.name}}</p>
-    <button class="selection-cancel-button" (click)="onCancelClick()">X</button>
+    <button *ngIf="UserService.ADMIN" class="selection-cancel-button" (click)="onCancelClick()">X</button>
+  </div>
+  <div class="loggout-box" (click)="onLogoutClick()">
+    <img src="../../../assets/logout.png"/>
   </div>
 </div>

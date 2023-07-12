@@ -71,7 +71,12 @@ export class SearchbarComponent implements OnInit{
       this.onDbObjectSelected("0", "");
     } else {
       this.cs.deleteAll();
+      location.reload();
     }
+  }
+  onLogoutClick() {
+    this.cs.deleteAll();
+    location.reload();
   }
 
   getImgSrc(id: string) {
@@ -290,4 +295,6 @@ export class SearchbarComponent implements OnInit{
       this.shown = !this.shown;
     }
   }
+
+  protected readonly UserService = UserService;
 }

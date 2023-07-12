@@ -18,6 +18,7 @@ import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
 import {User} from "./user/user";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
+import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
 
 @Component({
   selector: 'dash-page',
@@ -40,7 +41,7 @@ export class PageComponent implements OnInit {
 
   getLandingPageCards(){
     return [
-      {type: LoginComponent, row: 2, col: 2, height: 2, width: 2},
+      {type: LoginComponent, row: 2, col: 2, height: 2, width: 3},
     ];
   }
 
@@ -55,7 +56,7 @@ export class PageComponent implements OnInit {
       //@ts-ignore
       {type: PostComponent, row: 1, col: 6, height: 2, width: 1},
       {type: PotentialComponent, row: 3, col: 2, height: 2, width: 2},
-      {type: TagListComponent, row: 3, col: 4, height: 2, width: 2}
+      {type: OriginMapComponent, row: 3, col: 4, height: 2, width: 2}
     ];
   }
   getTagsPageCards() {

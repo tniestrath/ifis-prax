@@ -25,6 +25,13 @@ import java.util.List;
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 public class LoginController {
 
+    /**
+     *
+     * @param user
+     * @param pass
+     * @return String representation of the WordPress-login-cookie value
+     * @throws IOException
+     */
     @GetMapping("/login")
     public String login(@RequestParam String user, String pass) throws IOException {
         HttpClient httpClient = HttpClients.createDefault();

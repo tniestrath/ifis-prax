@@ -27,7 +27,7 @@ export class SearchbarComponent implements OnInit{
   filter_dropdown: HTMLDivElement | null = null;
   shown = false;
   logged_in = false;
-  constructor(protected element : ElementRef, private cookieService : CookieService, private db : DbService) {
+  constructor(protected element : ElementRef, private cs : CookieService, private db : DbService) {
     UserService.login.subscribe(user => {
       this.logged_in = true;
     })
@@ -35,8 +35,8 @@ export class SearchbarComponent implements OnInit{
 
   ngOnInit(): void {
     let object :string[]  = ["0",""];
-      if (this.cookieService.check(this.page)) {
-        object = this.cookieService.get(this.page).split(":");
+      if (this.cs.check(this.page)) {
+        object = this.cs.get(this.page).split(":");
       }
       this.onDbObjectSelected(object[0], object[1]);
   }
@@ -54,7 +54,7 @@ export class SearchbarComponent implements OnInit{
       this.displaySearchBox = "0";
     }
     this.selected.emit(new DbObject(id, name));
-    this.cookieService.set(this.page, object.id + ":" + object.name, {expires : 2});
+    this.cs.set(this.page, object.id + ":" + object.name, {expires : 2});
 
     this.getImgSrc(this.selectedSearch.id);
 
@@ -64,10 +64,14 @@ export class SearchbarComponent implements OnInit{
   }
 
   onCancelClick(){
-    this.selectedSearch = new DbObject("0", "");
-    this.displaySearchBox = "50px";
-    this.onKey("");
-    this.onDbObjectSelected("0", "");
+    if (UserService.ADMIN){
+      this.selectedSearch = new DbObject("0", "");
+      this.displaySearchBox = "50px";
+      this.onKey("");
+      this.onDbObjectSelected("0", "");
+    } else {
+      this.cs.deleteAll();
+    }
   }
 
   getImgSrc(id: string) {

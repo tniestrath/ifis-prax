@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
@@ -9,7 +9,7 @@ import {UserService} from "../../services/user.service";
   templateUrl: './clicks.component.html',
   styleUrls: ['./clicks.component.css', "../../component/dash-base/dash-base.component.css"]
 })
-export class ClicksComponent extends DashBaseComponent implements OnInit, OnDestroy{
+export class ClicksComponent extends DashBaseComponent implements OnInit, OnDestroy, AfterViewInit{
 
   colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
   c_chart: any;
@@ -217,8 +217,9 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
       this.createLegend("clicks-profile-box", this.p_chart);
       this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsPresse;
       this.p_chart_total = res.viewsProfile + this.c_chart_total;
-
       this.cdr.detectChanges();
+
+      //this.pdf.exportAsPDF(this.p_chart);
     })
     this.cdr.detectChanges();
   }
@@ -233,6 +234,10 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
     this.c_chart_total = 0;
     this.p_chart_total = 0;
     this.cdr.detectChanges();
+  }
+
+  ngAfterViewInit(): void {
+
   }
 
 

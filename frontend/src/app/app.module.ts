@@ -35,6 +35,7 @@ import { PotentialComponent } from './component/potential/potential.component';
 import { UserPlanComponent } from './component/user-plan/user-plan.component';
 import { LoginComponent } from './component/login/login.component';
 import { OriginMapComponent } from './component/origin-map/origin-map.component';
+import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { OriginMapComponent } from './component/origin-map/origin-map.component'
     PotentialComponent,
     UserPlanComponent,
     LoginComponent,
-    OriginMapComponent
+    OriginMapComponent,
+    ClicksByTimeComponent
   ],
     imports: [
         BrowserModule,

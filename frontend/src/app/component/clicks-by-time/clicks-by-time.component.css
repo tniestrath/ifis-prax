@@ -1,0 +1,12 @@
+.clicksByTime-box {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  height: 100%;
+}
+canvas{
+  padding: 5px;
+  max-height: 30%;
+  max-width: 100%;
+}

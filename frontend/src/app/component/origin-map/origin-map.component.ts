@@ -144,7 +144,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     pathElement.style =
       "fill:" + this.interpolateColor( "rgb(90, 121, 149)", "rgb(122, 24, 51)", 100, Math.max(Math.min(clicks/this.totalDE, .5), .1)*200) +
       ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
-
   }
 
   setRegionTooltip(svg: any, region : string, cities : {name : string, clicks : number}[]){

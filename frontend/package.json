@@ -21,6 +21,8 @@
     "@angular/platform-browser-dynamic": "^16.0.2",
     "@angular/router": "^16.0.2",
     "chart.js": "^4.3.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "ngx-cookie-service": "^16.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -28,7 +30,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.0.2",
-    "@angular/cli": "~16.0.2",
+    "@angular/cli": "^16.1.4",
     "@angular/compiler-cli": "^16.0.2",
     "@types/jasmine": "~4.3.0",
     "jasmine-core": "~4.5.0",

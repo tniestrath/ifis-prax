@@ -53,10 +53,14 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           "BY": {
             "München": 10,
             "gesamt": 510
+          },
+          "BE": {
+            "Berlin": 0,
+            "gesamt": 0
           }
         },
         "NL": {
-          "ZH": {
+          "NL": {
             "Amsterdam": 420,
             "gesamt": 820
           },
@@ -65,7 +69,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           }
         },
         "AT": {
-          "district": {
+          "AT": {
             "Bern": 200,
             "gesamt": 2000
           },
@@ -124,11 +128,14 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
                   this.setRegionColor(svgElement, "BG", region_gesamt);
                 }
                 if (country != "DE"){
-                  this.setRegionTooltip(svgElement, country, cityArray);
-                  this.setRegionColor(svgElement, country, region_gesamt);
+                  if (region == "BE") {
+                    this.setRegionTooltip(svgElement, region, cityArray);
+                    this.setRegionColor(svgElement, region, region_gesamt);
+                  }
                 }
                 this.setRegionTooltip(svgElement, region, cityArray);
                 this.setRegionColor(svgElement, region, region_gesamt);
+                console.log(region)
               }
             }
           }

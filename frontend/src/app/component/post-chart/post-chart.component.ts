@@ -35,7 +35,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
 
 
-  createChart(labels: string[], fullLabels : string[], data: number[], data2: number[], onClick: (index : number) => void){
+  createChart(labels: string[], fullLabels : string[], data: number[], data2: number[], data3: string[], onClick: (index : number) => void){
     Chart.defaults.color = "#000"
     if (this.chart){
       this.chart.destroy();
@@ -155,9 +155,9 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
               //@ts-ignore
               label: ((tooltipItem) => {
                 if (tooltipItem.datasetIndex == 0) {
-                  return "Performance: " + data[tooltipItem.dataIndex].toFixed();
+                  return "Performance: " + data[tooltipItem.dataIndex].toFixed() + "  Datum: " + data3[tooltipItem.dataIndex];
                 } else if (tooltipItem.datasetIndex == 1) {
-                  return "Relevanz: " + data2[tooltipItem.dataIndex].toFixed();
+                  return "Relevanz: " + data2[tooltipItem.dataIndex].toFixed() + "  Datum: " + data3[tooltipItem.dataIndex];
                 }
               })
             }
@@ -191,6 +191,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         var postLabel : string[] = [];
         var postData : number[] = [];
         var postDataRelevance : number[] = [];
+        var postDataDate : string[] = [];
 
         var postIds :number[] = [];
 
@@ -225,10 +226,11 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
           postLabel.push(label);
           postData.push((post.performance / value[0])*100);
           postDataRelevance.push((post.relevance / value[1])*100);
+          postDataDate.push(new Date(post.date).toLocaleDateString());
           // @ts-ignore
           postIds.push(post.id);
         }
-        this.createChart(postLabel, fullLabels, postData, postDataRelevance, (index) => {
+        this.createChart(postLabel, fullLabels, postData, postDataRelevance, postDataDate, (index) => {
           UserService.SELECTED_POST_ID.emit(postIds[index]);
         });
       })

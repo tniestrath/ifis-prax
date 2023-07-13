@@ -10,6 +10,7 @@ import {UserService} from "../../services/user.service";
 })
 export class PostComponent extends DashBaseComponent implements OnInit{
   post: Post = new Post();
+  formattedDate : string = "";
   formattedTags : string = "";
   formattedPerformance: number = 0;
   formattedRelevanz: number = 0;
@@ -19,7 +20,7 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.db.getUserNewestPost(UserService.USER_ID).then(res => {
       Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value => {
-        this.formatPost(res, value[0], value[1], true)
+        this.formatPost(res, value[0], value[1], false)
       })
     });
 
@@ -53,6 +54,7 @@ export class PostComponent extends DashBaseComponent implements OnInit{
           break;
       }
     }
+    this.formattedDate = new Date(res.date).toLocaleDateString();
     this.formattedTags = res.tags?.toString().replace("[", "").replace("]", "");
     this.formattedPerformance = (res.performance / maxPerf) * 100;
     this.formattedRelevanz = (res.relevance / maxRel) * 100;

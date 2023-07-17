@@ -23,6 +23,7 @@ export enum dbUrl {
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
   GET_USER_BY_LOGINNAME = "/users/getByLogin?u=",
   GET_USER_BY_ID = "/users/getById?id=",
+  GET_USER_ORIGIN_MAP = "/users/getViewsByLocation?id=",
 
   GET_POST = "/posts/getPostWithStatsById?id=",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
@@ -157,5 +158,9 @@ export class DbService {
 
   async getPostById(id: number) : Promise<Post> {
     return await fetch(DbService.getUrl(dbUrl.GET_POST) + id).then(res => res.json());
+  }
+
+  async getOriginMapByUser(id : number){
+    return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id).then(res => res.json());
   }
 }

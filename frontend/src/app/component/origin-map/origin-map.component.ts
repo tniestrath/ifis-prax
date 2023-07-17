@@ -41,7 +41,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   ngOnInit() {
     const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
     if (svgElement) {
-
       this.db.getOriginMapByUser(Number.parseInt(UserService.USER_ID)).then(res => {
         const ip_map = res;
 
@@ -66,20 +65,18 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
                     }
                   }
                 }
-                if (country == "DE"){
-                  if (region == "gesamt"){
+                if (country == "DE") {
+                  if (region == "gesamt") {
                     this.totalDE = region_gesamt;
                   }
-                }
-                else {
+                } else {
                   this.totalGlobal = region_gesamt - this.totalDE;
 
                 }
                 if (region != "gesamt") {
                   if (country == "BG") {
 
-                  }
-                  else if (country == "BE") {
+                  } else if (country == "BE") {
                     if (region == "BE") {
                       this.setRegionTooltip(svgElement, "BG", cityArray);
                       this.setRegionColor(svgElement, "BG", region_gesamt);
@@ -87,7 +84,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
                   } else {
                     this.setRegionTooltip(svgElement, region, cityArray);
                     this.setRegionColor(svgElement, region, region_gesamt);
-                    console.log(region)
                   }
                 }
               }
@@ -96,59 +92,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         }
         this.cdr.detectChanges();
       });
-      /*const ip_map = {
-        "DE": {
-          "gesamt": {
-            "gesamt": 2710
-          },
-          "NW": {
-            "Oberhausen": 200,
-            "Bottrop": 1000,
-            "gesamt": 1200
-          },
-          "BY": {
-            "München": 10,
-            "gesamt": 510
-          },
-          "BE": {
-            "Berlin": 0,
-            "gesamt": 0
-          }
-        },
-        "NL": {
-          "NL": {
-            "Amsterdam": 420,
-            "gesamt": 820
-          },
-          "gesamt": {
-            "gesamt": 820
-          }
-        },
-        "AT": {
-          "AT": {
-            "Bern": 200,
-            "gesamt": 2000
-          },
-          "gesamt": {
-            "gesamt": 2000
-          }
-        },
-        "BE": {
-          "district": {
-            "Brüssel": 200,
-            "gesamt": 200
-          },
-          "gesamt": {
-            "gesamt": 200
-          }
-        },
-        "global": {
-          "gesamt": {
-            "gesamt": 5730
-          }
-        }
-      }*/
-
     }
   }
 

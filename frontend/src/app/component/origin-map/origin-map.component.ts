@@ -75,20 +75,20 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
                   this.totalGlobal = region_gesamt - this.totalDE;
 
                 }
-                if (region != "gesamt"){
-                  if (country == "BE"){
-                    this.setRegionTooltip(svgElement, "BG", cityArray);
-                    this.setRegionColor(svgElement, "BG", region_gesamt);
+                if (region != "gesamt") {
+                  if (country == "BG") {
+
                   }
-                  if (country != "DE"){
+                  else if (country == "BE") {
                     if (region == "BE") {
-                      this.setRegionTooltip(svgElement, region, cityArray);
-                      this.setRegionColor(svgElement, region, region_gesamt);
+                      this.setRegionTooltip(svgElement, "BG", cityArray);
+                      this.setRegionColor(svgElement, "BG", region_gesamt);
                     }
+                  } else {
+                    this.setRegionTooltip(svgElement, region, cityArray);
+                    this.setRegionColor(svgElement, region, region_gesamt);
+                    console.log(region)
                   }
-                  this.setRegionTooltip(svgElement, region, cityArray);
-                  this.setRegionColor(svgElement, region, region_gesamt);
-                  console.log(region)
                 }
               }
             }

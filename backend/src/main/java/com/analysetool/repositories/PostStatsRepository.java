@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 //import org.springframework.data.repository.query.Param;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -142,6 +143,9 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
     @Query("SELECT MAX(s.relevance) FROM PostStats s")
     public float getMaxRelevance();
+
+    @Query("SELECT s.viewsByLocation FROM PostStats s WHERE s.artId=:artId")
+    public HashMap getViewsByLocation(int artId);
 
 
     // Beispiel für eine separate Methode zur Berechnung der Performance

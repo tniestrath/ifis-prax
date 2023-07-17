@@ -3,6 +3,8 @@ import com.analysetool.Application;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,9 +18,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.text.ParseException;
+import java.util.*;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -194,5 +195,59 @@ public class UserController {
         obj.put("viewsProfile", viewsProfile);
         return obj.toString();
 
+    }
+
+    @GetMapping("/getViewsByLocation")
+    public String getViewsByLocation(@RequestParam int id) throws JSONException, ParseException, JsonProcessingException {
+        List<Post> posts= postRepository.findByAuthor(id);
+        HashMap map = new HashMap<>();
+        int count = 0;
+        for(Post post : posts) {
+            if(statRepository.getViewsByLocation(post.getId().intValue()) != null) {
+                if (count == 0) {
+                    map = statRepository.getViewsByLocation(post.getId().intValue());
+                    count++;
+                } else {
+                    mergeMaps(map, statRepository.getViewsByLocation(post.getId().intValue()));
+                }
+            }
+
+        }
+        System.out.println(new JSONObject(map).toString());
+        return new JSONObject(map).toString();
+
+    }
+    private static void mergeMaps(Map<String, Map<String, Map<String, Long>>> map1, Map<String, Map<String, Map<String, Long>>> map2) {
+        for (Map.Entry<String, Map<String, Map<String, Long>>> outerEntry : map2.entrySet()) {
+            String outerKey = outerEntry.getKey();
+            Map<String, Map<String, Long>> innerMap2 = outerEntry.getValue();
+            if (map1.containsKey(outerKey)) {
+                Map<String, Map<String, Long>> innerMap1 = map1.get(outerKey);
+                mergeInnerMaps(innerMap1, innerMap2);
+            } else {
+                map1.put(outerKey, innerMap2);
+            }
+        }
+    }
+
+    private static void mergeInnerMaps(Map<String, Map<String, Long>> innerMap1, Map<String, Map<String, Long>> innerMap2) {
+        for (Map.Entry<String, Map<String, Long>> innerEntry : innerMap2.entrySet()) {
+            String innerKey = innerEntry.getKey();
+            Map<String, Long> innermostMap2 = innerEntry.getValue();
+            if (innerMap1.containsKey(innerKey)) {
+                Map<String, Long> innermostMap1 = innerMap1.get(innerKey);
+                mergeInnermostMaps(innermostMap1, innermostMap2);
+            } else {
+                innerMap1.put(innerKey, innermostMap2);
+            }
+        }
+    }
+
+    private static void mergeInnermostMaps(Map<String, Long> innermostMap1, Map<String, Long> innermostMap2) {
+        for (Map.Entry<String, Long> entry : innermostMap2.entrySet()) {
+            String key = entry.getKey();
+            Long value = entry.getValue();
+            innermostMap1.merge(key, value, Long::sum);
+        }
     }
 }

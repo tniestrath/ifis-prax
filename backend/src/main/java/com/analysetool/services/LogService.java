@@ -899,6 +899,9 @@ public class LogService {
                 if (country != null && !country.isEmpty()) {
                     countryKey = country;
                     regionKey = (region != null && !region.isEmpty()) ? region : "gesamt";
+                    if(!country.equals("DE")) {
+                        regionKey = country;
+                    }
 
                     // Map der Regionen für das gegebene Land holen
                     Map<String, Map<String, Long>> regions = viewsByLocation.computeIfAbsent(countryKey, k -> new HashMap<>());

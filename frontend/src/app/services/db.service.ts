@@ -25,6 +25,8 @@ export enum dbUrl {
   GET_USER_BY_ID = "/users/getById?id=",
   GET_USER_ORIGIN_MAP = "/users/getViewsByLocation?id=",
 
+  GET_USER_ALL_ORIGIN_MAP = "/users/getAllViewsByLocation",
+
   GET_POST = "/posts/getPostWithStatsById?id=",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
@@ -162,5 +164,9 @@ export class DbService {
 
   async getOriginMapByUser(id : number){
     return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id).then(res => res.json());
+  }
+
+  async getOriginMapAll(){
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_ALL_ORIGIN_MAP)).then(res => res.json());
   }
 }

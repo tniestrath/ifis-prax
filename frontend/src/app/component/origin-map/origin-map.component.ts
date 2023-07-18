@@ -1,6 +1,11 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {UserService} from "../../services/user.service";
+import {User} from "../../page/page-einzel/user/user";
+import {DbObject} from "../../services/DbObject";
+import {DbService} from "../../services/db.service";
+import {CookieService} from "ngx-cookie-service";
+import {PdfService} from "../../services/pdf.service";
 
 
 export enum Region {
@@ -38,60 +43,78 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   totalDE: number = 0;
   totalGlobal: number = 0;
 
+constructor(element: ElementRef, db : DbService, us : UserService, cs : CookieService, pdf : PdfService, cdr : ChangeDetectorRef) {
+  super(element, db, us, cs, pdf, cdr);
+
+}
+
   ngOnInit() {
     const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
     if (svgElement) {
-      this.db.getOriginMapByUser(Number.parseInt(UserService.USER_ID)).then(res => {
-        const ip_map = res;
+      // @ts-ignore
+      if (true){
+        console.log("USER")
+        this.db.getOriginMapByUser(Number.parseInt(UserService.USER_ID)).then(res => {
+          this.buildMap(res, svgElement);
+          this.cdr.detectChanges();
+        });
+      } else {
+        console.log("GLOBAL")
+        this.db.getOriginMapAll().then(res => {
+          this.buildMap(res, svgElement);
+          this.cdr.detectChanges();
+        })
+      }
 
-        var global_gesamt = 0;
-        for (const country in ip_map) {
-          var country_gesamt = 0;
-          if (ip_map.hasOwnProperty(country)) {
-            // @ts-ignore
-            const regions = ip_map[country];
-            for (const region in regions) {
-              if (regions.hasOwnProperty(region)) {
-                const cities = regions[region];
+    }
+  }
 
-                var cityArray = [];
-                var region_gesamt = 0;
-                for (const name in cities) {
-                  if (cities.hasOwnProperty(name)) {
-                    const clicks: number = cities[name];
-                    cityArray.push({name, clicks})
-                    if (name == "gesamt") {
-                      region_gesamt = clicks;
-                    }
-                  }
+buildMap(ip_map: { [x: string]: any; hasOwnProperty: (arg0: string) => any; }, svgElement: any){
+    var global_gesamt = 0;
+    for (const country in ip_map) {
+      var country_gesamt = 0;
+      if (ip_map.hasOwnProperty(country)) {
+        // @ts-ignore
+        const regions = ip_map[country];
+        for (const region in regions) {
+          if (regions.hasOwnProperty(region)) {
+            const cities = regions[region];
+
+            var cityArray = [];
+            var region_gesamt = 0;
+            for (const name in cities) {
+              if (cities.hasOwnProperty(name)) {
+                const clicks: number = cities[name];
+                cityArray.push({name, clicks})
+                if (name == "gesamt") {
+                  region_gesamt = clicks;
                 }
-                if (country == "DE") {
-                  if (region == "gesamt") {
-                    this.totalDE = region_gesamt;
-                  }
-                } else {
-                  this.totalGlobal = region_gesamt - this.totalDE;
+              }
+            }
+            if (country == "DE") {
+              if (region == "gesamt") {
+                this.totalDE = region_gesamt;
+              }
+            } else {
+              this.totalGlobal = region_gesamt - this.totalDE;
 
-                }
-                if (region != "gesamt") {
-                  if (country == "BG") {
+            }
+            if (region != "gesamt") {
+              if (country == "BG") {
 
-                  } else if (country == "BE") {
-                    if (region == "BE") {
-                      this.setRegionTooltip(svgElement, "BG", cityArray);
-                      this.setRegionColor(svgElement, "BG", region_gesamt);
-                    }
-                  } else {
-                    this.setRegionTooltip(svgElement, region, cityArray);
-                    this.setRegionColor(svgElement, region, region_gesamt);
-                  }
+              } else if (country == "BE") {
+                if (region == "BE") {
+                  this.setRegionTooltip(svgElement, "BG", cityArray);
+                  this.setRegionColor(svgElement, "BG", region_gesamt);
                 }
+              } else {
+                this.setRegionTooltip(svgElement, region, cityArray);
+                this.setRegionColor(svgElement, region, region_gesamt);
               }
             }
           }
         }
-        this.cdr.detectChanges();
-      });
+      }
     }
   }
 

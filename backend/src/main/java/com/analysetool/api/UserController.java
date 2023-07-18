@@ -196,6 +196,25 @@ public class UserController {
         return obj.toString();
 
     }
+    @GetMapping("/getAllViewsByLocation")
+    public String getAllViewsByLocation() {
+        List<Post> posts= postRepository.findPublishedPosts();
+        HashMap map = new HashMap<>();
+        int count = 0;
+        for(Post post : posts) {
+            if(statRepository.getViewsByLocation(post.getId().intValue()) != null) {
+                if (count == 0) {
+                    map = statRepository.getViewsByLocation(post.getId().intValue());
+                    count++;
+                } else {
+                    mergeMaps(map, statRepository.getViewsByLocation(post.getId().intValue()));
+                }
+            }
+
+        }
+        System.out.println(new JSONObject(map).toString());
+        return new JSONObject(map).toString();
+    }
 
     @GetMapping("/getViewsByLocation")
     public String getViewsByLocation(@RequestParam int id) throws JSONException, ParseException, JsonProcessingException {

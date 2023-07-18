@@ -19,6 +19,7 @@ import {LoginComponent} from "../../component/login/login.component";
 import {User} from "./user/user";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
 import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
+import {DbObject} from "../../services/DbObject";
 
 @Component({
   selector: 'dash-page',

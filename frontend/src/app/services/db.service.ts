@@ -24,6 +24,7 @@ export enum dbUrl {
   GET_USER_BY_LOGINNAME = "/users/getByLogin?u=",
   GET_USER_BY_ID = "/users/getById?id=",
   GET_USER_ORIGIN_MAP = "/users/getViewsByLocation?id=",
+  GET_USER_VIEWS_PER_HOUR = "/getViewsPerHour?id=",
 
   GET_USER_ALL_ORIGIN_MAP = "/users/getAllViewsByLocation",
 
@@ -168,5 +169,9 @@ export class DbService {
 
   async getOriginMapAll(){
     return await fetch(DbService.getUrl(dbUrl.GET_USER_ALL_ORIGIN_MAP)).then(res => res.json());
+  }
+
+  async getClicksByTime(id : number){
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id).then(res => res.json());
   }
 }

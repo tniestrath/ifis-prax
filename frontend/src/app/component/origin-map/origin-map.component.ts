@@ -43,23 +43,16 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   totalDE: number = 0;
   totalGlobal: number = 0;
 
-constructor(element: ElementRef, db : DbService, us : SysVars, cs : CookieService, pdf : PdfService, cdr : ChangeDetectorRef) {
-  super(element, db, us, cs, pdf, cdr);
-
-}
-
   ngOnInit() {
     const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
     if (svgElement) {
       // @ts-ignore
       if (SysVars.CURRENT_PAGE == "Users"){
-        console.log("USER")
         this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID)).then(res => {
           this.buildMap(res, svgElement);
           this.cdr.detectChanges();
         });
       } else{
-        console.log("GLOBAL")
         this.db.getOriginMapAll().then(res => {
           this.buildMap(res, svgElement);
           this.cdr.detectChanges();

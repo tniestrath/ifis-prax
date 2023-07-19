@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "^16.0.2",
     "@angular/router": "^16.0.2",
     "chart.js": "^4.3.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "ngx-cookie-service": "^16.0.0",

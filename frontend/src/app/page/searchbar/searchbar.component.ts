@@ -3,7 +3,7 @@ import {CookieService} from "ngx-cookie-service";
 import {DbObject} from "../../services/DbObject";
 import {DbService} from "../../services/db.service";
 import {SafeUrl} from "@angular/platform-browser";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 
 
 @Component({
@@ -28,7 +28,7 @@ export class SearchbarComponent implements OnInit{
   shown = false;
   logged_in = false;
   constructor(protected element : ElementRef, private cs : CookieService, private db : DbService) {
-    UserService.login.subscribe(user => {
+    SysVars.login.subscribe(user => {
       this.logged_in = true;
     })
   }
@@ -64,7 +64,7 @@ export class SearchbarComponent implements OnInit{
   }
 
   onCancelClick(){
-    if (UserService.ADMIN){
+    if (SysVars.ADMIN){
       this.selectedSearch = new DbObject("0", "");
       this.displaySearchBox = "50px";
       this.onKey("");
@@ -296,5 +296,5 @@ export class SearchbarComponent implements OnInit{
     }
   }
 
-  protected readonly UserService = UserService;
+  protected readonly UserService = SysVars;
 }

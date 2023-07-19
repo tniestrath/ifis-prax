@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { UserService } from './user.service';
+import { SysVars } from './sys-vars-service';
 
 describe('UserService', () => {
-  let service: UserService;
+  let service: SysVars;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(UserService);
+    service = TestBed.inject(SysVars);
   });
 
   it('should be created', () => {

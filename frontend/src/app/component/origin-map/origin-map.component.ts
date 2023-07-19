@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 import {User} from "../../page/page-einzel/user/user";
 import {DbObject} from "../../services/DbObject";
 import {DbService} from "../../services/db.service";
@@ -43,7 +43,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   totalDE: number = 0;
   totalGlobal: number = 0;
 
-constructor(element: ElementRef, db : DbService, us : UserService, cs : CookieService, pdf : PdfService, cdr : ChangeDetectorRef) {
+constructor(element: ElementRef, db : DbService, us : SysVars, cs : CookieService, pdf : PdfService, cdr : ChangeDetectorRef) {
   super(element, db, us, cs, pdf, cdr);
 
 }
@@ -52,13 +52,13 @@ constructor(element: ElementRef, db : DbService, us : UserService, cs : CookieSe
     const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
     if (svgElement) {
       // @ts-ignore
-      if (true){
+      if (SysVars.CURRENT_PAGE == "Users"){
         console.log("USER")
-        this.db.getOriginMapByUser(Number.parseInt(UserService.USER_ID)).then(res => {
+        this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID)).then(res => {
           this.buildMap(res, svgElement);
           this.cdr.detectChanges();
         });
-      } else {
+      } else{
         console.log("GLOBAL")
         this.db.getOriginMapAll().then(res => {
           this.buildMap(res, svgElement);

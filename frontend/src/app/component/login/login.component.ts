@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 import {User} from "../../page/page-einzel/user/user";
 
 @Component({
@@ -29,9 +29,9 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
 
         this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")), {expires: 2});
         this.db.getUserByLogin(ans.substring(ans.indexOf("=") + 1, ans.indexOf("|"))).then(res => {
-          UserService.login.next(res);
+          SysVars.login.next(res);
           console.log("admin?" + res.accountType)
-          UserService.ADMIN = res.accountType == "admin";
+          SysVars.ADMIN = res.accountType == "admin";
 
           this.cdr.detectChanges();
         });

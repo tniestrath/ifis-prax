@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnInit} from '@angular/core';
 import {DbService} from "../../services/db.service";
 import {GridComponent} from "../../grid/grid.component";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 import {CookieService} from "ngx-cookie-service";
 import {PdfService} from "../../services/pdf.service";
 
@@ -21,7 +21,7 @@ export class DashBaseComponent {
 
   constructor(protected element : ElementRef,
               protected db : DbService,
-              protected us : UserService,
+              protected us : SysVars,
               protected cs : CookieService,
               protected pdf : PdfService,
               protected cdr : ChangeDetectorRef) {

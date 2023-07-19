@@ -27,6 +27,7 @@ export enum dbUrl {
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
 
   GET_USER_ALL_ORIGIN_MAP = "/users/getAllViewsByLocation",
+  GET_USER_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
 
   GET_POST = "/posts/getPostWithStatsById?id=",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
@@ -175,5 +176,8 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id).then(res => {
       return res.json();
     });
+  }
+  async getClicksByTimeAll() : Promise<number[]>{
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_ALL_VIEWS_PER_HOUR)).then(res => res.json());
   }
 }

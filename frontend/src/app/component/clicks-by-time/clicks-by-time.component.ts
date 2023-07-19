@@ -16,16 +16,26 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
   chart: any;
 
   labels = [["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],["12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"]];
-  private maxClicks: number = 2;
   ngOnInit(): void {
 
-    this.db.getClicksByTime(Number(1)).then(res => {
-      console.log(res)
-      for (var clicks of res) {
-        this.colors.push( this.interpolateColor("rgb(90, 121, 149)", "rgb(122, 24, 51)", this.maxClicks, clicks));
-      }
-      this.chart = this.createChart("time_clicks", this.colors, this.labels, undefined);
-    })
+    if (SysVars.CURRENT_PAGE == "Users"){
+      this.db.getClicksByTime(Number(SysVars.USER_ID)).then(res => {
+        var max = Math.max(...res);
+        for (var clicks of res) {
+          this.colors.push( this.interpolateColor("rgb(90, 121, 149)", "rgb(122, 24, 51)", max, clicks));
+        }
+        this.chart = this.createChart("time_clicks", this.colors, this.labels, undefined);
+      });
+    } else {
+      this.db.getClicksByTimeAll().then(res => {
+        var max = Math.max(...res);
+        for (var clicks of res) {
+          this.colors.push( this.interpolateColor("rgb(90, 121, 149)", "rgb(122, 24, 51)", max, clicks));
+        }
+        this.chart = this.createChart("time_clicks", this.colors, this.labels, undefined);
+      });
+    }
+
 
 
   }

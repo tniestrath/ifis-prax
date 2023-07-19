@@ -262,7 +262,7 @@ public class UserController {
             }
 
         }
-        return new JSONObject(map).toString();
+        return map.values().toString();
     }
 
 

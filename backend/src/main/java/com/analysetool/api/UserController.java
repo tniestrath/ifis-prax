@@ -4,7 +4,6 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +20,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.*;
 
-import static com.analysetool.util.MapHelper.mergeMaps;
+import static com.analysetool.util.MapHelper.*;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -206,7 +205,7 @@ public class UserController {
         HashMap map = new HashMap<>();
         for(HashMap locMap : posts) {
             if(locMap != null) {
-                mergeMaps(map, locMap);
+                mergeLocationMaps(map, locMap);
             }
 
         }
@@ -224,7 +223,7 @@ public class UserController {
                     map = statRepository.getViewsByLocation(post.getId().intValue());
                     count++;
                 } else {
-                    mergeMaps(map, statRepository.getViewsByLocation(post.getId().intValue()));
+                    mergeLocationMaps(map, statRepository.getViewsByLocation(post.getId().intValue()));
                 }
             }
 
@@ -243,7 +242,7 @@ public class UserController {
                     map = statRepository.getViewsPerHour(post.getId().intValue());
                     count++;
                 } else {
-                    mergeMaps(map, statRepository.getViewsPerHour(post.getId().intValue()));
+                    mergeTimeMaps(map, statRepository.getViewsPerHour(post.getId().intValue()));
                 }
             }
 
@@ -252,13 +251,13 @@ public class UserController {
     }
 
     //ToDo Move method somewhere
-    @GetMapping("/getAllViewsByLocation")
+    @GetMapping("/getAllViewsPerHour")
     public String getAllViewsPerHour() {
         List<HashMap> posts = statRepository.getAllViewsPerHour();
         HashMap map = new HashMap<>();
         for(HashMap locMap : posts) {
             if(locMap != null) {
-                mergeMaps(map, locMap);
+                mergeTimeMaps(map, locMap);
             }
 
         }

@@ -1,12 +1,6 @@
 package com.analysetool.util;
 
-import com.analysetool.Application;
-import com.maxmind.db.CHMCache;
-import com.maxmind.geoip2.DatabaseReader;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 public final class MapHelper {
@@ -24,7 +18,12 @@ public final class MapHelper {
         return INSTANCE;
     }
 
-    public static void mergeMaps(Map<String, Map<String, Map<String, Long>>> map1, Map<String, Map<String, Map<String, Long>>> map2) {
+    /**
+     *
+     * @param map1 this map will be merged into.
+     * @param map2 this map will be merged from.
+     */
+    public static void mergeLocationMaps(Map<String, Map<String, Map<String, Long>>> map1, Map<String, Map<String, Map<String, Long>>> map2) {
         for (Map.Entry<String, Map<String, Map<String, Long>>> outerEntry : map2.entrySet()) {
             String outerKey = outerEntry.getKey();
             Map<String, Map<String, Long>> innerMap2 = outerEntry.getValue();
@@ -37,7 +36,27 @@ public final class MapHelper {
         }
     }
 
-    public static void mergeInnerMaps(Map<String, Map<String, Long>> innerMap1, Map<String, Map<String, Long>> innerMap2) {
+
+    /**
+     *
+     * @param map1 will be merged into.
+     * @param map2 will be merged from.
+     */
+    public static void mergeTimeMaps(Map<String, Long> map1, Map<String, Long> map2) {
+
+        for (Map.Entry<String, Long> entry : map2.entrySet()) {
+            String key = entry.getKey();
+            Long value = entry.getValue();
+            map1.merge(key, value, Long::sum);
+        }
+    }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+    //Only private methods used internally from this point forward.
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static void mergeInnerMaps(Map<String, Map<String, Long>> innerMap1, Map<String, Map<String, Long>> innerMap2) {
         for (Map.Entry<String, Map<String, Long>> innerEntry : innerMap2.entrySet()) {
             String innerKey = innerEntry.getKey();
             Map<String, Long> innermostMap2 = innerEntry.getValue();
@@ -50,11 +69,13 @@ public final class MapHelper {
         }
     }
 
-    public static void mergeInnermostMaps(Map<String, Long> innermostMap1, Map<String, Long> innermostMap2) {
+    private static void mergeInnermostMaps(Map<String, Long> innermostMap1, Map<String, Long> innermostMap2) {
         for (Map.Entry<String, Long> entry : innermostMap2.entrySet()) {
             String key = entry.getKey();
             Long value = entry.getValue();
             innermostMap1.merge(key, value, Long::sum);
         }
     }
+
+
 }

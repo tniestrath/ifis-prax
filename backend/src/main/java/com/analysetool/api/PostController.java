@@ -61,6 +61,7 @@ public class PostController {
     @GetMapping("/publishedPosts")
     public List<Post> getPublishedPosts(){return postRepository.findPublishedPosts();}
 
+    //ToDo Rename
     @GetMapping("/getPostsByAuthorLine")
     public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
 
@@ -91,6 +92,7 @@ public class PostController {
         return list.toString();
     }
 
+    //ToDo Rename
     @GetMapping("/getPostsByAuthorLine2")
     public String PostsByAuthor2(@RequestParam int id) throws JSONException, ParseException {
 
@@ -207,6 +209,7 @@ public class PostController {
         return leViews;
     }
 
+    //ToDo Rename
     @GetMapping("/getPostWithStatsById")
     public String PostsById2(@RequestParam long id) throws JSONException, ParseException {
         if(!postRepository.findById(id).isPresent()) {return null;}
@@ -390,6 +393,7 @@ public class PostController {
         return obj.toString();
     }
 
+    //ToDo Rename
     @GetMapping("/getPostStat")
     public String getStat2(@RequestParam Long id) throws JSONException {
         PostStats Stat = statRepository.getStatByArtID(id);

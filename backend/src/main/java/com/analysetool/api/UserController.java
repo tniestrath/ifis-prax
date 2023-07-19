@@ -265,4 +265,17 @@ public class UserController {
         return new JSONObject(map).toString();
     }
 
+
+    @GetMapping("/getClickTotalOnPostsOfUser")
+    public int getClickTotalOnPostsOfUser (int uid){
+        List<Post> posts= postRepository.findByAuthor(uid);
+        int clicks = 0;
+        for(Post post : posts) {
+            if(post != null) {
+                clicks += statRepository.getClicksByArtId(post.getId());
+            }
+        }
+
+        return clicks;
+    }
 }

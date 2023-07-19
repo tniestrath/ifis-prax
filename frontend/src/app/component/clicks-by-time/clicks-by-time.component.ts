@@ -42,7 +42,6 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
 
   createChart(canvas_id : string, colors : string[], labels: string[][], onClick : EventEmitter<number> | undefined){
     Chart.defaults.color = "#000"
-    Chart.register(ChartDataLabels)
     // @ts-ignore
     return new Chart(canvas_id, {
       type: "doughnut",

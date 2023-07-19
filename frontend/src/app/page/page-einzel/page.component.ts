@@ -40,7 +40,7 @@ export class PageComponent implements OnInit {
 
   getLandingPageCards(){
     return [
-      {type: ClicksByTimeComponent, row: 2, col: 2, height: 2, width: 3},
+      {type: LoginComponent, row: 2, col: 2, height: 2, width: 3},
     ];
   }
 
@@ -54,7 +54,7 @@ export class PageComponent implements OnInit {
       {type: RelevanceComponent, row: 3, col: 6, height: 1, width: 1},
       //@ts-ignore
       {type: PostComponent, row: 1, col: 6, height: 2, width: 1},
-      {type: PotentialComponent, row: 3, col: 2, height: 2, width: 2},
+      {type: ClicksByTimeComponent, row: 3, col: 2, height: 2, width: 2},
       {type: OriginMapComponent, row: 3, col: 4, height: 2, width: 2}
     ];
   }
@@ -72,7 +72,8 @@ export class PageComponent implements OnInit {
   getAdminPageCards() {
     return [
       {type: UserPlanComponent, row: 1, col: 1, height: 2, width: 1},
-      {type: OriginMapComponent, row: 1, col: 2, height: 2, width: 2}
+      {type: OriginMapComponent, row: 1, col: 2, height: 2, width: 2},
+      {type: ClicksByTimeComponent, row: 1, col: 3, height: 2, width: 2}
 
     ];
   }

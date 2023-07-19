@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Post} from "../../Post";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 import {EmptyObject} from "chart.js/dist/types/basic";
 
 
@@ -182,7 +182,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       if ((event?.target as HTMLInputElement).type == "select-one") this.postType = (event?.target as HTMLInputElement).value;
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
-    if (this.data == undefined){this.data = this.db.getUserPostsWithStats(UserService.USER_ID)}
+    if (this.data == undefined){this.data = this.db.getUserPostsWithStats(SysVars.USER_ID)}
     if (this.max_performance == undefined){this.max_performance = this.db.getMaxPerformance()}
     if (this.max_relevance == undefined){this.max_relevance = this.db.getMaxRelevance()}
     Promise.all([this.max_performance, this.max_relevance]).then((value) => {
@@ -231,7 +231,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
           postIds.push(post.id);
         }
         this.createChart(postLabel, fullLabels, postData, postDataRelevance, postDataDate, (index) => {
-          UserService.SELECTED_POST_ID.emit(postIds[index]);
+          SysVars.SELECTED_POST_ID.emit(postIds[index]);
         });
       })
         .finally(() => {this.visibility = "visible"});

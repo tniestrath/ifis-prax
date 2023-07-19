@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Post} from "../../Post";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-post',
@@ -18,13 +18,13 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   formattedARR: number = 0;
 
   ngOnInit(): void {
-    this.db.getUserNewestPost(UserService.USER_ID).then(res => {
+    this.db.getUserNewestPost(SysVars.USER_ID).then(res => {
       Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value => {
         this.formatPost(res, value[0], value[1], false)
       })
     });
 
-    UserService.SELECTED_POST_ID.subscribe( id => {
+    SysVars.SELECTED_POST_ID.subscribe(id => {
       Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value =>
       {
         this.db.getPostById(id).then(res => {

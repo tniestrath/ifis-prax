@@ -2,7 +2,7 @@ import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit} from '@angula
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-clicks',
@@ -210,7 +210,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
     this.c_chart_total = 0;
     this.p_chart_total = 0;
 
-    this.db.getUserClicks(UserService.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsPresse: number}) => {
+    this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsPresse: number}) => {
       this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "Pressemitteilung"], [res.viewsArtikel,res.viewsBlog, res.viewsPresse], undefined);
       this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsPresse)], undefined);
       this.createLegend("clicks-content-box", this.c_chart);

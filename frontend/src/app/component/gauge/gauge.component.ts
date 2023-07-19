@@ -2,7 +2,7 @@ import {Component, EventEmitter, OnInit} from '@angular/core';
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {EmptyObject} from "chart.js/dist/types/basic";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 import {Post} from "../../Post";
 
 @Component({
@@ -121,7 +121,7 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
     this.setToolTip("Ihr Beitrag mit der höchsten berechneten Performance (aufg. Aufrufe der ersten 7 Tage)");
 
     this.db.getMaxPerformance().then(max => {
-      this.db.getUserBestPost(UserService.USER_ID, "performance").then(data => {
+      this.db.getUserBestPost(SysVars.USER_ID, "performance").then(data => {
         let post : Post = data;
         this.createChart(["Score", "Grey"],[((post.performance || 0) / max)*100 , 100-(((post.performance || 0) / max)*100)],null);
         this.postName = post.title;

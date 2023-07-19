@@ -3,7 +3,7 @@ import {ChartComponent, ChartElements} from "../../component/chart/chart.compone
 import {DbService} from "../../services/db.service";
 import {Subject} from "rxjs";
 import {CookieService} from "ngx-cookie-service";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
 import {PostChartComponent} from "../../component/post-chart/post-chart.component";
 import {GaugeComponent} from "../../component/gauge/gauge.component";

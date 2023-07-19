@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Subject} from "rxjs";
 import {DbService} from "../../services/db.service";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 import {CookieService} from "ngx-cookie-service";
 
 
@@ -21,23 +21,23 @@ export class HeaderComponent implements AfterViewInit{
     // COOKIE VALIDATION //
     this.db.validate().then(res  => {
       if (res.user_id.toString().includes("Invalid")) {
-        UserService.USER_ID = "0";
+        SysVars.USER_ID = "0";
         return;
       }
       this.db.getUserById(res.user_id).then(res => {
-        UserService.login.next(res);
-        UserService.USER_ID = "0";
-        UserService.ADMIN = res.accountType == "admin";
+        SysVars.login.next(res);
+        SysVars.USER_ID = "0";
+        SysVars.ADMIN = res.accountType == "admin";
       })
     })
 
-    UserService.login.subscribe(user => {
+    SysVars.login.subscribe(user => {
       if (user.accountType == "admin"){
         this.navElements = ["Overview", "Posts", "Tags", "Users"];
       }else {
         cs.set("user", user.id + ":" + user.displayName);
       }
-      UserService.USER_ID = user.id;
+      SysVars.USER_ID = user.id;
       this.selected.next("Users");
     })
   }

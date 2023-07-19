@@ -10,16 +10,13 @@ import {GaugeComponent} from "../../component/gauge/gauge.component";
 import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
 import {PostComponent} from "../../component/post/post.component";
-import {UserService} from "../../services/user.service";
+import {SysVars} from "../../services/sys-vars-service";
 import {PotentialComponent} from "../../component/potential/potential.component";
-import {TagListComponent} from "../../component/tag-list/tag-list.component";
 import {TagComponent} from "../tag/tag/tag.component";
 import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
 import {User} from "./user/user";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
-import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
-import {DbObject} from "../../services/DbObject";
 
 @Component({
   selector: 'dash-page',
@@ -86,7 +83,7 @@ export class PageComponent implements OnInit {
     } else {
       this.displayContent = "none";
     }
-    UserService.USER_ID = id;
+    SysVars.USER_ID = id;
   }
 
   onSearchInput(value : string){
@@ -101,11 +98,12 @@ export class PageComponent implements OnInit {
 
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
-      console.log(page + " : "+ UserService.USER_ID);
+      SysVars.CURRENT_PAGE = page;
+      console.log(page + " : "+ SysVars.USER_ID);
       this.displayContent = "grid";
       switch (page) {
         case "Users":{
-          if (UserService.USER_ID != "0" && UserService.ADMIN){
+          if (SysVars.USER_ID != "0" && SysVars.ADMIN){
             this.displayContent = "grid";
             this.cardsLoaded.next(this.getUserPageCards());
           } else {

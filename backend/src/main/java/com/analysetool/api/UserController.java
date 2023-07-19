@@ -198,21 +198,15 @@ public class UserController {
     }
     @GetMapping("/getAllViewsByLocation")
     public String getAllViewsByLocation() {
-        List<Post> posts= postRepository.findPublishedPosts();
+        List<HashMap> posts = statRepository.getAllViewsByLocation();
         HashMap map = new HashMap<>();
         int count = 0;
-        for(Post post : posts) {
-            if(statRepository.getViewsByLocation(post.getId().intValue()) != null) {
-                if (count == 0) {
-                    map = statRepository.getViewsByLocation(post.getId().intValue());
-                    count++;
-                } else {
-                    mergeMaps(map, statRepository.getViewsByLocation(post.getId().intValue()));
-                }
+        for(HashMap locMap : posts) {
+            if(locMap != null) {
+                mergeMaps(map, locMap);
             }
 
         }
-        System.out.println(new JSONObject(map).toString());
         return new JSONObject(map).toString();
     }
 

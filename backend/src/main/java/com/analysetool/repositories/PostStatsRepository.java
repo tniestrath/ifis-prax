@@ -150,6 +150,12 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("SELECT s.viewsByLocation FROM PostStats s")
     public List<HashMap> getAllViewsByLocation();
 
+    @Query("SELECT s.viewsPerHour FROM PostStats s WHERE s.artId=:artId")
+    public HashMap getViewsPerHour(int id);
+
+    @Query("SELECT s.viewsPerHour FROM PostStats s")
+    public List<HashMap> getAllViewsPerHour();
+
 
     // Beispiel für eine separate Methode zur Berechnung der Performance
 

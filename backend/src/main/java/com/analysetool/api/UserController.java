@@ -198,11 +198,12 @@ public class UserController {
         return obj.toString();
 
     }
+
+    //ToDo Move method somewhere
     @GetMapping("/getAllViewsByLocation")
     public String getAllViewsByLocation() {
         List<HashMap> posts = statRepository.getAllViewsByLocation();
         HashMap map = new HashMap<>();
-        int count = 0;
         for(HashMap locMap : posts) {
             if(locMap != null) {
                 mergeMaps(map, locMap);
@@ -228,9 +229,40 @@ public class UserController {
             }
 
         }
-        System.out.println(new JSONObject(map).toString());
         return new JSONObject(map).toString();
+    }
 
+    @GetMapping("/getViewsPerHour")
+    public String getViewsPerHour(@RequestParam int id) throws JSONException, ParseException, JsonProcessingException {
+        List<Post> posts= postRepository.findByAuthor(id);
+        HashMap map = new HashMap<>();
+        int count = 0;
+        for(Post post : posts) {
+            if(statRepository.getViewsByLocation(post.getId().intValue()) != null) {
+                if (count == 0) {
+                    map = statRepository.getViewsPerHour(post.getId().intValue());
+                    count++;
+                } else {
+                    mergeMaps(map, statRepository.getViewsPerHour(post.getId().intValue()));
+                }
+            }
+
+        }
+        return new JSONObject(map).toString();
+    }
+
+    //ToDo Move method somewhere
+    @GetMapping("/getAllViewsByLocation")
+    public String getAllViewsPerHour() {
+        List<HashMap> posts = statRepository.getAllViewsPerHour();
+        HashMap map = new HashMap<>();
+        for(HashMap locMap : posts) {
+            if(locMap != null) {
+                mergeMaps(map, locMap);
+            }
+
+        }
+        return new JSONObject(map).toString();
     }
 
 }

@@ -42,6 +42,7 @@ public class Application {
 	public static void main(String[] args) {
 		try{
 		ApplicationContext context = SpringApplication.run(Application.class, args);
+			//ToDo Toten Code aufräumen
 		/*HttpClient httpClient = HttpClients.createDefault();
 		HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-login.php");
 

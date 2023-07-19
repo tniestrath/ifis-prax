@@ -23,6 +23,7 @@ public interface TagStatRepository extends JpaRepository<TagStat, Long> {
     @Query("UPDATE TagStat s SET s.views = :clicks , s.performance=:performance WHERE s.tagId =:tagId")
     void updateClicksAndPerformanceByArtId( Long clicks,  Long tagId, float performance);
 
+    //ToDo Toten Code aufräumen
     /*@Modifying
     @Transactional
     @Query("UPDATE TagStat  s SET s.views =:clicks, s.searchSuccess =:searchSuccess, s.performance =:performance, s.searchSuccessRate =:searchSuccessRate WHERE s.artId = :artId")

@@ -139,12 +139,13 @@ public class UserController {
     //STATS
 
 
-
+    //ToDo Clean
     @GetMapping("/{userId}")
     public UserStats getUserStats(@PathVariable("userId") Long userId) {
         return userStatsRepository.findByUserId(userId);
     }
 
+    //ToDo Clean
     @GetMapping("/getUserStats")
     public String getUserStat(@RequestParam Long id) throws JSONException {
         JSONObject obj = new JSONObject();

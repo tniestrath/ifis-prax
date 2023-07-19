@@ -65,6 +65,7 @@ public class LoginController {
             for (int i = 0; i < allSetCookie.length; i++) {
                 System.out.println(responseCookie);
             }
+            //ToDo Toten Code aufräumen
             /*for (int i = 0; i < headers.length; i++) {
                 System.out.println("Name: " + headers[i].getName() + ", Value: " + headers[i].getValue());
             }*/

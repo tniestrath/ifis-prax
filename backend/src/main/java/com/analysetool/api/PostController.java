@@ -163,7 +163,7 @@ public class PostController {
                         obj.put("relevance", 0);
                     }
 
-
+                    //ToDo Toten Code aufräumen
                /* if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
                     String currentId = list.getJSONObject(list.length() - 1).getString("title");
                    // double currentCount = list.getJSONObject(list.length() - 1).getDouble("performance");
@@ -282,6 +282,7 @@ public class PostController {
 
     //STATS
 
+    //ToDo Toten Code aufräumen
    /* @GetMapping("/{id}")
     public Optional<PostStats> getStat(@PathVariable Long id) {
         return statRepository.findById(id);
@@ -306,6 +307,7 @@ public class PostController {
         return statRepository.getPerformanceByArtID(id);
     }
 
+    //ToDo Move -> Views eines Users sollten nicht im PostController sein.
     @GetMapping("/getViewsOfUser")
     public long getViewsOfUserById(@RequestParam Long id){
         List<Post> posts = postRepo.findByAuthor(id.intValue());
@@ -409,7 +411,6 @@ public class PostController {
 
         return obj.toString();
     }
-
 
     @GetMapping("/getNewestStatsByAuthor")
     public String getNewestStatsByAuthor(@RequestParam Long id) throws JSONException{

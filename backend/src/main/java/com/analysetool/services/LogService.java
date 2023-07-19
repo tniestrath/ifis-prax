@@ -27,6 +27,8 @@ import com.analysetool.util.IPHelper;
 @Service
 public class LogService {
 
+
+
     private PostRepository postRepository;
     private PostStatsRepository statsRepo;
     private TagStatRepository tagStatRepo;
@@ -67,6 +69,8 @@ public class LogService {
     private int lineCounter = 0;
     private int lastLineCounter = 0;
     private boolean liveScanning ;
+
+    //ToDo Toten Code aufräumen
     //private String Pfad=Application.class.getClassLoader().getResource("access.log").getPath();
     private String Pfad = Paths.get(Application.class.getClassLoader().getResource("access.log").toURI()).toString();
 
@@ -116,6 +120,7 @@ public class LogService {
 
         }else {SystemVariabeln = sysVarRepo.findAll().get(sysVarRepo.findAll().size()-1);
 
+            //ToDo Toten Code aufräumen
             //if(SystemVariabeln.getDate().getDayOfYear()!=(LocalDateTime.now().getDayOfYear())){
                 liveScanning= (getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0).equals(SystemVariabeln.getLogDate().withSecond(0).withNano(0)));
                 System.out.println(getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0)+ "  "+SystemVariabeln.getLogDate().withSecond(0).withNano(0));
@@ -152,7 +157,7 @@ public class LogService {
             liveScanning = false;
 
         }else {SystemVariabeln = sysVarRepo.findAll().get(sysVarRepo.findAll().size()-1);
-
+            //ToDo Toten Code aufräumen
            // if(SystemVariabeln.getDate().getDayOfYear()!=(LocalDateTime.now().getDayOfYear())){
             liveScanning= (getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0).equals(SystemVariabeln.getLogDate().withSecond(0).withNano(0)));
                 SystemVariabeln.setDate(LocalDateTime.now());
@@ -346,7 +351,9 @@ public class LogService {
         if (patternNumber==7){
 
             System.out.println(postRepository.getIdByName(matcher.group(1)+" "+matcher.group(1))+" PROCESSING 5.1");
-           /* try{
+
+            //ToDo Toten Code aufräumen
+            /*try{
 
                 long id =postRepository.getIdByName(matcher.group(1));
                 //hier nach TagSuchen WIP
@@ -384,6 +391,7 @@ public class LogService {
         if (patternNumber==8){
 
             System.out.println(postRepository.getIdByName(matcher.group(1))+matcher.group(1)+" PROCESSING 5.2");
+            //ToDo Toten Code aufräumen
             /*try{
                 long id =postRepository.getIdByName(matcher.group(1));
                 checkTheTag(id,true);
@@ -528,6 +536,7 @@ public class LogService {
         return viewsPerHour;
     }
 
+    //ToDo Toten Code aufräumen
   /*  public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
         try{
             long id =postRepository.getIdByName(matcher.group(6));
@@ -559,7 +568,7 @@ public class LogService {
             System.out.println("IGNORE "+matcher.group(2).substring(0,matcher.group(2).length()-1)+" BECAUSE: "+e.getMessage());
     }
     }*/
-
+    //ToDo Toten Code aufräumen
    /* public void UpdatePerformanceAndViews(Matcher matcher) {
         try{
             long id =postRepository.getIdByName(matcher.group(6));

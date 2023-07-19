@@ -45,6 +45,7 @@ public class WPUser {
     private String img;
     // Konstruktoren, Getter und Setter
 
+    //ToDo Toten Code aufräumen
     /*public WPUser(Long id, String displayName, String activationKey, String email, String login, String nicename, String password, LocalDateTime registered, Integer status, String url) {
         this.id = id;
         this.displayName = displayName;

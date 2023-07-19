@@ -36,7 +36,6 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
 
   createChart(labels: string[], fullLabels : string[], data: number[], data2: number[], data3: string[], onClick: (index : number) => void){
-    Chart.defaults.color = "#000"
     if (this.chart){
       this.chart.destroy();
     }
@@ -124,6 +123,9 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
           }
         },
         plugins: {
+          datalabels: {
+            display: false
+          },
           title: {
             display: true,
             text: "",

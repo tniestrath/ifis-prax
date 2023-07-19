@@ -20,6 +20,12 @@ export class AppComponent {
 
   constructor() {
     Chart.register(ChartDataLabels);
+    Chart.defaults.set('plugins.datalabels', {
+      color: '#fff'
+    });
+    Chart.defaults.animation = {
+      duration: 1500
+    }
   }
 
   select(selection : string) {

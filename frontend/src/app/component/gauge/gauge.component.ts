@@ -82,6 +82,9 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
           }
         },
         plugins: {
+          datalabels: {
+            display: false
+          },
           title: {
             display: true,
             text: "",

@@ -19,7 +19,6 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
   p_chart_total : number  = 0;
 
   createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){
-    Chart.defaults.color = "#000"
 
     const donughtInner  = {
       id: "donughtInner",

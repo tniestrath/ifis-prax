@@ -15,7 +15,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
   colors : string[] = [];
   chart: any;
 
-  labels = [["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],["12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"]];
+  labels = [["12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],["12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"]];
   ngOnInit(): void {
 
     if (SysVars.CURRENT_PAGE == "Users"){
@@ -41,7 +41,6 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
   }
 
   createChart(canvas_id : string, colors : string[], labels: string[][], onClick : EventEmitter<number> | undefined){
-    Chart.defaults.color = "#000"
     // @ts-ignore
     return new Chart(canvas_id, {
       type: "doughnut",

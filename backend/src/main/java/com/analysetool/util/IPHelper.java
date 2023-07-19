@@ -1,12 +1,10 @@
-package com.analysetool;
+package com.analysetool.util;
 
+import com.analysetool.Application;
 import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CityResponse;
-import com.maxmind.geoip2.record.City;
-import com.maxmind.geoip2.record.Country;
-import com.maxmind.geoip2.record.Subdivision;
 
 import java.io.File;
 import java.io.IOException;

@@ -22,7 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.analysetool.IPHelper;
+import com.analysetool.util.IPHelper;
 
 @Service
 public class LogService {

@@ -58,8 +58,9 @@ export class SearchbarComponent implements OnInit{
 
     this.getImgSrc(this.selectedSearch.id);
 
-    // @ts-ignore
-    this.filter_dropdown.style.display = "none";
+    if (this.filter_dropdown){
+      this.filter_dropdown.style.display = "none";
+    }
     this.shown = false;
   }
 

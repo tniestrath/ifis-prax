@@ -32,6 +32,7 @@ public class LoginController {
      * @return String representation of the WordPress-login-cookie value
      * @throws IOException
      */
+
     @GetMapping("/login")
     public String login(@RequestParam String user, String pass) throws IOException {
         HttpClient httpClient = HttpClients.createDefault();

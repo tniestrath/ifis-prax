@@ -39,6 +39,13 @@ public class SearchStats {
         this.clickedPost = clickedPost;
     }
 
+    public SearchStats(String ipHashed, String searchString, LocalDateTime searchTime, String location) {
+        this.ipHashed = ipHashed;
+        this.searchString = searchString;
+        this.searchTime = searchTime;
+        this.location = location;
+    }
+
     public SearchStats(){}
 
     public Long getSearchId() {

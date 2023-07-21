@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.analysetool.util.IPHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class LogService {
@@ -56,6 +57,7 @@ public class LogService {
     private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/";
     private String PresseViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2})*GET /pressemitteilung/(\\S+)/";
     private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/*s=";
+    private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+)/";
     Pattern pattern1_1 = Pattern.compile(ArtikelViewPattern);
     Pattern pattern1_2 = Pattern.compile(ArtikelSSPattern);
     Pattern pattern2_1 = Pattern.compile(BlogViewPattern);
@@ -65,6 +67,7 @@ public class LogService {
     Pattern pattern5_1 = Pattern.compile(PresseViewPatter);
     Pattern pattern5_2= Pattern.compile(PresseSSViewPatter);
     Pattern pattern4_2=Pattern.compile(RedirectUserPattern);
+    Pattern pattern6_1= Pattern.compile(SearchPattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -76,6 +79,8 @@ public class LogService {
 
     private Calendar kalender = Calendar.getInstance();
     private int aktuellesJahr = kalender.get(Calendar.YEAR);
+    @Autowired
+    private SearchStatsRepository searchStatRepo;
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo) throws URISyntaxException {
@@ -276,6 +281,10 @@ public class LogService {
             if(matcher4_2.find()){
                 processLine(line,9,matcher4);
             }
+            Matcher matcher6_1=pattern6_1.matcher(line);
+            if(matcher6_1.find()){
+                processLine(line,10,matcher6_1);
+            }
 
 
 
@@ -447,6 +456,33 @@ public class LogService {
                 }
 
             };
+        }
+        if(patternNumber==10){
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            String ip = matcher.group(1);
+            String ipHash = bCryptPasswordEncoder.encode(ip);
+            IPHelper.getInstance();
+            String country = IPHelper.getCountryISO(ip);
+            String region = IPHelper.getSubISO(ip);
+            String city = IPHelper.getCityName(ip);
+            String location="";
+            if(country!=null){
+                location=country;
+                if(region!=null)
+                    location= location+" : "+region;
+                if(city!=null)
+                    location = location+" : "+city;
+            }
+            String day = matcher.group(2);
+            String month = getMonthNumber(matcher.group(3));
+            String year = matcher.group(4);
+            String time = matcher.group(5);
+            LocalDateTime dateTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
+            searchStatRepo.save(new SearchStats(ipHash,matcher.group(6),dateTime,location));
+            System.out.println("DIESE-->"+dateTime);
+
+
+
         }
 
 

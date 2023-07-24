@@ -13,7 +13,6 @@ import {Post} from "../../Post";
 export class GaugeComponent extends DashBaseComponent implements OnInit{
 
   canvas_id: string = "gauge";
-  chart: any;
 
   colors : string[] = ["rgb(149,29,64)", "#5A7995"];
   cutout: string = "60%";

@@ -12,7 +12,6 @@ import {Post} from "../../../Post";
 })
 export class RelevanceComponent extends DashBaseComponent {
   canvas_id: string = "rel";
-  chart: any;
 
   colors : string[] = ["rgb(149,29,64)", "#5A7995"];
   cutout: string = "80%";

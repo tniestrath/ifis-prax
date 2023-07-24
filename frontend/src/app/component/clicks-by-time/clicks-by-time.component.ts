@@ -13,7 +13,6 @@ import {SysVars} from "../../services/sys-vars-service";
 export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
 
   colors : string[] = [];
-  chart: any;
 
   labels = [["12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],["12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"]];
   ngOnInit(): void {
@@ -24,7 +23,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
         for (var clicks of res) {
           this.colors.push( this.interpolateColor("rgb(90, 121, 149)", "rgb(122, 24, 51)", max, clicks));
         }
-        this.chart = this.createChart("time_clicks", this.colors, this.labels, undefined);
+        this.chart = this.createChart2("time_clicks", [], undefined);
       });
     } else if (SysVars.CURRENT_PAGE == "Overview") {
       this.db.getClicksByTimeAll().then(res => {
@@ -32,9 +31,54 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
         for (var clicks of res) {
           this.colors.push( this.interpolateColor("rgb(90, 121, 149)", "rgb(122, 24, 51)", max, clicks));
         }
-        this.chart = this.createChart("time_clicks", this.colors, this.labels, undefined);
+        this.chart = this.createChart2("time_clicks", [], undefined);
       });
     }
+  }
+  createChart2(canvas_id : string, data: number[], onClick : EventEmitter<number> | undefined){
+    // @ts-ignore
+    return new Chart(canvas_id, {
+      type: "bar",
+      data: {
+        labels : ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+                 "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
+        datasets: [{
+          data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+          backgroundColor: "#000",
+          borderRadius: 5,
+          borderWidth: 5,
+        }]
+      },
+      options: {
+        aspectRatio: 1,
+        plugins: {
+          title: {
+            display: false,
+            text: "",
+            position: "top",
+            fullSize: true,
+            font: {
+              size: 50,
+              weight: "bold",
+              family: 'Times New Roman'
+            }
+          },
+          legend: {
+            onClick: (e) => null,
+            display: false
+          },
+          tooltip: {
+            displayColors: false,
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            }
+          },
+        }
+      }
+    })
   }
 
   createChart(canvas_id : string, colors : string[], labels: string[][], onClick : EventEmitter<number> | undefined){

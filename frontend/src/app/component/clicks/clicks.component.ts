@@ -9,7 +9,7 @@ import {SysVars} from "../../services/sys-vars-service";
   templateUrl: './clicks.component.html',
   styleUrls: ['./clicks.component.css', "../../component/dash-base/dash-base.component.css"]
 })
-export class ClicksComponent extends DashBaseComponent implements OnInit, OnDestroy, AfterViewInit{
+export class ClicksComponent extends DashBaseComponent implements OnInit, AfterViewInit{
 
   colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
   c_chart: any;
@@ -223,7 +223,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, OnDest
     this.cdr.detectChanges();
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
     if (this.c_chart != undefined) {
       this.c_chart.destroy();
     }

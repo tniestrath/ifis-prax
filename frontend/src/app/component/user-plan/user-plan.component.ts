@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
@@ -11,10 +11,13 @@ import {EmptyObject} from "chart.js/dist/types/basic";
 export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
   colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
-  chart: any;
   chart_total: any;
 
   ngOnInit(): void {
+    if (this.chart != undefined) {
+      this.chart.destroy();
+    }
+
     this.chart = this.createChart("user_plan_chart", ["Basic", "Plus", "Premium"],[1173,223,35], undefined);
     this.createLegend("user-plan-content-box", this.chart);
     this.chart_total = 1173 + 223 + 35;
@@ -166,4 +169,5 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     legendBox?.appendChild(legendContainer);
     legendContainer.appendChild(ul);
   }
+
 }

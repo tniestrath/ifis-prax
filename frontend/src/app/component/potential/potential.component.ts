@@ -8,7 +8,6 @@ import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
   styleUrls: ['./potential.component.css', "../../component/dash-base/dash-base.component.html"]
 })
 export class PotentialComponent extends DashBaseComponent implements OnInit, OnDestroy{
-  chart: any;
   canvas_id : string = "potential-chart";
   colors : string[] = ["#5A7995", "#941C3E"];
 
@@ -88,10 +87,6 @@ export class PotentialComponent extends DashBaseComponent implements OnInit, OnD
 
   ngOnInit(): void {
     this.createChart(["Artikel","Blogeinträge", "Pressemitteilungen", "Interaktion"], [2,4,5, 8], [5,5,5,5], null);
-  }
-
-  ngOnDestroy(): void {
-    this.chart.destroy();
   }
 
 

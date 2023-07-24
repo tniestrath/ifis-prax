@@ -16,7 +16,6 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
   visibility: string = "hidden";
 
-  chart : any;
   canvas_id: string = "chart";
 
   timeSpan : string = "all_time";

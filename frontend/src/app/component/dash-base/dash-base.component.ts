@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {DbService} from "../../services/db.service";
 import {GridComponent} from "../../grid/grid.component";
 import {SysVars} from "../../services/sys-vars-service";
@@ -10,7 +10,7 @@ import {PdfService} from "../../services/pdf.service";
   styleUrls: ['./dash-base.component.css'],
   templateUrl: 'dash-base.component.html'
 })
-export class DashBaseComponent {
+export class DashBaseComponent implements OnDestroy{
 
   @Input() protected clicked : {} | undefined;
   @Input() protected grid_reference : GridComponent | undefined;
@@ -18,6 +18,7 @@ export class DashBaseComponent {
 
   protected tooltip : HTMLSpanElement;
   protected helpButton : HTMLElement;
+  protected chart: any;
 
   constructor(protected element : ElementRef,
               protected db : DbService,
@@ -75,5 +76,12 @@ export class DashBaseComponent {
     if (!enabled){
       this.helpButton.style.display = "none";
     }
+  }
+
+  ngOnDestroy(): void {
+    if (this.chart != undefined) {
+      this.chart?.destroy();
+    }
+    this.cdr.detectChanges();
   }
 }

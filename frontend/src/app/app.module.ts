@@ -5,10 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PolarChartComponent } from './component/polar-chart/polar-chart.component';
 import { HeaderComponent } from './page/header/header.component';
-import { ChartComponent } from './component/chart/chart.component';
 import { CounterComponent } from './component/counter/counter.component';
 import { GaugeComponent } from './component/gauge/gauge.component';
-import { PageKennzahlenComponent } from './page/page-kennzahlen/page-kennzahlen.component';
 import { PageTagComponent } from './page/tag/page-tag/page-tag.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
@@ -42,10 +40,8 @@ import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time
     AppComponent,
     PolarChartComponent,
     HeaderComponent,
-    ChartComponent,
     CounterComponent,
     GaugeComponent,
-    PageKennzahlenComponent,
     PageTagComponent,
     TagComponent,
     SearchbarComponent,

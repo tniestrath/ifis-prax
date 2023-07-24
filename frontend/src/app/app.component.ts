@@ -23,9 +23,9 @@ export class AppComponent {
     Chart.defaults.set('plugins.datalabels', {
       color: '#fff'
     });
-    Chart.defaults.animation = {
-      duration: 1500
-    }
+    // @ts-ignore
+    Chart.defaults.animation.duration = 2000;
+
   }
 
   select(selection : string) {

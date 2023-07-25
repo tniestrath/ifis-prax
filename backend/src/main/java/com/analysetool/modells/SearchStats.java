@@ -12,7 +12,7 @@ public class SearchStats {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long searchId;
 
-    @Column(length = 45)
+    @Column(length = 250)
     private String ipHashed;
 
     @Column
@@ -44,6 +44,7 @@ public class SearchStats {
         this.searchString = searchString;
         this.searchTime = searchTime;
         this.location = location;
+        this.searchSuccessFlag=false;
     }
 
     public SearchStats(){}

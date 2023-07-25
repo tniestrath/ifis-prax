@@ -1,5 +1,6 @@
 package com.analysetool.api;
 
+import com.analysetool.util.ConfigReader;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
+
 public class LoginController {
 
     /**
@@ -36,7 +38,7 @@ public class LoginController {
     @GetMapping("/login")
     public String login(@RequestParam String user, String pass) throws IOException {
         HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-login.php");
+        HttpPost httpPost = new HttpPost(ConfigReader.getInstance().getProperty("wp-login"));
 
         String responseCookie = "";
 
@@ -80,7 +82,7 @@ public class LoginController {
     @GetMapping("/validate")
     public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-json/server_variables/custom-endpoint");
+        HttpPost httpPost = new HttpPost(ConfigReader.getInstance().getProperty("validate"));
 
         String responseBody = "INVALID";
         try {

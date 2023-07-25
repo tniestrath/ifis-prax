@@ -3,6 +3,7 @@ package com.analysetool.services;
 import com.analysetool.Application;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.util.ConfigReader;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,9 +74,10 @@ public class LogService {
     private int lastLineCounter = 0;
     private boolean liveScanning ;
 
-    //ToDo Toten Code aufräumen
+    //Toter Code wird bis zum fertigen ConfigReader hier gelassen.
     //private String Pfad=Application.class.getClassLoader().getResource("access.log").getPath();
-    private String Pfad = Paths.get(Application.class.getClassLoader().getResource("access.log").toURI()).toString();
+    //private String Pfad = Paths.get(Application.class.getClassLoader().getResource("access.log").toURI()).toString();
+    private String Pfad = ConfigReader.getInstance().getProperty("access.log");
 
     private Calendar kalender = Calendar.getInstance();
     private int aktuellesJahr = kalender.get(Calendar.YEAR);

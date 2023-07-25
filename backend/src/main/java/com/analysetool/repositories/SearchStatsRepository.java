@@ -13,11 +13,11 @@ public interface SearchStatsRepository extends JpaRepository<SearchStats, Long> 
     // Hier können Sie benutzerdefinierte Methoden für spezifische Abfragen definieren
 
 
-    Optional<SearchStats> findByIpHashedAndAndSearchTime(String ipHashed, LocalDateTime SearchTime);
+    //Optional<SearchStats> findByIpHashedAndAndSearchTime(String ipHashed, LocalDateTime SearchTime);
 
 
-    Optional<SearchStats> findByIpHashedAndAndSearchStringAnAndSearchSuccessFlag(String ipHashed, String SearchString,boolean SearchSuccessFlag);
+    //Optional<SearchStats> findByIpHashedAndAndSearchStringAnAndSearchSuccessFlag(String ipHashed, String SearchString,boolean SearchSuccessFlag);
 
-    @Query("SELECT s FROM SearchStat s WHERE DATE(s.search_time) = :date")
+    @Query("SELECT s FROM SearchStats s WHERE DATE(s.searchTime) = :date")
     List<SearchStats> findAllBySearchDate(@Param("date") LocalDate date);
 }

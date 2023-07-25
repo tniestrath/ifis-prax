@@ -44,8 +44,8 @@ public class LogService {
     private BufferedReader br;
     private String path = "";
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
-    private String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/.*s="; //search +1, view +1,(bei match) vor blog view pattern
-    private String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/.*s=";//search +1, view +1,(bei match) vor artikel view pattern
+    private String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/.*s=(\\S+)/"; //search +1, view +1,(bei match) vor blog view pattern
+    private String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/.*s=(\\S+)/";//search +1, view +1,(bei match) vor artikel view pattern
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
     private String BlogViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/";
     private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
@@ -56,7 +56,7 @@ public class LogService {
     //private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+)";//Artikel view +1 bei match
     private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/";
     private String PresseViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2})*GET /pressemitteilung/(\\S+)/";
-    private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/*s=";
+    private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)/";
     private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+)/";
     Pattern pattern1_1 = Pattern.compile(ArtikelViewPattern);
     Pattern pattern1_2 = Pattern.compile(ArtikelSSPattern);
@@ -316,6 +316,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
+            updateSearchStats(matcher);
         }
         if (patternNumber==3){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
@@ -328,6 +329,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 2.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
+            updateSearchStats(matcher);
         }
 
         if(patternNumber==5){
@@ -435,6 +437,7 @@ public class LogService {
             }*/
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
+            updateSearchStats(matcher);
         }
 
         if(patternNumber==9){
@@ -485,6 +488,23 @@ public class LogService {
 
         }
 
+
+    }
+
+    public void updateSearchStats(Matcher matcher){
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+        LocalDate date = LocalDate.now();  // Replace with the date you want to search for
+        List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
+
+        for(SearchStats s : searchStatsForDate){
+            if(bCryptPasswordEncoder.matches(matcher.group(1), s.getIpHashed())&& !s.getSearchSuccessFlag() &&s.getSearchString().equals(matcher.group(6))){
+                s.setSearchSuccessFlag(true);
+                long id = postRepository.getIdByName(matcher.group(6));
+                s.setClickedPost(String.valueOf(id));
+                searchStatRepo.save(s);
+            }
+        }
 
     }
     public void updatePerformanceViewsSearchSuccess(Matcher matcher) {

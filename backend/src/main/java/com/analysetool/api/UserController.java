@@ -255,6 +255,7 @@ public class UserController {
     @GetMapping("/getAllViewsPerHour")
     public String getAllViewsPerHour() {
         List<HashMap> posts = statRepository.getAllViewsPerHour();
+
         HashMap map = new HashMap<>();
         for(HashMap locMap : posts) {
             if(locMap != null) {
@@ -262,7 +263,11 @@ public class UserController {
             }
 
         }
-        return map.values().toString();
+        Long[] orderedViews = new Long[24];
+        for(int i=0; i<24; i++) {
+            orderedViews[i] = (Long) map.get("" + i);
+        }
+        return Arrays.toString(orderedViews);
     }
 
 

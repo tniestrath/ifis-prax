@@ -1,8 +1,6 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {User} from "../../page/page-einzel/user/user";
 import {SysVars} from "../../services/sys-vars-service";
 
 @Component({
@@ -98,78 +96,4 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
       }
     })
   }
-
-  createChart(canvas_id : string, colors : string[], labels: string[][], onClick : EventEmitter<number> | undefined){
-    // @ts-ignore
-    return new Chart(canvas_id, {
-      type: "doughnut",
-      data: {
-        datasets: [{
-          rotation: -15,
-          data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-          backgroundColor: this.colors.slice(0, 11),
-          borderRadius: 5,
-          borderWidth: 5,
-        },
-          {
-            rotation: -15,
-            data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            backgroundColor: this.colors.slice(12),
-            borderRadius: 5,
-            borderWidth: 5
-          }]
-      },
-      options: {
-        aspectRatio: 1,
-        cutout: "20%",
-        plugins: {
-          datalabels: {
-            color: "#ffffff",
-            formatter: function(value, context) {
-              // @ts-ignore
-              return  labels[context.datasetIndex][context.dataIndex];
-            }
-          },
-          title: {
-            display: false,
-            text: "",
-            position: "top",
-            fullSize: true,
-            font: {
-              size: 50,
-              weight: "bold",
-              family: 'Times New Roman'
-            }
-          },
-          legend: {
-            onClick: (e) => null,
-            display: false
-          },
-          tooltip: {
-            displayColors: false,
-            titleFont: {
-              size: 20
-            },
-            bodyFont: {
-              size: 15
-            }
-          },
-        }
-      }
-    })
-  }
-
-  interpolateColor(color1 : string, color2 : string, steps : number, step : number) {
-    // @ts-ignore
-    var color1Arr = color1.match(/\d+/g).map(Number);
-    // @ts-ignore
-    var color2Arr = color2.match(/\d+/g).map(Number);
-
-    var r = Math.round(color1Arr[0] + (color2Arr[0] - color1Arr[0]) * (step / steps));
-    var g = Math.round(color1Arr[1] + (color2Arr[1] - color1Arr[1]) * (step / steps));
-    var b = Math.round(color1Arr[2] + (color2Arr[2] - color1Arr[2]) * (step / steps));
-
-    return 'rgb(' + r + ',' + g + ',' + b + ')';
-  }
-
 }

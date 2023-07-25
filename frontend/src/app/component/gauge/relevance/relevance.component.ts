@@ -2,6 +2,8 @@ import {Component} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {SysVars} from "../../../services/sys-vars-service";
 import {Post} from "../../../Post";
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
+import {EmptyObject} from "chart.js/dist/types/basic";
 
 @Component({
   selector: 'dash-relevance',
@@ -12,48 +14,121 @@ export class RelevanceComponent extends DashBaseComponent {
   canvas_id: string = "rel";
 
   colors : string[] = ["rgb(149,29,64)", "#5A7995"];
-  cutout: string = "80%";
 
   type : string = "rel";
-  postID : string = "10445";
   postName: string = "";
 
   createChart(value : number, max : number){
 
-    const canvas  = document.getElementById(this.canvas_id);
+    const canvas  = document.querySelector("#rel");
     // @ts-ignore
     var ctx : CanvasRenderingContext2D = (canvas as HTMLCanvasElement).getContext("2d");
     let img = new Image();
     img.src = "../../assets/flame_thicc.png";
 
     // @ts-ignore
-    canvas.height = canvas.width*0.8;
+    let fillHeight = (value / max) * 100;
 
-    ctx.fillStyle = this.colors[1];
-    // @ts-ignore
-    let fillHeight = (value / max) * canvas.height;
-    // @ts-ignore
-    ctx.fillRect(0, 0, canvas.width , canvas.height - fillHeight - 5);
+    const relevanceChartTextAndDecoration  = {
+      id: "relevanceChartTextAndDecoration",
+      afterDatasetsDraw(chart: Chart, args: EmptyObject, options: 0, cancelable: false) {
+        const {ctx, data, chartArea: {top, bottom, left, right, width, height}, scales: {r}} = chart;
+        ctx.save();
 
-    ctx.fillStyle = this.colors[0];
-    // @ts-ignore
-    ctx.fillRect(0, canvas.height - fillHeight, canvas.width , canvas.height);
+        ctx.globalCompositeOperation = 'destination-atop';
+        // @ts-ignore
+        ctx.drawImage(img, 10,20, canvas.width-20, canvas.height-20);
+        ctx.save();
 
-    ctx.globalCompositeOperation = 'destination-in';
+        ctx.globalCompositeOperation = 'source-over';
 
-    // @ts-ignore
-    ctx.drawImage(img, canvas.width*0.1+5,5, canvas.height-10, canvas.height-5);
-    ctx.save();
+        ctx.fillStyle = "#000";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        // @ts-ignore
+        ctx.font = canvas.height/3 + "px sans-serif";
+        // @ts-ignore
+        ctx.fillText(  ((value / max) * 100).toFixed(), canvas.width/2, canvas.height+5);
+      }
+    }
 
-    ctx.globalCompositeOperation = 'source-over';
-
-    ctx.fillStyle = "#000";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "bottom";
-    // @ts-ignore
-    ctx.font = canvas.height/3 + "px sans-serif";
-    // @ts-ignore
-    ctx.fillText(  ((value / max) * 100).toFixed(), canvas.width/2, canvas.height+5);
+    this.chart = new Chart(this.canvas_id, {
+      type: "bar",
+      data: {
+        labels : [""],
+        datasets: [{
+          label: "Red",
+          data: [fillHeight],
+          backgroundColor: "rgb(122, 24, 51)",
+          borderRadius: 5,
+          borderWidth: 6,
+          barThickness: 300,
+          borderColor: "#fff"
+          },
+          {
+          label: "Blue",
+          // @ts-ignore
+          data: [100 - fillHeight],
+          backgroundColor: "rgb(90, 121, 149)",
+          borderRadius: 5,
+          borderWidth: 0,
+          barThickness: 300
+        }]
+      },
+      options: {
+        aspectRatio: 1,
+        scales : {
+          x: {
+            stacked : true,
+            display: false
+          },
+          y: {
+            stacked : true,
+            display: false,
+            max : 100
+          }
+        },
+        plugins: {
+          datalabels: {
+            display: false
+          },
+          title: {
+            display: false,
+            text: "",
+            position: "top",
+            fullSize: true,
+            font: {
+              size: 50,
+              weight: "bold",
+              family: 'Times New Roman'
+            }
+          },
+          legend: {
+            onClick: (e) => null,
+            display: false
+          },
+          tooltip: {
+            displayColors: false,
+            enabled: false,
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            }
+          },
+        },
+        interaction: {
+          mode: "nearest"
+        },
+        events: [],
+        onHover(event: ChartEvent, elements: ActiveElement[], chart: Chart) {
+          return;
+        },
+      },
+      // @ts-ignore
+      plugins: [relevanceChartTextAndDecoration]
+    })
   }
 
   ngOnInit(): void {

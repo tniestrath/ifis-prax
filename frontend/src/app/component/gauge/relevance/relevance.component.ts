@@ -1,6 +1,4 @@
-import {AfterViewInit, Component, EventEmitter} from '@angular/core';
-import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import {EmptyObject} from "chart.js/dist/types/basic";
+import {Component} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {SysVars} from "../../../services/sys-vars-service";
 import {Post} from "../../../Post";

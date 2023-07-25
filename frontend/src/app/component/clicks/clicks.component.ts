@@ -48,14 +48,14 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
         if (total > 1000){
           totalText = +parseFloat(String(total / 1000)).toFixed( 1 ) + "K";
         }
-        if (total > 9999){
+        else if (total > 9999){
           totalText = (total/1000).toFixed() + "K";
         }
-        if (total > 1000000){
+        else if (total > 1000000){
           totalText = (total/1000000).toFixed(1) + "M";
         }
-        if (total > 9999999){
-          totalText = (total/10000000).toFixed() + "M";
+        else if (total > 9999999){
+          totalText = (total/1000000).toFixed() + "M";
         }
         ctx.font = (chart.chartArea.height / 6.5) + "px sans-serif";
         ctx.fillStyle = "#fff";

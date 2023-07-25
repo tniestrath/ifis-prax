@@ -14,24 +14,16 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
 
   colors : string[] = [];
 
-  labels = [["12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],["12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"]];
+  labels = ["0/12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
   ngOnInit(): void {
 
     if (SysVars.CURRENT_PAGE == "Users") {
       this.db.getClicksByTime(Number(SysVars.USER_ID)).then(res => {
-        var max = Math.max(...res);
-        for (var clicks of res) {
-          this.colors.push( this.interpolateColor("rgb(90, 121, 149)", "rgb(122, 24, 51)", max, clicks));
-        }
-        this.chart = this.createChart2("time_clicks", [], undefined);
+        this.chart = this.createChart2("time_clicks", res, undefined);
       });
     } else if (SysVars.CURRENT_PAGE == "Overview") {
       this.db.getClicksByTimeAll().then(res => {
-        var max = Math.max(...res);
-        for (var clicks of res) {
-          this.colors.push( this.interpolateColor("rgb(90, 121, 149)", "rgb(122, 24, 51)", max, clicks));
-        }
-        this.chart = this.createChart2("time_clicks", [], undefined);
+        this.chart = this.createChart2("time_clicks", res, undefined);
       });
     }
   }
@@ -40,18 +32,44 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
     return new Chart(canvas_id, {
       type: "bar",
       data: {
-        labels : ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
-                 "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"],
+        labels : this.labels,
         datasets: [{
-          data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
-          backgroundColor: "#000",
+          label: "Vormittags",
+          data: data.slice(0, 11),
+          backgroundColor: "rgb(90, 121, 149)",
           borderRadius: 5,
-          borderWidth: 5,
-        }]
+          borderWidth: 0,
+        },{
+          label: "Nachmittags",
+          data: data.slice(12),
+          backgroundColor: "rgb(122, 24, 51)",
+          borderRadius: 5,
+          borderWidth: 0,
+         }]
       },
       options: {
         aspectRatio: 1,
         plugins: {
+          datalabels: {
+            color: "#ffffff",
+            formatter: function(value, context) {
+              var valueString = String(value);
+              if (value > 1000){
+                valueString = +parseFloat(String(value / 1000)).toFixed( 1 ) + "K";
+              }
+              else if (value > 9999){
+                valueString = (value/1000).toFixed() + "K";
+              }
+              else if (value > 1000000){
+                valueString = (value/1000000).toFixed(1) + "M";
+              }
+              else if (value > 9999999){
+                valueString = (value/1000000).toFixed() + "M";
+              }
+              return valueString;
+            },
+            rotation: -90
+          },
           title: {
             display: false,
             text: "",
@@ -65,7 +83,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
           },
           legend: {
             onClick: (e) => null,
-            display: false
+            display: true
           },
           tooltip: {
             displayColors: false,

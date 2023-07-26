@@ -12,43 +12,52 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
 
   colors : string[] = [];
 
-  labels = ["0/12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
+  labels = ["0/12", "1/13", "2/14", "3/15", "4/16", "5/17", "6/18", "7/19", "8/20", "9/21", "10/22", "11/23"];
   ngOnInit(): void {
 
     if (SysVars.CURRENT_PAGE == "Users") {
       this.db.getClicksByTime(Number(SysVars.USER_ID)).then(res => {
-        this.chart = this.createChart2("time_clicks", res, undefined);
+        this.chart = this.createChart2("time_clicks", this.labels, res.slice(0, 11), res.slice(12), undefined);
       });
     } else if (SysVars.CURRENT_PAGE == "Overview") {
       this.db.getClicksByTimeAll().then(res => {
-        this.chart = this.createChart2("time_clicks", res, undefined);
+        this.chart = this.createChart2("time_clicks", this.labels, res.slice(0, 11), res.slice(12), undefined);
       });
     }
   }
-  createChart2(canvas_id : string, data: number[], onClick : EventEmitter<number> | undefined){
+  createChart2(canvas_id : string, labels: string[], data: number[], data2: number[], onClick : EventEmitter<number> | undefined){
     // @ts-ignore
     return new Chart(canvas_id, {
-      type: "bar",
+      type: "line",
       data: {
-        labels : this.labels,
+        labels : labels,
         datasets: [{
           label: "Vormittags",
-          data: data.slice(0, 11),
+          data: data,
           backgroundColor: "rgb(90, 121, 149)",
-          borderRadius: 5,
-          borderWidth: 0,
+          //borderRadius: 5,
+          borderWidth: 2,
+          borderColor : "rgb(90, 121, 149)",
+          borderJoinStyle: "round",
+          tension: 0.2
         },{
           label: "Nachmittags",
-          data: data.slice(12),
+          data: data2,
           backgroundColor: "rgb(122, 24, 51)",
-          borderRadius: 5,
-          borderWidth: 0,
+          //borderRadius: 5,
+          borderWidth: 2,
+          borderColor: "rgb(122, 24, 51)",
+          borderJoinStyle: "round",
+          tension: 0.2
          }]
       },
       options: {
         aspectRatio: 1,
         plugins: {
           datalabels: {
+            display: false
+          },
+          /*datalabels: {
             color: "#ffffff",
             formatter: function(value, context) {
               var valueString = String(value);
@@ -67,7 +76,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
               return valueString;
             },
             rotation: -90
-          },
+          },*/
           title: {
             display: false,
             text: "",
@@ -90,6 +99,35 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
             },
             bodyFont: {
               size: 15
+            },
+            callbacks: {
+              //@ts-ignore
+              title(tooltipItems): string {
+                // @ts-ignore
+                if (tooltipItems.at(0).datasetIndex == 0){
+                  // @ts-ignore
+                  return labels[tooltipItems.at(0).dataIndex].split("/", 1) + " Uhr";
+                }
+                // @ts-ignore
+                else if (tooltipItems.at(0).datasetIndex == 1){
+                  // @ts-ignore
+                  return labels[tooltipItems.at(0).dataIndex].split("/", 2).at(1)+ " Uhr";
+                }
+
+              },
+              //@ts-ignore
+              label: ((tooltipItem) => {
+                if (tooltipItem.datasetIndex == 0){
+                  // @ts-ignore
+                  return "Clicks: " + data[tooltipItem.dataIndex].toFixed();
+                }
+                // @ts-ignore
+                else if (tooltipItem.datasetIndex == 1){
+                  // @ts-ignore
+                  return "Clicks: " + data2[tooltipItem.dataIndex].toFixed();
+                }
+
+              })
             }
           },
         }

@@ -44,3 +44,13 @@ CREATE TABLE `PostStats` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `art_id_UNIQUE` (`art_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `search_stats` (
+  `search_id` bigint NOT NULL AUTO_INCREMENT,
+  `ip_hashed` varchar(250) DEFAULT NULL,
+  `search_success_flag` tinyint(1) DEFAULT '0',
+  `search_string` varchar(100) DEFAULT NULL,
+  `search_time` datetime DEFAULT NULL,
+  `location` varchar(45) DEFAULT NULL,
+  `clicked_post` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`search_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

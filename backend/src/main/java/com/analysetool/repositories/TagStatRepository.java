@@ -44,5 +44,11 @@ public interface TagStatRepository extends JpaRepository<TagStat, Long> {
     public TagStat getStatById(int id);
 
     public boolean existsByTagId(int tagId);
+
+    @Query("SELECT s.tagId FROM TagStat s ORDER BY s.relevance DESC LIMIT 3")
+    public List<Long> getTop3Relevance();
+
+    @Query("SELECT s.tagId FROM TagStat s ORDER BY s.performance DESC LIMIT 3")
+    public List<Long> getTop3Performance();
 }
 

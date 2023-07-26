@@ -8,6 +8,8 @@ import java.util.*;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -574,6 +576,40 @@ public class PostController {
             result.put(maxLocationCity, maxViewsCity);
         }
         return result;
+    }
+
+    /**
+     *
+     * @param sorter relevance | performance - chooses what statistic you want to sort by.
+     * @return a jsonString containing the ids of the top3 posts found.
+     */
+    @GetMapping("/getTop3")
+    public String getTop3(String sorter) {
+        List<Long> top3 = null;
+        String errorString = "";
+        if(sorter.equalsIgnoreCase("relevance")) {
+            top3 = statsRepo.getTop3Relevance();
+        }
+        if(sorter.equalsIgnoreCase("performance")) {
+            top3 = statsRepo.getTop3Performance();
+        }
+
+        String jsonString = null;
+
+        if(top3 == null) {
+            errorString = "Wrong sorter / table error";
+        } else {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                jsonString = objectMapper.writeValueAsString(top3);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                errorString = "JSON Mapping Error";
+            }
+        }
+        System.out.println(errorString);
+        return jsonString != null? jsonString : errorString;
+
     }
 
 

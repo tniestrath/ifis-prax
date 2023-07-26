@@ -1,6 +1,6 @@
 package com.analysetool.api;
 
-import com.analysetool.util.ConfigReader;
+import com.analysetool.util.DashConfig;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +13,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -27,6 +28,13 @@ import java.util.List;
 
 public class LoginController {
 
+
+    private final DashConfig config;
+
+    public LoginController(DashConfig config) {
+        this.config = config;
+    }
+
     /**
      *
      * @param user
@@ -38,7 +46,7 @@ public class LoginController {
     @GetMapping("/login")
     public String login(@RequestParam String user, String pass) throws IOException {
         HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(ConfigReader.getInstance().getProperty("wp-login"));
+        HttpPost httpPost = new HttpPost(config.getWplogin());
 
         String responseCookie = "";
 
@@ -82,7 +90,7 @@ public class LoginController {
     @GetMapping("/validate")
     public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(ConfigReader.getInstance().getProperty("validate"));
+        HttpPost httpPost = new HttpPost(config.getValidate());
 
         String responseBody = "INVALID";
         try {

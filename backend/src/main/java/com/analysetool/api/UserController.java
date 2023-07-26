@@ -3,7 +3,7 @@ import com.analysetool.Application;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 
-import com.analysetool.util.ConfigReader;
+import com.analysetool.util.DashConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +46,12 @@ public class UserController {
     private WpTermRelationshipsRepository termRelRepo;
     @Autowired
     private WpTermTaxonomyRepository termTaxRepo;
+
+    private final DashConfig config;
+
+    public UserController(DashConfig config) {
+        this.config = config;
+    }
 
     @GetMapping("/getById")
     public String getUserById(@RequestParam String id) throws JSONException {
@@ -128,7 +134,7 @@ public class UserController {
 
     @GetMapping("/profilePic")
     public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException, URISyntaxException {
-        String path = String.valueOf(Paths.get(Objects.requireNonNull(ConfigReader.getInstance().getProperty("profile-photos").toString() +"/"+id+"_profile_photo.jpg")));
+        String path = String.valueOf(Paths.get(Objects.requireNonNull(config.getProfilephotos() +"/"+id+"_profile_photo.jpg")));
         File cutePic = new File(path);
         if (!cutePic.exists()) {
             cutePic = new File(Paths.get(Objects.requireNonNull(Application.class.getClassLoader().getResource("user_img/404_img.jpg")).toURI()).toUri());

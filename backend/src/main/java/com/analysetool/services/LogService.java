@@ -1,9 +1,8 @@
 package com.analysetool.services;
 
-import com.analysetool.Application;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
-import com.analysetool.util.ConfigReader;
+import com.analysetool.util.DashConfig;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,10 +79,12 @@ public class LogService {
     private int lastLineCounter = 0;
     private boolean liveScanning ;
 
+
     //Toter Code wird bis zum fertigen ConfigReader hier gelassen.
     //private String Pfad=Application.class.getClassLoader().getResource("access.log").getPath();
     //private String Pfad = Paths.get(Application.class.getClassLoader().getResource("access.log").toURI()).toString();
-    private String Pfad = ConfigReader.getInstance().getProperty("access.log");
+    private DashConfig config;
+    private String Pfad;
 
     private Calendar kalender = Calendar.getInstance();
     private int aktuellesJahr = kalender.get(Calendar.YEAR);
@@ -91,7 +92,7 @@ public class LogService {
     private SearchStatsRepository searchStatRepo;
 
     @Autowired
-    public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo) throws URISyntaxException {
+    public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
         this.postRepository = postRepository;
         this.statsRepo = PostStatsRepository;
         this.tagStatRepo=tagStatRepo;
@@ -102,6 +103,8 @@ public class LogService {
         this.userStatsRepo=userStatsRepo;
         this.commentRepo=commentRepo;
         this.sysVarRepo=sysVarRepo;
+        this.config = config;
+        Pfad = config.getAccess();
     }
     public LocalDateTime getCreationDateOfAccessLog(String filePath) {
         try {

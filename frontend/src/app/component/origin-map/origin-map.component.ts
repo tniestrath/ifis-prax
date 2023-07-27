@@ -6,6 +6,7 @@ import {DbObject} from "../../services/DbObject";
 import {DbService} from "../../services/db.service";
 import {CookieService} from "ngx-cookie-service";
 import {PdfService} from "../../services/pdf.service";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 
 export enum Region {
@@ -37,32 +38,51 @@ export enum Region {
 @Component({
   selector: 'dash-origin-map',
   templateUrl: './origin-map.component.html',
-  styleUrls: ['./origin-map.component.css', "../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./origin-map.component.css', "../../component/dash-base/dash-base.component.css"],
+  animations: [
+    trigger('scaleOnLoad', [
+      state('initial', style({
+        transform: 'scale(0)',
+        transformOrigin: '50% 50%'
+      })),
+      state('scaled', style({
+        transform: 'scale(1)',
+        transformOrigin: '50% 50%'
+      })),
+      transition('initial => scaled', animate('1000ms ease-in'))
+    ])
+  ]
 })
 export class OriginMapComponent extends DashBaseComponent implements OnInit{
   totalDE: number = 0;
   totalGlobal: number = 0;
+  isScaled = false;
 
   ngOnInit() {
-    const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
-    if (svgElement) {
-      // @ts-ignore
-      if (SysVars.CURRENT_PAGE == "Users"){
-        this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID)).then(res => {
-          this.buildMap(res, svgElement);
-          this.cdr.detectChanges();
-        });
-      } else{
-        this.db.getOriginMapAll().then(res => {
-          this.buildMap(res, svgElement);
-          this.cdr.detectChanges();
-        })
+    setTimeout(() => {
+      this.isScaled = true;
+      const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
+      if (svgElement) {
+        // @ts-ignore
+        if (SysVars.CURRENT_PAGE == "Users") {
+          this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID)).then(res => {
+            this.buildMap(res, svgElement);
+            this.cdr.detectChanges();
+          });
+        } else {
+          this.db.getOriginMapAll().then(res => {
+            this.buildMap(res, svgElement);
+            this.cdr.detectChanges();
+          })
+        }
       }
-
-    }
+    }, 100);
   }
 
+
 buildMap(ip_map: { [x: string]: any; hasOwnProperty: (arg0: string) => any; }, svgElement: any){
+
+
     var global_gesamt = 0;
     for (const country in ip_map) {
       var country_gesamt = 0;

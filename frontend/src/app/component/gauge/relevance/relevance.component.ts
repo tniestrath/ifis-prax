@@ -62,7 +62,7 @@ export class RelevanceComponent extends DashBaseComponent {
           backgroundColor: "rgb(122, 24, 51)",
           borderRadius: 5,
           borderWidth: 6,
-          barThickness: 300,
+          barThickness: 1000,
           borderColor: "#fff"
           },
           {
@@ -72,7 +72,7 @@ export class RelevanceComponent extends DashBaseComponent {
           backgroundColor: "rgb(90, 121, 149)",
           borderRadius: 5,
           borderWidth: 0,
-          barThickness: 300
+          barThickness: 1000
         }]
       },
       options: {

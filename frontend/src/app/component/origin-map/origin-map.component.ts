@@ -8,7 +8,6 @@ import {CookieService} from "ngx-cookie-service";
 import {PdfService} from "../../services/pdf.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 
-
 export enum Region {
   HH = "Hamburg",
   HB = "Bremen",
@@ -33,7 +32,6 @@ export enum Region {
   AT = "Österreich",
   LU = "Luxemburg"
 }
-
 
 @Component({
   selector: 'dash-origin-map',

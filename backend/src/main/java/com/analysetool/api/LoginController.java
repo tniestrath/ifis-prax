@@ -14,6 +14,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -91,6 +94,7 @@ public class LoginController {
     public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getValidate());
+
 
         String responseBody = "INVALID";
         try {

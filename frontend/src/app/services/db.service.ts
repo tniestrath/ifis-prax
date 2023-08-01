@@ -8,7 +8,7 @@ import {User} from "../page/page-einzel/user/user";
 export enum dbUrl {
   HOST = "http://localhost",
   PORT = ":8080",
-  GET_ALL_TAGS = "/tags/getPostTagsIdName",
+  GET_ALL_TAGS = "/tags/getPostTagsIdName", // NO CREDENTIALS NEEDED
   GET_ALL_TAGS_WITH_COUNT_AND_RELEVANCE = "/tags/allTermsRelevanceAndCount",
   GET_TAG_POST_COUNT = "/tags/getPostcount?id=",
   GET_TAG_RANKING = "/tags/getTermRanking",
@@ -19,7 +19,7 @@ export enum dbUrl {
   GET_POST_BY_USERS_BEST = "/posts/bestPost?id=",
 
   GET_USERS_ALL = "/users/getAllNew",
-  GET_USER_IMG = "/users/profilePic?id=",
+  GET_USER_IMG = "/users/profilePic?id=", // NO CREDENTIALS NEEDED
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
   GET_USER_BY_LOGINNAME = "/users/getByLogin?u=",
   GET_USER_BY_ID = "/users/getById?id=",
@@ -73,7 +73,7 @@ export class DbService {
     if (DbService.Tags.length > 0){
       return;
     }
-    await fetch(DbService.getUrl(dbUrl.GET_ALL_TAGS), {credentials: "include"}).then(res => res.json()).then(res => {
+    await fetch(DbService.getUrl(dbUrl.GET_ALL_TAGS)).then(res => res.json()).then(res => {
       for (let tag of res) {
         DbService.Tags.push(tag);
       }
@@ -110,7 +110,7 @@ export class DbService {
   }
 
   async getUserImgSrc(id : string){
-    const blob = await fetch(DbService.getUrl(dbUrl.GET_USER_IMG) + id, {credentials: "include"}).then(res => res.blob());
+    const blob = await fetch(DbService.getUrl(dbUrl.GET_USER_IMG) + id).then(res => res.blob());
     const reader = new FileReader();
     reader.readAsDataURL(blob);
     return new Promise<string>((resolve, reject) => {

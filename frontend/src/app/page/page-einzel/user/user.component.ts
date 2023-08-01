@@ -10,11 +10,11 @@ import {User} from "./user";
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements SelectableComponent, OnInit {
-  @Input() data: User = new User("", "", "", "", 0, 50, 66, 0, "");
+  @Input() data: User = new User("", "", "", "", 0, 50, 66, 0, "/assets/user_img/404_img_.jpg");
 
   @Input() clicked: EventEmitter<User> = new EventEmitter<User>();
 
-  user_img: SafeUrl = "";
+  user_img: SafeUrl = "/assets/user_img/404_img_.jpg";
 
   constructor(private db: DbService) {
   }

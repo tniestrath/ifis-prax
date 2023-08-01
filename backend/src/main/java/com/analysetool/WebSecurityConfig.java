@@ -52,7 +52,7 @@ public class WebSecurityConfig {
         http.addFilterBefore(new AuthenticationFilter(), BasicAuthenticationFilter.class);
 
         http.authorizeHttpRequests((auth) -> {
-                auth.requestMatchers("/login", "/validate", "/users/profilePic", "/tags/getPostTagsIdName").permitAll();
+                auth.requestMatchers("/login", "/validate", "/users/profilePic", "/tags/getPostTagsIdName", "/posts/bestPost").permitAll();
                 auth.anyRequest().authenticated();
             });
 

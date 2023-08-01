@@ -1,6 +1,5 @@
 package com.analysetool.api;
 
-import com.analysetool.util.DashAuthenticationProvider;
 import com.analysetool.util.DashConfig;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +13,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -221,7 +221,7 @@ public class LoginController {
             HttpResponse response2 = httpClient.execute(httpPost);
             HttpEntity entity = response2.getEntity();
 
-            responseBody = EntityUtils.toString(entity);
+            responseBody = new JSONObject(EntityUtils.toString(entity)).getString("user_id");
 
         } catch (Exception e) {
             e.printStackTrace();

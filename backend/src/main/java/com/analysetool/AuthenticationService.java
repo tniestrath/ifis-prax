@@ -14,6 +14,11 @@ import java.util.Arrays;
 @Component
 public class AuthenticationService {
 
+    private static final String[] ADMIN_IDS = {
+            "0",
+            "1",
+            "20"
+    };
 
     private static final LoginController loginController = new LoginController(new DashConfig());
 
@@ -24,8 +29,12 @@ public class AuthenticationService {
                 cookie = c.getValue();
             }
         }
-        String apiKey = loginController.validateCookie(cookie);
-
-        return new ApiKeyAuthentication(apiKey, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN, USER"));
+        String user_id = loginController.validateCookie(cookie);
+        for (String id : ADMIN_IDS) {
+            if (user_id.contains(id)){
+                return new ApiKeyAuthentication(cookie, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN, USER"));
+            }
+        }
+        return new ApiKeyAuthentication(cookie, AuthorityUtils.commaSeparatedStringToAuthorityList("USER"));
     }
 }

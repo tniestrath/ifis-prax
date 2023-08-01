@@ -21,15 +21,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/posts")
 public class PostController {
     private final Calendar kalender = Calendar.getInstance();
-    private int aktuellesJahr = kalender.get(Calendar.YEAR);
+    private final int aktuellesJahr = kalender.get(Calendar.YEAR);
     @Autowired
     private PostStatsRepository statRepository;
     @Autowired
     private PostRepository postRepo;
-    @Autowired
-    private UserStatsRepository userStatsRepo;
-    @Autowired
-    private TagStatRepository tagStatRepo;
     @Autowired
     private WPTermRepository termRepo;
     @Autowired
@@ -325,7 +321,6 @@ public class PostController {
         int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
-                PostStats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
                         if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse) {

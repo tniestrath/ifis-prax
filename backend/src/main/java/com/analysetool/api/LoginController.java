@@ -11,9 +11,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -24,80 +21,6 @@ import java.util.*;
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 
 public class LoginController {
-
-    public Authentication adminAuthentication = new Authentication() {
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return Collections.singleton(new SimpleGrantedAuthority("ADMIN"));
-        }
-
-        @Override
-        public Object getCredentials() {
-            return null;
-        }
-
-        @Override
-        public Object getDetails() {
-            return null;
-        }
-
-        @Override
-        public Object getPrincipal() {
-            return null;
-        }
-
-        @Override
-        public boolean isAuthenticated() {
-            return true;
-        }
-
-        @Override
-        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-        }
-
-        @Override
-        public String getName() {
-            return "Admin";
-        }
-    };
-
-    public Authentication userAuthentication = new Authentication() {
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return Collections.singleton(new SimpleGrantedAuthority("USER"));
-        }
-
-        @Override
-        public Object getCredentials() {
-            return null;
-        }
-
-        @Override
-        public Object getDetails() {
-            return null;
-        }
-
-        @Override
-        public Object getPrincipal() {
-            return null;
-        }
-
-        @Override
-        public boolean isAuthenticated() {
-            return true;
-        }
-
-        @Override
-        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-        }
-
-        @Override
-        public String getName() {
-            return "User";
-        }
-    };
 
 
     private final DashConfig config;
@@ -130,7 +53,6 @@ public class LoginController {
             httpPost.setEntity(new UrlEncodedFormEntity(params));
 
             HttpResponse response = httpClient.execute(httpPost);
-            HttpEntity entity = response.getEntity();
             //Header[] headers = response.getAllHeaders();
 
             Header[] allSetCookie = response.getHeaders("Set-Cookie");
@@ -144,7 +66,6 @@ public class LoginController {
             }
 
             // Process the response
-            String responseBody = EntityUtils.toString(entity);
             for (int i = 0; i < allSetCookie.length; i++) {
                 System.out.println(responseCookie);
             }

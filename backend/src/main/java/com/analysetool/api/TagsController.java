@@ -5,7 +5,6 @@ import com.analysetool.modells.WPTerm;
 import com.analysetool.modells.WpTermTaxonomy;
 import com.analysetool.repositories.TagStatRepository;
 import com.analysetool.repositories.WPTermRepository;
-import com.analysetool.repositories.WpTermRelationshipsRepository;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +29,6 @@ public class TagsController {
     private WpTermTaxonomyRepository termTaxonomyRepository;
     @Autowired
     private TagStatRepository tagStatRepo;
-    @Autowired
-    private WpTermRelationshipsRepository termRelRepo;
 
     @GetMapping("/{id}")
     public ResponseEntity<WPTerm> getTermById(@PathVariable Long id) {
@@ -45,7 +42,7 @@ public class TagsController {
     @GetMapping("/getPostTags")
     List<WPTerm>getPostTags(){
         List<Long> li = termTaxonomyRepository.getAllPostTags();
-        List<WPTerm> list = new ArrayList<WPTerm>();
+        List<WPTerm> list = new ArrayList<>();
         for (Long l:li){
             Optional <WPTerm> optTerm =termRepository.findById(l);
             optTerm.ifPresent(list::add);

@@ -14,11 +14,6 @@ public class SearchStatsController {
     @Autowired
     private SearchStatsRepository searchStatsRepository;
 
-    /*@Autowired
-    public SearchStatsController(SearchStatsRepository searchStatsRepository) {
-        this.searchStatsRepository = searchStatsRepository;
-    }*/
-
     @GetMapping("/getAll")
     public List<SearchStats> getAllSearchStats() {
         return searchStatsRepository.findAll();

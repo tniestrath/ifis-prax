@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RequestMapping("/posts")
 public class PostController {
-    private Calendar kalender = Calendar.getInstance();
+    private final Calendar kalender = Calendar.getInstance();
     private int aktuellesJahr = kalender.get(Calendar.YEAR);
     @Autowired
     private PostStatsRepository statRepository;
@@ -55,7 +55,7 @@ public class PostController {
        this.wpTermTaxonomyRepo = wpTermTaxonomyRepo;
     }
 
-    @GetMapping("/getall")
+    @GetMapping("/getAll")
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
@@ -133,11 +133,7 @@ public class PostController {
                                     if (wpTermRepo.findById(tt.getTermId()).isPresent()) {
                                         type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
                                         switch (type) {
-                                            case "artikel":
-                                                break;
-                                            case "blog":
-                                                break;
-                                            case "pressemitteilung":
+                                            case "artikel", "pressemitteilung", "blog":
                                                 break;
                                             default:
                                                 type = "default";
@@ -164,16 +160,6 @@ public class PostController {
                         obj.put("performance", 0);
                         obj.put("relevance", 0);
                     }
-
-                    //ToDo Toten Code aufräumen
-               /* if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
-                    String currentId = list.getJSONObject(list.length() - 1).getString("title");
-                   // double currentCount = list.getJSONObject(list.length() - 1).getDouble("performance");
-                    list.getJSONObject(list.length() - 1).put("title", currentId + "," + i.getTitle());
-                    //list.getJSONObject(list.length() - 1).put("performance", currentCount + 1);
-                } else {
-                    list.put(obj);
-                }*/
                     if (!obj.get("type").equals("default")) {
                         list.put(obj);
                     }
@@ -199,13 +185,13 @@ public class PostController {
         return PostsById2(newestId);
     }
 
-    @GetMapping("/getViewsOfPostDirstributedByHour")
-    public String getViewsOfPostDistributedByHour(@RequestParam Long id)throws JSONException,ParseException{
+    @GetMapping("/getViewsOfPostDistributedByHour")
+    public String getViewsOfPostDistributedByHour(@RequestParam Long id) {
         //wip
         String leViews="";
         if(statsRepo.existsByArtId(id)){
             PostStats stats = statsRepo.getStatByArtID(id);
-            leViews=stats.getViewsPerDay().toString();
+            leViews= stats.getViewsPerDay();
 
         }
         return leViews;
@@ -214,7 +200,7 @@ public class PostController {
     //ToDo Rename
     @GetMapping("/getPostWithStatsById")
     public String PostsById2(@RequestParam long id) throws JSONException, ParseException {
-        if(!postRepository.findById(id).isPresent()) {return null;}
+        if(postRepository.findById(id).isEmpty()) {return null;}
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
         String type = "default";
@@ -268,7 +254,7 @@ public class PostController {
             obj.put("clicks", PostStats.getClicks().toString());
             obj.put("searchSuccesses", PostStats.getSearchSuccess());
             obj.put("searchSuccessRate", PostStats.getSearchSuccessRate());
-            obj.put("referrings", PostStats.getRefferings());
+            obj.put("referring", PostStats.getRefferings());
             obj.put("articleReferringRate", PostStats.getArticleReferringRate());
         }else {
             obj.put("performance",0);
@@ -276,19 +262,13 @@ public class PostController {
             obj.put("clicks", "0");
             obj.put("searchSuccesses",0);
             obj.put("searchSuccessRate",0);
-            obj.put("referrings",0);
+            obj.put("referring",0);
             obj.put("articleReferringRate",0);}
 
         return obj.toString();
     }
 
     //STATS
-
-    //ToDo Toten Code aufräumen
-   /* @GetMapping("/{id}")
-    public Optional<PostStats> getStat(@PathVariable Long id) {
-        return statRepository.findById(id);
-    }*/
 
     @GetMapping
     public List<PostStats> getAllStats() {
@@ -369,7 +349,7 @@ public class PostController {
         if (Posts.size() == 0) {
             return null;
         }
-        PostStats PostStats = null;
+        PostStats PostStats;
         float max = 0;
         long PostId = 0;
         for (Post post : Posts) {
@@ -393,7 +373,9 @@ public class PostController {
         JSONObject obj = new JSONObject();
         obj.put("ID", PostId);
         obj.put(type, max);
-        obj.put("title", postRepo.findById(PostId).get().getTitle());
+        if(postRepo.findById(PostId).isPresent()) {
+            obj.put("title", postRepo.findById(PostId).get().getTitle());
+        }
         return obj.toString();
     }
 
@@ -406,8 +388,8 @@ public class PostController {
         obj.put("Relevanz",Stat.getRelevance());
         obj.put("Performance",Stat.getPerformance());
         obj.put("Views",Stat.getClicks());
-        obj.put("Refferings",Stat.getReferrings());
-        obj.put("Article Reffering Rate",Stat.getArticleReferringRate());
+        obj.put("Referring",Stat.getReferrings());
+        obj.put("Article Referring Rate",Stat.getArticleReferringRate());
         obj.put("Search Successes",Stat.getSearchSucces());
         obj.put("Search Success Rate",Stat.getSearchSuccessRate());
 
@@ -416,6 +398,21 @@ public class PostController {
 
     @GetMapping("/getNewestStatsByAuthor")
     public String getNewestStatsByAuthor(@RequestParam Long id) throws JSONException{
+        return statsByAuthorHelper(id);
+
+    }
+
+    @GetMapping("/getNewestStatsByAuthorSessionId")
+    public String getNewestStatsByAuthorSessionId(@RequestParam String SessionId) throws JSONException{
+        if(userRepo.existsByActivationKey(SessionId)){
+            Long id = userRepo.findByActivationKey(SessionId).get().getId();
+            return statsByAuthorHelper(id);
+        }
+        else{return "SESSION ID WRONG";}
+
+    }
+
+    private String statsByAuthorHelper(Long id) throws JSONException {
         List<Post> posts =postRepo.findByAuthor(id.intValue()) ;
         long newestId = 0 ;
         LocalDateTime newestTime = null ;
@@ -428,7 +425,7 @@ public class PostController {
         long views = 0;
         long searchSuccesses = 0;
         float SearchSuccessRate = 0 ;
-        long refferings = 0;
+        long referringCount = 0;
         float refrate = 0;
         float relevanz = 0;
         float performance = 0 ;
@@ -438,7 +435,7 @@ public class PostController {
             views = PostStats.getClicks();
             searchSuccesses = PostStats.getSearchSuccess();
             SearchSuccessRate = PostStats.getSearchSuccessRate();
-            refferings = PostStats.getRefferings();
+            referringCount = PostStats.getRefferings();
             refrate = PostStats.getArticleReferringRate();
             relevanz = PostStats.getRelevance();
             performance = PostStats.getPerformance();
@@ -448,67 +445,19 @@ public class PostController {
         obj.put("views",views);
         obj.put("Search Successes",searchSuccesses);
         obj.put("Search Success Rate",SearchSuccessRate);
-        obj.put("refferings",refferings);
-        obj.put("article reffering rate",refrate);
+        obj.put("referringCount",referringCount);
+        obj.put("article referring rate",refrate);
         obj.put("relevanz",relevanz);
         obj.put("performance",performance);
 
 
         return obj.toString();
-
     }
 
-    @GetMapping("/getNewestStatsByAuthorSessionId")
-    public String getNewestStatsByAuthorSessionId(@RequestParam String SessionId) throws JSONException{
-        if(userRepo.existsByActivationKey(SessionId)){
-            Long id = userRepo.findByActivationKey(SessionId).get().getId();
-            List<Post> posts =postRepo.findByAuthor(id.intValue()) ;
-            long newestId = 0 ;
-            LocalDateTime newestTime = null ;
-            for(Post post : posts){
-                if(newestTime == null || newestTime.isBefore(post.getDate())){
-                    newestTime = post.getDate();
-                    newestId = post.getId();
-                }
-            }
-            long views = 0;
-            long searchSuccesses = 0;
-            float SearchSuccessRate = 0 ;
-            long refferings = 0;
-            float refrate = 0;
-            float relevanz = 0;
-            float performance = 0 ;
-
-            if(statRepository.existsByArtId(newestId)){
-                PostStats PostStats = statRepository.getStatByArtID(newestId);
-                views = PostStats.getClicks();
-                searchSuccesses = PostStats.getSearchSuccess();
-                SearchSuccessRate = PostStats.getSearchSuccessRate();
-                refferings = PostStats.getRefferings();
-                refrate = PostStats.getArticleReferringRate();
-                relevanz = PostStats.getRelevance();
-                performance = PostStats.getPerformance();
-            }
-            JSONObject obj = new JSONObject();
-            obj.put("ID",newestId);
-            obj.put("views",views);
-            obj.put("Search Successes",searchSuccesses);
-            obj.put("Search Success Rate",SearchSuccessRate);
-            obj.put("refferings",refferings);
-            obj.put("article reffering rate",refrate);
-            obj.put("relevanz",relevanz);
-            obj.put("performance",performance);
-
-
-            return obj.toString();}
-        else{return "SESSION ID WRONG";}
-
-    }
     @GetMapping("/getViewsOfPostDistributedByHours")
     public Map<String,Long>getViewsDistributedByHour(@RequestParam Long PostId){
         PostStats postStats= statsRepo.findByArtIdAndAndYear(PostId,aktuellesJahr);
-        Map<String,Long>viewsPerHour=postStats.getViewsPerHour();
-        return viewsPerHour;
+        return postStats.getViewsPerHour();
     }
 
     @GetMapping("/maxViewsByLocation")
@@ -585,13 +534,18 @@ public class PostController {
      */
     @GetMapping("/getTop3")
     public String getTop3(String sorter) {
+        return top3Helper(sorter, statsRepo.getTop3Relevance(), statsRepo.getTop3Performance());
+
+    }
+
+    static String top3Helper(String sorter, List<Long> top3Relevance, List<Long> top3Performance) {
         List<Long> top3 = null;
         String errorString = "";
         if(sorter.equalsIgnoreCase("relevance")) {
-            top3 = statsRepo.getTop3Relevance();
+            top3 = top3Relevance;
         }
         if(sorter.equalsIgnoreCase("performance")) {
-            top3 = statsRepo.getTop3Performance();
+            top3 = top3Performance;
         }
 
         String jsonString = null;
@@ -609,7 +563,6 @@ public class PostController {
         }
         System.out.println(errorString);
         return jsonString != null? jsonString : errorString;
-
     }
 
 

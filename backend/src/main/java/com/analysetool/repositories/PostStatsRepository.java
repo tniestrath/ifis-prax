@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 //import org.springframework.data.repository.query.Param;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -146,16 +147,16 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     public float getMaxRelevance();
 
     @Query("SELECT s.viewsByLocation FROM PostStats s WHERE s.artId=:artId")
-    public HashMap getViewsByLocation(int artId);
+    public HashMap<String, Map<String, Map<String , Long>>> getViewsByLocation(int artId);
 
     @Query("SELECT s.viewsByLocation FROM PostStats s")
-    public List<HashMap> getAllViewsByLocation();
+    public List<HashMap<String, Map<String, Map<String, Long>>>> getAllViewsByLocation();
 
     @Query("SELECT s.viewsPerHour FROM PostStats s WHERE s.artId=:artId")
-    public HashMap getViewsPerHour(int artId);
+    public HashMap<String, Long> getViewsPerHour(int artId);
 
     @Query("SELECT s.viewsPerHour FROM PostStats s")
-    public List<HashMap> getAllViewsPerHour();
+    public List<HashMap<String, Long>> getAllViewsPerHour();
 
     @Query("SELECT s.artId FROM PostStats s ORDER BY s.relevance DESC LIMIT 3")
     public List<Long> getTop3Relevance();

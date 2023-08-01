@@ -4,23 +4,18 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 
 import com.analysetool.util.DashConfig;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.*;
 
 import static com.analysetool.util.MapHelper.*;
@@ -59,38 +54,34 @@ public class UserController {
     public String getUserById(@RequestParam String id) throws JSONException {
         JSONObject obj = new JSONObject();
         var user = userRepository.findById(Long.valueOf(id));
-        if (user.isPresent()){
-            obj.put("id", user.get().getId());
-            obj.put("displayName",user.get().getDisplayName());
-            if (wpUserMetaRepository.existsByUserId(user.get().getId())){
-                String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.get().getId());
-                if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
-                if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
-                if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
-                if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
-            }
-        }
-        return obj.toString();
+        return getByIdHelper(obj, user);
     }
 
     @GetMapping("/getByLogin")
     public String getUserByLogin(@RequestParam String u) throws JSONException {
         JSONObject obj = new JSONObject();
         var user = userRepository.findByLogin(u);
+        return getByIdHelper(obj, user);
+    }
+
+    private String getByIdHelper(JSONObject obj, Optional<WPUser> user) throws JSONException {
         if (user.isPresent()){
             obj.put("id", user.get().getId());
             obj.put("displayName",user.get().getDisplayName());
             if (wpUserMetaRepository.existsByUserId(user.get().getId())){
                 String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.get().getId());
-                if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
-                if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
-                if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
-                if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
+                accTypeHelper(obj, wpUserMeta);
             }
         }
         return obj.toString();
+    }
+
+    private void accTypeHelper(JSONObject obj, String wpUserMeta) throws JSONException {
+        if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
+        if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
+        if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
+        if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
+        if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
     }
 
     @GetMapping("/getAllNew")
@@ -113,11 +104,7 @@ public class UserController {
             }
             if (wpUserMetaRepository.existsByUserId(i.getId())){
                 String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(i.getId());
-                if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
-                if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
-                if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
-                if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
+                accTypeHelper(obj, wpUserMeta);
             }
             else {obj.put("id",i.getId());
                 obj.put("email",i.getEmail());
@@ -136,7 +123,7 @@ public class UserController {
 
     @GetMapping("/profilePic")
     public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException, URISyntaxException {
-        String path = String.valueOf(Paths.get(Objects.requireNonNull(config.getProfilephotos() +"/"+id+"_profile_photo.jpg")));
+        String path = String.valueOf(Paths.get(config.getProfilephotos() +"/"+id+"_profile_photo.jpg"));
         File cutePic = new File(path);
         if (!cutePic.exists()) {
             cutePic = new File(Paths.get(Objects.requireNonNull(Application.class.getClassLoader().getResource("user_img/404_img.jpg")).toURI()).toUri());
@@ -179,7 +166,6 @@ public class UserController {
         long viewsPresse = 0;
         List<Post> posts = postRepository.findByAuthor(id.intValue());
 
-        List<Long> postTags = new ArrayList<>();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 PostStats Stat = statRepository.getStatByArtID(post.getId());
@@ -211,9 +197,9 @@ public class UserController {
     //ToDo Move method somewhere
     @GetMapping("/getAllViewsByLocation")
     public String getAllViewsByLocation() {
-        List<HashMap> posts = statRepository.getAllViewsByLocation();
-        HashMap map = new HashMap<>();
-        for(HashMap locMap : posts) {
+        List<HashMap<String, Map<String, Map<String , Long>>>> posts = statRepository.getAllViewsByLocation();
+        HashMap<String, Map<String, Map<String , Long>>> map = new HashMap<>();
+        for(HashMap<String, Map<String, Map<String , Long>>> locMap : posts) {
             if(locMap != null) {
                 mergeLocationMaps(map, locMap);
             }
@@ -223,9 +209,9 @@ public class UserController {
     }
 
     @GetMapping("/getViewsByLocation")
-    public String getViewsByLocation(@RequestParam int id) throws JSONException, ParseException, JsonProcessingException {
+    public String getViewsByLocation(@RequestParam int id) {
         List<Post> posts= postRepository.findByAuthor(id);
-        HashMap map = new HashMap<>();
+        HashMap<String, Map<String, Map<String , Long>>> map = new HashMap<>();
         int count = 0;
         for(Post post : posts) {
             if(statRepository.getViewsByLocation(post.getId().intValue()) != null) {
@@ -242,9 +228,9 @@ public class UserController {
     }
 
     @GetMapping("/getViewsPerHour")
-    public String getViewsPerHour(@RequestParam int id) throws JSONException, ParseException, JsonProcessingException {
+    public String getViewsPerHour(@RequestParam int id) {
         List<Post> posts= postRepository.findByAuthor(id);
-        HashMap map = new HashMap<>();
+        HashMap<String, Long> map = new HashMap<>();
         int count = 0;
         for(Post post : posts) {
             if(statRepository.getViewsByLocation(post.getId().intValue()) != null) {
@@ -263,10 +249,10 @@ public class UserController {
     //ToDo Move method somewhere
     @GetMapping("/getAllViewsPerHour")
     public String getAllViewsPerHour() {
-        List<HashMap> posts = statRepository.getAllViewsPerHour();
+        List<HashMap<String, Long>> posts = statRepository.getAllViewsPerHour();
 
-        HashMap map = new HashMap<>();
-        for(HashMap locMap : posts) {
+        HashMap<String, Long> map = new HashMap<>();
+        for(HashMap<String, Long> locMap : posts) {
             if(locMap != null) {
                 mergeTimeMaps(map, locMap);
             }
@@ -274,7 +260,7 @@ public class UserController {
         }
         Long[] orderedViews = new Long[24];
         for(int i=0; i<24; i++) {
-            orderedViews[i] = (Long) map.get("" + i);
+            orderedViews[i] = map.get(String.valueOf(i));
         }
         return Arrays.toString(orderedViews);
     }

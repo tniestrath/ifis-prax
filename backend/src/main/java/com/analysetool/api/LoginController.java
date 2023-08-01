@@ -1,10 +1,8 @@
 package com.analysetool.api;
 
-import com.analysetool.util.DashAuthenticationProvider;
 import com.analysetool.util.DashConfig;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -13,10 +11,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.util.*;
 
 @RestController
@@ -116,10 +109,10 @@ public class LoginController {
 
     /**
      *
-     * @param user
-     * @param pass
+     * @param user the username.
+     * @param pass the password.
      * @return String representation of the WordPress-login-cookie value
-     * @throws IOException
+     * @throws IOException can throw IOException. F U.
      */
 
     @GetMapping("/login")
@@ -155,11 +148,6 @@ public class LoginController {
             for (int i = 0; i < allSetCookie.length; i++) {
                 System.out.println(responseCookie);
             }
-            //ToDo Toten Code aufräumen
-            /*for (int i = 0; i < headers.length; i++) {
-                System.out.println("Name: " + headers[i].getName() + ", Value: " + headers[i].getValue());
-            }*/
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -209,7 +197,7 @@ public class LoginController {
 
         String responseBody = "INVALID";
         try {
-            String cookieValue = "";
+            String cookieValue;
             cookieValue = java.net.URLDecoder.decode(cookie, StandardCharsets.UTF_8);
             System.out.println(cookieValue);
 

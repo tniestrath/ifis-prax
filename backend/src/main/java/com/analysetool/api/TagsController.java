@@ -6,8 +6,6 @@ import com.analysetool.modells.WpTermTaxonomy;
 import com.analysetool.repositories.TagStatRepository;
 import com.analysetool.repositories.WPTermRepository;
 import com.analysetool.repositories.WpTermRelationshipsRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +16,9 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.analysetool.api.PostController.top3Helper;
+
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
 @RequestMapping("/tags")
@@ -35,15 +36,11 @@ public class TagsController {
     @GetMapping("/{id}")
     public ResponseEntity<WPTerm> getTermById(@PathVariable Long id) {
         Optional<WPTerm> term = termRepository.findById(id);
-        if (term.isPresent()) {
-            return ResponseEntity.ok(term.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return term.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/getall")
-    List<WPTerm> getall(){return termRepository.findAll();}
+    @GetMapping("/getAll")
+    List<WPTerm> getAll(){return termRepository.findAll();}
     // weitere REST-Endpunkte, falls benötigt
     @GetMapping("/getPostTags")
     List<WPTerm>getPostTags(){
@@ -51,9 +48,7 @@ public class TagsController {
         List<WPTerm> list = new ArrayList<WPTerm>();
         for (Long l:li){
             Optional <WPTerm> optTerm =termRepository.findById(l);
-             if(optTerm.isPresent()){
-                 list.add(optTerm.get());
-             }
+            optTerm.ifPresent(list::add);
         }
         return list;
     }
@@ -77,7 +72,7 @@ public class TagsController {
         return list.toString();
     }
 
-    @GetMapping("/getPostcount")
+    @GetMapping("/getPostCount")
     String getPostCount(@RequestParam String id) {
         return Long.toString(termRepository.getPostCount(id));
     }
@@ -130,30 +125,7 @@ public class TagsController {
 
     @GetMapping("/getTop3")
     public String getTop3(String sorter) {
-        List<Long> top3 = null;
-        String errorString = "";
-        if(sorter.equalsIgnoreCase("relevance")) {
-            top3 = tagStatRepo.getTop3Relevance();
-        }
-        if(sorter.equalsIgnoreCase("performance")) {
-            top3 = tagStatRepo.getTop3Performance();
-        }
-
-        String jsonString = null;
-
-        if(top3 == null) {
-            errorString = "Wrong sorter / table error";
-        } else {
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                jsonString = objectMapper.writeValueAsString(top3);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                errorString = "JSON Mapping Error";
-            }
-        }
-        System.out.println(errorString);
-        return jsonString != null? jsonString : errorString;
+        return top3Helper(sorter, tagStatRepo.getTop3Relevance(), tagStatRepo.getTop3Performance());
 
     }
 }

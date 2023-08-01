@@ -25,7 +25,6 @@ public class AuthenticationService {
             }
         }
         String apiKey = loginController.validateCookie(cookie);
-        System.out.println(apiKey);
 
         return new ApiKeyAuthentication(apiKey, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN, USER"));
     }

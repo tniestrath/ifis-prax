@@ -20,11 +20,8 @@ public class AuthenticationFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
         try {
-            System.out.println("1");
             Authentication authentication = AuthenticationService.getAuthentication((HttpServletRequest) request);
-            System.out.println("2");
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println("3");
         } catch (Exception exp) {
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

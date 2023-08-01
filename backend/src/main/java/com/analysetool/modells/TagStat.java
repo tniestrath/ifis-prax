@@ -125,7 +125,7 @@ public class TagStat {
     }
 
     public Map<String,Long> setJson(){
-        String temp ="";
+        String temp;
         temp = viewsPerDay.substring(1, viewsPerDay.length() - 1);
 
         // Teile den String an den Kommas auf, um die einzelnen Schlüssel-Wert-Paare zu erhalten
@@ -146,11 +146,10 @@ public class TagStat {
             // Füge das Schlüssel-Wert-Paar der HashMap hinzu
             map.put(key, value);
         }
-        return (Map) map;
+        return map;
     }
     public TagStat(){}
     public TagStat( int tagId, long views, int searchSuccess, float relevance, float performance) {
-        this.id = id;
         this.tagId = tagId;
         this.views = views;
         this.searchSuccess = searchSuccess;

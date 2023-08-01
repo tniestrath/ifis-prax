@@ -1,5 +1,6 @@
 package com.analysetool.modells;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class userWp {
@@ -51,12 +52,12 @@ public class userWp {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof userWp userWp)) return false;
-        return Objects.equals(getId(), userWp.getId()) && Objects.equals(getEmail(), userWp.getEmail()) && Objects.equals(getImg(), userWp.getImg()) && Objects.equals(getDisplayName(), userWp.getDisplayName());
+        return Objects.equals(getId(), userWp.getId()) && Objects.equals(getEmail(), userWp.getEmail()) && Arrays.equals(getImg(), userWp.getImg()) && Objects.equals(getDisplayName(), userWp.getDisplayName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getEmail(), getImg(), getDisplayName());
+        return Objects.hash(getId(), getEmail(), Arrays.hashCode(getImg()), getDisplayName());
     }
 
     @Override
@@ -64,7 +65,7 @@ public class userWp {
         return "userWp{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
-                ", img='" + img + '\'' +
+                ", img='" + Arrays.toString(img) + '\'' +
                 ", displayName='" + displayName + '\'' +
                 '}';
     }

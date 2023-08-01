@@ -23,8 +23,8 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     boolean existsByArtIdAndYear(long artid,int year);
 
     @Modifying
-    @Query("UPDATE PostStats s SET s.searchSuccessRate = :searchSuccessRate, s.articleReferringRate = :articleReferringRate, s.clicks = :clicks, s.searchSuccess = :searchSucces, s.refferings = :refferings WHERE s.artId = :artId")
-    void updateStats(Long artId,  Float searchSuccessRate,  Float articleReferringRate,  Long clicks,Long searchSucces,  Long refferings);
+    @Query("UPDATE PostStats s SET s.searchSuccessRate = :searchSuccessRate, s.articleReferringRate = :articleReferringRate, s.clicks = :clicks, s.searchSuccess = :searchSucces, s.referrings = :referrings WHERE s.artId = :artId")
+    void updateStats(Long artId,  Float searchSuccessRate,  Float articleReferringRate,  Long clicks,Long searchSucces,  Long referrings);
 
     // Methode zum Aktualisieren der searchSuccessRate-Spalte
     @Modifying
@@ -47,10 +47,10 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("UPDATE PostStats s SET s.searchSuccess = :searchSuccess WHERE s.artId = :artId")
     void updateSearchSucces( Long artId,Long searchSuccess);
 
-    // Methode zum Aktualisieren der refferings-Spalte
+    // Methode zum Aktualisieren der referrings-Spalte
     @Modifying
-    @Query("UPDATE PostStats s SET s.refferings = :refferings WHERE s.artId = :artId")
-    void updateRefferings( Long artId,  Long refferings);
+    @Query("UPDATE PostStats s SET s.referrings = :referrings WHERE s.artId = :artId")
+    void updatereferrings( Long artId,  Long referrings);
 
     List<PostStats> findByArtId(Long artId);
 
@@ -81,11 +81,11 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("UPDATE PostStats s SET s.searchSuccess = :searchSucces WHERE s.artId = :artId")
     void updateSearchSuccesByArtId( Long searchSucces, Long artId);
 
-    // Aktualisiere die refferings-Spalte für einen bestimmten Artikel
+    // Aktualisiere die referrings-Spalte für einen bestimmten Artikel
     @Transactional
     @Modifying
-    @Query("UPDATE PostStats s SET s.refferings = :refferings WHERE s.artId = :artId")
-    void updateRefferingsByArtId( Long refferings,  Long artId);
+    @Query("UPDATE PostStats s SET s.referrings = :referrings WHERE s.artId = :artId")
+    void updatereferringsByArtId( Long referrings,  Long artId);
 
     boolean existsByArtId(Long artId);
 
@@ -105,7 +105,7 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     public Long getSearchSuccesByArtId( Long artId);
 
     // Get the number of referrings for a given article ID
-    @Query("SELECT s.refferings FROM PostStats s WHERE s.artId = :artId")
+    @Query("SELECT s.referrings FROM PostStats s WHERE s.artId = :artId")
     public Long getReferringsByArtId( Long artId);
     @Transactional
     @Modifying
@@ -114,8 +114,8 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE PostStats s SET s.refferings = :refferings , s.articleReferringRate=:rate WHERE s.artId = :artId")
-    void updateRefferingsAndRateByArtId( Float rate,Long refferings,  Long artId);
+    @Query("UPDATE PostStats s SET s.referrings = :referrings , s.articleReferringRate=:rate WHERE s.artId = :artId")
+    void updatereferringsAndRateByArtId( Float rate,Long referrings,  Long artId);
 
     @Transactional
     @Modifying

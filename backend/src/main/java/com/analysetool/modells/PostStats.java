@@ -30,11 +30,11 @@ public class PostStats {
     @Column(name = "clicks")
     private Long clicks;
     // Constructor, getters, and setters
-    @Column(name="search_succes")
+    @Column(name="search_success")
     private long searchSuccess;
 
-    @Column(name="refferings")
-    private long refferings;
+    @Column(name="referring")
+    private long referrings;
 
     @Column(name="performance")
     private float performance;
@@ -64,19 +64,11 @@ public class PostStats {
     String viewsPerHourString = "{\"0\":0,\"1\":0,\"2\":0,\"3\":0,\"4\":0,\"5\":0,\"6\":0,\"7\":0,\"8\":0,\"9\":0,\"10\":0,\"11\":0,\"12\":0,\"13\":0,\"14\":0,\"15\":0,\"16\":0,\"17\":0,\"18\":0,\"19\":0,\"20\":0,\"21\":0,\"22\":0,\"23\":0}";
     public PostStats(){}
 
-    public long getSearchSucces() {
-        return searchSuccess;
-    }
-
-    public void setSearchSucces(long searchSuccess) {
-        this.searchSuccess = searchSuccess;
-    }
-
     public long getReferrings() {
-        return refferings;
+        return referrings;
     }
     public void setReferrings(long referrings) {
-        this.refferings = referrings;
+        this.referrings = referrings;
     }
 
     public float getRelevance() {
@@ -87,13 +79,12 @@ public class PostStats {
         this.relevance = relevance;
     }
 
-    public PostStats(Long artId, Float searchSuccessRate, Float articleReferringRate, long clicks, long searchSuccess, long refferings, float performance) {
-        this.id = id;
+    public PostStats(Long artId, Float searchSuccessRate, Float articleReferringRate, long clicks, long searchSuccess, long referrings, float performance) {
         this.artId = artId;
         this.searchSuccessRate = searchSuccessRate;
         this.articleReferringRate = articleReferringRate;
         this.clicks = clicks;
-        this.refferings=refferings;
+        this.referrings=referrings;
         this.searchSuccess=searchSuccess;
         this.performance = performance;
         this.relevance=(float)0;
@@ -101,8 +92,7 @@ public class PostStats {
         this.viewsLastYear=setViewsLastYearJson();
         this.viewsPerHour=setJson();
         Calendar kalender = Calendar.getInstance();
-        int aktuellesJahr = kalender.get(Calendar.YEAR);
-        this.year=aktuellesJahr;
+        this.year= kalender.get(Calendar.YEAR);
         this.viewsByLocation=new HashMap<>();
     }
 
@@ -121,11 +111,11 @@ public class PostStats {
         // Durch alle Tage des Jahres iterieren
         while (datum.getYear() == 2023) {
             // Datum formatieren und in die HashMap mit dem Wert 0 einfügen
-            tageDesJahres.put(datum.format(formatter).toString(), (long)0);
+            tageDesJahres.put(datum.format(formatter), (long)0);
             // Datum um einen Tag erhöhen
             datum = datum.plusDays(1);
         }
-        return (Map)tageDesJahres;
+        return tageDesJahres;
     }
     public Map<String, Long> createYearlyViewsMap(int year) {
         // Erstellen einer HashMap mit dem Schlüssel als Datum (z.B. 01.01) und dem Wert 0
@@ -149,7 +139,7 @@ public class PostStats {
     }
 
     public Map<String,Long> setJson(){
-        String temp ="";
+        String temp;
         //temp = viewsPerDay.substring(1, viewsPerDay.length() - 1);
         temp = viewsPerHourString.substring(1, viewsPerHourString.length() - 1);
         // Teile den String an den Kommas auf, um die einzelnen Schlüssel-Wert-Paare zu erhalten
@@ -170,7 +160,7 @@ public class PostStats {
             // Füge das Schlüssel-Wert-Paar der HashMap hinzu
             map.put(key, value);
         }
-        return (Map) map;
+        return map;
     }
     public Long getId() {
         return id;
@@ -226,14 +216,6 @@ public class PostStats {
 
     public Float getArticleReferringRate() {
         return articleReferringRate;
-    }
-
-    public long getRefferings() {
-        return refferings;
-    }
-
-    public void setRefferings(long refferings) {
-        this.refferings = refferings;
     }
 
     public int getYear() {
@@ -297,7 +279,7 @@ public class PostStats {
                 ", articleReferringRate=" + articleReferringRate +
                 ", clicks=" + clicks +
                 ", searchSuccess=" + searchSuccess +
-                ", referrings=" + refferings +
+                ", referrings=" + referrings +
                 ", performance=" + performance +
                 '}';
     }

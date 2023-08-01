@@ -352,14 +352,14 @@ public class LogService {
             if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
                 PostStats stats=statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
                 long views = stats.getClicks();
-                long refferings =stats.getRefferings();
-                refferings++;
-                float article_reffering_rate= ((float)refferings/views);
-                System.out.println("RefRate :"+article_reffering_rate);
+                long referrings =stats.getReferrings();
+                referrings++;
+                float article_referring_rate= ((float)referrings/views);
+                System.out.println("RefRate :"+article_referring_rate);
                 stats.setClicks(views);
-                stats.setReferrings(refferings);
+                stats.setReferrings(referrings);
                 statsRepo.save(stats);
-                //statsRepo.updateRefferingsAndRateByArtId(article_reffering_rate,refferings,id);
+                //statsRepo.updatereferringsAndRateByArtId(article_referring_rate,referrings,id);
 
             }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,0,0,1,(float) 0));
             }
@@ -459,12 +459,12 @@ public class LogService {
                 WPUser wpUser=wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get();
                 if(userStatsRepo.existsByUserId(wpUser.getId())){
                     UserStats userStats = userStatsRepo.findByUserId(wpUser.getId());
-                    long refferings = userStats.getRefferings();
+                    long referrings = userStats.getReferrings();
                     long views = userStats.getProfileView();
-                    refferings ++;
-                    userStats.setRefferings(refferings);
+                    referrings ++;
+                    userStats.setReferrings(referrings);
                     if(views!=0){
-                        userStats.setRefferingRate((float)refferings/views);
+                        userStats.setReferringRate((float)referrings/views);
                     }
                     userStatsRepo.save(userStats);
                 }else{

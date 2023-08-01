@@ -26,37 +26,36 @@ public class UserStats {
     @Column(name = "interaction_rate")
     private float interactionRate;
 
-    @Column(name = "refferings")
-    private Long refferings;
+    @Column(name = "referring")
+    private Long referrings;
     @Column(name = "ref_rate")
-    private float refferingRate;
+    private float referringRate;
 
-    public Long getRefferings() {
-        return refferings;
+    public Long getReferrings() {
+        return referrings;
     }
 
-    public void setRefferings(Long refferings) {
-        this.refferings = refferings;
+    public void setReferrings(Long referrings) {
+        this.referrings = referrings;
     }
-
-    public UserStats(long userId, float averagePerformance, float averageRelevance, long profileView, float interactionRate, float refferingRate, float postFrequence, Long refferings) {
+    public UserStats(long userId, float averagePerformance, float averageRelevance, long profileView, float interactionRate, float referringRate, float postFrequence, Long referrings) {
 
         this.userId = userId;
         this.averagePerformance = averagePerformance;
         this.averageRelevance = averageRelevance;
         this.profileView = profileView;
         this.interactionRate = interactionRate;
-        this.refferingRate = refferingRate;
+        this.referringRate = referringRate;
         this.postFrequence = postFrequence;
-        this.refferings=refferings;
+        this.referrings = referrings;
     }
 
-    public float getRefferingRate() {
-        return refferingRate;
+    public float getReferringRate() {
+        return referringRate;
     }
 
-    public void setRefferingRate(float refferingRate) {
-        this.refferingRate = refferingRate;
+    public void setReferringRate(float referringRate) {
+        this.referringRate = referringRate;
     }
 
     public float getInteractionRate() {
@@ -87,7 +86,7 @@ public class UserStats {
                 ", averageRelevance=" + averageRelevance +
                 ", profileView=" + profileView +
                 ", interactionRate=" + interactionRate +
-                ", refferingRate=" + refferingRate +
+                ", referringRate=" + referringRate +
                 ", postFrequence=" + postFrequence +
                 '}';
     }
@@ -98,12 +97,12 @@ public class UserStats {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserStats userStats)) return false;
-        return getIduser_stats() == userStats.getIduser_stats() && getUserId() == userStats.getUserId() && Float.compare(userStats.getAveragePerformance(), getAveragePerformance()) == 0 && Float.compare(userStats.getAverageRelevance(), getAverageRelevance()) == 0 && getProfileView() == userStats.getProfileView() && Float.compare(userStats.getInteractionRate(), getInteractionRate()) == 0 && Float.compare(userStats.getRefferingRate(), getRefferingRate()) == 0 && Float.compare(userStats.getPostFrequence(), getPostFrequence()) == 0;
+        return getIduser_stats() == userStats.getIduser_stats() && getUserId() == userStats.getUserId() && Float.compare(userStats.getAveragePerformance(), getAveragePerformance()) == 0 && Float.compare(userStats.getAverageRelevance(), getAverageRelevance()) == 0 && getProfileView() == userStats.getProfileView() && Float.compare(userStats.getInteractionRate(), getInteractionRate()) == 0 && Float.compare(userStats.getReferringRate(), getReferringRate()) == 0 && Float.compare(userStats.getPostFrequence(), getPostFrequence()) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIduser_stats(), getUserId(), getAveragePerformance(), getAverageRelevance(), getProfileView(), getInteractionRate(), getRefferingRate(), getPostFrequence());
+        return Objects.hash(getIduser_stats(), getUserId(), getAveragePerformance(), getAverageRelevance(), getProfileView(), getInteractionRate(), getReferringRate(), getPostFrequence());
     }
 
     public int getIduser_stats() {

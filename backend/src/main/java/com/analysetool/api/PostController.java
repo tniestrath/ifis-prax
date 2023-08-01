@@ -250,7 +250,7 @@ public class PostController {
             obj.put("clicks", PostStats.getClicks().toString());
             obj.put("searchSuccesses", PostStats.getSearchSuccess());
             obj.put("searchSuccessRate", PostStats.getSearchSuccessRate());
-            obj.put("referring", PostStats.getRefferings());
+            obj.put("referring", PostStats.getReferrings());
             obj.put("articleReferringRate", PostStats.getArticleReferringRate());
         }else {
             obj.put("performance",0);
@@ -385,7 +385,7 @@ public class PostController {
         obj.put("Views",Stat.getClicks());
         obj.put("Referring",Stat.getReferrings());
         obj.put("Article Referring Rate",Stat.getArticleReferringRate());
-        obj.put("Search Successes",Stat.getSearchSucces());
+        obj.put("Search Successes",Stat.getSearchSuccess());
         obj.put("Search Success Rate",Stat.getSearchSuccessRate());
 
         return obj.toString();
@@ -430,7 +430,7 @@ public class PostController {
             views = PostStats.getClicks();
             searchSuccesses = PostStats.getSearchSuccess();
             SearchSuccessRate = PostStats.getSearchSuccessRate();
-            referringCount = PostStats.getRefferings();
+            referringCount = PostStats.getReferrings();
             refrate = PostStats.getArticleReferringRate();
             relevanz = PostStats.getRelevance();
             performance = PostStats.getPerformance();

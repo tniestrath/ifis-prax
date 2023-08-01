@@ -34,6 +34,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.filter.GenericFilterBean;
@@ -48,13 +49,14 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> {
-                auth.requestMatchers("/", "/login", "/validate").permitAll();
+        http.addFilterBefore(new AuthenticationFilter(), BasicAuthenticationFilter.class);
+
+        http.authorizeHttpRequests((auth) -> {
+                auth.requestMatchers("/login", "/validate").permitAll();
                 auth.anyRequest().authenticated();
-            }).sessionManagement(sessionM -> {
-                sessionM.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-            }).addFilterBefore(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).build();
+            });
+
+        return http.build();
     }
 
 }

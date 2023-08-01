@@ -192,6 +192,9 @@ public class LoginController {
 
             responseBody = EntityUtils.toString(entity);
 
+        } catch (NullPointerException e) {
+            System.out.println("Code above causes an Error on every logout. It shouldn't. " +
+                    "This is printed instead of the Error, remove Catch and logout to see. LoginController:197");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -136,8 +136,7 @@ public class LogService {
 
         }else {SystemVariabeln = sysVarRepo.findAll().get(sysVarRepo.findAll().size()-1);
 
-            //ToDo Toten Code aufräumen
-            //if(SystemVariabeln.getDate().getDayOfYear()!=(LocalDateTime.now().getDayOfYear())){
+
                 liveScanning= (getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0).equals(SystemVariabeln.getLogDate().withSecond(0).withNano(0)));
                 System.out.println(getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0)+ "  "+SystemVariabeln.getLogDate().withSecond(0).withNano(0));
 
@@ -173,8 +172,7 @@ public class LogService {
             liveScanning = false;
 
         }else {SystemVariabeln = sysVarRepo.findAll().get(sysVarRepo.findAll().size()-1);
-            //ToDo Toten Code aufräumen
-           // if(SystemVariabeln.getDate().getDayOfYear()!=(LocalDateTime.now().getDayOfYear())){
+
             liveScanning= (getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0).equals(SystemVariabeln.getLogDate().withSecond(0).withNano(0)));
                 SystemVariabeln.setDate(LocalDateTime.now());
                 SystemVariabeln.setDayInYear(LocalDateTime.now().getDayOfYear());
@@ -183,7 +181,7 @@ public class LogService {
                 SystemVariabeln.setLastLine("");
                 if(!liveScanning){SystemVariabeln.setLastLineCount(0);}
                 SystemVariabeln.setLogDate(getCreationDateOfAccessLog(Pfad));
-          //  }
+
 
         }
 
@@ -376,78 +374,16 @@ public class LogService {
 
             System.out.println(postRepository.getIdByName(matcher.group(1)+" "+matcher.group(1))+" PROCESSING 5.1");
 
-            //ToDo Toten Code aufräumen
-            /*try{
 
-                long id =postRepository.getIdByName(matcher.group(1));
-                //hier nach TagSuchen WIP
 
-                checkTheTag(id,false);
-                if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
-                    PostStats stats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
-                    long views = stats.getClicks();
-                    views ++;
-
-                    LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-                    LocalDateTime Now =  LocalDateTime.now();
-                    Duration duration = Duration.between(PostTimestamp, Now);
-                    long diffInDays = duration.toDays();
-                    float Performance = views;
-                    if (diffInDays>0&&views > 0){
-                        Performance = (float)views/diffInDays;
-                    }
-                    stats.setClicks(views);
-                    stats.setPerformance(Performance);
-
-                    //statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
-                    //updateDailyClicks(id);
-                    statsRepo.save(stats);
-                    erhoeheWertFuerHeutigesDatum( id);
-                }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,1,0,0,(float) 0)); //updateDailyClicks(id);
-                    erhoeheWertFuerHeutigesDatum( id);}
-            }
-            catch(Exception e){
-                System.out.println("IGNORE "+matcher.group(1)+" BECAUSE: "+e.getMessage());
-            }*/
             UpdatePerformanceAndViews(matcher);
             updateViewsByLocation(matcher);
         }
         if (patternNumber==8){
 
             System.out.println(postRepository.getIdByName(matcher.group(5))+matcher.group(6)+" PROCESSING 5.2");
-            //ToDo Toten Code aufräumen
-            /*try{
-                long id =postRepository.getIdByName(matcher.group(1));
-                checkTheTag(id,true);
-                if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
-                    PostStats stats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
-                    long views = stats.getClicks();
-                    views ++;
-                    long searchSuccess= stats.getSearchSuccess();
-                    searchSuccess ++;
-                    LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-                    LocalDateTime Now =  LocalDateTime.now();
-                    Duration duration = Duration.between(PostTimestamp, Now);
-                    long diffInDays = duration.toDays();
-                    float Performance = views;
-                    if (diffInDays>0&&views > 0){
-                        Performance = (float)views/diffInDays;
-                    }
-                    stats.setPerformance(Performance);
-                    stats.setSearchSucces(searchSuccess);
-                    stats.setClicks(views);
-                    stats.setSearchSuccessRate((float)searchSuccess/views);
-                    statsRepo.save(stats);
-                   // statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
-                   // updateDailyClicks(id);
-                    erhoeheWertFuerHeutigesDatum( id);
-                }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,1,1,0,(float) 0)); //updateDailyClicks(id);
-                    erhoeheWertFuerHeutigesDatum( id);}
-            }
-            catch(Exception e){
-                System.out.println("IGNORE "+matcher.group(1)+" BECAUSE: "+e.getMessage());
 
-            }*/
+
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
             updateSearchStats(matcher);

@@ -584,7 +584,7 @@ public class PostController {
      * @return a jsonString containing the ids of the top3 posts found.
      */
     @GetMapping("/getTop3")
-    public String getTop3(String sorter) {
+    public String getTop3(@RequestParam String sorter) {
         List<Long> top3 = null;
         String errorString = "";
         if(sorter.equalsIgnoreCase("relevance")) {

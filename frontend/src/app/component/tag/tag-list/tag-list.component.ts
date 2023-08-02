@@ -1,14 +1,14 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {SelectorItem} from "../../page/selector/selector.component";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
+import {SelectorItem} from "../../../page/selector/selector.component";
 import {Subject} from "rxjs";
-import {TagRanking} from "../../page/tag/Tag";
+import {TagRanking} from "../Tag";
 import {TagListItemComponent} from "./tag-list-item/tag-list-item.component";
 
 @Component({
   selector: 'dash-tag-list',
   templateUrl: './tag-list.component.html',
-  styleUrls: ['./tag-list.component.css', "../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./tag-list.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class TagListComponent extends DashBaseComponent implements AfterViewInit{
   selectorItems : SelectorItem[] = [];
@@ -16,13 +16,13 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
   selectorItemsLoaded = new Subject<SelectorItem[]>();
   search_input : any;
   sorting_input_r : any;
-  sorting_input_a : any;
+  sorting_input_p : any;
   ngOnInit(): void {
-    this.setToolTip("Auflistung aller #Tags, sortierbar nach Relevanz oder Anzahl der globalen Beiträge zu diesem Thema")
+    this.setToolTip("Auflistung aller #Tags, sortierbar nach Relevanz oder Performance")
 
     this.db.getAllTagsWithCountAndRelevance().then(res => {
       for (var tag of res) {
-        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.relevance, tag.count)));
+        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.relevance, tag.performance, tag.count)));
         this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRelevance((b.data as TagRanking)));
       }
       this.selectorItemsLoaded.next(this.selectorItems)
@@ -30,7 +30,7 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
 
     this.search_input = document.getElementById("tag-search");
     this.sorting_input_r = document.getElementById("tag-sort-r");
-    this.sorting_input_a = document.getElementById("tag-sort-a");
+    this.sorting_input_p = document.getElementById("tag-sort-p");
 
     this.search_input.addEventListener("input", (event : any) => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
@@ -43,8 +43,8 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
       this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRelevance((b.data as TagRanking)));
       this.selectorItemsLoaded.next(this.selectorItems);
     });
-    this.sorting_input_a.addEventListener("change", () => {
-      this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByCount((b.data as TagRanking)));
+    this.sorting_input_p.addEventListener("change", () => {
+      this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByPerformance((b.data as TagRanking)));
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }

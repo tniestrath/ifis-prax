@@ -44,7 +44,9 @@ public class TagsController {
 
     @GetMapping("/getall")
     List<WPTerm> getall(){return termRepository.findAll();}
+
     // weitere REST-Endpunkte, falls benötigt
+
     @GetMapping("/getPostTags")
     List<WPTerm>getPostTags(){
         List<Long> li = termTaxonomyRepository.getAllPostTags();

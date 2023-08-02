@@ -10,7 +10,7 @@ import {SelectableDirective} from "./selectable.directive";
 import {SelectableComponent} from "./selectable.component";
 import {Observable, Subscription} from "rxjs";
 import {DbObject} from "../../services/DbObject";
-import {TagListItemComponent} from "../../component/tag-list/tag-list-item/tag-list-item.component";
+import {TagListItemComponent} from "../../component/tag/tag-list/tag-list-item/tag-list-item.component";
 
 export class SelectorItem {
   constructor(public component: Type<any>, public data: DbObject){}

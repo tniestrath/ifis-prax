@@ -12,16 +12,15 @@ export class TagPieComponent extends DashBaseComponent implements OnInit{
   colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
 
   ngOnInit(): void {
-    this.db.getAllTagsPostCount(15).then(res => {
+    this.db.getAllTagsPostCount(5).then(res => {
       let map : Map<string, number> = new Map(Object.entries(res));
       let labels :string[] = Array.from(map.keys());
       let data : number[] = Array.from(map.values());
-      console.log(labels)
-      this.createChart(labels, data);
+      this.createChart(labels.slice(0, 20), data.slice(0, 20), this.colors);
     })
   }
 
-    createChart(labels : string[], data : number[], ){
+    createChart(labels : string[], data : number[], colors : string[]){
       return new Chart("tagpie", {
         type: "pie",
         data: {
@@ -29,7 +28,7 @@ export class TagPieComponent extends DashBaseComponent implements OnInit{
           datasets: [{
             label: "",
             data: data,
-            backgroundColor: this.colors,
+            backgroundColor: colors,
             borderRadius: 5,
             borderWidth: 5
           }]

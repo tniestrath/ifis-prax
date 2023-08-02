@@ -18,6 +18,7 @@ import {LoginComponent} from "../../component/login/login.component";
 import {User} from "./user/user";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
 import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
+import {TagListComponent} from "../../component/tag-list/tag-list.component";
 
 @Component({
   selector: 'dash-page',
@@ -60,7 +61,7 @@ export class PageComponent implements OnInit {
   }
   getTagsPageCards() {
     return [
-      {type: TagComponent, row: 1, col: 1, height: 1, width: 1},
+      {type: TagListComponent, row: 1, col: 1, height: 2, width: 1},
     ];
   }
   getPostsPageCards() {

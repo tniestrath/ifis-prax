@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {TagRanking} from "../../../page/tag/Tag";
+import {TagRanking} from "../../Tag";
 
 @Component({
   selector: 'dash-tag-list-item',
@@ -7,6 +7,6 @@ import {TagRanking} from "../../../page/tag/Tag";
   styleUrls: ['./tag-list-item.component.css']
 })
 export class TagListItemComponent {
-  data : TagRanking = new TagRanking("" ,"","","");
+  data : TagRanking = new TagRanking("" ,"","", "","");
   protected readonly parseFloat = parseFloat;
 }

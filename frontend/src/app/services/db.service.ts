@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
-import {Tag} from "../page/tag/Tag";
+import {Tag} from "../component/tag/Tag";
 import {DbObject} from "./DbObject";
 import {Post} from "../Post";
 import {User} from "../page/page-einzel/user/user";

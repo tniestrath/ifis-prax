@@ -7,12 +7,11 @@ import { PolarChartComponent } from './component/polar-chart/polar-chart.compone
 import { HeaderComponent } from './page/header/header.component';
 import { CounterComponent } from './component/counter/counter.component';
 import { GaugeComponent } from './component/gauge/gauge.component';
-import { PageTagComponent } from './page/tag/page-tag/page-tag.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatInputModule} from "@angular/material/input";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import { TagComponent } from './page/tag/tag/tag.component';
+import { TagComponent } from './component/tag/tag/tag.component';
 import { SearchbarComponent } from './page/searchbar/searchbar.component';
 import { PageComponent } from './page/page-einzel/page.component';
 import {CookieService} from "ngx-cookie-service";
@@ -22,8 +21,8 @@ import { UserComponent } from './page/page-einzel/user/user.component';
 import {NgOptimizedImage} from "@angular/common";
 import { DashBaseComponent } from './component/dash-base/dash-base.component';
 import { ClicksComponent } from './component/clicks/clicks.component';
-import { TagListComponent } from './component/tag-list/tag-list.component';
-import { TagListItemComponent } from './component/tag-list/tag-list-item/tag-list-item.component';
+import { TagListComponent } from './component/tag/tag-list/tag-list.component';
+import { TagListItemComponent } from './component/tag/tag-list/tag-list-item/tag-list-item.component';
 import { PostChartComponent } from './component/post-chart/post-chart.component';
 import { GridComponent } from './grid/grid.component';
 import { GridCardDirective } from './grid/grid-card.directive';
@@ -34,6 +33,7 @@ import { UserPlanComponent } from './component/user-plan/user-plan.component';
 import { LoginComponent } from './component/login/login.component';
 import { OriginMapComponent } from './component/origin-map/origin-map.component';
 import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time.component';
+import { TagPieComponent } from './component/tag/tag-pie/tag-pie.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +42,6 @@ import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time
     HeaderComponent,
     CounterComponent,
     GaugeComponent,
-    PageTagComponent,
     TagComponent,
     SearchbarComponent,
     PageComponent,
@@ -62,7 +61,8 @@ import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time
     UserPlanComponent,
     LoginComponent,
     OriginMapComponent,
-    ClicksByTimeComponent
+    ClicksByTimeComponent,
+    TagPieComponent
   ],
     imports: [
         BrowserModule,

@@ -12,13 +12,14 @@ import {RelevanceComponent} from "../../component/gauge/relevance/relevance.comp
 import {PostComponent} from "../../component/post/post.component";
 import {SysVars} from "../../services/sys-vars-service";
 import {PotentialComponent} from "../../component/potential/potential.component";
-import {TagComponent} from "../tag/tag/tag.component";
+import {TagComponent} from "../../component/tag/tag/tag.component";
 import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
 import {User} from "./user/user";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
 import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
-import {TagListComponent} from "../../component/tag-list/tag-list.component";
+import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
+import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
 
 @Component({
   selector: 'dash-page',
@@ -61,7 +62,8 @@ export class PageComponent implements OnInit {
   }
   getTagsPageCards() {
     return [
-      {type: TagListComponent, row: 1, col: 1, height: 2, width: 1},
+      {type: TagListComponent, row: 1, col: 1, height: 4, width: 2},
+      {type: TagPieComponent, row: 1, col: 3, height: 2, width: 2}
     ];
   }
   getPostsPageCards() {

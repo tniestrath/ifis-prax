@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Tag} from "../Tag";
-import {DashBaseComponent} from "../../../component/dash-base/dash-base.component";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
 
 @Component({
   selector: 'dash-tag-details',

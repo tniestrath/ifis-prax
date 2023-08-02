@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
-import {Tag} from "../component/tag/Tag";
+import {Tag, TagRanking} from "../component/tag/Tag";
 import {DbObject} from "./DbObject";
 import {Post} from "../Post";
 import {User} from "../page/page-einzel/user/user";
@@ -10,6 +10,7 @@ export enum dbUrl {
   PORT = ":8080",
   GET_ALL_TAGS = "/tags/getPostTagsIdName",
   GET_ALL_TAGS_WITH_RELEVANCE_AND_PERFORMANCE = "/tags/allTermsRelevanceAndPerformance",
+  GET_ALL_TAGS_POST_COUNT_CLAMPED_PERCENTAGE = "/tags/getPostCountAbove?percentage=",
   GET_TAG_POST_COUNT = "/tags/getPostcount?id=",
   GET_TAG_RANKING = "/tags/getTermRanking",
 
@@ -85,6 +86,9 @@ export class DbService {
 
   async getTagPostCount(id : string){
     return await fetch(DbService.getUrl(dbUrl.GET_TAG_POST_COUNT) + id).then(res => res.json());
+  }
+  async getAllTagsPostCount(percantage : number) : Promise<Map<string, number>>{
+    return await fetch(DbService.getUrl(dbUrl.GET_ALL_TAGS_POST_COUNT_CLAMPED_PERCENTAGE) + percantage).then(res => res.json());
   }
 
   async getTagRanking() {

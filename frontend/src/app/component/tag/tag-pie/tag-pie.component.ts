@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
+import {Tag, TagRanking} from "../Tag";
 
 @Component({
   selector: 'dash-tag-pie',
@@ -11,7 +12,13 @@ export class TagPieComponent extends DashBaseComponent implements OnInit{
   colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
 
   ngOnInit(): void {
-    this.createChart([""], [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20])
+    this.db.getAllTagsPostCount(15).then(res => {
+      let map : Map<string, number> = new Map(Object.entries(res));
+      let labels :string[] = Array.from(map.keys());
+      let data : number[] = Array.from(map.values());
+      console.log(labels)
+      this.createChart(labels, data);
+    })
   }
 
     createChart(labels : string[], data : number[], ){

@@ -4,7 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
 
 @Repository
 public interface WpTermTaxonomyRepository extends JpaRepository<WpTermTaxonomy, Long> {
@@ -17,6 +20,15 @@ public interface WpTermTaxonomyRepository extends JpaRepository<WpTermTaxonomy, 
 
     @Query("select p.termId from WpTermTaxonomy p where p.termTaxonomyId IN :ids")
     List<Long> getTermIdByTaxId(List<Long> ids);
+
+    @Query("SELECT p.count from WpTermTaxonomy p where p.taxonomy = 'post_tag'")
+    List<Integer> getCount();
+
+    @Query("SELECT p.termId FROM WpTermTaxonomy p WHERE p.taxonomy='post_tag' AND p.count >= (SELECT (:percentage * 0.01) * SUM(s.count) FROM WpTermTaxonomy s WHERE s.taxonomy = 'post_tag') ORDER BY p.count DESC")
+    List<Long> getCountAbove(int percentage);
+
+    @Query("SELECT p.count from WpTermTaxonomy p where p.termId = :id")
+    Long getCountById(int id);
 
     List<WpTermTaxonomy> findByTermTaxonomyId(Long termTaxonomyId);
 

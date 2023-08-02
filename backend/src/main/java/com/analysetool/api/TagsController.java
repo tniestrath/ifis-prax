@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import com.analysetool.repositories.WpTermTaxonomyRepository;
 import org.json.JSONObject;
 import org.json.JSONArray;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
+
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
 @RequestMapping("/tags")
@@ -125,6 +125,42 @@ public class TagsController {
         }
         return response.toString();
 
+    }
+
+
+    @GetMapping("/allTermsRelevanceAndPerformance")
+    public String getTermsRelevanceAndPerformance() throws JSONException {
+        List<WpTermTaxonomy> termTaxs = termTaxonomyRepository.findAll();
+        JSONArray response = new JSONArray();
+        for(WpTermTaxonomy tax : termTaxs){
+            JSONObject obj = new JSONObject();
+            if(tax.getTaxonomy().equals("post_tag")){
+                obj.put("name",termRepository.findById(tax.getTermId()).get().getName());
+                if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) {
+                    obj.put("relevance", tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance());
+                    obj.put("performance", tagStatRepo.getStatById(tax.getTermId().intValue()).getPerformance());
+                }
+                else {
+                    obj.put("relevance", 0);
+                    obj.put("performance", 0);
+                }
+                response.put(obj);
+            }
+        }
+        return response.toString();
+    }
+
+    @GetMapping("/getPostCountAbove")
+    public String getPostCountAbove(int percentage) {
+        HashMap<String, Long> map = new HashMap<>();
+
+        for(Long id : termTaxonomyRepository.getCountAbove(percentage)) {
+            map.put(termRepository.getNameById(id.intValue()), termTaxonomyRepository.getCountById(id.intValue()));
+        }
+
+
+        JSONObject json = new JSONObject(map);
+        return json.toString();
     }
 
 

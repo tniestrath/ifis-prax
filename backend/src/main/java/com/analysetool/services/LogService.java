@@ -3,6 +3,7 @@ package com.analysetool.services;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
+import io.hypersistence.utils.hibernate.type.array.LocalDateTimeArrayType;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.jsoup.Jsoup;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.Time;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -61,7 +63,7 @@ public class LogService {
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
     private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)\".*";
 
-
+    private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
 
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
@@ -76,6 +78,7 @@ public class LogService {
     Pattern pattern5_2= Pattern.compile(PresseSSViewPatter);
     Pattern pattern4_2=Pattern.compile(RedirectUserPattern);
     Pattern pattern6_1= Pattern.compile(SearchPattern);
+    Pattern pattern7=Pattern.compile(ReffererPattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -300,6 +303,10 @@ public class LogService {
             if(matcher6_1.find()){
                 processLine(line,10,matcher6_1);
             }
+            Matcher matcher7=pattern7.matcher(line);
+            if(matcher7.find()){
+                processLine(line,11,matcher7);
+            }
 
 
 
@@ -435,9 +442,37 @@ public class LogService {
             String time = matcher.group(5);
             LocalDateTime dateTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
             searchStatRepo.save(new SearchStats(ipHash,matcher.group(6),dateTime,location));
-            System.out.println("DIESE-->"+dateTime);
 
+        }
+        if(patternNumber==11){
 
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+            LocalDate date = LocalDate.now();  // Replace with the date you want to search for
+            List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
+
+            for(SearchStats s : searchStatsForDate){
+                long id = postRepository.getIdByName(matcher.group(6));
+                if(bCryptPasswordEncoder.matches(matcher.group(1), s.getIpHashed())&& s.getSearchSuccessFlag() &&s.getClickedPost().equals(id)){
+
+                    LocalTime search_success_time = s.getSearch_success_time().toLocalTime();
+
+                    String logHourMinuteSecond = matcher.group(5);
+
+                    // Trenne Stunden, Minuten und Sekunden
+                    String[] timeParts = logHourMinuteSecond.split(":");
+                    String logHour = timeParts[0];
+                    String logMinute = timeParts[1];
+                    String logSecond = timeParts[2];
+                    LocalTime refferer_time = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
+
+                    //differenz = dwelltime
+                    Duration difference = Duration.between(refferer_time,search_success_time );
+                    LocalTime dwell_time= LocalTime.of((int)difference.toHours(),(int)difference.toMinutes(),(int)difference.toSeconds());
+                    s.setDwell_time(dwell_time);
+                    searchStatRepo.save(s);
+                }
+            }
 
         }
 
@@ -455,6 +490,15 @@ public class LogService {
                 s.setSearchSuccessFlag(true);
                 long id = postRepository.getIdByName(matcher.group(6));
                 s.setClickedPost(String.valueOf(id));
+
+                String day = matcher.group(2);
+                String month = getMonthNumber(matcher.group(3));
+                String year = matcher.group(4);
+                String time = matcher.group(5);
+                LocalDateTime searchSuccessTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
+
+                s.setSearch_success_time(searchSuccessTime);
+
                 searchStatRepo.save(s);
             }
         }

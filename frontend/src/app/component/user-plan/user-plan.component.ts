@@ -26,8 +26,6 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
   }
 
   createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){
-    Chart.defaults.color = "#000"
-
     const donughtInner  = {
       id: "donughtInner",
       afterDatasetsDraw(chart: Chart, args: EmptyObject, options: 0, cancelable: false) {

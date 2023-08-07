@@ -16,6 +16,13 @@
             "outputPath": "dist/frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2mb",
+                "maximumError": "2.5mb"
+              }
+            ],
             "polyfills": [
               "zone.js"
             ],

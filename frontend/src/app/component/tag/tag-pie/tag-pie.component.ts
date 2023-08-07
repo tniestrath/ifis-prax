@@ -29,13 +29,7 @@ export class TagPieComponent extends DashBaseComponent implements OnInit{
           ctx.save();
           const x = chart.getDatasetMeta(0).data[0].x;
           const y = chart.getDatasetMeta(0).data[0].y;
-/*          ctx.beginPath();
-          ctx.ellipse(x, y, chart.chartArea.width / 5, chart.chartArea.width / 5, 0, 0,2 * Math.PI, false);
-          ctx.fillStyle = "#000"
-          ctx.closePath();
-          ctx.stroke();*/
-
-
+          
           ctx.globalCompositeOperation = 'source-over';
 
           ctx.font = (chart.chartArea.height / 22) + "px sans-serif";

@@ -6,7 +6,7 @@ import {Post} from "../Post";
 import {User} from "../page/page-einzel/user/user";
 
 export enum dbUrl {
-  HOST = "http://localhost",
+  HOST = "http://analyse.it-sicherheit.de",
   PORT = ":8080",
   GET_ALL_TAGS = "/tags/getPostTagsIdName",
   GET_ALL_TAGS_WITH_RELEVANCE_AND_PERFORMANCE = "/tags/allTermsRelevanceAndPerformance",

@@ -127,7 +127,11 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.14.3</version> <!-- Aktuelle Version überprüfen -->
+			<version>1.15.3</version> <!-- Aktuelle Version überprüfen -->
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 	</dependencies>

@@ -17,10 +17,8 @@ public final class IPHelper {
 
     static {
         try {
-            cityReader = new DatabaseReader.Builder(new File(Application.class.getClassLoader().getResource("backend/src/main/resources/iplocationdbs/city.mmdb").toURI())).withCache(new CHMCache()).build();
+            cityReader = new DatabaseReader.Builder(new File(("backend/src/main/resources/iplocationdbs/city.mmdb"))).withCache(new CHMCache()).build();
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }

@@ -7,7 +7,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
-import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

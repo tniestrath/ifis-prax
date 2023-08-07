@@ -28,5 +28,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    @Query("select p.date from Post p where p.id =:Id AND p.status= 'publish'")
    LocalDateTime getPostDateById(long Id);
+
+   @Query("SELECT p.content FROM Post p WHERE p.id =:pId")
+   public String getContentById(long pId);
+
+
+   @Query("SELECT p FROM Post p WHERE p.status = 'publish' AND p.type = 'post'")
+   List<Post> findAllUserPosts();
+
 }
 

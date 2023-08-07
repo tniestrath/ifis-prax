@@ -5,6 +5,9 @@ import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
+import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -153,6 +156,7 @@ public class LogService {
 
 
         run(liveScanning,Pfad, SystemVariabeln);
+        updateLetterCountForAll();
 
     }
     @Scheduled(cron = "0 0 * * * *") //einmal die Stunde
@@ -187,6 +191,7 @@ public class LogService {
 
 
         run(liveScanning,Pfad, SystemVariabeln);
+        updateLetterCountForAll();
     }
     public void run(boolean liveScanning, String path,SysVar SystemVariabeln)  {
         this.liveScanning = liveScanning;
@@ -964,6 +969,19 @@ public class LogService {
         months.put("Dec", "12");
 
         return months.getOrDefault(monthName.substring(0, 3), "00");
+    }
+
+
+    public void updateLetterCount(long id) {
+        int lettercount = Jsoup.clean(postRepository.getContentById(id), Safelist.none()).length();
+        System.out.println("Lettercount für" + id + "war: " + lettercount);
+        statsRepo.updateLetterCount(lettercount, id);
+    }
+
+    public void updateLetterCountForAll () {
+        for(Post p : postRepository.findAllUserPosts()) {
+            updateLetterCount(p.getId());
+        }
     }
 
 

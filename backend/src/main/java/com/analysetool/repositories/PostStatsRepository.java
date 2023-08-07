@@ -131,6 +131,11 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("UPDATE PostStats s SET s.clicks = :clicks, s.searchSuccess = :searchSuccess, s.performance = :performance, s.searchSuccessRate = :searchSuccessRate WHERE s.artId = :artId")
     void updateClicksSearchSuccessAndRatePerformance(Long artId, Long clicks, Long searchSuccess, float performance, float searchSuccessRate);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE PostStats s SET s.lettercount =:lettercount WHERE s.artId =:artId")
+    void updateLetterCount(int lettercount, long artId);
+
     default void updateClicksSearchSuccessRateAndPerformance(Long artId, Long clicks, Long searchSuccess, float performance) {
         float searchSuccessRate = (float) clicks / searchSuccess;
         updateClicksSearchSuccessAndRatePerformance(artId, clicks, searchSuccess, performance, searchSuccessRate);
@@ -162,6 +167,9 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
     @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC LIMIT 3")
     public List<Long> getTop3Performance();
+
+    @Query("SELECT s.lettercount FROM PostStats s WHERE s.artId =:artId")
+    public int getLetterCount(int artId);
 
 
     // Beispiel für eine separate Methode zur Berechnung der Performance

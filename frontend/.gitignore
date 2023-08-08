@@ -23,6 +23,9 @@ yarn-error.log
 .gitignore
 dataSources.xml
 
+angular.json
+.properties
+
 # Visual Studio Code
 .vscode/*
 !.vscode/settings.json

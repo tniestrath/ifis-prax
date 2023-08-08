@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://localhost:8080",
+    "target": "http://analyse.it-sicherheit.de:4200",
     "secure": false
   }
 }

@@ -17,7 +17,7 @@ public final class IPHelper {
 
     static {
         try {
-            cityReader = new DatabaseReader.Builder(new File(("backend/src/main/resources/iplocationdbs/city.mmdb"))).withCache(new CHMCache()).build();
+            cityReader = new DatabaseReader.Builder(new File(("/var/www/ifis-prax/backend/src/main/resources/iplocationdbs/city.mmdb"))).withCache(new CHMCache()).build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

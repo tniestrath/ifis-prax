@@ -3,7 +3,7 @@ import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import {SysVars} from "../../services/sys-vars-service";
-import {Post} from "../../Post";
+import {Post} from "../post/Post";
 
 @Component({
   selector: 'dash-performance',

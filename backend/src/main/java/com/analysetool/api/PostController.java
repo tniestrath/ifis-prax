@@ -269,6 +269,7 @@ public class PostController {
             obj.put("searchSuccesses", PostStats.getSearchSuccess());
             obj.put("searchSuccessRate", PostStats.getSearchSuccessRate());
             obj.put("referrings", PostStats.getRefferings());
+            obj.put("lettercount", PostStats.getLettercount());
             obj.put("articleReferringRate", PostStats.getArticleReferringRate());
         }else {
             obj.put("performance",0);
@@ -277,6 +278,7 @@ public class PostController {
             obj.put("searchSuccesses",0);
             obj.put("searchSuccessRate",0);
             obj.put("referrings",0);
+            obj.put("lettercount", 0);
             obj.put("articleReferringRate",0);}
 
         return obj.toString();

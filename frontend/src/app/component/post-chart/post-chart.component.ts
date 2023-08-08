@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {Post} from "../../Post";
+import {Post} from "../post/Post";
 import {SysVars} from "../../services/sys-vars-service";
 import {EmptyObject} from "chart.js/dist/types/basic";
 

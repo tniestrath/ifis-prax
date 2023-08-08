@@ -2,12 +2,12 @@ import {Injectable} from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
 import {Tag, TagRanking} from "../component/tag/Tag";
 import {DbObject} from "./DbObject";
-import {Post} from "../Post";
+import {Post} from "../component/post/Post";
 import {User} from "../page/page-einzel/user/user";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de",
-  PORT = ":8080",
+  PORT = ":80",
   GET_ALL_TAGS = "/tags/getPostTagsIdName",
   GET_ALL_TAGS_WITH_RELEVANCE_AND_PERFORMANCE = "/tags/allTermsRelevanceAndPerformance",
   GET_ALL_TAGS_POST_COUNT_CLAMPED_PERCENTAGE = "/tags/getPostCountAbove?percentage=",

@@ -90,6 +90,8 @@ public class PostStats {
         this.relevance = relevance;
     }
 
+    public int getLettercount() { return lettercount; }
+
     public PostStats(Long artId, Float searchSuccessRate, Float articleReferringRate, long clicks, long searchSuccess, long refferings, float performance) {
         this.id = id;
         this.artId = artId;

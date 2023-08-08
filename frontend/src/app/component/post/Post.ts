@@ -10,6 +10,7 @@ export class Post {
               public searchSuccessRate: number = 0,
               public referrings: number = 0,
               public articleReferringRate: number = 0,
+              public lettercount: number = 0,
               public id : number = -1) {
   }
 }

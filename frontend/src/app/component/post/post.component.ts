@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {Post} from "../../Post";
+import {Post} from "./Post";
 import {SysVars} from "../../services/sys-vars-service";
 
 @Component({
@@ -15,7 +15,6 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   formattedPerformance: number = 0;
   formattedRelevanz: number = 0;
   formattedSSR: number = 0;
-  formattedARR: number = 0;
 
   ngOnInit(): void {
     this.db.getUserNewestPost(SysVars.USER_ID).then(res => {
@@ -60,10 +59,8 @@ export class PostComponent extends DashBaseComponent implements OnInit{
     this.formattedRelevanz = (res.relevance / maxRel) * 100;
     // @ts-ignore
     this.formattedSSR = res.searchSuccessRate * 100;
-    // @ts-ignore
-    this.formattedARR = res.articleReferringRate * 100;
 
     // @ts-ignore
-    this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, res.performance, res.relevance, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate);
+    this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, res.performance, res.relevance, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate, res.lettercount);
   }
 }

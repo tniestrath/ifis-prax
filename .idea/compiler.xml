@@ -14,12 +14,16 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-configuration-processor/3.1.0-SNAPSHOT/spring-boot-configuration-processor-3.1.0-SNAPSHOT.jar" />
         </processorPath>
-        <module name="demo" />
+        <module name="dash" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="demo" target="20" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="dash" options="-parameters" />
       <module name="demo" options="-parameters" />
     </option>
   </component>

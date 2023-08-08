@@ -6,8 +6,8 @@ import {Post} from "../component/post/Post";
 import {User} from "../page/page-einzel/user/user";
 
 export enum dbUrl {
-  HOST = "http://analyse.it-sicherheit.de",
-  PORT = ":8080",
+  HOST = "http://analyse.it-sicherheit.de/api",
+  PORT = "",
   GET_ALL_TAGS = "/tags/getPostTagsIdName",
   GET_ALL_TAGS_WITH_RELEVANCE_AND_PERFORMANCE = "/tags/allTermsRelevanceAndPerformance",
   GET_ALL_TAGS_POST_COUNT_CLAMPED_PERCENTAGE = "/tags/getPostCountAbove?percentage=",

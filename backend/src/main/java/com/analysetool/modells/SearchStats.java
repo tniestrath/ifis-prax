@@ -2,7 +2,6 @@ package com.analysetool.modells;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Objects;
 
 @Entity
@@ -30,12 +29,6 @@ public class SearchStats {
 
     @Column(length = 100)
     private String clickedPost;
-
-    @Column
-    private LocalDateTime search_success_time;
-
-    @Column
-    private LocalTime dwell_time;
 
     public SearchStats(String ipHashed, Boolean searchSuccessFlag, String searchString, LocalDateTime searchTime, String location, String clickedPost) {
         this.ipHashed = ipHashed;
@@ -110,22 +103,6 @@ public class SearchStats {
 
     public void setClickedPost(String clickedPost) {
         this.clickedPost = clickedPost;
-    }
-
-    public LocalDateTime getSearch_success_time() {
-        return search_success_time;
-    }
-
-    public void setSearch_success_time(LocalDateTime search_success_time) {
-        this.search_success_time = search_success_time;
-    }
-
-    public LocalTime getDwell_time() {
-        return dwell_time;
-    }
-
-    public void setDwell_time(LocalTime dwell_time) {
-        this.dwell_time = dwell_time;
     }
 
     @Override

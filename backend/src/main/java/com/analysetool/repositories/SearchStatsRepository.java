@@ -21,5 +21,5 @@ public interface SearchStatsRepository extends JpaRepository<SearchStats, Long> 
     @Query("SELECT s FROM SearchStats s WHERE DATE(s.searchTime) = :date")
     List<SearchStats> findAllBySearchDate(@Param("date") LocalDate date);
 
-    List<SearchStats>findByClickedPost(Long ClickedPost);
+    List<SearchStats>findByClickedPost(String ClickedPost);
 }

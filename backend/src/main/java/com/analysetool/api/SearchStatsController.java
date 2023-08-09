@@ -17,10 +17,10 @@ public class SearchStatsController {
     @Autowired
     private SearchStatsRepository searchStatsRepository;
 
-    /*@Autowired
+/*    @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
-        this.searchStatsRepository = searchStatsRepository;
-    }*/
+        this.searchStatsRepository = searchStatsRepository;}*/
+
 
     @GetMapping("/getAll")
     public List<SearchStats> getAllSearchStats() {
@@ -51,7 +51,7 @@ public class SearchStatsController {
     @GetMapping
     public String getSearchStatsByPostWithLimit(@RequestParam Long PostId,@RequestParam int limit) throws JSONException {
         JSONArray response = new JSONArray();
-        List<SearchStats> alleStats = searchStatsRepository.findByClickedPost(PostId);
+        List<SearchStats> alleStats = searchStatsRepository.findByClickedPost(PostId.toString());
         for (int i = alleStats.size() - 1; i != alleStats.size() - limit; i--) {
 
             JSONObject obj = new JSONObject();
@@ -66,7 +66,7 @@ public class SearchStatsController {
             obj.put("dwell_time",alleStats.get(i).getDwell_time());
             obj.put("search_time",alleStats.get(i).getSearchTime());
             obj.put("search_success_time",alleStats.get(i).getSearch_success_time());
-           
+
 
             response.put(obj);
         }

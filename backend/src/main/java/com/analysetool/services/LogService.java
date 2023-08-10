@@ -209,6 +209,7 @@ public class LogService {
         }
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
+        updateWordCountForAll();
         sysVarRepo.save(SystemVariabeln);
     }
 
@@ -1027,6 +1028,22 @@ public class LogService {
         }
     }
 
+    public void countWordsInPost(long id) {
+        // Hole den Inhalt des Posts und bereinige ihn
+        String content = Jsoup.clean(postRepository.getContentById(id), Safelist.none());
+
+        // Trenne den String anhand der bekannten Worttrenner und zähle die Anzahl der resultierenden Wörter
+        String[] words = content.split("\\s+|,|;|\\.|\\?|!");
+        int wordCount = words.length;
+
+        statsRepo.updateWordCount(wordCount,id);
+    }
+
+    public void updateWordCountForAll () {
+        for(Post p : postRepository.findAllUserPosts()) {
+            countWordsInPost(p.getId());
+        }
+    }
 
 }
 

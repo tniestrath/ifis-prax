@@ -48,7 +48,7 @@ public class SearchStatsController {
         return response.toString();
     }
 
-    @GetMapping
+    @GetMapping("/getSearchStatsByPostWithLimit")
     public String getSearchStatsByPostWithLimit(@RequestParam Long PostId,@RequestParam int limit) throws JSONException {
         JSONArray response = new JSONArray();
         List<SearchStats> alleStats = searchStatsRepository.findByClickedPost(PostId.toString());

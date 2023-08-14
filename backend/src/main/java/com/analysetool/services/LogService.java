@@ -972,6 +972,7 @@ public class LogService {
 
 
     public void updateLetterCount(long id) {
+
         int lettercount = Jsoup.clean(postRepository.getContentById(id), Safelist.none()).length();
         System.out.println("Lettercount für" + id + "war: " + lettercount);
         statsRepo.updateLetterCount(lettercount, id);
@@ -979,7 +980,9 @@ public class LogService {
 
     public void updateLetterCountForAll () {
         for(Post p : postRepository.findAllUserPosts()) {
-            updateLetterCount(p.getId());
+            if(statsRepo.getLetterCount(p.getId().intValue()) <= 0) {
+                updateLetterCount(p.getId());
+            }
         }
     }
 

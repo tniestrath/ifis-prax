@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
@@ -134,13 +135,21 @@ public class UserController {
 
     @GetMapping("/profilePic")
     public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException, URISyntaxException {
-        String path = String.valueOf(Paths.get(config.getProfilephotos() +"/"+id+"/profile_photo.jpg"));
-        File cutePic = new File(path);
-        if (!cutePic.exists()) {
-            cutePic = new File(Paths.get(Objects.requireNonNull(Application.class.getClassLoader().getResource("user_img/404_img.jpg")).toURI()).toUri());
+
+        try {
+            String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + id + "/profile_photo.jpg"));
+
+            File cutePic = new File(path);
+            if (!cutePic.exists()) {
+                cutePic = new File(Paths.get(Objects.requireNonNull(Application.class.getClassLoader().getResource("user_img/404_img.jpg")).toURI()).toUri());
+            }
+            byte[] imageBytes = Files.readAllBytes(cutePic.toPath());
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
+        } catch (FileSystemException e) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(Files.readAllBytes(new File(Paths.get(Objects.requireNonNull(Application.class.getClassLoader().getResource("user_img/404_img.jpg")).toURI()).toUri()).toPath());
         }
-        byte[] imageBytes = Files.readAllBytes(cutePic.toPath());
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
     }
 
     //STATS

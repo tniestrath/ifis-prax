@@ -17,19 +17,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p WHERE p.status = 'publish'")
    List<Post> findPublishedPosts();
 
-   @Query("SELECT p FROM Post p where p.authorId = :id AND p.status='publish'")
+   @Query("SELECT p FROM Post p where p.authorId = :id AND p.status='publish' AND p.type='post'")
    List<Post> findByAuthor(int id);
 
    @Query("SELECT p.id from Post p where p.title =:title")
    List<Long> getIdByTitle(String title);
 
-   @Query("SELECT p.id from Post p where p.slug =:name AND p.status='publish'")
+   @Query("SELECT p.id from Post p where p.slug =:name AND p.status='publish' AND p.type='post'")
    Long getIdByName(String name);
 
-   @Query("select p.date from Post p where p.id =:Id AND p.status= 'publish'")
+   @Query("select p.date from Post p where p.id =:Id AND p.status= 'publish' AND p.type='post'")
    LocalDateTime getPostDateById(long Id);
 
-   @Query("SELECT p.content FROM Post p WHERE p.id =:pId")
+   @Query("SELECT p.content FROM Post p WHERE p.id =:pId AND p.type='post'")
    public String getContentById(long pId);
 
 

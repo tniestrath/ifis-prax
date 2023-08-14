@@ -169,7 +169,7 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     public List<Long> getTop3Performance();
 
     @Query("SELECT s.lettercount FROM PostStats s WHERE s.artId =:artId")
-    public int getLetterCount(int artId);
+    public Integer getLetterCount(int artId);
 
 
     // Beispiel für eine separate Methode zur Berechnung der Performance

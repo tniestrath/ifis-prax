@@ -980,7 +980,7 @@ public class LogService {
 
     public void updateLetterCountForAll () {
         for(Post p : postRepository.findAllUserPosts()) {
-            if(statsRepo.getLetterCount(p.getId().intValue()) <= 0) {
+            if((statsRepo.getLetterCount(p.getId().intValue())) == null) {
                 updateLetterCount(p.getId());
             }
         }

@@ -158,8 +158,8 @@ public class LogService {
         updateLetterCountForAll();
 
     }
-    @Scheduled(cron = "0 0 * * * *") //einmal die Stunde
-    //@Scheduled(cron = "0 */2 * * * *") //alle 2min
+    //@Scheduled(cron = "0 0 * * * *") //einmal die Stunde
+    @Scheduled(cron = "0 */2 * * * *") //alle 2min
     public void runScheduled() {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){

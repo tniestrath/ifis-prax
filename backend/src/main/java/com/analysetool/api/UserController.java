@@ -140,15 +140,10 @@ public class UserController {
             String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + id + "/profile_photo.jpg"));
 
             File cutePic = new File(path);
-            if (!cutePic.exists()) {
-                cutePic = new File(Paths.get(Objects.requireNonNull(Application.class.getClassLoader().getResource("user_img/404_img.jpg")).toURI()).toUri());
-            }
             byte[] imageBytes = Files.readAllBytes(cutePic.toPath());
             return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
-        } catch (FileSystemException e) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .body(Files.readAllBytes(new File(Paths.get(Objects.requireNonNull(Application.class.getClassLoader().getResource("user_img/404_img.jpg")).toURI()).toUri()).toPath()));
+        } catch (Exception e) {
+            return ResponseEntity.noContent().build();
         }
     }
 

@@ -34,6 +34,7 @@ import { LoginComponent } from './component/login/login.component';
 import { OriginMapComponent } from './component/origin-map/origin-map.component';
 import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time.component';
 import { TagPieComponent } from './component/tag/tag-pie/tag-pie.component';
+import { ImgFallbackDirective } from './img-fallback.directive';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { TagPieComponent } from './component/tag/tag-pie/tag-pie.component';
     LoginComponent,
     OriginMapComponent,
     ClicksByTimeComponent,
-    TagPieComponent
+    TagPieComponent,
+    ImgFallbackDirective
   ],
     imports: [
         BrowserModule,

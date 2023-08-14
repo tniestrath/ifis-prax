@@ -614,6 +614,11 @@ public class PostController {
 
     }
 
+    @GetMapping("/testLetterCount")
+    public void updateLetterCount(int lettercount, long id) {
+        statsRepo.updateLetterCount(lettercount, id);
+    }
+
 
 }
 

@@ -134,7 +134,7 @@ public class UserController {
 
     @GetMapping("/profilePic")
     public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException, URISyntaxException {
-        String path = String.valueOf(Paths.get(Objects.requireNonNull(config.getProfilephotos() +"/"+id+"_profile_photo.jpg")));
+        String path = String.valueOf(Paths.get(config.getProfilephotos() +"/"+id+"/profile_photo.jpg"));
         File cutePic = new File(path);
         if (!cutePic.exists()) {
             cutePic = new File(Paths.get(Objects.requireNonNull(Application.class.getClassLoader().getResource("user_img/404_img.jpg")).toURI()).toUri());

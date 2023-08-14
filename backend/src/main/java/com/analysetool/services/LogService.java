@@ -139,7 +139,7 @@ public class LogService {
         }else {SystemVariabeln = sysVarRepo.findAll().get(sysVarRepo.findAll().size()-1);
 
 
-                liveScanning= (getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0).equals(SystemVariabeln.getLogDate().withSecond(0).withNano(0)));
+                liveScanning= (getCreationDateOfAccessLog(Pfad).withHour(0).withMinute(0).withSecond(0).withNano(0).equals(SystemVariabeln.getLogDate().withHour(0).withMinute(0).withSecond(0).withNano(0)));
                 System.out.println(getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0)+ "  "+SystemVariabeln.getLogDate().withSecond(0).withNano(0));
 
                 SystemVariabeln.setDate(LocalDateTime.now());
@@ -176,7 +176,7 @@ public class LogService {
 
         }else {SystemVariabeln = sysVarRepo.findAll().get(sysVarRepo.findAll().size()-1);
 
-            liveScanning= (getCreationDateOfAccessLog(Pfad).withSecond(0).withNano(0).equals(SystemVariabeln.getLogDate().withSecond(0).withNano(0)));
+            liveScanning= (getCreationDateOfAccessLog(Pfad).withHour(0).withMinute(0).withSecond(0).withNano(0).equals(SystemVariabeln.getLogDate().withHour(0).withMinute(0).withSecond(0).withNano(0)));
                 SystemVariabeln.setDate(LocalDateTime.now());
                 SystemVariabeln.setDayInYear(LocalDateTime.now().getDayOfYear());
                 SystemVariabeln.setDayInWeek(LocalDateTime.now().getDayOfWeek().getValue());

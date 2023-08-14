@@ -15,7 +15,7 @@
     <p>{{data.email}}</p>
   </div>
   <div class="user-post-count-box">
-    <p>Posts: {{data.postCount}}</p>
+    <p>Views: {{data.profileViews + data.postViews}}</p>
   </div>
   <div class="user-performance-box">
     <img [src]="'assets/performance_icon_' + data.performance + '.png'" alt="performance indicator">

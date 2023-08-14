@@ -104,7 +104,7 @@ public class UserController {
                 obj.put("id",i.getId());
                 obj.put("email",i.getEmail());
                 obj.put("displayName",i.getDisplayName());
-                obj.put("profileViews ", statsUser.getProfileView());
+                obj.put("profileViews", statsUser.getProfileView());
                 obj.put("postViews", postController.getViewsOfUserById(i.getId()));
                 obj.put("postCount", postController.getPostCountOfUserById(i.getId()));
                 obj.put ("performance",statsUser.getAveragePerformance());
@@ -122,7 +122,7 @@ public class UserController {
                 obj.put("email",i.getEmail());
                 obj.put("displayName",i.getDisplayName());
                 obj.put( "accountType" ,"undefined");
-                obj.put("profileViews ", 0);
+                obj.put("profileViews", 0);
                 obj.put("postViews",0);
                 obj.put("postCount",0);
                 obj.put ("performance",0);

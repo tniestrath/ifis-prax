@@ -150,11 +150,11 @@ export class PageComponent implements OnInit {
         for (let u of DbService.Users) {
           let performance = ((u.performance || 0) / max_performance)*100;
           if (performance <= 33){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.accountType, u.postViews, 50, 33, u.postViews, u.img)));
+            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 33, u.accountType, u.potential, u.img)));
           } if (performance > 33 && performance <= 66){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.accountType, u.postViews, 50, 66, u.postViews, u.img)));
+            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 33, u.accountType, u.potential, u.img)));
           } if (performance > 66){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.accountType, u.postViews, 50, 100, u.postViews, u.img)));
+            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 33, u.accountType, u.potential, u.img)));
           }
 
         }

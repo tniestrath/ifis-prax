@@ -173,7 +173,7 @@ public class UserController {
         int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
 
-        int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
+        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
         long viewsPresse = 0;
         List<Post> posts = postRepository.findByAuthor(id.intValue());
 

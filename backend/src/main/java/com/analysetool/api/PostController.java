@@ -344,7 +344,7 @@ public class PostController {
         int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
 
-        int tagIdPresse = termRepo.findBySlug("pressemitteilung").getId().intValue();
+        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 PostStats Stat = statRepository.getStatByArtID(post.getId());

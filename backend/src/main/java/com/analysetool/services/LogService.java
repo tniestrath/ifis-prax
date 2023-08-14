@@ -1,5 +1,6 @@
 package com.analysetool.services;
 
+import com.analysetool.api.PostController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
@@ -980,7 +981,7 @@ public class LogService {
 
     public void updateLetterCountForAll () {
         for(Post p : postRepository.findAllUserPosts()) {
-            if((statsRepo.getLetterCount(p.getId().intValue())) == null) {
+            if((statsRepo.getLetterCount(p.getId().intValue())) == null || (statsRepo.getLetterCount(p.getId().intValue())) == 0) {
                 updateLetterCount(p.getId());
             }
         }

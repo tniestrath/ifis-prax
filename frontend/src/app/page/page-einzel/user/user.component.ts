@@ -10,7 +10,7 @@ import {User} from "./user";
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements SelectableComponent, OnInit {
-  @Input() data: User = new User("", "", "", "", 0, 50, 66, 0, "");
+  @Input() data: User = new User("", "", "", 0, 0, 0, 50, "", 0, "");
 
   @Input() clicked: EventEmitter<User> = new EventEmitter<User>();
 

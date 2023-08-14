@@ -615,7 +615,7 @@ public class PostController {
     }
 
     @GetMapping("/testLetterCount")
-    public static void updateLetterCount(int lettercount, long id) {
+    public void updateLetterCount(int lettercount, long id) {
         statsRepo.updateLetterCount(lettercount, id);
     }
 

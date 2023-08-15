@@ -17,12 +17,19 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     if (this.chart != undefined) {
       this.chart.destroy();
     }
+    var labels = [];
+    var data = [];
 
-    this.chart = this.createChart("user_plan_chart", ["Basic", "Plus", "Premium"],[1173,223,35], undefined);
-    this.createLegend("user-plan-content-box", this.chart);
-    this.chart_total = 1173 + 223 + 35;
-
-    this.cdr.detectChanges();
+    this.db.getUserAccountTypes().then(value => {
+      let map : Map<string, number> = new Map(Object.entries(value));
+      map.delete("administrator");
+      labels = Array.from(map.keys());
+      data = Array.from(map.values());
+      this.chart = this.createChart("user_plan_chart", labels,data, undefined);
+      this.createLegend("user-plan-content-box", this.chart);
+      this.chart_total = data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      this.cdr.detectChanges();
+    })
   }
 
   createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){

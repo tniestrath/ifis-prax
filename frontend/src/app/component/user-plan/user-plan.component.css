@@ -12,14 +12,14 @@ canvas{
 }
 .legend-box{
   padding: 5px;
-  height: calc(25% - 10px);
+  height: calc(30% - 10px);
   width: calc(100% - 10px);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.clicks-item-head{
+.user-plan-item-head{
   margin: 0;
   font-weight: bold;
   font-size: large;

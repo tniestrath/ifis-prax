@@ -301,19 +301,19 @@ public class UserController {
 
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {
                 if (s.contains("customer"))
-                    counts.put("customer", counts.get("customer") == null ? 1 : counts.get("customer") + 1);
+                    counts.put("Customer", counts.get("Customer") == null ? 1 : counts.get("Customer") + 1);
                 if (s.contains("administrator"))
-                    counts.put("administrator", counts.get("administrator") == null ? 1 : counts.get("administrator") + 1);
+                    counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
                 if (( s.contains("um_anbieter") || s.contains("um_basis-anbieter") ) && !s.contains("plus"))
-                    counts.put("basic", counts.get("basic") == null ? 1 : counts.get("basic") + 1);
+                    counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
                 if (s.contains("um_plus-anbieter"))
-                    counts.put("plus", counts.get("plus") == null ? 1 : counts.get("plus") + 1);
+                    counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
                 if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
-                    counts.put("premium", counts.get("premium") == null ? 1 : counts.get("premium") + 1);
+                    counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
                 if (s.contains("um_premium-anbieter-sponsoren"))
-                    counts.put("sponsor", counts.get("sponsor") == null ? 1 : counts.get("sponsor") + 1);
+                    counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
                 if (s.contains("um_basis-anbieter-plus"))
-                    counts.put("basic-plus", counts.get("basic-plus") == null ? 1 : counts.get("basic-plus") + 1);
+                    counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
     });
         return new JSONObject(counts).toString();
     }

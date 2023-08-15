@@ -8,16 +8,16 @@ import {User} from "../page/page-einzel/user/user";
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
   PORT = "",
-  GET_ALL_TAGS = "/tags/getPostTagsIdName",
-  GET_ALL_TAGS_WITH_RELEVANCE_AND_PERFORMANCE = "/tags/allTermsRelevanceAndPerformance",
-  GET_ALL_TAGS_POST_COUNT_CLAMPED_PERCENTAGE = "/tags/getPostCountAbove?percentage=",
+  GET_TAGS_ALL = "/tags/getPostTagsIdName",
+  GET_TAGS_WITH_RELEVANCE_AND_PERFORMANCE_ALL = "/tags/allTermsRelevanceAndPerformance",
+  GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL = "/tags/getPostCountAbove?percentage=",
+
   GET_TAG_POST_COUNT = "/tags/getPostcount?id=",
   GET_TAG_RANKING = "/tags/getTermRanking",
 
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
-  GET_POST_BY_USERS_BEST = "/posts/bestPost?id=",
 
   GET_USERS_ALL = "/users/getAllNew",
   GET_USER_IMG = "/users/profilePic?id=",
@@ -27,10 +27,12 @@ export enum dbUrl {
   GET_USER_ORIGIN_MAP = "/users/getViewsByLocation?id=",
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
 
-  GET_USER_ALL_ORIGIN_MAP = "/users/getAllViewsByLocation",
-  GET_USER_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
+  GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
+  GET_USERS_ALL_ORIGIN_MAP = "/users/getAllViewsByLocation",
+  GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
 
   GET_POST = "/posts/getPostWithStatsById?id=",
+  GET_POST_BY_USERS_BEST = "/posts/bestPost?id=",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
@@ -74,21 +76,21 @@ export class DbService {
     if (DbService.Tags.length > 0){
       return;
     }
-    await fetch(DbService.getUrl(dbUrl.GET_ALL_TAGS)).then(res => res.json()).then(res => {
+    await fetch(DbService.getUrl(dbUrl.GET_TAGS_ALL)).then(res => res.json()).then(res => {
       for (let tag of res) {
         DbService.Tags.push(tag);
       }
     });
   }
   async getAllTagsWithRelevanceAndPerformance(){
-    return await fetch(DbService.getUrl(dbUrl.GET_ALL_TAGS_WITH_RELEVANCE_AND_PERFORMANCE)).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_TAGS_WITH_RELEVANCE_AND_PERFORMANCE_ALL)).then(res => res.json());
   }
 
   async getTagPostCount(id : string){
     return await fetch(DbService.getUrl(dbUrl.GET_TAG_POST_COUNT) + id).then(res => res.json());
   }
   async getAllTagsPostCount(percantage : number) : Promise<Map<string, number>>{
-    return await fetch(DbService.getUrl(dbUrl.GET_ALL_TAGS_POST_COUNT_CLAMPED_PERCENTAGE) + percantage).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL) + percantage).then(res => res.json());
   }
 
   async getTagRanking() {
@@ -143,6 +145,10 @@ export class DbService {
     return fetch(DbService.getUrl(dbUrl.GET_POSTS_NEWEST_BY_USER_WITH_STATS) + id).then(res => res.json());
   }
 
+  async getUserAccountTypes() : Promise<Map<string, number>>{
+    return fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_ALL)).then(res => res.json());
+  }
+
   async getMaxPerformance(){
     let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_PERFORMANCE)).then(res => res.json());
     return max;
@@ -173,7 +179,7 @@ export class DbService {
   }
 
   async getOriginMapAll(){
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_ALL_ORIGIN_MAP)).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL_ORIGIN_MAP)).then(res => res.json());
   }
 
   async getClicksByTime(id : number){
@@ -182,6 +188,6 @@ export class DbService {
     });
   }
   async getClicksByTimeAll() : Promise<number[]>{
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_ALL_VIEWS_PER_HOUR)).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL_VIEWS_PER_HOUR)).then(res => res.json());
   }
 }

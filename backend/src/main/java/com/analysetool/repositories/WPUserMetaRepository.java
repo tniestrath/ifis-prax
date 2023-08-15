@@ -19,5 +19,8 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     @Query("select p.value from WPUserMeta p where p.userId = :id AND p.key = 'wp_capabilities'")
     String getWPUserMetaValueByUserId(Long id);
 
+    @Query("SELECT p.value FROM WPUserMeta p WHERE p.key ='wp_capabilities'")
+    List<String> getWpCapabilities();
+
 }
 

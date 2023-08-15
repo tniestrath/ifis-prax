@@ -13,6 +13,7 @@ export class TagPieComponent extends DashBaseComponent implements OnInit{
   colors : string[] = ["#5A7995", "#354657", "rgb(148,28,62)", "rgb(84, 16, 35)", "#000"];
 
   ngOnInit(): void {
+    this.setToolTip("Hier wird die Verteilung der Posts auf die Top 5 Tags als absolutes angezeigt.");
     this.db.getAllTagsPostCount(5).then(res => {
       let map : Map<string, number> = new Map(Object.entries(res).sort(([tag1, count1], [tag2, count2]) => count2 -count1));
       let labels :string[] = Array.from(map.keys());
@@ -29,7 +30,7 @@ export class TagPieComponent extends DashBaseComponent implements OnInit{
           ctx.save();
           const x = chart.getDatasetMeta(0).data[0].x;
           const y = chart.getDatasetMeta(0).data[0].y;
-          
+
           ctx.globalCompositeOperation = 'source-over';
 
           ctx.font = (chart.chartArea.height / 22) + "px sans-serif";

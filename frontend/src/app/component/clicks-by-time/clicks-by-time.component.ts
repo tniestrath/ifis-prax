@@ -14,7 +14,9 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
 
   labels = ["0/12", "1/13", "2/14", "3/15", "4/16", "5/17", "6/18", "7/19", "8/20", "9/21", "10/22", "11/23"];
   ngOnInit(): void {
-
+    this.setToolTip("Hier wird angezeigt, zu welcher Zeit wie viele Zugriffe auf den Marktplatz" +
+      "stattgefunden haben. In Rot die Stunden Nachmittags, in Blau die Vormittags. Durch hovern der Maus über deb Graphen" +
+      "erhalten Sie mehr Informationen.");
     if (SysVars.CURRENT_PAGE == "Users") {
       this.db.getClicksByTime(Number(SysVars.USER_ID)).then(res => {
         this.chart = this.createChart2("time_clicks", this.labels, res.slice(0, 11), res.slice(12), undefined);

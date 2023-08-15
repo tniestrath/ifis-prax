@@ -17,6 +17,8 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   formattedSSR: number = 0;
 
   ngOnInit(): void {
+    this.setToolTip("Hier werden Ihnen Einzelheiten zu einem Post angezeigt. " +
+      "Diesen können Sie links im Graphen anclicken um hier Details anzeigen zu lassen.");
     this.db.getUserNewestPost(SysVars.USER_ID).then(res => {
       Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value => {
         this.formatPost(res, value[0], value[1], false)

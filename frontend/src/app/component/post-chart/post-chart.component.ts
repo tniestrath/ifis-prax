@@ -241,7 +241,8 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.setToolTip("Diese Grafik zeigt die Performance / Relevanz all ihrer Beiträge, im angegebenen Zeitraum.")
+    this.setToolTip("Diese Grafik zeigt die Performance / Relevanz all ihrer Beiträge, im angegebenen Zeitraum. " +
+      "Sie können einen Post anwählen, um rechts weitere Details dazu zu erhalten.")
     this.getData();
   }
 

@@ -57,6 +57,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   isScaled = false;
 
   ngOnInit() {
+    this.setToolTip("Dies ist eine Karte, die durch Färbung die Orte angibt, von denen am meisten auf den Marktplatz zugegriffen wird. " +
+      "Mit einem Click auf eine Region werden genauere Informationen angezeigt.");
     setTimeout(() => {
       this.isScaled = true;
       const svgElement = this.element.nativeElement.querySelector('#Ebene_1');

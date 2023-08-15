@@ -12,7 +12,7 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
   incorrect = false;
 
   ngOnInit(): void {
-
+    this.setToolTip("Sie können sich hier mit Ihren Login-Daten Ihres Wordpress-Kontos anmelden.");
   }
 
   onSubmit(username: string, userpass: string) {

@@ -194,6 +194,29 @@ public class TagsController {
         return jsonString != null? jsonString : errorString;
 
     }
+
+    @GetMapping("/allTermsRelevanceAndViews")
+    public String getTermsRelevanceAndViews() throws JSONException {
+        List<WpTermTaxonomy> termTaxs = termTaxonomyRepository.findAll();
+        JSONArray response = new JSONArray();
+        for(WpTermTaxonomy tax : termTaxs){
+            JSONObject obj = new JSONObject();
+            if(tax.getTaxonomy().equals("post_tag")){
+                obj.put("name",termRepository.findById(tax.getTermId()).get().getName());
+                if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) {
+                    obj.put("relevance", tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance());
+                    obj.put("views", tagStatRepo.getStatById(tax.getTermId().intValue()).getViews());
+                }
+                else {
+                    obj.put("relevance", 0);
+                    obj.put("views", 0);
+                }
+                response.put(obj);
+            }
+        }
+        return response.toString();
+    }
+
 }
 
 

@@ -168,7 +168,7 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC LIMIT 3")
     public List<Long> getTop3Performance();
 
-    @Query("SELECT s.lettercount FROM PostStats s WHERE s.artId =:artId")
+    @Query("SELECT s.lettercount FROM PostStats s WHERE s.artId=:artId")
     public Integer getLetterCount(long artId);
 
 

@@ -980,9 +980,11 @@ public class LogService {
 
     public void updateLetterCountForAll () {
         for(Post p : postRepository.findAllUserPosts()) {
-            if((statsRepo.getLetterCount(p.getId().intValue())) == null || (statsRepo.getLetterCount(p.getId().intValue())) == 0) {
-                System.out.println(statsRepo.getLetterCount(p.getId().intValue()));
-                updateLetterCount(p.getId());
+            if (statsRepo.existsByArtId(p.getId())) {
+                if ((statsRepo.getLetterCount(p.getId()) == 0L) || statsRepo.getLetterCount(p.getId()) == null) {
+                    System.out.println(statsRepo.getLetterCount(p.getId()));
+                    updateLetterCount(p.getId());
+                }
             }
         }
     }

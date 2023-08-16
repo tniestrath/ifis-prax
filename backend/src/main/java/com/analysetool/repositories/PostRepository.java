@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -36,5 +37,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p WHERE p.status = 'publish' AND p.type = 'post'")
    List<Post> findAllUserPosts();
 
+
+   @Query("SELECT p.date FROM Post p WHERE p.id =:pId AND p.status = 'publish' AND p.type = 'post'")
+   LocalDateTime getDateById(long pId);
+
+   @Query("SELECT p.date FROM Post p WHERE p.status = 'publish' AND p.type = 'post'")
+   Map<Integer, LocalDateTime> getAllDates();
 }
 

@@ -619,6 +619,36 @@ public class PostController {
         statsRepo.updateLetterCount(lettercount, id);
     }
 
+    @GetMapping("/getDate")
+    public String getDate(long id) {
+        return postRepository.getDateById(id).toString();
+    }
+
+    @GetMapping("/getAllDates")
+    public String getAllDates() {
+        Map<Integer, String> answer = new HashMap<>();
+        for (Post post : postRepository.findAll()) {
+            answer.put(post.getId().intValue(), postRepository.getDateById(post.getId()).toString());
+        }
+        return new JSONObject(answer).toString();
+    }
+
+    @GetMapping("/getRelevanceById")
+    public float getRelevanceById(long id) {
+        return statRepository.getRelevanceById(id);
+    }
+
+    @GetMapping("/getAllRelevance")
+    public String getAllRelevance() {
+        Map<Integer, Float> answer = new HashMap<>();
+        for(Post post : postRepository.findAllUserPosts()){
+            if(statRepository.existsByArtId(post.getId())) {
+                answer.put(post.getId().intValue(), statRepository.getRelevanceById(post.getId()));
+            }
+        }
+
+        return new JSONObject(answer).toString();
+    }
 
 }
 

@@ -23,7 +23,7 @@ export class AppComponent {
     Chart.defaults.set('plugins.datalabels', {
       color: '#fff',
       formatter: (value: number, context: { dataIndex: string; }) => {
-        return Util.formatNumbers(value);
+        return value == 0 ? "" : Util.formatNumbers(value);
       }
     });
     // @ts-ignore

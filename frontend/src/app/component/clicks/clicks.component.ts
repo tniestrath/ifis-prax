@@ -3,6 +3,7 @@ import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import {SysVars} from "../../services/sys-vars-service";
+import Util from "../../util/Util";
 
 @Component({
   selector: 'dash-clicks',
@@ -44,19 +45,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
 
         ctx.globalCompositeOperation = 'source-over';
 
-        var totalText = String(total);
-        if (total > 1000){
-          totalText = +parseFloat(String(total / 1000)).toFixed( 1 ) + "K";
-        }
-        else if (total > 9999){
-          totalText = (total/1000).toFixed() + "K";
-        }
-        else if (total > 1000000){
-          totalText = (total/1000000).toFixed(1) + "M";
-        }
-        else if (total > 9999999){
-          totalText = (total/1000000).toFixed() + "M";
-        }
+        var totalText = Util.formatNumbers(total);
         ctx.font = (chart.chartArea.height / 6.5) + "px sans-serif";
         ctx.fillStyle = "#fff";
         ctx.textAlign = "center";

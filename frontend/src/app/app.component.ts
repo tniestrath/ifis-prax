@@ -1,8 +1,8 @@
-import {Component, EventEmitter} from '@angular/core';
-import {CookieService} from "ngx-cookie-service";
-import {Observable, Subject} from "rxjs";
+import {Component} from '@angular/core';
+import {Subject} from "rxjs";
 import {Chart} from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import Util from "./util/Util";
 
 
 
@@ -21,7 +21,10 @@ export class AppComponent {
   constructor() {
     Chart.register(ChartDataLabels);
     Chart.defaults.set('plugins.datalabels', {
-      color: '#fff'
+      color: '#fff',
+      formatter: (value: number, context: { dataIndex: string; }) => {
+        return Util.formatNumbers(value);
+      }
     });
     // @ts-ignore
     Chart.defaults.animation.duration = 2000;

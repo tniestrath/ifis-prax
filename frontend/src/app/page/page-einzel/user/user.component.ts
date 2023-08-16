@@ -3,6 +3,7 @@ import {SelectableComponent} from "../../selector/selectable.component";
 import {SafeUrl} from "@angular/platform-browser";
 import {DbService} from "../../../services/db.service";
 import {User} from "./user";
+import Util from "../../../util/Util";
 
 @Component({
   selector: 'dash-user',
@@ -33,4 +34,5 @@ export class UserComponent implements SelectableComponent, OnInit {
     return this.user_img;
   }
 
+  protected readonly Util = Util;
 }

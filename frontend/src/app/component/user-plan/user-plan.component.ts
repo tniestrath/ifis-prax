@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
+import Util from "../../util/Util";
 
 @Component({
   selector: 'dash-user-plan',
@@ -57,19 +58,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
         ctx.globalCompositeOperation = 'source-over';
 
-        var totalText = String(total);
-        if (total > 1000){
-          totalText = +parseFloat(String(total / 1000)).toFixed( 1 ) + "K";
-        }
-        if (total > 9999){
-          totalText = (total/1000).toFixed() + "K";
-        }
-        if (total > 1000000){
-          totalText = (total/1000000).toFixed(1) + "M";
-        }
-        if (total > 9999999){
-          totalText = (total/10000000).toFixed() + "M";
-        }
+        var totalText = Util.formatNumbers(total);
         ctx.font = (chart.chartArea.height / 6.5) + "px sans-serif";
         ctx.fillStyle = "#fff";
         ctx.textAlign = "center";

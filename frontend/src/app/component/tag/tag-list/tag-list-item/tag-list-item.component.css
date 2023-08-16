@@ -10,7 +10,7 @@
   border: 1px solid black;
 }
 
-.tag-rank{
+.tag-rel{
   width: 10%;
   text-align: left;
 }
@@ -18,7 +18,7 @@
   width: 80%;
   text-align: center;
 }
-.tag-count{
+.tag-views{
   width: 10%;
   text-align: right;
 }

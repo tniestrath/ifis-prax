@@ -14,7 +14,7 @@ export class Tag extends DbObject{
 }
 
 export class TagRanking extends DbObject{
-  constructor(public override id : string, public override name : string, public relevance : string, public performance : string, public count : string) {
+  constructor(public override id : string, public override name : string, public relevance : string, public views : string, public count : string) {
     super(id, name);
   }
 
@@ -22,8 +22,8 @@ export class TagRanking extends DbObject{
     return Number.parseFloat(other.relevance) - Number.parseFloat(this.relevance);
   }
 
-  compareByPerformance(other: TagRanking): number {
-    return Number.parseFloat(other.performance) - Number.parseFloat(this.performance);
+  compareByViews(other: TagRanking): number {
+    return Number.parseFloat(other.views) - Number.parseFloat(this.views);
   }
 
   compareByCount(other: TagRanking): number {

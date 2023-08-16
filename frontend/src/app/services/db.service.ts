@@ -9,7 +9,7 @@ export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
   PORT = "",
   GET_TAGS_ALL = "/tags/getPostTagsIdName",
-  GET_TAGS_WITH_RELEVANCE_AND_PERFORMANCE_ALL = "/tags/allTermsRelevanceAndPerformance",
+  GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL = "/tags/allTermsRelevanceAndViews",
   GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL = "/tags/getPostCountAbove?percentage=",
 
   GET_TAG_POST_COUNT = "/tags/getPostcount?id=",
@@ -82,8 +82,8 @@ export class DbService {
       }
     });
   }
-  async getAllTagsWithRelevanceAndPerformance(){
-    return await fetch(DbService.getUrl(dbUrl.GET_TAGS_WITH_RELEVANCE_AND_PERFORMANCE_ALL)).then(res => res.json());
+  async getAllTagsWithRelevanceAndViews(){
+    return await fetch(DbService.getUrl(dbUrl.GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL)).then(res => res.json());
   }
 
   async getTagPostCount(id : string){

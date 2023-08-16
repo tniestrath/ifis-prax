@@ -49,10 +49,10 @@ input[type="radio"]::after{
   bottom: 0;
 }
 #tag-sort-p::before{
-  content: "Perf";
+  content: "Views";
 }
 #tag-sort-p::after{
-  content: "Perf";
+  content: "Views";
 }
 
 input[type="radio"]:checked::before{

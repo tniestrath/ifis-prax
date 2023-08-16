@@ -29,7 +29,12 @@ export class SearchbarComponent implements OnInit{
   logged_in = false;
   constructor(protected element : ElementRef, private cs : CookieService, private db : DbService) {
     SysVars.login.subscribe(user => {
+      let loggedUser :string[]  = [user.id, user.displayName];
       this.logged_in = true;
+      if (this.cs.check(this.page)) {
+        loggedUser = this.cs.get(this.page).split(":");
+      }
+      this.onDbObjectSelected(loggedUser[0], loggedUser[1]);
     })
   }
 

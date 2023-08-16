@@ -20,13 +20,14 @@ export class HeaderComponent implements AfterViewInit{
     this.navElements = [];
     // COOKIE VALIDATION //
     this.db.validate().then(res  => {
-      if (res.user_id.toString().includes("Invalid")) {
+      var usid = res.user_id;
+      if (usid.toString().includes("Invalid") || usid == null || res == null || res == undefined) {
         SysVars.USER_ID = "0";
         return;
       }
-      this.db.getUserById(res.user_id).then(res => {
+      this.db.getUserById(usid).then(res => {
         SysVars.login.next(res);
-        SysVars.USER_ID = res.user_id;
+        SysVars.USER_ID = usid;
         SysVars.ADMIN = res.accountType == "admin";
       })
     })
@@ -35,11 +36,13 @@ export class HeaderComponent implements AfterViewInit{
       if (user.accountType == "admin"){
         this.navElements = ["Overview", "Posts", "Tags", "Users"];
         cs.set("user", user.id + ":" + user.displayName);
+        this.selected.next("Overview");
       }else {
         cs.set("user", user.id + ":" + user.displayName);
+        this.selected.next("Users");
       }
       SysVars.USER_ID = user.id;
-      this.selected.next("Users");
+
     })
   }
 

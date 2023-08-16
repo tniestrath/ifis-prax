@@ -12,6 +12,7 @@ canvas{
 }
 .legend-box{
   padding: 5px;
+  padding-top: 25px;
   height: calc(30% - 10px);
   width: calc(100% - 10px);
   display: flex;

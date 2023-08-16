@@ -11,21 +11,26 @@ import Util from "../../util/Util";
 })
 export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
-  colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
+  colors : string[] = ["#5A7995", "#354657", "rgb(148,28,62)", "rgb(84, 16, 35)", "#000"];
   chart_total: any;
 
   ngOnInit(): void {
     if (this.chart != undefined) {
       this.chart.destroy();
     }
-    var labels = [];
-    var data = [];
+    var labels = ["Basic", "Basic-Plus", "Plus", "Premium", "Sponsor"]
+    var data = [0,0,0,0,0]
 
     this.db.getUserAccountTypes().then(value => {
       let map : Map<string, number> = new Map(Object.entries(value));
-      map.delete("administrator");
-      labels = Array.from(map.keys());
-      data = Array.from(map.values());
+      map.delete("Administrator");
+      map.forEach((value1, key) => {
+        if (key == "Basic") {labels[0] = key; data[0] = (value1 == 0 || value1 == undefined ? 0 : value1)}
+        if (key == "Basic-Plus") {labels[1] = key; data[1] = (value1 == 0 || value1 == undefined ? 0 : value1)}
+        if (key == "Plus") {labels[2] = key; data[2] = (value1 == 0 || value1 == undefined ? 0 : value1)}
+        if (key == "Premium") {labels[3] = key; data[3] = (value1 == 0 || value1 == undefined ? 0 : value1)}
+        if (key == "Sponsor") {labels[4] = key; data[4] = (value1 == 0 || value1 == undefined ? 0 : value1)}
+      })
       this.chart = this.createChart("user_plan_chart", labels,data, undefined);
       this.createLegend("user-plan-content-box", this.chart);
       this.chart_total = data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);

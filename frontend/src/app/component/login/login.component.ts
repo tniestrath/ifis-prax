@@ -27,7 +27,7 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
           return;
         }
 
-        this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")), {expires: 2});
+        this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")), {expires: 1});
         this.db.getUserByLogin(ans.substring(ans.indexOf("=") + 1, ans.indexOf("|"))).then(res => {
           SysVars.login.next(res);
           console.log("admin?" + res.accountType)

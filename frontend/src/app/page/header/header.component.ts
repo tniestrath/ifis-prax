@@ -26,7 +26,7 @@ export class HeaderComponent implements AfterViewInit{
       }
       this.db.getUserById(res.user_id).then(res => {
         SysVars.login.next(res);
-        SysVars.USER_ID = "0";
+        SysVars.USER_ID = res.user_id;
         SysVars.ADMIN = res.accountType == "admin";
       })
     })
@@ -34,6 +34,7 @@ export class HeaderComponent implements AfterViewInit{
     SysVars.login.subscribe(user => {
       if (user.accountType == "admin"){
         this.navElements = ["Overview", "Posts", "Tags", "Users"];
+        cs.set("user", user.id + ":" + user.displayName);
       }else {
         cs.set("user", user.id + ":" + user.displayName);
       }

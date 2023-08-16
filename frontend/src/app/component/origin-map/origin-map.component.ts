@@ -104,12 +104,13 @@ buildMap(ip_map: { [x: string]: any; hasOwnProperty: (arg0: string) => any; }, s
                 }
               }
             }
+            global_gesamt = global_gesamt + region_gesamt;
             if (country == "DE") {
               if (region == "gesamt") {
                 this.totalDE = region_gesamt;
               }
             } else {
-              this.totalGlobal = region_gesamt - this.totalDE;
+              if(country == "global") this.totalGlobal = this.totalGlobal + region_gesamt;
 
             }
             if (region != "gesamt") {

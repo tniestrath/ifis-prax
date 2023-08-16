@@ -317,4 +317,37 @@ public class UserController {
     });
         return new JSONObject(counts).toString();
     }
+
+
+
+    @GetMapping("/getPostDistribution")
+    public String getPostDistribution() throws JSONException {
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+        List<Post> posts = postRepository.findAllUserPosts();
+
+        int artCount = 0;
+        int blogCount = 0;
+        int newsCount = 0;
+
+        for(Post post : posts) {
+            for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
+                    if (termTax.getTermId() == tagIdBlog) blogCount++;
+                    if (termTax.getTermId() == tagIdArtikel) artCount++;
+                    if (termTax.getTermId() == tagIdPresse) newsCount++;
+                }
+            }
+        }
+
+
+
+        JSONObject obj = new JSONObject();
+        obj.put("blogCount", blogCount);
+        obj.put("artCount", artCount);
+        obj.put("newsCount", newsCount);
+        return obj.toString();
+
+    }
 }

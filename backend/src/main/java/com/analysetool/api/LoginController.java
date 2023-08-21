@@ -169,7 +169,7 @@ public class LoginController {
     @GetMapping("/validate")
     public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-json/server_variables/custom-endpoint");
+        HttpPost httpPost = new HttpPost(config.getValidate());
 
 
         String responseBody = "INVALID";
@@ -203,7 +203,7 @@ public class LoginController {
 
     public String validateCookie(String cookie){
         HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-json/server_variables/custom-endpoint");
+        HttpPost httpPost = new HttpPost(config.getValidate());
         System.out.println("1.1.1");
 
 

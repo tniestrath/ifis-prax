@@ -27,7 +27,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.analysetool.util.IPHelper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.util.encoders.Hex;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class LogService {
@@ -422,9 +424,10 @@ public class LogService {
             };
         }
         if(patternNumber==10){
-            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
             String ip = matcher.group(1);
-            String ipHash = bCryptPasswordEncoder.encode(ip);
+            byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
+            String ipHash = Hex.toHexString(hashBytes);
             IPHelper.getInstance();
             String country = IPHelper.getCountryISO(ip);
             String region = IPHelper.getSubISO(ip);
@@ -447,14 +450,16 @@ public class LogService {
         }
         if(patternNumber==11){
 
-            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
 
             LocalDate date = LocalDate.now();  // Replace with the date you want to search for
             List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
 
             for(SearchStats s : searchStatsForDate){
                 long id = postRepository.getIdByName(matcher.group(6));
-                if(bCryptPasswordEncoder.matches(matcher.group(1), s.getIpHashed())&& s.getSearchSuccessFlag() &&s.getClickedPost().equals(id)){
+                byte[] hashBytesForComparison = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
+                String hashForComparison = Hex.toHexString(hashBytesForComparison);
+                if(hashForComparison.equals(s.getIpHashed()) && s.getSearchSuccessFlag() && s.getClickedPost().equals(id)){
 
                     LocalTime search_success_time = s.getSearch_success_time().toLocalTime();
 
@@ -480,14 +485,17 @@ public class LogService {
 
     }
 
-    public void updateSearchStats(Matcher matcher){
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    public void updateSearchStats(Matcher matcher) {
+
+        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
+        byte[] hashBytes = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
+        String hashedIp = Hex.toHexString(hashBytes);
 
         LocalDate date = LocalDate.now();  // Replace with the date you want to search for
         List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
 
-        for(SearchStats s : searchStatsForDate){
-            if(bCryptPasswordEncoder.matches(matcher.group(1), s.getIpHashed())&& !s.getSearchSuccessFlag() &&s.getSearchString().equals(matcher.group(6))){
+        for(SearchStats s : searchStatsForDate) {
+            if(hashedIp.equals(s.getIpHashed()) && !s.getSearchSuccessFlag() && s.getSearchString().equals(matcher.group(6))) {
                 s.setSearchSuccessFlag(true);
                 long id = postRepository.getIdByName(matcher.group(6));
                 s.setClickedPost(String.valueOf(id));
@@ -503,7 +511,6 @@ public class LogService {
                 searchStatRepo.save(s);
             }
         }
-
     }
     public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
 

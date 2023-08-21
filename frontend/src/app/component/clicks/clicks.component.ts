@@ -200,7 +200,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
     this.p_chart_total = 0;
 
     this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsPresse: number}) => {
-      this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "Pressemitteilung"], [res.viewsArtikel,res.viewsBlog, res.viewsPresse], undefined);
+      this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News"], [res.viewsArtikel,res.viewsBlog, res.viewsPresse], undefined);
       this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsPresse)], undefined);
       this.createLegend("clicks-content-box", this.c_chart);
       this.createLegend("clicks-profile-box", this.p_chart);

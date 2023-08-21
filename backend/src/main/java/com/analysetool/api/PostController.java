@@ -137,7 +137,7 @@ public class PostController {
                                                 break;
                                             case "blog":
                                                 break;
-                                            case "pressemitteilung":
+                                            case "news":
                                                 break;
                                             default:
                                                 type = "default";

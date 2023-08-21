@@ -26,7 +26,6 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
           this.styleLogin(true);
           return;
         }
-
         this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")), {expires: 1});
         this.db.getUserByLogin(ans.substring(ans.indexOf("=") + 1, ans.indexOf("|"))).then(res => {
           SysVars.login.next(res);

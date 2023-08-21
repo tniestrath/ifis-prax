@@ -65,8 +65,8 @@ public class LogService {
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
     private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)\".*";
 
+   // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
     private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
-
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
@@ -451,14 +451,23 @@ public class LogService {
         if(patternNumber==11){
 
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
+            System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));
+            String day = matcher.group(2);
+            String month = getMonthNumber(matcher.group(3));
+            String year = matcher.group(4);
+            String time = matcher.group(5);
+            LocalDateTime searchSuccessTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
+            LocalDate date = searchSuccessTime.toLocalDate() ;
 
-            LocalDate date = LocalDate.now();  // Replace with the date you want to search for
+
             List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
 
+            long id = postRepository.getIdByName(matcher.group(8));
+            byte[] hashBytesForComparison = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
+            String hashForComparison = Hex.toHexString(hashBytesForComparison);
+
             for(SearchStats s : searchStatsForDate){
-                long id = postRepository.getIdByName(matcher.group(6));
-                byte[] hashBytesForComparison = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
-                String hashForComparison = Hex.toHexString(hashBytesForComparison);
+
                 if(hashForComparison.equals(s.getIpHashed()) && s.getSearchSuccessFlag() && s.getClickedPost().equals(id)){
 
                     LocalTime search_success_time = s.getSearch_success_time().toLocalTime();
@@ -491,20 +500,23 @@ public class LogService {
         byte[] hashBytes = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
         String hashedIp = Hex.toHexString(hashBytes);
 
-        LocalDate date = LocalDate.now();  // Replace with the date you want to search for
-        List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
 
+        String day = matcher.group(2);
+        String month = getMonthNumber(matcher.group(3));
+        String year = matcher.group(4);
+        String time = matcher.group(5);
+        LocalDateTime searchSuccessTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
+        LocalDate date = searchSuccessTime.toLocalDate();  // Replace with the date you want to search for
+
+        List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
+        long id = postRepository.getIdByName(matcher.group(6));
         for(SearchStats s : searchStatsForDate) {
             if(hashedIp.equals(s.getIpHashed()) && !s.getSearchSuccessFlag() && s.getSearchString().equals(matcher.group(6))) {
                 s.setSearchSuccessFlag(true);
-                long id = postRepository.getIdByName(matcher.group(6));
+
                 s.setClickedPost(String.valueOf(id));
 
-                String day = matcher.group(2);
-                String month = getMonthNumber(matcher.group(3));
-                String year = matcher.group(4);
-                String time = matcher.group(5);
-                LocalDateTime searchSuccessTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
+
 
                 s.setSearch_success_time(searchSuccessTime);
 

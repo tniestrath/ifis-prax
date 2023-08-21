@@ -40,8 +40,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
           //borderRadius: 5,
           borderWidth: 2,
           borderColor : "rgb(90, 121, 149)",
-          borderJoinStyle: "round",
-          tension: 0.2
+          borderJoinStyle: "round"
         },{
           label: "Nachmittags",
           data: data2,
@@ -49,8 +48,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
           //borderRadius: 5,
           borderWidth: 2,
           borderColor: "rgb(122, 24, 51)",
-          borderJoinStyle: "round",
-          tension: 0.2
+          borderJoinStyle: "round"
          }]
       },
       options: {

@@ -46,7 +46,7 @@ export class RelevanceComponent extends DashBaseComponent {
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom";
         // @ts-ignore
-        ctx.font = canvas.height/3 + "px sans-serif";
+        ctx.font = chart.chartArea.width/4 + "px sans-serif";
         // @ts-ignore
         ctx.fillText(  ((value / max) * 100).toFixed(), canvas.width/2, canvas.height+5);
       }
@@ -138,7 +138,12 @@ export class RelevanceComponent extends DashBaseComponent {
       this.db.getUserBestPost(SysVars.USER_ID, "relevance").then(data => {
         let post : Post = data;
         this.createChart(post.relevance || 0, max);
-        this.postName = post.title;
+
+        if (post.title.length > 30){
+          this.postName = post.title.slice(0, 30) + " ...";
+        } else {
+          this.postName = post.title;
+        }
 
         this.cdr.detectChanges();
       });

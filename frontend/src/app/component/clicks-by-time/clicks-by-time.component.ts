@@ -38,7 +38,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
           data: data,
           backgroundColor: "rgb(90, 121, 149)",
           //borderRadius: 5,
-          borderWidth: 2,
+          borderWidth: 3,
           borderColor : "rgb(90, 121, 149)",
           borderJoinStyle: "round"
         },{
@@ -46,7 +46,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
           data: data2,
           backgroundColor: "rgb(122, 24, 51)",
           //borderRadius: 5,
-          borderWidth: 2,
+          borderWidth: 3,
           borderColor: "rgb(122, 24, 51)",
           borderJoinStyle: "round"
          }]
@@ -57,26 +57,6 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
           datalabels: {
             display: false
           },
-          /*datalabels: {
-            color: "#ffffff",
-            formatter: function(value, context) {
-              var valueString = String(value);
-              if (value > 1000){
-                valueString = +parseFloat(String(value / 1000)).toFixed( 1 ) + "K";
-              }
-              else if (value > 9999){
-                valueString = (value/1000).toFixed() + "K";
-              }
-              else if (value > 1000000){
-                valueString = (value/1000000).toFixed(1) + "M";
-              }
-              else if (value > 9999999){
-                valueString = (value/1000000).toFixed() + "M";
-              }
-              return valueString;
-            },
-            rotation: -90
-          },*/
           title: {
             display: false,
             text: "",

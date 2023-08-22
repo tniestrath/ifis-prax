@@ -19,11 +19,11 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
       "erhalten Sie mehr Informationen.");
     if (SysVars.CURRENT_PAGE == "Users") {
       this.db.getClicksByTime(Number(SysVars.USER_ID)).then(res => {
-        this.chart = this.createChart2("time_clicks", this.labels, res.slice(0, 11), res.slice(12), undefined);
+        this.chart = this.createChart2("time_clicks", this.labels, res.slice(0, 12), res.slice(12), undefined);
       });
     } else if (SysVars.CURRENT_PAGE == "Overview") {
       this.db.getClicksByTimeAll().then(res => {
-        this.chart = this.createChart2("time_clicks", this.labels, res.slice(0, 11), res.slice(12), undefined);
+        this.chart = this.createChart2("time_clicks", this.labels, res.slice(0, 12), res.slice(12), undefined);
       });
     }
   }
@@ -36,19 +36,21 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
         datasets: [{
           label: "Vormittags",
           data: data,
-          backgroundColor: "rgb(90, 121, 149)",
+          backgroundColor: "rgba(90, 121, 149, .5)",
           //borderRadius: 5,
           borderWidth: 3,
           borderColor : "rgb(90, 121, 149)",
-          borderJoinStyle: "round"
+          borderJoinStyle: "round",
+          fill: true
         },{
           label: "Nachmittags",
           data: data2,
-          backgroundColor: "rgb(122, 24, 51)",
+          backgroundColor: "rgba(122, 24, 51, .5)",
           //borderRadius: 5,
           borderWidth: 3,
           borderColor: "rgb(122, 24, 51)",
-          borderJoinStyle: "round"
+          borderJoinStyle: "round",
+          fill: true
          }]
       },
       options: {

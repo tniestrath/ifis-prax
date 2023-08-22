@@ -468,7 +468,7 @@ public class LogService {
 
             for(SearchStats s : searchStatsForDate){
 
-                if(hashForComparison.equals(s.getIpHashed()) && s.getSearchSuccessFlag() && s.getClickedPost().equals(id)){
+                if(hashForComparison.equals(s.getIpHashed()) && s.getSearchSuccessFlag() && s.getClickedPost().equals(Long.toString(id))){
 
                     LocalTime search_success_time = s.getSearch_success_time().toLocalTime();
 
@@ -482,8 +482,14 @@ public class LogService {
                     LocalTime refferer_time = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
 
                     //differenz = dwelltime
-                    Duration difference = Duration.between(refferer_time,search_success_time );
-                    LocalTime dwell_time= LocalTime.of((int)difference.toHours(),(int)difference.toMinutes(),(int)difference.toSeconds());
+                    System.out.println("Refferer Time: " + refferer_time);
+                    System.out.println("Search Success Time: " + search_success_time);
+                    Duration difference = Duration.between(search_success_time,refferer_time );
+                    int hours = (int) difference.toHours();
+                    int minutes = (int) (difference.toMinutes() - hours * 60);
+                    int seconds = (int) (difference.getSeconds() - hours * 3600 - minutes * 60);
+                    LocalTime dwell_time= LocalTime.of(hours, minutes, seconds);
+
                     s.setDwell_time(dwell_time);
                     searchStatRepo.save(s);
                 }

@@ -42,7 +42,7 @@ export class PostComponent extends DashBaseComponent implements OnInit{
           break;
         case "blog": res.type = "Ausgewählter Blog Eintrag";
           break;
-        case "news": res.type = "Ausgewählte News";
+        case "news": res.type = "Ausgewählter News Beitrag";
           break;
       }
     } else {
@@ -51,7 +51,7 @@ export class PostComponent extends DashBaseComponent implements OnInit{
           break;
         case "blog": res.type = "Ihr aktuellster Blog Eintrag";
           break;
-        case "news": res.type = "Ihre aktuellster News Beitrag";
+        case "news": res.type = "Ihr aktuellster News Beitrag";
           break;
       }
     }

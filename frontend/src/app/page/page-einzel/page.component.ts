@@ -40,7 +40,7 @@ export class PageComponent implements OnInit {
 
   getLandingPageCards(){
     return [
-      {type: LoginComponent, row: 2, col: 2, height: 2, width: 3},
+      {type: LoginComponent, row: 2, col: 3, height: 2, width: 2},
     ];
   }
 

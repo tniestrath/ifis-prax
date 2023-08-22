@@ -11,8 +11,6 @@ import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
 import {PostComponent} from "../../component/post/post.component";
 import {SysVars} from "../../services/sys-vars-service";
-import {PotentialComponent} from "../../component/potential/potential.component";
-import {TagComponent} from "../../component/tag/tag/tag.component";
 import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
 import {User} from "./user/user";
@@ -85,6 +83,7 @@ export class PageComponent implements OnInit {
     if (id != "0"){
       this.displayContent = "grid";
       this.cardsLoaded.next(this.getUserPageCards());
+      SysVars.CURRENT_PAGE = "Users";
     } else {
       this.displayContent = "none";
     }

@@ -27,14 +27,12 @@ export class SearchbarComponent implements OnInit{
   filter_dropdown: HTMLDivElement | null = null;
   shown = false;
   logged_in = false;
+  loggedUser :string[]  = ["0", ""];
   constructor(protected element : ElementRef, private cs : CookieService, private db : DbService) {
     SysVars.login.subscribe(user => {
-      let loggedUser :string[]  = [user.id, user.displayName];
+      this.loggedUser = [user.id, user.displayName];
       this.logged_in = true;
-      if (this.cs.check(this.page)) {
-        loggedUser = this.cs.get(this.page).split(":");
-      }
-      this.onDbObjectSelected(loggedUser[0], loggedUser[1]);
+      this.onDbObjectSelected(this.loggedUser[0], this.loggedUser[1]);
     })
   }
 
@@ -42,8 +40,13 @@ export class SearchbarComponent implements OnInit{
     let object :string[]  = ["0",""];
       if (this.cs.check(this.page)) {
         object = this.cs.get(this.page).split(":");
+        if (object != this.loggedUser){
+          this.onDbObjectSelected(object[0], object[1]);
+        } else {
+          this.onDbObjectSelected(this.loggedUser[0], this.loggedUser[1])
+        }
       }
-      this.onDbObjectSelected(object[0], object[1]);
+
   }
 
   onKey(value : string) {

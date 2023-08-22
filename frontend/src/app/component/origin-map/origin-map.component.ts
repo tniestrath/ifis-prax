@@ -64,7 +64,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
       if (svgElement) {
         // @ts-ignore
-        if (SysVars.CURRENT_PAGE == "Users") {
+        if (SysVars.CURRENT_PAGE == "Users" ||SysVars.CURRENT_PAGE != "Overview") {
+          console.log("adwadwa")
           this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID)).then(res => {
             this.buildMap(res, svgElement);
             this.cdr.detectChanges();

@@ -37,7 +37,7 @@ export class RelevanceComponent extends DashBaseComponent {
 
         ctx.globalCompositeOperation = 'destination-atop';
         // @ts-ignore
-        ctx.drawImage(img, 10,20, canvas.width-20, canvas.height-20);
+        ctx.drawImage(img, 0,0, chart.chartArea.width, chart.chartArea.height);
         ctx.save();
 
         ctx.globalCompositeOperation = 'source-over';
@@ -46,9 +46,9 @@ export class RelevanceComponent extends DashBaseComponent {
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom";
         // @ts-ignore
-        ctx.font = chart.chartArea.width/4 + "px sans-serif";
+        ctx.font = canvas.width/4 + "px sans-serif";
         // @ts-ignore
-        ctx.fillText(  ((value / max) * 100).toFixed(), canvas.width/2, canvas.height+5);
+        ctx.fillText(  ((value / max) * 100).toFixed(), chart.chartArea.width/2, chart.chartArea.height+5);
       }
     }
 
@@ -63,7 +63,8 @@ export class RelevanceComponent extends DashBaseComponent {
           borderRadius: 5,
           borderWidth: 6,
           barThickness: 1000,
-          borderColor: "#fff"
+          borderColor: "#fff",
+          stack: "1"
           },
           {
           label: "Blue",
@@ -72,7 +73,8 @@ export class RelevanceComponent extends DashBaseComponent {
           backgroundColor: "rgb(90, 121, 149)",
           borderRadius: 5,
           borderWidth: 0,
-          barThickness: 1000
+          barThickness: 1000,
+          stack: "1"
         }]
       },
       options: {
@@ -85,7 +87,8 @@ export class RelevanceComponent extends DashBaseComponent {
           y: {
             stacked : true,
             display: false,
-            max : 100
+            max : 100,
+            min: 0
           }
         },
         plugins: {

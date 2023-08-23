@@ -21,11 +21,14 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
   postID : string = "10445";
   postName: string = "";
 
+
   createChart(labels : string[], data : number[], onClick : EventEmitter<number> | null){
     Chart.defaults.color = "#000"
     if (this.chart){
       this.chart.destroy();
     }
+
+    const canvas  = document.querySelector("#gauge");
 
     const gaugeChartText  = {
       id: "gaugeChartText",
@@ -42,7 +45,8 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
 
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom";
-        ctx.font = chart.chartArea.width/4 + "px sans-serif";
+        // @ts-ignore
+        ctx.font = canvas.width/4 + "px sans-serif";
 
         //@ts-ignore
         ctx.fillText(score.toFixed(), x, y + chart.chartArea.height/8);

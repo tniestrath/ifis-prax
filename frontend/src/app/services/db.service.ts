@@ -178,7 +178,7 @@ export class DbService {
     return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id).then(res => res.json());
   }
 
-  async getOriginMapAll(){
+  async getOriginMapAll() {
     return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL_ORIGIN_MAP)).then(res => res.json());
   }
 

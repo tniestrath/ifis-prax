@@ -7,6 +7,8 @@ import {DbService} from "../../services/db.service";
 import {CookieService} from "ngx-cookie-service";
 import {PdfService} from "../../services/pdf.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import _default from "chart.js/dist/plugins/plugin.tooltip";
+import numbers = _default.defaults.animations.numbers;
 
 export enum Region {
   HH = "Hamburg",
@@ -31,6 +33,16 @@ export enum Region {
   SW = "Schweiz",
   AT = "Österreich",
   LU = "Luxemburg"
+}
+
+interface SVG_Region {
+  identifier : string,
+  clicks : number,
+  cities : SVG_City[]
+}
+interface SVG_City {
+  name : string,
+  clicks : number
 }
 
 @Component({
@@ -66,12 +78,12 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         // @ts-ignore
         if (SysVars.CURRENT_PAGE == "Users") {
           this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID)).then(res => {
-            this.buildMap(res, svgElement);
+            this.readData(res, svgElement);
             this.cdr.detectChanges();
           });
         } else {
           this.db.getOriginMapAll().then(res => {
-            this.buildMap(res, svgElement);
+            this.readData(res, svgElement);
             this.cdr.detectChanges();
           })
         }
@@ -79,64 +91,58 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     }, 100);
   }
 
+  readData(global: { [x: string]: any}, svgElement: any){
+    this.totalDE = global["DE"]["gesamt"]["gesamt"];
+    this.totalGlobal = global["global"]["gesamt"]["gesamt"];
+    var region_clicks : SVG_Region[] = [];
 
-buildMap(ip_map: { [x: string]: any; hasOwnProperty: (arg0: string) => any; }, svgElement: any){
-
-
-    var global_gesamt = 0;
-    for (const country in ip_map) {
-      var country_gesamt = 0;
-      if (ip_map.hasOwnProperty(country)) {
-        // @ts-ignore
-        const regions = ip_map[country];
-        for (const region in regions) {
-          if (regions.hasOwnProperty(region)) {
-            const cities = regions[region];
-
-            var cityArray = [];
-            var region_gesamt = 0;
-            for (const name in cities) {
-              if (cities.hasOwnProperty(name)) {
-                const clicks: number = cities[name];
-                cityArray.push({name, clicks})
-                if (name == "gesamt") {
-                  region_gesamt = clicks;
-                }
+    for (const country in global){
+      if (country == "DE"){
+          for (const region in global["DE"]){
+            let clicks = global[country][region]["gesamt"];
+            var cityArray: SVG_City[] = [];
+            for (const city in global[country][region]) {
+              if (city != "gesamt") {
+                cityArray.push({clicks: global[country][region][city], name: city});
               }
             }
-            global_gesamt = global_gesamt + region_gesamt;
-            if (country == "DE") {
-              if (region == "gesamt") {
-                this.totalDE = region_gesamt;
-              }
-            } else {
-              if(country == "global") this.totalGlobal = this.totalGlobal + region_gesamt;
-
-            }
-            if (region != "gesamt") {
-              if (country == "BG") {
-
-              } else if (country == "BE") {
-                if (region == "BE") {
-                  this.setRegionTooltip(svgElement, "BG", cityArray);
-                  this.setRegionColor(svgElement, "BG", region_gesamt);
-                }
-              } else {
-                this.setRegionTooltip(svgElement, region, cityArray);
-                this.setRegionColor(svgElement, region, region_gesamt);
-              }
-            }
+            cityArray.push({clicks: clicks, name: "gesamt"});
+            region_clicks.push({identifier: region, clicks: clicks, cities: cityArray})
+          }
+      } else if (country == "BE") {
+        let clicks = global[country]["gesamt"]["gesamt"];
+        var cityArray: SVG_City[] = [];
+        for (const city in global[country][country]) {
+          if (city != "gesamt") {
+            cityArray.push({clicks: global[country][country][city], name: city});
           }
         }
+        cityArray.push({clicks: clicks, name: "gesamt"});
+        region_clicks.push({identifier: "BG", clicks: clicks, cities: cityArray})
       }
+      else {
+        let clicks = global[country]["gesamt"]["gesamt"];
+        var cityArray: SVG_City[] = [];
+        for (const city in global[country][country]) {
+          if (city != "gesamt") {
+            cityArray.push({clicks: global[country][country][city], name: city});
+          }
+        }
+        cityArray.push({clicks: clicks, name: "gesamt"});
+        region_clicks.push({identifier: country, clicks: clicks, cities: cityArray})
+      }
+    }
+    for (const region of region_clicks){
+      this.setRegionTooltip(svgElement, region.identifier, region.cities);
+      this.setRegionColor(svgElement, region.identifier, region.clicks, this.totalDE);
     }
   }
 
-  setRegionColor(svg : any, region : string, clicks : number){
+  setRegionColor(svg : any, region : string, clicks : number, clicks_global : number){
     var pathElement = svg.querySelector("#" + region) ?? null;
     if (pathElement == null){return}
     pathElement.style =
-      "fill:" + this.interpolateColor( "rgb(90, 121, 149)", "rgb(122, 24, 51)", 100, Math.max(Math.min(clicks/this.totalDE, .5), .1)*200) +
+      "fill:" + this.interpolateColor( "rgb(90, 121, 149)", "rgb(122, 24, 51)", clicks_global,  Math.max(clicks*1.5, clicks_global/10)) +
       ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
   }
 

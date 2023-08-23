@@ -51,7 +51,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         // @ts-ignore
-        ctx.fillText(totalText, x, y);
+        ctx.fillText(totalText, x, y+2);
       }
     }
 

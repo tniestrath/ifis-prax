@@ -142,7 +142,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     var pathElement = svg.querySelector("#" + region) ?? null;
     if (pathElement == null){return}
     pathElement.style =
-      "fill:" + this.interpolateColor( "rgb(90, 121, 149)", "rgb(122, 24, 51)", clicks_global,  Math.max(clicks*1.5, clicks_global/10)) +
+      "fill:" + this.interpolateColor( "rgb(90, 121, 149)", "rgb(122, 24, 51)", clicks_global,  Math.max(clicks*1.5, clicks_global/8)) +
       ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
   }
 

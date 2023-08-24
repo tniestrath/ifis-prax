@@ -9,6 +9,7 @@ import {PdfService} from "../../services/pdf.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import _default from "chart.js/dist/plugins/plugin.tooltip";
 import numbers = _default.defaults.animations.numbers;
+import Util from "../../util/Util";
 
 export enum Region {
   HH = "Hamburg",
@@ -94,40 +95,43 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   readData(global: { [x: string]: any}, svgElement: any){
     this.totalDE = global["DE"]["gesamt"]["gesamt"];
     this.totalGlobal = global["global"]["gesamt"]["gesamt"];
-    var region_clicks : SVG_Region[] = [];
+    const region_clicks: SVG_Region[] = [];
 
     for (const country in global){
       if (country == "DE"){
           for (const region in global["DE"]){
             let clicks = global[country][region]["gesamt"];
-            var cityArray: SVG_City[] = [];
+            let cityArray: SVG_City[] = [];
             for (const city in global[country][region]) {
               if (city != "gesamt") {
                 cityArray.push({clicks: global[country][region][city], name: city});
               }
             }
+            cityArray.sort((a, b) =>  b.clicks - a.clicks);
             cityArray.push({clicks: clicks, name: "gesamt"});
             region_clicks.push({identifier: region, clicks: clicks, cities: cityArray})
           }
       } else if (country == "BE") {
         let clicks = global[country]["gesamt"]["gesamt"];
-        var cityArray: SVG_City[] = [];
+        let cityArray: SVG_City[] = [];
         for (const city in global[country][country]) {
           if (city != "gesamt") {
             cityArray.push({clicks: global[country][country][city], name: city});
           }
         }
+        cityArray.sort((a, b) =>  b.clicks - a.clicks);
         cityArray.push({clicks: clicks, name: "gesamt"});
         region_clicks.push({identifier: "BG", clicks: clicks, cities: cityArray})
       }
       else {
         let clicks = global[country]["gesamt"]["gesamt"];
-        var cityArray: SVG_City[] = [];
+        let cityArray: SVG_City[] = [];
         for (const city in global[country][country]) {
           if (city != "gesamt") {
             cityArray.push({clicks: global[country][country][city], name: city});
           }
         }
+        cityArray.sort((a, b) =>  b.clicks - a.clicks);
         cityArray.push({clicks: clicks, name: "gesamt"});
         region_clicks.push({identifier: country, clicks: clicks, cities: cityArray})
       }
@@ -169,7 +173,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       for (const city of cities) {
         let cityElement = document.createElement('div');
         let cityName = document.createElement('div');
-        let cttyClicks = document.createElement('div');
+        let cityClicks = document.createElement('div');
         cityElement.style.fontSize = "12px";
         cityElement.style.display = "flex";
         cityElement.style.flexDirection = "row";
@@ -178,19 +182,11 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           cityElement.style.paddingTop = "10px";
         }
         cityName.innerText = city.name;
-        if (city.clicks >= 1000000){
-          cttyClicks.innerText = String((city.clicks/1000000).toFixed(1) + "M");
-        }
-        else if (city.clicks >= 1000){
-          cttyClicks.innerText = String((city.clicks/1000).toFixed(1) + "K");
-        }
-        else {
-          cttyClicks.innerText = String(city.clicks);
-        }
+        cityClicks.innerText = Util.formatNumbers(city.clicks);
 
 
         cityElement.appendChild(cityName);
-        cityElement.appendChild(cttyClicks);
+        cityElement.appendChild(cityClicks);
         tooltipCities.appendChild(cityElement);
       }
 

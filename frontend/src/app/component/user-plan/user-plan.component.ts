@@ -56,7 +56,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         //@ts-ignore
         const total : number = data.datasets[0].data.reduce((a, b) => a + b, 0);
         ctx.beginPath();
-        ctx.arc(x, y, chart.chartArea.width / 6, 0, 2 * Math.PI, false);
+        ctx.arc(x, y, Math.sqrt(chart.chartArea.width * chart.chartArea.height)/ 6, 0, 2 * Math.PI, false);
         ctx.closePath();
         ctx.fill();
 

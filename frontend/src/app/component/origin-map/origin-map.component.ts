@@ -111,17 +111,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
             cityArray.push({clicks: clicks, name: "gesamt"});
             region_clicks.push({identifier: region, clicks: clicks, cities: cityArray})
           }
-      } else if (country == "BE") {
-        let clicks = global[country]["gesamt"]["gesamt"];
-        let cityArray: SVG_City[] = [];
-        for (const city in global[country][country]) {
-          if (city != "gesamt") {
-            cityArray.push({clicks: global[country][country][city], name: city});
-          }
-        }
-        cityArray.sort((a, b) =>  b.clicks - a.clicks);
-        cityArray.push({clicks: clicks, name: "gesamt"});
-        region_clicks.push({identifier: "BG", clicks: clicks, cities: cityArray})
       }
       else {
         let clicks = global[country]["gesamt"]["gesamt"];
@@ -133,7 +122,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         }
         cityArray.sort((a, b) =>  b.clicks - a.clicks);
         cityArray.push({clicks: clicks, name: "gesamt"});
-        region_clicks.push({identifier: country, clicks: clicks, cities: cityArray})
+        if (country == "BE") region_clicks.push({identifier: "BG", clicks: clicks, cities: cityArray});
+        else region_clicks.push({identifier: country, clicks: clicks, cities: cityArray});
       }
     }
     for (const region of region_clicks){

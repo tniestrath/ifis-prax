@@ -5,7 +5,7 @@ import {DbService} from "../../services/db.service";
 import {UserComponent} from "./user/user.component";
 import {Observable, Subject} from "rxjs";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
-import {PostChartComponent} from "../../component/post-chart/post-chart.component";
+import {PostChartComponent} from "../../component/post/post-chart/post-chart.component";
 import {GaugeComponent} from "../../component/gauge/gauge.component";
 import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
@@ -18,6 +18,7 @@ import {OriginMapComponent} from "../../component/origin-map/origin-map.componen
 import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
+import {PostListComponent} from "../../component/post/post-list/post-list.component";
 
 @Component({
   selector: 'dash-page',
@@ -66,7 +67,7 @@ export class PageComponent implements OnInit {
   }
   getPostsPageCards() {
     return [
-      {type: PostComponent, row: 1, col: 1, height: 3, width: 2},
+      {type: PostListComponent, row: 1, col: 1, height: 3, width: 3},
     ];
   }
 

@@ -1,15 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {Post} from "../post/Post";
-import {SysVars} from "../../services/sys-vars-service";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
+import {Post} from "../Post";
+import {SysVars} from "../../../services/sys-vars-service";
 import {EmptyObject} from "chart.js/dist/types/basic";
 
 
 @Component({
   selector: 'dash-post-chart',
   templateUrl: './post-chart.component.html',
-  styleUrls: ['./post-chart.component.css', "../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./post-chart.component.css', "../../dash-base/dash-base.component.css"]
 })
 
 export class PostChartComponent extends DashBaseComponent implements OnInit{

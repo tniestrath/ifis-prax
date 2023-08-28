@@ -1,0 +1,37 @@
+<div class="post-box">
+  <div class="post-select-info">
+    <p id="selected-post-identifier">{{data.type}}</p>
+  </div>
+  <div class="post-details">
+    <div class="post-detail">
+      <div class="post-label">Titel</div>
+      <p>{{data.title}}</p>
+    </div>
+    <div class="post-detail">
+      <div class="post-label" >Datum</div>
+      <p>{{formattedDate}}</p>
+    </div>
+    <div class="post-detail">
+      <div class="post-label" >Themen</div>
+      <p>{{formattedTags}}</p>
+    </div>
+    <div class="post-detail">
+      <div class="post-label" >Clicks</div>
+      <p>{{data.clicks}}</p>
+    </div>
+    <div class="post-detail-group">
+      <div class="post-detail">
+        <div class="post-label" >Performance</div>
+        <p>{{formattedPerformance.toFixed()}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label" >Relevanz</div>
+        <p>{{formattedRelevanz.toFixed()}}</p>
+      </div>
+    </div>
+    <div class="post-detail">
+      <div class="post-label" >Zeichenanzahl</div>
+      <p>{{data.lettercount}}</p>
+    </div>
+  </div>
+</div>

@@ -134,7 +134,7 @@ export class DbService {
   }
 
   async getUserClicks(id : string){
-    return fetch(DbService.getUrl(dbUrl.GET_USER_CLICKS + id)).then(res => res.json());
+    return fetch(DbService.getUrl(dbUrl.GET_USER_CLICKS + id)).then(res => res.json()).catch(reason => {return "NO DATA"});
   }
 
   async getUserBestPost(id: string, type: string){

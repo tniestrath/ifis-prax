@@ -1,4 +1,6 @@
-export class Post {
+import {DbObject} from "../../services/DbObject";
+
+export class Post extends DbObject{
   constructor(public title : string = "placeholder title",
               public date : string = "00/00/0000",
               public type : string = "default",
@@ -11,6 +13,7 @@ export class Post {
               public referrings: number = 0,
               public articleReferringRate: number = 0,
               public lettercount: number = 0,
-              public id : number = -1) {
+              public override id : string = "-1") {
+    super(id, title);
   }
 }

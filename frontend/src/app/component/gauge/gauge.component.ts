@@ -132,7 +132,7 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
         this.createChart(["Score", "Grey"],[((post.performance || 0) / max)*100 , 100-(((post.performance || 0) / max)*100)],null);
 
         if (post.title.length > 30){
-          this.postName = post.title.slice(0, 30) + " ...";
+          this.postName = post.title.slice(0, 25) + " ...";
         } else {
           this.postName = post.title;
         }

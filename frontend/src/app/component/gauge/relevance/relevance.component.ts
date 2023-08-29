@@ -78,7 +78,7 @@ export class RelevanceComponent extends DashBaseComponent {
         }]
       },
       options: {
-        aspectRatio: 1,
+        aspectRatio: .8,
         scales : {
           x: {
             stacked : true,
@@ -143,7 +143,7 @@ export class RelevanceComponent extends DashBaseComponent {
         this.createChart(post.relevance || 0, max);
 
         if (post.title.length > 30){
-          this.postName = post.title.slice(0, 30) + " ...";
+          this.postName = post.title.slice(0, 25) + " ...";
         } else {
           this.postName = post.title;
         }

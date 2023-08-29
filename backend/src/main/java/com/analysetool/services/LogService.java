@@ -98,6 +98,12 @@ public class LogService {
     @Autowired
     private SearchStatsRepository searchStatRepo;
 
+    private HashMap<String,ArrayList<LocalDateTime>> userViewTimes= new HashMap<>();
+    private HashMap<String, Integer> userViews = new HashMap<>();
+    private HashMap<String, Integer> impressions = new HashMap<>();
+
+
+
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
         this.postRepository = postRepository;
@@ -212,6 +218,7 @@ public class LogService {
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();
+        saveStatsToDatabase();
         sysVarRepo.save(SystemVariabeln);
     }
 
@@ -381,8 +388,9 @@ public class LogService {
         if(patternNumber==6){
             System.out.println(matcher.group(1).replace("+","-")+" PROCESSING 4");
             if(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).isPresent()){
-                updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
-            };
+                //updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
+                userViewOrImpression(matcher);
+            }
         }
         if (patternNumber==7){
 
@@ -498,6 +506,66 @@ public class LogService {
         }
 
 
+    }
+
+    public void saveStatsToDatabase() {
+        for (String user : userViews.keySet()) {
+            UserStats userStats = userStatsRepo.findByUserId(Long.valueOf(user));
+
+            long views = userViews.get(user);
+            long currentImpressions = impressions.getOrDefault(user, 0);
+
+            if (userStats == null) {
+                userStats = new UserStats(Long.valueOf(user), views, currentImpressions);
+            } else {
+                // Addiere die Werte zu den vorhandenen Statistiken
+                userStats.setProfileView(userStats.getProfileView() + views);
+                userStats.setImpressions(userStats.getImpressions() + currentImpressions);
+            }
+
+            userStatsRepo.save(userStats);
+        }
+    }
+
+    public void userViewOrImpression(Matcher matcher) {
+        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
+        String ip = matcher.group(1);
+        byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
+        String ipHash = Hex.toHexString(hashBytes);
+
+        WPUser currentUser = wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get();
+
+        if (currentUser == null) {
+            // Handle the case where no user is found.
+            return;
+        }
+
+        String day = matcher.group(2);
+        String month = matcher.group(3);
+        String year = matcher.group(4);
+        String time = matcher.group(5);
+        LocalDateTime requestTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
+
+        if (userViewTimes.containsKey(ipHash)) {
+            ArrayList<LocalDateTime> times = userViewTimes.get(ipHash);
+
+            // Check the time difference between the last request and the current one.
+            if (Duration.between(times.get(times.size() - 1), requestTime).getSeconds() <= 3) {
+                // This request is an impression.
+                impressions.put(currentUser.getId().toString(), impressions.getOrDefault(currentUser, 0) + 1);
+                times.add(requestTime);
+            } else {
+                // This request is a unique view.
+                userViews.put(currentUser.getId().toString(), userViews.getOrDefault(currentUser, 0) + 1);
+                times.add(requestTime);
+            }
+        } else {
+            ArrayList<LocalDateTime> times = new ArrayList<>();
+            times.add(requestTime);
+            userViewTimes.put(ipHash, times);
+            // This is the first time seeing this IP for the user, so it's a unique view.
+            userViews.put(currentUser.getId().toString(), userViews.getOrDefault(currentUser, 0) + 1);
+        }
     }
 
     public void updateSearchStats(Matcher matcher) {

@@ -15,11 +15,6 @@ export enum dbUrl {
   GET_TAG_POST_COUNT = "/tags/getPostcount?id=",
   GET_TAG_RANKING = "/tags/getTermRanking",
 
-  GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
-  GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
-  GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
-
-  GET_USERS_ALL = "/users/getAllNew",
   GET_USER_IMG = "/users/profilePic?id=",
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
   GET_USER_BY_LOGINNAME = "/users/getByLogin?u=",
@@ -27,6 +22,7 @@ export enum dbUrl {
   GET_USER_ORIGIN_MAP = "/users/getViewsByLocation?id=",
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
 
+  GET_USERS_ALL = "/users/getAllNew",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
   GET_USERS_ALL_ORIGIN_MAP = "/users/getAllViewsByLocation",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
@@ -36,6 +32,11 @@ export enum dbUrl {
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
+
+  GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
+  GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
+  GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
+
 
   LOGIN = "/login",
   VALIDATE = "/validate"

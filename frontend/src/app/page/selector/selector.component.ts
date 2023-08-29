@@ -55,7 +55,8 @@ export class SelectorComponent implements OnInit{
       componentRef.instance.data = item.data;
       componentRef.setInput("clicked", this.itemClick);
       if (index % 2 == 0 && this.zebraColorMode){
-        componentRef.location.nativeElement.setAttribute("style", "background : #EFEFEF");
+        componentRef.location.nativeElement.setAttribute("style", "background : #EFEFEF; border-radius : 5px");
+        componentRef.instance.bgColor = "#EFEFEF";
       }
       index++;
     }

@@ -67,7 +67,7 @@ export class PageComponent implements OnInit {
   }
   getPostsPageCards() {
     return [
-      {type: PostListComponent, row: 1, col: 1, height: 3, width: 3},
+      {type: PostListComponent, row: 1, col: 1, height: 4, width: 2},
     ];
   }
 

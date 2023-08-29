@@ -1,20 +1,39 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Post} from "../../Post";
+import Util, {DashColors} from "../../../../util/Util";
 
 @Component({
   selector: 'dash-post-list-item',
   templateUrl: './post-list-item.component.html',
   styleUrls: ['./post-list-item.component.css']
 })
-export class PostListItemComponent {
+export class PostListItemComponent implements OnInit{
   data: Post = new Post();
   formattedDate = new Date(this.data.date).toLocaleDateString();
   formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");
-  /*formattedPerformance = (this.data.performance / maxPerf) * 100;
-  formattedRelevanz = (this.data.relevance / maxRel) * 100;*/
-  // @ts-ignore
-  formattedSSR = this.data.searchSuccessRate * 100;
+  formattedPerformance = this.data.performance;
+  formattedRelevanz = this.data.relevance;
+  typeColor = "rgb(148,28,62)";
+  bgColor: string = "#FFFFFF";
 
-  formattedPerformance = 0;
-  formattedRelevanz = 0;
+  ngOnInit(): void {
+    switch (this.data.type) {
+      case "article": {
+        this.typeColor = DashColors.Red;
+        break;
+      }
+      case "blog": {
+        this.typeColor = DashColors.Blue;
+        break;
+      }
+      case "news": {
+        this.typeColor = DashColors.Black;
+        break;
+      }
+    }
+    this.formattedDate = new Date(this.data.date).toLocaleDateString();
+    this.formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");
+    this.formattedPerformance = this.data.performance;
+    this.formattedRelevanz = this.data.relevance;
+  }
 }

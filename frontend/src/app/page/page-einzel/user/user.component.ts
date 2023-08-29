@@ -16,6 +16,7 @@ export class UserComponent implements SelectableComponent, OnInit {
   @Input() clicked: EventEmitter<User> = new EventEmitter<User>();
 
   user_img: SafeUrl = "";
+  bgColor: string = "fff";
 
   constructor(private db: DbService) {
   }

@@ -17,3 +17,10 @@ export default class Util {
     return formattedN;
   }
 }
+export enum DashColors {
+  Red = "rgb(148,28,62)",
+  DarkRed = "rgb(84, 16, 35)",
+  Blue = "rgb(90, 121, 149)",
+  DarkBlue = "#354657",
+  Black = "#000"
+}

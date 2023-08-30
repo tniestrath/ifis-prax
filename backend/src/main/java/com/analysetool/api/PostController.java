@@ -186,7 +186,8 @@ public class PostController {
         DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
 
         String type = "";
-
+        float maxPerformance =   statsRepo.getMaxPerformance();
+        float maxRelevance = statsRepo.getMaxRelevance();
         if (!posts.isEmpty()) {
             for (Post i : posts) {
                 if (i.getType().equals("post")) {
@@ -241,8 +242,8 @@ public class PostController {
                     obj.put("date", formattedDate);
                     obj.put("type", type);
                     if (PostStats != null) {
-                        obj.put("performance", PostStats.getPerformance());
-                        obj.put("relevance", PostStats.getRelevance());
+                        obj.put("performance", ((float)PostStats.getPerformance()/maxPerformance));
+                        obj.put("relevance", ((float)PostStats.getRelevance()/maxRelevance));
                     } else {
                         obj.put("performance", 0);
                         obj.put("relevance", 0);
@@ -346,8 +347,10 @@ public class PostController {
         obj.put("tags", tags);
         obj.put("type", type);
         if(PostStats != null){
-            obj.put("performance", PostStats.getPerformance());
-            obj.put("relevance", PostStats.getRelevance());
+            float maxPerformance =   statsRepo.getMaxPerformance();
+            float maxRelevance = statsRepo.getMaxRelevance();
+            obj.put("performance", ((float)PostStats.getPerformance()/maxPerformance));
+            obj.put("relevance", ((float)PostStats.getRelevance()/maxRelevance));
             obj.put("clicks", PostStats.getClicks().toString());
             obj.put("searchSuccesses", PostStats.getSearchSuccess());
             obj.put("searchSuccessRate", PostStats.getSearchSuccessRate());
@@ -457,18 +460,23 @@ public class PostController {
         PostStats PostStats = null;
         float max = 0;
         long PostId = 0;
+
+
+
         for (Post post : Posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 PostStats = statRepository.getStatByArtID(post.getId());
                 if (type.equals("relevance")) {
                     if (PostStats.getRelevance() > max) {
-                        max = PostStats.getRelevance();
+                        float maxRelevance = statsRepo.getMaxRelevance();
+                        max = ((float)PostStats.getRelevance()/maxRelevance);
                         PostId = PostStats.getArtId();
                     }
                 }
                 if (type.equals("performance")) {
                     if (PostStats.getPerformance() > max) {
-                        max = PostStats.getPerformance();
+                        float maxPerformance =   statsRepo.getMaxPerformance();
+                        max = ((float)PostStats.getPerformance()/maxPerformance);
                         PostId = PostStats.getArtId();
                     }
                 }
@@ -488,8 +496,10 @@ public class PostController {
         PostStats Stat = statRepository.getStatByArtID(id);
         JSONObject obj = new JSONObject();
         obj.put("Post-Id",Stat.getArtId());
-        obj.put("Relevanz",Stat.getRelevance());
-        obj.put("Performance",Stat.getPerformance());
+        float maxPerformance =   statsRepo.getMaxPerformance();
+        float maxRelevance = statsRepo.getMaxRelevance();
+        obj.put("performance", ((float)Stat.getPerformance()/maxPerformance));
+        obj.put("relevanz", ((float)Stat.getRelevance()/maxRelevance));
         obj.put("Views",Stat.getClicks());
         obj.put("Refferings",Stat.getReferrings());
         obj.put("Article Reffering Rate",Stat.getArticleReferringRate());
@@ -525,8 +535,10 @@ public class PostController {
             SearchSuccessRate = PostStats.getSearchSuccessRate();
             refferings = PostStats.getRefferings();
             refrate = PostStats.getArticleReferringRate();
-            relevanz = PostStats.getRelevance();
-            performance = PostStats.getPerformance();
+            float maxPerformance =   statsRepo.getMaxPerformance();
+            float maxRelevance = statsRepo.getMaxRelevance();
+            relevanz = ((float)PostStats.getRelevance()/maxRelevance);
+            performance = ((float)PostStats.getPerformance()/maxPerformance);
         }
         JSONObject obj = new JSONObject();
         obj.put("ID",newestId);
@@ -571,8 +583,10 @@ public class PostController {
                 SearchSuccessRate = PostStats.getSearchSuccessRate();
                 refferings = PostStats.getRefferings();
                 refrate = PostStats.getArticleReferringRate();
-                relevanz = PostStats.getRelevance();
-                performance = PostStats.getPerformance();
+                float maxPerformance =   statsRepo.getMaxPerformance();
+                float maxRelevance = statsRepo.getMaxRelevance();
+                relevanz = ((float)PostStats.getRelevance()/maxRelevance);
+                performance = ((float)PostStats.getPerformance()/maxPerformance);
             }
             JSONObject obj = new JSONObject();
             obj.put("ID",newestId);

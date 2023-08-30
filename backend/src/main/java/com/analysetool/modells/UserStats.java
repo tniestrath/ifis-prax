@@ -23,6 +23,9 @@ public class UserStats {
     @Column(name = "profile_view")
     private long profileView;
 
+    @Column(name = "impressions")
+    private long impressions;
+
     @Column(name = "interaction_rate")
     private float interactionRate;
 
@@ -49,6 +52,12 @@ public class UserStats {
         this.refferingRate = refferingRate;
         this.postFrequence = postFrequence;
         this.refferings=refferings;
+    }
+
+    public UserStats(long userId, long profileView, long impressions) {
+        this.userId = userId;
+        this.profileView = profileView;
+        this.impressions = impressions;
     }
 
     public float getRefferingRate() {
@@ -104,6 +113,14 @@ public class UserStats {
     @Override
     public int hashCode() {
         return Objects.hash(getIduser_stats(), getUserId(), getAveragePerformance(), getAverageRelevance(), getProfileView(), getInteractionRate(), getRefferingRate(), getPostFrequence());
+    }
+
+    public long getImpressions() {
+        return impressions;
+    }
+
+    public void setImpressions(long impressions) {
+        this.impressions = impressions;
     }
 
     public int getIduser_stats() {

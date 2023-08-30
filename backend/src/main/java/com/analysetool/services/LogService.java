@@ -26,7 +26,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.analysetool.util.IPHelper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.util.encoders.Hex;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class LogService {
@@ -47,13 +49,13 @@ public class LogService {
     private BufferedReader br;
     private String path = "";
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
-    private String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/.*s=(\\S+)/"; //search +1, view +1,(bei match) vor blog view pattern
-    private String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/.*s=(\\S+)/";//search +1, view +1,(bei match) vor artikel view pattern
+    private String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
+    private String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/.*s=(\\S+)\".*";//search +1, view +1,(bei match) vor artikel view pattern
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
     private String BlogViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/";
     private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
     private String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
-    private String UserViewPattern=".*GET /user/(\\S+)/";
+    private String UserViewPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
     //private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+)";//Artikel view +1 bei match
@@ -62,8 +64,8 @@ public class LogService {
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
     private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /news/(\\S+)/.*s=(\\S+)\".*";
 
-
-
+   // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
+    private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
@@ -77,6 +79,7 @@ public class LogService {
     Pattern pattern5_2= Pattern.compile(PresseSSViewPatter);
     Pattern pattern4_2=Pattern.compile(RedirectUserPattern);
     Pattern pattern6_1= Pattern.compile(SearchPattern);
+    Pattern pattern7=Pattern.compile(ReffererPattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -93,6 +96,12 @@ public class LogService {
     private int aktuellesJahr = kalender.get(Calendar.YEAR);
     @Autowired
     private SearchStatsRepository searchStatRepo;
+
+    private HashMap<String,ArrayList<LocalDateTime>> userViewTimes= new HashMap<>();
+    private HashMap<String, Integer> userViews = new HashMap<>();
+    private HashMap<String, Integer> impressions = new HashMap<>();
+
+
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
@@ -207,6 +216,8 @@ public class LogService {
         }
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
+        updateWordCountForAll();
+        saveStatsToDatabase();
         sysVarRepo.save(SystemVariabeln);
     }
 
@@ -372,8 +383,9 @@ public class LogService {
         if(patternNumber==6){
             System.out.println(matcher.group(1).replace("+","-")+" PROCESSING 4");
             if(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).isPresent()){
-                updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
-            };
+                //updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
+                userViewOrImpression(matcher);
+            }
         }
         if (patternNumber==7){
 
@@ -415,9 +427,10 @@ public class LogService {
             };
         }
         if(patternNumber==10){
-            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
             String ip = matcher.group(1);
-            String ipHash = bCryptPasswordEncoder.encode(ip);
+            byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
+            String ipHash = Hex.toHexString(hashBytes);
             IPHelper.getInstance();
             String country = IPHelper.getCountryISO(ip);
             String region = IPHelper.getSubISO(ip);
@@ -436,30 +449,158 @@ public class LogService {
             String time = matcher.group(5);
             LocalDateTime dateTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
             searchStatRepo.save(new SearchStats(ipHash,matcher.group(6),dateTime,location));
-            System.out.println("DIESE-->"+dateTime);
+
+        }
+        if(patternNumber==11){
+
+            SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
+            System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));
+            String day = matcher.group(2);
+            String month = getMonthNumber(matcher.group(3));
+            String year = matcher.group(4);
+            String time = matcher.group(5);
+            LocalDateTime searchSuccessTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
+            LocalDate date = searchSuccessTime.toLocalDate() ;
 
 
+            List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
+
+            long id = postRepository.getIdByName(matcher.group(8));
+            byte[] hashBytesForComparison = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
+            String hashForComparison = Hex.toHexString(hashBytesForComparison);
+
+            for(SearchStats s : searchStatsForDate){
+
+                if(hashForComparison.equals(s.getIpHashed()) && s.getSearchSuccessFlag() && s.getClickedPost().equals(Long.toString(id))){
+
+                    LocalTime search_success_time = s.getSearch_success_time().toLocalTime();
+                    String logHourMinuteSecond = matcher.group(5);
+
+                // Trenne Stunden, Minuten und Sekunden
+                    String[] timeParts = logHourMinuteSecond.split(":");
+                    LocalTime refferer_time = LocalTime.of(Integer.parseInt(timeParts[0]), Integer.parseInt(timeParts[1]), Integer.parseInt(timeParts[2]));
+
+               // Differenz = dwelltime
+                    Duration difference = Duration.between(search_success_time, refferer_time);
+
+                    LocalTime dwell_time;
+
+                // Wenn die Differenz negativ ist oder länger als 24 Stunden beträgt
+                    if (difference.isNegative() || difference.toHours() >= 24) {
+                        dwell_time = LocalTime.of(0, 0, 0);
+                    } else {
+                        // Konvertiere die Dauer in Stunden, Minuten und Sekunden
+                        long totalSeconds = difference.getSeconds();
+                        int hours = (int) (totalSeconds / 3600);
+                        int minutes = (int) ((totalSeconds % 3600) / 60);
+                        int seconds = (int) (totalSeconds % 60);
+
+                        dwell_time = LocalTime.of(hours, minutes, seconds);
+                    }
+
+
+
+
+                    s.setDwell_time(dwell_time);
+                    searchStatRepo.save(s);
+                }
+            }
 
         }
 
 
     }
 
-    public void updateSearchStats(Matcher matcher){
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    public void saveStatsToDatabase() {
+        for (String user : userViews.keySet()) {
+            UserStats userStats = userStatsRepo.findByUserId(Long.valueOf(user));
 
-        LocalDate date = LocalDate.now();  // Replace with the date you want to search for
+            long views = userViews.get(user);
+            long currentImpressions = impressions.getOrDefault(user, 0);
+
+            if (userStats == null) {
+                userStats = new UserStats(Long.valueOf(user), views, currentImpressions);
+            } else {
+                // Addiere die Werte zu den vorhandenen Statistiken
+                userStats.setProfileView(userStats.getProfileView() + views);
+                userStats.setImpressions(userStats.getImpressions() + currentImpressions);
+            }
+
+            userStatsRepo.save(userStats);
+        }
+    }
+
+    public void userViewOrImpression(Matcher matcher) {
+        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
+        String ip = matcher.group(1);
+        byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
+        String ipHash = Hex.toHexString(hashBytes);
+
+        WPUser currentUser = wpUserRepo.findByNicename(matcher.group(6).replace("+","-")).get();
+
+        if (currentUser == null) {
+            // Handle the case where no user is found.
+            return;
+        }
+
+        String day = matcher.group(2);
+        String month = matcher.group(3);
+        String year = matcher.group(4);
+        String time = matcher.group(5);
+        LocalDateTime requestTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
+
+        if (userViewTimes.containsKey(ipHash)) {
+            ArrayList<LocalDateTime> times = userViewTimes.get(ipHash);
+
+            // Check the time difference between the last request and the current one.
+            if (Duration.between(times.get(times.size() - 1), requestTime).getSeconds() <= 3) {
+                // This request is an impression.
+                impressions.put(currentUser.getId().toString(), impressions.getOrDefault(currentUser, 0) + 1);
+                times.add(requestTime);
+            } else {
+                // This request is a unique view.
+                userViews.put(currentUser.getId().toString(), userViews.getOrDefault(currentUser, 0) + 1);
+                times.add(requestTime);
+            }
+        } else {
+            ArrayList<LocalDateTime> times = new ArrayList<>();
+            times.add(requestTime);
+            userViewTimes.put(ipHash, times);
+            // This is the first time seeing this IP for the user, so it's a unique view.
+            userViews.put(currentUser.getId().toString(), userViews.getOrDefault(currentUser, 0) + 1);
+        }
+    }
+
+    public void updateSearchStats(Matcher matcher) {
+
+        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
+        byte[] hashBytes = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
+        String hashedIp = Hex.toHexString(hashBytes);
+
+
+        String day = matcher.group(2);
+        String month = getMonthNumber(matcher.group(3));
+        String year = matcher.group(4);
+        String time = matcher.group(5);
+        LocalDateTime searchSuccessTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
+        LocalDate date = searchSuccessTime.toLocalDate();  // Replace with the date you want to search for
+        System.out.println("GRUPPE 7: "+matcher.group(7));
         List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
-
-        for(SearchStats s : searchStatsForDate){
-            if(bCryptPasswordEncoder.matches(matcher.group(1), s.getIpHashed())&& !s.getSearchSuccessFlag() &&s.getSearchString().equals(matcher.group(6))){
+        long id = postRepository.getIdByName(matcher.group(6));
+        for(SearchStats s : searchStatsForDate) {
+            //hier weiter searchstring equals nicht so viel sinn mit klicked post
+            if(hashedIp.equals(s.getIpHashed()) && !s.getSearchSuccessFlag() && s.getSearchString().equals(matcher.group(7))) {
                 s.setSearchSuccessFlag(true);
-                long id = postRepository.getIdByName(matcher.group(6));
+
                 s.setClickedPost(String.valueOf(id));
+
+
+
+                s.setSearch_success_time(searchSuccessTime);
+
                 searchStatRepo.save(s);
             }
         }
-
     }
     public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
 
@@ -989,6 +1130,22 @@ public class LogService {
         }
     }
 
+    public void countWordsInPost(long id) {
+        // Hole den Inhalt des Posts und bereinige ihn
+        String content = Jsoup.clean(postRepository.getContentById(id), Safelist.none());
+
+        // Trenne den String anhand der bekannten Worttrenner und zähle die Anzahl der resultierenden Wörter
+        String[] words = content.split("\\s+|,|;|\\.|\\?|!");
+        int wordCount = words.length;
+
+        statsRepo.updateWordCount(wordCount,id);
+    }
+
+    public void updateWordCountForAll () {
+        for(Post p : postRepository.findAllUserPosts()) {
+            countWordsInPost(p.getId());
+        }
+    }
 
 }
 

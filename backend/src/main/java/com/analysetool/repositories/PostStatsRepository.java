@@ -174,6 +174,13 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("SELECT s.relevance FROM PostStats s WHERE s.artId=:artId")
     public float getRelevanceById(long artId);
 
+    @Query("SELECT s.wordcount FROM PostStats s WHERE s.artId =:artId")
+    public int getWordCount(int artId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE PostStats s SET s.wordcount =:wordcount WHERE s.artId =:artId")
+    void updateWordCount(int wordcount, long artId);
 
     // Beispiel für eine separate Methode zur Berechnung der Performance
 

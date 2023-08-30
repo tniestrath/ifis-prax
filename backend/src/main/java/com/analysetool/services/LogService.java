@@ -56,7 +56,7 @@ public class LogService {
     private String BlogViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/";
     private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
     private String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
-    private String UserViewPattern=".*GET /user/(\\S+)/";
+    private String UserViewPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
     //private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+)";//Artikel view +1 bei match
@@ -479,24 +479,32 @@ public class LogService {
                 if(hashForComparison.equals(s.getIpHashed()) && s.getSearchSuccessFlag() && s.getClickedPost().equals(Long.toString(id))){
 
                     LocalTime search_success_time = s.getSearch_success_time().toLocalTime();
-
                     String logHourMinuteSecond = matcher.group(5);
 
-                    // Trenne Stunden, Minuten und Sekunden
+                // Trenne Stunden, Minuten und Sekunden
                     String[] timeParts = logHourMinuteSecond.split(":");
-                    String logHour = timeParts[0];
-                    String logMinute = timeParts[1];
-                    String logSecond = timeParts[2];
-                    LocalTime refferer_time = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
+                    LocalTime refferer_time = LocalTime.of(Integer.parseInt(timeParts[0]), Integer.parseInt(timeParts[1]), Integer.parseInt(timeParts[2]));
 
-                    //differenz = dwelltime
-                    System.out.println("Refferer Time: " + refferer_time);
-                    System.out.println("Search Success Time: " + search_success_time);
-                    Duration difference = Duration.between(search_success_time,refferer_time );
-                    int hours = (int) difference.toHours();
-                    int minutes = (int) (difference.toMinutes() - hours * 60);
-                    int seconds = (int) (difference.getSeconds() - hours * 3600 - minutes * 60);
-                    LocalTime dwell_time= LocalTime.of(hours, minutes, seconds);
+               // Differenz = dwelltime
+                    Duration difference = Duration.between(search_success_time, refferer_time);
+
+                    LocalTime dwell_time;
+
+                // Wenn die Differenz negativ ist oder länger als 24 Stunden beträgt
+                    if (difference.isNegative() || difference.toHours() >= 24) {
+                        dwell_time = LocalTime.of(0, 0, 0);
+                    } else {
+                        // Konvertiere die Dauer in Stunden, Minuten und Sekunden
+                        long totalSeconds = difference.getSeconds();
+                        int hours = (int) (totalSeconds / 3600);
+                        int minutes = (int) ((totalSeconds % 3600) / 60);
+                        int seconds = (int) (totalSeconds % 60);
+
+                        dwell_time = LocalTime.of(hours, minutes, seconds);
+                    }
+
+
+
 
                     s.setDwell_time(dwell_time);
                     searchStatRepo.save(s);
@@ -533,7 +541,7 @@ public class LogService {
         byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
         String ipHash = Hex.toHexString(hashBytes);
 
-        WPUser currentUser = wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get();
+        WPUser currentUser = wpUserRepo.findByNicename(matcher.group(6).replace("+","-")).get();
 
         if (currentUser == null) {
             // Handle the case where no user is found.

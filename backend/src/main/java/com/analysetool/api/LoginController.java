@@ -13,26 +13,102 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 
 public class LoginController {
 
+    public Authentication adminAuthentication = new Authentication() {
+        @Override
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            return Collections.singleton(new SimpleGrantedAuthority("ADMIN"));
+        }
+
+        @Override
+        public Object getCredentials() {
+            return null;
+        }
+
+        @Override
+        public Object getDetails() {
+            return null;
+        }
+
+        @Override
+        public Object getPrincipal() {
+            return null;
+        }
+
+        @Override
+        public boolean isAuthenticated() {
+            return true;
+        }
+
+        @Override
+        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+
+        }
+
+        @Override
+        public String getName() {
+            return "Admin";
+        }
+    };
+
+    public Authentication userAuthentication = new Authentication() {
+        @Override
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            return Collections.singleton(new SimpleGrantedAuthority("USER"));
+        }
+
+        @Override
+        public Object getCredentials() {
+            return null;
+        }
+
+        @Override
+        public Object getDetails() {
+            return null;
+        }
+
+        @Override
+        public Object getPrincipal() {
+            return null;
+        }
+
+        @Override
+        public boolean isAuthenticated() {
+            return true;
+        }
+
+        @Override
+        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+
+        }
+
+        @Override
+        public String getName() {
+            return "User";
+        }
+    };
+
 
     private final DashConfig config;
+
 
     public LoginController(DashConfig config) {
         this.config = config;
@@ -93,7 +169,7 @@ public class LoginController {
     @GetMapping("/validate")
     public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(config.getValidate());
+        HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-json/server_variables/custom-endpoint");
 
 
         String responseBody = "INVALID";
@@ -116,10 +192,40 @@ public class LoginController {
 
             responseBody = EntityUtils.toString(entity);
 
+        } catch (NullPointerException e) {
+            System.out.println("Code above causes an Error on every logout. It shouldn't. " +
+                    "This is printed instead of the Error, remove Catch and logout to see. LoginController:197");
         } catch (Exception e) {
             e.printStackTrace();
         }
         return responseBody;
     }
 
+    public String validateCookie(String cookie){
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-json/server_variables/custom-endpoint");
+        System.out.println("1.1.1");
+
+
+        String responseBody = "INVALID";
+        try {
+            String cookieValue = "";
+            cookieValue = java.net.URLDecoder.decode(cookie, StandardCharsets.UTF_8);
+            System.out.println(cookieValue);
+
+            String jsonPayload = "{\"log\":\""+ cookieValue +"\"}";
+            StringEntity strEntity = new StringEntity(jsonPayload, "UTF-8");
+            strEntity.setContentType("application/json");
+            httpPost.setEntity(strEntity);
+
+            HttpResponse response2 = httpClient.execute(httpPost);
+            HttpEntity entity = response2.getEntity();
+
+            responseBody = new JSONObject(EntityUtils.toString(entity)).getString("user_id");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return responseBody;
+    }
 }

@@ -60,13 +60,13 @@ export class DbService {
   }
 
   async login(username : string, userpass : string) {
-    return await fetch(DbService.getUrl(dbUrl.LOGIN) + "?user=" + username + "&pass=" + userpass).then(res => res.blob());
+    return await fetch(DbService.getUrl(dbUrl.LOGIN) + "?user=" + username + "&pass=" + userpass, {credentials: "include"}).then(res => res.blob());
   }
   async getUserByLogin(login : string) : Promise<User> {
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGINNAME) + login).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGINNAME) + login, {credentials: "include"}).then(res => res.json());
   }
   async getUserById(id : string){
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_ID) + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_ID) + id, {credentials: "include"}).then(res => res.json());
   }
 
   async validate() : Promise<{"user_id":string}>{
@@ -83,26 +83,26 @@ export class DbService {
       }
     });
   }
-  async getAllTagsWithRelevanceAndViews(){
-    return await fetch(DbService.getUrl(dbUrl.GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL)).then(res => res.json());
+  async getAllTagsWithCountAndRelevance(){
+    return await fetch(DbService.getUrl(dbUrl.GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL), {credentials: "include"}).then(res => res.json());
   }
 
   async getTagPostCount(id : string){
-    return await fetch(DbService.getUrl(dbUrl.GET_TAG_POST_COUNT) + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_TAG_POST_COUNT) + id, {credentials: "include"}).then(res => res.json());
   }
   async getAllTagsPostCount(percantage : number) : Promise<Map<string, number>>{
-    return await fetch(DbService.getUrl(dbUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL) + percantage).then(res => res.json());
+    return await fetch(DbService.getUrl((dbUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL) + percantage) , {credentials: "include"}).then(res => res.json());
   }
 
   async getTagRanking() {
-    return await fetch(DbService.getUrl(dbUrl.GET_TAG_RANKING)).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_TAG_RANKING), {credentials: "include"}).then(res => res.json());
   }
 
   async loadAllUsers() {
     if (DbService.Users.length > 0){
       return;
     }
-    await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL)).then(res => res.json()).then(res => {
+    await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL), {credentials: "include"}).then(res => res.json()).then(res => {
       for (let user of res) {
         DbService.Users.push(user);
       }
@@ -110,10 +110,10 @@ export class DbService {
   }
 
   async getUserPostsDay(id : string){
-    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_PER_DAY) + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_PER_DAY) + id, {credentials: "include"}).then(res => res.json());
   }
   async getUserPostsWithStats(id : string){
-    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_WITH_STATS) + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_WITH_STATS) + id, {credentials: "include"}).then(res => res.json());
   }
 
   async getUserImgSrc(id : string){
@@ -135,15 +135,15 @@ export class DbService {
   }
 
   async getUserClicks(id : string){
-    return fetch(DbService.getUrl(dbUrl.GET_USER_CLICKS + id)).then(res => res.json()).catch(reason => {return "NO DATA"});
+    return fetch(DbService.getUrl(dbUrl.GET_USER_CLICKS + id) , {credentials: "include"}).then(res => res.json()).catch(reason => {return "NO DATA"});
   }
 
   async getUserBestPost(id: string, type: string){
-    return fetch(DbService.getUrl(dbUrl.GET_POST_BY_USERS_BEST) + id + "&type=" + type).then(res => res.json()).catch(reason => {return new Post()});
+    return fetch(DbService.getUrl(dbUrl.GET_POST_BY_USERS_BEST) + id + "&type=" + type, {credentials: "include"}).then(res => res.json()).catch(reason => {return new Post()});
   }
 
   async getUserNewestPost(id: string): Promise<Post> {
-    return fetch(DbService.getUrl(dbUrl.GET_POSTS_NEWEST_BY_USER_WITH_STATS) + id).then(res => res.json());
+    return fetch(DbService.getUrl(dbUrl.GET_POSTS_NEWEST_BY_USER_WITH_STATS) + id, {credentials: "include"}).then(res => res.json());
   }
 
   async getUserAccountTypes() : Promise<Map<string, number>>{
@@ -151,11 +151,11 @@ export class DbService {
   }
 
   async getMaxPerformance(){
-    let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_PERFORMANCE)).then(res => res.json());
+    let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_PERFORMANCE), {credentials: "include"}).then(res => res.json());
     return max;
   }
   async getMaxRelevance(){
-    let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_RELEVANCE)).then(res => res.json());
+    let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_RELEVANCE), {credentials: "include"}).then(res => res.json());
     return max;
   }
 
@@ -172,23 +172,23 @@ export class DbService {
   }
 
   async getPostById(id: number) : Promise<Post> {
-    return await fetch(DbService.getUrl(dbUrl.GET_POST) + id).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_POST) + id, {credentials: "include"}).then(res => res.json());
   }
 
   async getOriginMapByUser(id : number){
-    return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id).then(res => res.json());
+    return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id, {credentials: "include"}).then(res => res.json());
   }
 
   async getOriginMapAll() {
-    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL_ORIGIN_MAP)).then(res => res.json());
+    return await fetch((DbService.getUrl(dbUrl.GET_USERS_ALL_ORIGIN_MAP)) , {credentials: "include"}).then(res => res.json());
   }
 
   async getClicksByTime(id : number){
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id).then(res => {
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id, {credentials: "include"}).then(res => {
       return res.json();
     });
   }
   async getClicksByTimeAll() : Promise<number[]>{
-    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL_VIEWS_PER_HOUR)).then(res => res.json());
+    return await fetch((DbService.getUrl(dbUrl.GET_USERS_ALL_VIEWS_PER_HOUR)), {credentials: "include"}).then(res => res.json());
   }
 }

@@ -17,7 +17,8 @@ public class AuthenticationService {
     private static final String[] ADMIN_IDS = {
             "0",
             "1",
-            "20"
+            "20",
+            "27"
     };
 
     private static final LoginController loginController = new LoginController(new DashConfig());

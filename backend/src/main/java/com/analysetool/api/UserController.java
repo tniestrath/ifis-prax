@@ -352,4 +352,9 @@ public class UserController {
         return obj.toString();
 
     }
+
+    @GetMapping("/hasPost")
+    public boolean hasPost(int authorID) {
+        return !postRepository.findByAuthor(authorID).isEmpty();
+    }
 }

@@ -36,8 +36,10 @@ public class AuthenticationService {
             user_id = "";
         }
         for (String id : ADMIN_IDS) {
-            if (user_id.contains(id)){
-                return new ApiKeyAuthentication(cookie, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN, USER"));
+            if(user_id.contains("{user_id: ")) {
+                if (user_id.contains(id)) {
+                    return new ApiKeyAuthentication(cookie, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN, USER"));
+                }
             }
         }
         return new ApiKeyAuthentication(cookie, AuthorityUtils.commaSeparatedStringToAuthorityList("USER"));

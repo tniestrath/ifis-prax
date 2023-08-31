@@ -159,7 +159,6 @@ export class PageComponent implements OnInit {
 
         }
       }).then(() => {
-        this.selectorItems = this.selectorItems.filter(item => this.db.hasUserPost(Number(item.data.id)));
         this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||
           (item.data as User).email.toUpperCase().includes(this.searchValue.toUpperCase()))
       }).then(() => {

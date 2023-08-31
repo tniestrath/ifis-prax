@@ -21,7 +21,7 @@ export enum dbUrl {
   GET_USER_BY_ID = "/users/getById?id=",
   GET_USER_ORIGIN_MAP = "/users/getViewsByLocation?id=",
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
-  HAS_USER_POST = "/users/hasPost?authorID=",
+  HAS_USER_POST = "/users/hasPost?id=",
 
   GET_USERS_ALL = "/users/getAllNew",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",

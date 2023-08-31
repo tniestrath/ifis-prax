@@ -13,13 +13,13 @@ import java.util.List;
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RequestMapping("/search-stats")
-public class searchStatsController {
+public class SearchStatsController {
 
     @Autowired
     private SearchStatsRepository searchStatsRepository;
 
     @Autowired
-    public searchStatsController(SearchStatsRepository searchStatsRepository) {
+    public SearchStatsController(SearchStatsRepository searchStatsRepository) {
         this.searchStatsRepository = searchStatsRepository;}
 
 

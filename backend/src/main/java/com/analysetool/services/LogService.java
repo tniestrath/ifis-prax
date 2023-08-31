@@ -11,14 +11,14 @@ import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -28,7 +28,10 @@ import java.util.regex.Pattern;
 import com.analysetool.util.IPHelper;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Hex;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
 
 @Service
 public class LogService {
@@ -100,7 +103,8 @@ public class LogService {
     private HashMap<String,ArrayList<LocalDateTime>> userViewTimes= new HashMap<>();
     private HashMap<String, Integer> userViews = new HashMap<>();
     private HashMap<String, Integer> impressions = new HashMap<>();
-
+    @Autowired
+    private universalStatsRepository uniRepo;
 
 
     @Autowired
@@ -165,6 +169,7 @@ public class LogService {
 
 
         run(liveScanning,Pfad, SystemVariabeln);
+        setUniversalStats();
         updateLetterCountForAll();
 
     }
@@ -509,6 +514,12 @@ public class LogService {
         }
 
 
+    }
+    public String hashIp(String ip){
+        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
+        byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
+        String ipHash = Hex.toHexString(hashBytes);
+        return ipHash;
     }
 
     public void saveStatsToDatabase() {
@@ -1145,6 +1156,166 @@ public class LogService {
         for(Post p : postRepository.findAllUserPosts()) {
             countWordsInPost(p.getId());
         }
+    }
+
+    public static String getLastDay(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1); // Vortag
+        Date vortag = calendar.getTime();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        String formattedDate = dateFormat.format(vortag);
+        return formattedDate;
+    }
+
+    public static String generateLogFileNameLastDay() {
+       return "access.log-" + getLastDay() + ".gz";
+    }
+    public void setUniversalStats(){
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+            Date date = dateFormat.parse(getLastDay());
+
+            if(uniRepo.findByDatum(date).isEmpty()){
+
+                String pathOfOldLog="/var/log/nginx/access.log-"+getLastDay()+".gz";
+                FileInputStream fileInputStream = new FileInputStream(pathOfOldLog);
+                GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
+                InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                universalStats uniStats=  proccessLinesOfOldLog(new universalStats(date),bufferedReader);
+                uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
+                uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
+                uniRepo.save(uniStats);
+
+
+            }else{System.out.println("Vortag bereits in der Statistik");}
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public universalStats proccessLinesOfOldLog(universalStats uniStat,BufferedReader bufferedReader) throws IOException {
+
+        ArrayList<String> uniqueIps = new ArrayList<>();
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            Matcher matcher1_1 = pattern1_1.matcher(line);
+
+            if (matcher1_1.find()) {
+                Matcher matcher1_2 = pattern1_2.matcher(line);
+
+
+                if (matcher1_2.find()) {
+                    // Do something with the matched 1.2 patterns
+                    if(!uniqueIps.contains(hashIp(matcher1_2.group(1)))){uniqueIps.add(hashIp(matcher1_2.group(1)));}
+
+                } else {//1.1 matched
+
+                    if(!uniqueIps.contains(hashIp(matcher1_1.group(1)))){uniqueIps.add(hashIp(matcher1_1.group(1)));}
+
+                }
+            }
+            // }
+            else {
+                Matcher matcher2_1 = pattern2_1.matcher(line);
+
+                if (matcher2_1.find()) {
+                    Matcher matcher2_2 = pattern2_2.matcher(line);
+
+                    if (matcher2_2.find()) {
+                        // Do something with the matched 2.2 patterns
+
+                        if(!uniqueIps.contains(hashIp(matcher2_2.group(1)))){uniqueIps.add(hashIp(matcher2_2.group(1)));}
+
+                    } else {
+                        //2.1 match
+
+                        if(!uniqueIps.contains(hashIp(matcher2_1.group(1)))){uniqueIps.add(hashIp(matcher2_1.group(1)));}
+
+                    }
+                } else {
+                    Matcher matcher5_1 = pattern5_1.matcher(line);
+
+                    if (matcher5_1.find()) {
+
+                        Matcher matcher5_2 = pattern5_2.matcher(line);
+                        if (matcher5_2.find()) {
+                            if(!uniqueIps.contains(hashIp(matcher5_2.group(1)))){uniqueIps.add(hashIp(matcher5_2.group(1)));}
+                        } else {
+                            if(!uniqueIps.contains(hashIp(matcher5_1.group(1)))){uniqueIps.add(hashIp(matcher5_1.group(1)));}
+                        }
+                    }
+                }
+            }
+
+            Matcher matcher3 = pattern3.matcher(line);
+            if (matcher3.find()) {
+                if(!uniqueIps.contains(hashIp(matcher3.group(1)))){uniqueIps.add(hashIp(matcher3.group(1)));}
+            }
+            Matcher matcher4 = pattern4.matcher(line);
+            if (matcher4.find()) {
+                if(!uniqueIps.contains(hashIp(matcher4.group(1)))){uniqueIps.add(hashIp(matcher4.group(1)));}
+            }
+            Matcher matcher4_2 = pattern4_2.matcher(line);
+            if (matcher4_2.find()) {
+                if(!uniqueIps.contains(hashIp(matcher4_2.group(1)))){uniqueIps.add(hashIp(matcher4_2.group(1)));}
+            }
+            Matcher matcher6_1 = pattern6_1.matcher(line);
+            if (matcher6_1.find()) {
+
+                if(!uniqueIps.contains(hashIp(matcher6_1.group(1)))){uniqueIps.add(hashIp(matcher6_1.group(1)));}
+
+            }
+        }
+
+        uniStat.setBesucherAnzahl((long) uniqueIps.size());
+        return uniStat;
+    }
+
+    public universalStats setNewsArticelBlogCountForUniversalStats(universalStats uniStats){
+
+        List<Post> posts = postRepository.findAllUserPosts();
+
+        long artikelCounter = 0 ;
+        long newsCounter =0;
+        long blogCounter = 0;
+
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+
+        for (Post post : posts) {
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
+
+                        if (termTax.getTermId() == tagIdBlog) {
+                            blogCounter++ ;
+                        }
+
+                        if (termTax.getTermId() == tagIdArtikel) {
+                            artikelCounter++ ;
+                        }
+
+                        if (termTax.getTermId() == tagIdPresse) {
+                            newsCounter++ ;
+                        }
+                    }
+
+
+                }
+            }
+
+        uniStats.setAnzahlArtikel(artikelCounter);
+        uniStats.setAnzahlNews(newsCounter);
+        uniStats.setAnzahlBlog(blogCounter);
+
+        return uniStats ;
     }
 
 }

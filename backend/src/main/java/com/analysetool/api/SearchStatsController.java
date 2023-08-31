@@ -17,9 +17,9 @@ public class SearchStatsController {
     @Autowired
     private SearchStatsRepository searchStatsRepository;
 
-/*    @Autowired
+    @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
-        this.searchStatsRepository = searchStatsRepository;}*/
+        this.searchStatsRepository = searchStatsRepository;}
 
 
     @GetMapping("/getAll")

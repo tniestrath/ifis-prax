@@ -83,7 +83,7 @@ export class DbService {
       }
     });
   }
-  async getAllTagsWithCountAndRelevance(){
+  async getAllTagsWithRelevanceAndViews(){
     return await fetch(DbService.getUrl(dbUrl.GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL), {credentials: "include"}).then(res => res.json());
   }
 

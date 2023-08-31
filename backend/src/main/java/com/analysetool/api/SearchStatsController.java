@@ -62,9 +62,17 @@ public class SearchStatsController {
                 obj.put("clicked_post", alleStats.get(i).getClickedPost());
 
             }
+            if (alleStats.get(i).getSearchTime() != null) {
+
+                obj.put("search_time", alleStats.get(i).getSearchTime());
+
+            }
+            if (alleStats.get(i).getDwell_time() != null) {
+
+                obj.put("dwell_time", alleStats.get(i).getDwell_time());
+
+            }
             obj.put("location", alleStats.get(i).getLocation());
-            obj.put("dwell_time",alleStats.get(i).getDwell_time());
-            obj.put("search_time",alleStats.get(i).getSearchTime());
             obj.put("search_success_time",alleStats.get(i).getSearch_success_time());
 
 

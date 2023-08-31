@@ -21,6 +21,7 @@ export enum dbUrl {
   GET_USER_BY_ID = "/users/getById?id=",
   GET_USER_ORIGIN_MAP = "/users/getViewsByLocation?id=",
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
+  HAS_USER_POST = "/users/hasPost?authorID=",
 
   GET_USERS_ALL = "/users/getAllNew",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
@@ -148,6 +149,10 @@ export class DbService {
 
   async getUserAccountTypes() : Promise<Map<string, number>>{
     return fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_ALL)).then(res => res.json());
+  }
+
+  async hasUserPost(id : number) {
+    return fetch(DbService.getUrl(dbUrl.HAS_USER_POST) + id).then(res => res.json());
   }
 
   async getMaxPerformance(){

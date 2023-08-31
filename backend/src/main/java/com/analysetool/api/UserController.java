@@ -354,7 +354,7 @@ public class UserController {
     }
 
     @GetMapping("/hasPost")
-    public boolean hasPost(int authorID) {
-        return !postRepository.findByAuthor(authorID).isEmpty();
+    public boolean hasPost(@RequestParam int id) {
+        return !postRepository.findByAuthor(id).isEmpty();
     }
 }

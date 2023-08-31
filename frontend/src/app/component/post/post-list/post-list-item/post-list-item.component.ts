@@ -11,8 +11,6 @@ export class PostListItemComponent implements OnInit{
   data: Post = new Post();
   formattedDate = new Date(this.data.date).toLocaleDateString();
   formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");
-  formattedPerformance = this.data.performance;
-  formattedRelevanz = this.data.relevance;
   typeColor = "rgb(148,28,62)";
   bgColor: string = "#FFFFFF";
 
@@ -33,7 +31,5 @@ export class PostListItemComponent implements OnInit{
     }
     this.formattedDate = new Date(this.data.date).toLocaleDateString();
     this.formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");
-    this.formattedPerformance = this.data.performance;
-    this.formattedRelevanz = this.data.relevance;
   }
 }

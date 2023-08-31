@@ -126,10 +126,9 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.setToolTip("Ihr Beitrag mit der höchsten berechneten Performance (aufg. Aufrufe der ersten 7 Tage)");
 
-    this.db.getMaxPerformance().then(max => {
       this.db.getUserBestPost(SysVars.USER_ID, "performance").then(data => {
         let post : Post = data;
-        this.createChart(["Score", "Grey"],[((post.performance || 0) / max)*100 , 100-(((post.performance || 0) / max)*100)],null);
+        this.createChart(["Score", "Grey"],[(post.performance || 0)*100 , 100-((post.performance || 0)*100)],null);
 
         if (post.title.length > 30){
           this.postName = post.title.slice(0, 25) + " ...";
@@ -139,7 +138,6 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
 
         this.cdr.detectChanges();
       });
-    })
   }
 
 }

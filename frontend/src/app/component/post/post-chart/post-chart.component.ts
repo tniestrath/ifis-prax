@@ -22,8 +22,6 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
   postType : string = "artikel";
 
   data : Promise<Post[]> | undefined;
-  max_performance: Promise<number> |undefined;
-  max_relevance: Promise<number> |undefined;
 
   timeSpanMap = new Map<string, number>([
     ["all_time", 365*2],
@@ -184,59 +182,53 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
     if (this.data == undefined){this.data = this.db.getUserPostsWithStats(SysVars.USER_ID)}
-    if (this.max_performance == undefined){this.max_performance = this.db.getMaxPerformance()}
-    if (this.max_relevance == undefined){this.max_relevance = this.db.getMaxRelevance()}
-    Promise.all([this.max_performance, this.max_relevance]).then((value) => {
-      // @ts-ignore
-      this.data.then((res : Post[]) => {
-        var postLabel : string[] = [];
-        var postData : number[] = [];
-        var postDataRelevance : number[] = [];
-        var postDataDate : string[] = [];
+    this.data.then((res : Post[]) => {
+      var postLabel : string[] = [];
+      var postData : number[] = [];
+      var postDataRelevance : number[] = [];
+      var postDataDate : string[] = [];
 
-        var postIds :number[] = [];
+      var postIds :number[] = [];
 
-        let time_filtered : Post[] = res.filter((post : Post) => {
-          var postDate = new Date(Date.parse(post.date));
-          var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
-          return postDate >= calcDate;
-        }).filter((post : Post) => {
-          return post.type == this.postType;
-        })
-        time_filtered.sort((a, b) => {
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
-        })
-        let fullLabels : string[] = [];
-        for (var post of time_filtered) {
-          let label = post.title;
-          fullLabels.push(post.title);
-          let space_index = label.indexOf(" ");
-          let sec_space_index = label.indexOf(" ", space_index+1);
-          if (label.length > 10){
-            if (sec_space_index < 10){
-              label = label.slice(0, sec_space_index);
-            }
-            if (space_index < 10 !&& sec_space_index < 10){
-              label = label.slice(0, space_index);
-            }
-            else {
-              label = label.slice(0, 10)
-            }
-            label += "...";
-          }
-          postLabel.push(label);
-          postData.push((post.performance / value[0])*100);
-          postDataRelevance.push((post.relevance / value[1])*100);
-          postDataDate.push(new Date(post.date).toLocaleDateString());
-          // @ts-ignore
-          postIds.push(post.id);
-        }
-        this.createChart(postLabel, fullLabels, postData, postDataRelevance, postDataDate, (index) => {
-          SysVars.SELECTED_POST_ID.emit(postIds[index]);
-        });
+      let time_filtered : Post[] = res.filter((post : Post) => {
+        var postDate = new Date(Date.parse(post.date));
+        var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
+        return postDate >= calcDate;
+      }).filter((post : Post) => {
+        return post.type == this.postType;
       })
-        .finally(() => {this.visibility = "visible"});
-    });
+      time_filtered.sort((a, b) => {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      })
+      let fullLabels : string[] = [];
+      for (var post of time_filtered) {
+        let label = post.title;
+        fullLabels.push(post.title);
+        let space_index = label.indexOf(" ");
+        let sec_space_index = label.indexOf(" ", space_index+1);
+        if (label.length > 10){
+          if (sec_space_index < 10){
+            label = label.slice(0, sec_space_index);
+          }
+          if (space_index < 10 !&& sec_space_index < 10){
+            label = label.slice(0, space_index);
+          }
+          else {
+            label = label.slice(0, 10)
+          }
+          label += "...";
+        }
+        postLabel.push(label);
+        postData.push(post.performance*100);
+        postDataRelevance.push(post.relevance*100);
+        postDataDate.push(new Date(post.date).toLocaleDateString());
+        // @ts-ignore
+        postIds.push(post.id);
+      }
+      this.createChart(postLabel, fullLabels, postData, postDataRelevance, postDataDate, (index) => {
+        SysVars.SELECTED_POST_ID.emit(postIds[index]);
+      });
+    }).finally(() => {this.visibility = "visible"});
   }
 
 

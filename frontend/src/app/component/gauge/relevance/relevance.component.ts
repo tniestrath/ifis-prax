@@ -18,7 +18,7 @@ export class RelevanceComponent extends DashBaseComponent {
   type : string = "rel";
   postName: string = "";
 
-  createChart(value : number, max : number){
+  createChart(value : number){
 
     const canvas  = document.querySelector("#rel");
     // @ts-ignore
@@ -48,7 +48,7 @@ export class RelevanceComponent extends DashBaseComponent {
         // @ts-ignore
         ctx.font = canvas.width/4 + "px sans-serif";
         // @ts-ignore
-        ctx.fillText(  ((value / max) * 100).toFixed(), chart.chartArea.width/2, chart.chartArea.height+5);
+        ctx.fillText(  ((value) * 100).toFixed(), chart.chartArea.width/2, chart.chartArea.height+5);
       }
     }
 
@@ -137,10 +137,9 @@ export class RelevanceComponent extends DashBaseComponent {
   ngOnInit(): void {
     this.setToolTip("Ihr Beitrag mit der höchsten berechneten Relevanz (aufg. Aufrufe der letzten 7 Tage)");
 
-    this.db.getMaxRelevance().then(max => {
       this.db.getUserBestPost(SysVars.USER_ID, "relevance").then(data => {
         let post : Post = data;
-        this.createChart(post.relevance || 0, max);
+        this.createChart(post.relevance || 0);
 
         if (post.title.length > 30){
           this.postName = post.title.slice(0, 25) + " ...";
@@ -150,7 +149,6 @@ export class RelevanceComponent extends DashBaseComponent {
 
         this.cdr.detectChanges();
       });
-    })
   }
 
 }

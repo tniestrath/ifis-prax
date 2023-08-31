@@ -17,7 +17,8 @@ public class AuthenticationService {
     private static final String[] ADMIN_IDS = {
             "0",
             "1",
-            "20"
+            "20",
+            "27"
     };
 
     private static final LoginController loginController = new LoginController(new DashConfig());
@@ -29,10 +30,17 @@ public class AuthenticationService {
                 cookie = c.getValue();
             }
         }
-        String user_id = loginController.validateCookie(cookie);
+        String user_id = "";
+        if(!cookie.equals("")) {
+            user_id = loginController.validateCookie(cookie);
+        } else {
+            user_id = "";
+        }
         for (String id : ADMIN_IDS) {
-            if (user_id.contains(id)){
-                return new ApiKeyAuthentication(cookie, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN, USER"));
+            if(user_id.contains("{user_id: ")) {
+                if (user_id.contains(id)) {
+                    return new ApiKeyAuthentication(cookie, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN, USER"));
+                }
             }
         }
         return new ApiKeyAuthentication(cookie, AuthorityUtils.commaSeparatedStringToAuthorityList("USER"));

@@ -4,13 +4,14 @@ import com.analysetool.modells.SearchStats;
 import com.analysetool.repositories.SearchStatsRepository;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RequestMapping("/search-stats")
 public class SearchStatsController {
 

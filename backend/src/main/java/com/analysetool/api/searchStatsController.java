@@ -11,14 +11,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RequestMapping("/search-stats")
-public class SearchStatsController {
+public class searchStatsController {
 
     @Autowired
     private SearchStatsRepository searchStatsRepository;
 
     @Autowired
-    public SearchStatsController(SearchStatsRepository searchStatsRepository) {
+    public searchStatsController(SearchStatsRepository searchStatsRepository) {
         this.searchStatsRepository = searchStatsRepository;}
 
 

@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,7 +24,7 @@ public class uniStatController {
     @Autowired
     universalStatsRepository uniRepo;
 
-    @GetMapping("/gestern")
+    @GetMapping(value = "/gestern", produces = MediaType.TEXT_HTML_VALUE)
     public String getLetzte() throws JSONException {
         JSONObject obj = new JSONObject();
         universalStats uniStat=uniRepo.findAll().get(uniRepo.findAll().size()-1);
@@ -34,7 +35,32 @@ public class uniStatController {
         obj.put("veröffentlichte Blogs",uniStat.getAnzahlBlog());
         obj.put("veröffentlichte News",uniStat.getAnzahlNews());
 
-        return obj.toString();
+        String html = "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>Bericht - "+ obj.get("Datum") + "</title>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <h1>Datum: "+ obj.get("Datum") + "</h1>\n" +
+                "    <table>\n" +
+                "        <th>Besucher</th>\n" +
+                "        <th>Angemeldete Benutzer</th>\n" +
+                "        <th>veröffentlichte Artikel</th>\n" +
+                "        <th>veröffentlichte Blogs</th>\n" +
+                "        <th>veröffentlichte News</th>\n" +
+                "        <tr>\n" +
+                "            <td>"+ obj.get("Besucher") +"</td>\n" +
+                "            <td>"+ obj.get("Angemeldete Profile") +"</td>\n" +
+                "            <td>"+ obj.get("veröffentlichte Artikel") +"</td>\n" +
+                "            <td>"+ obj.get("veröffentlichte Blogs") +"</td>\n" +
+                "            <td>"+ obj.get("veröffentlichte News") +"</td>\n" +
+                "        </tr>\n" +
+                "    </table>\n" +
+                "</body>\n" +
+                "</html>";
+
+        return html;
     }
 
 }

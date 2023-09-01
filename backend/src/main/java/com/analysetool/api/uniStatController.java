@@ -39,16 +39,29 @@ public class uniStatController {
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
                 "    <meta charset=\"UTF-8\">\n" +
-                "    <title>Bericht - "+ obj.get("Datum") + "</title>\n" +
+                "    <title>Bericht - "+ new SimpleDateFormat("dd.MM.yyyy").format(uniStat.getDatum()) + "</title>\n" +
+                "    <style>" +
+                "       table{\n" +
+                "           border: 1px solid black;\n" +
+                "           width: 100%;\n"+
+                "           text-align: center;\n"+
+                "       }\n" +
+                "       tr{\n" +
+                "           border-bottom: 2px solid black;\n" +
+                "           height: 20px;\n"+
+                "       }" +
+                "    </style>"+
                 "</head>\n" +
                 "<body>\n" +
-                "    <h1>Datum: "+ obj.get("Datum") + "</h1>\n" +
+                "    <h1>Datum: "+ new SimpleDateFormat("dd.MM.yyyy").format(uniStat.getDatum()) + "</h1>\n" +
                 "    <table>\n" +
-                "        <th>Besucher</th>\n" +
-                "        <th>Angemeldete Benutzer</th>\n" +
-                "        <th>veröffentlichte Artikel</th>\n" +
-                "        <th>veröffentlichte Blogs</th>\n" +
-                "        <th>veröffentlichte News</th>\n" +
+                "        <tr>\n"+
+                "           <th>Besucher</th>\n" +
+                "           <th>Angemeldete Benutzer</th>\n" +
+                "           <th>Artikel</th>\n" +
+                "           <th>Blogs</th>\n" +
+                "           <th>News</th>\n" +
+                "        </tr>\n"+
                 "        <tr>\n" +
                 "            <td>"+ obj.get("Besucher") +"</td>\n" +
                 "            <td>"+ obj.get("Angemeldete Profile") +"</td>\n" +

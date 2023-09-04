@@ -43,7 +43,7 @@ public class uniStatController {
         obj.put("veröffentlichte News",uniStat.getAnzahlNews());
 
         obj.put("aktueller jährlicher Umsatz",uniStat.getUmsatz());
-        
+
         String html = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +

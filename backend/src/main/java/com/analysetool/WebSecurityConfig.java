@@ -11,16 +11,16 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Bean
+    /*@Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.addFilterBefore(new AuthenticationFilter(), BasicAuthenticationFilter.class);
 
         http.authorizeHttpRequests((auth) -> {
                 auth.requestMatchers("/login", "/validate", "/users/profilePic", "/tags/getPostTagsIdName", "/posts/bestPost").permitAll();
-                auth.anyRequest().permitAll();
+                auth.anyRequest().authenticated();
             });
 
         return http.build();
-    }
+    }*/
 
 }

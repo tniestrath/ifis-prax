@@ -827,11 +827,15 @@ public class PostController {
     @GetMapping("/getAllPostsWithStats")
     public String getAll() throws JSONException, ParseException {
         List<Post> posts = postRepo.findAllUserPosts();
+
         List<JSONObject> stats = new ArrayList<>();
 
 
         for(Post post : posts) {
-            stats.add(this.PostStatsByIdForFrontend(post.getId()));
+            JSONObject json = PostStatsByIdForFrontend(post.getId());
+            if(!json.get("tags").toString().contains("Ratgeber") && !json.get("tags").toString().contains("Whitepaper")) {
+                stats.add(this.PostStatsByIdForFrontend(post.getId()));
+            }
         }
         return new JSONArray(stats).toString();
     }

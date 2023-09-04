@@ -833,7 +833,7 @@ public class PostController {
 
         for(Post post : posts) {
             JSONObject json = PostStatsByIdForFrontend(post.getId());
-            if(!json.get("type").toString().contains("Ratgeber") && !json.get("tags").toString().contains("Whitepaper")) {
+            if(!json.get("type").toString().toLowerCase().contains("ratgeber") && !json.get("tags").toString().toLowerCase().contains("whitepaper")) {
                 stats.add(this.PostStatsByIdForFrontend(post.getId()));
             }
         }

@@ -44,7 +44,8 @@ public class PostController {
     WPTermRepository wpTermRepo;
     WpTermTaxonomyRepository wpTermTaxonomyRepo;
 
-    PostMetaRepository postMetaRepo;
+    @Autowired
+    private PostMetaRepository postMetaRepo;
 
     @Autowired
     public PostController(

@@ -17,7 +17,7 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests((auth) -> {
                 auth.requestMatchers("/login", "/validate", "/users/profilePic", "/tags/getPostTagsIdName", "/posts/bestPost").permitAll();
-                auth.anyRequest().authenticated();
+                auth.anyRequest().permitAll();
             });
 
         return http.build();

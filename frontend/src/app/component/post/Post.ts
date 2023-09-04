@@ -13,6 +13,7 @@ export class Post extends DbObject{
               public referrings: number = 0,
               public articleReferringRate: number = 0,
               public lettercount: number = 0,
+              public authors: string = "",
               public override id : string = "-1") {
     super(id, title);
   }

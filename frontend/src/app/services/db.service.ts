@@ -28,12 +28,13 @@ export enum dbUrl {
   GET_USERS_ALL_ORIGIN_MAP = "/users/getAllViewsByLocation",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
 
-  GET_POST = "/posts/getPostWithStatsById?id=",
+  GET_POST = "/posts/getPostStatsByIdWithAuthor?id=",
   GET_POST_BY_USERS_BEST = "/posts/bestPost?id=",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
 
+  GET_POSTS_ALL = "/posts/getAllPostsWithStats",
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
@@ -174,6 +175,10 @@ export class DbService {
         .replace(/[\W_]+/g,"")
         .localeCompare(b.name.toLowerCase());
     });
+  }
+
+  async getPostsAll(){
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL), {credentials: "include"}).then(res => res.json());
   }
 
   async getPostById(id: number) : Promise<Post> {

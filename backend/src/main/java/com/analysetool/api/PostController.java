@@ -44,6 +44,8 @@ public class PostController {
     WPTermRepository wpTermRepo;
     WpTermTaxonomyRepository wpTermTaxonomyRepo;
 
+    PostMetaRepository postMetaRepo;
+
     @Autowired
     public PostController(
             PostRepository postRepository, PostStatsRepository statsRepo, WpTermRelationshipsRepository termRelationRepo, WPTermRepository wpTermRepo, WpTermTaxonomyRepository wpTermTaxonomyRepo
@@ -366,6 +368,80 @@ public class PostController {
             obj.put("referrings",0);
             obj.put("lettercount", 0);
             obj.put("articleReferringRate",0);}
+
+        return obj.toString();
+    }
+
+
+    @GetMapping("/getPostStatsByIdWithAuthor")
+    public String PostStatsByIdForFrontend(@RequestParam long id) throws JSONException, ParseException {
+        if(!postRepository.findById(id).isPresent()) {return null;}
+        Post post = postRepository.findById(id).get();
+        List<String> tags = new ArrayList<>();
+        String type = "default";
+
+        PostStats PostStats = null;
+        if(statsRepo.existsByArtId(post.getId())){
+            PostStats = statsRepo.getStatByArtID(post.getId());
+        }
+        List<Long> tagIDs = null;
+        if(termRelationRepo.existsByObjectId(post.getId())){
+            tagIDs = termRelationRepo.getTaxIdByObject(post.getId());
+        }
+        List<WPTerm> terms = new ArrayList<>();
+        if (tagIDs != null) {
+            for (long l : tagIDs) {
+                if (wpTermRepo.existsById(l)) {
+                    if (wpTermRepo.findById(l).isPresent()) {
+                        terms.add(wpTermRepo.findById(l).get());
+                    }
+                }
+            }
+        }
+        for (WPTerm t: terms) {
+            if (wpTermTaxonomyRepo.existsById(t.getId())){
+                if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
+                    WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
+                    if (Objects.equals(tt.getTaxonomy(), "category")){
+                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1) {
+                            type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
+                        }
+                    } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
+                        tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
+                    }
+                }
+            }
+        }
+
+        JSONObject obj = new JSONObject();
+        DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = onlyDate.parse(post.getDate().toString());
+        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
+        obj.put("id", post.getId());
+        obj.put("title", post.getTitle());
+        obj.put("date", formattedDate);
+        obj.put("tags", tags);
+        obj.put("type", type);
+        if(PostStats != null){
+            float maxPerformance =   statsRepo.getMaxPerformance();
+            float maxRelevance = statsRepo.getMaxRelevance();
+            obj.put("performance", ((float)PostStats.getPerformance()/maxPerformance));
+            obj.put("relevance", ((float)PostStats.getRelevance()/maxRelevance));
+            obj.put("clicks", PostStats.getClicks().toString());
+            obj.put("lettercount", PostStats.getLettercount());
+        }else {
+            obj.put("performance",0);
+            obj.put("relevance",0);
+            obj.put("clicks", "0");
+            obj.put("searchSuccesses",0);
+            obj.put("searchSuccessRate",0);
+            obj.put("referrings",0);
+            obj.put("lettercount", 0);
+            obj.put("articleReferringRate",0);
+        }
+
+        obj.put("authors", postMetaRepo.getAuthorsByPostId(id));
 
         return obj.toString();
     }
@@ -746,6 +822,19 @@ public class PostController {
 
         return new JSONObject(answer).toString();
     }
+
+    @GetMapping("/getAllPostsWithStats")
+    public String getAll() throws JSONException, ParseException {
+        List<Post> posts = postRepo.findAllUserPosts();
+        List<String> stats = new ArrayList<>();
+
+
+        for(Post post : posts) {
+            stats.add(this.PostStatsByIdForFrontend(post.getId()));
+        }
+        return new JSONArray(stats).toString();
+    }
+
 
 }
 

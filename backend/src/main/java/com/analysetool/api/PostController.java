@@ -375,7 +375,7 @@ public class PostController {
 
 
     @GetMapping("/getPostStatsByIdWithAuthor")
-    public String PostStatsByIdForFrontend(@RequestParam long id) throws JSONException, ParseException {
+    public JSONObject PostStatsByIdForFrontend(@RequestParam long id) throws JSONException, ParseException {
         if(!postRepository.findById(id).isPresent()) {return null;}
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
@@ -444,7 +444,7 @@ public class PostController {
 
         obj.put("authors", postMetaRepo.getAuthorsByPostId(id));
 
-        return obj.toString();
+        return obj;
     }
 
     //STATS
@@ -827,7 +827,7 @@ public class PostController {
     @GetMapping("/getAllPostsWithStats")
     public String getAll() throws JSONException, ParseException {
         List<Post> posts = postRepo.findAllUserPosts();
-        List<String> stats = new ArrayList<>();
+        List<JSONObject> stats = new ArrayList<>();
 
 
         for(Post post : posts) {

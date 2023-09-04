@@ -152,9 +152,9 @@ export class PageComponent implements OnInit {
           if (performance <= 33){
             this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 33, u.accountType, u.potential, u.img)));
           } if (performance > 33 && performance <= 66){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 33, u.accountType, u.potential, u.img)));
+            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 66, u.accountType, u.potential, u.img)));
           } if (performance > 66){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 33, u.accountType, u.potential, u.img)));
+            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 100, u.accountType, u.potential, u.img)));
           }
 
         }
@@ -168,15 +168,15 @@ export class PageComponent implements OnInit {
         }
         switch (filter.perf) {
           case "low": {
-            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance < 33);
+            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance <= 33);
             break;
           }
           case "medium": {
-            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance >= 33 && (item.data as User).performance < 66);
+            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance > 33 && (item.data as User).performance <= 66);
             break;
           }
           case "high": {
-            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance >= 66);
+            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance > 66);
             break;
           }
           default: break;

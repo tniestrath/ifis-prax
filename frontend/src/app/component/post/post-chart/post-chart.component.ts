@@ -4,6 +4,7 @@ import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Post} from "../Post";
 import {SysVars} from "../../../services/sys-vars-service";
 import {EmptyObject} from "chart.js/dist/types/basic";
+import {DashColors} from "../../../util/Util";
 
 
 @Component({
@@ -42,6 +43,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       afterDatasetsDraw(chart: Chart, args: EmptyObject, options: 0, cancelable: false) {
         const { ctx, data, chartArea: {top, bottom, left, right, width, height}, scales: {r} } = chart;
         ctx.save();
+
         for (let i = 0; i < chart.getDatasetMeta(0).data.length; i++) {
           let x = chart.getDatasetMeta(0).data[i].x;
           let y = chart.getDatasetMeta(0).data[i].y;

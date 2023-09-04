@@ -18,6 +18,21 @@ public class universalStats {
     @Column(name = "anbieter_profile_anzahl")
     private Long anbieterProfileAnzahl;
 
+    @Column(name = "anbieter_basic_anzahl")
+    private long anbieterBasicAnzahl;
+
+    @Column(name = "anbieter_plus_anzahl")
+    private long anbieterPlusAnzahl;
+
+    @Column(name = "anbieter_basicplus_anzahl")
+    private long anbieterBasicPlusAnzahl;
+
+    @Column(name = "anbieter_premium_anzahl")
+    private long anbieterPremiumAnzahl;
+
+    @Column(name = "anbieter_premium_sponsoren_anzahl")
+    private long anbieterPremiumSponsorenAnzahl;
+
     @Column(name = "anzahl_artikel")
     private Long anzahlArtikel;
 
@@ -29,6 +44,9 @@ public class universalStats {
 
     @Column(name = "datum")
     private Date datum;
+
+    @Column(name = "umsatz")
+    private long umsatz;
 
     public universalStats() {
     }
@@ -44,6 +62,54 @@ public class universalStats {
 
     public universalStats(Date datum) {
         this.datum = datum;
+    }
+
+    public long getAnbieterBasicAnzahl() {
+        return anbieterBasicAnzahl;
+    }
+
+    public void setAnbieterBasicAnzahl(long anbieterBasicAnzahl) {
+        this.anbieterBasicAnzahl = anbieterBasicAnzahl;
+    }
+
+    public long getAnbieterPlusAnzahl() {
+        return anbieterPlusAnzahl;
+    }
+
+    public void setAnbieterPlusAnzahl(long anbieterPlusAnzahl) {
+        this.anbieterPlusAnzahl = anbieterPlusAnzahl;
+    }
+
+    public long getAnbieterBasicPlusAnzahl() {
+        return anbieterBasicPlusAnzahl;
+    }
+
+    public void setAnbieterBasicPlusAnzahl(long anbieterBasicPlusAnzahl) {
+        this.anbieterBasicPlusAnzahl = anbieterBasicPlusAnzahl;
+    }
+
+    public long getAnbieterPremiumAnzahl() {
+        return anbieterPremiumAnzahl;
+    }
+
+    public void setAnbieterPremiumAnzahl(long anbieterPremiumAnzahl) {
+        this.anbieterPremiumAnzahl = anbieterPremiumAnzahl;
+    }
+
+    public long getUmsatz() {
+        return umsatz;
+    }
+
+    public void setUmsatz(long umsatz) {
+        this.umsatz = umsatz;
+    }
+
+    public long getAnbieterPremiumSponsorenAnzahl() {
+        return anbieterPremiumSponsorenAnzahl;
+    }
+
+    public void setAnbieterPremiumSponsorenAnzahl(long anbieterPremiumSponsorenAnzahl) {
+        this.anbieterPremiumSponsorenAnzahl = anbieterPremiumSponsorenAnzahl;
     }
 
     public int getId() {

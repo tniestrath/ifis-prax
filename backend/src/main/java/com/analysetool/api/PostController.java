@@ -44,7 +44,8 @@ public class PostController {
     WPTermRepository wpTermRepo;
     WpTermTaxonomyRepository wpTermTaxonomyRepo;
 
-    PostMetaRepository postMetaRepo;
+    @Autowired
+    private PostMetaRepository postMetaRepo;
 
     @Autowired
     public PostController(
@@ -374,7 +375,7 @@ public class PostController {
 
 
     @GetMapping("/getPostStatsByIdWithAuthor")
-    public String PostStatsByIdForFrontend(@RequestParam long id) throws JSONException, ParseException {
+    public JSONObject PostStatsByIdForFrontend(@RequestParam long id) throws JSONException, ParseException {
         if(!postRepository.findById(id).isPresent()) {return null;}
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
@@ -443,7 +444,7 @@ public class PostController {
 
         obj.put("authors", postMetaRepo.getAuthorsByPostId(id));
 
-        return obj.toString();
+        return obj;
     }
 
     //STATS
@@ -826,11 +827,17 @@ public class PostController {
     @GetMapping("/getAllPostsWithStats")
     public String getAll() throws JSONException, ParseException {
         List<Post> posts = postRepo.findAllUserPosts();
-        List<String> stats = new ArrayList<>();
+
+        List<JSONObject> stats = new ArrayList<>();
 
 
         for(Post post : posts) {
-            stats.add(this.PostStatsByIdForFrontend(post.getId()));
+            JSONObject json = PostStatsByIdForFrontend(post.getId());
+            if(json.get("type").toString().toLowerCase().contains("blog")  ||
+                    json.get("type").toString().toLowerCase().contains("news") ||
+                    json.get("type").toString().toLowerCase().contains("artikel")) {
+                stats.add(this.PostStatsByIdForFrontend(post.getId()));
+            }
         }
         return new JSONArray(stats).toString();
     }

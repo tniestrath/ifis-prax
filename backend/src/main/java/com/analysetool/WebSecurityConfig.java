@@ -1,4 +1,4 @@
-package com.analysetool;
+/*package com.analysetool;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    /*@Bean
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.addFilterBefore(new AuthenticationFilter(), BasicAuthenticationFilter.class);
 
@@ -21,6 +21,6 @@ public class WebSecurityConfig {
             });
 
         return http.build();
-    }*/
+    }
 
-}
+}*/

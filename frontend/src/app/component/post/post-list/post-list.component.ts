@@ -25,7 +25,7 @@ export class PostListComponent extends DashBaseComponent implements AfterViewIni
   ngOnInit(): void {
     this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen");
     //@ts-ignore
-    this.db.getUserPostsWithStats("1").then( (value : Post[]) => {
+    this.db.getPostsAll().then( (value : Post[]) => {
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
       }

@@ -28,21 +28,15 @@ export class HeaderComponent implements AfterViewInit{
       this.db.getUserById(usid).then(res => {
         SysVars.login.next(res);
         SysVars.USER_ID = usid;
-        SysVars.ADMIN = res.accountType == "admin";
+        SysVars.ADMIN = true;
       })
     })
 
     SysVars.login.subscribe(user => {
-      if (user.accountType == "admin"){
-        this.navElements = ["Overview", "Posts", "Tags", "Users"];
-        cs.set("user", user.id + ":" + user.displayName);
-        this.selected.next("Overview");
-      }else {
-        cs.set("user", user.id + ":" + user.displayName);
-        this.selected.next("Users");
-      }
+      this.navElements = ["Overview", "Posts", "Tags", "Users"];
+      cs.set("user", user.id + ":" + user.displayName);
+      this.selected.next("Overview");
       SysVars.USER_ID = user.id;
-
     })
   }
 

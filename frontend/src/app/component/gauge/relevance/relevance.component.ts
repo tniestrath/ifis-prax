@@ -27,7 +27,7 @@ export class RelevanceComponent extends DashBaseComponent {
     img.src = "../../assets/flame_thicc.png";
 
     // @ts-ignore
-    let fillHeight = (value / max) * 100;
+    let fillHeight = value;
 
     const relevanceChartTextAndDecoration  = {
       id: "relevanceChartTextAndDecoration",

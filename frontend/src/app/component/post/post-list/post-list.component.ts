@@ -35,7 +35,7 @@ export class PostListComponent extends DashBaseComponent implements AfterViewIni
     this.search_input = document.getElementById("post-search");
     this.search_input.addEventListener("input", (event : any) => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
-        return ((item.data as Post).title.toUpperCase() + (item.data as Post).tags.join(",").toUpperCase()).includes(event.target.value.toUpperCase());
+        return (item.data as Post).title.toUpperCase().includes(event.target.value.toUpperCase());
       });
       this.selectorItemsLoaded.next(this.selectorItems);
     });

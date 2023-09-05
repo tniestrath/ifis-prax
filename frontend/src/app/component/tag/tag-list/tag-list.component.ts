@@ -4,6 +4,7 @@ import {SelectorItem} from "../../../page/selector/selector.component";
 import {Subject} from "rxjs";
 import {TagRanking} from "../Tag";
 import {TagListItemComponent} from "./tag-list-item/tag-list-item.component";
+import {DbObject} from "../../../services/DbObject";
 
 @Component({
   selector: 'dash-tag-list',
@@ -54,4 +55,7 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
   }
 
 
+  onItemClick($event: DbObject) {
+    console.log($event.name);
+  }
 }

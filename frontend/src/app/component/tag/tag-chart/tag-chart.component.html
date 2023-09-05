@@ -1,1 +1,14 @@
-<p>tag-chart works!</p>
+<div class="component-box tag-chart-box">
+  <form class="tag-chart-form">
+    <select id="post-type-select" name="post_type" (change)="getData($event)">
+
+    </select>
+    <input type="radio" name="time_range" value="all_time" checked (change)="getData($event)">
+    <input type="radio" name="time_range" value="half_year" id="tag-range-halfyear" (change)="getData($event)">
+    <input type="radio" name="time_range" value="month" id="tag-range-month" (change)="getData($event)">
+    <input type="radio" name="time_range" value="week" id="tag-range-week" (change)="getData($event)">
+  </form>
+  <div class="chart-canvas-box">
+    <canvas [attr.id]="canvas_id">{{chart}}</canvas>
+  </div>
+</div>

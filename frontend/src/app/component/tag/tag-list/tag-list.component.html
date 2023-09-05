@@ -5,7 +5,7 @@
   <input type="radio" id="tag-sort-p" name="sort" value="V">
   </form>
   <div class="tag-list-selector-container">
-    <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded"></dash-selector>
+    <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded" (itemClick)="onItemClick($event)"></dash-selector>
   </div>
   <div id="shadow"></div>
 </div>

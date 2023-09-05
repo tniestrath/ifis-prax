@@ -169,7 +169,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         cityElement.style.flexDirection = "row";
         cityElement.style.justifyContent = "space-between";
         if (city.name == "gesamt"){
-          cityElement.style.paddingTop = "10px";
+          cityElement.style.paddingTop = "5px";
+          cityElement.style.borderTop = "1px dotted #fff";
+          cityElement.style.marginTop = "5px";
         }
         cityName.innerText = city.name;
         cityClicks.innerText = Util.formatNumbers(city.clicks);

@@ -30,3 +30,8 @@ export class TagRanking extends DbObject{
     return Number.parseFloat(other.count) - Number.parseFloat(this.count);
   }
 }
+export class TagStats extends TagRanking{
+  constructor(public override id : string, public override name : string, public override relevance : string, public override views : string, public override count : string, public date : string) {
+    super(id, name, relevance, views, count);
+  }
+}

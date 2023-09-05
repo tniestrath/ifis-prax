@@ -19,6 +19,7 @@ import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-ti
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
 import {PostListComponent} from "../../component/post/post-list/post-list.component";
+import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
 
 @Component({
   selector: 'dash-page',
@@ -61,8 +62,9 @@ export class PageComponent implements OnInit {
   }
   getTagsPageCards() {
     return [
-      {type: TagListComponent, row: 1, col: 1, height: 4, width: 2},
-      {type: TagPieComponent, row: 1, col: 3, height: 2, width: 2}
+      {type: TagListComponent, row: 1, col: 5, height: 2, width: 2},
+      {type: TagPieComponent, row: 3, col: 5, height: 2, width: 2},
+      {type: TagChartComponent, row: 1, col: 1, height: 2, width: 4}
     ];
   }
   getPostsPageCards() {
@@ -143,12 +145,11 @@ export class PageComponent implements OnInit {
   }
 
   loadSelector(filter: {accType : string, perf : string}){
-    this.db.getMaxPerformance().then(res => {
-      const max_performance = res;
       this.db.loadAllUsers().then(() => {
         this.selectorItems = [];
         for (let u of DbService.Users) {
-          let performance = ((u.performance || 0) / max_performance)*100;
+          console.log(u.id + " : " + u.performance);
+          let performance = (u.performance || 0);
           if (performance <= 33){
             this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 33, u.accountType, u.potential, u.img)));
           } if (performance > 33 && performance <= 66){
@@ -183,6 +184,5 @@ export class PageComponent implements OnInit {
         }
       }).finally(() =>
         this.selectorItemsLoaded.next(this.selectorItems));
-    })
-  }
+    }
 }

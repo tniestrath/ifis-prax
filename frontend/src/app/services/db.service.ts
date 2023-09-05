@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
-import {Tag, TagRanking} from "../component/tag/Tag";
+import {Tag, TagRanking, TagStats} from "../component/tag/Tag";
 import {DbObject} from "./DbObject";
 import {Post} from "../component/post/Post";
 import {User} from "../page/page-einzel/user/user";
@@ -14,6 +14,7 @@ export enum dbUrl {
 
   GET_TAG_POST_COUNT = "/tags/getPostcount?id=",
   GET_TAG_RANKING = "/tags/getTermRanking",
+  GET_TAGSTATS_BY_ID = "/tags/getTagStats?id=",
 
   GET_USER_IMG = "/users/profilePic?id=",
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
@@ -41,7 +42,7 @@ export enum dbUrl {
 
 
   LOGIN = "/login",
-  VALIDATE = "/validate"
+  VALIDATE = "/validate",
 }
 
 @Injectable({
@@ -200,5 +201,9 @@ export class DbService {
   }
   async getClicksByTimeAll() : Promise<number[]>{
     return await fetch((DbService.getUrl(dbUrl.GET_USERS_ALL_VIEWS_PER_HOUR)), {credentials: "include"}).then(res => res.json());
+  }
+
+  async getTagStatsByID(id: number) : Promise<TagStats[]> {
+    return await fetch(DbService.getUrl(dbUrl.GET_TAGSTATS_BY_ID)+ id, {credentials: "include"}).then(res => res.json());
   }
 }

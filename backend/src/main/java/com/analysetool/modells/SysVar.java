@@ -31,6 +31,9 @@ public class SysVar {
     @Column(name = "date")
     private LocalDateTime date;
 
+    @Column(name ="flag_scan_last_14")
+    private boolean flagScanLast14;
+
     public LocalDateTime getLogDate() {
         return logDate;
     }
@@ -89,6 +92,15 @@ public class SysVar {
     }
 
     // Getter und Setter für die Attribute
+
+
+    public boolean isFlagScanLast14() {
+        return flagScanLast14;
+    }
+
+    public void setFlagScanLast14(boolean flagScanLast14) {
+        this.flagScanLast14 = flagScanLast14;
+    }
 
     public int getId() {
         return id;

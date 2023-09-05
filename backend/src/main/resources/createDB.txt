@@ -32,8 +32,10 @@ CREATE TABLE `sys_var` (
   `lastline` varchar(500) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `log_date` datetime DEFAULT NULL,
+  `flag_scan_last_14` tinyint DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `stats` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `art_id` bigint NOT NULL,

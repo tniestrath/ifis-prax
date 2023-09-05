@@ -1137,7 +1137,7 @@ public class LogService {
         for(Post p : postRepository.findAllUserPosts()) {
             if (statsRepo.existsByArtId(p.getId())) {
                 if ((statsRepo.getLetterCount(p.getId()) == 0L) || statsRepo.getLetterCount(p.getId()) == null) {
-                    System.out.println(statsRepo.getLetterCount(p.getId()));
+                  //  System.out.println(statsRepo.getLetterCount(p.getId()));
                     updateLetterCount(p.getId());
                 }
             }
@@ -1171,38 +1171,80 @@ public class LogService {
         return formattedDate;
     }
 
+    public static String getDay(int zuruek){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -zuruek); // Vortag
+        Date vortag = calendar.getTime();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        String formattedDate = dateFormat.format(vortag);
+        return formattedDate;
+    }
+
     public static String generateLogFileNameLastDay() {
        return "access.log-" + getLastDay() + ".gz";
     }
-    public void setUniversalStats(){
+    public void setUniversalStats() {
+        int daysToLookBack = 14; // Anzahl der Tage, die zurückgeschaut werden sollen
 
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-            Date date = dateFormat.parse(getLastDay());
+        if (!sysVarRepo.findAll().get(sysVarRepo.findAll().size() - 1).isFlagScanLast14()) {
+            while (daysToLookBack > 0) {
+                try {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+                    Date date = dateFormat.parse(getDay(daysToLookBack));
 
-            if(uniRepo.findByDatum(date).isEmpty()){
+                    if (uniRepo.findByDatum(date).isEmpty()) {
+                        String pathOfOldLog = "/var/log/nginx/access.log-" + getDay(daysToLookBack) + ".gz";
+                        FileInputStream fileInputStream = new FileInputStream(pathOfOldLog);
+                        GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
+                        InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
+                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-                String pathOfOldLog="/var/log/nginx/access.log-"+getLastDay()+".gz";
-                FileInputStream fileInputStream = new FileInputStream(pathOfOldLog);
-                GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
-                InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                        universalStats uniStats = proccessLinesOfOldLog(new universalStats(date), bufferedReader);
+                        uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
+                        uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
+                        uniStats = setAccountTypeAllUniStats(uniStats);
+                        uniRepo.save(uniStats);
+                    } else {
+                        System.out.println("Tag " + daysToLookBack + " bereits in der Statistik");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                universalStats uniStats=  proccessLinesOfOldLog(new universalStats(date),bufferedReader);
-                uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
-                uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
-                uniStats=setAccountTypeAllUniStats(uniStats);
-                uniRepo.save(uniStats);
+                daysToLookBack--; // Verringert die Anzahl der zurückzuschauenden Tage
+            }
 
+            SysVar sysVar =sysVarRepo.findAll().get(sysVarRepo.findAll().size() - 1);
+            sysVar.setFlagScanLast14(true);
+            sysVarRepo.save(sysVar);
 
-            }else{System.out.println("Vortag bereits in der Statistik");}
+        } else {
+            // Ihr bisheriger Code für den Fall, dass das Flag gesetzt ist
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+                Date date = dateFormat.parse(getLastDay());
+                if (uniRepo.findByDatum(date).isEmpty()) {
+                    String pathOfOldLog = "/var/log/nginx/access.log-" + getLastDay() + ".gz";
+                    FileInputStream fileInputStream = new FileInputStream(pathOfOldLog);
+                    GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
+                    InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+                    universalStats uniStats = proccessLinesOfOldLog(new universalStats(date), bufferedReader);
+                    uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
+                    uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
+                    uniStats = setAccountTypeAllUniStats(uniStats);
+                    uniRepo.save(uniStats);
+                } else {
+                    System.out.println("Vortag bereits in der Statistik");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
-
     }
+
 
     public universalStats proccessLinesOfOldLog(universalStats uniStat,BufferedReader bufferedReader) throws IOException {
 

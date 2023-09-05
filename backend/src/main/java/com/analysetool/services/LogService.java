@@ -6,6 +6,7 @@ import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,8 @@ public class LogService {
     private WPTermRepository termRepo;
     private WpTermTaxonomyRepository termTaxRepo;
     private WPUserRepository wpUserRepo;
+    @Autowired
+    private WPUserMetaRepository wpUserMetaRepository;
     private UserStatsRepository userStatsRepo;
 
     private CommentsRepository commentRepo;
@@ -1188,6 +1191,7 @@ public class LogService {
                 universalStats uniStats=  proccessLinesOfOldLog(new universalStats(date),bufferedReader);
                 uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
                 uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
+                uniStats=setAccountTypeAllUniStats(uniStats);
                 uniRepo.save(uniStats);
 
 
@@ -1316,6 +1320,38 @@ public class LogService {
         uniStats.setAnzahlBlog(blogCounter);
 
         return uniStats ;
+    }
+
+    public universalStats setAccountTypeAllUniStats(universalStats uniStats){
+        HashMap<String, Integer> counts = new HashMap<>();
+
+        wpUserMetaRepository.getWpCapabilities().forEach(s -> {
+
+            if (( s.contains("um_anbieter") || s.contains("um_basis-anbieter") ) && !s.contains("plus"))
+                counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
+            if (s.contains("um_plus-anbieter"))
+                counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
+            if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
+                counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
+            if (s.contains("um_premium-anbieter-sponsoren"))
+                counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
+            if (s.contains("um_basis-anbieter-plus"))
+                counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
+        });
+        uniStats.setAnbieterBasicAnzahl(counts.get("Basic"));
+        uniStats.setAnbieterBasicPlusAnzahl(counts.get("Basic-Plus"));
+        uniStats.setAnbieterPlusAnzahl(counts.get("Plus"));
+        uniStats.setAnbieterPremiumAnzahl(counts.get("Premium"));
+        uniStats.setAnbieterPremiumSponsorenAnzahl(counts.get("Sponsor"));
+
+        long umsatzBasicPlus =uniStats.getAnbieterBasicPlusAnzahl()*200;
+        long umsatzPlus =uniStats.getAnbieterPlusAnzahl()*1000;
+        long umsatzPremium =uniStats.getAnbieterPremiumAnzahl()*1500;
+        long umsatzSponsor = uniStats.getAnbieterPremiumSponsorenAnzahl()*3000;
+
+        uniStats.setUmsatz(umsatzBasicPlus+umsatzPlus+umsatzPremium+umsatzSponsor);
+
+        return uniStats;
     }
 
 }

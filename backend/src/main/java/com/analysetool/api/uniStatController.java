@@ -30,10 +30,19 @@ public class uniStatController {
         universalStats uniStat=uniRepo.findAll().get(uniRepo.findAll().size()-1);
         obj.put("Datum",uniStat.getDatum());
         obj.put("Besucher",uniStat.getBesucherAnzahl());
+
         obj.put("Angemeldete Profile",uniStat.getAnbieterProfileAnzahl());
+        obj.put("Angemeldete Basic Profile",uniStat.getAnbieterBasicAnzahl());
+        obj.put("Angemeldete Basic-Plus Profile",uniStat.getAnbieterBasicPlusAnzahl());
+        obj.put("Angemeldete Plus Profile",uniStat.getAnbieterPlusAnzahl());
+        obj.put("Angemeldete Premium Profile",uniStat.getAnbieterPremiumAnzahl());
+        obj.put("Angemeldete Premium Sponsoren Profile",uniStat.getAnbieterPremiumSponsorenAnzahl());
+
         obj.put("veröffentlichte Artikel",uniStat.getAnzahlArtikel());
         obj.put("veröffentlichte Blogs",uniStat.getAnzahlBlog());
         obj.put("veröffentlichte News",uniStat.getAnzahlNews());
+
+        obj.put("aktueller jährlicher Umsatz",uniStat.getUmsatz());
 
         String html = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
@@ -75,5 +84,7 @@ public class uniStatController {
 
         return html;
     }
+
+
 
 }

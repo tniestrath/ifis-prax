@@ -1,0 +1,116 @@
+.uni-chart-form{
+  display: flex;
+  width: calc(100% - 45px);
+  height: 30px;
+  padding: 5px;
+  position: relative;
+}
+.chart-canvas-box{
+  display: flex;
+  height: calc(100% - 40px);
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+
+  box-sizing: border-box;
+  padding-bottom: 5px;
+}
+select{
+  box-sizing: border-box;
+  max-width: 35%;
+  min-width: 25%;
+  border-radius: 5px 0 0 5px;
+  border: 1px solid #A0A0A0;
+}
+
+select:focus-visible{
+  box-sizing: border-box;
+  outline-style: none;
+  border-radius: 5px 0 0 5px;
+  border: 1px solid black;
+}
+
+input[type="radio"]{
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: white;
+  margin: 0;
+  border: 1px solid #A0A0A0;
+  width: 20%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+}
+input[type="radio"]:hover{
+  border: 1px solid black;
+}
+input[type="radio"]::before{
+  content: "Immer";
+  color: #A0A0A0;
+  transform: scale(1);
+  transition: 120ms transform ease-in-out;
+}
+input[type="radio"]::after{
+  content: "Immer";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
+}
+#uni-range-halfyear::before{
+  content: "Halb-Jahr";
+}
+#uni-range-halfyear::after{
+  content: "Halb-Jahr";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
+}
+#uni-range-month::before{
+  content: "Monat";
+}
+#uni-range-month::after{
+  content: "Monat";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
+}
+#uni-range-week::before{
+  content: "Woche";
+}
+#uni-range-week::after{
+  content: "Woche";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
+}
+#uni-range-day::before{
+  content: "Heute";
+}
+#uni-range-day::after{
+  content: "Heute";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
+}
+input[type="radio"]:checked::before{
+  color: #A0A0A0;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  position: fixed;
+  bottom: 0;
+}
+input[type="radio"]:checked::after{
+  color: #951D40;
+  transform: scale(1) !important;
+  transition: 120ms transform ease-in-out;
+  position: inherit !important;
+}
+#uni-range-day{
+  border-radius: 0 5px 5px 0;
+}

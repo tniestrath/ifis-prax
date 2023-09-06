@@ -1,0 +1,18 @@
+<div class="component-box chart-box">
+  <form class="uni-chart-form">
+    <select id="uni-stat-select" name="uni_stat" (change)="getData($event)">
+      <option value="clicks">Aufrufe</option>
+      <option value="visitors">Besucher</option>
+      <option value="dwell_time">Verweildauer</option>
+    </select>
+    <input type="radio" name="time_range" value="all_time" checked (change)="getData($event)">
+    <input type="radio" name="time_range" value="half_year" id="uni-range-halfyear" (change)="getData($event)">
+    <input type="radio" name="time_range" value="month" id="uni-range-month" (change)="getData($event)">
+    <input type="radio" name="time_range" value="week" id="uni-range-week" (change)="getData($event)">
+    <input type="radio" name="time_range" value="day" id="uni-range-day" (change)="getData($event)">
+  </form>
+  <div class="chart-canvas-box">
+    <canvas [attr.id]="canvas_id" [ngStyle]="{'visibility': visibility}">{{chart}}</canvas>
+  </div>
+
+</div>

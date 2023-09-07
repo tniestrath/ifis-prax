@@ -77,7 +77,7 @@ export class PageComponent implements OnInit {
   getAdminPageCards() {
     return [
       {type: UserPlanComponent, row: 1, col: 1, height: 2, width: 1},
-      {type: UniChartComponent, row: 1, col: 2, height: 2, width: 4},
+      //{type: UniChartComponent, row: 1, col: 2, height: 2, width: 4},
       {type: OriginMapComponent, row: 3, col: 1, height: 2, width: 1},
       {type: ClicksByTimeComponent, row: 3, col: 5, height: 2, width: 2}
 

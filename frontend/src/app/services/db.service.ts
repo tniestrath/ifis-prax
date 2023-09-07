@@ -4,6 +4,7 @@ import {Tag, TagRanking, TagStats} from "../component/tag/Tag";
 import {DbObject} from "./DbObject";
 import {Post} from "../component/post/Post";
 import {User} from "../page/page-einzel/user/user";
+import {UniStat} from "../component/uni-chart/uni-chart.component";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -39,6 +40,8 @@ export enum dbUrl {
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
+
+  GET_UNISTATS_BY_TYPE_AND_TIME = "/unistats/getByTypeAndTime?type=TYPE&time=TIME",
 
 
   LOGIN = "/login",
@@ -205,5 +208,9 @@ export class DbService {
 
   async getTagStatsByID(id: number) : Promise<TagStats[]> {
     return await fetch(DbService.getUrl(dbUrl.GET_TAGSTATS_BY_ID)+ id, {credentials: "include"}).then(res => res.json());
+  }
+
+  async getUniStatsByTypeAndTime(type: string, time: number) : Promise<UniStat[]> {
+    return await fetch(DbService.getUrl(dbUrl.GET_UNISTATS_BY_TYPE_AND_TIME.replace("TYPE", type).replace("TIME", String(time))), {credentials: "include"}).then(res => res.json());
   }
 }

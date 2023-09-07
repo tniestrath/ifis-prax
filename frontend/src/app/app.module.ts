@@ -38,6 +38,7 @@ import { ImgFallbackDirective } from './img-fallback.directive';
 import { PostListComponent } from './component/post/post-list/post-list.component';
 import { PostListItemComponent } from './component/post/post-list/post-list-item/post-list-item.component';
 import { TagChartComponent } from './component/tag/tag-chart/tag-chart.component';
+import { UniChartComponent } from './component/uni-chart/uni-chart.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { TagChartComponent } from './component/tag/tag-chart/tag-chart.component
     ImgFallbackDirective,
     PostListComponent,
     PostListItemComponent,
-    TagChartComponent
+    TagChartComponent,
+    UniChartComponent
   ],
     imports: [
         BrowserModule,

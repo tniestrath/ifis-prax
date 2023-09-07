@@ -1,8 +1,8 @@
-import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
-import Util from "../../util/Util";
+import Util, {DashColors} from "../../util/Util";
 
 @Component({
   selector: 'dash-user-plan',
@@ -11,29 +11,34 @@ import Util from "../../util/Util";
 })
 export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
-  colors : string[] = ["#5A7995", "#354657", "rgb(148,28,62)", "rgb(84, 16, 35)", "#000"];
-  chart_total: any;
+  colors : string[] = [DashColors.Blue, DashColors.DarkBlue, DashColors.Red, DashColors.DarkRed, DashColors.Black];
+  chart_total : number = 0;
+  prev_total : number = 0;
+  prev_total_text : any;
 
   ngOnInit(): void {
     if (this.chart != undefined) {
       this.chart.destroy();
     }
-    var labels = ["Basic", "Basic-Plus", "Plus", "Premium", "Sponsor"]
-    var data = [0,0,0,0,0]
+    var labels = ["Basic", "Basic-Plus", "Plus", "Premium", "Sponsor"];
+    var data = [0,0,0,0,0];
+    var prev_data = [0,0,0,0,0];
 
-    this.db.getUserAccountTypes().then(value => {
-      let map : Map<string, number> = new Map(Object.entries(value));
+    this.db.getUserAccountTypes().then(res => {
+      let map : Map<string, number> = new Map(Object.entries(res));
       map.delete("Administrator");
-      map.forEach((value1, key) => {
-        if (key == "Basic") {labels[0] = key; data[0] = (value1 == 0 || value1 == undefined ? 0 : value1)}
-        if (key == "Basic-Plus") {labels[1] = key; data[1] = (value1 == 0 || value1 == undefined ? 0 : value1)}
-        if (key == "Plus") {labels[2] = key; data[2] = (value1 == 0 || value1 == undefined ? 0 : value1)}
-        if (key == "Premium") {labels[3] = key; data[3] = (value1 == 0 || value1 == undefined ? 0 : value1)}
-        if (key == "Sponsor") {labels[4] = key; data[4] = (value1 == 0 || value1 == undefined ? 0 : value1)}
+      map.forEach((value, key) => {
+        if (key == "Basic") {labels[0] = key; data[0] = (value == 0 || value == undefined ? 0 : value)}
+        if (key == "Basic-Plus") {labels[1] = key; data[1] = (value == 0 || value == undefined ? 0 : value)}
+        if (key == "Plus") {labels[2] = key; data[2] = (value == 0 || value == undefined ? 0 : value)}
+        if (key == "Premium") {labels[3] = key; data[3] = (value == 0 || value == undefined ? 0 : value)}
+        if (key == "Sponsor") {labels[4] = key; data[4] = (value == 0 || value == undefined ? 0 : value)}
       })
-      this.chart = this.createChart("user_plan_chart", labels,data, undefined);
-      this.createLegend("user-plan-content-box", this.chart);
+      this.chart = this.createChart("user_plan_chart", labels, data, undefined);
+      this.createLegend("user-plan-content-box", this.chart, prev_data);
       this.chart_total = data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      this.prev_total = prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
       this.cdr.detectChanges();
     })
   }
@@ -123,7 +128,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     })
   }
 
-  createLegend(legend_class : string, chart : any){
+  createLegend(legend_class: string, chart: any, prev_data: number[]){
     const legendBox = document.querySelector("."+legend_class);
 
     const legendContainer = document.createElement("DIV");
@@ -145,6 +150,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       li.style.display = "flex";
       li.style.alignItems = "center";
       li.style.flexDirection = "row";
+      li.style.justifyContent = "space-between";
       li.style.height = "20px";
       li.style.margin = "5px";
       const spanBox = document.createElement("SPAN");
@@ -160,9 +166,20 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       p.classList.add("clicks-item-text");
       p.innerText = text + ": " + chart.data.datasets[0].data[datasetIndex];
 
+      const p2 = document.createElement("P");
+      p2.classList.add("clicks-item-text");
+      p2.innerText = prev_data[datasetIndex] >= 0 ? "+" + prev_data[datasetIndex] : prev_data[datasetIndex].toString();
+
+      const wrapper = document.createElement("DIV");
+      wrapper.style.height = "20px";
+      wrapper.style.display = "flex";
+      wrapper.style.alignItems = "center";
+      wrapper.appendChild(spanBox);
+      wrapper.appendChild(p);
+
       ul.appendChild(li);
-      li.appendChild(spanBox);
-      li.appendChild(p);
+      li.appendChild(wrapper);
+      li.appendChild(p2);
     });
 
     legendBox?.appendChild(legendContainer);

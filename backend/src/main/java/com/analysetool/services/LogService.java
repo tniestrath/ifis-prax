@@ -207,7 +207,7 @@ public class LogService {
 
         }
 
-
+        setUniversalStats();
         run(liveScanning,Pfad, SystemVariabeln);
         updateLetterCountForAll();
     }
@@ -227,6 +227,7 @@ public class LogService {
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();
         saveStatsToDatabase();
+        setUniversalStats();
         sysVarRepo.save(SystemVariabeln);
     }
 

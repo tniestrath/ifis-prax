@@ -11,7 +11,7 @@ import Util, {DashColors} from "../../util/Util";
 })
 export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
-  colors : string[] = [DashColors.Blue, DashColors.DarkBlue, DashColors.Red, DashColors.DarkRed, DashColors.Black];
+  colors : string[] = [DashColors.Grey, DashColors.Blue, DashColors.DarkBlue, DashColors.Red, DashColors.DarkRed, DashColors.Black];
   chart_total : number = 0;
   prev_total : number = 0;
   prev_total_text : any;
@@ -20,19 +20,20 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     if (this.chart != undefined) {
       this.chart.destroy();
     }
-    var labels = ["Basic", "Basic-Plus", "Plus", "Premium", "Sponsor"];
-    var data = [0,0,0,0,0];
-    var prev_data = [0,0,0,0,0];
+    var labels = ["Ohne Abo", "Basic", "Basic-Plus", "Plus", "Premium", "Sponsor"];
+    var data = [0,0,0,0,0,0];
+    var prev_data = [0,0,0,0,0,0];
 
     this.db.getUserAccountTypes().then(res => {
       let map : Map<string, number> = new Map(Object.entries(res));
       map.delete("Administrator");
       map.forEach((value, key) => {
-        if (key == "Basic") {labels[0] = key; data[0] = (value == 0 || value == undefined ? 0 : value)}
-        if (key == "Basic-Plus") {labels[1] = key; data[1] = (value == 0 || value == undefined ? 0 : value)}
-        if (key == "Plus") {labels[2] = key; data[2] = (value == 0 || value == undefined ? 0 : value)}
-        if (key == "Premium") {labels[3] = key; data[3] = (value == 0 || value == undefined ? 0 : value)}
-        if (key == "Sponsor") {labels[4] = key; data[4] = (value == 0 || value == undefined ? 0 : value)}
+        if (key == "Anbieter") {labels[0] = key; data[0] = (value == 0 || value == undefined ? 0 : value)}
+        if (key == "Basic") {labels[1] = key; data[1] = (value == 0 || value == undefined ? 0 : value)}
+        if (key == "Basic-Plus") {labels[2] = key; data[2] = (value == 0 || value == undefined ? 0 : value)}
+        if (key == "Plus") {labels[3] = key; data[3] = (value == 0 || value == undefined ? 0 : value)}
+        if (key == "Premium") {labels[4] = key; data[4] = (value == 0 || value == undefined ? 0 : value)}
+        if (key == "Sponsor") {labels[5] = key; data[5] = (value == 0 || value == undefined ? 0 : value)}
       })
       this.chart = this.createChart("user_plan_chart", labels, data, undefined);
       this.createLegend("user-plan-content-box", this.chart, prev_data);

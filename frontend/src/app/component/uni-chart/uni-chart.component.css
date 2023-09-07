@@ -58,6 +58,10 @@ input[type="radio"]::after{
   position: fixed;
   bottom: 0;
 }
+#uni-range-alltime{
+  border-radius: 5px 0 0 5px;
+}
+
 #uni-range-halfyear::before{
   content: "Halb-Jahr";
 }

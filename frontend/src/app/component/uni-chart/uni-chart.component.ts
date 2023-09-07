@@ -1,18 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {Post} from "../post/Post";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import {EmptyObject} from "chart.js/dist/types/basic";
-import {SysVars} from "../../services/sys-vars-service";
+import {DashColors} from "../../util/Util";
 
 export class UniStat {
-  type : string = "default";
-  data : number = 0;
+  clicks : number = 0;
+  visitors : number = 0;
   date : string = "00-00-0000";
 
-  constructor(type: string, data: number, date: string) {
-    this.type = type;
-    this.data = data;
+  constructor(clicks : number, visitors : number, date : string) {
+    this.clicks = clicks;
+    this.visitors = visitors;
     this.date = date;
   }
 }
@@ -28,19 +26,18 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
   canvas_id: string = "uni-chart";
 
   timeSpan : string = "all_time";
-  statType : string = "clicks";
 
   data : UniStat[] =
-    [ new UniStat("clicks", 0, "2023-06-06"),
-      new UniStat("clicks", 1, "2023-06-07"),
-      new UniStat("clicks", 2, "2023-06-08"),
-      new UniStat("clicks", 80, "2023-09-05"),
-      new UniStat("clicks", 900, "2023-09-06"),
-      new UniStat("clicks", 1000, "2023-09-07"),
-      new UniStat("clicks", 69, "2023-07-07"),
-      new UniStat("clicks", 75, "2023-07-08"),
-      new UniStat("clicks", 3, "2023-07-05"),
-      new UniStat("clicks", 4, "2023-07-06")
+    [ new UniStat(0,0, "2023-06-06"),
+      new UniStat(1,1, "2023-06-07"),
+      new UniStat(2,1, "2023-06-08"),
+      new UniStat(80, 70, "2023-09-05"),
+      new UniStat(900,800, "2023-09-06"),
+      new UniStat(1000, 850, "2023-09-07"),
+      new UniStat(69, 66, "2023-07-07"),
+      new UniStat(75, 55, "2023-07-08"),
+      new UniStat(3, 2, "2023-07-05"),
+      new UniStat(4, 4, "2023-07-06")
     ];
 
   timeSpanMap = new Map<string, number>([
@@ -54,15 +51,11 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
 
   getData(event?: Event) {
     if (event !== undefined) {
-      if ((event?.target as HTMLInputElement).type == "select-one") this.statType = (event?.target as HTMLInputElement).value;
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
     /*if (this.data == undefined){this.data = this.db.getUniStatsByTypeAndTime(this.statType, (this.timeSpanMap.get(this.timeSpan) ?? 365*2))}
     this.data.then((res : UniStat[]) => {*/
       var res = this.data;
-      var statLabel : string[] = [];
-      var statData : number[] = [];
-      var statDate : string[] = [];
 
       var time_filtered : UniStat[] = res.filter((stat : UniStat) => {
         var statDate = new Date(Date.parse(stat.date));
@@ -73,35 +66,52 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       });
       /*});*/
-    for (var stat of time_filtered) {
-      statLabel.push(stat.type);
-      statData.push(stat.data);
-      statDate.push(stat.date);
-    }
-
-    this.createChart(statDate, statLabel, statData, () => {});
+    this.createChart(time_filtered, this.timeSpan);
   }
 
   ngOnInit(): void {
     this.getData();
   }
 
-  createChart(labels: string[], fullLabels : string[], data: number[], onClick: (index : number) => void){
+  createChart(uniStats : UniStat[], timeSpan : string){
     if (this.chart){
       this.chart.destroy();
     }
-    const max = Math.max.apply(null, data);
+
+    var timestamps : string[] = [];
+    var clicksData : number[] = [];
+    var visitorsData : number[] = [];
+    for (var unistat of uniStats) {
+      if (timeSpan == "day"){
+        timestamps.push(new Date(unistat.date).getHours().toString());
+      }
+      else {
+        timestamps.push(unistat.date);
+      }
+      clicksData.push(unistat.clicks);
+      visitorsData.push(unistat.visitors);
+    }
+
+    const max = Math.max.apply(null, clicksData);
 
     // @ts-ignore
     this.chart = new Chart("uni-chart", {
       type: "line",
       data: {
-        labels: labels,
+        labels: timestamps,
         datasets: [{
-          label: this.statType,
-          data: data,
-          backgroundColor: "rgb(148,28,62)",
-          borderColor: "rgb(148,28,62)",
+          label: "Aufrufe",
+          data: clicksData,
+          backgroundColor: DashColors.Red,
+          borderColor: DashColors.Red,
+          borderJoinStyle: 'round',
+          borderWidth: 5
+        },
+        {
+          label: "Besucher",
+          data: visitorsData,
+          backgroundColor: DashColors.Blue,
+          borderColor: DashColors.Blue,
           borderJoinStyle: 'round',
           borderWidth: 5
         }]
@@ -138,7 +148,7 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
             }
           },
           legend: {
-            display: this.statType != "clicks",
+            display: true,
             position: "bottom"
           },
           tooltip: {
@@ -149,11 +159,6 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
               size: 15
             },
             callbacks: {
-              //@ts-ignore
-              title(tooltipItems): string {
-                // @ts-ignore
-                return fullLabels[tooltipItems.at(0).dataIndex];
-              }
             }
           }
         },
@@ -162,7 +167,6 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
           intersect: true
         },
         onClick(event: ChartEvent, elements: ActiveElement[]) {
-          onClick(elements[0].index);
         },
       }
     })

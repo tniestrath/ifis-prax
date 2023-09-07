@@ -13,11 +13,12 @@ import {CookieService} from "ngx-cookie-service";
 export class HeaderComponent implements AfterViewInit{
 
   @Output() selected = new Subject<string>();
+  navElementsBackup = ["Overview", "Posts", "Tags", "Users"];
   navElements = ["Overview", "Posts", "Tags", "Users"];
 
 
   constructor(private cs : CookieService, private db : DbService) {
-    var currentNavElements = [];
+    this.navElements = [];
     // COOKIE VALIDATION //
     this.db.validate().then(res  => {
       var usid = res.user_id;
@@ -33,7 +34,7 @@ export class HeaderComponent implements AfterViewInit{
     })
 
     SysVars.login.subscribe(user => {
-      currentNavElements = this.navElements;
+       this.navElements = this.navElementsBackup;
       cs.set("user", user.id + ":" + user.displayName);
       this.selected.next("Overview");
       SysVars.USER_ID = user.id;

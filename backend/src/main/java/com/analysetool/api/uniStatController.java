@@ -86,25 +86,9 @@ public class uniStatController {
     }
     @GetMapping(value = "/letzte7Tage", produces = MediaType.TEXT_HTML_VALUE)
     public String getLast7Days() throws JSONException {
-        List<universalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse
+        List<universalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse <--GPT speaks?
 
         StringBuilder tableRows = new StringBuilder();
-
-        // Header für die Tabelle
-        tableRows.append("<tr>\n");
-        tableRows.append("<th>Datum</th>\n");
-        tableRows.append("<th>Besucher</th>\n");
-        tableRows.append("<th>Angemeldete Profile</th>\n");
-        tableRows.append("<th>Basic Profile</th>\n");
-        tableRows.append("<th>Basic-Plus Profile</th>\n");
-        tableRows.append("<th>Plus Profile</th>\n");
-        tableRows.append("<th>Premium Profile</th>\n");
-        tableRows.append("<th>Premium Sponsoren Profile</th>\n");
-        tableRows.append("<th>Artikel</th>\n");
-        tableRows.append("<th>Blogs</th>\n");
-        tableRows.append("<th>News</th>\n");
-        tableRows.append("<th>Umsatz</th>\n");
-        tableRows.append("</tr>\n");
 
         for (universalStats uniStat : last7DaysStats) {
             JSONObject obj = new JSONObject();
@@ -136,6 +120,23 @@ public class uniStatController {
             tableRows.append("<td>").append(obj.get("aktueller jährlicher Umsatz")).append("</td>\n");
             tableRows.append("</tr>\n");
         }
+        // Header für die Tabelle
+        tableRows.append("<tr>\n");
+        tableRows.append("<th>Datum</th>\n");
+        tableRows.append("<th>Besucher</th>\n");
+        tableRows.append("<th>Angemeldete Profile</th>\n");
+        tableRows.append("<th>Basic Profile</th>\n");
+        tableRows.append("<th>Basic-Plus Profile</th>\n");
+        tableRows.append("<th>Plus Profile</th>\n");
+        tableRows.append("<th>Premium Profile</th>\n");
+        tableRows.append("<th>Premium Sponsoren Profile</th>\n");
+        tableRows.append("<th>Artikel</th>\n");
+        tableRows.append("<th>Blogs</th>\n");
+        tableRows.append("<th>News</th>\n");
+        tableRows.append("<th>Umsatz</th>\n");
+        tableRows.append("</tr>\n");
+        //Reverse: war das jetzt so schwierig @Tim? :^)
+        tableRows.reverse();
 
         String html = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +

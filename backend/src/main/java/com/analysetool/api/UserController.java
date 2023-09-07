@@ -302,11 +302,11 @@ public class UserController {
         HashMap<String, Integer> counts = new HashMap<>();
 
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {
-                if (s.contains("customer"))
-                    counts.put("Customer", counts.get("Customer") == null ? 1 : counts.get("Customer") + 1);
+                if (s.contains("um_anbieter")) // hoffe "leere" Accounts sind "um_anbieter" und nicht "anbieter" oder was auch immer
+                    counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
                 if (s.contains("administrator"))
                     counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
-                if (( s.contains("um_anbieter") || s.contains("um_basis-anbieter") ) && !s.contains("plus"))
+                if ((s.contains("um_basis-anbieter") ) && !s.contains("plus"))
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
                 if (s.contains("um_plus-anbieter"))
                     counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);

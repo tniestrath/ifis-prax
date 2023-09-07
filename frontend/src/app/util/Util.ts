@@ -22,5 +22,6 @@ export enum DashColors {
   DarkRed = "rgb(84, 16, 35)",
   Blue = "rgb(90, 121, 149)",
   DarkBlue = "#354657",
-  Black = "#000"
+  Black = "#000",
+  Grey = "#E5E5E5"
 }

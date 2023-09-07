@@ -14,7 +14,7 @@ public interface universalStatsRepository extends JpaRepository<universalStats, 
     Optional<universalStats> findById(Integer integer);
 
     // Hier können Sie benutzerdefinierte Abfragen hinzufügen, wenn nötig
-    Optional<JpaRepository> findByDatum(Date Datum);
+    Optional<universalStats> findByDatum(Date Datum);
 
 
     List<universalStats> findTop7ByOrderByDatumDesc();

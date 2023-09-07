@@ -1386,6 +1386,7 @@ public class LogService {
 
         for (Post post : posts) {
             // Konvertiere post_date zu yyyyMMdd Format für den Vergleich
+            System.out.println("ANDERE DATUM HIER ---------->"+post.getDate());
             String postDateStr = sdf.format(post.getDate());
 
             // Konvertiere das gegebene Datum auch zu String für den Vergleich

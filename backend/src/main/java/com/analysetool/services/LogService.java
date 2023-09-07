@@ -1204,7 +1204,7 @@ public class LogService {
                         universalStats uniStats = proccessLinesOfOldLog(new universalStats(date), bufferedReader);
                         uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
                         //m
-                        uniStats = setNewsArticelBlogCountForUniversalStats(date.toString(),uniStats);
+                        uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
 
                         uniStats = setAccountTypeAllUniStats(uniStats);
 
@@ -1367,10 +1367,12 @@ public class LogService {
 
         return uniStats ;
     }
-    public universalStats setNewsArticelBlogCountForUniversalStats(String dateStr, universalStats uniStats) throws ParseException {
 
+
+    public universalStats setNewsArticelBlogCountForUniversalStats(Date givenDate, universalStats uniStats) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        Date givenDate = sdf.parse(dateStr);
+
+        // Keine Notwendigkeit, das Datum zu parsen, da es bereits ein Date-Objekt ist.
 
         List<Post> posts = postRepository.findAllUserPosts();
 
@@ -1386,8 +1388,11 @@ public class LogService {
             // Konvertiere post_date zu yyyyMMdd Format für den Vergleich
             String postDateStr = sdf.format(post.getDate());
 
+            // Konvertiere das gegebene Datum auch zu String für den Vergleich
+            String givenDateStr = sdf.format(givenDate);
+
             // Zähle nur die Posts, die am gegebenen Tag oder davor veröffentlicht wurden
-            if (postDateStr.compareTo(dateStr) <= 0) {
+            if (postDateStr.compareTo(givenDateStr) <= 0) {
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
                         if (termTax.getTermId() == tagIdBlog) {
@@ -1413,6 +1418,7 @@ public class LogService {
 
         return uniStats;
     }
+
 
     public universalStats setAccountTypeAllUniStats(universalStats uniStats){
         HashMap<String, Integer> counts = new HashMap<>();

@@ -84,6 +84,87 @@ public class uniStatController {
 
         return html;
     }
+    @GetMapping(value = "/letzte7Tage", produces = MediaType.TEXT_HTML_VALUE)
+    public String getLast7Days() throws JSONException {
+        List<universalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse
+
+        StringBuilder tableRows = new StringBuilder();
+
+        // Header für die Tabelle
+        tableRows.append("<tr>\n");
+        tableRows.append("<th>Datum</th>\n");
+        tableRows.append("<th>Besucher</th>\n");
+        tableRows.append("<th>Angemeldete Profile</th>\n");
+        tableRows.append("<th>Basic Profile</th>\n");
+        tableRows.append("<th>Basic-Plus Profile</th>\n");
+        tableRows.append("<th>Plus Profile</th>\n");
+        tableRows.append("<th>Premium Profile</th>\n");
+        tableRows.append("<th>Premium Sponsoren Profile</th>\n");
+        tableRows.append("<th>Artikel</th>\n");
+        tableRows.append("<th>Blogs</th>\n");
+        tableRows.append("<th>News</th>\n");
+        tableRows.append("<th>Umsatz</th>\n");
+        tableRows.append("</tr>\n");
+
+        for (universalStats uniStat : last7DaysStats) {
+            JSONObject obj = new JSONObject();
+            obj.put("Datum", new SimpleDateFormat("dd.MM.yyyy").format(uniStat.getDatum()));
+            obj.put("Besucher", uniStat.getBesucherAnzahl());
+            obj.put("Angemeldete Profile", uniStat.getAnbieterProfileAnzahl());
+            obj.put("Angemeldete Basic Profile", uniStat.getAnbieterBasicAnzahl());
+            obj.put("Angemeldete Basic-Plus Profile", uniStat.getAnbieterBasicPlusAnzahl());
+            obj.put("Angemeldete Plus Profile", uniStat.getAnbieterPlusAnzahl());
+            obj.put("Angemeldete Premium Profile", uniStat.getAnbieterPremiumAnzahl());
+            obj.put("Angemeldete Premium Sponsoren Profile", uniStat.getAnbieterPremiumSponsorenAnzahl());
+            obj.put("veröffentlichte Artikel", uniStat.getAnzahlArtikel());
+            obj.put("veröffentlichte Blogs", uniStat.getAnzahlBlog());
+            obj.put("veröffentlichte News", uniStat.getAnzahlNews());
+            obj.put("aktueller jährlicher Umsatz", uniStat.getUmsatz());
+
+            tableRows.append("<tr>\n");
+            tableRows.append("<td>").append(obj.get("Datum")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("Besucher")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("Angemeldete Profile")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("Angemeldete Basic Profile")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("Angemeldete Basic-Plus Profile")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("Angemeldete Plus Profile")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("Angemeldete Premium Profile")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("Angemeldete Premium Sponsoren Profile")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("veröffentlichte Artikel")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("veröffentlichte Blogs")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("veröffentlichte News")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("aktueller jährlicher Umsatz")).append("</td>\n");
+            tableRows.append("</tr>\n");
+        }
+
+        String html = "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>Bericht für die letzten 7 Tage</title>\n" +
+                "    <style>\n" +
+                "       table {\n" +
+                "           border: 1px solid black;\n" +
+                "           width: 100%;\n" +
+                "           text-align: center;\n" +
+                "       }\n" +
+                "       tr {\n" +
+                "           border-bottom: 2px solid black;\n" +
+                "           height: 20px;\n" +
+                "       }\n" +
+                "    </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <h1>Statistik für die letzten 7 Tage</h1>\n" +
+                "    <table>\n" +
+                tableRows.toString() +
+                "    </table>\n" +
+                "</body>\n" +
+                "</html>";
+
+        return html;
+    }
+
 
 
 

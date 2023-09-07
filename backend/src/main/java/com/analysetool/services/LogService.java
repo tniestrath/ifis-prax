@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -1202,8 +1203,11 @@ public class LogService {
 
                         universalStats uniStats = proccessLinesOfOldLog(new universalStats(date), bufferedReader);
                         uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
-                        uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
+                        //m
+                        uniStats = setNewsArticelBlogCountForUniversalStats(date.toString(),uniStats);
+
                         uniStats = setAccountTypeAllUniStats(uniStats);
+
                         uniRepo.save(uniStats);
                     } else {
                         System.out.println("Tag " + daysToLookBack + " bereits in der Statistik");
@@ -1362,6 +1366,51 @@ public class LogService {
         uniStats.setAnzahlBlog(blogCounter);
 
         return uniStats ;
+    }
+    public universalStats setNewsArticelBlogCountForUniversalStats(String dateStr, universalStats uniStats) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date givenDate = sdf.parse(dateStr);
+
+        List<Post> posts = postRepository.findAllUserPosts();
+
+        long artikelCounter = 0;
+        long newsCounter = 0;
+        long blogCounter = 0;
+
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+
+        for (Post post : posts) {
+            // Konvertiere post_date zu yyyyMMdd Format für den Vergleich
+            String postDateStr = sdf.format(post.getDate());
+
+            // Zähle nur die Posts, die am gegebenen Tag oder davor veröffentlicht wurden
+            if (postDateStr.compareTo(dateStr) <= 0) {
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
+                        if (termTax.getTermId() == tagIdBlog) {
+                            blogCounter++;
+                        }
+
+                        if (termTax.getTermId() == tagIdArtikel) {
+                            artikelCounter++;
+                        }
+
+                        if (termTax.getTermId() == tagIdPresse) {
+                            newsCounter++;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Setze die Zählungen im universalStats-Objekt
+        uniStats.setAnzahlArtikel(artikelCounter);
+        uniStats.setAnzahlNews(newsCounter);
+        uniStats.setAnzahlBlog(blogCounter);
+
+        return uniStats;
     }
 
     public universalStats setAccountTypeAllUniStats(universalStats uniStats){

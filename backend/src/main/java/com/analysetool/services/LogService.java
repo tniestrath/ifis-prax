@@ -1368,6 +1368,7 @@ public class LogService {
         return uniStats ;
     }
     public universalStats setNewsArticelBlogCountForUniversalStats(String dateStr, universalStats uniStats) throws ParseException {
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         Date givenDate = sdf.parse(dateStr);
 
@@ -1429,11 +1430,11 @@ public class LogService {
             if (s.contains("um_basis-anbieter-plus"))
                 counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
         });
-        uniStats.setAnbieterBasicAnzahl(counts.get("Basic"));
-        uniStats.setAnbieterBasicPlusAnzahl(counts.get("Basic-Plus"));
-        uniStats.setAnbieterPlusAnzahl(counts.get("Plus"));
-        uniStats.setAnbieterPremiumAnzahl(counts.get("Premium"));
-        uniStats.setAnbieterPremiumSponsorenAnzahl(counts.get("Sponsor"));
+        uniStats.setAnbieterBasicAnzahl(counts.getOrDefault("Basic",0));
+        uniStats.setAnbieterBasicPlusAnzahl(counts.getOrDefault("Basic-Plus",0));
+        uniStats.setAnbieterPlusAnzahl(counts.getOrDefault("Plus",0));
+        uniStats.setAnbieterPremiumAnzahl(counts.getOrDefault("Premium",0));
+        uniStats.setAnbieterPremiumSponsorenAnzahl(counts.getOrDefault("Sponsor",0));
 
         long umsatzBasicPlus =uniStats.getAnbieterBasicPlusAnzahl()*200;
         long umsatzPlus =uniStats.getAnbieterPlusAnzahl()*1000;

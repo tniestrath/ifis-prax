@@ -1186,7 +1186,7 @@ public class LogService {
        return "access.log-" + getLastDay() + ".gz";
     }
     public void setUniversalStats() {
-        int daysToLookBack = 14; // Anzahl der Tage, die zurückgeschaut werden sollen
+        int daysToLookBack = 10; // Anzahl der Tage, die zurückgeschaut werden sollen
 
         if (!sysVarRepo.findAll().get(sysVarRepo.findAll().size() - 1).isFlagScanLast14()) {
             while (daysToLookBack > 0) {
@@ -1373,7 +1373,7 @@ public class LogService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
         // Keine Notwendigkeit, das Datum zu parsen, da es bereits ein Date-Objekt ist.
-
+        System.out.println("DATUM HIER ----------->>>>"+givenDate);
         List<Post> posts = postRepository.findAllUserPosts();
 
         long artikelCounter = 0;

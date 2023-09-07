@@ -207,7 +207,7 @@ public class LogService {
 
         }
 
-
+        setUniversalStats();
         run(liveScanning,Pfad, SystemVariabeln);
         updateLetterCountForAll();
     }
@@ -227,6 +227,7 @@ public class LogService {
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();
         saveStatsToDatabase();
+        setUniversalStats();
         sysVarRepo.save(SystemVariabeln);
     }
 
@@ -1186,7 +1187,7 @@ public class LogService {
        return "access.log-" + getLastDay() + ".gz";
     }
     public void setUniversalStats() {
-        int daysToLookBack = 14; // Anzahl der Tage, die zurückgeschaut werden sollen
+        int daysToLookBack = 9; // Anzahl der Tage, die zurückgeschaut werden sollen
 
         if (!sysVarRepo.findAll().get(sysVarRepo.findAll().size() - 1).isFlagScanLast14()) {
             while (daysToLookBack > 0) {
@@ -1204,7 +1205,7 @@ public class LogService {
                         universalStats uniStats = proccessLinesOfOldLog(new universalStats(date), bufferedReader);
                         uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
                         //m
-                        uniStats = setNewsArticelBlogCountForUniversalStats(date.toString(),uniStats);
+                        uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
 
                         uniStats = setAccountTypeAllUniStats(uniStats);
 
@@ -1367,9 +1368,14 @@ public class LogService {
 
         return uniStats ;
     }
-    public universalStats setNewsArticelBlogCountForUniversalStats(String dateStr, universalStats uniStats) throws ParseException {
+
+
+    public universalStats setNewsArticelBlogCountForUniversalStats(Date dateStr, universalStats uniStats) {
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        Date givenDate = sdf.parse(dateStr);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+        String givenDateStr = sdf.format(dateStr);  // Konvertiere das eingegebene Date-Objekt in einen String
 
         List<Post> posts = postRepository.findAllUserPosts();
 
@@ -1382,11 +1388,9 @@ public class LogService {
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
 
         for (Post post : posts) {
-            // Konvertiere post_date zu yyyyMMdd Format für den Vergleich
-            String postDateStr = sdf.format(post.getDate());
-
-            // Zähle nur die Posts, die am gegebenen Tag oder davor veröffentlicht wurden
-            if (postDateStr.compareTo(dateStr) <= 0) {
+            LocalDateTime postDateTime = post.getDate(); // Nehmen wir an, das ist vom Typ LocalDateTime
+            String postDateStr = postDateTime.format(dtf); // Verwende DateTimeFormatter
+            if (postDateStr.compareTo(givenDateStr) <= 0) {
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
                         if (termTax.getTermId() == tagIdBlog) {
@@ -1413,6 +1417,7 @@ public class LogService {
         return uniStats;
     }
 
+
     public universalStats setAccountTypeAllUniStats(universalStats uniStats){
         HashMap<String, Integer> counts = new HashMap<>();
 
@@ -1429,11 +1434,11 @@ public class LogService {
             if (s.contains("um_basis-anbieter-plus"))
                 counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
         });
-        uniStats.setAnbieterBasicAnzahl(counts.get("Basic"));
-        uniStats.setAnbieterBasicPlusAnzahl(counts.get("Basic-Plus"));
-        uniStats.setAnbieterPlusAnzahl(counts.get("Plus"));
-        uniStats.setAnbieterPremiumAnzahl(counts.get("Premium"));
-        uniStats.setAnbieterPremiumSponsorenAnzahl(counts.get("Sponsor"));
+        uniStats.setAnbieterBasicAnzahl(counts.getOrDefault("Basic",0));
+        uniStats.setAnbieterBasicPlusAnzahl(counts.getOrDefault("Basic-Plus",0));
+        uniStats.setAnbieterPlusAnzahl(counts.getOrDefault("Plus",0));
+        uniStats.setAnbieterPremiumAnzahl(counts.getOrDefault("Premium",0));
+        uniStats.setAnbieterPremiumSponsorenAnzahl(counts.getOrDefault("Sponsor",0));
 
         long umsatzBasicPlus =uniStats.getAnbieterBasicPlusAnzahl()*200;
         long umsatzPlus =uniStats.getAnbieterPlusAnzahl()*1000;

@@ -34,14 +34,13 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
     [ new UniStat("clicks", 0, "2023-06-06"),
       new UniStat("clicks", 1, "2023-06-07"),
       new UniStat("clicks", 2, "2023-06-08"),
-      new UniStat("clicks", 8, "2023-09-05"),
-      new UniStat("clicks", 9, "2023-09-06"),
-      new UniStat("clicks", 10, "2023-09-07"),
-      new UniStat("clicks", 6, "2023-07-06"),
-      new UniStat("clicks", 7, "2023-07-07"),
-      new UniStat("clicks", 3, "2023-07-08"),
-      new UniStat("clicks", 4, "2023-07-05"),
-      new UniStat("clicks", 5, "2023-07-06")
+      new UniStat("clicks", 80, "2023-09-05"),
+      new UniStat("clicks", 900, "2023-09-06"),
+      new UniStat("clicks", 1000, "2023-09-07"),
+      new UniStat("clicks", 69, "2023-07-07"),
+      new UniStat("clicks", 75, "2023-07-08"),
+      new UniStat("clicks", 3, "2023-07-05"),
+      new UniStat("clicks", 4, "2023-07-06")
     ];
 
   timeSpanMap = new Map<string, number>([
@@ -91,6 +90,8 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
     if (this.chart){
       this.chart.destroy();
     }
+    const max = Math.max.apply(null, data);
+
     // @ts-ignore
     this.chart = new Chart("uni-chart", {
       type: "line",
@@ -109,13 +110,13 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
         aspectRatio: 2.8,
         layout: {
           padding: {
-            bottom: -50
+            bottom: -45
           }
         },
         scales: {
           y: {
             min: 0,
-            max: Math.max.apply(null, data)
+            max: max
           },
           x: {
             display: true
@@ -137,7 +138,7 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
             }
           },
           legend: {
-            display: true,
+            display: this.statType != "clicks",
             position: "bottom"
           },
           tooltip: {

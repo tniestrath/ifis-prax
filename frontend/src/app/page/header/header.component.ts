@@ -17,7 +17,7 @@ export class HeaderComponent implements AfterViewInit{
 
 
   constructor(private cs : CookieService, private db : DbService) {
-    this.navElements = [];
+    var currentNavElements = [];
     // COOKIE VALIDATION //
     this.db.validate().then(res  => {
       var usid = res.user_id;
@@ -33,7 +33,7 @@ export class HeaderComponent implements AfterViewInit{
     })
 
     SysVars.login.subscribe(user => {
-      this.navElements = ["Overview", "Posts", "Tags", "Users"];
+      currentNavElements = this.navElements;
       cs.set("user", user.id + ":" + user.displayName);
       this.selected.next("Overview");
       SysVars.USER_ID = user.id;

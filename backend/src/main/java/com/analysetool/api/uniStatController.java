@@ -103,7 +103,7 @@ public class uniStatController {
         tableRows.append("<th>Artikel</th>\n");
         tableRows.append("<th>Blogs</th>\n");
         tableRows.append("<th>News</th>\n");
-        tableRows.append("<th>Umsatz</th>\n");
+        //tableRows.append("<th>Umsatz</th>\n");
         tableRows.append("</tr>\n");
 
         for (universalStats uniStat : last7DaysStats) {
@@ -119,7 +119,7 @@ public class uniStatController {
             obj.put("veröffentlichte Artikel", uniStat.getAnzahlArtikel());
             obj.put("veröffentlichte Blogs", uniStat.getAnzahlBlog());
             obj.put("veröffentlichte News", uniStat.getAnzahlNews());
-            obj.put("aktueller jährlicher Umsatz", uniStat.getUmsatz());
+            //obj.put("aktueller jährlicher Umsatz", uniStat.getUmsatz());
 
             tableRows.append("<tr>\n");
             tableRows.append("<td>").append(obj.get("Datum")).append("</td>\n");
@@ -133,7 +133,7 @@ public class uniStatController {
             tableRows.append("<td>").append(obj.get("veröffentlichte Artikel")).append("</td>\n");
             tableRows.append("<td>").append(obj.get("veröffentlichte Blogs")).append("</td>\n");
             tableRows.append("<td>").append(obj.get("veröffentlichte News")).append("</td>\n");
-            tableRows.append("<td>").append(obj.get("aktueller jährlicher Umsatz")).append("</td>\n");
+           // tableRows.append("<td>").append(obj.get("aktueller jährlicher Umsatz")).append("</td>\n");
             tableRows.append("</tr>\n");
         }
 

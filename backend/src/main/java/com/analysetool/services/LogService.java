@@ -1186,7 +1186,7 @@ public class LogService {
        return "access.log-" + getLastDay() + ".gz";
     }
     public void setUniversalStats() {
-        int daysToLookBack = 10; // Anzahl der Tage, die zurückgeschaut werden sollen
+        int daysToLookBack = 9; // Anzahl der Tage, die zurückgeschaut werden sollen
 
         if (!sysVarRepo.findAll().get(sysVarRepo.findAll().size() - 1).isFlagScanLast14()) {
             while (daysToLookBack > 0) {
@@ -1369,11 +1369,13 @@ public class LogService {
     }
 
 
-    public universalStats setNewsArticelBlogCountForUniversalStats(Date givenDate, universalStats uniStats) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+    public universalStats setNewsArticelBlogCountForUniversalStats(Date dateStr, universalStats uniStats) {
 
-        // Keine Notwendigkeit, das Datum zu parsen, da es bereits ein Date-Objekt ist.
-        System.out.println("DATUM HIER ----------->>>>"+givenDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+        String givenDateStr = sdf.format(dateStr);  // Konvertiere das eingegebene Date-Objekt in einen String
+
         List<Post> posts = postRepository.findAllUserPosts();
 
         long artikelCounter = 0;
@@ -1385,14 +1387,8 @@ public class LogService {
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
 
         for (Post post : posts) {
-            // Konvertiere post_date zu yyyyMMdd Format für den Vergleich
-            System.out.println("ANDERE DATUM HIER ---------->"+post.getDate());
-            String postDateStr = sdf.format(post.getDate());
-
-            // Konvertiere das gegebene Datum auch zu String für den Vergleich
-            String givenDateStr = sdf.format(givenDate);
-
-            // Zähle nur die Posts, die am gegebenen Tag oder davor veröffentlicht wurden
+            LocalDateTime postDateTime = post.getDate(); // Nehmen wir an, das ist vom Typ LocalDateTime
+            String postDateStr = postDateTime.format(dtf); // Verwende DateTimeFormatter
             if (postDateStr.compareTo(givenDateStr) <= 0) {
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {

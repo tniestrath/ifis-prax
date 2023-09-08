@@ -1,21 +1,19 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.TagStat;
-import com.analysetool.modells.WPTerm;
-import com.analysetool.modells.WpTermTaxonomy;
-import com.analysetool.repositories.TagStatRepository;
-import com.analysetool.repositories.WPTermRepository;
-import com.analysetool.repositories.WpTermRelationshipsRepository;
+import com.analysetool.modells.*;
+import com.analysetool.repositories.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.analysetool.repositories.WpTermTaxonomyRepository;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -31,6 +29,8 @@ public class TagsController {
     private TagStatRepository tagStatRepo;
     @Autowired
     private WpTermRelationshipsRepository termRelRepo;
+    @Autowired
+    private PostRepository postRepo;
 
     @GetMapping("/{id}")
     public ResponseEntity<WPTerm> getTermById(@PathVariable Long id) {
@@ -149,6 +149,7 @@ public class TagsController {
                 response.put(obj);
             }
         }
+
         return response.toString();
     }
 
@@ -214,6 +215,81 @@ public class TagsController {
                 response.put(obj);
             }
         }
+        return response.toString();
+    }
+
+    public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd.MM");
+
+        // Add the current year to the date string
+        String year = String.valueOf(LocalDate.now().getYear());
+        LocalDate currentDate = LocalDate.parse(year + "-" + currentDateString, formatter);
+
+        long views = 0;
+
+        for (int i = 0; i < time; i++) {
+            String dateKey = currentDate.minusDays(i).format(DateTimeFormatter.ofPattern("dd.MM"));
+            views += viewsLastYear.getOrDefault(dateKey, 0L);
+        }
+
+        return (float) views / time;
+    }
+
+
+
+    public float getRelevance(HashMap<String,Long>viewsLastYear,int currentDayOfYear,int time){
+        int counter =currentDayOfYear-time;
+        long views=0;
+        while(counter<=currentDayOfYear){
+            views=views+(viewsLastYear.get(Integer.toString(counter)));
+            counter++;
+        }
+        return (float)views/time;
+    }
+
+    public static Date getDate(int zuruek){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -zuruek); // Vortag
+        Date vortag = calendar.getTime();
+        return vortag;
+    }
+    public static int getDayOfYear(){
+        LocalDate today = LocalDate.now();
+        int dayOfYear = today.getDayOfYear();
+        return dayOfYear;
+    }
+    public int getCount(int tagId,Date dateLimit){
+        Long termTaxId= termTaxonomyRepository.findByTermId(tagId).getTermTaxonomyId();
+        List<wp_term_relationships> termRel = termRelRepo.findByTermTaxonomyId(termTaxId);
+        ArrayList<Post> posts = new ArrayList<>();
+        for(wp_term_relationships t: termRel){
+            Post post = postRepo.findById(t.getObjectId()).get();
+            Date datePost =Date.from( post.getDate().atZone(ZoneId.systemDefault()).toInstant());
+            if(datePost.before(dateLimit)){
+                posts.add(post);
+            }
+        }
+        return posts.size();
+    }
+
+
+    @GetMapping("/getTagStat")
+    public String getTagStat(@RequestParam int tagId,@RequestParam int limitDaysBack) throws JSONException {
+        JSONArray response = new JSONArray();
+        int dayOfYear = getDayOfYear();
+        TagStat tagStat = tagStatRepo.getStatById(tagId);
+        for(int i=limitDaysBack;i>0;i--){
+        JSONObject obj =new JSONObject();
+        obj.put("id",tagId);
+        obj.put("name",termRepository.getNameById(tagId));
+        obj.put("date",getDate(i));
+        obj.put("relevance",getRelevance((HashMap<String, Long>) tagStat.getViewsLastYear(),dayOfYear,i));
+        obj.put("count",getCount(tagId,getDate(i)));
+        obj.put("clicks",tagStat.getViewsLastYear().get(dayOfYear-i));
+
+        response.put(obj);
+        }
+
         return response.toString();
     }
 

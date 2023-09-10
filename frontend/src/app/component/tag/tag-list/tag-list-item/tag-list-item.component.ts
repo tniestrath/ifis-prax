@@ -1,5 +1,7 @@
 import {Component, EventEmitter, Input} from '@angular/core';
 import {TagRanking} from "../../Tag";
+import {DbObject} from "../../../../services/DbObject";
+import {SysVars} from "../../../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-tag-list-item',
@@ -7,12 +9,13 @@ import {TagRanking} from "../../Tag";
   styleUrls: ['./tag-list-item.component.css']
 })
 export class TagListItemComponent {
-  data : TagRanking = new TagRanking("" ,"","", "","");
+  data : TagRanking = new TagRanking("", "", "", "", "");
   protected readonly parseFloat = parseFloat;
 
-  @Input() clicked: EventEmitter<TagRanking> = new EventEmitter<TagRanking>();
+  @Input() clicked: EventEmitter<DbObject> = new EventEmitter<DbObject>();
 
   onClick(){
-    this.clicked.emit(this.data)
+    SysVars.SELECTED_TAG.emit(Number(this.data?.id));
+    console.log(this.data);
   }
 }

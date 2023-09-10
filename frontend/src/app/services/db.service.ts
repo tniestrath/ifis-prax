@@ -7,7 +7,8 @@ import {User} from "../page/page-einzel/user/user";
 import {Callup} from "../component/call-up-chart/call-up-chart.component";
 
 export enum dbUrl {
-  HOST = "http://analyse.it-sicherheit.de/api",
+  //HOST = "http://analyse.it-sicherheit.de/api",
+  HOST = "http://localhost:8080/api",
   PORT = "",
   GET_TAGS_ALL = "/tags/getPostTagsIdName",
   GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL = "/tags/allTermsRelevanceAndViews",
@@ -15,7 +16,7 @@ export enum dbUrl {
 
   GET_TAG_POST_COUNT = "/tags/getPostcount?id=",
   GET_TAG_RANKING = "/tags/getTermRanking",
-  GET_TAGSTATS_BY_ID = "/tags/getTagStats?id=",
+  GET_TAGSTATS_BY_ID = "/tags/getTagStats?tagId=ID&limitDaysBack=DAYS",
 
   GET_USER_IMG = "/users/profilePic?id=",
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
@@ -206,8 +207,8 @@ export class DbService {
     return await fetch((DbService.getUrl(dbUrl.GET_USERS_ALL_VIEWS_PER_HOUR)), {credentials: "include"}).then(res => res.json());
   }
 
-  async getTagStatsByID(id: number) : Promise<TagStats[]> {
-    return await fetch(DbService.getUrl(dbUrl.GET_TAGSTATS_BY_ID)+ id, {credentials: "include"}).then(res => res.json());
+  async getTagStatsByID(id: number, timeSpan: number) : Promise<TagStats[]> {
+    return await fetch(DbService.getUrl(dbUrl.GET_TAGSTATS_BY_ID).replace("ID", String(id)).replace("DAYS", String(timeSpan)), {credentials: "include"}).then(res => res.json());
   }
 
   async getUniStatsByTypeAndTime(type: string, time: number) : Promise<Callup[]> {

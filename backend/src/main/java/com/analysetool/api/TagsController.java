@@ -204,6 +204,8 @@ public class TagsController {
             JSONObject obj = new JSONObject();
             if(tax.getTaxonomy().equals("post_tag")){
                 obj.put("name",termRepository.findById(tax.getTermId()).get().getName());
+                obj.put("id", tax.getTermId());
+                obj.put("count", getCount(tax.getTermId().intValue(), new Date()));
                 if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) {
                     obj.put("relevance", tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance());
                     obj.put("views", tagStatRepo.getStatById(tax.getTermId().intValue()).getViews());
@@ -241,7 +243,9 @@ public class TagsController {
         int counter =currentDayOfYear-time;
         long views=0;
         while(counter<=currentDayOfYear){
-            views=views+(viewsLastYear.get(Integer.toString(counter)));
+            if (viewsLastYear.containsKey(Integer.toString(counter))){
+                views=views+(viewsLastYear.get(Integer.toString(counter)));
+            }
             counter++;
         }
         return (float)views/time;
@@ -273,21 +277,24 @@ public class TagsController {
     }
 
 
-    @GetMapping("/getTagStat")
+    @GetMapping("/getTagStats")
     public String getTagStat(@RequestParam int tagId,@RequestParam int limitDaysBack) throws JSONException {
         JSONArray response = new JSONArray();
         int dayOfYear = getDayOfYear();
-        TagStat tagStat = tagStatRepo.getStatById(tagId);
+        TagStat tagStat = new TagStat();
+        if (tagStatRepo.existsByTagId(tagId)){
+            tagStat = tagStatRepo.getStatById(tagId);
+        }
         for(int i=limitDaysBack;i>0;i--){
-        JSONObject obj =new JSONObject();
-        obj.put("id",tagId);
-        obj.put("name",termRepository.getNameById(tagId));
-        obj.put("date",getDate(i));
-        obj.put("relevance",getRelevance((HashMap<String, Long>) tagStat.getViewsLastYear(),dayOfYear,i));
-        obj.put("count",getCount(tagId,getDate(i)));
-        obj.put("clicks",tagStat.getViewsLastYear().get(dayOfYear-i));
+            JSONObject obj =new JSONObject();
+            obj.put("id",tagId);
+            obj.put("name",termRepository.getNameById(tagId));
+            obj.put("date",getDate(i));
+            obj.put("relevance",getRelevance((HashMap<String, Long>) tagStat.getViewsLastYear(),dayOfYear,i));
+            obj.put("count",getCount(tagId,getDate(i)));
+            obj.put("clicks",tagStat.getViewsLastYear().get(dayOfYear-i));
 
-        response.put(obj);
+            response.put(obj);
         }
 
         return response.toString();

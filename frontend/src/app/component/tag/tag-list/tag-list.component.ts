@@ -5,6 +5,7 @@ import {Subject} from "rxjs";
 import {TagRanking} from "../Tag";
 import {TagListItemComponent} from "./tag-list-item/tag-list-item.component";
 import {DbObject} from "../../../services/DbObject";
+import {SysVars} from "../../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-tag-list',
@@ -52,10 +53,5 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
 
   ngAfterViewInit(): void {
     this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRelevance((b.data as TagRanking)));
-  }
-
-
-  onItemClick($event: DbObject) {
-    console.log($event.name);
   }
 }

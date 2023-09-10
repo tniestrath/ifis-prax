@@ -4,6 +4,8 @@ import {visibility} from "html2canvas/dist/types/css/property-descriptors/visibi
 import {SysVars} from "../../../services/sys-vars-service";
 import {Post} from "../../post/Post";
 import {Tag, TagRanking, TagStats} from "../Tag";
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
+import {DashColors} from "../../../util/Util";
 
 
 
@@ -13,7 +15,7 @@ import {Tag, TagRanking, TagStats} from "../Tag";
   styleUrls: ['./tag-chart.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class TagChartComponent extends DashBaseComponent implements OnInit{
-  canvas_id: string = "tag-chart-canvas";
+  canvas_id: string = "tag-chart";
   private visibility: string = "hidden";
 
   selectedTag_id : number = 0;
@@ -25,62 +27,145 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
     ["all_time", 365*2],
     ["half_year", 182],
     ["month", 31],
-    ["week", 7]
+    ["week", 7],
+    ["day", 1]
   ]);
 
-  getData($event: Event) {
-    if (this.data == undefined){this.data = this.db.getTagStatsByID(this.selectedTag_id)}
+  getData(event?: Event) {
+    if (event !== undefined) {
+      if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
+    }
+    if (this.data == undefined){this.data = this.db.getTagStatsByID(this.selectedTag_id,this.timeSpanMap.get(this.timeSpan) || 365*2)}
     this.data.then((res : TagStats[]) => {
       var tagLabel : string[] = [];
-      var tagData : number[] = [];
-      var tagDataRelevance : number[] = [];
-      var tagDataDate : string[] = [];
-
+      var tagViews : number[] = [];
+      var tagRelevance : number[] = [];
+      var tagCount : number[] = [];
+      var tagDate : string[] = [];
       var tagIds :number[] = [];
 
-      let time_filtered : TagStats[] = res.filter((tagStats : TagStats) => {
-        var tagStatsDate = new Date(Date.parse(tagStats.date));
-        var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
-        return tagStatsDate >= calcDate;
-      })
-      time_filtered.sort((a, b) => {
+      res.sort((a, b) => {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       })
-      let fullLabels : string[] = [];
-      for (var tagStats of time_filtered) {
-        let label = tagStats.name;
-        fullLabels.push(tagStats.name);
-        let space_index = label.indexOf(" ");
-        let sec_space_index = label.indexOf(" ", space_index+1);
-        if (label.length > 10){
-          if (sec_space_index < 10){
-            label = label.slice(0, sec_space_index);
-          }
-          if (space_index < 10 !&& sec_space_index < 10){
-            label = label.slice(0, space_index);
-          }
-          else {
-            label = label.slice(0, 10)
-          }
-          label += "...";
-        }
-        tagLabel.push(label);
-        tagData.push(Number(tagStats.count));
-        tagDataRelevance.push(Number(tagStats.relevance));
-        tagDataDate.push(new Date(tagStats.date).toLocaleDateString());
+      for (var tagStats of res) {
+        tagLabel.push(tagStats.name);
+        tagCount.push(Number(tagStats.count));
+        tagRelevance.push(Number(tagStats.relevance));
+        tagViews.push(Number(tagStats.views));
+        tagDate.push(new Date(tagStats.date).toLocaleDateString());
         tagIds.push(Number(tagStats.id));
       }
-      this.createChart(tagLabel, fullLabels, tagData, tagDataRelevance, tagDataDate, () => {});
+      console.log(tagDate);
+      this.createChart(tagLabel, tagViews, tagRelevance, tagCount, tagDate);
     }).finally(() => {this.visibility = "visible"});
   }
 
   ngOnInit(): void {
-    SysVars.SELECTED_TAG.subscribe((tr) => {
-      this.selectedTag_id = Number(tr.id);
+    SysVars.SELECTED_TAG.subscribe((id) => {
+      this.selectedTag_id = id;
+      this.getData()
     })
   }
 
-  private createChart(tagLabel: string[], fullLabels: string[], tagData: number[], tagDataRelevance: number[], tagDataDate: string[], param6: () => void) {
+  private createChart(tagLabel: string[], tagViews: number[], tagRelevance: number[], tagCount: number[], tagDate: string[]) {
+    if (this.chart){
+      this.chart.destroy();
+    }
+    var timestamps = [];
+    for (var date of tagDate) {
+      if (date == "day"){
+        timestamps.push(new Date(date).getHours().toString());
+      }
+      else {
+        timestamps.push(date);
+      }
+    }
 
+    const max = Math.max.apply(null, tagViews);
+
+    // @ts-ignore
+    this.chart = new Chart("tag_chart", {
+      type: "line",
+      data: {
+        labels: timestamps,
+        datasets: [{
+          label: "Views",
+          data: tagViews,
+          backgroundColor: DashColors.Red,
+          borderColor: DashColors.Red,
+          borderJoinStyle: 'round',
+          borderWidth: 5
+        },
+        {
+          label: "Relevanz",
+          data: tagRelevance,
+          backgroundColor: DashColors.Blue,
+          borderColor: DashColors.Blue,
+          borderJoinStyle: 'round',
+          borderWidth: 5
+        },
+        {
+          label: "Beiträge zum Thema",
+          data: tagCount,
+          backgroundColor: DashColors.Black,
+          borderColor: DashColors.Black,
+          borderJoinStyle: 'round',
+          borderWidth: 5
+        }]
+      },
+      options: {
+        aspectRatio: 2.8,
+        layout: {
+          padding: {
+            bottom: -45
+          }
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: max
+          },
+          x: {
+            display: true
+          }
+        },
+        plugins: {
+          datalabels: {
+            display: false
+          },
+          title: {
+            display: true,
+            text: "",
+            position: "bottom",
+            fullSize: true,
+            font: {
+              size: 18,
+              weight: "bold",
+              family: 'Times New Roman'
+            }
+          },
+          legend: {
+            display: true,
+            position: "bottom"
+          },
+          tooltip: {
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            },
+            callbacks: {
+            }
+          }
+        },
+        interaction: {
+          mode: "nearest",
+          intersect: true
+        },
+        onClick(event: ChartEvent, elements: ActiveElement[]) {
+        },
+      }
+    })
   }
 }

@@ -4,7 +4,7 @@ import {Tag, TagRanking, TagStats} from "../component/tag/Tag";
 import {DbObject} from "./DbObject";
 import {Post} from "../component/post/Post";
 import {User} from "../page/page-einzel/user/user";
-import {UniStat} from "../component/uni-chart/uni-chart.component";
+import {Callup} from "../component/call-up-chart/call-up-chart.component";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -210,7 +210,7 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_TAGSTATS_BY_ID)+ id, {credentials: "include"}).then(res => res.json());
   }
 
-  async getUniStatsByTypeAndTime(type: string, time: number) : Promise<UniStat[]> {
+  async getUniStatsByTypeAndTime(type: string, time: number) : Promise<Callup[]> {
     return await fetch(DbService.getUrl(dbUrl.GET_UNISTATS_BY_TYPE_AND_TIME.replace("TYPE", type).replace("TIME", String(time))), {credentials: "include"}).then(res => res.json());
   }
 }

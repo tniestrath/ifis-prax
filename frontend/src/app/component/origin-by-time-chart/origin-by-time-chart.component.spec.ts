@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UniChartComponent } from './uni-chart.component';
+import { UniChartComponent } from './origin-by-time-chart.component';
 
 describe('UniChartComponent', () => {
   let component: UniChartComponent;

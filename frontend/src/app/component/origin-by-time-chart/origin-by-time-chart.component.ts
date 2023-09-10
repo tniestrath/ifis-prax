@@ -3,7 +3,7 @@ import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {DashColors} from "../../util/Util";
 
-export class UniStat {
+export class OriginByTime {
   clicks : number = 0;
   visitors : number = 0;
   date : string = "00-00-0000";
@@ -16,28 +16,28 @@ export class UniStat {
 }
 
 @Component({
-  selector: 'dash-uni-chart',
-  templateUrl: './uni-chart.component.html',
-  styleUrls: ['./uni-chart.component.css', "../../component/dash-base/dash-base.component.css"]
+  selector: 'dash-origin-by-time-chart',
+  templateUrl: './origin-by-time-chart.component.html',
+  styleUrls: ['./origin-by-time-chart.component.css', "../../component/dash-base/dash-base.component.css"]
 })
-export class UniChartComponent extends DashBaseComponent implements OnInit {
+export class OriginByTimeChartComponent extends DashBaseComponent implements OnInit {
   visibility: string = "visible";
 
-  canvas_id: string = "uni-chart";
+  canvas_id: string = "obt-chart";
 
   timeSpan : string = "all_time";
 
-  data : UniStat[] =
-    [ new UniStat(0,0, "2023-06-06"),
-      new UniStat(1,1, "2023-06-07"),
-      new UniStat(2,1, "2023-06-08"),
-      new UniStat(80, 70, "2023-09-05"),
-      new UniStat(900,800, "2023-09-06"),
-      new UniStat(1000, 850, "2023-09-07"),
-      new UniStat(69, 66, "2023-07-07"),
-      new UniStat(75, 55, "2023-07-08"),
-      new UniStat(3, 2, "2023-07-05"),
-      new UniStat(4, 4, "2023-07-06")
+  data : OriginByTime[] =
+    [ new OriginByTime(0,0, "2023-06-06"),
+      new OriginByTime(1,1, "2023-06-07"),
+      new OriginByTime(2,1, "2023-06-08"),
+      new OriginByTime(80, 70, "2023-09-05"),
+      new OriginByTime(900,800, "2023-09-06"),
+      new OriginByTime(1000, 850, "2023-09-07"),
+      new OriginByTime(69, 66, "2023-07-07"),
+      new OriginByTime(75, 55, "2023-07-08"),
+      new OriginByTime(3, 2, "2023-07-05"),
+      new OriginByTime(4, 4, "2023-07-06")
     ];
 
   timeSpanMap = new Map<string, number>([
@@ -57,7 +57,7 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
     this.data.then((res : UniStat[]) => {*/
       var res = this.data;
 
-      var time_filtered : UniStat[] = res.filter((stat : UniStat) => {
+      var time_filtered : OriginByTime[] = res.filter((stat : OriginByTime) => {
         var statDate = new Date(Date.parse(stat.date));
         var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
         return statDate >= calcDate;
@@ -73,7 +73,7 @@ export class UniChartComponent extends DashBaseComponent implements OnInit {
     this.getData();
   }
 
-  createChart(uniStats : UniStat[], timeSpan : string){
+  createChart(uniStats : OriginByTime[], timeSpan : string){
     if (this.chart){
       this.chart.destroy();
     }

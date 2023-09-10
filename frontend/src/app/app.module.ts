@@ -38,7 +38,8 @@ import { ImgFallbackDirective } from './img-fallback.directive';
 import { PostListComponent } from './component/post/post-list/post-list.component';
 import { PostListItemComponent } from './component/post/post-list/post-list-item/post-list-item.component';
 import { TagChartComponent } from './component/tag/tag-chart/tag-chart.component';
-import { UniChartComponent } from './component/uni-chart/uni-chart.component';
+import { CallUpChartComponent } from './component/call-up-chart/call-up-chart.component';
+import { OriginByTimeChartComponent } from './component/origin-by-time-chart/origin-by-time-chart.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +73,8 @@ import { UniChartComponent } from './component/uni-chart/uni-chart.component';
     PostListComponent,
     PostListItemComponent,
     TagChartComponent,
-    UniChartComponent
+    CallUpChartComponent,
+    OriginByTimeChartComponent
   ],
     imports: [
         BrowserModule,

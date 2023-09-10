@@ -20,7 +20,7 @@ import {TagListComponent} from "../../component/tag/tag-list/tag-list.component"
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
 import {PostListComponent} from "../../component/post/post-list/post-list.component";
 import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
-import {UniChartComponent} from "../../component/uni-chart/uni-chart.component";
+import {CallUpChartComponent} from "../../component/call-up-chart/call-up-chart.component";
 
 @Component({
   selector: 'dash-page',
@@ -77,7 +77,7 @@ export class PageComponent implements OnInit {
   getAdminPageCards() {
     return [
       {type: UserPlanComponent, row: 1, col: 1, height: 2, width: 1},
-      //{type: UniChartComponent, row: 1, col: 2, height: 2, width: 4},
+      //{type: CallUpChartComponent, row: 1, col: 2, height: 2, width: 4},
       {type: OriginMapComponent, row: 3, col: 1, height: 2, width: 1},
       {type: ClicksByTimeComponent, row: 3, col: 5, height: 2, width: 2}
 

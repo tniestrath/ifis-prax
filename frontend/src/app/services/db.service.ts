@@ -7,8 +7,8 @@ import {User} from "../page/page-einzel/user/user";
 import {Callup} from "../component/call-up-chart/call-up-chart.component";
 
 export enum dbUrl {
-  //HOST = "http://analyse.it-sicherheit.de/api",
-  HOST = "http://localhost:8080/api",
+  HOST = "http://analyse.it-sicherheit.de/api",
+  //HOST = "http://localhost:8080/api", DEBUG LINE
   PORT = "",
   GET_TAGS_ALL = "/tags/getPostTagsIdName",
   GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL = "/tags/allTermsRelevanceAndViews",

@@ -30,6 +30,7 @@ public interface WpTermTaxonomyRepository extends JpaRepository<WpTermTaxonomy, 
     @Query("SELECT p.count from WpTermTaxonomy p where p.termId = :id")
     Long getCountById(int id);
 
+    WpTermTaxonomy findByTermId(int termId);
     List<WpTermTaxonomy> findByTermTaxonomyId(Long termTaxonomyId);
 
 }

@@ -128,6 +128,7 @@ public class uniStatController {
         tableRows.append("<th>Datum</th>\n");
         tableRows.append("<th>Besucher</th>\n");
         tableRows.append("<th>Angemeldete Profile</th>\n");
+        tableRows.append("<th>User ohne Abo</th>\n");
         tableRows.append("<th>Basic Profile</th>\n");
         tableRows.append("<th>Basic-Plus Profile</th>\n");
         tableRows.append("<th>Plus Profile</th>\n");
@@ -159,6 +160,7 @@ public class uniStatController {
             tableRows.append("<td>").append(obj.get("Datum")).append("</td>\n");
             tableRows.append("<td>").append(obj.get("Besucher")).append("</td>\n");
             tableRows.append("<td>").append(obj.get("Angemeldete Profile")).append("</td>\n");
+            tableRows.append("<td>").append(obj.get("Angemeldete Nutzer ohne Abo")).append("</td>\n");
             tableRows.append("<td>").append(obj.get("Angemeldete Basic Profile")).append("</td>\n");
             tableRows.append("<td>").append(obj.get("Angemeldete Basic-Plus Profile")).append("</td>\n");
             tableRows.append("<td>").append(obj.get("Angemeldete Plus Profile")).append("</td>\n");

@@ -186,7 +186,7 @@ public class uniStatController {
         return html;
     }
 
-    @GetMapping("/getUniAccTypes")
+    @GetMapping("/getAccountTypeAllYesterday")
     public String getAccTypes() {
         HashMap<String, Long> map = new HashMap<>();
         UniversalStats uni = uniRepo.findFirstByOrderByDatumDesc();

@@ -36,6 +36,9 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       this.db.getUserAccountTypesYesterday().then(res => {
         let map : Map<string, number> = new Map(Object.entries(res));
         this.readMap(map, prev_data);
+        for (var i = 0; i <= data.length; i++) {
+          prev_data[i] = data[i] - prev_data[i];
+        }
         this.prev_total = prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
         this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
         this.createLegend("user-plan-content-box", this.chart, prev_data);
@@ -162,7 +165,10 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
   createLegend(legend_class: string, chart: any, prev_data: number[]){
     const legendBox = document.querySelector("."+legend_class);
+    const userPlanItemHead = document.querySelector("#user-plan-item-head");
     legendBox?.replaceChildren();
+    // @ts-ignore
+    legendBox?.appendChild(userPlanItemHead);
 
     const legendContainer = document.createElement("DIV");
     legendContainer.setAttribute("id", legend_class + "_legend");

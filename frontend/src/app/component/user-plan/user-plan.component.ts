@@ -36,7 +36,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       this.db.getUserAccountTypesYesterday().then(res => {
         let map : Map<string, number> = new Map(Object.entries(res));
         this.readMap(map, prev_data);
-        for (var i = 0; i <= data.length; i++) {
+        for (var i = 0; i < data.length; i++) {
           prev_data[i] = data[i] - prev_data[i];
         }
         this.prev_total = prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);

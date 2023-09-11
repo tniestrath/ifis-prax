@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -251,10 +253,9 @@ public class TagsController {
         return (float)views/time;
     }
 
-    public static Date getDate(int zuruek){
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -zuruek); // Vortag
-        Date vortag = calendar.getTime();
+    public static Date getDate(int zuruek) throws ParseException {
+        String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(zuruek).format(DateTimeFormatter.ISO_DATE);
+        Date vortag = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
         return vortag;
     }
     public static int getDayOfYear(){
@@ -278,7 +279,7 @@ public class TagsController {
 
 
     @GetMapping("/getTagStats")
-    public String getTagStat(@RequestParam int tagId,@RequestParam int limitDaysBack) throws JSONException {
+    public String getTagStat(@RequestParam int tagId,@RequestParam int limitDaysBack, @RequestParam String dataType) throws JSONException, ParseException {
         JSONArray response = new JSONArray();
         int dayOfYear = getDayOfYear();
         TagStat tagStat = new TagStat();
@@ -289,11 +290,12 @@ public class TagsController {
             JSONObject obj =new JSONObject();
             obj.put("id",tagId);
             obj.put("name",termRepository.getNameById(tagId));
-            obj.put("date",getDate(i));
-            obj.put("relevance",getRelevance((HashMap<String, Long>) tagStat.getViewsLastYear(),dayOfYear,i));
-            obj.put("count",getCount(tagId,getDate(i)));
-            obj.put("clicks",tagStat.getViewsLastYear().get(dayOfYear-i));
-
+            obj.put("date", new SimpleDateFormat("yyyy-MM-dd").format(getDate(i)));
+            switch (dataType) {
+                case "relevance" -> obj.put("relevance", getRelevance((HashMap<String, Long>) tagStat.getViewsLastYear(), dayOfYear, i));
+                case "count" -> obj.put("count", getCount(tagId, getDate(i)));
+                case "views" -> obj.put("views", tagStat.getViewsLastYear().get(String.valueOf(dayOfYear - i)));
+            }
             response.put(obj);
         }
 

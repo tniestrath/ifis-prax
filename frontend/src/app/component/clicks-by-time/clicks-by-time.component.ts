@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {SysVars} from "../../services/sys-vars-service";
+import {DashColors} from "../../util/Util";
 
 @Component({
   selector: 'dash-clicks-by-time',
@@ -12,46 +13,37 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
 
   colors : string[] = [];
 
-  labels = ["0/12", "1/13", "2/14", "3/15", "4/16", "5/17", "6/18", "7/19", "8/20", "9/21", "10/22", "11/23"];
+  labels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
   ngOnInit(): void {
     this.setToolTip("Hier wird angezeigt, zu welcher Zeit wie viele Zugriffe auf den Marktplatz" +
       "stattgefunden haben. In Rot die Stunden Nachmittags, in Blau die Vormittags. Durch hovern der Maus über deb Graphen" +
       "erhalten Sie mehr Informationen.");
     if (SysVars.CURRENT_PAGE == "Users") {
       this.db.getClicksByTime(Number(SysVars.USER_ID)).then(res => {
-        this.chart = this.createChart2("time_clicks", this.labels, res.slice(0, 12), res.slice(12), undefined);
+        this.chart = this.createChart2("time_clicks", this.labels, res, undefined);
       });
     } else if (SysVars.CURRENT_PAGE == "Overview") {
       this.db.getClicksByTimeAll().then(res => {
-        this.chart = this.createChart2("time_clicks", this.labels, res.slice(0, 12), res.slice(12), undefined);
+        this.chart = this.createChart2("time_clicks", this.labels, res, undefined);
       });
     }
   }
-  createChart2(canvas_id : string, labels: string[], data: number[], data2: number[], onClick : EventEmitter<number> | undefined){
+  createChart2(canvas_id : string, labels: string[], data: number[], onClick : EventEmitter<number> | undefined){
     // @ts-ignore
     return new Chart(canvas_id, {
       type: "line",
       data: {
         labels : labels,
         datasets: [{
-          label: "Vormittags",
+          label: "",
           data: data,
-          backgroundColor: "rgba(90, 121, 149, .5)",
+          backgroundColor: DashColors.Red_50,
           //borderRadius: 5,
           borderWidth: 3,
-          borderColor : "rgb(90, 121, 149)",
+          borderColor : DashColors.Red,
           borderJoinStyle: "round",
-          fill: true
-        },{
-          label: "Nachmittags",
-          data: data2,
-          backgroundColor: "rgba(122, 24, 51, .5)",
-          //borderRadius: 5,
-          borderWidth: 3,
-          borderColor: "rgb(122, 24, 51)",
-          borderJoinStyle: "round",
-          fill: true
-         }]
+          fill: true,
+        }]
       },
       options: {
         aspectRatio: 1,
@@ -60,19 +52,19 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
             display: false
           },
           title: {
-            display: false,
-            text: "",
+            display: true,
+            text: "Aufrufe nach Uhrzeit",
             position: "top",
             fullSize: true,
             font: {
-              size: 50,
+              size: 18,
               weight: "bold",
-              family: 'Times New Roman'
+              family: "Helvetica Neue sans-serif"
             }
           },
           legend: {
             onClick: (e) => null,
-            display: true
+            display: false
           },
           tooltip: {
             displayColors: false,
@@ -86,29 +78,12 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
               //@ts-ignore
               title(tooltipItems): string {
                 // @ts-ignore
-                if (tooltipItems.at(0).datasetIndex == 0){
-                  // @ts-ignore
-                  return labels[tooltipItems.at(0).dataIndex].split("/", 1) + " Uhr";
-                }
-                // @ts-ignore
-                else if (tooltipItems.at(0).datasetIndex == 1){
-                  // @ts-ignore
-                  return labels[tooltipItems.at(0).dataIndex].split("/", 2).at(1)+ " Uhr";
-                }
-
+                return labels[tooltipItems.at(0).dataIndex] + " Uhr";
               },
               //@ts-ignore
               label: ((tooltipItem) => {
-                if (tooltipItem.datasetIndex == 0){
-                  // @ts-ignore
-                  return "Clicks: " + data[tooltipItem.dataIndex].toFixed();
-                }
                 // @ts-ignore
-                else if (tooltipItem.datasetIndex == 1){
-                  // @ts-ignore
-                  return "Clicks: " + data2[tooltipItem.dataIndex].toFixed();
-                }
-
+                return "Clicks: " + data[tooltipItem.dataIndex].toFixed();
               })
             }
           },

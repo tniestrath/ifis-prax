@@ -20,7 +20,8 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
 
   selectedTag_id : number = 0;
 
-  timeSpan : string = "all_time";
+  dataType : string = "views"
+  timeSpan : string = "month";
   data : Promise<TagStats[]> | undefined;
 
   timeSpanMap = new Map<string, number>([
@@ -34,10 +35,10 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
   getData(event?: Event) {
     if (event !== undefined) {
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
+      if ((event?.target as HTMLInputElement).type == "select-one") this.dataType = (event?.target as HTMLInputElement).value;
     }
-    if (this.data == undefined){this.data = this.db.getTagStatsByID(this.selectedTag_id,this.timeSpanMap.get(this.timeSpan) || 365*2)}
-    this.data.then((res : TagStats[]) => {
-      var tagLabel : string[] = [];
+    this.db.getTagStatsByID(this.selectedTag_id,this.timeSpanMap.get(this.timeSpan) || 365*2, this.dataType).then((res : TagStats[]) => {
+      var tagName : string = "";
       var tagViews : number[] = [];
       var tagRelevance : number[] = [];
       var tagCount : number[] = [];
@@ -47,32 +48,47 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       res.sort((a, b) => {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       })
+      tagName = res[0].name;
       for (var tagStats of res) {
-        tagLabel.push(tagStats.name);
         tagCount.push(Number(tagStats.count));
         tagRelevance.push(Number(tagStats.relevance));
         tagViews.push(Number(tagStats.views));
-        tagDate.push(new Date(tagStats.date).toLocaleDateString());
         tagIds.push(Number(tagStats.id));
+        let date = new Date(Date.parse(tagStats.date));
+        let formattedDate = date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
+
+        tagDate.push(formattedDate);
       }
-      console.log(tagDate);
-      this.createChart(tagLabel, tagViews, tagRelevance, tagCount, tagDate);
+      switch (this.dataType) {
+        case "views":
+          this.createChart("Views", tagViews, tagDate, DashColors.Red, tagName);
+          break;
+        case "relevance":
+          this.createChart("Relevanz", tagRelevance, tagDate, DashColors.Blue, tagName);
+          break;
+        case "count":
+          this.createChart("Beiträge zum Thema", tagCount, tagDate, DashColors.Black, tagName);
+          break;
+      }
+
     }).finally(() => {this.visibility = "visible"});
   }
 
   ngOnInit(): void {
+    this.setToolTip("Diese Grafik zeigt die Views / Relevanz / Anzahl aller Beiträge zum Thema, im angegebenen Zeitraum. " +
+      "Sie können einen Tag anwählen, um dessen Informationen hier anzuzeigen.")
     SysVars.SELECTED_TAG.subscribe((id) => {
       this.selectedTag_id = id;
       this.getData()
     })
   }
 
-  private createChart(tagLabel: string[], tagViews: number[], tagRelevance: number[], tagCount: number[], tagDate: string[]) {
+  private createChart(dataLabel: string, data: number[], dates: string[], color : string, tagName : string) {
     if (this.chart){
       this.chart.destroy();
     }
     var timestamps = [];
-    for (var date of tagDate) {
+    for (var date of dates) {
       if (date == "day"){
         timestamps.push(new Date(date).getHours().toString());
       }
@@ -81,7 +97,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       }
     }
 
-    const max = Math.max.apply(null, tagViews);
+    const max = Math.max.apply(null, data);
 
     // @ts-ignore
     this.chart = new Chart("tag_chart", {
@@ -89,26 +105,10 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       data: {
         labels: timestamps,
         datasets: [{
-          label: "Views",
-          data: tagViews,
-          backgroundColor: DashColors.Red,
-          borderColor: DashColors.Red,
-          borderJoinStyle: 'round',
-          borderWidth: 5
-        },
-        {
-          label: "Relevanz",
-          data: tagRelevance,
-          backgroundColor: DashColors.Blue,
-          borderColor: DashColors.Blue,
-          borderJoinStyle: 'round',
-          borderWidth: 5
-        },
-        {
-          label: "Beiträge zum Thema",
-          data: tagCount,
-          backgroundColor: DashColors.Black,
-          borderColor: DashColors.Black,
+          label: dataLabel,
+          data: data,
+          backgroundColor: color,
+          borderColor: color,
           borderJoinStyle: 'round',
           borderWidth: 5
         }]
@@ -117,7 +117,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
         aspectRatio: 2.8,
         layout: {
           padding: {
-            bottom: -45
+            bottom: 0
           }
         },
         scales: {
@@ -135,17 +135,17 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
           },
           title: {
             display: true,
-            text: "",
-            position: "bottom",
+            text: tagName,
+            position: "top",
             fullSize: true,
             font: {
               size: 18,
               weight: "bold",
-              family: 'Times New Roman'
+              family: "Helvetica Neue sans-serif"
             }
           },
           legend: {
-            display: true,
+            display: false,
             position: "bottom"
           },
           tooltip: {

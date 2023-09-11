@@ -8,7 +8,7 @@ import {Callup} from "../component/call-up-chart/call-up-chart.component";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
-  //HOST = "http://localhost:8080/api", DEBUG LINE
+  //HOST = "http://localhost:8080/api", // DEBUG LINE
   PORT = "",
   GET_TAGS_ALL = "/tags/getPostTagsIdName",
   GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL = "/tags/allTermsRelevanceAndViews",
@@ -16,7 +16,7 @@ export enum dbUrl {
 
   GET_TAG_POST_COUNT = "/tags/getPostcount?id=",
   GET_TAG_RANKING = "/tags/getTermRanking",
-  GET_TAGSTATS_BY_ID = "/tags/getTagStats?tagId=ID&limitDaysBack=DAYS",
+  GET_TAGSTATS_BY_ID = "/tags/getTagStats?tagId=ID&limitDaysBack=DAYS&dataType=TYPE",
 
   GET_USER_IMG = "/users/profilePic?id=",
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
@@ -32,7 +32,7 @@ export enum dbUrl {
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
 
   GET_POST = "/posts/getPostStatsByIdWithAuthor?id=",
-  GET_POST_BY_USERS_BEST = "/posts/bestPost?id=",
+  GET_POST_BY_USERS_BEST = "/posts/bestPost?id=ID&type=TYPE",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
@@ -45,7 +45,7 @@ export enum dbUrl {
   GET_CALLUPS_BY_TIME = "/bericht/callups?days=DAYS",
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/bericht/getAccountTypeAllYesterday",
 
-  LOGIN = "/login",
+  LOGIN = "/login?user=USERNAME&pass=PASSWORD",
   VALIDATE = "/validate",
 }
 
@@ -67,7 +67,7 @@ export class DbService {
   }
 
   async login(username : string, userpass : string) {
-    return await fetch(DbService.getUrl(dbUrl.LOGIN) + "?user=" + username + "&pass=" + userpass, {credentials: "include"}).then(res => res.blob());
+    return await fetch(DbService.getUrl(dbUrl.LOGIN).replace("USERNAME", username).replace("PASSWORD", userpass), {credentials: "include"}).then(res => res.blob());
   }
   async getUserByLogin(login : string) : Promise<User> {
     return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGINNAME) + login, {credentials: "include"}).then(res => res.json());
@@ -97,8 +97,8 @@ export class DbService {
   async getTagPostCount(id : string){
     return await fetch(DbService.getUrl(dbUrl.GET_TAG_POST_COUNT) + id, {credentials: "include"}).then(res => res.json());
   }
-  async getAllTagsPostCount(percantage : number) : Promise<Map<string, number>>{
-    return await fetch(DbService.getUrl((dbUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL) + percantage) , {credentials: "include"}).then(res => res.json());
+  async getAllTagsPostCount(percentage : number) : Promise<Map<string, number>>{
+    return await fetch(DbService.getUrl((dbUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL) + percentage) , {credentials: "include"}).then(res => res.json());
   }
 
   async getTagRanking() {
@@ -146,7 +146,7 @@ export class DbService {
   }
 
   async getUserBestPost(id: string, type: string){
-    return fetch(DbService.getUrl(dbUrl.GET_POST_BY_USERS_BEST) + id + "&type=" + type, {credentials: "include"}).then(res => res.json()).catch(reason => {return new Post()});
+    return fetch(DbService.getUrl(dbUrl.GET_POST_BY_USERS_BEST).replace("ID", id).replace("TYPE", type), {credentials: "include"}).then(res => res.json()).catch(reason => {return new Post()});
   }
 
   async getUserNewestPost(id: string): Promise<Post> {
@@ -199,16 +199,14 @@ export class DbService {
   }
 
   async getClicksByTime(id : number){
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id, {credentials: "include"}).then(res => {
-      return res.json();
-    });
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id, {credentials: "include"}).then(res => res.json());
   }
   async getClicksByTimeAll() : Promise<number[]>{
     return await fetch((DbService.getUrl(dbUrl.GET_USERS_ALL_VIEWS_PER_HOUR)), {credentials: "include"}).then(res => res.json());
   }
 
-  async getTagStatsByID(id: number, timeSpan: number) : Promise<TagStats[]> {
-    return await fetch(DbService.getUrl(dbUrl.GET_TAGSTATS_BY_ID).replace("ID", String(id)).replace("DAYS", String(timeSpan)), {credentials: "include"}).then(res => res.json());
+  async getTagStatsByID(id: number, timeSpan: number, dataType: string) : Promise<TagStats[]> {
+    return await fetch(DbService.getUrl(dbUrl.GET_TAGSTATS_BY_ID).replace("ID", String(id)).replace("DAYS", String(timeSpan)).replace("TYPE", dataType), {credentials: "include"}).then(res => res.json());
   }
 
   async getCallupsByTime(days: number) : Promise<Callup[]> {

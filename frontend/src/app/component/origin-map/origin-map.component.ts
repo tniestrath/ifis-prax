@@ -150,7 +150,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
     pathElement.addEventListener('click', () => {
       var pathBoundingBox = pathElement.getBoundingClientRect();
-      var pathCenterX = pathBoundingBox.x + pathBoundingBox.width / 2;
+      // @ts-ignore
+      var pathCenterX = pathBoundingBox.x + pathBoundingBox.width / 2 + ((visualViewport.width * .5 - pathBoundingBox.x) * .03);
       var pathCenterY = pathBoundingBox.y + pathBoundingBox.height / 2;
 
       tooltip.style.display = 'block';

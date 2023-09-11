@@ -48,19 +48,20 @@ public class UniversalStats {
     @Column(name = "umsatz")
     private long umsatz;
 
-    @Column(name = "totalClicks")
-    private int totalClicks;
+    @Column(name = "total_clicks")
+    private long totalClicks;
 
     public UniversalStats() {
     }
 
-    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum) {
+    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum, int totalClicks) {
         this.besucherAnzahl = besucherAnzahl;
         this.anbieterProfileAnzahl = anbieterProfileAnzahl;
         this.anzahlArtikel = anzahlArtikel;
         this.anzahlNews = anzahlNews;
         this.anzahlBlog = anzahlBlog;
         this.datum = datum;
+        this.totalClicks = totalClicks;
     }
 
     public UniversalStats(Date datum) {
@@ -196,7 +197,7 @@ public class UniversalStats {
                 '}';
     }
 
-    public int getTotalClicks() {
+    public long getTotalClicks() {
         return totalClicks;
     }
 

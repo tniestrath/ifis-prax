@@ -25,6 +25,18 @@ public class uniStatController {
     @Autowired
     universalStatsRepository uniRepo;
 
+    @Autowired
+    private WPUserMetaRepository wpUserMetaRepository;
+
+
+    public int getAdminCount() {
+        int adminCount = 0;
+        for(String cap : wpUserMetaRepository.getWpCapabilities()) {
+            if(cap.contains("administrator")){ adminCount++;}
+        }
+        return adminCount;
+    }
+
     @GetMapping(value = "/callups")
     public String getCallupsByTime(@RequestParam() int days) throws JSONException, ParseException {
         JSONArray response = new JSONArray();
@@ -50,7 +62,7 @@ public class uniStatController {
         obj.put("Datum",uniStat.getDatum());
         obj.put("Besucher",uniStat.getBesucherAnzahl());
 
-        obj.put("Angemeldete Profile",uniStat.getAnbieterProfileAnzahl());
+        obj.put("Angemeldete Profile",uniStat.getAnbieterProfileAnzahl() - getAdminCount());
         obj.put("Angemeldete Basic Profile",uniStat.getAnbieterBasicAnzahl());
         obj.put("Angemeldete Basic-Plus Profile",uniStat.getAnbieterBasicPlusAnzahl());
         obj.put("Angemeldete Plus Profile",uniStat.getAnbieterPlusAnzahl());
@@ -130,7 +142,7 @@ public class uniStatController {
             JSONObject obj = new JSONObject();
             obj.put("Datum", new SimpleDateFormat("dd.MM.yyyy").format(uniStat.getDatum()));
             obj.put("Besucher", uniStat.getBesucherAnzahl());
-            obj.put("Angemeldete Profile", uniStat.getAnbieterProfileAnzahl());
+            obj.put("Angemeldete Profile", uniStat.getAnbieterProfileAnzahl() - getAdminCount());
             obj.put("Angemeldete Basic Profile", uniStat.getAnbieterBasicAnzahl());
             obj.put("Angemeldete Basic-Plus Profile", uniStat.getAnbieterBasicPlusAnzahl());
             obj.put("Angemeldete Plus Profile", uniStat.getAnbieterPlusAnzahl());
@@ -191,12 +203,13 @@ public class uniStatController {
         HashMap<String, Long> map = new HashMap<>();
         UniversalStats uni = uniRepo.findTop1ByOrderByDatumDesc();
 
-        map.put("Anbieter", uni.getAnbieterProfileAnzahl() - uni.getAnbieterBasicAnzahl() - uni.getAnbieterBasicPlusAnzahl() - uni.getAnbieterPlusAnzahl() - uni.getAnbieterPremiumAnzahl() - uni.getAnbieterPremiumSponsorenAnzahl());
+        map.put("Anbieter", uni.getAnbieterProfileAnzahl() - uni.getAnbieterBasicAnzahl() - uni.getAnbieterBasicPlusAnzahl() - uni.getAnbieterPlusAnzahl() - uni.getAnbieterPremiumAnzahl() - uni.getAnbieterPremiumSponsorenAnzahl() - getAdminCount());
         map.put("Basic", uni.getAnbieterBasicAnzahl());
         map.put("Basic-Plus", uni.getAnbieterBasicPlusAnzahl());
         map.put("Plus", uni.getAnbieterPlusAnzahl());
         map.put("Premium", uni.getAnbieterPremiumAnzahl());
         map.put("Sponsor", uni.getAnbieterPremiumSponsorenAnzahl());
+
 
         return new JSONObject(map).toString();
 

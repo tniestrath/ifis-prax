@@ -42,8 +42,8 @@ export enum dbUrl {
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
 
-  GET_UNISTATS_BY_TYPE_AND_TIME = "/bericht/callups?days=DAYS",
-
+  GET_CALLUPS_BY_TIME = "/bericht/callups?days=DAYS",
+  GET_USERS_ACCOUNTTYPES_YESTERDAY = "/bericht/getAccountTypeAllYesterday",
 
   LOGIN = "/login",
   VALIDATE = "/validate",
@@ -212,6 +212,10 @@ export class DbService {
   }
 
   async getCallupsByTime(days: number) : Promise<Callup[]> {
-    return await fetch(DbService.getUrl(dbUrl.GET_UNISTATS_BY_TYPE_AND_TIME.replace("DAYS", String(days))), {credentials: "include"}).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_CALLUPS_BY_TIME.replace("DAYS", String(days))), {credentials: "include"}).then(res => res.json());
+  }
+
+  async getUserAccountTypesYesterday() {
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY), {credentials: "include"}).then(res => res.json());
   }
 }

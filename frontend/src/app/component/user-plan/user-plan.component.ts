@@ -16,31 +16,62 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
   prev_total : number = 0;
   prev_total_text : any;
 
+  labels = ["Ohne Abo", "Basic", "Basic-Plus", "Plus", "Premium", "Sponsor"];
+
   ngOnInit(): void {
     if (this.chart != undefined) {
       this.chart.destroy();
     }
-    var labels = ["Ohne Abo", "Basic", "Basic-Plus", "Plus", "Premium", "Sponsor"];
     var data = [0,0,0,0,0,0];
     var prev_data = [0,0,0,0,0,0];
 
     this.db.getUserAccountTypes().then(res => {
       let map : Map<string, number> = new Map(Object.entries(res));
-      map.delete("Administrator");
-      map.forEach((value, key) => {
-        if (key == "Anbieter") {labels[0] = key; data[0] = (value == 0 || value == undefined ? 0 : value)}
-        if (key == "Basic") {labels[1] = key; data[1] = (value == 0 || value == undefined ? 0 : value)}
-        if (key == "Basic-Plus") {labels[2] = key; data[2] = (value == 0 || value == undefined ? 0 : value)}
-        if (key == "Plus") {labels[3] = key; data[3] = (value == 0 || value == undefined ? 0 : value)}
-        if (key == "Premium") {labels[4] = key; data[4] = (value == 0 || value == undefined ? 0 : value)}
-        if (key == "Sponsor") {labels[5] = key; data[5] = (value == 0 || value == undefined ? 0 : value)}
-      })
-      this.chart = this.createChart("user_plan_chart", labels, data, undefined);
+      this.readMap(map, data);
+      this.chart = this.createChart("user_plan_chart", this.labels, data, undefined);
       this.createLegend("user-plan-content-box", this.chart, prev_data);
       this.chart_total = data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
-      this.prev_total = prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
-      this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
       this.cdr.detectChanges();
+    }).finally(() => {
+      this.db.getUserAccountTypesYesterday().then(res => {
+        let map : Map<string, number> = new Map(Object.entries(res));
+        this.readMap(map, prev_data);
+        this.prev_total = prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+        this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
+        this.createLegend("user-plan-content-box", this.chart, prev_data);
+        this.cdr.detectChanges();
+      })
+    })
+
+  }
+
+  private readMap(map: Map<string, number>, data: number[]) {
+    map.delete("Administrator");
+    map.forEach((value, key) => {
+      if (key == "Anbieter") {
+        this.labels[0] = "Ohne Abo";
+        data[0] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Basic") {
+        this.labels[1] = key;
+        data[1] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Basic-Plus") {
+        this.labels[2] = key;
+        data[2] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Plus") {
+        this.labels[3] = key;
+        data[3] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Premium") {
+        this.labels[4] = key;
+        data[4] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Sponsor") {
+        this.labels[5] = key;
+        data[5] = (value == 0 || value == undefined ? 0 : value)
+      }
     })
   }
 
@@ -131,6 +162,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
   createLegend(legend_class: string, chart: any, prev_data: number[]){
     const legendBox = document.querySelector("."+legend_class);
+    legendBox?.replaceChildren();
 
     const legendContainer = document.createElement("DIV");
     legendContainer.setAttribute("id", legend_class + "_legend");

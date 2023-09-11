@@ -205,7 +205,7 @@ public class uniStatController {
         HashMap<String, Long> map = new HashMap<>();
         UniversalStats uni = uniRepo.findTop1ByOrderByDatumDesc();
 
-        map.put("Anbieter", uni.getAnbieterProfileAnzahl() - uni.getAnbieterBasicAnzahl() - uni.getAnbieterBasicPlusAnzahl() - uni.getAnbieterPlusAnzahl() - uni.getAnbieterPremiumAnzahl() - uni.getAnbieterPremiumSponsorenAnzahl() - getAdminCount());
+        map.put("Anbieter", uni.getAnbieter_abolos_anzahl());
         map.put("Basic", uni.getAnbieterBasicAnzahl());
         map.put("Basic-Plus", uni.getAnbieterBasicPlusAnzahl());
         map.put("Plus", uni.getAnbieterPlusAnzahl());

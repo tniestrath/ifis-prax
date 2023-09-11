@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "universal_stats")
-public class universalStats {
+public class UniversalStats {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,10 +48,13 @@ public class universalStats {
     @Column(name = "umsatz")
     private long umsatz;
 
-    public universalStats() {
+    @Column(name = "totalClicks")
+    private int totalClicks;
+
+    public UniversalStats() {
     }
 
-    public universalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum) {
+    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum) {
         this.besucherAnzahl = besucherAnzahl;
         this.anbieterProfileAnzahl = anbieterProfileAnzahl;
         this.anzahlArtikel = anzahlArtikel;
@@ -60,7 +63,7 @@ public class universalStats {
         this.datum = datum;
     }
 
-    public universalStats(Date datum) {
+    public UniversalStats(Date datum) {
         this.datum = datum;
     }
 
@@ -171,7 +174,7 @@ public class universalStats {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof universalStats that)) return false;
+        if (!(o instanceof UniversalStats that)) return false;
         return getId() == that.getId() && Objects.equals(getBesucherAnzahl(), that.getBesucherAnzahl()) && Objects.equals(getAnbieterProfileAnzahl(), that.getAnbieterProfileAnzahl()) && Objects.equals(getAnzahlArtikel(), that.getAnzahlArtikel()) && Objects.equals(getAnzahlNews(), that.getAnzahlNews()) && Objects.equals(getAnzahlBlog(), that.getAnzahlBlog()) && Objects.equals(getDatum(), that.getDatum());
     }
 
@@ -191,6 +194,14 @@ public class universalStats {
                 ", anzahlBlog=" + anzahlBlog +
                 ", datum=" + datum +
                 '}';
+    }
+
+    public int getTotalClicks() {
+        return totalClicks;
+    }
+
+    public void setTotalClicks(int totalClicks) {
+        this.totalClicks = totalClicks;
     }
 }
 

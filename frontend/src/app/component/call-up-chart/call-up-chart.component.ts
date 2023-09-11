@@ -28,7 +28,8 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
   timeSpan : string = "all_time";
 
   data : Callup[] =
-    [ new Callup(0,0, "2023-06-06"),
+    [
+     /* new Callup(0,0, "2023-06-06"),
       new Callup(1,1, "2023-06-07"),
       new Callup(2,1, "2023-06-08"),
       new Callup(80, 70, "2023-09-05"),
@@ -37,7 +38,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       new Callup(69, 66, "2023-07-07"),
       new Callup(75, 55, "2023-07-08"),
       new Callup(3, 2, "2023-07-05"),
-      new Callup(4, 4, "2023-07-06")
+      new Callup(4, 4, "2023-07-06")*/
     ];
 
   timeSpanMap = new Map<string, number>([
@@ -53,9 +54,8 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     if (event !== undefined) {
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
-    /*if (this.data == undefined){this.data = this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365*2))}
-    this.data.then((res : Callup[]) => {*/
-      var res = this.data;
+    this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365*2)).then((res : Callup[]) => {
+      this.data = res;
 
       var time_filtered : Callup[] = res.filter((stat : Callup) => {
         var statDate = new Date(Date.parse(stat.date));
@@ -65,10 +65,9 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       time_filtered.sort((a, b) => {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       });
-      /*});*/
     this.createChart(time_filtered, this.timeSpan);
+    });
   }
-
   ngOnInit(): void {
     this.getData();
   }

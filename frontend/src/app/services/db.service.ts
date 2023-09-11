@@ -42,7 +42,7 @@ export enum dbUrl {
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
 
-  GET_UNISTATS_BY_TYPE_AND_TIME = "/unistats/getByTypeAndTime?type=TYPE&time=TIME",
+  GET_UNISTATS_BY_TYPE_AND_TIME = "/bericht/callups?days=DAYS",
 
 
   LOGIN = "/login",
@@ -211,7 +211,7 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_TAGSTATS_BY_ID).replace("ID", String(id)).replace("DAYS", String(timeSpan)), {credentials: "include"}).then(res => res.json());
   }
 
-  async getUniStatsByTypeAndTime(type: string, time: number) : Promise<Callup[]> {
-    return await fetch(DbService.getUrl(dbUrl.GET_UNISTATS_BY_TYPE_AND_TIME.replace("TYPE", type).replace("TIME", String(time))), {credentials: "include"}).then(res => res.json());
+  async getCallupsByTime(days: number) : Promise<Callup[]> {
+    return await fetch(DbService.getUrl(dbUrl.GET_UNISTATS_BY_TYPE_AND_TIME.replace("DAYS", String(days))), {credentials: "include"}).then(res => res.json());
   }
 }

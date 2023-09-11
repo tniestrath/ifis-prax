@@ -28,7 +28,8 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
     ["all_time", 365*2],
     ["half_year", 182],
     ["month", 31],
-    ["week", 7]
+    ["week", 7],
+    ["day", 1]
   ]);
 
 

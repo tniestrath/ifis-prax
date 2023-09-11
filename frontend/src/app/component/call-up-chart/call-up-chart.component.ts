@@ -53,8 +53,8 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     if (event !== undefined) {
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
-    /*if (this.data == undefined){this.data = this.db.getUniStatsByTypeAndTime(this.statType, (this.timeSpanMap.get(this.timeSpan) ?? 365*2))}
-    this.data.then((res : UniStat[]) => {*/
+    /*if (this.data == undefined){this.data = this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365*2))}
+    this.data.then((res : Callup[]) => {*/
       var res = this.data;
 
       var time_filtered : Callup[] = res.filter((stat : Callup) => {

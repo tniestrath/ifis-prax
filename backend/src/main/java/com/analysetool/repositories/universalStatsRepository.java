@@ -1,5 +1,5 @@
 package com.analysetool.repositories;
-import com.analysetool.modells.universalStats;
+import com.analysetool.modells.UniversalStats;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -8,16 +8,17 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface universalStatsRepository extends JpaRepository<universalStats, Integer> {
+public interface universalStatsRepository extends JpaRepository<UniversalStats, Integer> {
 
     @Override
-    Optional<universalStats> findById(Integer integer);
+    Optional<UniversalStats> findById(Integer integer);
 
     // Hier können Sie benutzerdefinierte Abfragen hinzufügen, wenn nötig
-    Optional<universalStats> findByDatum(Date Datum);
+    Optional<UniversalStats> findByDatum(Date Datum);
 
+    List<UniversalStats> getAllByDatumAfter(Date date);
 
-    List<universalStats> findTop7ByOrderByDatumDesc();
+    List<UniversalStats> findTop7ByOrderByDatumDesc();
 
 }
 

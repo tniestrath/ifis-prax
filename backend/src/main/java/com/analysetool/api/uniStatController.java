@@ -1,14 +1,12 @@
 package com.analysetool.api;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,12 +22,28 @@ public class uniStatController {
     @Autowired
     universalStatsRepository uniRepo;
 
+    @GetMapping(value = "/callups")
+    public String getCallupsByTime(@RequestParam() int days) throws JSONException {
+        JSONArray respose = new JSONArray();
+
+        List<UniversalStats> universalStatsList = uniRepo.getAllByDatumAfter(Date.from(Instant.from(LocalDate.now(ZoneId.systemDefault()).minusDays(days))));
+        for (UniversalStats uniStat : universalStatsList) {
+            JSONObject callup = new JSONObject();
+            callup.put("date", new SimpleDateFormat("yyyy-mm-dd").format(uniStat.getDatum()));
+            callup.put("clicks", uniStat.getTotalClicks());
+            callup.put("visitors", uniStat.getVisitorsCount());
+
+            respose.put(callup);
+        }
+        return respose.toString();
+    }
+
     @GetMapping(value = "/gestern", produces = MediaType.TEXT_HTML_VALUE)
     public String getLetzte() throws JSONException {
         JSONObject obj = new JSONObject();
-        universalStats uniStat=uniRepo.findAll().get(uniRepo.findAll().size()-1);
+        UniversalStats uniStat=uniRepo.findAll().get(uniRepo.findAll().size()-1);
         obj.put("Datum",uniStat.getDatum());
-        obj.put("Besucher",uniStat.getBesucherAnzahl());
+        obj.put("Besucher",uniStat.getVisitorsCount());
 
         obj.put("Angemeldete Profile",uniStat.getAnbieterProfileAnzahl());
         obj.put("Angemeldete Basic Profile",uniStat.getAnbieterBasicAnzahl());
@@ -86,7 +100,7 @@ public class uniStatController {
     }
     @GetMapping(value = "/letzte7Tage", produces = MediaType.TEXT_HTML_VALUE)
     public String getLast7Days() throws JSONException {
-        List<universalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse <--GPT speaks?
+        List<UniversalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse <--GPT speaks?
         Collections.reverse(last7DaysStats); // So
 
         StringBuilder tableRows = new StringBuilder();
@@ -107,10 +121,10 @@ public class uniStatController {
         tableRows.append("<th>Umsatz</th>\n");
         tableRows.append("</tr>\n");
 
-        for (universalStats uniStat : last7DaysStats) {
+        for (UniversalStats uniStat : last7DaysStats) {
             JSONObject obj = new JSONObject();
             obj.put("Datum", new SimpleDateFormat("dd.MM.yyyy").format(uniStat.getDatum()));
-            obj.put("Besucher", uniStat.getBesucherAnzahl());
+            obj.put("Besucher", uniStat.getVisitorsCount());
             obj.put("Angemeldete Profile", uniStat.getAnbieterProfileAnzahl());
             obj.put("Angemeldete Basic Profile", uniStat.getAnbieterBasicAnzahl());
             obj.put("Angemeldete Basic-Plus Profile", uniStat.getAnbieterBasicPlusAnzahl());

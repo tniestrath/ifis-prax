@@ -1,12 +1,10 @@
 package com.analysetool.services;
 
-import com.analysetool.api.PostController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +27,6 @@ import java.util.regex.Pattern;
 import com.analysetool.util.IPHelper;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Hex;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
@@ -1202,7 +1198,7 @@ public class LogService {
                         InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
                         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-                        universalStats uniStats = proccessLinesOfOldLog(new universalStats(date), bufferedReader);
+                        UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date), bufferedReader);
                         uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
                         //m
                         uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
@@ -1236,7 +1232,7 @@ public class LogService {
                     InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-                    universalStats uniStats = proccessLinesOfOldLog(new universalStats(date), bufferedReader);
+                    UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date), bufferedReader);
                     uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
                     uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
                     uniStats = setAccountTypeAllUniStats(uniStats);
@@ -1251,7 +1247,7 @@ public class LogService {
     }
 
 
-    public universalStats proccessLinesOfOldLog(universalStats uniStat,BufferedReader bufferedReader) throws IOException {
+    public UniversalStats proccessLinesOfOldLog(UniversalStats uniStat, BufferedReader bufferedReader) throws IOException {
 
         ArrayList<String> uniqueIps = new ArrayList<>();
         String line;
@@ -1341,7 +1337,7 @@ public class LogService {
         return uniStat;
     }
 
-    public universalStats setNewsArticelBlogCountForUniversalStats(universalStats uniStats){
+    public UniversalStats setNewsArticelBlogCountForUniversalStats(UniversalStats uniStats){
 
         List<Post> posts = postRepository.findAllUserPosts();
 
@@ -1382,7 +1378,7 @@ public class LogService {
     }
 
 
-    public universalStats setNewsArticelBlogCountForUniversalStats(Date dateStr, universalStats uniStats) {
+    public UniversalStats setNewsArticelBlogCountForUniversalStats(Date dateStr, UniversalStats uniStats) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -1430,7 +1426,7 @@ public class LogService {
     }
 
 
-    public universalStats setAccountTypeAllUniStats(universalStats uniStats){
+    public UniversalStats setAccountTypeAllUniStats(UniversalStats uniStats){
         HashMap<String, Integer> counts = new HashMap<>();
 
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {

@@ -21,7 +21,7 @@ public interface universalStatsRepository extends JpaRepository<UniversalStats, 
 
     List<UniversalStats> findTop7ByOrderByDatumDesc();
 
-    UniversalStats findFirstByOrderByDatumDesc();
+    UniversalStats findTop1ByOrderByDatumDesc();
 
 
 }

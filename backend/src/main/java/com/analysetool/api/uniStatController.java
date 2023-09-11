@@ -26,8 +26,8 @@ public class uniStatController {
     public String getCallupsByTime(@RequestParam() int days) throws JSONException {
         JSONArray respose = new JSONArray();
 
-        List<UniversalStats> universalStatsList = uniRepo.getAllByDatumAfter(Date.from(Instant.from(LocalDate.now(ZoneId.systemDefault()).minusDays(days))));
-        for (UniversalStats uniStat : universalStatsList) {
+        List<universalStats> universalStatsList = uniRepo.getAllByDatumAfter(Date.from(Instant.from(LocalDate.now(ZoneId.systemDefault()).minusDays(days))));
+        for (universalStats uniStat : universalStatsList) {
             JSONObject callup = new JSONObject();
             callup.put("date", new SimpleDateFormat("yyyy-mm-dd").format(uniStat.getDatum()));
             callup.put("clicks", uniStat.getTotalClicks());
@@ -41,7 +41,7 @@ public class uniStatController {
     @GetMapping(value = "/gestern", produces = MediaType.TEXT_HTML_VALUE)
     public String getLetzte() throws JSONException {
         JSONObject obj = new JSONObject();
-        UniversalStats uniStat=uniRepo.findAll().get(uniRepo.findAll().size()-1);
+        universalStats uniStat=uniRepo.findAll().get(uniRepo.findAll().size()-1);
         obj.put("Datum",uniStat.getDatum());
         obj.put("Besucher",uniStat.getVisitorsCount());
 
@@ -100,7 +100,7 @@ public class uniStatController {
     }
     @GetMapping(value = "/letzte7Tage", produces = MediaType.TEXT_HTML_VALUE)
     public String getLast7Days() throws JSONException {
-        List<UniversalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse <--GPT speaks?
+        List<universalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse <--GPT speaks?
         Collections.reverse(last7DaysStats); // So
 
         StringBuilder tableRows = new StringBuilder();
@@ -121,7 +121,7 @@ public class uniStatController {
         tableRows.append("<th>Umsatz</th>\n");
         tableRows.append("</tr>\n");
 
-        for (UniversalStats uniStat : last7DaysStats) {
+        for (universalStats uniStat : last7DaysStats) {
             JSONObject obj = new JSONObject();
             obj.put("Datum", new SimpleDateFormat("dd.MM.yyyy").format(uniStat.getDatum()));
             obj.put("Besucher", uniStat.getVisitorsCount());

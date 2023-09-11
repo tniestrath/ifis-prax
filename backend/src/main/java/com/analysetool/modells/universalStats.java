@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "universal_stats")
-public class UniversalStats {
+public class universalStats {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,13 +48,10 @@ public class UniversalStats {
     @Column(name = "umsatz")
     private long umsatz;
 
-    @Column(name= "totalClicks")
-    private int totalClicks;
-
-    public UniversalStats() {
+    public universalStats() {
     }
 
-    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum) {
+    public universalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum) {
         this.besucherAnzahl = besucherAnzahl;
         this.anbieterProfileAnzahl = anbieterProfileAnzahl;
         this.anzahlArtikel = anzahlArtikel;
@@ -63,7 +60,7 @@ public class UniversalStats {
         this.datum = datum;
     }
 
-    public UniversalStats(Date datum) {
+    public universalStats(Date datum) {
         this.datum = datum;
     }
 
@@ -123,7 +120,7 @@ public class UniversalStats {
         this.id = id;
     }
 
-    public Long getVisitorsCount() {
+    public Long getBesucherAnzahl() {
         return besucherAnzahl;
     }
 
@@ -174,13 +171,13 @@ public class UniversalStats {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UniversalStats that)) return false;
-        return getId() == that.getId() && Objects.equals(getVisitorsCount(), that.getVisitorsCount()) && Objects.equals(getAnbieterProfileAnzahl(), that.getAnbieterProfileAnzahl()) && Objects.equals(getAnzahlArtikel(), that.getAnzahlArtikel()) && Objects.equals(getAnzahlNews(), that.getAnzahlNews()) && Objects.equals(getAnzahlBlog(), that.getAnzahlBlog()) && Objects.equals(getDatum(), that.getDatum());
+        if (!(o instanceof universalStats that)) return false;
+        return getId() == that.getId() && Objects.equals(getBesucherAnzahl(), that.getBesucherAnzahl()) && Objects.equals(getAnbieterProfileAnzahl(), that.getAnbieterProfileAnzahl()) && Objects.equals(getAnzahlArtikel(), that.getAnzahlArtikel()) && Objects.equals(getAnzahlNews(), that.getAnzahlNews()) && Objects.equals(getAnzahlBlog(), that.getAnzahlBlog()) && Objects.equals(getDatum(), that.getDatum());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getVisitorsCount(), getAnbieterProfileAnzahl(), getAnzahlArtikel(), getAnzahlNews(), getAnzahlBlog(), getDatum());
+        return Objects.hash(getId(), getBesucherAnzahl(), getAnbieterProfileAnzahl(), getAnzahlArtikel(), getAnzahlNews(), getAnzahlBlog(), getDatum());
     }
 
     @Override
@@ -194,14 +191,6 @@ public class UniversalStats {
                 ", anzahlBlog=" + anzahlBlog +
                 ", datum=" + datum +
                 '}';
-    }
-
-    public int getTotalClicks() {
-        return totalClicks;
-    }
-
-    public void setTotalClicks(int totalClicks) {
-        this.totalClicks = totalClicks;
     }
 }
 

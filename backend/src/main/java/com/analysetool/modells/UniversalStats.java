@@ -45,6 +45,9 @@ public class UniversalStats {
     @Column(name = "datum")
     private Date datum;
 
+    @Column(name = "anbieter_abolos_anzahl")
+    private long anbieter_abolos_anzahl;
+
     @Column(name = "umsatz")
     private long umsatz;
 
@@ -203,6 +206,14 @@ public class UniversalStats {
 
     public void setTotalClicks(int totalClicks) {
         this.totalClicks = totalClicks;
+    }
+
+    public long getAnbieter_abolos_anzahl() {
+        return anbieter_abolos_anzahl;
+    }
+
+    public void setAnbieter_abolos_anzahl(long anbieter_abolos_anzahl) {
+        this.anbieter_abolos_anzahl = anbieter_abolos_anzahl;
     }
 }
 

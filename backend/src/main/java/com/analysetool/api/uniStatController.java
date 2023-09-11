@@ -63,6 +63,7 @@ public class uniStatController {
         obj.put("Besucher",uniStat.getBesucherAnzahl());
 
         obj.put("Angemeldete Profile",uniStat.getAnbieterProfileAnzahl() - getAdminCount());
+        obj.put("Angemeldete Nutzer ohne Abo", uniStat.getAnbieter_abolos_anzahl());
         obj.put("Angemeldete Basic Profile",uniStat.getAnbieterBasicAnzahl());
         obj.put("Angemeldete Basic-Plus Profile",uniStat.getAnbieterBasicPlusAnzahl());
         obj.put("Angemeldete Plus Profile",uniStat.getAnbieterPlusAnzahl());
@@ -143,6 +144,7 @@ public class uniStatController {
             obj.put("Datum", new SimpleDateFormat("dd.MM.yyyy").format(uniStat.getDatum()));
             obj.put("Besucher", uniStat.getBesucherAnzahl());
             obj.put("Angemeldete Profile", uniStat.getAnbieterProfileAnzahl() - getAdminCount());
+            obj.put("Angemeldete Nutzer ohne Abo", uniStat.getAnbieter_abolos_anzahl());
             obj.put("Angemeldete Basic Profile", uniStat.getAnbieterBasicAnzahl());
             obj.put("Angemeldete Basic-Plus Profile", uniStat.getAnbieterBasicPlusAnzahl());
             obj.put("Angemeldete Plus Profile", uniStat.getAnbieterPlusAnzahl());

@@ -105,7 +105,8 @@ public class uniStatController {
     }
     @GetMapping(value = "/letzte7Tage", produces = MediaType.TEXT_HTML_VALUE)
     public String getLast7Days() throws JSONException {
-        List<UniversalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumAsc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse <--GPT speaks?
+        List<UniversalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse <--GPT speaks?
+        Collections.reverse(last7DaysStats);
 
         StringBuilder tableRows = new StringBuilder();
 
@@ -183,6 +184,22 @@ public class uniStatController {
                 "</html>";
 
         return html;
+    }
+
+    @GetMapping("/getUniAccTypes")
+    public String getAccTypes() {
+        HashMap<String, Long> map = new HashMap<>();
+        UniversalStats uni = uniRepo.findFirstByOrderByDatumDesc();
+
+        map.put("Anbieter", uni.getAnbieterProfileAnzahl());
+        map.put("Basic", uni.getAnbieterBasicAnzahl());
+        map.put("Basic-Plus", uni.getAnbieterBasicPlusAnzahl());
+        map.put("Plus", uni.getAnbieterPlusAnzahl());
+        map.put("Premium", uni.getAnbieterPremiumAnzahl());
+        map.put("Sponsor", uni.getAnbieterPremiumSponsorenAnzahl());
+
+        return new JSONObject(map).toString();
+
     }
 
 

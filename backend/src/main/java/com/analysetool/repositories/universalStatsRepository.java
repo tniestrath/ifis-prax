@@ -18,7 +18,7 @@ public interface universalStatsRepository extends JpaRepository<UniversalStats, 
 
     List<UniversalStats> getAllByDatumAfter(Date date);
 
-    List<UniversalStats> findTop7ByOrderByDatumDesc();
+    List<UniversalStats> findTop7ByOrderByDatumAsc();
 
 }
 

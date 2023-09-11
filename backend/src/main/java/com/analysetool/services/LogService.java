@@ -1106,6 +1106,53 @@ public class LogService {
         }
     }
 
+    public static Map<String, Map<String, Map<String, Long>>> setViewsByLocation(String ip, Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
+        try {
+            String country = IPHelper.getCountryISO(ip);
+            String region = IPHelper.getSubISO(ip);
+            String city = IPHelper.getCityName(ip);
+
+            // Standard Schlüssel setzen
+            String countryKey = "global";
+            String regionKey = "gesamt";
+
+            if (country != null && !country.isEmpty()) {
+                countryKey = country;
+                regionKey = (region != null && !region.isEmpty()) ? region : "gesamt";
+                if (!country.equals("DE")) {
+                    regionKey = country;
+                }
+
+                // Map der Regionen für das gegebene Land holen oder erstellen
+                Map<String, Map<String, Long>> regions = viewsByLocation.computeIfAbsent(countryKey, k -> new HashMap<>());
+
+                // Map der Städte für die gegebene Region holen oder erstellen
+                Map<String, Long> cities = regions.computeIfAbsent(regionKey, k -> new HashMap<>());
+
+                // Aktualisieren der Anzahl der Views für die Stadt
+                if (city != null && !city.isEmpty()) {
+                    cities.merge(city, 1L, Long::sum);
+                }
+
+                // Aktualisieren der "gesamt" Views für die Region
+                cities.merge("gesamt", 1L, Long::sum);
+
+                // Aktualisieren der "gesamt" Views für das Land
+                Map<String, Long> countryTotal = regions.computeIfAbsent("gesamt", k -> new HashMap<>());
+                countryTotal.merge("gesamt", 1L, Long::sum);
+            }
+
+            // Aktualisieren der "gesamt" Views für Global
+            Map<String, Map<String, Long>> globalTotal = viewsByLocation.computeIfAbsent("global", k -> new HashMap<>());
+            globalTotal.computeIfAbsent("gesamt", k -> new HashMap<>()).merge("gesamt", 1L, Long::sum);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return viewsByLocation;
+    }
+
     private static String getMonthNumber(String monthName) {
         Map<String, String> months = new HashMap<>();
         months.put("Jan", "01");
@@ -1249,9 +1296,12 @@ public class LogService {
 
     public UniversalStats proccessLinesOfOldLog(UniversalStats uniStat, BufferedReader bufferedReader) throws IOException {
 
+       Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();//hiermit weiter und mit setViewsByLocation 
+
         ArrayList<String> uniqueIps = new ArrayList<>();
         String line;
         int allClicks = 0;
+
         while ((line = bufferedReader.readLine()) != null) {
             Matcher matcher1_1 = pattern1_1.matcher(line);
 

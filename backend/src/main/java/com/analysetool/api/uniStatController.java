@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -27,6 +28,17 @@ public class uniStatController {
 
     @Autowired
     private WPUserMetaRepository wpUserMetaRepository;
+
+    @Autowired
+    private WPTermRepository termRepo;
+    @Autowired
+    private PostStatsRepository postStatsRepo;
+    @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    private WpTermRelationshipsRepository termRelRepo;
+    @Autowired
+    private WpTermTaxonomyRepository termTaxRepo;
 
 
     public int getAdminCount() {
@@ -118,7 +130,7 @@ public class uniStatController {
     }
     @GetMapping(value = "/letzte7Tage", produces = MediaType.TEXT_HTML_VALUE)
     public String getLast7Days() throws JSONException {
-        List<UniversalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse <--GPT speaks?
+        List<UniversalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc();
         Collections.reverse(last7DaysStats);
 
         StringBuilder tableRows = new StringBuilder();
@@ -137,7 +149,7 @@ public class uniStatController {
         tableRows.append("<th>Artikel</th>\n");
         tableRows.append("<th>Blogs</th>\n");
         tableRows.append("<th>News</th>\n");
-        tableRows.append("<th>Umsatz</th>\n");
+        //tableRows.append("<th>Umsatz</th>\n");
         tableRows.append("</tr>\n");
 
         for (UniversalStats uniStat : last7DaysStats) {
@@ -217,6 +229,93 @@ public class uniStatController {
 
         return new JSONObject(map).toString();
 
+    }
+    public JSONObject getClickOfDayAsJson(long id,int daysBack) throws JSONException {
+
+        JSONObject obj = new JSONObject();
+        PostStats stats =postStatsRepo.getStatByArtID(id);
+        long clicks = 0;
+        HashMap<String,Long> allClicks = (HashMap<String, Long>) stats.getViewsLastYear();
+        LocalDate heute = LocalDate.now();
+        // Datum, das n Tage zurückliegt
+        LocalDate vergangenesDatum = heute.minusDays(daysBack);
+        // Datum in dd.MM-Format umwandeln
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
+        String formatiertesDatum = vergangenesDatum.format(formatter);
+
+        clicks=allClicks.get(formatiertesDatum);
+
+        obj.put("iD",id);
+        obj.put("name",postRepository.findById(id).get().getTitle());
+        obj.put("clicks of day",clicks);
+        return obj;
+    }
+
+    @GetMapping("/getTop5ByClicksAndDaysBackAndType")
+    public String getTop5ByClicks(@RequestParam String type, @RequestParam int daysBack) throws JSONException {
+        JSONArray ergebnis = new JSONArray();
+
+        List<Post> posts = postRepository.findAllUserPosts();
+
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+
+        for (Post post : posts) {
+
+
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+
+                    for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
+
+                        if (termTax.getTermId() == tagIdBlog && type.equals("blog")) {
+                            JSONObject obj = new JSONObject();
+                            obj = getClickOfDayAsJson(post.getId(),daysBack);
+                            ergebnis.put(obj);
+                        }
+
+                        if (termTax.getTermId() == tagIdArtikel && type.equals("artikel") ) {
+                            JSONObject obj = new JSONObject();
+                            obj = getClickOfDayAsJson(post.getId(),daysBack);
+                            ergebnis.put(obj);
+                        }
+
+                        if (termTax.getTermId() == tagIdPresse && type.equals("news")) {
+                            JSONObject obj = new JSONObject();
+                            obj = getClickOfDayAsJson(post.getId(),daysBack);
+                            ergebnis.put(obj);
+                        }
+
+                    }
+                }
+
+        }
+        ArrayList<JSONObject> jsonObjects = new ArrayList<>();
+        for (int i = 0; i < ergebnis.length(); i++) {
+            jsonObjects.add(ergebnis.getJSONObject(i));
+        }
+
+
+        Collections.sort(jsonObjects, new Comparator<JSONObject>() {
+            @Override
+            public int compare(JSONObject o1, JSONObject o2) {
+                try {
+                    long clicks1 = o1.getLong("clicks of day");
+                    long clicks2 = o2.getLong("clicks of day");
+                    return Long.compare(clicks2, clicks1);  // für absteigende Sortierung
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        // neues JSONArray, das nur die Top-5-Elemente enthält
+        JSONArray top5JsonArray = new JSONArray();
+        for (int i = 0; i < Math.min(5, jsonObjects.size()); i++) {
+            top5JsonArray.put(jsonObjects.get(i));
+        }
+
+        return top5JsonArray.toString();
     }
 
 

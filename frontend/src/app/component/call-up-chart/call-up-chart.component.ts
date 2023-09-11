@@ -57,7 +57,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365*2)).then((res : Callup[]) => {
       this.data = res;
 
-      var time_filtered : Callup[] = res.filter((stat : Callup) => {
+      var time_filtered : Callup[] = this.data.filter((stat : Callup) => {
         var statDate = new Date(Date.parse(stat.date));
         var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
         return statDate >= calcDate;

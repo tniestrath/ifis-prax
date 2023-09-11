@@ -31,10 +31,10 @@ public class uniStatController {
 
         String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(days).format(DateTimeFormatter.ISO_DATE);
 
-        List<UniversalStats> universalStatsList = uniRepo.getAllByDatumAfter(DateFormat.getDateInstance().parse(dateString));
+        List<UniversalStats> universalStatsList = uniRepo.getAllByDatumAfter(new SimpleDateFormat("yyyy-MM-dd").parse(dateString));
         for (UniversalStats uniStat : universalStatsList) {
             JSONObject callup = new JSONObject();
-            callup.put("date", new SimpleDateFormat("yyyy-mm-dd").format(uniStat.getDatum()));
+            callup.put("date", new SimpleDateFormat("yyyy-MM-dd").format(uniStat.getDatum()));
             callup.put("clicks", uniStat.getTotalClicks());
             callup.put("visitors", uniStat.getBesucherAnzahl());
 

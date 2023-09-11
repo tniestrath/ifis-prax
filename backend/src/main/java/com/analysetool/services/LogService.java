@@ -1431,7 +1431,9 @@ public class LogService {
 
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {
 
-            if (( s.contains("um_anbieter") || s.contains("um_basis-anbieter") ) && !s.contains("plus"))
+            if (s.contains("um_anbieter"))
+                counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
+            if (s.contains("um_basis-anbieter")  && !s.contains("plus"))
                 counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
             if (s.contains("um_plus-anbieter"))
                 counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
@@ -1442,6 +1444,7 @@ public class LogService {
             if (s.contains("um_basis-anbieter-plus"))
                 counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
         });
+        uniStats.setAnbieter_abolos_anzahl(counts.getOrDefault("Anbieter", 0));
         uniStats.setAnbieterBasicAnzahl(counts.getOrDefault("Basic",0));
         uniStats.setAnbieterBasicPlusAnzahl(counts.getOrDefault("Basic-Plus",0));
         uniStats.setAnbieterPlusAnzahl(counts.getOrDefault("Plus",0));

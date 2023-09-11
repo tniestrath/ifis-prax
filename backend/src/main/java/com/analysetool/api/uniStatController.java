@@ -1,8 +1,11 @@
 package com.analysetool.api;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.analysetool.modells.*;
@@ -23,19 +26,21 @@ public class uniStatController {
     universalStatsRepository uniRepo;
 
     @GetMapping(value = "/callups")
-    public String getCallupsByTime(@RequestParam() int days) throws JSONException {
-        JSONArray respose = new JSONArray();
+    public String getCallupsByTime(@RequestParam() int days) throws JSONException, ParseException {
+        JSONArray response = new JSONArray();
 
-        List<UniversalStats> universalStatsList = uniRepo.getAllByDatumAfter(Date.from(Instant.from(LocalDate.now(ZoneId.systemDefault()).minusDays(days))));
+        String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(days).format(DateTimeFormatter.ISO_DATE);
+
+        List<UniversalStats> universalStatsList = uniRepo.getAllByDatumAfter(DateFormat.getDateInstance().parse(dateString));
         for (UniversalStats uniStat : universalStatsList) {
             JSONObject callup = new JSONObject();
             callup.put("date", new SimpleDateFormat("yyyy-mm-dd").format(uniStat.getDatum()));
             callup.put("clicks", uniStat.getTotalClicks());
             callup.put("visitors", uniStat.getBesucherAnzahl());
 
-            respose.put(callup);
+            response.put(callup);
         }
-        return respose.toString();
+        return response.toString();
     }
 
     @GetMapping(value = "/gestern", produces = MediaType.TEXT_HTML_VALUE)

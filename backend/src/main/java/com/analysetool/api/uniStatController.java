@@ -100,8 +100,7 @@ public class uniStatController {
     }
     @GetMapping(value = "/letzte7Tage", produces = MediaType.TEXT_HTML_VALUE)
     public String getLast7Days() throws JSONException {
-        List<UniversalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse <--GPT speaks?
-        Collections.reverse(last7DaysStats); // So
+        List<UniversalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumAsc(); // Ersetze universalStats durch den Namen deiner Entitätsklasse <--GPT speaks?
 
         StringBuilder tableRows = new StringBuilder();
 

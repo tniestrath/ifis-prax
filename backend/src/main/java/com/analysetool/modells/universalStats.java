@@ -48,6 +48,9 @@ public class universalStats {
     @Column(name = "umsatz")
     private long umsatz;
 
+    @Column(name= "totalClicks")
+    private int totalClicks;
+
     public universalStats() {
     }
 
@@ -191,6 +194,14 @@ public class universalStats {
                 ", anzahlBlog=" + anzahlBlog +
                 ", datum=" + datum +
                 '}';
+    }
+
+    public int getTotalClicks() {
+        return totalClicks;
+    }
+
+    public void setTotalClicks(int totalClicks) {
+        this.totalClicks = totalClicks;
     }
 }
 

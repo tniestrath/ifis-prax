@@ -1255,6 +1255,7 @@ public class LogService {
 
         ArrayList<String> uniqueIps = new ArrayList<>();
         String line;
+        int allClicks = 0;
         while ((line = bufferedReader.readLine()) != null) {
             Matcher matcher1_1 = pattern1_1.matcher(line);
 
@@ -1265,10 +1266,12 @@ public class LogService {
                 if (matcher1_2.find()) {
                     // Do something with the matched 1.2 patterns
                     if(!uniqueIps.contains(hashIp(matcher1_2.group(1)))){uniqueIps.add(hashIp(matcher1_2.group(1)));}
+                    allClicks++;
 
                 } else {//1.1 matched
 
                     if(!uniqueIps.contains(hashIp(matcher1_1.group(1)))){uniqueIps.add(hashIp(matcher1_1.group(1)));}
+                    allClicks++;
 
                 }
             }
@@ -1283,11 +1286,13 @@ public class LogService {
                         // Do something with the matched 2.2 patterns
 
                         if(!uniqueIps.contains(hashIp(matcher2_2.group(1)))){uniqueIps.add(hashIp(matcher2_2.group(1)));}
+                        allClicks++;
 
                     } else {
                         //2.1 match
 
                         if(!uniqueIps.contains(hashIp(matcher2_1.group(1)))){uniqueIps.add(hashIp(matcher2_1.group(1)));}
+                        allClicks++;
 
                     }
                 } else {
@@ -1298,8 +1303,10 @@ public class LogService {
                         Matcher matcher5_2 = pattern5_2.matcher(line);
                         if (matcher5_2.find()) {
                             if(!uniqueIps.contains(hashIp(matcher5_2.group(1)))){uniqueIps.add(hashIp(matcher5_2.group(1)));}
+                            allClicks++;
                         } else {
                             if(!uniqueIps.contains(hashIp(matcher5_1.group(1)))){uniqueIps.add(hashIp(matcher5_1.group(1)));}
+                            allClicks++;
                         }
                     }
                 }
@@ -1308,24 +1315,29 @@ public class LogService {
             Matcher matcher3 = pattern3.matcher(line);
             if (matcher3.find()) {
                 if(!uniqueIps.contains(hashIp(matcher3.group(1)))){uniqueIps.add(hashIp(matcher3.group(1)));}
+                allClicks++;
             }
             Matcher matcher4 = pattern4.matcher(line);
             if (matcher4.find()) {
                 if(!uniqueIps.contains(hashIp(matcher4.group(1)))){uniqueIps.add(hashIp(matcher4.group(1)));}
+                allClicks++;
             }
             Matcher matcher4_2 = pattern4_2.matcher(line);
             if (matcher4_2.find()) {
                 if(!uniqueIps.contains(hashIp(matcher4_2.group(1)))){uniqueIps.add(hashIp(matcher4_2.group(1)));}
+                allClicks++;
             }
             Matcher matcher6_1 = pattern6_1.matcher(line);
             if (matcher6_1.find()) {
 
                 if(!uniqueIps.contains(hashIp(matcher6_1.group(1)))){uniqueIps.add(hashIp(matcher6_1.group(1)));}
+                allClicks++;
 
             }
         }
 
         uniStat.setBesucherAnzahl((long) uniqueIps.size());
+        uniStat.setTotalClicks(allClicks);
         return uniStat;
     }
 

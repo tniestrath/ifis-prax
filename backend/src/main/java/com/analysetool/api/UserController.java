@@ -114,11 +114,14 @@ public class UserController {
             }
             if (wpUserMetaRepository.existsByUserId(i.getId())){
                 String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(i.getId());
-                if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
+                obj.put("accountType", "undefined");
                 if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
+                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "ohne abo");
+                if (wpUserMeta.contains("basis-anbieter")) obj.put("accountType", "basis");
+                if (wpUserMeta.contains("basis-anbieter-plus")) obj.put("accountType", "basis-plus");
                 if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
                 if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
+                if (wpUserMeta.contains("premium-anbieter-sponsoren")) obj.put("accountType", "sponsor");
             }
             else {obj.put("id",i.getId());
                 obj.put("email",i.getEmail());

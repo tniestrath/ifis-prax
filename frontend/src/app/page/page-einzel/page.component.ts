@@ -150,7 +150,6 @@ export class PageComponent implements OnInit {
       this.db.loadAllUsers().then(() => {
         this.selectorItems = [];
         for (let u of DbService.Users) {
-          console.log(u.id + " : " + u.performance);
           let performance = (u.performance || 0);
           if (performance <= 33){
             this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 33, u.accountType, u.potential, u.img)));

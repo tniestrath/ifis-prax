@@ -16,6 +16,29 @@ export default class Util {
     }
     return formattedN;
   }
+
+  static formatDate(date : string | Date) : string{
+    let formattedDate = "";
+    let parsedDate = new Date();
+    if (typeof date == "string"){
+      parsedDate = new Date(Date.parse(date));
+    }
+    if (date instanceof Date){
+      parsedDate = date;
+    }
+    if (parsedDate.getDate() <= 9) {
+      formattedDate = formattedDate.concat("0", parsedDate.getDate().toString() + "-");
+    } else {
+      formattedDate = formattedDate.concat(parsedDate.getDate().toString() + "-");
+    }
+    if (parsedDate.getMonth() +1 <= 9) {
+      formattedDate = formattedDate.concat("0", (parsedDate.getMonth() +1).toString()  + "-");
+    } else {
+      formattedDate = formattedDate.concat((parsedDate.getMonth() +1).toString() + "-");
+    }
+    formattedDate = formattedDate.concat(parsedDate.getFullYear().toString());
+    return formattedDate;
+  }
 }
 export enum DashColors {
   Red = "rgb(148,28,62)",

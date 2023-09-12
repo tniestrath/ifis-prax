@@ -1,11 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
-import {visibility} from "html2canvas/dist/types/css/property-descriptors/visibility";
 import {SysVars} from "../../../services/sys-vars-service";
-import {Post} from "../../post/Post";
-import {Tag, TagRanking, TagStats} from "../Tag";
+import {TagStats} from "../Tag";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import {DashColors} from "../../../util/Util";
+import Util, {DashColors} from "../../../util/Util";
 
 
 
@@ -54,10 +52,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
         tagRelevance.push(Number(tagStats.relevance));
         tagViews.push(Number(tagStats.views));
         tagIds.push(Number(tagStats.id));
-        let date = new Date(Date.parse(tagStats.date));
-        let formattedDate = date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
-
-        tagDate.push(formattedDate);
+        tagDate.push(Util.formatDate(tagStats.date));
       }
       switch (this.dataType) {
         case "views":

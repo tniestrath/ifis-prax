@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import {DashColors} from "../../util/Util";
+import Util, {DashColors} from "../../util/Util";
 
 export class Callup {
   clicks : number = 0;
@@ -25,7 +25,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
 
   canvas_id: string = "uni-chart";
 
-  timeSpan : string = "all_time";
+  timeSpan : string = "month";
 
   data : Callup[] =
     [
@@ -85,7 +85,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         timestamps.push(new Date(callup.date).getHours().toString());
       }
       else {
-        timestamps.push(callup.date);
+        timestamps.push(Util.formatDate(callup.date));
       }
       clicksData.push(callup.clicks);
       visitorsData.push(callup.visitors);

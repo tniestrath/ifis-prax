@@ -41,6 +41,7 @@ export enum dbUrl {
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
+  GET_POSTS_TOP_BY_SORTER = "/posts/getTopVariableWithStats?sorter=SORTER&limit=LIMIT",
 
   GET_CALLUPS_BY_TIME = "/bericht/callups?days=DAYS",
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/bericht/getAccountTypeAllYesterday",
@@ -215,5 +216,9 @@ export class DbService {
 
   async getUserAccountTypesYesterday() {
     return await fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY), {credentials: "include"}).then(res => res.json());
+  }
+
+  async getTopPostsBySorterWithLimit(sorter: string, limit: number){
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_TOP_BY_SORTER).replace("SORTER", sorter).replace("LIMIT", String(limit)), {credentials: "include"}).then(res => res.json());
   }
 }

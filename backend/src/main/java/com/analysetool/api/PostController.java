@@ -788,6 +788,60 @@ public class PostController {
 
     }
 
+    @GetMapping("/getTopVariableID")
+    public String getTopVariable(@RequestParam String sorter, int limit) {
+        List<Long> top = null;
+        String errorString = "";
+        if(sorter.equalsIgnoreCase("relevance")) {
+            top = statsRepo.getTopRelevanceID(limit);
+        }
+        if(sorter.equalsIgnoreCase("performance")) {
+            top = statsRepo.getTopPerformanceID(limit);
+        }
+
+        String jsonString = null;
+
+        if(top == null) {
+            errorString = "Wrong sorter / table error";
+        } else {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                jsonString = objectMapper.writeValueAsString(top);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                errorString = "JSON Mapping Error";
+            }
+        }
+        System.out.println(errorString);
+        return jsonString != null? jsonString : errorString;
+    }
+
+    @GetMapping("/getTopVariableWithStats")
+    public String getTopVariableWithStats(String sorter, int limit) throws JSONException, ParseException {
+        List<PostStats> top = null;
+        String errorString = "";
+        if(sorter.equalsIgnoreCase("relevance")) {
+            top = statsRepo.getTopRelevance(limit);
+        }
+        if(sorter.equalsIgnoreCase("performance")) {
+            top = statsRepo.getTopPerformance(limit);
+        }
+        String jsonString = null;
+        JSONArray array = new JSONArray();
+
+        if(top == null) {
+            errorString = "Wrong sorter / table error";
+        } else {
+            for(PostStats stats : top) {
+                JSONObject obj = PostStatsByIdForFrontend(stats.getArtId());
+                array.put(obj);
+            }
+        }
+        jsonString = array.toString();
+        return jsonString != null? jsonString : errorString;
+    }
+
+
     @GetMapping("/testLetterCount")
     public void updateLetterCount(int lettercount, long id) {
         statsRepo.updateLetterCount(lettercount, id);

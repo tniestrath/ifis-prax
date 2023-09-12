@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 //import org.springframework.data.repository.query.Param;
 import java.util.HashMap;
@@ -167,6 +168,18 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
     @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC LIMIT 3")
     public List<Long> getTop3Performance();
+
+    @Query("SELECT s FROM PostStats s ORDER BY s.performance DESC")
+    public List<PostStats> getTopRelevance(int limit);
+
+    @Query("SELECT s FROM PostStats s ORDER BY s.performance DESC")
+    public List<PostStats> getTopPerformance(int limit);
+
+    @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC")
+    public List<Long> getTopRelevanceID(int limit);
+
+    @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC")
+    public List<Long> getTopPerformanceID(int limit);
 
     @Query("SELECT s.lettercount FROM PostStats s WHERE s.artId=:artId")
     public Integer getLetterCount(long artId);

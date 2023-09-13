@@ -18,7 +18,7 @@ export class SearchbarComponent implements OnInit{
   @Output() selected = new EventEmitter<DbObject>();
   @Output() filter = new EventEmitter<{ accType : string, perf : string }>();
 
-  @Input() page : string = "placeholder";
+  page : string = "user";
 
   selectedSearch : DbObject = new DbObject("0", "");
   displaySearchBox: string = "";
@@ -78,6 +78,7 @@ export class SearchbarComponent implements OnInit{
       this.displaySearchBox = "50px";
       this.onKey("");
       this.onDbObjectSelected("0", "");
+      SysVars.CURRENT_PAGE = "Users";
     } else {
       this.cs.deleteAll();
       location.reload();

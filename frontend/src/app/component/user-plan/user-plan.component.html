@@ -2,8 +2,77 @@
   <canvas id="user_plan_chart">{{chart}}</canvas>
   <div class="legend-box user-plan-content-box">
     <div id="user-plan-item-head">
-      <p>Registrierte Nutzer: {{chart_total}}</p><p>{{prev_total_text}}</p>
+      <p>Registriert: </p><p>{{chart_total}}</p><p>{{prev_total_text}}</p>
     </div>
-
+      <div id="legend-box">
+        <ul style="display: flex; flex-direction: column; margin: 0px; padding: 0px; height: 100%;">
+          <li style="display: flex; height: 2vh;; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.Grey}">
+              </span>
+              <p style="margin: 0px;">Ohne Abo:</p>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[0]}}</p>
+              <p style="margin: 0;">{{prev_data[0] >= 0 ? "+" + prev_data[0] : prev_data[0].toString()}}</p>
+            </div>
+          </li>
+          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.Blue}">
+              </span>
+              <p style="margin: 0px;">Basis:</p>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[1]}}</p>
+              <p style="margin: 0;">{{prev_data[1] >= 0 ? "+" + prev_data[1] : prev_data[1].toString()}}</p>
+            </div>
+          </li>
+          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.DarkBlue}">
+              </span>
+              <p style="margin: 0px;">Basis-Plus:</p>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[2]}}</p>
+              <p style="margin: 0;">{{prev_data[2] >= 0 ? "+" + prev_data[2] : prev_data[2].toString()}}</p>
+            </div>
+          </li>
+          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.Red}">
+              </span>
+              <p style="margin: 0px;">Plus:</p>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[3]}}</p>
+              <p style="margin: 0;">{{prev_data[3] >= 0 ? "+" + prev_data[3] : prev_data[3].toString()}}</p>
+            </div>
+          </li>
+          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.DarkRed}">
+              </span>
+              <p style="margin: 0px;">Premium:</p>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[4]}}</p>
+              <p style="margin: 0;">{{prev_data[4] >= 0 ? "+" + prev_data[4] : prev_data[4].toString()}}</p>
+            </div>
+          </li>
+          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.Black}">
+              </span>
+              <p style="margin: 0px;">Sponsor:</p>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[5]}}</p>
+              <p style="margin: 0;">{{prev_data[5] >= 0 ? "+" + prev_data[5] : prev_data[5].toString()}}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
   </div>
 </div>

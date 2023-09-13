@@ -15,7 +15,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
 
   labels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
   ngOnInit(): void {
-    this.setToolTip("Hier wird angezeigt, zu welcher Zeit wie viele Zugriffe auf den Marktplatz" +
+    this.setToolTip("Hier wird angezeigt, zu welcher Zeit wie viele Zugriffe auf den Marktplatz " +
       "stattgefunden haben. Durch hovern der Maus über den Graphen erhalten Sie mehr Informationen.");
     if (SysVars.CURRENT_PAGE == "Users") {
       this.db.getClicksByTime(Number(SysVars.USER_ID)).then(res => {

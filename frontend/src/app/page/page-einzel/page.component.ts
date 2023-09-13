@@ -86,11 +86,12 @@ export class PageComponent implements OnInit {
     ];
   }
 
-  onSelected(id: string, name: string){
-    if (id != "0"){
+  onSelected(id: string, name: string) {
+    if (id != "0") {
       this.displayContent = "grid";
-      this.cardsLoaded.next(this.getUserPageCards());
-      SysVars.CURRENT_PAGE = "Users";
+      if (SysVars.CURRENT_PAGE == "Users"){
+        this.cardsLoaded.next(this.getUserPageCards());
+      }
     } else {
       this.displayContent = "none";
     }

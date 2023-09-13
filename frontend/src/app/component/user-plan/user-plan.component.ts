@@ -18,30 +18,32 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
   labels = ["Ohne Abo", "Basic", "Basic-Plus", "Plus", "Premium", "Sponsor"];
 
+  data = [0,0,0,0,0,0];
+  prev_data = [0,0,0,0,0,0];
+
   ngOnInit(): void {
     if (this.chart != undefined) {
       this.chart.destroy();
     }
-    var data = [0,0,0,0,0,0];
-    var prev_data = [0,0,0,0,0,0];
+
 
     this.db.getUserAccountTypes().then(res => {
       let map : Map<string, number> = new Map(Object.entries(res));
-      this.readMap(map, data);
-      this.chart = this.createChart("user_plan_chart", this.labels, data, undefined);
-      this.createLegend("user-plan-content-box", this.chart, prev_data);
-      this.chart_total = data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      this.readMap(map, this.data);
+      this.chart = this.createChart("user_plan_chart", this.labels, this.data, undefined);
+      //this.createLegend("legend-box", this.chart, this.prev_data);
+      this.chart_total = this.data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
       this.cdr.detectChanges();
     }).finally(() => {
       this.db.getUserAccountTypesYesterday().then(res => {
         let map : Map<string, number> = new Map(Object.entries(res));
-        this.readMap(map, prev_data);
-        for (var i = 0; i < data.length; i++) {
-          prev_data[i] = data[i] - prev_data[i];
+        this.readMap(map, this.prev_data);
+        for (var i = 0; i < this.data.length; i++) {
+          this.prev_data[i] = this.data[i] - this.prev_data[i];
         }
-        this.prev_total = prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+        this.prev_total = this.prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
         this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
-        this.createLegend("user-plan-content-box", this.chart, prev_data);
+        //this.createLegend("legend-box", this.chart, this.prev_data);
         this.cdr.detectChanges();
       })
     })
@@ -178,6 +180,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     ul.style.flexDirection = "column";
     ul.style.margin = "0";
     ul.style.padding = "0";
+    ul.style.height = "100%";
 
     chart.legend.legendItems.forEach((dataset: { text: any; index: any; fillStyle: any}, index: any) => {
       const text = dataset.text;
@@ -190,24 +193,38 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       li.style.alignItems = "center";
       li.style.flexDirection = "row";
       li.style.justifyContent = "space-between";
-      li.style.height = "20px";
-      li.style.margin = "5px";
+      li.style.height = "10%";
+      li.style.margin = "4px";
+      li.style.fontSize = "1.15vw";
+
       const spanBox = document.createElement("SPAN");
       spanBox.classList.add("clicks-item-span");
       spanBox.style.display = "inline-block";
-      spanBox.style.height = "100%";
-      spanBox.style.width = "20px";
+      spanBox.style.height = "2vh";
+      spanBox.style.width = "2vh";
       spanBox.style.marginRight = "5px";
       spanBox.style.borderRadius = "5px";
       spanBox.style.backgroundColor = bgColor;
 
       const p = document.createElement("P");
       p.classList.add("clicks-item-text");
-      p.innerText = text + ": " + chart.data.datasets[0].data[datasetIndex];
+      p.innerText = text + ":";
+      p.style.margin = "0";
+
+      const pWrapper = document.createElement("DIV");
+      pWrapper.style.display = "flex";
+      pWrapper.style.flexDirection = "row";
 
       const p2 = document.createElement("P");
       p2.classList.add("clicks-item-text");
-      p2.innerText = prev_data[datasetIndex] >= 0 ? "+" + prev_data[datasetIndex] : prev_data[datasetIndex].toString();
+      p2.innerText = chart.data.datasets[0].data[datasetIndex];
+      p2.style.width = "4vw";
+      p2.style.margin = "0";
+
+      const p3 = document.createElement("P");
+      p3.classList.add("clicks-item-text");
+      p3.innerText = prev_data[datasetIndex] >= 0 ? "+" + prev_data[datasetIndex] : prev_data[datasetIndex].toString();
+      p3.style.margin = "0";
 
       const wrapper = document.createElement("DIV");
       wrapper.style.height = "20px";
@@ -216,13 +233,17 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       wrapper.appendChild(spanBox);
       wrapper.appendChild(p);
 
+
       ul.appendChild(li);
       li.appendChild(wrapper);
-      li.appendChild(p2);
+      li.appendChild(pWrapper)
+      pWrapper.appendChild(p2);
+      pWrapper.appendChild(p3);
     });
 
     legendBox?.appendChild(legendContainer);
     legendContainer.appendChild(ul);
   }
 
+  protected readonly DashColors = DashColors;
 }

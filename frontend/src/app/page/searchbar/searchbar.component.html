@@ -7,7 +7,7 @@
     <input #search class="searchbar" type="text" (keyup)="onKey(search.value)" placeholder="Filter">
   </div>
   <div *ngSwitchDefault class="selection-box" >
-    <img *ngIf="page == 'user'" [src]="imgSrc" alt="" dashImgFallback>
+    <img [src]="imgSrc" alt="" dashImgFallback>
     <p>{{selectedSearch.name}}</p>
     <button *ngIf="UserService.ADMIN" class="selection-cancel-button" (click)="onCancelClick()">X</button>
   </div>

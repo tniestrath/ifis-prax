@@ -40,6 +40,7 @@ import { PostListItemComponent } from './component/post/post-list/post-list-item
 import { TagChartComponent } from './component/tag/tag-chart/tag-chart.component';
 import { CallUpChartComponent } from './component/call-up-chart/call-up-chart.component';
 import { OriginByTimeChartComponent } from './component/origin-by-time-chart/origin-by-time-chart.component';
+import { Top5PostsComponent } from './component/post/top5-posts/top5-posts.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,8 @@ import { OriginByTimeChartComponent } from './component/origin-by-time-chart/ori
     PostListItemComponent,
     TagChartComponent,
     CallUpChartComponent,
-    OriginByTimeChartComponent
+    OriginByTimeChartComponent,
+    Top5PostsComponent
   ],
     imports: [
         BrowserModule,

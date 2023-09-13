@@ -21,6 +21,7 @@ import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
 import {PostListComponent} from "../../component/post/post-list/post-list.component";
 import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
 import {CallUpChartComponent} from "../../component/call-up-chart/call-up-chart.component";
+import {Top5PostsComponent} from "../../component/post/top5-posts/top5-posts.component";
 
 @Component({
   selector: 'dash-page',
@@ -71,6 +72,7 @@ export class PageComponent implements OnInit {
   getPostsPageCards() {
     return [
       {type: PostListComponent, row: 1, col: 1, height: 4, width: 2},
+      {type: Top5PostsComponent, row: 1, col: 3, height: 1, width: 4}
     ];
   }
 
@@ -84,10 +86,13 @@ export class PageComponent implements OnInit {
     ];
   }
 
-  onSelected(id: string, name: string){
-    if (id != "0"){
+  onSelected(id: string, name: string) {
+    if (id != "0") {
       this.displayContent = "grid";
-      this.cardsLoaded.next(this.getUserPageCards());
+      if (!SysVars.WELCOME){
+        this.cardsLoaded.next(this.getUserPageCards());
+        SysVars.WELCOME = false;
+      }
       SysVars.CURRENT_PAGE = "Users";
     } else {
       this.displayContent = "none";
@@ -150,7 +155,6 @@ export class PageComponent implements OnInit {
       this.db.loadAllUsers().then(() => {
         this.selectorItems = [];
         for (let u of DbService.Users) {
-          console.log(u.id + " : " + u.performance);
           let performance = (u.performance || 0);
           if (performance <= 33){
             this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 33, u.accountType, u.potential, u.img)));

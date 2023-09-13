@@ -41,6 +41,10 @@ public class uniStatController {
     private WpTermTaxonomyRepository termTaxRepo;
 
 
+    /**
+     *
+     * @return gibt aus, wie viele Admins es aktuell gibt.
+     */
     public int getAdminCount() {
         int adminCount = 0;
         for(String cap : wpUserMetaRepository.getWpCapabilities()) {
@@ -66,14 +70,34 @@ public class uniStatController {
         }
         return response.toString();
     }
+    @GetMapping(value="/getViewsPerHourByDaysBack")
+    public String getViewsPerHourByDaysBack(@RequestParam int daysBack) throws ParseException {
+        String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(daysBack).format(DateTimeFormatter.ISO_DATE);
+        return uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(dateString)).get().getViewsPerHour().toString();
+    }
+    @GetMapping(value="/getViewsByLocationByDaysBack")
+    public String getViewsByLocationByDaysBack(@RequestParam int daysBack) throws ParseException {
+        String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(daysBack).format(DateTimeFormatter.ISO_DATE);
+        return uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(dateString)).get().getViewsByLocation().toString();
+    }
 
+    /**
+     *
+     * @return ein HTML Code, der eine Tabelle mit Statistiken enthält.
+     * @throws JSONException
+     */
     @GetMapping(value = "/gestern", produces = MediaType.TEXT_HTML_VALUE)
     public String getLetzte() throws JSONException {
         JSONObject obj = new JSONObject();
         UniversalStats uniStat=uniRepo.findAll().get(uniRepo.findAll().size()-1);
+
+        //Datum des Berichts
         obj.put("Datum",uniStat.getDatum());
+
+        //Anzahl der Besucher Allgemein
         obj.put("Besucher",uniStat.getBesucherAnzahl());
 
+        //Anzahl der Profile pro Profiltyp
         obj.put("Angemeldete Profile",uniStat.getAnbieterProfileAnzahl() - getAdminCount());
         obj.put("Angemeldete Nutzer ohne Abo", uniStat.getAnbieter_abolos_anzahl());
         obj.put("Angemeldete Basic Profile",uniStat.getAnbieterBasicAnzahl());
@@ -82,6 +106,7 @@ public class uniStatController {
         obj.put("Angemeldete Premium Profile",uniStat.getAnbieterPremiumAnzahl());
         obj.put("Angemeldete Premium Sponsoren Profile",uniStat.getAnbieterPremiumSponsorenAnzahl());
 
+        //Anzahl der veröffentlichten Posts nach Kategorie
         obj.put("veröffentlichte Artikel",uniStat.getAnzahlArtikel());
         obj.put("veröffentlichte Blogs",uniStat.getAnzahlBlog());
         obj.put("veröffentlichte News",uniStat.getAnzahlNews());
@@ -128,6 +153,12 @@ public class uniStatController {
 
         return html;
     }
+
+    /**
+     *
+     * @return eine HTML-Seite, die den Bericht wie in der Methode getLetzte, nur für die letzten 7 Tage erstellt.
+     * @throws JSONException
+     */
     @GetMapping(value = "/letzte7Tage", produces = MediaType.TEXT_HTML_VALUE)
     public String getLast7Days() throws JSONException {
         List<UniversalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc();
@@ -153,6 +184,7 @@ public class uniStatController {
         tableRows.append("</tr>\n");
 
         for (UniversalStats uniStat : last7DaysStats) {
+            //Erstelle pro Durchlauf einen Bericht
             JSONObject obj = new JSONObject();
             obj.put("Datum", new SimpleDateFormat("dd.MM.yyyy").format(uniStat.getDatum()));
             obj.put("Besucher", uniStat.getBesucherAnzahl());
@@ -214,6 +246,10 @@ public class uniStatController {
         return html;
     }
 
+    /**
+     *
+     * @return ein JSON-String, der die Anzahl der Accounts pro Account-Typ enthält.
+     */
     @GetMapping("/getAccountTypeAllYesterday")
     public String getAccTypes() {
         HashMap<String, Long> map = new HashMap<>();
@@ -230,6 +266,14 @@ public class uniStatController {
         return new JSONObject(map).toString();
 
     }
+
+    /**
+     *
+     * @param id  die ID des Posts, für den die Clicks ermittelt werden sollen.
+     * @param daysBack wie viele Tage zurückgeschaut werden soll.
+     * @return  JSONObject, dass die ID des Posts, den Namen und die Clicks des gewünschten Tages enthält.
+     * @throws JSONException
+     */
     public JSONObject getClickOfDayAsJson(long id,int daysBack) throws JSONException {
 
         JSONObject obj = new JSONObject();
@@ -251,6 +295,13 @@ public class uniStatController {
         return obj;
     }
 
+    /**
+     *
+     * @param type der Typ Post, für den eine Top5 erstellt werden soll ("blog" | "artikel" | "news")
+     * @param daysBack
+     * @return
+     * @throws JSONException
+     */
     @GetMapping("/getTop5ByClicksAndDaysBackAndType")
     public String getTop5ByClicks(@RequestParam String type, @RequestParam int daysBack) throws JSONException {
         JSONArray ergebnis = new JSONArray();
@@ -270,6 +321,7 @@ public class uniStatController {
 
                         if (termTax.getTermId() == tagIdBlog && type.equals("blog")) {
                             JSONObject obj = new JSONObject();
+                            //getClickOfDayAsJson enthält auch den Namen und die ID.
                             obj = getClickOfDayAsJson(post.getId(),daysBack);
                             ergebnis.put(obj);
                         }

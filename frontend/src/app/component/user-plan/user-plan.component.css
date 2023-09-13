@@ -1,7 +1,7 @@
 .user-plan-box {
   display: flex;
-  justify-content: start;
   flex-direction: column;
+  justify-content: space-between;
   flex-wrap: nowrap;
   height: 100%;
 }
@@ -11,18 +11,22 @@ canvas{
   max-width: 100%;
 }
 .legend-box{
-  padding: 25px 5px 5px;
-  height: calc(30% - 10px);
+  padding: 5px 5px 5px;
+  height: 50%;
   width: calc(100% - 10px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
+}
+.legend-box p {
+  margin: 0;
+  font-size: calc((0.8vh + 1vw)/2 * 1.5) !important;
 }
 
 #user-plan-item-head{
-  margin: 0;
+  margin: 5px 4px;
   font-weight: bold;
-  font-size: large;
+  font-size: calc((0.8vh + 1vw)/2 * 1.5);
   display: flex;
   justify-content: space-between;
 }

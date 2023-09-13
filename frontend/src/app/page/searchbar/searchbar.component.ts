@@ -18,7 +18,7 @@ export class SearchbarComponent implements OnInit{
   @Output() selected = new EventEmitter<DbObject>();
   @Output() filter = new EventEmitter<{ accType : string, perf : string }>();
 
-  @Input() page : string = "placeholder";
+  page : string = "user";
 
   selectedSearch : DbObject = new DbObject("0", "");
   displaySearchBox: string = "";
@@ -32,6 +32,7 @@ export class SearchbarComponent implements OnInit{
     SysVars.login.subscribe(user => {
       this.loggedUser = [user.id, user.displayName];
       this.logged_in = true;
+      SysVars.WELCOME = true;
       this.onDbObjectSelected(this.loggedUser[0], this.loggedUser[1]);
     })
   }
@@ -55,7 +56,14 @@ export class SearchbarComponent implements OnInit{
   }
 
   onDbObjectSelected(id: string, name: string){
-    let object : DbObject = new DbObject(id, name);
+    let index  = Math.max(name.lastIndexOf("-"), name.lastIndexOf(" "));
+    let shortName;
+    if (index >= 10){
+      shortName =  name.slice(0,index);
+    } else {
+      shortName = name;
+    }
+    let object : DbObject = new DbObject(id,shortName);
 
     if (id != "0"){
       this.selectedSearch = object;
@@ -78,13 +86,16 @@ export class SearchbarComponent implements OnInit{
       this.displaySearchBox = "50px";
       this.onKey("");
       this.onDbObjectSelected("0", "");
+      SysVars.CURRENT_PAGE = "Users";
     } else {
       this.cs.deleteAll();
+      SysVars.WELCOME = true;
       location.reload();
     }
   }
   onLogoutClick() {
     this.cs.deleteAll();
+    SysVars.WELCOME = true;
     location.reload();
   }
 
@@ -98,7 +109,7 @@ export class SearchbarComponent implements OnInit{
     if (!document.getElementById("filter_dropdown")) {
       this.filter_dropdown = document.createElement("div");
       this.filter_dropdown.id = "filter_dropdown";
-      this.filter_dropdown.style.width = "370px";
+      this.filter_dropdown.style.width = "640px";
       this.filter_dropdown.style.height = "100px";
       this.filter_dropdown.style.position = "absolute";
       this.filter_dropdown.style.top = "60px";
@@ -124,9 +135,12 @@ export class SearchbarComponent implements OnInit{
       let selected_performance_filter = "all";
 
       let label_accountType = document.createElement("div");
+      let filter_accountTypeWithoutPlan = document.createElement("div");
       let filter_accountTypeBasic = document.createElement("div");
+      let filter_accountTypeBasicPlus = document.createElement("div");
       let filter_accountTypePlus = document.createElement("div");
       let filter_accountTypePremium = document.createElement("div");
+      let filter_accountTypeSponsor = document.createElement("div");
       let filter_accountTypeAll = document.createElement("div");
 
       let label_performance = document.createElement("div");
@@ -139,8 +153,32 @@ export class SearchbarComponent implements OnInit{
       label_accountType.style.width = "100%";
       this.filter_dropdown.appendChild(label_accountType);
 
+      filter_accountTypeWithoutPlan.id = "filter_type_withoutPlan";
+      filter_accountTypeWithoutPlan.innerText = "Ohne Abo";
+      filter_accountTypeWithoutPlan.style.cssText = filter_styles;
+
+      filter_accountTypeWithoutPlan.addEventListener("mouseenter",
+        () => filter_accountTypeWithoutPlan.style.borderColor = "black");
+      filter_accountTypeWithoutPlan.addEventListener("mouseleave",
+        () => filter_accountTypeWithoutPlan.style.borderColor = "#A0A0A0");
+      filter_accountTypeWithoutPlan.addEventListener("click", () => {
+        filter_accountTypeWithoutPlan.style.color = "#951D40";
+
+        filter_accountTypeBasic.style.color = "black";
+        filter_accountTypeBasicPlus.style.color = "black";
+        filter_accountTypePlus.style.color = "black";
+        filter_accountTypePremium.style.color = "black";
+        filter_accountTypeSponsor.style.color = "black";
+        filter_accountTypeAll.style.color = "black";
+        selected_account_filter = "ohne abo";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+      })
+      this.filter_dropdown.appendChild(filter_accountTypeWithoutPlan);
+
+
       filter_accountTypeBasic.id = "filter_type_basic";
-      filter_accountTypeBasic.innerText = "Basic";
+      filter_accountTypeBasic.innerText = "Basis";
       filter_accountTypeBasic.style.cssText = filter_styles;
 
       filter_accountTypeBasic.addEventListener("mouseenter",
@@ -148,15 +186,44 @@ export class SearchbarComponent implements OnInit{
       filter_accountTypeBasic.addEventListener("mouseleave",
         () => filter_accountTypeBasic.style.borderColor = "#A0A0A0");
       filter_accountTypeBasic.addEventListener("click", () => {
+        filter_accountTypeWithoutPlan.style.color = "black";
         filter_accountTypeBasic.style.color = "#951D40";
+
+        filter_accountTypeBasicPlus.style.color = "black";
         filter_accountTypePlus.style.color = "black";
         filter_accountTypePremium.style.color = "black";
+        filter_accountTypeSponsor.style.color = "black";
         filter_accountTypeAll.style.color = "black";
-        selected_account_filter = "basic";
+        selected_account_filter = "basis";
 
         this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
       })
       this.filter_dropdown.appendChild(filter_accountTypeBasic);
+
+
+      filter_accountTypeBasicPlus.id = "filter_type_basicPlus";
+      filter_accountTypeBasicPlus.innerText = "Basis-Plus";
+      filter_accountTypeBasicPlus.style.cssText = filter_styles;
+
+      filter_accountTypeBasicPlus.addEventListener("mouseenter",
+        () => filter_accountTypeBasicPlus.style.borderColor = "black");
+      filter_accountTypeBasicPlus.addEventListener("mouseleave",
+        () => filter_accountTypeBasicPlus.style.borderColor = "#A0A0A0");
+      filter_accountTypeBasicPlus.addEventListener("click", () => {
+        filter_accountTypeWithoutPlan.style.color = "black";
+        filter_accountTypeBasic.style.color = "black";
+
+        filter_accountTypeBasicPlus.style.color = "#951D40";
+
+        filter_accountTypePlus.style.color = "black";
+        filter_accountTypePremium.style.color = "black";
+        filter_accountTypeSponsor.style.color = "black";
+        filter_accountTypeAll.style.color = "black";
+        selected_account_filter = "basis-plus";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+      })
+      this.filter_dropdown.appendChild(filter_accountTypeBasicPlus);
 
 
       filter_accountTypePlus.id = "filter_type_plus";
@@ -167,9 +234,14 @@ export class SearchbarComponent implements OnInit{
       filter_accountTypePlus.addEventListener("mouseleave",
         () => filter_accountTypePlus.style.borderColor = "#A0A0A0");
       filter_accountTypePlus.addEventListener("click", () => {
+        filter_accountTypeWithoutPlan.style.color = "black";
         filter_accountTypeBasic.style.color = "black";
+        filter_accountTypeBasicPlus.style.color = "black";
+
         filter_accountTypePlus.style.color = "#951D40";
+
         filter_accountTypePremium.style.color = "black";
+        filter_accountTypeSponsor.style.color = "black";
         filter_accountTypeAll.style.color = "black";
         selected_account_filter = "plus";
 
@@ -186,15 +258,45 @@ export class SearchbarComponent implements OnInit{
       filter_accountTypePremium.addEventListener("mouseleave",
         () => filter_accountTypePremium.style.borderColor = "#A0A0A0");
       filter_accountTypePremium.addEventListener("click", () => {
+        filter_accountTypeWithoutPlan.style.color = "black";
         filter_accountTypeBasic.style.color = "black";
+        filter_accountTypeBasicPlus.style.color = "black";
         filter_accountTypePlus.style.color = "black";
+
         filter_accountTypePremium.style.color = "#951D40";
+
+        filter_accountTypeSponsor.style.color = "black";
         filter_accountTypeAll.style.color = "black";
         selected_account_filter = "premium";
 
         this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
       })
       this.filter_dropdown.appendChild(filter_accountTypePremium);
+
+
+      filter_accountTypeSponsor.id = "filter_type_sponsor";
+      filter_accountTypeSponsor.innerText = "Sponsor";
+      filter_accountTypeSponsor.style.cssText = filter_styles;
+      filter_accountTypeSponsor.addEventListener("mouseenter",
+        () => filter_accountTypeSponsor.style.borderColor = "black");
+      filter_accountTypeSponsor.addEventListener("mouseleave",
+        () => filter_accountTypeSponsor.style.borderColor = "#A0A0A0");
+      filter_accountTypeSponsor.addEventListener("click", () => {
+        filter_accountTypeWithoutPlan.style.color = "black";
+        filter_accountTypeBasic.style.color = "black";
+        filter_accountTypeBasicPlus.style.color = "black";
+        filter_accountTypePlus.style.color = "black";
+        filter_accountTypePremium.style.color = "black";
+
+        filter_accountTypeSponsor.style.color = "#951D40";
+
+        filter_accountTypeAll.style.color = "black";
+        selected_account_filter = "sponsor";
+
+        this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+      })
+      this.filter_dropdown.appendChild(filter_accountTypeSponsor);
+
 
       filter_accountTypeAll.id = "filter_type_all";
       filter_accountTypeAll.innerText = "Alle";
@@ -204,9 +306,13 @@ export class SearchbarComponent implements OnInit{
       filter_accountTypeAll.addEventListener("mouseleave",
         () => filter_accountTypeAll.style.borderColor = "#A0A0A0");
       filter_accountTypeAll.addEventListener("click", () => {
+        filter_accountTypeWithoutPlan.style.color = "black";
         filter_accountTypeBasic.style.color = "black";
+        filter_accountTypeBasicPlus.style.color = "black";
         filter_accountTypePlus.style.color = "black";
         filter_accountTypePremium.style.color = "black";
+        filter_accountTypeSponsor.style.color = "black";
+
         filter_accountTypeAll.style.color = "#951D40";
         selected_account_filter = "all";
 

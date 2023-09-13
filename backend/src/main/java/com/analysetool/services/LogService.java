@@ -614,6 +614,27 @@ public class LogService {
             }
         }
     }
+    public LocalTime getLocalTimeFromMatcher(Matcher matcher){
+        String logHourMinuteSecond = matcher.group(5);
+        // Trenne Stunden, Minuten und Sekunden
+        String[] timeParts = logHourMinuteSecond.split(":");
+        String logHour = timeParts[0];
+        String logMinute = timeParts[1];
+        String logSecond = timeParts[2];
+
+        LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
+        return logTime;
+    }
+
+    public LocalDate getLocalDateFromMatcher(Matcher matcher){
+        String logDay = matcher.group(2);
+        String logMonth = matcher.group(3);
+        String logYear = matcher.group(4);
+        // Konvertiere den Monat in eine Zahl
+        int monthNumber = Integer.parseInt(getMonthNumber(logMonth));
+        LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), monthNumber, Integer.parseInt(logDay));
+        return logDate;
+    }
     public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
 
         // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
@@ -691,6 +712,14 @@ public class LogService {
 
     public Map<String, Long> erhoeheViewsPerHour2(PostStats stats, LocalTime logUhrzeit) {
         Map<String, Long> viewsPerHour = stats.getViewsPerHour();
+        int stunde = logUhrzeit.getHour();
+        long views = viewsPerHour.getOrDefault(Integer.toString(stunde), 0L);
+        views++;
+        viewsPerHour.put(Integer.toString(stunde), views);
+
+        return viewsPerHour;
+    }
+    public Map<String, Long> erhoeheViewsPerHour2(Map<String, Long> viewsPerHour, LocalTime logUhrzeit) {
         int stunde = logUhrzeit.getHour();
         long views = viewsPerHour.getOrDefault(Integer.toString(stunde), 0L);
         views++;
@@ -928,6 +957,8 @@ public class LogService {
 
         return viewsPerHour;
     }
+
+
     public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd.MM");
 
@@ -1293,10 +1324,11 @@ public class LogService {
         }
     }
 
-
+    @Transactional
     public UniversalStats proccessLinesOfOldLog(UniversalStats uniStat, BufferedReader bufferedReader) throws IOException {
 
-       Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();//hiermit weiter und mit setViewsByLocation 
+        Map<String, Map<String, Map<String, Long>>> viewsByLocation = uniStat.getViewsByLocation();//hiermit weiter und mit setViewsByLocation
+        Map<String,Long>viewsPerHour=uniStat.getViewsPerHour();
 
         ArrayList<String> uniqueIps = new ArrayList<>();
         String line;
@@ -1311,12 +1343,20 @@ public class LogService {
 
                 if (matcher1_2.find()) {
                     // Do something with the matched 1.2 patterns
-                    if(!uniqueIps.contains(hashIp(matcher1_2.group(1)))){uniqueIps.add(hashIp(matcher1_2.group(1)));}
+                    if(!uniqueIps.contains(hashIp(matcher1_2.group(1)))){uniqueIps.add(hashIp(matcher1_2.group(1)));
+                        viewsByLocation=setViewsByLocation(matcher1_2.group(1),viewsByLocation);
+                    }
+                    LocalTime logtime = getLocalTimeFromMatcher(matcher1_2);
+                    viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                     allClicks++;
 
                 } else {//1.1 matched
 
-                    if(!uniqueIps.contains(hashIp(matcher1_1.group(1)))){uniqueIps.add(hashIp(matcher1_1.group(1)));}
+                    if(!uniqueIps.contains(hashIp(matcher1_1.group(1)))){uniqueIps.add(hashIp(matcher1_1.group(1)));
+                        viewsByLocation=setViewsByLocation(matcher1_1.group(1),viewsByLocation);
+                    }
+                    LocalTime logtime = getLocalTimeFromMatcher(matcher1_1);
+                    viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                     allClicks++;
 
                 }
@@ -1331,13 +1371,19 @@ public class LogService {
                     if (matcher2_2.find()) {
                         // Do something with the matched 2.2 patterns
 
-                        if(!uniqueIps.contains(hashIp(matcher2_2.group(1)))){uniqueIps.add(hashIp(matcher2_2.group(1)));}
+                        if(!uniqueIps.contains(hashIp(matcher2_2.group(1)))){uniqueIps.add(hashIp(matcher2_2.group(1))); viewsByLocation=setViewsByLocation(matcher2_2.group(1),viewsByLocation);
+                        }
+                        LocalTime logtime = getLocalTimeFromMatcher(matcher2_2);
+                        viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                         allClicks++;
 
                     } else {
                         //2.1 match
 
-                        if(!uniqueIps.contains(hashIp(matcher2_1.group(1)))){uniqueIps.add(hashIp(matcher2_1.group(1)));}
+                        if(!uniqueIps.contains(hashIp(matcher2_1.group(1)))){uniqueIps.add(hashIp(matcher2_1.group(1))); viewsByLocation=setViewsByLocation(matcher2_1.group(1),viewsByLocation);
+                        }
+                        LocalTime logtime = getLocalTimeFromMatcher(matcher2_1);
+                        viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                         allClicks++;
 
                     }
@@ -1348,10 +1394,16 @@ public class LogService {
 
                         Matcher matcher5_2 = pattern5_2.matcher(line);
                         if (matcher5_2.find()) {
-                            if(!uniqueIps.contains(hashIp(matcher5_2.group(1)))){uniqueIps.add(hashIp(matcher5_2.group(1)));}
+                            if(!uniqueIps.contains(hashIp(matcher5_2.group(1)))){uniqueIps.add(hashIp(matcher5_2.group(1))); viewsByLocation=setViewsByLocation(matcher5_2.group(1),viewsByLocation);
+                            }
+                            LocalTime logtime = getLocalTimeFromMatcher(matcher5_2);
+                            viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                             allClicks++;
                         } else {
-                            if(!uniqueIps.contains(hashIp(matcher5_1.group(1)))){uniqueIps.add(hashIp(matcher5_1.group(1)));}
+                            if(!uniqueIps.contains(hashIp(matcher5_1.group(1)))){uniqueIps.add(hashIp(matcher5_1.group(1))); viewsByLocation=setViewsByLocation(matcher5_1.group(1),viewsByLocation);
+                            }
+                            LocalTime logtime = getLocalTimeFromMatcher(matcher5_1);
+                            viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                             allClicks++;
                         }
                     }
@@ -1360,23 +1412,35 @@ public class LogService {
 
             Matcher matcher3 = pattern3.matcher(line);
             if (matcher3.find()) {
-                if(!uniqueIps.contains(hashIp(matcher3.group(1)))){uniqueIps.add(hashIp(matcher3.group(1)));}
+                if(!uniqueIps.contains(hashIp(matcher3.group(1)))){uniqueIps.add(hashIp(matcher3.group(1))); viewsByLocation=setViewsByLocation(matcher3.group(1),viewsByLocation);
+                }
+                LocalTime logtime = getLocalTimeFromMatcher(matcher3);
+                viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                 allClicks++;
             }
             Matcher matcher4 = pattern4.matcher(line);
             if (matcher4.find()) {
-                if(!uniqueIps.contains(hashIp(matcher4.group(1)))){uniqueIps.add(hashIp(matcher4.group(1)));}
+                if(!uniqueIps.contains(hashIp(matcher4.group(1)))){uniqueIps.add(hashIp(matcher4.group(1))); viewsByLocation=setViewsByLocation(matcher4.group(1),viewsByLocation);
+                }
+                LocalTime logtime = getLocalTimeFromMatcher(matcher4);
+                viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                 allClicks++;
             }
             Matcher matcher4_2 = pattern4_2.matcher(line);
             if (matcher4_2.find()) {
-                if(!uniqueIps.contains(hashIp(matcher4_2.group(1)))){uniqueIps.add(hashIp(matcher4_2.group(1)));}
+                if(!uniqueIps.contains(hashIp(matcher4_2.group(1)))){uniqueIps.add(hashIp(matcher4_2.group(1))); viewsByLocation=setViewsByLocation(matcher4_2.group(1),viewsByLocation);
+                }
+                LocalTime logtime = getLocalTimeFromMatcher(matcher4_2);
+                viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                 allClicks++;
             }
             Matcher matcher6_1 = pattern6_1.matcher(line);
             if (matcher6_1.find()) {
 
-                if(!uniqueIps.contains(hashIp(matcher6_1.group(1)))){uniqueIps.add(hashIp(matcher6_1.group(1)));}
+                if(!uniqueIps.contains(hashIp(matcher6_1.group(1)))){uniqueIps.add(hashIp(matcher6_1.group(1))); viewsByLocation=setViewsByLocation(matcher6_1.group(1),viewsByLocation);
+                }
+                LocalTime logtime = getLocalTimeFromMatcher(matcher6_1);
+                viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                 allClicks++;
 
             }
@@ -1384,6 +1448,8 @@ public class LogService {
 
         uniStat.setBesucherAnzahl((long) uniqueIps.size());
         uniStat.setTotalClicks(allClicks);
+        uniStat.setViewsByLocation(viewsByLocation);
+        uniStat.setViewsPerHour(viewsPerHour);
         return uniStat;
     }
 

@@ -105,7 +105,7 @@ public class UserController {
                 UserStats statsUser = userStatsRepository.findByUserId(i.getId());
                 obj.put("id",i.getId());
                 obj.put("email",i.getEmail());
-                obj.put("displayName",i.getDisplayName());
+                obj.put("displayName",i.getNicename());
                 obj.put("profileViews", statsUser.getProfileView());
                 obj.put("postViews", postController.getViewsOfUserById(i.getId()));
                 obj.put("postCount", postController.getPostCountOfUserById(i.getId()));
@@ -125,7 +125,7 @@ public class UserController {
             }
             else {obj.put("id",i.getId());
                 obj.put("email",i.getEmail());
-                obj.put("displayName",i.getDisplayName());
+                obj.put("displayName",i.getNicename());
                 obj.put( "accountType" ,"undefined");
                 obj.put("profileViews", 0);
                 obj.put("postViews",0);

@@ -3,7 +3,7 @@
   background-color: white;
   padding: 5px;
   display: grid;
-  grid-template-columns: 50px 250px 10% 10% 10% 10% 10%;
+  grid-template-columns: 50px 250px calc(5% + 5px) 10% 10% 10% 10%;
   height: 50px;
   top: 0;
   left: 0;
@@ -30,6 +30,15 @@
   padding: 10px 5px 0 5px;
   color: black;
   text-decoration: none;
+}
+.bericht{
+  font-size: large;
+  padding: 15px 5px 0 5px;
+  margin-right: 5px;
+  box-sizing: border-box;
+  height: 50px;
+  color: #7a1833;
+  border: 1px solid #7a1833;
 }
 .nav-element:hover{
   background-color: #EFEFEF;

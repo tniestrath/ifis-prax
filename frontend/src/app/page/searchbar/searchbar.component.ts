@@ -32,6 +32,7 @@ export class SearchbarComponent implements OnInit{
     SysVars.login.subscribe(user => {
       this.loggedUser = [user.id, user.displayName];
       this.logged_in = true;
+      SysVars.WELCOME = true;
       this.onDbObjectSelected(this.loggedUser[0], this.loggedUser[1]);
     })
   }
@@ -55,7 +56,14 @@ export class SearchbarComponent implements OnInit{
   }
 
   onDbObjectSelected(id: string, name: string){
-    let object : DbObject = new DbObject(id, name);
+    let index  = Math.max(name.lastIndexOf("-"), name.lastIndexOf(" "));
+    let shortName;
+    if (index >= 10){
+      shortName =  name.slice(0,index);
+    } else {
+      shortName = name;
+    }
+    let object : DbObject = new DbObject(id,shortName);
 
     if (id != "0"){
       this.selectedSearch = object;
@@ -81,11 +89,13 @@ export class SearchbarComponent implements OnInit{
       SysVars.CURRENT_PAGE = "Users";
     } else {
       this.cs.deleteAll();
+      SysVars.WELCOME = true;
       location.reload();
     }
   }
   onLogoutClick() {
     this.cs.deleteAll();
+    SysVars.WELCOME = true;
     location.reload();
   }
 
@@ -168,7 +178,7 @@ export class SearchbarComponent implements OnInit{
 
 
       filter_accountTypeBasic.id = "filter_type_basic";
-      filter_accountTypeBasic.innerText = "Basic";
+      filter_accountTypeBasic.innerText = "Basis";
       filter_accountTypeBasic.style.cssText = filter_styles;
 
       filter_accountTypeBasic.addEventListener("mouseenter",
@@ -192,7 +202,7 @@ export class SearchbarComponent implements OnInit{
 
 
       filter_accountTypeBasicPlus.id = "filter_type_basicPlus";
-      filter_accountTypeBasicPlus.innerText = "BasicPlus";
+      filter_accountTypeBasicPlus.innerText = "Basis-Plus";
       filter_accountTypeBasicPlus.style.cssText = filter_styles;
 
       filter_accountTypeBasicPlus.addEventListener("mouseenter",

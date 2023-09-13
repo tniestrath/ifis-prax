@@ -20,15 +20,19 @@ export class HeaderComponent implements AfterViewInit{
   constructor(private cs : CookieService, private db : DbService) {
     this.navElements = [];
     // COOKIE VALIDATION //
-    this.db.validate().then(res  => {
-      var usid = res.user_id;
+    let cookieValue : { [p: string]: string } = this.cs.getAll();
+    console.log(cookieValue["wordpress_logged_in_a35623bccfe85a34871549a3b4ed2595"]);
+
+    this.db.manualValidate(cookieValue["wordpress_logged_in_a35623bccfe85a34871549a3b4ed2595"]).then(res  => {
+      console.log(res);
+      var usid = res;
       if (usid.toString().includes("Invalid") || usid == null || res == null || res == undefined) {
         SysVars.USER_ID = "0";
         return;
       }
-      this.db.getUserById(usid).then(res => {
+      this.db.getUserById(String(usid)).then(res => {
         SysVars.login.next(res);
-        SysVars.USER_ID = usid;
+        SysVars.USER_ID = String(usid);
         SysVars.ADMIN = true;
       })
     })

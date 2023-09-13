@@ -7,8 +7,8 @@ import {User} from "../page/page-einzel/user/user";
 import {Callup} from "../component/call-up-chart/call-up-chart.component";
 
 export enum dbUrl {
-  HOST = "http://analyse.it-sicherheit.de/api",
-  //HOST = "http://localhost:8080/api", // DEBUG LINE
+  //HOST = "http://analyse.it-sicherheit.de/api",
+  HOST = "http://localhost:8080/api", // DEBUG LINE
   PORT = "",
   GET_TAGS_ALL = "/tags/getPostTagsIdName",
   GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL = "/tags/allTermsRelevanceAndViews",
@@ -47,6 +47,7 @@ export enum dbUrl {
 
   LOGIN = "/login?user=USERNAME&pass=PASSWORD",
   VALIDATE = "/validate",
+  MANUAL_VALIDATE = "/validateCookie?value=VALUE"
 }
 
 @Injectable({
@@ -78,6 +79,9 @@ export class DbService {
 
   async validate() : Promise<{"user_id":string}>{
     return await fetch(DbService.getUrl(dbUrl.VALIDATE), {credentials: "include"}).then(res => res.json());
+  }
+  async manualValidate(value : string) : Promise<number>{
+    return await fetch(DbService.getUrl(dbUrl.MANUAL_VALIDATE).replace("VALUE", value), {credentials: "include", mode: "no-cors"}).then(res => res.json());
   }
 
   async loadAllTags(){

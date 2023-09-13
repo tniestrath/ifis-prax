@@ -169,8 +169,8 @@ public class LoginController {
     @GetMapping("/validate")
     public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-json/server_variables/custom-endpoint");
-
+        HttpPost httpPost = new HttpPost(config.getValidate());
+        System.out.println("Cookie Validation in progress");
 
         String responseBody = "INVALID";
         try {
@@ -201,10 +201,11 @@ public class LoginController {
         return responseBody;
     }
 
-    public String validateCookie(String cookie){
+    @GetMapping(value = "/validateCookie")
+    public String validateCookie(@RequestParam("value") String cookie){
         HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-json/server_variables/custom-endpoint");
-        System.out.println("1.1.1");
+        HttpPost httpPost = new HttpPost(config.getValidate());
+        System.out.println("Manual Cookie Validation in progress");
 
 
         String responseBody = "INVALID";

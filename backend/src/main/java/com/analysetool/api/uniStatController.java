@@ -70,6 +70,16 @@ public class uniStatController {
         }
         return response.toString();
     }
+    @GetMapping(value="/getViewsPerHourByDaysBack")
+    public String getViewsPerHourByDaysBack(@RequestParam int daysBack) throws ParseException {
+        String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(daysBack).format(DateTimeFormatter.ISO_DATE);
+        return uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(dateString)).get().getViewsPerHour().toString();
+    }
+    @GetMapping(value="/getViewsByLocationByDaysBack")
+    public String getViewsByLocationByDaysBack(@RequestParam int daysBack) throws ParseException {
+        String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(daysBack).format(DateTimeFormatter.ISO_DATE);
+        return uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(dateString)).get().getViewsByLocation().toString();
+    }
 
     /**
      *

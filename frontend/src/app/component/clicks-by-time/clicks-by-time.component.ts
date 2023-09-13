@@ -19,15 +19,15 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
       "stattgefunden haben. Durch hovern der Maus über den Graphen erhalten Sie mehr Informationen.");
     if (SysVars.CURRENT_PAGE == "Users") {
       this.db.getClicksByTime(Number(SysVars.USER_ID)).then(res => {
-        this.chart = this.createChart2("time_clicks", this.labels, res, undefined);
+        this.chart = this.createChart("time_clicks", this.labels, res, undefined);
       });
     } else if (SysVars.CURRENT_PAGE == "Overview") {
       this.db.getClicksByTimeAll().then(res => {
-        this.chart = this.createChart2("time_clicks", this.labels, res, undefined);
+        this.chart = this.createChart("time_clicks", this.labels, res, undefined);
       });
     }
   }
-  createChart2(canvas_id : string, labels: string[], data: number[], onClick : EventEmitter<number> | undefined){
+  createChart(canvas_id : string, labels: string[], data: number[], onClick : EventEmitter<number> | undefined){
     // @ts-ignore
     return new Chart(canvas_id, {
       type: "line",
@@ -51,7 +51,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
             display: false
           },
           title: {
-            display: true,
+            display: false,
             text: "Aufrufe nach Uhrzeit",
             position: "top",
             fullSize: true,

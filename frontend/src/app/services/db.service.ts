@@ -7,8 +7,8 @@ import {User} from "../page/page-einzel/user/user";
 import {Callup} from "../component/call-up-chart/call-up-chart.component";
 
 export enum dbUrl {
-  //HOST = "http://analyse.it-sicherheit.de/api",
-  HOST = "http://localhost:8080/api", // DEBUG LINE
+  HOST = "http://analyse.it-sicherheit.de/api",
+  //HOST = "http://localhost:8080/api", // DEBUG LINE
   PORT = "",
   GET_TAGS_ALL = "/tags/getPostTagsIdName",
   GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL = "/tags/allTermsRelevanceAndViews",
@@ -45,6 +45,8 @@ export enum dbUrl {
 
   GET_CALLUPS_BY_TIME = "/bericht/callups?days=DAYS",
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/bericht/getAccountTypeAllYesterday",
+
+  GET_NEWSLETTER_SUBS = "/newsletter/getStatusAll",
 
   LOGIN = "/login?user=USERNAME&pass=PASSWORD",
   VALIDATE = "/validate",
@@ -224,5 +226,9 @@ export class DbService {
 
   async getTopPostsBySorterWithLimit(sorter: string, limit: number){
     return await fetch(DbService.getUrl(dbUrl.GET_POSTS_TOP_BY_SORTER).replace("SORTER", sorter).replace("LIMIT", String(limit)), {credentials: "include"}).then(res => res.json());
+  }
+
+  async getNewsletterSubs(){
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS), {credentials: "include"}).then(res => res.json());
   }
 }

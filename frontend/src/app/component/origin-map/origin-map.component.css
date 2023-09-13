@@ -5,7 +5,28 @@
   flex-direction: column;
   align-items: center;
 }
+.origin-map-title{
+  display: flex;
+  width: calc(100% - 45px);
+  height: 30px;
+  padding: 5px;
+  position: relative;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid #A0A0A0;
+
+  left: -17px;
+  top: 5px;
+
+}
+.origin-map-title > p{
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+
 #Ebene_1{
+  padding-top: 5px;
   max-height: 90%;
   max-width: 90%;
   margin: 5px;
@@ -41,4 +62,11 @@ path{
   width: 100%;
   height: 20px;
   font-size: 10px;
+}
+.origin-map-total{
+  height: 5%;
+  font-size: 1vw;
+}
+.origin-map-total > p{
+  margin: 0;
 }

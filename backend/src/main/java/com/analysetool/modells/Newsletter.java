@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -34,7 +35,7 @@ public class Newsletter implements Serializable {
     private String profile;
 
     @Column(name = "created")
-    private Date created;
+    private LocalDateTime created;
 
     @Column(name = "updated")
     private int updated;
@@ -342,11 +343,11 @@ public class Newsletter implements Serializable {
         this.profile = profile;
     }
 
-    public Date getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 

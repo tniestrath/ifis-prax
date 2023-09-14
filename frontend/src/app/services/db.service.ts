@@ -31,7 +31,7 @@ export enum dbUrl {
   GET_USERS_ALL_ORIGIN_MAP = "/users/getAllViewsByLocation",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
 
-  GET_POST = "/posts/getPostStatsByIdWithAuthor?id=",
+  GET_POST = "/posts/getPostStatsByIdWithAuthor?id=ID",
   GET_POST_BY_USERS_BEST = "/posts/bestPost?id=ID&type=TYPE",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
@@ -194,7 +194,7 @@ export class DbService {
   }
 
   async getPostById(id: number) : Promise<Post> {
-    return await fetch(DbService.getUrl(dbUrl.GET_POST) + id, {credentials: "include"}).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_POST).replace("ID", String(id)), {credentials: "include"}).then(res => res.json());
   }
 
   async getOriginMapByUser(id : number){

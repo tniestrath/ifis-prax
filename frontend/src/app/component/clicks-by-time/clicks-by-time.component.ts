@@ -36,16 +36,27 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
         datasets: [{
           label: "",
           data: data,
-          backgroundColor: DashColors.Red_50,
+          backgroundColor: DashColors.RED_50,
           //borderRadius: 5,
           borderWidth: 3,
-          borderColor : DashColors.Red,
+          borderColor : DashColors.RED,
           borderJoinStyle: "round",
           fill: true,
         }]
       },
       options: {
         aspectRatio: 1,
+        scales: {
+          x: {
+            ticks: {
+              callback: (tickValue, index) => {
+                if (index % 2 == 0) return tickValue;
+                return;
+              },
+              maxRotation: 0,
+            }
+          }
+        },
         plugins: {
           datalabels: {
             display: false

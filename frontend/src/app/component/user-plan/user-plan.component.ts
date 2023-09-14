@@ -11,7 +11,7 @@ import Util, {DashColors} from "../../util/Util";
 })
 export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
-  colors : string[] = [DashColors.Grey, DashColors.Blue, DashColors.DarkBlue, DashColors.Red, DashColors.DarkRed, DashColors.Black];
+  colors : string[] = [DashColors.GREY, DashColors.BLUE, DashColors.DARK_BLUE, DashColors.RED, DashColors.DARK_RED, DashColors.BLACK];
   chart_total : number = 0;
   prev_total : number = 0;
   prev_total_text : any;

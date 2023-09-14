@@ -43,7 +43,7 @@ input[type="radio"]::before{
 }
 input[type="radio"]::after{
   content: "Alle";
-  color: #7a1833;
+  color: #951D40;
   transform: scale(0);
   position: fixed;
   bottom: 0;
@@ -60,14 +60,21 @@ input[type="radio"]::after{
 }
 #post-type-blog::after{
   content: "Blog";
-  color: #5A7995;
+  color: #951D40;
 }
 #post-type-news::before{
   content: "News";
 }
 #post-type-news::after{
   content: "News";
-  color: black;
+  color: #951D40;
+}
+#post-type-whitepaper::before{
+  content: "WP";
+}
+#post-type-whitepaper::after{
+  content: "WP";
+  color: #951D40;
 }
 
 input[type="radio"]:checked::before{
@@ -84,7 +91,7 @@ input[type="radio"]:checked::after{
   position: inherit !important;
 }
 
-#post-type-news{
+#post-type-whitepaper{
   border-radius: 0 5px 5px 0;
 }
 

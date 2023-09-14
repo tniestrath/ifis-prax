@@ -101,16 +101,16 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         datasets: [{
           label: "Aufrufe",
           data: clicksData,
-          backgroundColor: DashColors.Red,
-          borderColor: DashColors.Red,
+          backgroundColor: DashColors.RED,
+          borderColor: DashColors.RED,
           borderJoinStyle: 'round',
           borderWidth: 5
         },
         {
           label: "Besucher",
           data: visitorsData,
-          backgroundColor: DashColors.Blue,
-          borderColor: DashColors.Blue,
+          backgroundColor: DashColors.BLUE,
+          borderColor: DashColors.BLUE,
           borderJoinStyle: 'round',
           borderWidth: 5
         }]

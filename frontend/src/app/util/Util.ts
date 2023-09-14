@@ -41,13 +41,38 @@ export default class Util {
   }
 }
 export enum DashColors {
-  Red = "rgb(148,28,62)",
-  DarkRed = "rgb(84, 16, 35)",
-  Blue = "rgb(90, 121, 149)",
-  Red_50 = "rgba(148,28,62, .5)",
-  DarkRed_50 = "rgba(84, 16, 35, .5)",
-  Blue_50 = "rgba(90, 121, 149, .5)",
-  DarkBlue = "#354657",
-  Black = "#000",
-  Grey = "#E5E5E5"
+  RED = "rgb(148,28,62)",
+  BLOG = "rgb(148,28,62)",
+  PLAN_PLUS = "rgb(148,28,62)",
+
+  RED_50 = "rgba(148,28,62, .5)",
+
+  DARK_RED = "rgb(84, 16, 35)",
+  NEWS = "rgb(84, 16, 35)",
+  PLAN_PREMIUM = "rgb(84, 16, 35)",
+
+  DARK_RED_50 = "rgba(84, 16, 35, .5)",
+
+  BLUE = "rgb(90, 121, 149)",
+  ARTICLE = "rgb(90, 121, 149)",
+  PLAN_BASIC = "rgb(90, 121, 149)",
+
+  BLUE_50 = "rgba(90, 121, 149, .5)",
+
+  DARK_BLUE = "rgb(53,70,87)",
+  WHITEPAPER = "rgb(53,70,87)",
+  PLAN_BASIC_PLUS = "rgb(53,70,87)",
+
+  DARK_BLUE_50 = "rgba(53,70,87, .5)",
+
+  BLACK = "rgb(0,0,0)",
+  PLAN_SPONSOR = "rgb(0,0,0)",
+
+  BLACK_50 = "rgba(0,0,0, .5)",
+
+  GREY = "rgb(229,229,229)",
+  PLAN_WITHOUT = "rgb(229,229,229)",
+  BACKGROUND = "rgb(229,229,229)",
+
+  GREY_50 = "rgba(229,229,229, .5)"
 }

@@ -2,8 +2,6 @@ import {AfterViewInit, Component} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {SelectorItem} from "../../../page/selector/selector.component";
 import {Subject} from "rxjs";
-import {PostComponent} from "../post.component";
-import {DbObject} from "../../../services/DbObject";
 import {PostListItemComponent} from "./post-list-item/post-list-item.component";
 import {Post} from "../Post";
 
@@ -21,6 +19,7 @@ export class PostListComponent extends DashBaseComponent implements AfterViewIni
   type_input_article : any;
   type_input_blog : any;
   type_input_news : any;
+  type_input_whitepaper : any;
 
   ngOnInit(): void {
     this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen");
@@ -66,9 +65,14 @@ export class PostListComponent extends DashBaseComponent implements AfterViewIni
       });
       this.selectorItemsLoaded.next(this.selectorItems);
     });
+    this.type_input_whitepaper = document.getElementById("post-type-whitepaper");
+    this.type_input_whitepaper.addEventListener("change", () => {
+      this.selectorItems = this.selectorItemsBackup.filter((item) => {
+        return ( (item.data as Post).type == "whitepaper" );
+      });
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
   }
-
-
 
   ngAfterViewInit(): void {
 

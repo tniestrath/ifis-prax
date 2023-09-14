@@ -1,38 +1,3 @@
-@media (min-aspect-ratio: 16/10) {
-  #tag-sort-r::before{
-    content: "Relevanz";
-  }
-  #tag-sort-r::after{
-    content: "Relevanz";
-  }
-  #tag-sort-a::before{
-    content: "Anzahl" !important;
-  }
-  #tag-sort-a::after{
-    content: "Anzahl" !important;
-  }
-  .clicks-item-head{
-    font-size: x-large !important;
-  }
-}
-@media (max-aspect-ratio: 5/4), (max-width: 1500px) {
-  #tag-sort-r::before{
-    content: "R";
-  }
-  #tag-sort-r::after{
-    content: "R";
-  }
-  #tag-sort-a::before{
-    content: "A" !important;
-  }
-  #tag-sort-a::after{
-    content: "A" !important;
-  }
-  .clicks-item-head{
-    font-size: large !important;
-  }
-}
-
 html, body {
   margin: 0;
   padding: 0;

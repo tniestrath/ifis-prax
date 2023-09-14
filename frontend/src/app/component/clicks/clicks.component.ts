@@ -3,7 +3,7 @@ import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import {SysVars} from "../../services/sys-vars-service";
-import Util from "../../util/Util";
+import Util, {DashColors} from "../../util/Util";
 
 @Component({
   selector: 'dash-clicks',
@@ -12,7 +12,7 @@ import Util from "../../util/Util";
 })
 export class ClicksComponent extends DashBaseComponent implements OnInit, AfterViewInit{
 
-  colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
+  colors : string[] = [DashColors.ARTICLE, DashColors.BLOG, DashColors.NEWS];
   c_chart: any;
   p_chart: any;
 

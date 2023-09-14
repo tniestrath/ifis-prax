@@ -9,27 +9,33 @@ import Util, {DashColors} from "../../../../util/Util";
 })
 export class PostListItemComponent implements OnInit{
   data: Post = new Post();
-  formattedDate = new Date(this.data.date).toLocaleDateString();
-  formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");
-  typeColor = "rgb(148,28,62)";
+  formattedDate = "DATUM FEHLT";
+  formattedTags = "KEINE TAGS";
+  typeColor = DashColors.GREY;
   bgColor: string = "#FFFFFF";
 
   ngOnInit(): void {
     switch (this.data.type) {
-      case "article": {
-        this.typeColor = DashColors.Red;
+      case "artikel": {
+        this.typeColor = DashColors.ARTICLE;
         break;
       }
       case "blog": {
-        this.typeColor = DashColors.Blue;
+        this.typeColor = DashColors.BLOG;
         break;
       }
       case "news": {
-        this.typeColor = DashColors.Black;
+        this.typeColor = DashColors.NEWS;
+        break;
+      }
+      case "whitepaper": {
+        this.typeColor = DashColors.WHITEPAPER;
         break;
       }
     }
     this.formattedDate = new Date(this.data.date).toLocaleDateString();
-    this.formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");
+    if (this.data.tags != null && this.data.tags.length > 0){
+      this.formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");
+    }
   }
 }

@@ -56,13 +56,13 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       }
       switch (this.dataType) {
         case "views":
-          this.createChart("Views", tagViews, tagDate, DashColors.Red, tagName);
+          this.createChart("Views", tagViews, tagDate, DashColors.RED, tagName);
           break;
         case "relevance":
-          this.createChart("Relevanz", tagRelevance, tagDate, DashColors.Blue, tagName);
+          this.createChart("Relevanz", tagRelevance, tagDate, DashColors.BLUE, tagName);
           break;
         case "count":
-          this.createChart("Beiträge zum Thema", tagCount, tagDate, DashColors.Black, tagName);
+          this.createChart("Beiträge zum Thema", tagCount, tagDate, DashColors.BLACK, tagName);
           break;
       }
 

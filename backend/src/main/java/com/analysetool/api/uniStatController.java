@@ -321,7 +321,7 @@ public class uniStatController {
 
                         if (termTax.getTermId() == tagIdBlog && type.equals("blog")) {
                             JSONObject obj = new JSONObject();
-                            //getClickOfDayAsJson enthält auch den Namen und die ID.
+
                             obj = getClickOfDayAsJson(post.getId(),daysBack);
                             ergebnis.put(obj);
                         }

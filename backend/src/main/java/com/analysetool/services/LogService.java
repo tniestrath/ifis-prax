@@ -710,7 +710,7 @@ public class LogService {
         statsRepo.save(postStats);
     }
 
-    public Map<String, Long> erhoeheViewsPerHour2(PostStats stats, LocalTime logUhrzeit) {
+    public  Map<String, Long> erhoeheViewsPerHour2(PostStats stats, LocalTime logUhrzeit) {
         Map<String, Long> viewsPerHour = stats.getViewsPerHour();
         int stunde = logUhrzeit.getHour();
         long views = viewsPerHour.getOrDefault(Integer.toString(stunde), 0L);
@@ -719,7 +719,7 @@ public class LogService {
 
         return viewsPerHour;
     }
-    public Map<String, Long> erhoeheViewsPerHour2(Map<String, Long> viewsPerHour, LocalTime logUhrzeit) {
+    public static Map<String, Long> erhoeheViewsPerHour2(Map<String, Long> viewsPerHour, LocalTime logUhrzeit) {
         int stunde = logUhrzeit.getHour();
         long views = viewsPerHour.getOrDefault(Integer.toString(stunde), 0L);
         views++;

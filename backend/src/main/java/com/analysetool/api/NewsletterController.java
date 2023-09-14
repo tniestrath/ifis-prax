@@ -141,6 +141,45 @@ public class NewsletterController {
 
         return subsPerHour.toString();
     }
+    /**
+     * Fetches the number of subscriptions in a given date range.
+     *
+     * <p>This method fetches all newsletter subscriptions from the database and filters
+     * them by their creation date to count the number of subscriptions between two specific dates.</p>
+     *
+     * @param daysBackTo The number of days from today to the furthest date back in time for which to consider subscriptions.
+     *                   E.g., if today is 2021-09-14 and daysBackTo is 10, then the furthest date back will be 2021-09-04.
+     *
+     * @param daysBackFrom The number of days from today to the nearest date back in time for which to consider subscriptions.
+     *                     E.g., if today is 2021-09-14 and daysBackFrom is 1, then the nearest date will be 2021-09-13.
+     *
+     * @return A long value representing the number of subscriptions between the fromDate and toDate, inclusive.
+     *
+     * @throws SomeExceptionType (if applicable)
+     *
+     * Example usage:
+     * <pre>{@code
+     *   long numberOfSubs = getAmountofSubsByDateRange(10, 1);
+     * }</pre>
+     */
+    @GetMapping("/getAmountOfSubsByDateRange")
+    public long getAmountofSubsByDateRange(@RequestParam int daysBackTo, @RequestParam int daysBackFrom) {
+        long counter =0 ;
+        List<Newsletter> allSubs = newsRepo.findAll();
+        LocalDate fromDate = LocalDate.now().minusDays((long) daysBackTo);
+        LocalDate toDate = LocalDate.now().minusDays((long) daysBackFrom);
+
+        for (Newsletter n : allSubs) {
+            LocalDate createdDate = n.getCreated().toLocalDate();
+
+            if (!createdDate.isBefore(fromDate) && !createdDate.isAfter(toDate)) {
+                counter++;
+
+            }
+        }
+
+        return counter;
+    }
 
 
 }

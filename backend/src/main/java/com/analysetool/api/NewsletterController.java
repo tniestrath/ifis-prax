@@ -66,7 +66,7 @@ public class NewsletterController {
         return newsRepo.getMailsByStatus(c);
     }
 
-    @GetMapping("getAllMailsWithStatus")
+    @GetMapping("/getAllMailsWithStatus")
     public Map<String, Character> getAllMailsWithStatus() {
         return newsRepo.getMailAndStatusAll();
     }

@@ -45,7 +45,9 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
         }]
       },
       options: {
+        clip: false,
         aspectRatio: 1,
+        maintainAspectRatio: false,
         scales: {
           x: {
             ticks: {

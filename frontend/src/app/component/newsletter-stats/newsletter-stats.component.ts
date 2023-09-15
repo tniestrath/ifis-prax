@@ -14,6 +14,9 @@ export class NewsletterStatsComponent extends DashBaseComponent implements OnIni
   verified: number = 0;
   not_jet_verified: number = 0;
 
+  verified_today: number = 0;
+  not_jet_verified_today: number = 0;
+
   verified_yesterday: number = 0;
   not_jet_verified_yesterday: number = 0;
 
@@ -23,6 +26,16 @@ export class NewsletterStatsComponent extends DashBaseComponent implements OnIni
         if (char == "S") this.not_jet_verified++;
         if (char == "C") this.verified++;
       }
+    }).then( () =>
+      this.db.getNewsletterSubsYesterday().then(res => {
+      for (let char of res) {
+        if (char == "S") this.not_jet_verified_yesterday++;
+        if (char == "C") this.verified_yesterday++;
+      }
+    })).then(() => {
+      this.verified_today = this.verified - this.verified_yesterday;
+      this.not_jet_verified_today = this.not_jet_verified - this.not_jet_verified_yesterday;
     })
+
   }
 }

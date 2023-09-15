@@ -3,7 +3,7 @@
     <div class="number-box" [style]="{color: DashColors.RED}">
       <p class="number-m"></p>
       <p class="number-xl" [style]="{width: 'fit-content'}">{{Util.formatNumbers(verified)}}</p>
-      <p class="number-m" [style]="{textAlign: 'start'}">{{verified_yesterday >= 0 ? "+" + verified_yesterday : "-" + verified_yesterday}}</p>
+      <p class="number-m" [style]="{textAlign: 'start'}">{{verified_today >= 0 ? "+" + verified_today : "-" + verified_today}}</p>
     </div>
     <p>Newsletter Abonenten</p>
   </div>
@@ -11,7 +11,7 @@
     <div class="number-box" [style]="{color: DashColors.BLUE}">
       <p class="number-s"></p>
       <p class="number-m" [style]="{width: 'fit-content'}">{{Util.formatNumbers(not_jet_verified)}}</p>
-      <p class="number-s" [style]="{textAlign: 'start'}">{{not_jet_verified_yesterday >= 0 ? "+" + not_jet_verified_yesterday : "-" + not_jet_verified_yesterday}}</p>
+      <p class="number-s" [style]="{textAlign: 'start'}">{{not_jet_verified_today >= 0 ? "+" + not_jet_verified_today : "-" + not_jet_verified_today}}</p>
     </div>
     <p>noch nicht Verifiziert</p>
   </div>

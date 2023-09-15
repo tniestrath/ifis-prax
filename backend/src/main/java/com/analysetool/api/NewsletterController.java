@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,6 +180,23 @@ public class NewsletterController {
         }
 
         return counter;
+    }
+
+    @GetMapping("/getAmountOfSubsYesterday")
+    public List<Character> getAmountofSubsYesterday() {
+        List<Character> subs = new ArrayList<>();
+        List<Newsletter> allSubs = newsRepo.findAll();
+        LocalDate today = LocalDate.now();
+
+        for (Newsletter n : allSubs) {
+            LocalDate createdDate = n.getCreated().toLocalDate();
+
+            if (createdDate.isBefore(today)) {
+                subs.add(n.getStatus());
+
+            }
+        }
+        return subs;
     }
 
 

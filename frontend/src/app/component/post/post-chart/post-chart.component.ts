@@ -108,6 +108,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       },
       options: {
         aspectRatio: 2.8,
+        maintainAspectRatio: false,
         layout: {
           padding: {
             bottom: -50

@@ -375,7 +375,7 @@ public class PostController {
 
 
     @GetMapping("/getPostStatsByIdWithAuthor")
-    public JSONObject PostStatsByIdForFrontend(@RequestParam long id) throws JSONException, ParseException {
+    public String PostStatsByIdForFrontend(@RequestParam long id) throws JSONException, ParseException {
         if(!postRepository.findById(id).isPresent()) {return null;}
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
@@ -444,7 +444,7 @@ public class PostController {
 
         obj.put("authors", postMetaRepo.getAuthorsByPostId(id));
 
-        return obj;
+        return obj.toString();
     }
 
     //STATS
@@ -833,7 +833,7 @@ public class PostController {
             errorString = "Wrong sorter / table error";
         } else {
             for(PostStats stats : top) {
-                JSONObject obj = PostStatsByIdForFrontend(stats.getArtId());
+                JSONObject obj = new JSONObject(PostStatsByIdForFrontend(stats.getArtId()));
                 array.put(obj);
             }
         }
@@ -886,11 +886,11 @@ public class PostController {
 
 
         for(Post post : posts) {
-            JSONObject json = PostStatsByIdForFrontend(post.getId());
+            JSONObject json = new JSONObject(PostStatsByIdForFrontend(post.getId()));
             if(json.get("type").toString().toLowerCase().contains("blog")  ||
                     json.get("type").toString().toLowerCase().contains("news") ||
                     json.get("type").toString().toLowerCase().contains("artikel") || json.get("type").toString().toLowerCase().contains("whitepaper")){
-                stats.add(this.PostStatsByIdForFrontend(post.getId()));
+                stats.add(json);
             }
         }
         return new JSONArray(stats).toString();

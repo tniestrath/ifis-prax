@@ -45,12 +45,15 @@ export enum dbUrl {
 
   GET_CALLUPS_BY_TIME = "/bericht/callups?days=DAYS",
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/bericht/getAccountTypeAllYesterday",
+  GET_VIEWS_BY_LOCATION_BY_DAYSBACK = "/bericht/getViewsByLocationLast14",
 
   GET_NEWSLETTER_SUBS = "/newsletter/getStatusAll",
+  GET_NEWSLETTER_SUBS_YESTERDAY = "/newsletter/getAmountOfSubsYesterday",
+  GET_NEWSLETTER_SUBS_BY_DATERANGE = "/newsletter/getAmountOfSubsByDateRange?daysBackTo=DAYSBACKTO&daysBackFrom=DAYSBACKFROM",
 
   LOGIN = "/login?user=USERNAME&pass=PASSWORD",
   VALIDATE = "/validate",
-  MANUAL_VALIDATE = "/validateCookie?value=VALUE"
+  MANUAL_VALIDATE = "/validateCookie?value=VALUE",
 }
 
 @Injectable({
@@ -84,7 +87,7 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.VALIDATE), {credentials: "include"}).then(res => res.json());
   }
   async manualValidate(value : string) : Promise<number>{
-    return await fetch(DbService.getUrl(dbUrl.MANUAL_VALIDATE).replace("VALUE", value), {credentials: "include", mode: "no-cors"}).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.MANUAL_VALIDATE).replace("VALUE", value), {credentials: "include"}).then(res => res.json());
   }
 
   async loadAllTags(){
@@ -230,5 +233,15 @@ export class DbService {
 
   async getNewsletterSubs(){
     return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS), {credentials: "include"}).then(res => res.json());
+  }
+  async getNewsletterSubsByDateRange(daysBackTo : number, daysBackFrom : number){
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_BY_DATERANGE).replace("DAYSBACKTO", String(daysBackTo)).replace("DAYSBACKFROM", String(daysBackFrom)), {credentials: "include"}).then(res => res.json());
+  }
+  async getNewsletterSubsYesterday(){
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_YESTERDAY), {credentials: "include"}).then(res => res.json());
+  }
+
+  async getViewsByLocationLas14(){
+    return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION_BY_DAYSBACK), {credentials: "include"}).then(res => res.json());
   }
 }

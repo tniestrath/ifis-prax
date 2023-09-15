@@ -74,7 +74,7 @@ public class UniversalStats {
     public UniversalStats() {
     }
 
-    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum, int totalClicks) {
+    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum, int totalClicks, Map<String, Long> viewsPerHour, Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
         this.besucherAnzahl = besucherAnzahl;
         this.anbieterProfileAnzahl = anbieterProfileAnzahl;
         this.anzahlArtikel = anzahlArtikel;
@@ -82,8 +82,8 @@ public class UniversalStats {
         this.anzahlBlog = anzahlBlog;
         this.datum = datum;
         this.totalClicks = totalClicks;
-        this.viewsPerHour=setJson();
-        this.viewsByLocation=new HashMap<>();
+        this.viewsPerHour=viewsPerHour;
+        this.viewsByLocation=viewsByLocation;
     }
 
     public Map<String,Long> setJson(){

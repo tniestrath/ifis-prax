@@ -78,7 +78,12 @@ public class uniStatController {
     @GetMapping(value="/getViewsByLocationByDaysBack")
     public String getViewsByLocationByDaysBack(@RequestParam int daysBack) throws ParseException {
         String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(daysBack).format(DateTimeFormatter.ISO_DATE);
+        JSONArray jsonArray = new JSONArray();
         return uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(dateString)).get().getViewsByLocation().toString();
+    }
+    @GetMapping("/getViewsByLocationLast14")
+    public String getViewsByLocationLast14(){
+        return new JSONArray(uniRepo.findAllTop14ByOrderByDatumDesc()).toString();
     }
 
     /**

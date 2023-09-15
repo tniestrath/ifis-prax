@@ -116,7 +116,9 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         }]
       },
       options: {
+        clip: false,
         aspectRatio: 2.8,
+        maintainAspectRatio: false,
         layout: {
           padding: {
             bottom: -45

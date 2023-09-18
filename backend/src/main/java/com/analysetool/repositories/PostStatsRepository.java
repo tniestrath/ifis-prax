@@ -169,7 +169,7 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("SELECT s FROM PostStats s ORDER BY s.performance DESC LIMIT 5")
     public List<PostStats> getTop5Performance();
 
-    @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC")
+    @Query("SELECT s.artId FROM PostStats s ORDER BY s.relevance DESC")
     public List<Long> getTopRelevanceID(int limit);
 
     @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC")

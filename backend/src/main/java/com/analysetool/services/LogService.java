@@ -55,6 +55,7 @@ public class LogService {
     private String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
     private String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/.*s=(\\S+)\".*";//search +1, view +1,(bei match) vor artikel view pattern
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
+    private String WhitepaperSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
     private String BlogViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/";
     private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
     private String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
@@ -69,7 +70,7 @@ public class LogService {
 
     private String PodcastPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /its-couch/(\\S+)/.*s=(\\S+)\".*";
 
-    private String WhitepaperPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
+    private String WhitepaperViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
 
     // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
     private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
@@ -77,19 +78,20 @@ public class LogService {
    private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
 
-    Pattern pattern1_1 = Pattern.compile(ArtikelViewPattern);
-    Pattern pattern1_2 = Pattern.compile(ArtikelSSPattern);
-    Pattern pattern2_1 = Pattern.compile(BlogViewPattern);
-    Pattern pattern2_2 = Pattern.compile(BlogSSPattern);
-    Pattern pattern3=Pattern.compile(RedirectPattern);
-    Pattern pattern4=Pattern.compile(UserViewPattern);
-    Pattern pattern5_1 = Pattern.compile(PresseViewPatter);
-    Pattern pattern5_2= Pattern.compile(PresseSSViewPatter);
-    Pattern pattern4_2=Pattern.compile(RedirectUserPattern);
-    Pattern pattern6_1= Pattern.compile(SearchPattern);
-    Pattern pattern7=Pattern.compile(ReffererPattern);
+    Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
+    Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
+    Pattern blogViewPattern = Pattern.compile(BlogViewPattern);
+    Pattern blogSearchSuccessPattern = Pattern.compile(BlogSSPattern);
+    Pattern redirectPattern = Pattern.compile(RedirectPattern);
+    Pattern userViewPattern = Pattern.compile(UserViewPattern);
+    Pattern newsViewPattern = Pattern.compile(PresseViewPatter);
+    Pattern newsSearchSuccessPattern = Pattern.compile(PresseSSViewPatter);
+    Pattern userRedirectPattern = Pattern.compile(RedirectUserPattern);
+    Pattern searchPattern = Pattern.compile(SearchPattern);
+    Pattern referPattern = Pattern.compile(ReffererPattern);
     Pattern patternPodcast = Pattern.compile(PodcastPattern);
-    Pattern patternWhitepaper = Pattern.compile(WhitepaperPattern);
+    Pattern patternWhitepaper = Pattern.compile(WhitepaperViewPattern);
+    Pattern patternWhitepaperSearchSuccess = Pattern.compile(WhitepaperSSPattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -251,57 +253,57 @@ public class LogService {
             }
 
            // if (foundPattern) {
-                Matcher matcher1_1 = pattern1_1.matcher(line);
+                Matcher matched_articleView = articleViewPattern.matcher(line);
 
-                if (matcher1_1.find()) {
-                    Matcher matcher1_2 = pattern1_2.matcher(line);
+                if (matched_articleView.find()) {
+                    Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
 
                     foundPattern = true;
-                    if (matcher1_2.find()) {
+                    if (matched_articleSearchSuccess.find()) {
                         // Do something with the matched 1.2 patterns
                         //System.out.println(line+"SEARCH FOUND");
-                        processLine(line,2,matcher1_2);
+                        processLine(line,"articleSearchSuccess",matched_articleSearchSuccess);
                         foundPattern = true;
                     } else {//1.1 matched
                         //System.out.println(line+"NO SEARCH");
-                        processLine(line,1,matcher1_1);
+                        processLine(line,"articleView",matched_articleView);
                         foundPattern = true;
                     }
                 }
            // }
             else {
-                    Matcher matcher2_1 = pattern2_1.matcher(line);
+                    Matcher matched_blogView = blogViewPattern.matcher(line);
 
-                    if (matcher2_1.find()) {
-                        Matcher matcher2_2 = pattern2_2.matcher(line);
+                    if (matched_blogView.find()) {
+                        Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
 
-                        if (matcher2_2.find()) {
+                        if (matched_blogSearchSuccess.find()) {
                             // Do something with the matched 2.2 patterns
-                            processLine(line, 4, matcher2_2);
+                            processLine(line, "blogSearchSuccess", matched_blogSearchSuccess);
                             foundPattern = false;
                            // System.out.println(line+" SEARCH FOUND");
                         } else {
                             //2.1 match
-                            processLine(line, 3, matcher2_1);
+                            processLine(line, "blogView", matched_blogView);
                             foundPattern = false;
                            // System.out.println(line+" NO SEARCH");
                         }
                     }else {
-                        Matcher matcher5_1 = pattern5_1.matcher(line);
+                        Matcher matched_newsView = newsViewPattern.matcher(line);
 
-                        if (matcher5_1.find()) {
+                        if (matched_newsView.find()) {
                             System.out.println("TEST NEWS GEFUNDEN");
-                            Matcher matcher5_2 = pattern5_2.matcher(line);
+                            Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(line);
 
-                            if (matcher5_2.find()) {
+                            if (matched_newsSearchSuccess.find()) {
                                 System.out.println("TEST SEARCHSUCCESS GEFUNDEN");
                                 // Do something with the matched 2.2 patterns
-                                processLine(line, 8, matcher5_2);
+                                processLine(line, "newsSearchSuccess", matched_newsSearchSuccess);
                                 foundPattern = false;
                                 // System.out.println(line+" SEARCH FOUND");
                             } else {
                                 //2.1 match
-                                processLine(line, 7, matcher5_1);
+                                processLine(line, "newsView", matched_newsView);
                                 foundPattern = false;
                                 // System.out.println(line+" NO SEARCH");
                             }
@@ -309,21 +311,21 @@ public class LogService {
                     }
                 }
 
-            Matcher matcher3=pattern3.matcher(line);
-            if(matcher3.find()){
-                processLine(line,5,matcher3);
+            Matcher matched_redirect = redirectPattern.matcher(line);
+            if(matched_redirect.find()){
+                processLine(line,"redirect",matched_redirect);
                 }
-            Matcher matcher4=pattern4.matcher(line);
-            if(matcher4.find()){
-                processLine(line,6,matcher4);
+            Matcher matched_userView = userViewPattern.matcher(line);
+            if(matched_userView.find()){
+                processLine(line,"userView",matched_userView);
             }
-            Matcher matcher4_2=pattern4_2.matcher(line);
-            if(matcher4_2.find()){
-                processLine(line,9,matcher4);
+            Matcher matched_userRedirect = userRedirectPattern.matcher(line);
+            if(matched_userRedirect.find()){
+                processLine(line,"userViewRedirect",matched_userView);
             }
-            Matcher matcher6_1=pattern6_1.matcher(line);
-            if(matcher6_1.find()){
-                processLine(line,10,matcher6_1);
+            Matcher matched_searchPattern = searchPattern.matcher(line);
+            if(matched_searchPattern.find()){
+                processLine(line,"search",matched_searchPattern);
             }
 
 
@@ -343,28 +345,28 @@ public class LogService {
     }
 
 
-    public void processLine(String line,int patternNumber,Matcher matcher){
+    public void processLine(String line,String patternName,Matcher matcher){
         lastLine=line;
-        if (patternNumber==1){
+        if (patternName.equals("articleView")){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.1");
             UpdatePerformanceAndViews(matcher);
             updateViewsByLocation(matcher);
         }
-        if (patternNumber==2){
+        if (patternName.equals("articleSearchSuccess")){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
             updateSearchStats(matcher);
         }
-        if (patternNumber==3){
+        if (patternName.equals("blogView")){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 2.1");
             UpdatePerformanceAndViews(matcher);
             updateViewsByLocation(matcher);
         }
-        if (patternNumber==4){
+        if (patternName.equals("blogSearchSuccess")){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 2.2");
             updatePerformanceViewsSearchSuccess(matcher);
@@ -372,7 +374,7 @@ public class LogService {
             updateSearchStats(matcher);
         }
 
-        if(patternNumber==5){
+        if(patternName.equals("redirect")){
             System.out.println(matcher.group(3)+" PROCESSING 3");
             //gibts das PostStats objekt? -nein = neues -ja = updaten
             long id =postRepository.getIdByName(matcher.group(3));
@@ -393,14 +395,14 @@ public class LogService {
 
         }
 
-        if(patternNumber==6){
+        if(patternName.equals("userView")){
             System.out.println(matcher.group(1).replace("+","-")+" PROCESSING 4");
             if(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).isPresent()){
                 //updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
                 userViewOrImpression(matcher);
             }
         }
-        if (patternNumber==7){
+        if (patternName.equals("newsView")){
 
             System.out.println(postRepository.getIdByName(matcher.group(1)+" "+matcher.group(1))+" PROCESSING 5.1");
 
@@ -409,7 +411,7 @@ public class LogService {
             UpdatePerformanceAndViews(matcher);
             updateViewsByLocation(matcher);
         }
-        if (patternNumber==8){
+        if (patternName.equals("newsSearchSuccess")){
 
             System.out.println(postRepository.getIdByName(matcher.group(5))+matcher.group(6)+" PROCESSING 5.2");
 
@@ -419,7 +421,7 @@ public class LogService {
             updateSearchStats(matcher);
         }
 
-        if(patternNumber==9){
+        if(patternName.equals("userViewRedirect")){
             System.out.println(matcher.group(1).replace("+","-")+" PROCESSING 4_2");
             if(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).isPresent()){
                 WPUser wpUser=wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get();
@@ -439,7 +441,7 @@ public class LogService {
 
             };
         }
-        if(patternNumber==10){
+        if(patternName.equals("search")){
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
             String ip = matcher.group(1);
             byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
@@ -464,7 +466,7 @@ public class LogService {
             searchStatRepo.save(new SearchStats(ipHash,matcher.group(6),dateTime,location));
 
         }
-        if(patternNumber==11){
+        if(patternName.equals("thisWasUnreached")){
 
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
             System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));
@@ -1342,10 +1344,10 @@ public class LogService {
         int allClicks = 0;
 
         while ((line = bufferedReader.readLine()) != null) {
-            Matcher matcher1_1 = pattern1_1.matcher(line);
+            Matcher matcher1_1 = articleViewPattern.matcher(line);
 
             if (matcher1_1.find()) {
-                Matcher matcher1_2 = pattern1_2.matcher(line);
+                Matcher matcher1_2 = articleSearchSuccessPattern.matcher(line);
 
 
                 if (matcher1_2.find()) {
@@ -1370,10 +1372,10 @@ public class LogService {
             }
             // }
             else {
-                Matcher matcher2_1 = pattern2_1.matcher(line);
+                Matcher matcher2_1 = blogViewPattern.matcher(line);
 
                 if (matcher2_1.find()) {
-                    Matcher matcher2_2 = pattern2_2.matcher(line);
+                    Matcher matcher2_2 = blogSearchSuccessPattern.matcher(line);
 
                     if (matcher2_2.find()) {
                         // Do something with the matched 2.2 patterns
@@ -1395,11 +1397,11 @@ public class LogService {
 
                     }
                 } else {
-                    Matcher matcher5_1 = pattern5_1.matcher(line);
+                    Matcher matcher5_1 = newsViewPattern.matcher(line);
 
                     if (matcher5_1.find()) {
 
-                        Matcher matcher5_2 = pattern5_2.matcher(line);
+                        Matcher matcher5_2 = newsSearchSuccessPattern.matcher(line);
                         if (matcher5_2.find()) {
                             if(!uniqueIps.contains(hashIp(matcher5_2.group(1)))){uniqueIps.add(hashIp(matcher5_2.group(1))); viewsByLocation=setViewsByLocation(matcher5_2.group(1),viewsByLocation);
                             }
@@ -1417,7 +1419,7 @@ public class LogService {
                 }
             }
 
-            Matcher matcher3 = pattern3.matcher(line);
+            Matcher matcher3 = redirectPattern.matcher(line);
             if (matcher3.find()) {
                 if(!uniqueIps.contains(hashIp(matcher3.group(1)))){uniqueIps.add(hashIp(matcher3.group(1))); viewsByLocation=setViewsByLocation(matcher3.group(1),viewsByLocation);
                 }
@@ -1425,7 +1427,7 @@ public class LogService {
                 viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                 allClicks++;
             }
-            Matcher matcher4 = pattern4.matcher(line);
+            Matcher matcher4 = userViewPattern.matcher(line);
             if (matcher4.find()) {
                 if(!uniqueIps.contains(hashIp(matcher4.group(1)))){uniqueIps.add(hashIp(matcher4.group(1))); viewsByLocation=setViewsByLocation(matcher4.group(1),viewsByLocation);
                 }
@@ -1433,7 +1435,7 @@ public class LogService {
                 viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                 allClicks++;
             }
-            Matcher matcher4_2 = pattern4_2.matcher(line);
+            Matcher matcher4_2 = userRedirectPattern.matcher(line);
             if (matcher4_2.find()) {
                 if(!uniqueIps.contains(hashIp(matcher4_2.group(1)))){uniqueIps.add(hashIp(matcher4_2.group(1))); viewsByLocation=setViewsByLocation(matcher4_2.group(1),viewsByLocation);
                 }
@@ -1441,7 +1443,7 @@ public class LogService {
                 viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                 allClicks++;
             }
-            Matcher matcher6_1 = pattern6_1.matcher(line);
+            Matcher matcher6_1 = searchPattern.matcher(line);
             if (matcher6_1.find()) {
 
                 if(!uniqueIps.contains(hashIp(matcher6_1.group(1)))){uniqueIps.add(hashIp(matcher6_1.group(1))); viewsByLocation=setViewsByLocation(matcher6_1.group(1),viewsByLocation);

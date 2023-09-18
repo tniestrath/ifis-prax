@@ -20,7 +20,7 @@ export class Top5PostsComponent extends DashBaseComponent implements OnInit{
   }[] | undefined;
 
   ngOnInit(): void {
-    this.db.getTopPostsBySorterWithLimit("performance", 5).then(res => {
+    this.db.getTopPostsBySorterWithType("performance", "artikel").then(res => {
       this.dataArray = res;
     });
   }

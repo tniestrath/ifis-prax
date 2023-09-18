@@ -189,6 +189,11 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("UPDATE PostStats s SET s.wordcount =:wordcount WHERE s.artId =:artId")
     void updateWordCount(int wordcount, long artId);
 
+
+    public List<PostStats> findAllByOrderByPerformanceDesc();
+
+    public List<PostStats> findAllByOrderByRelevanceDesc();
+
     // Beispiel für eine separate Methode zur Berechnung der Performance
 
 

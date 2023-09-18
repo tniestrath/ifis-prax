@@ -8,7 +8,6 @@ import java.util.*;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
-import com.analysetool.util.TypeHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -755,33 +754,77 @@ public class PostController {
         return result;
     }
 
+
+    private String getType(@RequestParam long id) throws JSONException, ParseException {
+        if(!postRepository.findById(id).isPresent()) {return null;}
+        Post post = postRepository.findById(id).get();
+        List<String> tags = new ArrayList<>();
+        String type = "default";
+        List<Long> tagIDs = null;
+        if(termRelationRepo.existsByObjectId(post.getId())){
+            tagIDs = termRelationRepo.getTaxIdByObject(post.getId());
+        }
+        List<WPTerm> terms = new ArrayList<>();
+        if (tagIDs != null) {
+            for (long l : tagIDs) {
+                if (wpTermRepo.existsById(l)) {
+                    if (wpTermRepo.findById(l).isPresent()) {
+                        terms.add(wpTermRepo.findById(l).get());
+                    }
+                }
+            }
+        }
+        for (WPTerm t: terms) {
+            if (wpTermTaxonomyRepo.existsById(t.getId())){
+                if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
+                    WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
+                    if (Objects.equals(tt.getTaxonomy(), "category")){
+                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1) {
+                            type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
+                        }
+                    } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
+                        tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
+                    }
+                }
+            }
+        }
+
+        return type;
+    }
+
     /**
      *
      * @param sorter sorter relevance | performance - chooses what statistic you want to sort by.
      * @param type "news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber"
      * @return
      */
-    @GetMapping("/getTop5WithType")
-    public String getTop5WithType(@RequestParam String sorter, String type) throws JSONException, ParseException {
+    @GetMapping("/getTopWithType")
+    public String getTopWithType(@RequestParam String sorter, String type, int limit) throws JSONException, ParseException {
         List<PostStats> top = null;
         String errorString = "";
 
         if(sorter.equalsIgnoreCase("relevance")) {
-            top = statsRepo.getTop5Relevance();
+            top = statsRepo.findAllByOrderByRelevanceDesc();
         }
         if(sorter.equalsIgnoreCase("performance")) {
-            top = statsRepo.getTop5Performance();
+            top = statsRepo.findAllByOrderByPerformanceDesc();
         }
         String jsonString = null;
         JSONArray array = new JSONArray();
 
-        if(top == null) {
-            errorString = "Wrong sorter / table error";
-        } else {
-            for(PostStats stats : top) {
-                JSONObject obj = new JSONObject(PostStatsByIdForFrontend(stats.getArtId()));
-                array.put(obj);
+        assert top != null;
+        top = top.stream().filter(postStats -> {
+            try {
+                return type.equalsIgnoreCase(getType(postStats.getArtId()));
+            } catch (JSONException | ParseException e) {
+                throw new RuntimeException(e);
             }
+        }).limit(limit).toList();
+
+
+        for (PostStats stats : top) {
+            JSONObject obj = new JSONObject(PostStatsByIdForFrontend(stats.getArtId()));
+            array.put(obj);
         }
         jsonString = array.toString();
         return jsonString != null? jsonString : errorString;
@@ -867,11 +910,6 @@ public class PostController {
             }
         }
         return new JSONArray(stats).toString();
-    }
-
-    @GetMapping("getTypeForId")
-    public String getType(long artId) {
-        return TypeHelper.getInstance().findTypeForPost(postRepo.findById(artId).get());
     }
 
 }

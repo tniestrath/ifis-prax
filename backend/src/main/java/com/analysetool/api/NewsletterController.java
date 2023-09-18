@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,22 +81,30 @@ public class NewsletterController {
      * the provided date range (specified by the number of days back from today for the start and end)
      * are processed to populate views by location.</p>
      *
-     * @param daysBackTo The start of the date range, specified as the number of days back from today.
+     * @param daysBackTo The end of the date range, specified as the number of days back from today.
+     *                    A lower numerical value means a date closer to today.
+     * @param daysBackFrom The start of the date range, specified as the number of days back from today.
      *                   A higher numerical value means a date further in the past.
-     * @param daysBackFrom The end of the date range, specified as the number of days back from today.
-     *                     A lower numerical value means a date closer to today.
      * @return A string representation of all subscribers (for debugging purposes).
      */
     @GetMapping("/getLocationsOfSubsByDateRange")
-    public String getLocationsOfSubsByDateRange(@RequestParam int daysBackTo, @RequestParam int daysBackFrom) {
+    public String getLocationsOfSubsByDateRange(@RequestParam int daysBackFrom, @RequestParam int daysBackTo) {
+        if (daysBackTo < daysBackFrom) {
+            throw new IllegalArgumentException("daysBackTo should be greater or equal to daysBackFrom");
+        }
+
         Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();
         List<Newsletter> allSubs = newsRepo.findAll();
 
-        LocalDate fromDate = LocalDate.now().minusDays((long) daysBackTo);
-        LocalDate toDate = LocalDate.now().minusDays((long) daysBackFrom);
+        LocalDate fromDate = LocalDate.now().minusDays(daysBackFrom); // Startdatum
+        LocalDate toDate = LocalDate.now().minusDays(daysBackTo); // Enddatum
 
         for (Newsletter n : allSubs) {
-            LocalDate createdDate = n.getCreated().toLocalDate();
+            if (n.getCreated() == null || n.getIp() == null) {
+                continue;
+            }
+
+            LocalDate createdDate = n.getCreated().atZone(ZoneId.systemDefault()).toLocalDate();
 
             if (!createdDate.isBefore(fromDate) && !createdDate.isAfter(toDate)) {
                 viewsByLocation = LogService.setViewsByLocation(n.getIp(), viewsByLocation);
@@ -104,6 +113,7 @@ public class NewsletterController {
 
         return viewsByLocation.toString();
     }
+
     /**
      * Retrieves the distribution of subscriptions by hour within a specific date range.
      *
@@ -120,43 +130,52 @@ public class NewsletterController {
      * </ul>
      * Both boundary dates are inclusive.</p>
      *
-     * @param daysBackTo The start of the date range, specified as the number of days back from today.
-     * @param daysBackFrom The end of the date range, specified as the number of days back from today.
+     * @param daysBackTo The end of the date range, specified as the number of days back from today.
+     * @param daysBackFrom The start of the date range, specified as the number of days back from today.
      * @return A string representation of the distribution of subscriptions by hour.
      */
     @GetMapping("/getTimesOfSubsByDateRange")
-    public String getTimesOfSubsByDateRange(@RequestParam int daysBackTo, @RequestParam int daysBackFrom) {
-        Map<String,Long>subsPerHour= setJson();
+    public String getTimesOfSubsByDateRange(@RequestParam int daysBackFrom, @RequestParam int daysBackTo) {
+        if (daysBackTo < daysBackFrom) {
+            throw new IllegalArgumentException("daysBackTo should be greater or equal to daysBackFrom");
+        }
+
+        Map<String, Long> subsPerHour = setJson();
         List<Newsletter> allSubs = newsRepo.findAll();
-        LocalDate fromDate = LocalDate.now().minusDays((long) daysBackTo);
-        LocalDate toDate = LocalDate.now().minusDays((long) daysBackFrom);
+
+        LocalDate fromDate = LocalDate.now().minusDays(daysBackFrom); // Startdatum
+        LocalDate toDate = LocalDate.now().minusDays(daysBackTo); // Enddatum
 
         for (Newsletter n : allSubs) {
-            LocalDate createdDate = n.getCreated().toLocalDate();
+            if (n.getCreated() == null) {
+                continue;
+            }
+
+            LocalDate createdDate = n.getCreated().atZone(ZoneId.systemDefault()).toLocalDate();
 
             if (!createdDate.isBefore(fromDate) && !createdDate.isAfter(toDate)) {
-                subsPerHour=LogService.erhoeheViewsPerHour2(subsPerHour,n.getCreated().toLocalTime());
-
+                subsPerHour = LogService.erhoeheViewsPerHour2(subsPerHour, n.getCreated().atZone(ZoneId.systemDefault()).toLocalTime());
             }
         }
 
         return subsPerHour.toString();
     }
+
     /**
      * Fetches the number of subscriptions in a given date range.
      *
      * <p>This method fetches all newsletter subscriptions from the database and filters
      * them by their creation date to count the number of subscriptions between two specific dates.</p>
      *
-     * @param daysBackTo The number of days from today to the furthest date back in time for which to consider subscriptions.
-     *                   E.g., if today is 2021-09-14 and daysBackTo is 10, then the furthest date back will be 2021-09-04.
+     * @param daysBackTo The number of days from today to the nearest date back in time for which to consider subscriptions.
+     *                   E.g., if today is 2021-09-14 and daysBackTo is 1, then the furthest date back will be 2021-09-13.
      *
-     * @param daysBackFrom The number of days from today to the nearest date back in time for which to consider subscriptions.
-     *                     E.g., if today is 2021-09-14 and daysBackFrom is 1, then the nearest date will be 2021-09-13.
+     * @param daysBackFrom The number of days from today to the furthest date back in time for which to consider subscriptions.
+     *                     E.g., if today is 2021-09-14 and daysBackFrom is 10, then the nearest date will be 2021-09-04.
      *
      * @return A long value representing the number of subscriptions between the fromDate and toDate, inclusive.
      *
-     * @throws SomeExceptionType (if applicable)
+     * @throws IllegalArgumentException (if applicable)
      *
      * Example usage:
      * <pre>{@code
@@ -164,21 +183,27 @@ public class NewsletterController {
      * }</pre>
      */
     @GetMapping("/getAmountOfSubsByDateRange")
-    public long getAmountofSubsByDateRange(@RequestParam int daysBackTo, @RequestParam int daysBackFrom) {
-        long counter =0 ;
-        List<Newsletter> allSubs = newsRepo.findAll();
-        LocalDate fromDate = LocalDate.now().minusDays((long) daysBackTo);
-        LocalDate toDate = LocalDate.now().minusDays((long) daysBackFrom);
+    public long getAmountofSubsByDateRange(@RequestParam int daysBackFrom, @RequestParam int daysBackTo) {
+        if (daysBackTo < daysBackFrom) {
+            throw new IllegalArgumentException("daysBackTo should be greater or equal to daysBackFrom");
+        }
 
+        LocalDate fromDate = LocalDate.now().minusDays(daysBackFrom); // Startdatum
+        LocalDate toDate = LocalDate.now().minusDays(daysBackTo); // Enddatum
+
+
+        long counter = 0;
+        List<Newsletter> allSubs = newsRepo.findAll();
         for (Newsletter n : allSubs) {
-            LocalDate createdDate = n.getCreated().toLocalDate();
+            if (n.getCreated() == null) {
+                continue;
+            }
+            LocalDate createdDate = n.getCreated().atZone(ZoneId.systemDefault()).toLocalDate();
 
             if (!createdDate.isBefore(fromDate) && !createdDate.isAfter(toDate)) {
                 counter++;
-
             }
         }
-
         return counter;
     }
 

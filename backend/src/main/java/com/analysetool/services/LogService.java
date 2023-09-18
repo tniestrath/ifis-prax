@@ -90,7 +90,7 @@ public class LogService {
     Pattern searchPattern = Pattern.compile(SearchPattern);
     Pattern referPattern = Pattern.compile(ReffererPattern);
     Pattern patternPodcast = Pattern.compile(PodcastPattern);
-    Pattern patternWhitepaper = Pattern.compile(WhitepaperViewPattern);
+    Pattern patternWhitepaperView = Pattern.compile(WhitepaperViewPattern);
     Pattern patternWhitepaperSearchSuccess = Pattern.compile(WhitepaperSSPattern);
     private String lastLine = "";
     private int lineCounter = 0;
@@ -306,6 +306,18 @@ public class LogService {
                                 processLine(line, "newsView", matched_newsView);
                                 foundPattern = false;
                                 // System.out.println(line+" NO SEARCH");
+                            }
+                        } else {
+                            Matcher matched_whitepaperView = patternWhitepaperView.matcher(line);
+
+                            if(matched_whitepaperView.find()) {
+                                Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
+
+                                if(matched_whitepaperSearchSuccess.find()) {
+                                    processLine(line, "whitepaperSearchSuccess", matched_whitepaperSearchSuccess);
+                                } else {
+                                    processLine(line, "whitepaperView", matched_whitepaperView);
+                                }
                             }
                         }
                     }
@@ -523,6 +535,22 @@ public class LogService {
 
         }
 
+        if(patternName.equals("whitepaperSearchSuccess")) {
+            //Stolen behaviour from articleSearchSuccess
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
+            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.2");
+            updatePerformanceViewsSearchSuccess(matcher);
+            updateViewsByLocation(matcher);
+            updateSearchStats(matcher);
+        }
+
+        if(patternName.equals("whitepaperView")) {
+            //Stolen behaviour from articleView
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
+            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.1");
+            UpdatePerformanceAndViews(matcher);
+            updateViewsByLocation(matcher);
+        }
 
     }
     public String hashIp(String ip){

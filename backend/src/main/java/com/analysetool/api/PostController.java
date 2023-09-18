@@ -8,6 +8,7 @@ import java.util.*;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.util.TypeHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -756,75 +757,45 @@ public class PostController {
 
     /**
      *
-     * @param sorter relevance | performance - chooses what statistic you want to sort by.
-     * @return a jsonString containing the ids of the top3 posts found.
+     * @param sorter sorter relevance | performance - chooses what statistic you want to sort by.
+     * @param type "news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber"
+     * @return
      */
-    @GetMapping("/getTop3")
-    public String getTop3(@RequestParam String sorter) {
-        List<Long> top3 = null;
+    @GetMapping("/getTop5WithType")
+    public String getTop5WithType(@RequestParam String sorter, String type) throws JSONException, ParseException {
+        List<PostStats> top = null;
         String errorString = "";
+
         if(sorter.equalsIgnoreCase("relevance")) {
-            top3 = statsRepo.getTop3Relevance();
+            top = statsRepo.getTop5Relevance();
         }
         if(sorter.equalsIgnoreCase("performance")) {
-            top3 = statsRepo.getTop3Performance();
+            top = statsRepo.getTop5Performance();
         }
-
         String jsonString = null;
-
-        if(top3 == null) {
-            errorString = "Wrong sorter / table error";
-        } else {
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                jsonString = objectMapper.writeValueAsString(top3);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                errorString = "JSON Mapping Error";
-            }
-        }
-        System.out.println(errorString);
-        return jsonString != null? jsonString : errorString;
-
-    }
-
-    @GetMapping("/getTopVariableID")
-    public String getTopVariable(@RequestParam String sorter, int limit) {
-        List<Long> top = null;
-        String errorString = "";
-        if(sorter.equalsIgnoreCase("relevance")) {
-            top = statsRepo.getTopRelevanceID(limit);
-        }
-        if(sorter.equalsIgnoreCase("performance")) {
-            top = statsRepo.getTopPerformanceID(limit);
-        }
-
-        String jsonString = null;
+        JSONArray array = new JSONArray();
 
         if(top == null) {
             errorString = "Wrong sorter / table error";
         } else {
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                jsonString = objectMapper.writeValueAsString(top);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                errorString = "JSON Mapping Error";
+            for(PostStats stats : top) {
+                JSONObject obj = new JSONObject(PostStatsByIdForFrontend(stats.getArtId()));
+                array.put(obj);
             }
         }
-        System.out.println(errorString);
+        jsonString = array.toString();
         return jsonString != null? jsonString : errorString;
     }
 
-    @GetMapping("/getTopVariableWithStats")
-    public String getTopVariableWithStats(String sorter, int limit) throws JSONException, ParseException {
+    @GetMapping("/getTop5")
+    public String getTop5(String sorter) throws JSONException, ParseException {
         List<PostStats> top = null;
         String errorString = "";
         if(sorter.equalsIgnoreCase("relevance")) {
-            top = statsRepo.getTopRelevance(limit);
+            top = statsRepo.getTop5Relevance();
         }
         if(sorter.equalsIgnoreCase("performance")) {
-            top = statsRepo.getTopPerformance(limit);
+            top = statsRepo.getTop5Performance();
         }
         String jsonString = null;
         JSONArray array = new JSONArray();
@@ -898,6 +869,10 @@ public class PostController {
         return new JSONArray(stats).toString();
     }
 
+    @GetMapping("getTypeForId")
+    public String getType(long artId) {
+        return TypeHelper.getInstance().findTypeForPost(postRepo.findById(artId).get());
+    }
 
 }
 

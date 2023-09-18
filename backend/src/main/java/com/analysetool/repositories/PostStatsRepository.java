@@ -163,17 +163,11 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("SELECT s.viewsPerHour FROM PostStats s")
     public List<HashMap> getAllViewsPerHour();
 
-    @Query("SELECT s.artId FROM PostStats s ORDER BY s.relevance DESC LIMIT 3")
-    public List<Long> getTop3Relevance();
+    @Query("SELECT s FROM PostStats s ORDER BY s.performance DESC LIMIT 5")
+    public List<PostStats> getTop5Relevance();
 
-    @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC LIMIT 3")
-    public List<Long> getTop3Performance();
-
-    @Query("SELECT s FROM PostStats s ORDER BY s.performance DESC")
-    public List<PostStats> getTopRelevance(int limit);
-
-    @Query("SELECT s FROM PostStats s ORDER BY s.performance DESC")
-    public List<PostStats> getTopPerformance(int limit);
+    @Query("SELECT s FROM PostStats s ORDER BY s.performance DESC LIMIT 5")
+    public List<PostStats> getTop5Performance();
 
     @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC")
     public List<Long> getTopRelevanceID(int limit);

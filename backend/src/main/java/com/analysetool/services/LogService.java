@@ -68,9 +68,9 @@ public class LogService {
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
     private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /news/(\\S+)/.*s=(\\S+)\".*";
 
-    private String PodcastPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /its-couch/(\\S+)/.*s=(\\S+)\".*";
-
     private String WhitepaperViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /whitepaper/(\\S+)/";
+    private String PodcastPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[\\d{2}/[a-zA-Z]{3}/\\d{4}:\\d{2}:\\d{2}:\\d{2}.*GET \\/its-couch\\/";
+
 
     // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
     private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
@@ -318,6 +318,13 @@ public class LogService {
                                 } else {
                                     processLine(line, "whitepaperView", matched_whitepaperView);
                                 }
+                            } else {
+                                Matcher matched_podcastView = patternPodcast.matcher(line);
+
+                                if(matched_podcastView.find()) {
+                                    //ToDo maybe implement SearchSuccess if applicable
+                                    processLine(line, "podcastView", matched_podcastView);
+                                }
                             }
                         }
                     }
@@ -552,6 +559,12 @@ public class LogService {
             updateViewsByLocation(matcher);
         }
 
+        if(patternName.equals("podcastView")) {
+            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
+            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING Podcast View");
+            UpdatePerformanceAndViews(matcher);
+            updateViewsByLocation(matcher);
+        }
     }
     public String hashIp(String ip){
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output

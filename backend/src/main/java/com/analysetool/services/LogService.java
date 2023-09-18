@@ -560,8 +560,7 @@ public class LogService {
         }
 
         if(patternName.equals("podcastView")) {
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
-            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING Podcast View");
+            System.out.println("PODCAST VIEW WOOOOHOOO");
             UpdatePerformanceAndViews(matcher);
             updateViewsByLocation(matcher);
         }

@@ -40,7 +40,7 @@ import { PostListItemComponent } from './component/post/post-list/post-list-item
 import { TagChartComponent } from './component/tag/tag-chart/tag-chart.component';
 import { CallUpChartComponent } from './component/call-up-chart/call-up-chart.component';
 import { OriginByTimeChartComponent } from './component/origin-by-time-chart/origin-by-time-chart.component';
-import { Top5PostsComponent } from './component/post/top5-posts/top5-posts.component';
+import { Top5PostsComponent, Top5ArticleComponent, Top5BlogComponent, Top5NewsComponent, Top5WhitepaperComponent } from './component/post/top5-posts/top5-posts.component';
 import { NewsletterStatsComponent } from './component/newsletter-stats/newsletter-stats.component';
 
 @NgModule({
@@ -78,6 +78,10 @@ import { NewsletterStatsComponent } from './component/newsletter-stats/newslette
     CallUpChartComponent,
     OriginByTimeChartComponent,
     Top5PostsComponent,
+    Top5ArticleComponent,
+    Top5BlogComponent,
+    Top5NewsComponent,
+    Top5WhitepaperComponent,
     NewsletterStatsComponent
   ],
     imports: [

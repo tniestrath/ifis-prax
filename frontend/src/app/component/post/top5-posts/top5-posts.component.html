@@ -1,32 +1,37 @@
-<div class="component-box top5-post-box">
-  <div class="post-box" *ngFor="let data of dataArray">
-    <div class="post-details">
-      <div class="post-detail" [style]="{'borderColor': data['type'], 'border': '2px solid'}">
-        <div class="post-label" [style]="{'color': data['type'], 'font-weight': 'bold'}">{{data["type"].toUpperCase()}}</div>
-        <p>{{data["title"]}}</p>
-      </div>
-      <div class="post-detail-group-3">
-        <div class="post-detail">
-          <div class="post-label">Datum</div>
-          <p>{{data["date"]}}</p>
+<div class="component-box top5-box">
+  <div class="top5-title">
+    <p>Beste {{this.postType}} sortiert nach {{this.sorter}}</p>
+  </div>
+  <div class="top5-post-box">
+    <div class="post-box" *ngFor="let data of dataArray">
+      <div class="post-details">
+        <div class="post-detail" [style]="{'borderColor': data['typeColor'], 'border': '2px solid'}">
+          <div class="post-label" [style]="{'color': data['typeColor'], 'font-weight': 'bold'}">{{data["type"].toUpperCase()}}</div>
+          <p>{{String(data["title"]).slice(0, 50)}}</p>
         </div>
-        <div class="post-detail">
-          <div class="post-label" >Clicks</div>
-          <p>{{data["clicks"]}}</p>
+        <div class="post-detail-group-3">
+          <div class="post-detail">
+            <div class="post-label">Datum</div>
+            <p>{{data["date"]}}</p>
+          </div>
+          <div class="post-detail">
+            <div class="post-label" >Clicks</div>
+            <p>{{Util.formatNumbers(data["clicks"])}}</p>
+          </div>
+          <div class="post-detail">
+            <div class="post-label" >Zeichen</div>
+            <p>{{Util.formatNumbers(data["lettercount"])}}</p>
+          </div>
         </div>
-        <div class="post-detail">
-          <div class="post-label" >Zeichen</div>
-          <p>{{data["lettercount"]}}</p>
-        </div>
-      </div>
-      <div class="post-detail-group-2">
-        <div class="post-detail">
-          <div class="post-label">Autoren</div>
-          <p>{{data["authors"]}}</p>
-        </div>
-        <div class="post-detail">
-          <div class="post-label">Themen</div>
-          <p>{{data["tags"]}}</p>
+        <div class="post-detail-group-2">
+          <div class="post-detail">
+            <div class="post-label">Autoren</div>
+            <p>{{data["authors"]}}</p>
+          </div>
+          <div class="post-detail">
+            <div class="post-label">Themen</div>
+            <p>{{String(data["tags"]).replace("[", "").replace("]", "")}}</p>
+          </div>
         </div>
       </div>
     </div>

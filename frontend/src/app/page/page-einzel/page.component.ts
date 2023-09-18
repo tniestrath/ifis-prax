@@ -21,7 +21,11 @@ import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
 import {PostListComponent} from "../../component/post/post-list/post-list.component";
 import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
 import {CallUpChartComponent} from "../../component/call-up-chart/call-up-chart.component";
-import {Top5PostsComponent} from "../../component/post/top5-posts/top5-posts.component";
+import {
+  Top5ArticleComponent,
+  Top5BlogComponent, Top5NewsComponent,
+  Top5PostsComponent, Top5WhitepaperComponent
+} from "../../component/post/top5-posts/top5-posts.component";
 import {NewsletterStatsComponent} from "../../component/newsletter-stats/newsletter-stats.component";
 
 @Component({
@@ -73,7 +77,10 @@ export class PageComponent implements OnInit {
   getPostsPageCards() {
     return [
       {type: PostListComponent, row: 1, col: 1, height: 4, width: 2},
-      {type: Top5PostsComponent, row: 1, col: 3, height: 1, width: 4}
+      {type: Top5ArticleComponent, row: 1, col: 3, height: 1, width: 4},
+      {type: Top5BlogComponent, row: 2, col: 3, height: 1, width: 4},
+      {type: Top5NewsComponent, row: 3, col: 3, height: 1, width: 4},
+      {type: Top5WhitepaperComponent, row: 4, col: 3, height: 1, width: 4}
     ];
   }
 

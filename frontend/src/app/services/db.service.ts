@@ -227,7 +227,7 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY), {credentials: "include"}).then(res => res.json());
   }
 
-  async getTopPostsBySorterWithType(sorter: string, type: string, limit: number){
+  async getTopPostsBySorterWithType(sorter: string, type: string, limit: number) : Promise<Post[]>{
     return await fetch(DbService.getUrl(dbUrl.GET_POSTS_TOP_BY_SORTER).replace("SORTER", sorter).replace("TYPE", type).replace("LIMIT", String(limit)), {credentials: "include"}).then(res => res.json());
   }
 

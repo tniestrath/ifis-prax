@@ -18,3 +18,12 @@ export class Post extends DbObject{
     super(id, title);
   }
 }
+
+export class PostWithTypeColor extends Post{
+
+  public typeColor : string = "";
+  constructor(post : Post, typeColor : string){
+    super(post.title,post.date,post.type,post.clicks,post.tags,post.performance,post.relevance,post.searchSuccesses,post.searchSuccessRate,post.referrings,post.articleReferringRate,post.lettercount,post.authors,post.id);
+    this.typeColor = typeColor;
+  }
+}

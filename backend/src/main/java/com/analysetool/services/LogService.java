@@ -145,7 +145,7 @@ public class LogService {
     }
 
     @PostConstruct
-    public void init() {
+    public void init() throws IOException {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
 
@@ -170,7 +170,9 @@ public class LogService {
                 SystemVariabeln.setDayInWeek(LocalDateTime.now().getDayOfWeek().getValue());
                 SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
                 SystemVariabeln.setLastLine("");
-                if(!liveScanning){SystemVariabeln.setLastLineCount(0);}
+        /*        if(!liveScanning){SystemVariabeln.setLastLineCount(0);
+
+                }*/
                 SystemVariabeln.setLogDate(getCreationDateOfAccessLog(Pfad));
            // }
 
@@ -178,13 +180,13 @@ public class LogService {
 
 
         run(liveScanning,Pfad, SystemVariabeln);
-        setUniversalStats();
+
         updateLetterCountForAll();
 
     }
     @Scheduled(cron = "0 0 * * * *") //einmal die Stunde
     //@Scheduled(cron = "0 */2 * * * *") //alle 2min
-    public void runScheduled() {
+    public void runScheduled() throws IOException {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
 
@@ -206,19 +208,29 @@ public class LogService {
                 SystemVariabeln.setDayInWeek(LocalDateTime.now().getDayOfWeek().getValue());
                 SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
                 SystemVariabeln.setLastLine("");
-                if(!liveScanning){SystemVariabeln.setLastLineCount(0);}
+                //if(!liveScanning){SystemVariabeln.setLastLineCount(0);}
                 SystemVariabeln.setLogDate(getCreationDateOfAccessLog(Pfad));
 
 
         }
 
-        setUniversalStats();
+
         run(liveScanning,Pfad, SystemVariabeln);
         updateLetterCountForAll();
     }
-    public void run(boolean liveScanning, String path,SysVar SystemVariabeln)  {
+    public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws IOException {
         this.liveScanning = liveScanning;
         this.path = path;
+        if(!liveScanning){
+
+            String pathOfOldLog = "/var/log/nginx/access.log-" + getDay(1) + ".gz";
+            FileInputStream fileInputStream = new FileInputStream(pathOfOldLog);
+            GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
+            InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
+            br = new BufferedReader(inputStreamReader);
+            findAMatch();
+            SystemVariabeln.setLastLineCount(0);
+        }
         lastLineCounter=SystemVariabeln.getLastLineCount();
         lastLine = SystemVariabeln.getLastLine();
         lineCounter = 0 ;

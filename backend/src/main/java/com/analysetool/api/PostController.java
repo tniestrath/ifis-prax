@@ -889,7 +889,9 @@ public class PostController {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(post.getId()));
             if(json.get("type").toString().toLowerCase().contains("blog")  ||
                     json.get("type").toString().toLowerCase().contains("news") ||
-                    json.get("type").toString().toLowerCase().contains("artikel") || json.get("type").toString().toLowerCase().contains("whitepaper")){
+                    json.get("type").toString().toLowerCase().contains("artikel") ||
+                    json.get("type").toString().toLowerCase().contains("whitepaper") || json.get("type").toString().toLowerCase().contains("podcast") || json.get("type").toString().toLowerCase().contains("ratgeber")
+            ){
                 stats.add(json);
             }
         }

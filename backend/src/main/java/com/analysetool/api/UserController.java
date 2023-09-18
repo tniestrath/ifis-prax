@@ -31,6 +31,13 @@ import static com.analysetool.util.MapHelper.*;
 @RequestMapping("/users")
 public class UserController {
 
+    private final int maxPostsPlus = 2;
+    private final int maxPostsPremium = 3 + 2 + 3 + 3;
+
+    private final int maxPostsSponsor= 3 + 3 + 6 + 6;
+
+
+
     @Autowired
     private WPUserRepository userRepository;
     @Autowired
@@ -105,7 +112,7 @@ public class UserController {
                 UserStats statsUser = userStatsRepository.findByUserId(i.getId());
                 obj.put("id",i.getId());
                 obj.put("email",i.getEmail());
-                obj.put("displayName",i.getNicename());
+                obj.put("displayName",i.getDisplayName());
                 obj.put("profileViews", statsUser.getProfileView());
                 obj.put("postViews", postController.getViewsOfUserById(i.getId()));
                 obj.put("postCount", postController.getPostCountOfUserById(i.getId()));
@@ -133,6 +140,7 @@ public class UserController {
                 obj.put ("performance",0);
 
             }
+            obj.put("usedPotential", getPotentialByID(Math.toIntExact(i.getId()), (String) obj.get("accountType")));
             response.put(obj);
         }
         return response.toString();
@@ -166,7 +174,6 @@ public class UserController {
         return userStatsRepository.findByUserId(userId);
     }
 
-    //ToDo Clean
     @GetMapping("/getUserStats")
     public String getUserStat(@RequestParam Long id) throws JSONException {
         JSONObject obj = new JSONObject();
@@ -220,7 +227,6 @@ public class UserController {
 
     }
 
-    //ToDo Move method somewhere
     @GetMapping("/getAllViewsByLocation")
     public String getAllViewsByLocation() {
         List<HashMap> posts = statRepository.getAllViewsByLocation();
@@ -272,7 +278,6 @@ public class UserController {
         return map.values().toString();
     }
 
-    //ToDo Move method somewhere
     @GetMapping("/getAllViewsPerHour")
     public String getAllViewsPerHour() {
         List<HashMap> posts = statRepository.getAllViewsPerHour();
@@ -365,4 +370,34 @@ public class UserController {
     public boolean hasPost(@RequestParam int id) {
         return !postRepository.findByAuthor(id).isEmpty();
     }
+
+    /**
+     *
+     * @param id  id des users.
+     * @param accType  der account typ des users ("admin" | "plus" | "premium" | "sponsor")
+     * @return
+     */
+    @GetMapping("/getPotentialByIDandType")
+    public double getPotentialByID(int id, String accType) {
+
+        //ToDo check when user potential posts are reset - and adjust following logic.
+        switch (accType) {
+            case "admin" -> {
+                return 1;
+            }
+            case "plus" -> {
+                return (double) (postRepository.findByAuthor(id).size()) / maxPostsPlus;
+            }
+            case "premium" -> {
+                return (double) (postRepository.findByAuthor(id).size()) / maxPostsPremium;
+            }
+            case "sponsor" -> {
+                return (double) (postRepository.findByAuthor(id).size()) / maxPostsSponsor;
+            } default -> {
+                return 0;
+            }
+        }
+    }
+
+
 }

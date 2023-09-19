@@ -114,7 +114,7 @@ public class UniversalStats {
     public UniversalStats(Date datum) {
         this.datum = datum;
         this.viewsPerHour=setJson();
-        this.viewsByLocation=new HashMap<>();
+        this.viewsByLocation=initializeViewsByLocation(new HashMap<>());
 
     }
 
@@ -281,6 +281,23 @@ public class UniversalStats {
 
     public void setAnbieter_abolos_anzahl(long anbieter_abolos_anzahl) {
         this.anbieter_abolos_anzahl = anbieter_abolos_anzahl;
+    }
+    public static Map<String, Map<String, Map<String, Long>>> initializeViewsByLocation(Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
+        String[] germanStates = {"HH", "HB", "BE", "MV", "BB", "SN", "ST", "BY", "SL", "RP", "SH", "TH", "NB", "HE", "BW", "NW"};
+        String[] otherCountries = {"NL", "BG", "SW", "AT", "LU"};
+
+        Map<String, Long> zeroMap = new HashMap<>();
+        zeroMap.put("gesamt", 0L);
+
+        for (String state : germanStates) {
+            viewsByLocation.computeIfAbsent("DE", k -> new HashMap<>()).put(state, new HashMap<>(zeroMap));
+        }
+
+        for (String country : otherCountries) {
+            viewsByLocation.computeIfAbsent(country, k -> new HashMap<>()).put(country, new HashMap<>(zeroMap));
+        }
+
+        return viewsByLocation;
     }
 }
 

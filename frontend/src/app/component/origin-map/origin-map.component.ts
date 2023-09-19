@@ -106,14 +106,28 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     }
     var date = new Date(Date.now());
 
-    var timestamps : string[] = [];
-    var clicksData : number[] = [];
-
+    var timestamps : string[] = [
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)))];
+    timestamps.reverse();
+    var clicksData : number[] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
     for (var regionClicks of perDayRegionClicks) {
       for (var clicks of regionClicks){
         if (clicks.identifier == region){
-          timestamps.push(Util.formatDate(new Date(date.setDate(date.getDate() - 1))));
-          clicksData.push(clicks.clicks);
+          let index = perDayRegionClicks.indexOf(regionClicks);
+          clicksData[index] = clicks.clicks;
         }
       }
     }
@@ -202,6 +216,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
             }
             cityArray.sort((a, b) =>  b.clicks - a.clicks);
             cityArray.push({clicks: clicks, name: "gesamt"});
+            if (Number.isNaN(clicks)) clicks = 0;
             region_clicks.push({identifier: region, clicks: clicks, cities: cityArray})
           }
         }
@@ -215,13 +230,14 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           }
           cityArray.sort((a, b) =>  b.clicks - a.clicks);
           cityArray.push({clicks: clicks, name: "gesamt"});
+          if (Number.isNaN(clicks)) clicks = 0;
           if (country == "BE") region_clicks.push({identifier: "BG", clicks: clicks, cities: cityArray});
           else region_clicks.push({identifier: country, clicks: clicks, cities: cityArray});
         }
       }
-
       this.perDayRegionClicks.push(region_clicks);
     }
+    this.perDayRegionClicks = this.perDayRegionClicks.reverse();
   }
 
   readData(global: { [x: string]: any}, svgElement: any){

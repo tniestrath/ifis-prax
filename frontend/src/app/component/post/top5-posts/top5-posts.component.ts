@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import Util, {DashColors} from "../../../util/Util";
 import {Post, PostWithTypeColor} from "../Post";
@@ -15,7 +15,35 @@ export class Top5PostsComponent extends DashBaseComponent implements OnInit{
   sorter: string = "Performance";
 
   ngOnInit(): void {
+    this.getData()
   }
+
+  protected getData(event?: Event){
+    if (event !== undefined) {
+      this.sorter = (event?.target as HTMLInputElement).value;
+    }
+    this.db.getTopPostsBySorterWithType(this.sorter.toLowerCase(), this.postType.toLowerCase(), 5).then(res => {
+      this.dataArray = this.addTypeColors(res);
+      this.cdr.detectChanges();
+    });
+    if (this.sorter.indexOf("p") == 0) this.sorter = this.sorter.replace("p", "P");
+    if (this.sorter.indexOf("r") == 0) this.sorter = this.sorter.replace("r", "R").slice(0, 7) + "z";
+  }
+  protected getTypeString(){
+    if (this.postType.toLowerCase() == "blog"){
+      return "Blogs";
+    } else {
+      return this.postType;
+    }
+  }
+
+  protected getTitleSliced(title : string){
+    if (title.length > 50){
+      return title.slice(0, Math.min(title.lastIndexOf(" "), 50));
+    }
+    return title;
+  }
+
   protected addTypeColors(data: Post[]) : PostWithTypeColor[]{
     var dataWithColors: PostWithTypeColor[] = [];
     data.forEach((post : Post) => {
@@ -46,6 +74,7 @@ export class Top5PostsComponent extends DashBaseComponent implements OnInit{
 
   protected readonly Util = Util;
   protected readonly String = String;
+  protected readonly event = event;
 }
 @Component({
   selector: 'dash-top5-article',
@@ -55,11 +84,7 @@ export class Top5PostsComponent extends DashBaseComponent implements OnInit{
 export class Top5ArticleComponent extends Top5PostsComponent{
   override postType = "Artikel";
   override sorter = "Performance";
-  override ngOnInit() {
-    this.db.getTopPostsBySorterWithType("performance", "artikel", 5).then(res => {
-      this.dataArray = this.addTypeColors(res);
-    });
-  }
+
 }
 
 @Component({
@@ -68,13 +93,9 @@ export class Top5ArticleComponent extends Top5PostsComponent{
   styleUrls: ['./top5-posts.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class Top5BlogComponent extends Top5PostsComponent{
-  override postType = "Blogs";
+  override postType = "Blog";
   override sorter = "Performance";
-  override ngOnInit() {
-    this.db.getTopPostsBySorterWithType("performance", "blog", 5).then(res => {
-      this.dataArray = this.addTypeColors(res);
-    });
-  }
+
 }
 
 @Component({
@@ -85,11 +106,7 @@ export class Top5BlogComponent extends Top5PostsComponent{
 export class Top5NewsComponent extends Top5PostsComponent{
   override postType = "News";
   override sorter = "Performance";
-  override ngOnInit() {
-    this.db.getTopPostsBySorterWithType("performance", "news", 5).then(res => {
-      this.dataArray = this.addTypeColors(res);
-    });
-  }
+
 }
 
 @Component({
@@ -100,9 +117,5 @@ export class Top5NewsComponent extends Top5PostsComponent{
 export class Top5WhitepaperComponent extends Top5PostsComponent{
   override postType = "Whitepaper";
   override sorter = "Performance";
-  override ngOnInit() {
-    this.db.getTopPostsBySorterWithType("performance", "whitepaper", 5).then(res => {
-      this.dataArray = this.addTypeColors(res);
-    });
-  }
+
 }

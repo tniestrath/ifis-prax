@@ -1,13 +1,17 @@
 <div class="component-box top5-box">
-  <div class="top5-title">
-    <p>Beste {{this.postType}} sortiert nach {{this.sorter}}</p>
+  <div class="top5-header">
+    <div class="top5-title">
+      <p>Top 5 {{getTypeString()}} sortiert nach {{this.sorter}}</p>
+    </div>
+    <input type="radio" [id]="'top5-'+ postType + '-performance'" [name]="postType" value="performance" checked (change)="getData($event)">
+    <input type="radio" [id]="'top5-'+ postType + '-relevance'" [name]="postType" value="relevance" (change)="getData($event)">
   </div>
   <div class="top5-post-box">
     <div class="post-box" *ngFor="let data of dataArray">
       <div class="post-details">
         <div class="post-detail" [style]="{'borderColor': data['typeColor'], 'border': '2px solid'}">
           <div class="post-label" [style]="{'color': data['typeColor'], 'font-weight': 'bold'}">{{data["type"].toUpperCase()}}</div>
-          <p>{{String(data["title"]).slice(0, 50)}}</p>
+          <p>{{getTitleSliced(String(data["title"]))}}</p>
         </div>
         <div class="post-detail-group-3">
           <div class="post-detail">

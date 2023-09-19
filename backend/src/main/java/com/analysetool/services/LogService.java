@@ -240,11 +240,13 @@ public class LogService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        setUniversalStats(SystemVariabeln);
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();
         saveStatsToDatabase();
-        setUniversalStats();
+
         sysVarRepo.save(SystemVariabeln);
     }
 
@@ -1321,7 +1323,7 @@ public class LogService {
     public static String generateLogFileNameLastDay() {
        return "access.log-" + getLastDay() + ".gz";
     }
-    public void setUniversalStats() {
+    public void setUniversalStats(SysVar SystemVariabeln) {
         int daysToLookBack = 9; // Anzahl der Tage, die zurückgeschaut werden sollen
 
         if (!sysVarRepo.findAll().get(sysVarRepo.findAll().size() - 1).isFlagScanLast14()) {
@@ -1337,7 +1339,7 @@ public class LogService {
                         InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
                         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-                        UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date), bufferedReader);
+                        UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date), bufferedReader,SystemVariabeln);
                         uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
                         //m
                         uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
@@ -1363,21 +1365,27 @@ public class LogService {
             // Ihr bisheriger Code für den Fall, dass das Flag gesetzt ist
             try {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-                Date date = dateFormat.parse(getLastDay());
+                Date date = dateFormat.parse(getDay(0));
                 if (uniRepo.findByDatum(date).isEmpty()) {
-                    String pathOfOldLog = "/var/log/nginx/access.log-" + getLastDay() + ".gz";
+                    /*String pathOfOldLog = "/var/log/nginx/access.log-" + getLastDay() + ".gz";
                     FileInputStream fileInputStream = new FileInputStream(pathOfOldLog);
                     GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
                     InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);*/
 
-                    UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date), bufferedReader);
+                    br = new BufferedReader(new FileReader(Pfad));
+                    UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date), br,SystemVariabeln);
                     uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
                     uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
                     uniStats = setAccountTypeAllUniStats(uniStats);
                     uniRepo.save(uniStats);
                 } else {
-                    System.out.println("Vortag bereits in der Statistik");
+                    br = new BufferedReader(new FileReader(Pfad));
+                    UniversalStats uniStats = proccessLinesOfOldLog(uniRepo.findTop1ByOrderByDatumDesc(), br,SystemVariabeln);
+                    uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
+                    uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
+                    uniStats = setAccountTypeAllUniStats(uniStats);
+                    uniRepo.save(uniStats);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1386,16 +1394,28 @@ public class LogService {
     }
 
     @Transactional
-    public UniversalStats proccessLinesOfOldLog(UniversalStats uniStat, BufferedReader bufferedReader) throws IOException {
+    public UniversalStats proccessLinesOfOldLog(UniversalStats uniStat, BufferedReader bufferedReader, SysVar Systemvariabeln) throws IOException {
 
         Map<String, Map<String, Map<String, Long>>> viewsByLocation = uniStat.getViewsByLocation();//hiermit weiter und mit setViewsByLocation
         Map<String,Long>viewsPerHour=uniStat.getViewsPerHour();
 
         ArrayList<String> uniqueIps = new ArrayList<>();
         String line;
-        int allClicks = 0;
+        long allClicks = (long) 0;
+        if(uniStat.getTotalClicks()!=null){allClicks=uniStat.getTotalClicks();}
+        Long Besucher = (long) 0;
+        if(uniStat.getBesucherAnzahl()!=null){Besucher=uniStat.getBesucherAnzahl();}
+
+        long lastLineCount = Systemvariabeln.getLastLineCount();
+        long lineCount = 0;
 
         while ((line = bufferedReader.readLine()) != null) {
+
+            while(lastLineCount>lineCount){
+                bufferedReader.readLine();
+                lineCount++;
+            }
+
             Matcher matcher1_1 = articleViewPattern.matcher(line);
 
             if (matcher1_1.find()) {
@@ -1507,7 +1527,7 @@ public class LogService {
             }
         }
 
-        uniStat.setBesucherAnzahl((long) uniqueIps.size());
+        uniStat.setBesucherAnzahl((long) uniqueIps.size()+Besucher);
         uniStat.setTotalClicks(allClicks);
         uniStat.setViewsByLocation(viewsByLocation);
         uniStat.setViewsPerHour(viewsPerHour);

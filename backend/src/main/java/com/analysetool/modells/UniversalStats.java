@@ -56,7 +56,7 @@ public class UniversalStats {
     private long umsatz;
 
     @Column(name = "total_clicks")
-    private long totalClicks;
+    private Long totalClicks;
 
     @Lob
     @Column(name = "views_by_location", columnDefinition = "json")
@@ -74,7 +74,7 @@ public class UniversalStats {
     public UniversalStats() {
     }
 
-    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum, int totalClicks, Map<String, Long> viewsPerHour, Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
+    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum, Long totalClicks, Map<String, Long> viewsPerHour, Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
         this.besucherAnzahl = besucherAnzahl;
         this.anbieterProfileAnzahl = anbieterProfileAnzahl;
         this.anzahlArtikel = anzahlArtikel;
@@ -267,11 +267,11 @@ public class UniversalStats {
                 '}';
     }
 
-    public long getTotalClicks() {
+    public Long getTotalClicks() {
         return totalClicks;
     }
 
-    public void setTotalClicks(int totalClicks) {
+    public void setTotalClicks(Long totalClicks) {
         this.totalClicks = totalClicks;
     }
 

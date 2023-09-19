@@ -110,6 +110,8 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       },
       options: {
         aspectRatio: 2.8,
+        maintainAspectRatio: false,
+        clip: false,
         layout: {
           padding: {
             bottom: 0

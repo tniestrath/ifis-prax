@@ -13,7 +13,7 @@ import {CookieService} from "ngx-cookie-service";
 export class HeaderComponent implements AfterViewInit{
 
   @Output() selected = new Subject<string>();
-  navElementsBackup = ["Overview", "Statistics", "Posts", "Tags", "Users"];
+  navElementsBackup = ["Overview", "Posts", "Tags", "Users"];
   navElements = this.navElementsBackup;
 
 

@@ -572,12 +572,13 @@ public class LogService {
             UpdatePerformanceAndViews(matcher);
             updateViewsByLocation(matcher);
         }
-
+        /*
         if(patternName.equals("podcastView")) {
             System.out.println("PODCAST VIEW WOOOOHOOO");
             UpdatePerformanceAndViews(matcher);
             updateViewsByLocation(matcher);
         }
+        */
     }
     public String hashIp(String ip){
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output

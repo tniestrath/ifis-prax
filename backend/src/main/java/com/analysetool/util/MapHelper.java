@@ -51,6 +51,29 @@ public final class MapHelper {
         }
     }
 
+    /**
+     *
+     * @param viewsByLocation
+     * @return
+     */
+    public static Map<String, Map<String, Map<String, Long>>> initializeViewsByLocation(Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
+        String[] germanStates = {"HH", "HB", "BE", "MV", "BB", "SN", "ST", "BY", "SL", "RP", "SH", "TH", "NB", "HE", "BW", "NW"};
+        String[] otherCountries = {"NL", "BG", "SW", "AT", "LU"};
+
+        Map<String, Long> zeroMap = new HashMap<>();
+        zeroMap.put("gesamt", 0L);
+
+        for (String state : germanStates) {
+            viewsByLocation.computeIfAbsent("DE", k -> new HashMap<>()).put(state, new HashMap<>(zeroMap));
+        }
+
+        for (String country : otherCountries) {
+            viewsByLocation.computeIfAbsent(country, k -> new HashMap<>()).put(country, new HashMap<>(zeroMap));
+        }
+
+        return viewsByLocation;
+    }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     //Only private methods used internally from this point forward.
@@ -76,6 +99,7 @@ public final class MapHelper {
             innermostMap1.merge(key, value, Long::sum);
         }
     }
+
 
 
 }

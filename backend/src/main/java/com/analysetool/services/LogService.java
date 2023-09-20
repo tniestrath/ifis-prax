@@ -1246,23 +1246,6 @@ public class LogService {
 
         return viewsByLocation;
     }
-    public static Map<String, Map<String, Map<String, Long>>> initializeViewsByLocation(Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
-        String[] germanStates = {"HH", "HB", "BE", "MV", "BB", "SN", "ST", "BY", "SL", "RP", "SH", "TH", "NB", "HE", "BW", "NW"};
-        String[] otherCountries = {"NL", "BG", "SW", "AT", "LU"};
-
-        Map<String, Long> zeroMap = new HashMap<>();
-        zeroMap.put("gesamt", 0L);
-
-        for (String state : germanStates) {
-            viewsByLocation.computeIfAbsent("DE", k -> new HashMap<>()).put(state, new HashMap<>(zeroMap));
-        }
-
-        for (String country : otherCountries) {
-            viewsByLocation.computeIfAbsent(country, k -> new HashMap<>()).put(country, new HashMap<>(zeroMap));
-        }
-
-        return viewsByLocation;
-    }
 
     private static String getMonthNumber(String monthName) {
         Map<String, String> months = new HashMap<>();

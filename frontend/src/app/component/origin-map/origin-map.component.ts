@@ -221,7 +221,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           }
         }
         else {
-          let clicks = globals[i][country]["gesamt"]["gesamt"];
+          let clicks = globals[i][country]["gesamt"];
           let cityArray: SVG_City[] = [];
           for (const city in globals[i][country][country]) {
             if (city != "gesamt") {

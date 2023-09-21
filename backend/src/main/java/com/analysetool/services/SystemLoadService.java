@@ -2,6 +2,7 @@ package com.analysetool.services;
 
 import com.analysetool.modells.SystemLoad;
 import com.analysetool.repositories.SystemLoadRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,12 @@ public class SystemLoadService {
         systemLoad.setTimestamp(System.currentTimeMillis());
 
         systemLoadRepository.save(systemLoad);
+    }
+    @Scheduled(cron = "0 0 0 * * ?") // Jeden Tag um Mitternacht
+    @Transactional
+    public void deleteOldRecords() {
+        long seventyTwoHoursAgo = System.currentTimeMillis() - (72 * 60 * 60 * 1000); // 72 Stunden in Millisekunden
+        systemLoadRepository.deleteByTimestampBefore(seventyTwoHoursAgo);
     }
 
 

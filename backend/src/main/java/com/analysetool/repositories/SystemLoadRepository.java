@@ -10,5 +10,6 @@ public interface SystemLoadRepository extends JpaRepository<SystemLoad, Long> {
     SystemLoad findTopByCpuLoad();
     SystemLoad findTopByMemoryLoad();
 
+    void deleteByTimestampBefore(long timestamp);
 }
 

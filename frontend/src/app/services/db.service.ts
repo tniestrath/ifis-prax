@@ -5,6 +5,7 @@ import {DbObject} from "./DbObject";
 import {Post} from "../component/post/Post";
 import {User} from "../page/page-einzel/user/user";
 import {Callup} from "../component/call-up-chart/call-up-chart.component";
+import {SystemUsage} from "../component/system/systemload/systemload.component";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -50,6 +51,9 @@ export enum dbUrl {
   GET_NEWSLETTER_SUBS = "/newsletter/getStatusAll",
   GET_NEWSLETTER_SUBS_YESTERDAY = "/newsletter/getAmountOfSubsYesterday",
   GET_NEWSLETTER_SUBS_BY_DATERANGE = "/newsletter/getAmountOfSubsByDateRange?daysBackTo=DAYSBACKTO&daysBackFrom=DAYSBACKFROM",
+
+  GET_SYSTEM_USAGE = "/systemLoad/systemLive",
+  GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
 
   LOGIN = "/login?user=USERNAME&pass=PASSWORD",
   VALIDATE = "/validate",
@@ -243,5 +247,12 @@ export class DbService {
 
   async getViewsByLocationLas14(){
     return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION_BY_DAYSBACK), {credentials: "include"}).then(res => res.json());
+  }
+
+  async getSystemUsage() : Promise<SystemUsage>{
+    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE), {credentials: "include"}).then(res => res.json());
+  }
+  async getSystemUsageNow() : Promise<{cpu : number, memory : number}>{
+    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE_NOW), {credentials: "include"}).then(res => res.json());
   }
 }

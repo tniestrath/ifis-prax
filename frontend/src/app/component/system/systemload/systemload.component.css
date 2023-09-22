@@ -1,0 +1,35 @@
+.systemload-title{
+  border-radius: 5px;
+  border: 1px solid #A0A0A0;
+  padding: 5px;
+  margin: 0;
+  text-align: center;
+}
+
+.systemload-header{
+  display: grid;
+  width: calc(100% - 45px);
+  height: 30px;
+  position: relative;
+  box-sizing: border-box;
+
+  left: 5px;
+  top: 5px;
+}
+.systemload-content{
+  display: grid;
+  margin-top: 5px;
+  height: calc(100% - 35px);
+  width: 100%;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 10% 90%;
+}
+.systemload-content p{
+  margin: 0;
+  padding: 5px;
+  font-size: calc(.5vh + .5vw);
+  text-align: center;
+}
+canvas{
+  padding: 5px;
+}

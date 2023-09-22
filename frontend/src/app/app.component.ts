@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {Subject} from "rxjs";
 import {Chart} from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import ChartAnnotation from "chartjs-plugin-annotation";
 import Util from "./util/Util";
 
 
@@ -20,6 +21,7 @@ export class AppComponent {
 
   constructor() {
     Chart.register(ChartDataLabels);
+    Chart.register(ChartAnnotation);
     Chart.defaults.set('plugins.datalabels', {
       color: '#fff',
       formatter: (value: number, context: { dataIndex: string; }) => {

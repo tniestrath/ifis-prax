@@ -2,6 +2,9 @@ package com.analysetool.api;
 
 import com.analysetool.modells.SystemLoad;
 import com.analysetool.services.SystemLoadService;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,11 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.HardwareAbstractionLayer;
+import oshi.util.tuples.Pair;
 
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/systemLoad")
+@RequestMapping("/systemLoad")
 public class SystemLoadController {
 
     private final SystemLoadService systemLoadService;
@@ -33,13 +37,16 @@ public class SystemLoadController {
     }
 
     @GetMapping("/current")
-    public String getCurrentLoad() {
+    public String getCurrentLoad() throws JSONException {
         List<SystemLoad> allSystemLoads = systemLoadService.getAllSystemLoads();
         if (allSystemLoads.isEmpty()) return "{}";
 
         SystemLoad currentLoad = allSystemLoads.get(allSystemLoads.size() - 1);
-        return String.format("{\"cpu\": %f, \"memory\": %f, \"timestamp\": %d}",
-                currentLoad.getCpuLoad(), currentLoad.getMemoryLoad(), currentLoad.getTimestamp());
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("cpu", currentLoad.getCpuLoad());
+        jsonObject.put("memory", currentLoad.getMemoryLoad());
+
+        return jsonObject.toString();
     }
 
     @GetMapping("/peak")
@@ -55,6 +62,25 @@ public class SystemLoadController {
 
         return String.format("{\"cpu\": %f, \"memory\": %f, \"timestamp\": %d}",
                 peakLoad.getCpuLoad(), peakLoad.getMemoryLoad(), peakLoad.getTimestamp());
+    }
+
+    @GetMapping("/systemLive")
+    public String getComplete() throws JSONException {
+        List<SystemLoad> allSystemLoads = systemLoadService.getTop60ByTimeDesc();
+        Collections.reverse(allSystemLoads);
+        if (allSystemLoads.isEmpty()) return "{}";
+        JSONObject jsonObject = new JSONObject();
+        List<Double> array_cpu = new ArrayList<>();
+        List<Double> array_memory = new ArrayList<>();
+
+        for (SystemLoad systemLoad : allSystemLoads) {
+            array_cpu.add(systemLoad.getCpuLoad());
+            array_memory.add(systemLoad.getMemoryLoad());
+        }
+        jsonObject.put("cpu_record", new JSONArray(array_cpu));
+        jsonObject.put("memory_record",  new JSONArray(array_memory));
+
+        return jsonObject.toString();
     }
 }
 

@@ -65,6 +65,9 @@ public class SystemLoadService {
         return systemLoadRepository.findAll();
     }
 
+    public List<SystemLoad> getTop60ByTimeDesc(){
+        return systemLoadRepository.getTop60ByOrderByTimestampDesc();
+    }
 }
 
 

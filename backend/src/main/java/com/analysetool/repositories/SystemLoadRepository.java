@@ -7,8 +7,10 @@ import java.util.List;
 
 public interface SystemLoadRepository extends JpaRepository<SystemLoad, Long> {
     List<SystemLoad> findAll();
-    SystemLoad findTopByCpuLoad();
-    SystemLoad findTopByMemoryLoad();
+    //SystemLoad findTopByCpuLoad();
+    //SystemLoad findTopByMemoryLoad();
+
+    List<SystemLoad> getTop60ByOrderByTimestampDesc();
 
     void deleteByTimestampBefore(long timestamp);
 }

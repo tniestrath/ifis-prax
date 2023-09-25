@@ -233,7 +233,7 @@ public class LogService {
             GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
             InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
             br = new BufferedReader(inputStreamReader);
-            findAMatchTest(SystemVariabeln);
+            findAMatch(SystemVariabeln);
             SystemVariabeln.setLastLineCount(0);
         }
         lastLineCounter=SystemVariabeln.getLastLineCount();
@@ -241,7 +241,7 @@ public class LogService {
         lineCounter = 0;
         try  {
             br = new BufferedReader(new FileReader(path));
-            findAMatchTest(SystemVariabeln);
+            findAMatch(SystemVariabeln);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -255,7 +255,7 @@ public class LogService {
         sysVarRepo.save(SystemVariabeln);
     }
 
-    public void findAMatch() throws IOException {
+    public void findAMatchDeprecated() throws IOException {
         String line;
 
         boolean foundPattern = false;
@@ -380,7 +380,7 @@ public class LogService {
         System.out.println("END OF LOG");
     }
 
-    public void findAMatchTest(SysVar sysVar) throws IOException {
+    public void findAMatch(SysVar sysVar) throws IOException {
         String line;
         boolean foundPattern = false;
         boolean isNew = false;

@@ -396,100 +396,106 @@ public class LogService {
         while ((line = br.readLine()) != null ) {
 
             Matcher pre_Matched = patternPreMatch.matcher(line);
-            // Erstellen Sie ein Datum-Objekt mit den gegebenen Werten
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss XXXXX");
-            LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(1)));
-            LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
-            if(dateLog.isAfter(dateLastRead)) {
-                sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
-                Matcher matched_articleView = articleViewPattern.matcher(line);
 
-                if (matched_articleView.find()) {
-                    Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
+            if (pre_Matched.find()) {
+                System.out.println(pre_Matched.group(1));
+                // Erstellen Sie ein Datum-Objekt mit den gegebenen Werten
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss XXXXX");
+                LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(1)));
+                LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
+                if (dateLog.isAfter(dateLastRead)) {
+                    sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
+                    Matcher matched_articleView = articleViewPattern.matcher(line);
 
-                    foundPattern = true;
-                    if (matched_articleSearchSuccess.find()) {
-                        // Do something with the matched 1.2 patterns
-                        //System.out.println(line+"SEARCH FOUND");
-                        processLine(line, "articleSearchSuccess", matched_articleSearchSuccess);
-                    } else {//1.1 matched
-                        //System.out.println(line+"NO SEARCH");
-                        processLine(line, "articleView", matched_articleView);
-                    }
-                    foundPattern = true;
-                } else {
-                    Matcher matched_blogView = blogViewPattern.matcher(line);
+                    if (matched_articleView.find()) {
+                        Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
 
-                    if (matched_blogView.find()) {
-                        Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
-
-                        if (matched_blogSearchSuccess.find()) {
-                            // Do something with the matched 2.2 patterns
-                            processLine(line, "blogSearchSuccess", matched_blogSearchSuccess);
-                            // System.out.println(line+" SEARCH FOUND");
-                        } else {
-                            //2.1 match
-                            processLine(line, "blogView", matched_blogView);
-                            // System.out.println(line+" NO SEARCH");
+                        foundPattern = true;
+                        if (matched_articleSearchSuccess.find()) {
+                            // Do something with the matched 1.2 patterns
+                            //System.out.println(line+"SEARCH FOUND");
+                            processLine(line, "articleSearchSuccess", matched_articleSearchSuccess);
+                        } else {//1.1 matched
+                            //System.out.println(line+"NO SEARCH");
+                            processLine(line, "articleView", matched_articleView);
                         }
-                        foundPattern = false;
+                        foundPattern = true;
                     } else {
-                        Matcher matched_newsView = newsViewPattern.matcher(line);
+                        Matcher matched_blogView = blogViewPattern.matcher(line);
 
-                        if (matched_newsView.find()) {
-                            System.out.println("TEST NEWS GEFUNDEN");
-                            Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(line);
+                        if (matched_blogView.find()) {
+                            Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
 
-                            if (matched_newsSearchSuccess.find()) {
-                                System.out.println("TEST SEARCHSUCCESS GEFUNDEN");
+                            if (matched_blogSearchSuccess.find()) {
                                 // Do something with the matched 2.2 patterns
-                                processLine(line, "newsSearchSuccess", matched_newsSearchSuccess);
+                                processLine(line, "blogSearchSuccess", matched_blogSearchSuccess);
                                 // System.out.println(line+" SEARCH FOUND");
                             } else {
                                 //2.1 match
-                                processLine(line, "newsView", matched_newsView);
+                                processLine(line, "blogView", matched_blogView);
                                 // System.out.println(line+" NO SEARCH");
                             }
                             foundPattern = false;
                         } else {
-                            Matcher matched_whitepaperView = patternWhitepaperView.matcher(line);
+                            Matcher matched_newsView = newsViewPattern.matcher(line);
 
-                            if (matched_whitepaperView.find()) {
-                                Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
+                            if (matched_newsView.find()) {
+                                System.out.println("TEST NEWS GEFUNDEN");
+                                Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(line);
 
-                                if (matched_whitepaperSearchSuccess.find()) {
-                                    processLine(line, "whitepaperSearchSuccess", matched_whitepaperSearchSuccess);
+                                if (matched_newsSearchSuccess.find()) {
+                                    System.out.println("TEST SEARCHSUCCESS GEFUNDEN");
+                                    // Do something with the matched 2.2 patterns
+                                    processLine(line, "newsSearchSuccess", matched_newsSearchSuccess);
+                                    // System.out.println(line+" SEARCH FOUND");
                                 } else {
-                                    processLine(line, "whitepaperView", matched_whitepaperView);
+                                    //2.1 match
+                                    processLine(line, "newsView", matched_newsView);
+                                    // System.out.println(line+" NO SEARCH");
                                 }
+                                foundPattern = false;
                             } else {
-                                Matcher matched_podcastView = patternPodcast.matcher(line);
+                                Matcher matched_whitepaperView = patternWhitepaperView.matcher(line);
 
-                                if (matched_podcastView.find()) {
-                                    //ToDo maybe implement SearchSuccess if applicable
-                                    processLine(line, "podcastView", matched_podcastView);
+                                if (matched_whitepaperView.find()) {
+                                    Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
+
+                                    if (matched_whitepaperSearchSuccess.find()) {
+                                        processLine(line, "whitepaperSearchSuccess", matched_whitepaperSearchSuccess);
+                                    } else {
+                                        processLine(line, "whitepaperView", matched_whitepaperView);
+                                    }
+                                } else {
+                                    Matcher matched_podcastView = patternPodcast.matcher(line);
+
+                                    if (matched_podcastView.find()) {
+                                        //ToDo maybe implement SearchSuccess if applicable
+                                        processLine(line, "podcastView", matched_podcastView);
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                Matcher matched_redirect = redirectPattern.matcher(line);
-                if (matched_redirect.find()) {
-                    processLine(line, "redirect", matched_redirect);
+                    Matcher matched_redirect = redirectPattern.matcher(line);
+                    if (matched_redirect.find()) {
+                        processLine(line, "redirect", matched_redirect);
+                    }
+                    Matcher matched_userView = userViewPattern.matcher(line);
+                    if (matched_userView.find()) {
+                        processLine(line, "userView", matched_userView);
+                    }
+                    Matcher matched_userRedirect = userRedirectPattern.matcher(line);
+                    if (matched_userRedirect.find()) {
+                        processLine(line, "userViewRedirect", matched_userView);
+                    }
+                    Matcher matched_searchPattern = searchPattern.matcher(line);
+                    if (matched_searchPattern.find()) {
+                        processLine(line, "search", matched_searchPattern);
+                    }
                 }
-                Matcher matched_userView = userViewPattern.matcher(line);
-                if (matched_userView.find()) {
-                    processLine(line, "userView", matched_userView);
-                }
-                Matcher matched_userRedirect = userRedirectPattern.matcher(line);
-                if (matched_userRedirect.find()) {
-                    processLine(line, "userViewRedirect", matched_userView);
-                }
-                Matcher matched_searchPattern = searchPattern.matcher(line);
-                if (matched_searchPattern.find()) {
-                    processLine(line, "search", matched_searchPattern);
-                }
+            } else {
+                System.out.println(line);
             }
         }
     }

@@ -78,7 +78,7 @@ public class LogService {
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private final String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
-   private final String prePattern = "\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2}.[\\S]{1}[\\d]{4})";
+   private final String prePattern = "\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2})";
 
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -400,7 +400,7 @@ public class LogService {
             if (pre_Matched.find()) {
                 System.out.println(pre_Matched.group(1));
                 // Erstellen Sie ein Datum-Objekt mit den gegebenen Werten
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss ZZZZ",  Locale.ENGLISH);
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
                 LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(1)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
                 if (dateLog.isAfter(dateLastRead)) {

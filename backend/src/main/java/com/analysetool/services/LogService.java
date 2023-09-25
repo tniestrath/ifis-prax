@@ -400,7 +400,7 @@ public class LogService {
             if (pre_Matched.find()) {
                 System.out.println(pre_Matched.group(1));
                 // Erstellen Sie ein Datum-Objekt mit den gegebenen Werten
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss xxxxx");
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss ZZZZ");
                 LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(1)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
                 if (dateLog.isAfter(dateLastRead)) {

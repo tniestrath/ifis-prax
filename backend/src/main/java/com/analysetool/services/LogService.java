@@ -223,15 +223,6 @@ public class LogService {
         updateLetterCountForAll();
     }
 
-
-    /*@Scheduled(cron = "0 0 3 * * ?") // Dieser Cron-Ausdruck gibt 3 Uhr an
-    public void resetLastLineCount() {
-        SysVar SystemVariabeln = new SysVar();
-        SystemVariabeln.setLastLineCount(0);
-    }*/
-
-
-
     public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws IOException {
         this.liveScanning = liveScanning;
         this.path = path;

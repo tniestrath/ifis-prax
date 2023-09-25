@@ -130,7 +130,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
     const max = Math.max.apply(null, clicksData);
 
-    console.log(region + ": " + clicksData);
 
     // @ts-ignore
     this.chart = new Chart("region-by-date", {
@@ -198,7 +197,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   }
 
   readOldData(globals: { [x: string]: any}[]){
-    console.log(globals)
     for (let i = 0; i < globals.length; i++) {
       const region_clicks: SVG_Region[] = [];
       for (const country in globals[i]){

@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.SystemVariable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -36,46 +37,48 @@ public class LogService {
 
 
 
-    private PostRepository postRepository;
-    private PostStatsRepository statsRepo;
-    private TagStatRepository tagStatRepo;
-    private WpTermRelationshipsRepository termRelRepo;
-    private WPTermRepository termRepo;
-    private WpTermTaxonomyRepository termTaxRepo;
-    private WPUserRepository wpUserRepo;
+    private final PostRepository postRepository;
+    private final PostStatsRepository statsRepo;
+    private final TagStatRepository tagStatRepo;
+    private final WpTermRelationshipsRepository termRelRepo;
+    private final WPTermRepository termRepo;
+    private final WpTermTaxonomyRepository termTaxRepo;
+    private final WPUserRepository wpUserRepo;
     @Autowired
     private WPUserMetaRepository wpUserMetaRepository;
-    private UserStatsRepository userStatsRepo;
+    private final UserStatsRepository userStatsRepo;
 
-    private CommentsRepository commentRepo;
-    private SysVarRepository sysVarRepo;
+    private final CommentsRepository commentRepo;
+    private final SysVarRepository sysVarRepo;
     private BufferedReader br;
     private String path = "";
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
-    private String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
-    private String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/.*s=(\\S+)\".*";//search +1, view +1,(bei match) vor artikel view pattern
+    private final String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
+    private final String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/.*s=(\\S+)\".*";//search +1, view +1,(bei match) vor artikel view pattern
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
-    private String WhitepaperSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
-    private String BlogViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/";
-    private String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
-    private String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
-    private String UserViewPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /user/(\\S+)/";
+    private final String WhitepaperSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
+    private final String BlogViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/";
+    private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
+    private final String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
+    private final String UserViewPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
     //private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+)";//Artikel view +1 bei match
-    private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/";
-    private String PresseViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /news/(\\S+)/";
+    private final String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/";
+    private final String PresseViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /news/(\\S+)/";
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
-    private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /news/(\\S+)/.*s=(\\S+)\".*";
+    private final String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /news/(\\S+)/.*s=(\\S+)\".*";
 
-    private String WhitepaperViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /whitepaper/(\\S+)/";
-    private String PodcastPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /its-couch/";
+    private final String WhitepaperViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /whitepaper/(\\S+)/";
+    private final String PodcastPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /its-couch/";
 
 
     // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
-    private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
+    private final String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
-   private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
+   private final String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
+
+   private final String prePattern = "\\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).([\\S]{1}[\\d]{4})";
 
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -92,6 +95,7 @@ public class LogService {
     Pattern patternPodcast = Pattern.compile(PodcastPattern);
     Pattern patternWhitepaperView = Pattern.compile(WhitepaperViewPattern);
     Pattern patternWhitepaperSearchSuccess = Pattern.compile(WhitepaperSSPattern);
+    Pattern patternPreMatch = Pattern.compile(prePattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -101,17 +105,17 @@ public class LogService {
     //Toter Code wird bis zum fertigen ConfigReader hier gelassen.
     //private String Pfad=Application.class.getClassLoader().getResource("access.log").getPath();
     //private String Pfad = Paths.get(Application.class.getClassLoader().getResource("access.log").toURI()).toString();
-    private DashConfig config;
-    private String Pfad;
+    private final DashConfig config;
+    private final String Pfad;
 
-    private Calendar kalender = Calendar.getInstance();
-    private int aktuellesJahr = kalender.get(Calendar.YEAR);
+    private final Calendar kalender = Calendar.getInstance();
+    private final int aktuellesJahr = kalender.get(Calendar.YEAR);
     @Autowired
     private SearchStatsRepository searchStatRepo;
 
-    private HashMap<String,ArrayList<LocalDateTime>> userViewTimes= new HashMap<>();
-    private HashMap<String, Integer> userViews = new HashMap<>();
-    private HashMap<String, Integer> impressions = new HashMap<>();
+    private final HashMap<String,ArrayList<LocalDateTime>> userViewTimes= new HashMap<>();
+    private final HashMap<String, Integer> userViews = new HashMap<>();
+    private final HashMap<String, Integer> impressions = new HashMap<>();
     @Autowired
     private universalStatsRepository uniRepo;
 
@@ -218,25 +222,35 @@ public class LogService {
         run(liveScanning,Pfad, SystemVariabeln);
         updateLetterCountForAll();
     }
+
+
+    /*@Scheduled(cron = "0 0 3 * * ?") // Dieser Cron-Ausdruck gibt 3 Uhr an
+    public void resetLastLineCount() {
+        SysVar SystemVariabeln = new SysVar();
+        SystemVariabeln.setLastLineCount(0);
+    }*/
+
+
+
     public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws IOException {
         this.liveScanning = liveScanning;
         this.path = path;
         if(!liveScanning){
 
-            String pathOfOldLog = "/var/log/nginx/access.log-" + getDay(1) + ".gz";
+            String pathOfOldLog = "/var/log/nginx/access.log-" + getDay(0) + ".gz";
             FileInputStream fileInputStream = new FileInputStream(pathOfOldLog);
             GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
             InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
             br = new BufferedReader(inputStreamReader);
-            findAMatch();
+            findAMatchTest(SystemVariabeln);
             SystemVariabeln.setLastLineCount(0);
         }
         lastLineCounter=SystemVariabeln.getLastLineCount();
         lastLine = SystemVariabeln.getLastLine();
-        lineCounter = 0 ;
+        lineCounter = 0;
         try  {
             br = new BufferedReader(new FileReader(path));
-            findAMatch();
+            findAMatchTest(SystemVariabeln);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -258,11 +272,11 @@ public class LogService {
         while ((line = br.readLine()) != null ) {
             if(lineCounter!=lastLineCounter){
                 System.out.println("Counting up");
-            while(lineCounter!=lastLineCounter && liveScanning){
-                br.readLine();
-                lineCounter++;
+                while(lineCounter!=lastLineCounter && liveScanning){
+                    br.readLine();
+                    lineCounter++;
 
-            }
+                }
             System.out.println("reached final position");
             }
 
@@ -283,9 +297,7 @@ public class LogService {
                         processLine(line,"articleView",matched_articleView);
                         foundPattern = true;
                     }
-                }
-           // }
-            else {
+                } else {
                     Matcher matched_blogView = blogViewPattern.matcher(line);
 
                     if (matched_blogView.find()) {
@@ -375,6 +387,111 @@ public class LogService {
         updateUserStatsForAllUsers();
         lineCounter = 0 ;
         System.out.println("END OF LOG");
+    }
+
+    public void findAMatchTest(SysVar sysVar) throws IOException {
+        String line;
+        boolean foundPattern = false;
+        boolean isNew = false;
+        while ((line = br.readLine()) != null ) {
+
+            Matcher pre_Matched = patternPreMatch.matcher(line);
+            // Erstellen Sie ein Datum-Objekt mit den gegebenen Werten
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss XXXXX");
+            LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(1)));
+            LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
+            if(dateLog.isAfter(dateLastRead)) {
+                sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
+                Matcher matched_articleView = articleViewPattern.matcher(line);
+
+                if (matched_articleView.find()) {
+                    Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
+
+                    foundPattern = true;
+                    if (matched_articleSearchSuccess.find()) {
+                        // Do something with the matched 1.2 patterns
+                        //System.out.println(line+"SEARCH FOUND");
+                        processLine(line, "articleSearchSuccess", matched_articleSearchSuccess);
+                    } else {//1.1 matched
+                        //System.out.println(line+"NO SEARCH");
+                        processLine(line, "articleView", matched_articleView);
+                    }
+                    foundPattern = true;
+                } else {
+                    Matcher matched_blogView = blogViewPattern.matcher(line);
+
+                    if (matched_blogView.find()) {
+                        Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
+
+                        if (matched_blogSearchSuccess.find()) {
+                            // Do something with the matched 2.2 patterns
+                            processLine(line, "blogSearchSuccess", matched_blogSearchSuccess);
+                            // System.out.println(line+" SEARCH FOUND");
+                        } else {
+                            //2.1 match
+                            processLine(line, "blogView", matched_blogView);
+                            // System.out.println(line+" NO SEARCH");
+                        }
+                        foundPattern = false;
+                    } else {
+                        Matcher matched_newsView = newsViewPattern.matcher(line);
+
+                        if (matched_newsView.find()) {
+                            System.out.println("TEST NEWS GEFUNDEN");
+                            Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(line);
+
+                            if (matched_newsSearchSuccess.find()) {
+                                System.out.println("TEST SEARCHSUCCESS GEFUNDEN");
+                                // Do something with the matched 2.2 patterns
+                                processLine(line, "newsSearchSuccess", matched_newsSearchSuccess);
+                                // System.out.println(line+" SEARCH FOUND");
+                            } else {
+                                //2.1 match
+                                processLine(line, "newsView", matched_newsView);
+                                // System.out.println(line+" NO SEARCH");
+                            }
+                            foundPattern = false;
+                        } else {
+                            Matcher matched_whitepaperView = patternWhitepaperView.matcher(line);
+
+                            if (matched_whitepaperView.find()) {
+                                Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
+
+                                if (matched_whitepaperSearchSuccess.find()) {
+                                    processLine(line, "whitepaperSearchSuccess", matched_whitepaperSearchSuccess);
+                                } else {
+                                    processLine(line, "whitepaperView", matched_whitepaperView);
+                                }
+                            } else {
+                                Matcher matched_podcastView = patternPodcast.matcher(line);
+
+                                if (matched_podcastView.find()) {
+                                    //ToDo maybe implement SearchSuccess if applicable
+                                    processLine(line, "podcastView", matched_podcastView);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Matcher matched_redirect = redirectPattern.matcher(line);
+                if (matched_redirect.find()) {
+                    processLine(line, "redirect", matched_redirect);
+                }
+                Matcher matched_userView = userViewPattern.matcher(line);
+                if (matched_userView.find()) {
+                    processLine(line, "userView", matched_userView);
+                }
+                Matcher matched_userRedirect = userRedirectPattern.matcher(line);
+                if (matched_userRedirect.find()) {
+                    processLine(line, "userViewRedirect", matched_userView);
+                }
+                Matcher matched_searchPattern = searchPattern.matcher(line);
+                if (matched_searchPattern.find()) {
+                    processLine(line, "search", matched_searchPattern);
+                }
+            }
+        }
     }
 
 
@@ -472,7 +589,7 @@ public class LogService {
                     userStatsRepo.save(new UserStats(wpUser.getId(), (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)1));
                 }
 
-            };
+            }
         }
         if(patternName.equals("search")){
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
@@ -579,6 +696,12 @@ public class LogService {
             updateViewsByLocation(matcher);
         }
         */
+
+        System.out.println("UPDATING USER ACTIVITY");
+        updateUserActivity((long)3);
+        updateUserStatsForAllUsers();
+        lineCounter = 0 ;
+        System.out.println("END OF LOG");
     }
     public String hashIp(String ip){
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
@@ -982,7 +1105,7 @@ public class LogService {
         long views = daily.get(Integer.toString(currentDayOfYear));
         views++;
         daily.put(Integer.toString(currentDayOfYear),views);
-        PostStats.setViewsLastYear((Map<String,Long>) daily);
+        PostStats.setViewsLastYear(daily);
         PostStats.setRelevance(getRelevance(daily,currentDayOfYear,7));
         statsRepo.save(PostStats);
 
@@ -1061,7 +1184,7 @@ public class LogService {
         long views = daily.get(Integer.toString(currentDayOfYear));
         views++;
         daily.put(Integer.toString(currentDayOfYear),views);
-        Stats.setViewsLastYear((Map<String,Long>) daily);
+        Stats.setViewsLastYear(daily);
         views = Stats.getViews();
         views ++;
         Stats.setViews(views);
@@ -1402,7 +1525,7 @@ public class LogService {
 
         ArrayList<String> uniqueIps = new ArrayList<>();
         String line;
-        long allClicks = (long) 0;
+        long allClicks = 0;
         if(uniStat.getTotalClicks()!=null){allClicks=uniStat.getTotalClicks();}
         Long Besucher = (long) 0;
         if(uniStat.getBesucherAnzahl()!=null){Besucher=uniStat.getBesucherAnzahl();}

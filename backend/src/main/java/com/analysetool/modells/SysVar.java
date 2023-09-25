@@ -34,6 +34,9 @@ public class SysVar {
     @Column(name ="flag_scan_last_14")
     private boolean flagScanLast14;
 
+    @Column(name = "last_timestamp")
+    private String lastTimeStamp;
+
     public LocalDateTime getLogDate() {
         return logDate;
     }
@@ -150,4 +153,11 @@ public class SysVar {
         this.lastLine = lastLine;
     }
 
+    public String getLastTimeStamp() {
+        return lastTimeStamp;
+    }
+
+    public void setLastTimeStamp(String lastTimeStamp) {
+        this.lastTimeStamp = lastTimeStamp;
+    }
 }

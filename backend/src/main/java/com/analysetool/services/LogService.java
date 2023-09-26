@@ -393,7 +393,7 @@ public class LogService {
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
                 LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(1)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
-                if (dateLog.isAfter(dateLastRead)) {
+                if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
 

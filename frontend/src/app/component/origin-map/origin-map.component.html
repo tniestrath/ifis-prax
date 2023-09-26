@@ -42,11 +42,11 @@
       <div id="tooltip-cities">
       </div>
     </div>
-    <div id="tooltip-charts">
-      <div id="region-by-date-box" [style]="{display: showCharts}">
+    <div id="tooltip-charts" [style]="{display: isRegionSelected}">
+      <div id="region-by-date-box" >
         <canvas id="region-by-date">{{chart}}</canvas>
       </div>
-      <div id="region-by-time-box" [style]="{display: showCharts}">
+      <div id="region-by-time-box" >
         <canvas id="region-by-time"></canvas>
       </div>
     </div>

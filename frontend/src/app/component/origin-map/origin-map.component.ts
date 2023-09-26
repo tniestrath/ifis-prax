@@ -2,10 +2,8 @@ import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit} from '@
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {SysVars} from "../../services/sys-vars-service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
-import _default from "chart.js/dist/plugins/plugin.tooltip";
 import Util, {DashColors} from "../../util/Util";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import {Callup} from "../call-up-chart/call-up-chart.component";
 
 export enum Region {
   HH = "Hamburg",
@@ -101,9 +99,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   }
 
   createChart(perDayRegionClicks : SVG_Region[][], region: string){
-    if (this.chart){
-      this.chart.destroy();
-    }
+    this.chart?.destroy();
     var date = new Date(Date.now());
 
     var timestamps : string[] = [
@@ -133,6 +129,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     }
 
     const max = Math.max.apply(null, clicksData);
+
 
     // @ts-ignore
     this.chart = new Chart("region-by-date", {
@@ -194,9 +191,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         interaction: {
           mode: "nearest",
           intersect: true
-        },
-        onClick(event: ChartEvent, elements: ActiveElement[]) {
-        },
+        }
       }
     })
   }
@@ -221,7 +216,10 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           }
         }
         else {
-          let clicks = globals[i][country]["gesamt"];
+          let clicks = 0;
+          if (globals[i][country]["gesamt"] != undefined) {
+            clicks = globals[i][country]["gesamt"].gesamt;
+          }
           let cityArray: SVG_City[] = [];
           for (const city in globals[i][country][country]) {
             if (city != "gesamt") {
@@ -291,9 +289,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
   setRegionTooltip(svg: any, region : string, cities : {name : string, clicks : number}[]){
     var pathElement = svg.querySelector("#" + region) ?? null;
-    var tooltip = document.getElementById('tooltip') ?? new HTMLDivElement();
-    var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLDivElement();
-    var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLDivElement();
+    var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
+    var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
 
     if (pathElement == null){return}
 

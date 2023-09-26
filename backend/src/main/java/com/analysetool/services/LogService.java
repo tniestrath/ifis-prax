@@ -514,23 +514,25 @@ public class LogService {
                         processLine(line, "search", matched_searchPattern);
                     }
                 }
+                UniversalStats uniStats = uniRepo.findByDatum(date).isPresent() ? uniRepo.findByDatum(date).get() : new UniversalStats();
+
+                uniStats.setBesucherAnzahl(besucherTotal);
+                uniStats.setTotalClicks(clicksTotal);
+                uniStats.setViewsByLocation(viewsByLoc);
+                uniStats.setViewsPerHour(viewsByH);
+                uniStats.setDatum(date);
+                uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
+                uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
+                uniStats = setAccountTypeAllUniStats(uniStats);
+
+                uniRepo.save(uniStats);
+
+
+
             } else {
                 System.out.println(line);
             }
         }
-
-        UniversalStats uniStats = uniRepo.findByDatum(date).isPresent() ? uniRepo.findByDatum(date).get() : new UniversalStats();
-
-        uniStats.setBesucherAnzahl(besucherTotal);
-        uniStats.setTotalClicks(clicksTotal);
-        uniStats.setViewsByLocation(viewsByLoc);
-        uniStats.setViewsPerHour(viewsByH);
-        uniStats.setDatum(date);
-        uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
-        uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
-        uniStats = setAccountTypeAllUniStats(uniStats);
-
-        uniRepo.save(uniStats);
 
     }
 

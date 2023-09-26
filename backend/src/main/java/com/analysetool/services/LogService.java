@@ -394,7 +394,7 @@ public class LogService {
         Map<String, Map<String, Map<String, Long>>> viewsByLoc = new HashMap<>();
         Map<String, Long> viewsByH = new HashMap<>();
 
-        Date date = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+        System.out.println(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
 
 
 
@@ -826,6 +826,7 @@ public class LogService {
         int uniqueTimer = 3600 * 24;
 
         boolean isUnique = false;
+        UniqueUsers Row;
 
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
         byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
@@ -834,6 +835,8 @@ public class LogService {
 
         if(uniqueUserRepo.getAllIPs().contains(ipHash)) {
             List<LocalDateTime> times = uniqueUserRepo.getAccessTimesByIPHash(ipHash);
+            Row = uniqueUserRepo.findByIPHash(ipHash);
+            Row.setAccess_time(time);
 
             if (Duration.between(times.get(times.size() - 1), time).getSeconds() <= uniqueTimer) {
                 //This user already made a request not longer than uniqueTimer ago, so this is not unique
@@ -846,13 +849,13 @@ public class LogService {
 
         } else {
             //The IP was not yet used in a request to our Server, so it is a unique user.
+            Row = new UniqueUsers();
+            Row.setIp_hashed(ipHash);
+            Row.setAccess_time(time);
             isUnique = true;
         }
 
-        UniqueUsers newRow = new UniqueUsers();
-        newRow.setIp_hashed(ipHash);
-        newRow.setAccess_time(time);
-        uniqueUserRepo.save(newRow);
+        uniqueUserRepo.save(Row);
         return isUnique;
     }
 

@@ -19,6 +19,9 @@ public interface UniqueUserRepository extends JpaRepository<UniqueUsers, Long> {
     @Query("SELECT DISTINCT s.ip_hashed FROM UniqueUsers s")
     public List<String> getAllIPs();
 
+    @Query("SELECT u FROM UniqueUsers u WHERE u.ip_hashed=:iphash")
+    public UniqueUsers findByIPHash(String iphash);
+
 
 
 }

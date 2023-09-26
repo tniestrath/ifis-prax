@@ -521,6 +521,11 @@ public class LogService {
                     if (matched_searchPattern.find()) {
                         processLine(line, "search", matched_searchPattern);
                     }
+                    Matcher matched_refferer = referPattern.matcher(line);
+                    if(matched_refferer.find()){
+                        processLine(line,"refferer",matched_refferer);
+                    }
+
 
                     /*
 
@@ -674,7 +679,7 @@ public class LogService {
             searchStatRepo.save(new SearchStats(ipHash,matcher.group(6),dateTime,location));
 
         }
-        if(patternName.equals("thisWasUnreached")){
+        if(patternName.equals("refferer")){
 
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
             System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));

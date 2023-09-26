@@ -39,6 +39,25 @@ export default class Util {
     formattedDate = formattedDate.concat(parsedDate.getFullYear().toString());
     return formattedDate;
   }
+
+  static readFormattedDate(date : string){
+    let splitted = date.split("-");
+    // @ts-ignore
+    return new Date(Date.UTC(Number.parseInt(splitted.at(2)), Number.parseInt(splitted.at(1))-1, Number.parseInt(splitted.at(0))));
+  }
+
+  static getDayString(day : number){
+    switch (day) {
+      case 0: return "So";
+      case 1: return "Mo";
+      case 2: return "Di";
+      case 3: return "Mi";
+      case 4: return "Do";
+      case 5: return "Fr";
+      case 6: return "Sa";
+      default : return "ERR";
+    }
+  }
 }
 export enum DashColors {
   RED = "rgb(148,28,62)",

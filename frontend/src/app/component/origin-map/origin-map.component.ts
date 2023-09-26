@@ -4,6 +4,7 @@ import {SysVars} from "../../services/sys-vars-service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import Util, {DashColors} from "../../util/Util";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
+import {tick} from "@angular/core/testing";
 
 export enum Region {
   HH = "Hamburg",
@@ -147,15 +148,23 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       },
       options: {
         clip: false,
-        aspectRatio: 2,
-        maintainAspectRatio: false,
+        aspectRatio: .5,
         scales: {
           y: {
             min: 0,
             max: max
           },
           x: {
-            display: false,
+            display: true,
+            ticks: {
+              maxRotation: 0,
+              font: {
+                size: ctx => {return ctx.chart.width / 25},
+              },
+              callback: (tickValue, index) => {
+                return Util.getDayString(Util.readFormattedDate(timestamps[index]).getDay());
+              }
+            }
           }
         },
         plugins: {
@@ -289,6 +298,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
   setRegionTooltip(svg: any, region : string, cities : {name : string, clicks : number}[]){
     var pathElement = svg.querySelector("#" + region) ?? null;
+    var tooltipElement = document.getElementById("tooltip") ?? new HTMLElement();
+    var tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
     var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
     var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
 
@@ -328,7 +339,13 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         this.isRegionSelected = "block";
         if (SysVars.CURRENT_PAGE == "Overview") {
           this.showCharts = "block";
+          tooltipElement.classList.remove("width50");
+          tooltipCharts.classList.remove("hidden");
           this.createChart(this.perDayRegionClicks, region);
+        }
+        else {
+          tooltipElement.classList.add("width50");
+          tooltipCharts.classList.add("hidden");
         }
       }
     });

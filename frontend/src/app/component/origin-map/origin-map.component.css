@@ -44,7 +44,7 @@ path{
 }
 
 #tooltip {
-  width: fit-content;
+  width: 20%;
   height: 100%;
   border: 1px dashed black;
   border-radius: 5px;
@@ -64,6 +64,8 @@ path{
 }
 #tooltip-charts{
   height: 100%;
+  width: 30%;
+  padding: 5px;
 }
 
 .tooltip-city{
@@ -78,4 +80,12 @@ path{
 .origin-map-total > p{
   margin: 0;
   text-align: center;
+}
+
+.hidden{
+  display: none !important;
+}
+.width50{
+  width: 50% !important;
+  margin-right: 5px !important;
 }

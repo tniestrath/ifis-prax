@@ -5,6 +5,7 @@ import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.json.JSONArray;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,7 @@ public class LogService {
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private final String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
-   private final String prePattern = "\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2})";
+   private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2})";
 
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -118,6 +119,9 @@ public class LogService {
     private final HashMap<String, Integer> impressions = new HashMap<>();
     @Autowired
     private universalStatsRepository uniRepo;
+
+    @Autowired
+    private UniqueUserRepository uniqueUserRepo;
 
 
     @Autowired
@@ -246,7 +250,7 @@ public class LogService {
             e.printStackTrace();
         }
 
-        setUniversalStats(SystemVariabeln);
+        //setUniversalStats(SystemVariabeln);
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();
@@ -380,19 +384,45 @@ public class LogService {
         System.out.println("END OF LOG");
     }
 
+
     public void findAMatch(SysVar sysVar) throws IOException {
         String line;
         boolean foundPattern = false;
-        boolean isNew = false;
+
+        long besucherTotal = 0;
+        long clicksTotal = 0;
+        Map<String, Map<String, Map<String, Long>>> viewsByLoc = new HashMap<>();
+        Map<String, Long> viewsByH = new HashMap<>();
+
+        Date date = Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
+
+
+
         while ((line = br.readLine()) != null ) {
 
             Matcher pre_Matched = patternPreMatch.matcher(line);
 
             if (pre_Matched.find()) {
-                // Erstellen Sie ein Datum-Objekt mit den gegebenen Werten
+                // Erstellen von Datumsobjekten für den Aufruf und den letzten Aufruf.
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
-                LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(1)));
+                LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(2)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
+                String ip = pre_Matched.group(1);
+                date = Date.from(dateLog.atZone(ZoneId.systemDefault()).toInstant());
+
+                try {
+                    viewsByLoc = uniRepo.getViewsByLocationByDate(date);
+                    viewsByH = uniRepo.getViewsPerHourByDate(date);
+                } catch (Exception ignored) {
+                }
+
+                //Generate Universal Stats
+                clicksTotal++;
+                if(isUniqueView(ip, dateLog)) besucherTotal++;
+                setViewsByLocation(ip, viewsByLoc);
+                erhoeheViewsPerHour2(viewsByH, dateLog.toLocalTime());
+
+
                 if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
@@ -488,6 +518,20 @@ public class LogService {
                 System.out.println(line);
             }
         }
+
+        UniversalStats uniStats = uniRepo.findByDatum(date).isPresent() ? uniRepo.findByDatum(date).get() : new UniversalStats();
+
+        uniStats.setBesucherAnzahl(besucherTotal);
+        uniStats.setTotalClicks(clicksTotal);
+        uniStats.setViewsByLocation(viewsByLoc);
+        uniStats.setViewsPerHour(viewsByH);
+        uniStats.setDatum(date);
+        uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
+        uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
+        uniStats = setAccountTypeAllUniStats(uniStats);
+
+        uniRepo.save(uniStats);
+
     }
 
 
@@ -765,6 +809,48 @@ public class LogService {
             userViews.put(currentUser.getId().toString(), userViews.getOrDefault(currentUser, 0) + 1);
         }
     }
+
+    /**
+     *
+     * @param ip
+     * @param time
+     * @return
+     */
+    public boolean isUniqueView(String ip, LocalDateTime time) {
+        //This method sets the time in seconds after which a user once again becomes a unique user
+        int uniqueTimer = 3600 * 24;
+
+        boolean isUnique = false;
+
+        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
+        byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
+        String ipHash = Hex.toHexString(hashBytes);
+
+
+        if(uniqueUserRepo.getAllIPs().contains(ipHash)) {
+            List<LocalDateTime> times = uniqueUserRepo.getAccessTimesByIPHash(ipHash);
+
+            if (Duration.between(times.get(times.size() - 1), time).getSeconds() <= uniqueTimer) {
+                //This user already made a request not longer than uniqueTimer ago, so this is not unique
+                isUnique = false;
+            } else {
+                //This user has not made a request in for uniqueTimer seconds, so they are counted as a unique again.
+                isUnique = true;
+            }
+
+
+        } else {
+            //The IP was not yet used in a request to our Server, so it is a unique user.
+            isUnique = true;
+        }
+
+        UniqueUsers newRow = new UniqueUsers();
+        newRow.setIp_hashed(ipHash);
+        newRow.setAccess_time(time);
+        uniqueUserRepo.save(newRow);
+        return isUnique;
+    }
+
 
     public void updateSearchStats(Matcher matcher) {
 
@@ -1443,6 +1529,7 @@ public class LogService {
     public static String generateLogFileNameLastDay() {
        return "access.log-" + getLastDay() + ".gz";
     }
+
     public void setUniversalStats(SysVar SystemVariabeln) {
         int daysToLookBack = 9; // Anzahl der Tage, die zurückgeschaut werden sollen
 

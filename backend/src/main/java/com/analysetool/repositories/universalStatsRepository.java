@@ -28,6 +28,11 @@ public interface universalStatsRepository extends JpaRepository<UniversalStats, 
     @Query("SELECT u.viewsByLocation FROM UniversalStats u ORDER BY u.datum DESC LIMIT 14")
     List<Map<String, Map<String, Map<String, Long>>>> findAllTop14ByOrderByDatumDesc();
 
+    @Query("SELECT u.viewsByLocation FROM UniversalStats u WHERE u.datum =:date")
+    Map<String, Map<String, Map<String, Long>>> getViewsByLocationByDate(Date date);
+
+    @Query("SELECT u.viewsPerHour FROM UniversalStats u WHERE u.datum =:date")
+    Map<String, Long> getViewsPerHourByDate(Date date);
 
 
 }

@@ -391,12 +391,15 @@ public class LogService {
         String line;
         boolean foundPattern = false;
 
+        /*
         long besucherTotal = 0;
         long clicksTotal = 0;
         Map<String, Map<String, Map<String, Long>>> viewsByLoc = new HashMap<>();
         Map<String, Long> viewsByH = new HashMap<>();
         String dateString = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_DATE);
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+        */
+
 
 
 
@@ -410,6 +413,8 @@ public class LogService {
                 LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(2)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
 
+
+                /*
                 String ip = pre_Matched.group(1);
 
                 try {
@@ -423,6 +428,7 @@ public class LogService {
                 if(isUniqueView(ip, dateLog)) besucherTotal++;
                 setViewsByLocation(ip, viewsByLoc);
                 erhoeheViewsPerHour2(viewsByH, dateLog.toLocalTime());
+                 */
 
 
                 if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
@@ -517,6 +523,7 @@ public class LogService {
                         processLine(line, "search", matched_searchPattern);
                     }
 
+                    /*
 
                     UniversalStats uniStats = null;
                     if(uniRepo.findByDatum(date).isPresent()) {
@@ -536,6 +543,7 @@ public class LogService {
                     uniRepo.save(uniStats);
 
                     System.out.println("Er kam bis NACH UniStats");
+                     */
                 }
 
             } else {

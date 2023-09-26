@@ -407,7 +407,8 @@ public class LogService {
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
                 LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(2)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
-                String ip = pre_Matched.group(1);
+
+                /*String ip = pre_Matched.group(1);
                 date = Date.from(dateLog.atZone(ZoneId.systemDefault()).toInstant());
 
                 try {
@@ -421,7 +422,7 @@ public class LogService {
                 //if(isUniqueView(ip, dateLog)) besucherTotal++;
                 setViewsByLocation(ip, viewsByLoc);
                 erhoeheViewsPerHour2(viewsByH, dateLog.toLocalTime());
-
+                */
 
                 if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
@@ -514,6 +515,7 @@ public class LogService {
                         processLine(line, "search", matched_searchPattern);
                     }
                 }
+                /*
                 UniversalStats uniStats = uniRepo.findByDatum(date).isPresent() ? uniRepo.findByDatum(date).get() : new UniversalStats();
 
                 uniStats.setBesucherAnzahl(besucherTotal);
@@ -526,6 +528,7 @@ public class LogService {
                 uniStats = setAccountTypeAllUniStats(uniStats);
 
                 uniRepo.save(uniStats);
+                 */
 
 
 

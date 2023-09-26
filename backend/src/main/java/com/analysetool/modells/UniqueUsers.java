@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 public class UniqueUsers {
 
     @Id
-    @Column("id")
+    @Column(name = "id")
     private int id;
 
-    @Column("ip_hashed")
+    @Column(name = "ip_hashed")
     private String ip_hashed;
 
-    @Column("access_time")
+    @Column(name = "access_time")
     private LocalDateTime access_time;
 
 

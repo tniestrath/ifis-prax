@@ -3,6 +3,7 @@ package com.analysetool.services;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
+import com.analysetool.util.MapHelper;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.jsoup.Jsoup;
@@ -19,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -154,7 +156,7 @@ public class LogService {
     }
 
     @PostConstruct
-    public void init() throws IOException {
+    public void init() throws IOException, ParseException {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
 
@@ -195,7 +197,7 @@ public class LogService {
     }
     @Scheduled(cron = "0 0 * * * *") //einmal die Stunde
     //@Scheduled(cron = "0 */2 * * * *") //alle 2min
-    public void runScheduled() throws IOException {
+    public void runScheduled() throws IOException, ParseException {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
 
@@ -228,7 +230,7 @@ public class LogService {
         updateLetterCountForAll();
     }
 
-    public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws IOException {
+    public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws IOException, ParseException {
         this.liveScanning = liveScanning;
         this.path = path;
         if(!liveScanning){
@@ -251,7 +253,8 @@ public class LogService {
             e.printStackTrace();
         }
 
-        setUniversalStats(SystemVariabeln);
+
+        //setUniversalStats(SystemVariabeln);
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();
@@ -385,8 +388,11 @@ public class LogService {
         System.out.println("END OF LOG");
     }
 
-    public void findAMatch(SysVar sysVar) throws IOException {
+    public void findAMatch(SysVar sysVar) throws IOException, ParseException {
         String line;
+        int totalClicks = 0;
+        Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();
+        Map<String,Long> viewsByHour = new HashMap<>();
         while ((line = br.readLine()) != null ) {
 
             UniqueUser user = null;
@@ -399,7 +405,9 @@ public class LogService {
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
-
+                totalClicks++;
+                setViewsByLocation(pre_Matched.group(1), viewsByLocation);
+                erhoeheViewsPerHour2(viewsByHour, dateLog.toLocalTime());
 
                 if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
@@ -542,6 +550,36 @@ public class LogService {
             } else {
                 System.out.println(line);
             }
+        }
+        LocalDateTime dateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dateTime.format(formatter);
+        Date date = sdf.parse(formattedDate);
+
+        if(uniRepo.findTop1ByOrderByDatumDesc().getDatum().toString().equals(formattedDate)) {
+            UniversalStats uni = uniRepo.findTop1ByOrderByDatumDesc();
+            uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+            uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
+            MapHelper.mergeLocationMaps(viewsByLocation, uni.getViewsByLocation());
+            uni.setViewsByLocation(viewsByLocation);
+            MapHelper.mergeTimeMaps(viewsByHour, uni.getViewsPerHour());
+            uni.setViewsPerHour(viewsByHour);
+            uni.setAnbieterProfileAnzahl(wpUserRepo.count());
+            uni = setNewsArticelBlogCountForUniversalStats(date,uni);
+            uni = setAccountTypeAllUniStats(uni);
+            uniRepo.save(uni);
+        } else {
+            UniversalStats uni = new UniversalStats();
+            uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+            uni.setTotalClicks(totalClicks);
+            uni.setViewsByLocation(viewsByLocation);
+            uni.setViewsPerHour(viewsByHour);
+            uni.setAnbieterProfileAnzahl(wpUserRepo.count());
+            uni = setNewsArticelBlogCountForUniversalStats(date,uni);
+            uni = setAccountTypeAllUniStats(uni);
+            uni.setDatum(date);
+            uniRepo.save(uni);
         }
     }
 

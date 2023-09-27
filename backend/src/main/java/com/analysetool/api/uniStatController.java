@@ -91,7 +91,7 @@ public class uniStatController {
      * @return ein HTML Code, der eine Tabelle mit Statistiken enthält.
      * @throws JSONException
      */
-    @GetMapping(value = "/gestern", produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(value = "/today", produces = MediaType.TEXT_HTML_VALUE)
     public String getLetzte() throws JSONException {
         JSONObject obj = new JSONObject();
         UniversalStats uniStat=uniRepo.findAll().get(uniRepo.findAll().size()-1);
@@ -258,7 +258,7 @@ public class uniStatController {
     @GetMapping("/getAccountTypeAllYesterday")
     public String getAccTypes() {
         HashMap<String, Long> map = new HashMap<>();
-        UniversalStats uni = uniRepo.findTop1ByOrderByDatumDesc();
+        UniversalStats uni = uniRepo.getSecondLastUniStats();
 
         map.put("Anbieter", uni.getAnbieter_abolos_anzahl());
         map.put("Basic", uni.getAnbieterBasicAnzahl());

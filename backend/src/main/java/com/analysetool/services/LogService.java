@@ -426,7 +426,6 @@ public class LogService {
 
 
                 if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
-                    System.out.println("Line war spät genug");
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
 
@@ -523,7 +522,7 @@ public class LogService {
                     uniStats = uniRepo.findByDatum(date).get();
                 }
 
-                System.out.println("Er kam bis VOR UniStats");
+
                 uniStats.setBesucherAnzahl(besucherTotal);
                 uniStats.setTotalClicks(clicksTotal);
                 uniStats.setViewsByLocation(viewsByLoc);
@@ -534,8 +533,6 @@ public class LogService {
                 uniStats = setAccountTypeAllUniStats(uniStats);
 
                 uniRepo.save(uniStats);
-
-                System.out.println("Er kam bis NACH UniStats");
 
 
 

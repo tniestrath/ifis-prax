@@ -609,7 +609,11 @@ public class LogService {
             String year = matcher.group(4);
             String time = matcher.group(5);
             LocalDateTime dateTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
-            searchStatRepo.save(new SearchStats(ipHash,matcher.group(6),dateTime,location));
+            try {
+                searchStatRepo.save(new SearchStats(ipHash, matcher.group(6), dateTime, location));
+            } catch(Exception e) {
+                System.out.println(matcher.group(6));
+            }
 
         }
         if(patternName.equals("thisWasUnreached")){

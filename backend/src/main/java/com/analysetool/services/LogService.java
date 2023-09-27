@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.mongodb.core.aggregation.SystemVariable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -542,6 +543,11 @@ public class LogService {
                 System.out.println(line);
             }
         }
+    }
+
+    @Scheduled(cron = "0 30 2 * * ?")
+    public void endDay() {
+        uniRepo.getSecondLastUniStats().setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
     }
 
 

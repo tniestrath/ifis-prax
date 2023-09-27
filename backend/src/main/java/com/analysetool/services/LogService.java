@@ -516,27 +516,29 @@ public class LogService {
                     if (matched_searchPattern.find()) {
                         processLine(line, "search", matched_searchPattern);
                     }
-
-
-                    UniversalStats uniStats = null;
-                    if(uniRepo.findByDatum(date).isPresent()) {
-                        uniStats = uniRepo.findByDatum(date).get();
-                    }
-
-                    System.out.println("Er kam bis VOR UniStats");
-                    uniStats.setBesucherAnzahl(besucherTotal);
-                    uniStats.setTotalClicks(clicksTotal);
-                    uniStats.setViewsByLocation(viewsByLoc);
-                    uniStats.setViewsPerHour(viewsByH);
-                    uniStats.setDatum(date);
-                    uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
-                    uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
-                    uniStats = setAccountTypeAllUniStats(uniStats);
-
-                    uniRepo.save(uniStats);
-
-                    System.out.println("Er kam bis NACH UniStats");
                 }
+
+                UniversalStats uniStats = null;
+                if(uniRepo.findByDatum(date).isPresent()) {
+                    uniStats = uniRepo.findByDatum(date).get();
+                }
+
+                System.out.println("Er kam bis VOR UniStats");
+                uniStats.setBesucherAnzahl(besucherTotal);
+                uniStats.setTotalClicks(clicksTotal);
+                uniStats.setViewsByLocation(viewsByLoc);
+                uniStats.setViewsPerHour(viewsByH);
+                uniStats.setDatum(date);
+                uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
+                uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
+                uniStats = setAccountTypeAllUniStats(uniStats);
+
+                uniRepo.save(uniStats);
+
+                System.out.println("Er kam bis NACH UniStats");
+
+
+
 
             } else {
                 System.out.println(line);

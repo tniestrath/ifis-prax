@@ -607,7 +607,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            updateSearchStats(matcher);
+            //updateSearchStats(matcher);
         }
         if (patternName.equals("blogView")){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
@@ -620,7 +620,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 2.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            updateSearchStats(matcher);
+            //updateSearchStats(matcher);
         }
 
         if(patternName.equals("redirect")){
@@ -667,7 +667,7 @@ public class LogService {
 
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            updateSearchStats(matcher);
+            //updateSearchStats(matcher);
         }
 
         if(patternName.equals("userViewRedirect")){
@@ -782,7 +782,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING Whitepaper with Search");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            updateSearchStats(matcher);
+            //updateSearchStats(matcher);
         }
 
         if(patternName.equals("whitepaperView")) {

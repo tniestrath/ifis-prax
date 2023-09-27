@@ -20,6 +20,11 @@ public class UniqueUserController {
         return uniqueUserRepo.getUserCountGlobal();
     }
 
+    /**
+     *
+     * @param category "article" | "blog" | "news" | "whitepaper" | "podcast" | "global"
+     * @return count of all uniqueusers in said category.
+     */
     @GetMapping("/getCountByCategory")
     public int getCountByCategory(String category) {
         return uniqueUserRepo.getUserCountByCategory(category);

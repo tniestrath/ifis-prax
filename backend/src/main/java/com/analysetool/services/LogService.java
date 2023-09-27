@@ -548,6 +548,7 @@ public class LogService {
     @Scheduled(cron = "0 30 2 * * ?")
     public void endDay() {
         uniRepo.getSecondLastUniStats().setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+        uniqueUserRepo.truncate();
     }
 
 

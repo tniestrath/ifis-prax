@@ -104,7 +104,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     var date = new Date(Date.now());
 
     var timestamps : string[] = [
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
+      Util.formatDate(new Date(date.setDate(date.getDate()))),
       Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
       Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
       Util.formatDate(new Date(date.setDate(date.getDate() - 1))),

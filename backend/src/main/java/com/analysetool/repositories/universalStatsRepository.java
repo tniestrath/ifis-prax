@@ -31,6 +31,8 @@ public interface universalStatsRepository extends JpaRepository<UniversalStats, 
     @Query(value = "SELECT u FROM UniversalStats u ORDER BY u.id DESC LIMIT 1 OFFSET 1", nativeQuery = true)
     public UniversalStats getSecondLastUniStats();
 
+    @Query("SELECT u FROM UniversalStats u ORDER BY u.id DESC LIMIT 1")
+    public UniversalStats getLatestUniStat();
 
 
 }

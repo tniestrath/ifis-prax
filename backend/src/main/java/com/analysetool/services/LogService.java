@@ -19,8 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -155,7 +153,7 @@ public class LogService {
     }
 
     @PostConstruct
-    public void init() throws IOException, ParseException {
+    public void init() throws IOException {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
 
@@ -196,7 +194,7 @@ public class LogService {
     }
     @Scheduled(cron = "0 0 * * * *") //einmal die Stunde
     //@Scheduled(cron = "0 */2 * * * *") //alle 2min
-    public void runScheduled() throws IOException, ParseException {
+    public void runScheduled() throws IOException {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
 
@@ -229,7 +227,7 @@ public class LogService {
         updateLetterCountForAll();
     }
 
-    public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws IOException, ParseException {
+    public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws IOException {
         this.liveScanning = liveScanning;
         this.path = path;
         if(!liveScanning){
@@ -387,7 +385,7 @@ public class LogService {
     }
 
 
-    public void findAMatch(SysVar sysVar) throws IOException, ParseException {
+    public void findAMatch(SysVar sysVar) throws IOException {
         String line;
         boolean foundPattern = false;
 
@@ -395,8 +393,8 @@ public class LogService {
         long clicksTotal = 0;
         Map<String, Map<String, Map<String, Long>>> viewsByLoc = new HashMap<>();
         Map<String, Long> viewsByH = new HashMap<>();
-        String dateString = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_DATE);
-        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+
+        System.out.println(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
 
 
 
@@ -410,7 +408,8 @@ public class LogService {
                 LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(2)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
 
-                String ip = pre_Matched.group(1);
+                /*String ip = pre_Matched.group(1);
+                date = Date.from(dateLog.atZone(ZoneId.systemDefault()).toInstant());
 
                 try {
                     viewsByLoc = uniRepo.getViewsByLocationByDate(date);
@@ -420,10 +419,10 @@ public class LogService {
 
                 //Generate Universal Stats
                 clicksTotal++;
-                if(isUniqueView(ip, dateLog)) besucherTotal++;
+                //if(isUniqueView(ip, dateLog)) besucherTotal++;
                 setViewsByLocation(ip, viewsByLoc);
                 erhoeheViewsPerHour2(viewsByH, dateLog.toLocalTime());
-
+                */
 
                 if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
@@ -516,12 +515,8 @@ public class LogService {
                         processLine(line, "search", matched_searchPattern);
                     }
                 }
-
-                UniversalStats uniStats = null;
-                if(uniRepo.findByDatum(date).isPresent()) {
-                    uniStats = uniRepo.findByDatum(date).get();
-                }
-
+                /*
+                UniversalStats uniStats = uniRepo.findByDatum(date).isPresent() ? uniRepo.findByDatum(date).get() : new UniversalStats();
 
                 uniStats.setBesucherAnzahl(besucherTotal);
                 uniStats.setTotalClicks(clicksTotal);
@@ -533,7 +528,7 @@ public class LogService {
                 uniStats = setAccountTypeAllUniStats(uniStats);
 
                 uniRepo.save(uniStats);
-
+                 */
 
 
 

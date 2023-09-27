@@ -557,10 +557,11 @@ public class LogService {
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = dateTime.format(formatter);
+        String formattedDate = sdf.format(uniRepo.getLatestUniStat().getDatum());
+        String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(formattedDate);
 
-        if(uniRepo.getLatestUniStat().getDatum().equals(date)) {
+        if(formattedDate.equalsIgnoreCase(uniLastDateString)) {
             UniversalStats uni = uniRepo.findTop1ByOrderByDatumDesc();
             uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
             uni.setTotalClicks(uni.getTotalClicks() + totalClicks);

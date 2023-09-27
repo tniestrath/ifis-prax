@@ -258,7 +258,7 @@ public class uniStatController {
     @GetMapping("/getAccountTypeAllYesterday")
     public String getAccTypes() {
         HashMap<String, Long> map = new HashMap<>();
-        UniversalStats uni = uniRepo.getSecondLastUniStats();
+        UniversalStats uni = uniRepo.findAll().get(uniRepo.findAll().size() -2);
 
         map.put("Anbieter", uni.getAnbieter_abolos_anzahl());
         map.put("Basic", uni.getAnbieterBasicAnzahl());

@@ -418,7 +418,7 @@ public class LogService {
 
                 //Generate Universal Stats
                 clicksTotal++;
-                //if(isUniqueView(ip, dateLog)) besucherTotal++;
+                if(isUniqueView(ip, dateLog)) besucherTotal++;
                 setViewsByLocation(ip, viewsByLoc);
                 erhoeheViewsPerHour2(viewsByH, dateLog.toLocalTime());
 

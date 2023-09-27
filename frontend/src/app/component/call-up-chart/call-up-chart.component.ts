@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent, TooltipItem} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
+import _default from "chart.js/dist/plugins/plugin.legend";
+import labels = _default.defaults.labels;
 
 export class Callup {
   clicks : number = 0;
@@ -27,19 +29,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
 
   timeSpan : string = "month";
 
-  data : Callup[] =
-    [
-     /* new Callup(0,0, "2023-06-06"),
-      new Callup(1,1, "2023-06-07"),
-      new Callup(2,1, "2023-06-08"),
-      new Callup(80, 70, "2023-09-05"),
-      new Callup(900,800, "2023-09-06"),
-      new Callup(1000, 850, "2023-09-07"),
-      new Callup(69, 66, "2023-07-07"),
-      new Callup(75, 55, "2023-07-08"),
-      new Callup(3, 2, "2023-07-05"),
-      new Callup(4, 4, "2023-07-06")*/
-    ];
+  data : Callup[] = [];
 
   timeSpanMap = new Map<string, number>([
     ["all_time", 365*2],
@@ -160,11 +150,15 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
               size: 15
             },
             callbacks: {
+              title(tooltipItems): string {
+                  // @ts-ignore
+                  return Util.getDayString(new Date(callups[tooltipItems.at(0).dataIndex].date).getDay()) + " - " + timestamps[tooltipItems.at(0).dataIndex];
+              }
             }
           }
         },
         interaction: {
-          mode: "nearest",
+          mode: "x",
           intersect: true
         },
         onClick(event: ChartEvent, elements: ActiveElement[]) {

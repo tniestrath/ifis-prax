@@ -104,7 +104,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     var date = new Date(Date.now());
 
     var timestamps : string[] = [
-      Util.formatDate(new Date(date.setDate(date.getDate()))),
+      Util.formatDate(date),
       Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
       Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
       Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
@@ -129,7 +129,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       }
     }
 
-    const max = Math.max.apply(null, clicksData);
+    const max = Math.max(...clicksData);
 
 
     // @ts-ignore

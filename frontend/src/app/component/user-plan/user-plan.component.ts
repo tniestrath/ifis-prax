@@ -43,7 +43,6 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         }
         this.prev_total = this.prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
         this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
-        //this.createLegend("legend-box", this.chart, this.prev_data);
         this.cdr.detectChanges();
       })
     })

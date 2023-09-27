@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.mongodb.core.aggregation.SystemVariable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -48,8 +49,12 @@ public class LogService {
     private WPUserMetaRepository wpUserMetaRepository;
     private final UserStatsRepository userStatsRepo;
 
+    @Autowired
+    private UniqueUserRepository uniqueUserRepo;
+
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
+
     private BufferedReader br;
     private String path = "";
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
@@ -78,7 +83,7 @@ public class LogService {
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private final String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
-   private final String prePattern = "\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2})";
+   private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2})";
 
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -382,17 +387,20 @@ public class LogService {
 
     public void findAMatch(SysVar sysVar) throws IOException {
         String line;
-        boolean foundPattern = false;
-        boolean isNew = false;
         while ((line = br.readLine()) != null ) {
 
+            UniqueUser user = null;
             Matcher pre_Matched = patternPreMatch.matcher(line);
 
             if (pre_Matched.find()) {
                 // Erstellen Sie ein Datum-Objekt mit den gegebenen Werten
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
-                LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(1)));
+                LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(2)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
+                //if a problem with performance comes up, set this to false.
+                boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
+
+
                 if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
@@ -400,7 +408,6 @@ public class LogService {
                     if (matched_articleView.find()) {
                         Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
 
-                        foundPattern = true;
                         if (matched_articleSearchSuccess.find()) {
                             // Do something with the matched 1.2 patterns
                             //System.out.println(line+"SEARCH FOUND");
@@ -409,7 +416,14 @@ public class LogService {
                             //System.out.println(line+"NO SEARCH");
                             processLine(line, "articleView", matched_articleView);
                         }
-                        foundPattern = true;
+
+                        //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                        if(isUnique) {
+                            user = new UniqueUser();
+                            user.setCategory("article");
+                            user.setIp(pre_Matched.group(1));
+                            uniqueUserRepo.save(user);
+                        }
                     } else {
                         Matcher matched_blogView = blogViewPattern.matcher(line);
 
@@ -425,7 +439,15 @@ public class LogService {
                                 processLine(line, "blogView", matched_blogView);
                                 // System.out.println(line+" NO SEARCH");
                             }
-                            foundPattern = false;
+
+                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                            if(isUnique) {
+                                user = new UniqueUser();
+                                user.setCategory("blog");
+                                user.setIp(pre_Matched.group(1));
+                                uniqueUserRepo.save(user);
+                            }
+
                         } else {
                             Matcher matched_newsView = newsViewPattern.matcher(line);
 
@@ -443,7 +465,14 @@ public class LogService {
                                     processLine(line, "newsView", matched_newsView);
                                     // System.out.println(line+" NO SEARCH");
                                 }
-                                foundPattern = false;
+
+                                //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                if(isUnique) {
+                                    user = new UniqueUser();
+                                    user.setCategory("news");
+                                    user.setIp(pre_Matched.group(1));
+                                    uniqueUserRepo.save(user);
+                                }
                             } else {
                                 Matcher matched_whitepaperView = patternWhitepaperView.matcher(line);
 
@@ -455,12 +484,27 @@ public class LogService {
                                     } else {
                                         processLine(line, "whitepaperView", matched_whitepaperView);
                                     }
+
+                                    //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                    if(isUnique) {
+                                        user = new UniqueUser();
+                                        user.setCategory("whitepaper");
+                                        user.setIp(pre_Matched.group(1));
+                                        uniqueUserRepo.save(user);
+                                    }
                                 } else {
                                     Matcher matched_podcastView = patternPodcast.matcher(line);
 
                                     if (matched_podcastView.find()) {
                                         //ToDo maybe implement SearchSuccess if applicable
                                         processLine(line, "podcastView", matched_podcastView);
+                                        //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                        if(isUnique) {
+                                            user = new UniqueUser();
+                                            user.setCategory("podcast");
+                                            user.setIp(pre_Matched.group(1));
+                                            uniqueUserRepo.save(user);
+                                        }
                                     }
                                 }
                             }
@@ -483,11 +527,28 @@ public class LogService {
                     if (matched_searchPattern.find()) {
                         processLine(line, "search", matched_searchPattern);
                     }
+
+                    if(user == null) {
+                        //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                        if(isUnique) {
+                            user = new UniqueUser();
+                            user.setCategory("global");
+                            user.setIp(pre_Matched.group(1));
+                            uniqueUserRepo.save(user);
+                        }
+                    }
+
                 }
             } else {
                 System.out.println(line);
             }
         }
+    }
+
+    @Scheduled(cron = "0 30 2 * * ?")
+    public void endDay() {
+        uniRepo.getSecondLastUniStats().setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+        uniqueUserRepo.truncate();
     }
 
 

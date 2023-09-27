@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface UniqueUserRepository extends JpaRepository<UniqueUser, Long> {
 
-    @Query("SELECT u.category FROM UniqueUser u WHERE u.id =: id")
+    @Query("SELECT u.category FROM UniqueUser u WHERE u.id = :id")
     public String getCategoryByID(int id);
 
     @Query("SELECT count(u.ip) FROM UniqueUser u WHERE u.category =:category")
@@ -20,7 +20,7 @@ public interface UniqueUserRepository extends JpaRepository<UniqueUser, Long> {
     @Query("SELECT count(u.ip) FROM UniqueUser u")
     public int getUserCountGlobal();
 
-    @Query("SELECT u FROM UniqueUser u WHERE u.ip =: ip")
+    @Query("SELECT u FROM UniqueUser u WHERE u.ip = :ip")
     public UniqueUser findByIP(String ip);
 
 

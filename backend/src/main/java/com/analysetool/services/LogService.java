@@ -560,7 +560,7 @@ public class LogService {
         String formattedDate = dateTime.format(formatter);
         Date date = sdf.parse(formattedDate);
 
-        if(uniRepo.findTop1ByOrderByDatumDesc().getDatum().equals(date)) {
+        if(uniRepo.getLatestUniStat().getDatum().equals(date)) {
             UniversalStats uni = uniRepo.findTop1ByOrderByDatumDesc();
             uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
             uni.setTotalClicks(uni.getTotalClicks() + totalClicks);

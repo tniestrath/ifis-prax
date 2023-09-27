@@ -77,7 +77,7 @@ public class LogService {
 
 
     // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
-    private final String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung|whitepaper|news)/(\\S*)/)";
+    private final String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private final String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
@@ -391,15 +391,12 @@ public class LogService {
         String line;
         boolean foundPattern = false;
 
-        /*
         long besucherTotal = 0;
         long clicksTotal = 0;
         Map<String, Map<String, Map<String, Long>>> viewsByLoc = new HashMap<>();
         Map<String, Long> viewsByH = new HashMap<>();
         String dateString = LocalDate.now(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_DATE);
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
-        */
-
 
 
 
@@ -413,8 +410,6 @@ public class LogService {
                 LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(2)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
 
-
-                /*
                 String ip = pre_Matched.group(1);
 
                 try {
@@ -428,7 +423,6 @@ public class LogService {
                 if(isUniqueView(ip, dateLog)) besucherTotal++;
                 setViewsByLocation(ip, viewsByLoc);
                 erhoeheViewsPerHour2(viewsByH, dateLog.toLocalTime());
-                 */
 
 
                 if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
@@ -522,34 +516,29 @@ public class LogService {
                     if (matched_searchPattern.find()) {
                         processLine(line, "search", matched_searchPattern);
                     }
-                    Matcher matched_refferer = referPattern.matcher(line);
-                    if(matched_refferer.find()){
-                        processLine(line,"refferer",matched_refferer);
-                    }
-
-
-                    /*
-
-                    UniversalStats uniStats = null;
-                    if(uniRepo.findByDatum(date).isPresent()) {
-                        uniStats = uniRepo.findByDatum(date).get();
-                    }
-
-                    System.out.println("Er kam bis VOR UniStats");
-                    uniStats.setBesucherAnzahl(besucherTotal);
-                    uniStats.setTotalClicks(clicksTotal);
-                    uniStats.setViewsByLocation(viewsByLoc);
-                    uniStats.setViewsPerHour(viewsByH);
-                    uniStats.setDatum(date);
-                    uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
-                    uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
-                    uniStats = setAccountTypeAllUniStats(uniStats);
-
-                    uniRepo.save(uniStats);
-
-                    System.out.println("Er kam bis NACH UniStats");
-                     */
                 }
+
+                UniversalStats uniStats = null;
+                if(uniRepo.findByDatum(date).isPresent()) {
+                    uniStats = uniRepo.findByDatum(date).get();
+                }
+
+                System.out.println("Er kam bis VOR UniStats");
+                uniStats.setBesucherAnzahl(besucherTotal);
+                uniStats.setTotalClicks(clicksTotal);
+                uniStats.setViewsByLocation(viewsByLoc);
+                uniStats.setViewsPerHour(viewsByH);
+                uniStats.setDatum(date);
+                uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
+                uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
+                uniStats = setAccountTypeAllUniStats(uniStats);
+
+                uniRepo.save(uniStats);
+
+                System.out.println("Er kam bis NACH UniStats");
+
+
+
 
             } else {
                 System.out.println(line);
@@ -680,7 +669,7 @@ public class LogService {
             searchStatRepo.save(new SearchStats(ipHash,matcher.group(6),dateTime,location));
 
         }
-        if(patternName.equals("refferer")){
+        if(patternName.equals("thisWasUnreached")){
 
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
             System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));

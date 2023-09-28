@@ -557,12 +557,14 @@ public class LogService {
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = sdf.format(uniRepo.getLatestUniStat().getDatum());
+        String formattedDate = sdf.format(dateTime.toString());
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(formattedDate);
+        Date dateToday = sdf.parse(dateTime.toString());
 
+        UniversalStats uni;
         if(formattedDate.equalsIgnoreCase(uniLastDateString)) {
-            UniversalStats uni = uniRepo.findTop1ByOrderByDatumDesc();
+            uni = uniRepo.findTop1ByOrderByDatumDesc();
             uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
             uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
             MapHelper.mergeLocationMaps(viewsByLocation, uni.getViewsByLocation());
@@ -572,9 +574,8 @@ public class LogService {
             uni.setAnbieterProfileAnzahl(wpUserRepo.count());
             uni = setNewsArticelBlogCountForUniversalStats(date,uni);
             uni = setAccountTypeAllUniStats(uni);
-            uniRepo.save(uni);
         } else {
-            UniversalStats uni = new UniversalStats();
+            uni = new UniversalStats();
             uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
             uni.setTotalClicks(totalClicks);
             uni.setViewsByLocation(viewsByLocation);
@@ -582,9 +583,9 @@ public class LogService {
             uni.setAnbieterProfileAnzahl(wpUserRepo.count());
             uni = setNewsArticelBlogCountForUniversalStats(date,uni);
             uni = setAccountTypeAllUniStats(uni);
-            uni.setDatum(date);
-            uniRepo.save(uni);
+            uni.setDatum(dateToday);
         }
+        uniRepo.save(uni);
     }
 
     @Scheduled(cron = "0 30 2 * * ?")

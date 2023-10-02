@@ -691,6 +691,7 @@ public class LogService {
     public void endDay() {
         uniRepo.getSecondLastUniStats().setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
         uniqueUserRepo.truncate();
+        uniHourlyRepo.truncate();
     }
 
 

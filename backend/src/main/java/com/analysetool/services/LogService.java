@@ -556,7 +556,7 @@ public class LogService {
         }
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = dateTime.getYear() + 1900 + "-";
-        dateStirng += dateTime.getMonth() < 10 ? "0" + dateTime.getMonth() : dateTime.getMonth();
+        dateStirng += dateTime.getMonth() + 1  < 10 ? "0" + dateTime.getMonth() + 1 : dateTime.getMonth() + 1;
         dateStirng += "-" + (dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());

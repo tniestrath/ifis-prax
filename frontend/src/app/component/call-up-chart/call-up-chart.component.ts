@@ -8,7 +8,7 @@ import labels = _default.defaults.labels;
 export class Callup {
   clicks : number = 0;
   visitors : number = 0;
-  date : string = "00-00-0000";
+  date : string = "00-00-0000"; // interpreted as hour if timespan = day
 
   constructor(clicks : number, visitors : number, date : string) {
     this.clicks = clicks;
@@ -47,15 +47,19 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365*2)).then((res : Callup[]) => {
       this.data = res;
 
-      var time_filtered : Callup[] = this.data.filter((stat : Callup) => {
-        var statDate = new Date(Date.parse(stat.date));
-        var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
-        return statDate >= calcDate;
-      });
-      time_filtered.sort((a, b) => {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      });
-    this.createChart(time_filtered, this.timeSpan);
+      var time_filtered : Callup[] = this.data;
+
+      if (this.timeSpan == "day"){
+        time_filtered.sort((a, b) => {
+          return Number.parseInt(a.date) - Number.parseInt(b.date);
+        });
+      } else {
+        time_filtered.sort((a, b) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        });
+      }
+
+      this.createChart(time_filtered, this.timeSpan);
     });
   }
   ngOnInit(): void {
@@ -72,7 +76,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     var visitorsData : number[] = [];
     for (var callup of callups) {
       if (timeSpan == "day"){
-        timestamps.push(new Date(callup.date).getHours().toString());
+        timestamps.push(callup.date  + " Uhr");
       }
       else {
         timestamps.push(Util.formatDate(callup.date));

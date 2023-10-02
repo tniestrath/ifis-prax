@@ -27,7 +27,7 @@ public interface UniqueUserRepository extends JpaRepository<UniqueUser, Long> {
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM UniqueUser u")
+    @Query("DELETE FROM UniqueUser u WHERE u.id > 0")
     void truncate();
 
 

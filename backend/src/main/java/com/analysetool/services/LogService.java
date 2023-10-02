@@ -555,7 +555,7 @@ public class LogService {
             }
         }
         Date dateTime = Calendar.getInstance().getTime();
-        String dateStirng = dateTime.getYear() + "-";
+        String dateStirng = dateTime.getYear() + 1900 + "-";
         dateStirng += dateTime.getMonth() < 10 ? "0" + dateTime.getMonth() : dateTime.getMonth();
         dateStirng += "-" + (dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

@@ -53,6 +53,12 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         time_filtered.sort((a, b) => {
           return Number.parseInt(a.date) - Number.parseInt(b.date);
         });
+        time_filtered.forEach((value, index, array) => {
+          if (index > 0){
+            value.clicks = value.clicks - array[index-1].clicks;
+            value.visitors = value.visitors - array[index-1].visitors;
+          }
+        })
       } else {
         time_filtered.sort((a, b) => {
           return new Date(a.date).getTime() - new Date(b.date).getTime();

@@ -555,15 +555,15 @@ public class LogService {
             }
         }
         Date dateTime = Calendar.getInstance().getTime();
-        String dateStirng = dateTime.getYear() + "-" + dateTime.getMonth()  + "-"  + dateTime.getDay();
+        String dateStirng = dateTime.getYear() + "-";
+        dateStirng += dateTime.getMonth() < 10 ? "0" + dateTime.getMonth() : dateTime.getMonth();
+        dateStirng += "-" + (dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = sdf.format(dateStirng);
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
-        Date date = sdf.parse(formattedDate);
-        Date dateToday = sdf.parse(dateTime.toString());
+        Date date = sdf.parse(dateStirng);
 
         UniversalStats uni;
-        if(formattedDate.equalsIgnoreCase(uniLastDateString)) {
+        if(dateStirng.equalsIgnoreCase(uniLastDateString)) {
             uni = uniRepo.findTop1ByOrderByDatumDesc();
             uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
             uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
@@ -583,7 +583,7 @@ public class LogService {
             uni.setAnbieterProfileAnzahl(wpUserRepo.count());
             uni = setNewsArticelBlogCountForUniversalStats(date,uni);
             uni = setAccountTypeAllUniStats(uni);
-            uni.setDatum(dateToday);
+            uni.setDatum(date);
         }
         uniRepo.save(uni);
     }

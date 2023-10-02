@@ -28,6 +28,7 @@ export class Top5PostsComponent extends DashBaseComponent implements OnInit{
     });
     if (this.sorter.indexOf("p") == 0) this.sorter = this.sorter.replace("p", "P");
     if (this.sorter.indexOf("r") == 0) this.sorter = this.sorter.replace("r", "R").slice(0, 7) + "z";
+    if (this.sorter.indexOf("c") == 0) this.sorter = this.sorter.replace("c", "C");
   }
   protected getTypeString(){
     if (this.postType.toLowerCase() == "blog"){

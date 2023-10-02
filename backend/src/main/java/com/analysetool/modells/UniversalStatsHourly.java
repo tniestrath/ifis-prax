@@ -39,6 +39,9 @@ public class UniversalStatsHourly {
     @Column(name = "anzahl_artikel")
     private Long anzahlArtikel;
 
+    @Column(name = "anbieter_plus_anzahl")
+    private Long anbieterPlusAnzahl;
+
     @Column(name = "anzahl_news")
     private Long anzahlNews;
 

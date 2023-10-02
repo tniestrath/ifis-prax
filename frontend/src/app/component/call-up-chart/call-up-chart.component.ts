@@ -55,7 +55,6 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         });
         time_filtered.forEach((value, index, array) => {
           if (index > 0){
-            value.clicks = value.clicks - array[index-1].clicks;
             value.visitors = value.visitors - array[index-1].visitors;
           }
         })

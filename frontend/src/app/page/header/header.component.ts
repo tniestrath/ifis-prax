@@ -25,11 +25,12 @@ export class HeaderComponent implements AfterViewInit{
       var usid = res;
       if (usid.toString().includes("Invalid") || usid == null || res == null || res == undefined) {
         SysVars.USER_ID = "0";
+        usid = {user_id: "0"};
         return;
       }
       this.db.getUserById(String(usid)).then(res => {
         SysVars.login.next(res);
-        SysVars.USER_ID = String(usid);
+        SysVars.USER_ID = "0";
         SysVars.ADMIN = true;
       })
     })
@@ -38,7 +39,7 @@ export class HeaderComponent implements AfterViewInit{
        this.navElements = this.navElementsBackup;
       cs.set("user", user.id + ":" + user.displayName);
       this.selected.next("Overview");
-      SysVars.USER_ID = user.id;
+      SysVars.USER_ID = "0";
     })
   }
 

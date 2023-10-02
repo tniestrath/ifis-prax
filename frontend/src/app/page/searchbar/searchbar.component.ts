@@ -33,12 +33,12 @@ export class SearchbarComponent implements OnInit{
       this.loggedUser = [user.id, user.displayName];
       this.logged_in = true;
       SysVars.WELCOME = true;
-      this.onDbObjectSelected(this.loggedUser[0], this.loggedUser[1]);
+      //this.onDbObjectSelected(this.loggedUser[0], this.loggedUser[1]);
     })
   }
 
   ngOnInit(): void {
-    let object :string[]  = ["0",""];
+    /*let object :string[]  = ["0",""];
       if (this.cs.check(this.page)) {
         object = this.cs.get(this.page).split(":");
         if (object != this.loggedUser){
@@ -46,8 +46,7 @@ export class SearchbarComponent implements OnInit{
         } else {
           this.onDbObjectSelected(this.loggedUser[0], this.loggedUser[1])
         }
-      }
-
+      }*/
   }
 
   onKey(value : string) {

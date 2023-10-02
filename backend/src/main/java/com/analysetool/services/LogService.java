@@ -556,7 +556,7 @@ public class LogService {
         }
         LocalDate dateTime = LocalDate.now();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = sdf.format(dateTime.toString());
+        String formattedDate = sdf.format(dateTime);
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(formattedDate);
         Date dateToday = sdf.parse(dateTime.toString());

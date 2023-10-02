@@ -5,6 +5,7 @@
     </div>
     <input type="radio" [id]="'top5-'+ postType + '-performance'" [name]="postType" value="performance" checked (change)="getData($event)">
     <input type="radio" [id]="'top5-'+ postType + '-relevance'" [name]="postType" value="relevance" (change)="getData($event)">
+    <input type="radio" [id]="'top5-'+ postType + '-clicks'" [name]="postType" value="clicks" (change)="getData($event)">
   </div>
   <div class="top5-post-box">
     <div class="post-box" *ngFor="let data of dataArray">

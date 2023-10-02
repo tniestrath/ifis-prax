@@ -7,7 +7,7 @@
 .top5-header{
   display: grid;
   width: calc(100% - 45px);
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   height: 30px;
   position: relative;
   box-sizing: border-box;
@@ -63,7 +63,14 @@ input[value="relevance"]::after{
   content: "Relevanz";
   color: #951D40;
 }
-input[value="relevance"]{
+input[value="clicks"]::before{
+  content: "Clicks";
+}
+input[value="clicks"]::after{
+  content: "Clicks";
+  color: #951D40;
+}
+input[value="clicks"]{
   border-radius: 0 5px 5px 0;
 }
 

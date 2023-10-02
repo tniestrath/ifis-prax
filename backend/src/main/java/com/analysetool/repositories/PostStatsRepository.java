@@ -194,6 +194,8 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
     public List<PostStats> findAllByOrderByRelevanceDesc();
 
+    List<PostStats> findAllByOrderByClicksDesc();
+
     // Beispiel für eine separate Methode zur Berechnung der Performance
 
 

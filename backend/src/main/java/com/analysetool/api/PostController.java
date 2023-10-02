@@ -794,7 +794,7 @@ public class PostController {
 
     /**
      *
-     * @param sorter sorter relevance | performance - chooses what statistic you want to sort by.
+     * @param sorter sorter "relevance" | "performance" | "clicks" - chooses what statistic you want to sort by.
      * @param type "news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber"
      * @return
      */
@@ -808,6 +808,9 @@ public class PostController {
         }
         if(sorter.equalsIgnoreCase("performance")) {
             top = statsRepo.findAllByOrderByPerformanceDesc();
+        }
+        if(sorter.equalsIgnoreCase("clicks")) {
+            top = statsRepo.findAllByOrderByClicksDesc();
         }
         String jsonString = null;
         JSONArray array = new JSONArray();

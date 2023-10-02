@@ -254,7 +254,7 @@ public class LogService {
         }
 
 
-        //setUniversalStats(SystemVariabeln);
+        setUniversalStats(SystemVariabeln);
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();
@@ -554,15 +554,17 @@ public class LogService {
                 System.out.println(line);
             }
         }
-        LocalDateTime dateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        Date dateTime = Calendar.getInstance().getTime();
+        String dateStirng = dateTime.getYear() + 1900 + "-";
+        dateStirng += dateTime.getMonth() + 1  < 10 ? "0" + dateTime.getMonth() + 1 : dateTime.getMonth() + 1;
+        dateStirng += "-" + (dateTime.getDate() < 10 ? "0" + dateTime.getDate() : dateTime.getDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = sdf.format(uniRepo.getLatestUniStat().getDatum());
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
-        Date date = sdf.parse(formattedDate);
+        Date date = sdf.parse(dateStirng);
 
-        if(formattedDate.equalsIgnoreCase(uniLastDateString)) {
-            UniversalStats uni = uniRepo.findTop1ByOrderByDatumDesc();
+        UniversalStats uni;
+        if(dateStirng.equalsIgnoreCase(uniLastDateString)) {
+            uni = uniRepo.findTop1ByOrderByDatumDesc();
             uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
             uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
             MapHelper.mergeLocationMaps(viewsByLocation, uni.getViewsByLocation());
@@ -572,9 +574,8 @@ public class LogService {
             uni.setAnbieterProfileAnzahl(wpUserRepo.count());
             uni = setNewsArticelBlogCountForUniversalStats(date,uni);
             uni = setAccountTypeAllUniStats(uni);
-            uniRepo.save(uni);
         } else {
-            UniversalStats uni = new UniversalStats();
+            uni = new UniversalStats();
             uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
             uni.setTotalClicks(totalClicks);
             uni.setViewsByLocation(viewsByLocation);
@@ -583,8 +584,8 @@ public class LogService {
             uni = setNewsArticelBlogCountForUniversalStats(date,uni);
             uni = setAccountTypeAllUniStats(uni);
             uni.setDatum(date);
-            uniRepo.save(uni);
         }
+        uniRepo.save(uni);
     }
 
     @Scheduled(cron = "0 30 2 * * ?")

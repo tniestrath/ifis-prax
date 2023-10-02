@@ -254,7 +254,7 @@ public class LogService {
         }
 
 
-        //setUniversalStats(SystemVariabeln);
+        setUniversalStats(SystemVariabeln);
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();

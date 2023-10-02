@@ -555,8 +555,9 @@ public class LogService {
             }
         }
         Date dateTime = Calendar.getInstance().getTime();
+        String dateStirng = dateTime.getYear() + "-" + dateTime.getMonth()  + "-"  + dateTime.getDay();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = sdf.format(dateTime);
+        String formattedDate = sdf.format(dateStirng);
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(formattedDate);
         Date dateToday = sdf.parse(dateTime.toString());

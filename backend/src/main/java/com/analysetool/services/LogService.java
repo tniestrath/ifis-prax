@@ -594,7 +594,7 @@ public class LogService {
         if(uniHourlyRepo.getByStunde(LocalDateTime.now().getHour()) != null) {
             uniHourly = uniHourlyRepo.getByStunde(LocalDateTime.now().getHour());
             uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
-            uniHourly.setTotalClicks((long) totalClicks);
+            uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
             uniHourly.setViewsByLocation(viewsByLocation);
             uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
             uniHourly = setNewsArticelBlogCountForUniversalStats(uniHourly);

@@ -554,7 +554,7 @@ public class LogService {
                 System.out.println(line);
             }
         }
-        LocalDate dateTime = LocalDate.now();
+        Date dateTime = Calendar.getInstance().getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = sdf.format(dateTime);
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());

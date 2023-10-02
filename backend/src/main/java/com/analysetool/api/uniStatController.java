@@ -39,6 +39,8 @@ public class uniStatController {
     private WpTermRelationshipsRepository termRelRepo;
     @Autowired
     private WpTermTaxonomyRepository termTaxRepo;
+    @Autowired
+    private UniversalStatsHourlyRepository universalStatsHourlyRepo;
 
 
     /**
@@ -53,21 +55,41 @@ public class uniStatController {
         return adminCount;
     }
 
+    /**
+     *
+     * @param days  if 1, get hourly stats - if higher get Daily.
+     * @return
+     * @throws JSONException
+     * @throws ParseException
+     */
     @GetMapping(value = "/callups")
     public String getCallupsByTime(@RequestParam() int days) throws JSONException, ParseException {
         JSONArray response = new JSONArray();
 
         String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(days).format(DateTimeFormatter.ISO_DATE);
 
-        List<UniversalStats> universalStatsList = uniRepo.getAllByDatumAfter(new SimpleDateFormat("yyyy-MM-dd").parse(dateString));
-        for (UniversalStats uniStat : universalStatsList) {
-            JSONObject callup = new JSONObject();
-            callup.put("date", new SimpleDateFormat("yyyy-MM-dd").format(uniStat.getDatum()));
-            callup.put("clicks", uniStat.getTotalClicks());
-            callup.put("visitors", uniStat.getBesucherAnzahl());
+        if(days > 1) {
+            List<UniversalStats> universalStatsList = uniRepo.getAllByDatumAfter(new SimpleDateFormat("yyyy-MM-dd").parse(dateString));
+            for (UniversalStats uniStat : universalStatsList) {
+                JSONObject callup = new JSONObject();
+                callup.put("date", new SimpleDateFormat("yyyy-MM-dd").format(uniStat.getDatum()));
+                callup.put("clicks", uniStat.getTotalClicks());
+                callup.put("visitors", uniStat.getBesucherAnzahl());
 
-            response.put(callup);
+                response.put(callup);
+            }
+        } else {
+            List<UniversalStatsHourly> universalStatsList = universalStatsHourlyRepo.getAll();
+            for (UniversalStatsHourly uniStat : universalStatsList) {
+                JSONObject callup = new JSONObject();
+                callup.put("date", uniStat.getStunde());
+                callup.put("clicks", uniStat.getTotalClicks());
+                callup.put("visitors", uniStat.getBesucherAnzahl());
+
+                response.put(callup);
+            }
         }
+
         return response.toString();
     }
     @GetMapping(value="/getViewsPerHourByDaysBack")
@@ -374,6 +396,12 @@ public class uniStatController {
 
         return top5JsonArray.toString();
     }
+
+
+
+
+    ///////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    //////////////////////////////AB HIER UNIVERSAL STATS HOURLY \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
 

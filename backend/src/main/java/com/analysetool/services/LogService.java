@@ -125,6 +125,8 @@ public class LogService {
     private final HashMap<String, Integer> impressions = new HashMap<>();
     @Autowired
     private universalStatsRepository uniRepo;
+    @Autowired
+    private UniversalStatsHourlyRepository uniHourlyRepo;
 
 
     @Autowired
@@ -562,6 +564,7 @@ public class LogService {
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(dateStirng);
 
+
         UniversalStats uni;
         if(dateStirng.equalsIgnoreCase(uniLastDateString)) {
             uni = uniRepo.findTop1ByOrderByDatumDesc();
@@ -586,6 +589,102 @@ public class LogService {
             uni.setDatum(date);
         }
         uniRepo.save(uni);
+
+        UniversalStatsHourly uniHourly;
+        if(uniHourlyRepo.getByStunde(LocalDateTime.now().getHour()) != null) {
+            uniHourly = uniHourlyRepo.getByStunde(LocalDateTime.now().getHour());
+            uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+            uniHourly.setTotalClicks((long) totalClicks);
+            uniHourly.setViewsByLocation(viewsByLocation);
+            uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
+            uniHourly = setNewsArticelBlogCountForUniversalStats(uniHourly);
+            uniHourly = setAccountTypeAllUniStats(uniHourly);
+        } else {
+            uniHourly = new UniversalStatsHourly();
+            uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+            uniHourly.setTotalClicks((long) totalClicks);
+            uniHourly.setViewsByLocation(viewsByLocation);
+            uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
+            uniHourly = setNewsArticelBlogCountForUniversalStats(uniHourly);
+            uniHourly = setAccountTypeAllUniStats(uniHourly);
+            uniHourly.setStunde(LocalDateTime.now().getHour());
+        }
+        uniHourlyRepo.save(uniHourly);
+
+
+    }
+
+    private UniversalStatsHourly setAccountTypeAllUniStats(UniversalStatsHourly uniHourly) {
+        HashMap<String, Integer> counts = new HashMap<>();
+
+        wpUserMetaRepository.getWpCapabilities().forEach(s -> {
+
+            if (s.contains("um_anbieter"))
+                counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
+            if (s.contains("um_basis-anbieter")  && !s.contains("plus"))
+                counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
+            if (s.contains("um_plus-anbieter"))
+                counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
+            if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
+                counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
+            if (s.contains("um_premium-anbieter-sponsoren"))
+                counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
+            if (s.contains("um_basis-anbieter-plus"))
+                counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
+        });
+        uniHourly.setAnbieter_abolos_anzahl(counts.getOrDefault("Anbieter", 0));
+        uniHourly.setAnbieterBasicAnzahl(counts.getOrDefault("Basic",0));
+        uniHourly.setAnbieterBasicPlusAnzahl(counts.getOrDefault("Basic-Plus",0));
+        uniHourly.setAnbieterPlusAnzahl(counts.getOrDefault("Plus",0));
+        uniHourly.setAnbieterPremiumAnzahl(counts.getOrDefault("Premium",0));
+        uniHourly.setAnbieterPremiumSponsorenAnzahl(counts.getOrDefault("Sponsor",0));
+
+        long umsatzBasicPlus =uniHourly.getAnbieterBasicPlusAnzahl()*200;
+        long umsatzPlus =uniHourly.getAnbieterPlusAnzahl()*1000;
+        long umsatzPremium =uniHourly.getAnbieterPremiumAnzahl()*1500;
+        long umsatzSponsor = uniHourly.getAnbieterPremiumSponsorenAnzahl()*3000;
+
+        return uniHourly;
+
+    }
+
+    private UniversalStatsHourly setNewsArticelBlogCountForUniversalStats(UniversalStatsHourly uniHourly) {
+
+        List<Post> posts = postRepository.findAllUserPosts();
+
+        long artikelCounter = 0;
+        long newsCounter = 0;
+        long blogCounter = 0;
+
+        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+
+        for (Post post : posts) {
+
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
+                        if (termTax.getTermId() == tagIdBlog) {
+                            blogCounter++;
+                        }
+
+                        if (termTax.getTermId() == tagIdArtikel) {
+                            artikelCounter++;
+                        }
+
+                        if (termTax.getTermId() == tagIdPresse) {
+                            newsCounter++;
+                        }
+                    }
+                }
+        }
+
+        // Setze die Zählungen im universalStats-Objekt
+        uniHourly.setAnzahlArtikel(artikelCounter);
+        uniHourly.setAnzahlNews(newsCounter);
+        uniHourly.setAnzahlBlog(blogCounter);
+
+        return uniHourly;
     }
 
     @Scheduled(cron = "0 30 2 * * ?")

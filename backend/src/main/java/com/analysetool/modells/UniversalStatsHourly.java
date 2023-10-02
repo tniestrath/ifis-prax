@@ -1,0 +1,180 @@
+package com.analysetool.modells;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+@Entity
+@Table(name = "universal_stats_hourly")
+public class UniversalStatsHourly {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(name = "stunde")
+    private int stunde;
+
+    @Column(name = "besucher_anzahl")
+    private Long besucherAnzahl;
+
+    @Column(name = "anbieter_profile_anzahl")
+    private Long anbieterProfileAnzahl;
+    @Column(name = "anbieter_premium_anzahl")
+    private long anbieterPremiumAnzahl;
+
+    @Column(name = "anbieter_basicplus_anzahl")
+    private long anbieterBasicPlusAnzahl;
+
+    @Column(name = "anbieter_basic_anzahl")
+    private long anbieterBasicAnzahl;
+
+    @Column(name = "anbieter_premium_sponsoren_anzahl")
+    private long anbieterPremiumSponsorenAnzahl;
+
+    @Column(name = "anzahl_artikel")
+    private Long anzahlArtikel;
+
+    @Column(name = "anzahl_news")
+    private Long anzahlNews;
+
+    @Column(name = "anzahl_blog")
+    private Long anzahlBlog;
+
+    @Column(name = "anbieter_abolos_anzahl")
+    private long anbieter_abolos_anzahl;
+
+    @Column(name = "total_clicks")
+    private Long totalClicks;
+
+    @Lob
+    @Column(name = "views_by_location", columnDefinition = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, Map<String, Map<String, Long>>> viewsByLocation;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getStunde() {
+        return stunde;
+    }
+
+    public void setStunde(int stunde) {
+        this.stunde = stunde;
+    }
+
+    public Long getBesucherAnzahl() {
+        return besucherAnzahl;
+    }
+
+    public void setBesucherAnzahl(Long besucherAnzahl) {
+        this.besucherAnzahl = besucherAnzahl;
+    }
+
+    public Long getAnbieterProfileAnzahl() {
+        return anbieterProfileAnzahl;
+    }
+
+    public void setAnbieterProfileAnzahl(Long anbieterProfileAnzahl) {
+        this.anbieterProfileAnzahl = anbieterProfileAnzahl;
+    }
+
+    public long getAnbieterPremiumAnzahl() {
+        return anbieterPremiumAnzahl;
+    }
+
+    public void setAnbieterPremiumAnzahl(long anbieterPremiumAnzahl) {
+        this.anbieterPremiumAnzahl = anbieterPremiumAnzahl;
+    }
+
+    public long getAnbieterPremiumSponsorenAnzahl() {
+        return anbieterPremiumSponsorenAnzahl;
+    }
+
+    public void setAnbieterPremiumSponsorenAnzahl(long anbieterPremiumSponsorenAnzahl) {
+        this.anbieterPremiumSponsorenAnzahl = anbieterPremiumSponsorenAnzahl;
+    }
+
+    public Long getAnzahlArtikel() {
+        return anzahlArtikel;
+    }
+
+    public void setAnzahlArtikel(Long anzahlArtikel) {
+        this.anzahlArtikel = anzahlArtikel;
+    }
+
+    public Long getAnzahlNews() {
+        return anzahlNews;
+    }
+
+    public void setAnzahlNews(Long anzahlNews) {
+        this.anzahlNews = anzahlNews;
+    }
+
+    public Long getAnzahlBlog() {
+        return anzahlBlog;
+    }
+
+    public void setAnzahlBlog(Long anzahlBlog) {
+        this.anzahlBlog = anzahlBlog;
+    }
+
+    public long getAnbieter_abolos_anzahl() {
+        return anbieter_abolos_anzahl;
+    }
+
+    public void setAnbieter_abolos_anzahl(long anbieter_abolos_anzahl) {
+        this.anbieter_abolos_anzahl = anbieter_abolos_anzahl;
+    }
+
+    public Long getTotalClicks() {
+        return totalClicks;
+    }
+
+    public void setTotalClicks(Long totalClicks) {
+        this.totalClicks = totalClicks;
+    }
+
+    public Map<String, Map<String, Map<String, Long>>> getViewsByLocation() {
+        return viewsByLocation;
+    }
+
+    public void setViewsByLocation(Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
+        this.viewsByLocation = viewsByLocation;
+    }
+
+    public long getAnbieterPlusAnzahl() {
+        return anbieterPlusAnzahl;
+    }
+
+    public void setAnbieterPlusAnzahl(long anbieterPlusAnzahl) {
+        this.anbieterPlusAnzahl = anbieterPlusAnzahl;
+    }
+
+    public long getAnbieterBasicPlusAnzahl() {
+        return anbieterBasicPlusAnzahl;
+    }
+
+    public void setAnbieterBasicPlusAnzahl(long anbieterBasicPlusAnzahl) {
+        this.anbieterBasicPlusAnzahl = anbieterBasicPlusAnzahl;
+    }
+
+    public long getAnbieterBasicAnzahl() {
+        return anbieterBasicAnzahl;
+    }
+
+    public void setAnbieterBasicAnzahl(long anbieterBasicAnzahl) {
+        this.anbieterBasicAnzahl = anbieterBasicAnzahl;
+    }
+}
+
+

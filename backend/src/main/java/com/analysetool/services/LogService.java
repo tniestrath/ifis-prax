@@ -687,11 +687,10 @@ public class LogService {
         return uniHourly;
     }
 
-    @Scheduled(cron = "0 30 2 * * ?")
+    @Scheduled(cron = "0 10 9 * * ?")
     public void endDay() {
         uniRepo.getSecondLastUniStats().setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
-        uniqueUserRepo.truncate();
-        uniHourlyRepo.truncate();
+        uniqueUserRepo.deleteAll();
     }
 
 

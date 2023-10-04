@@ -42,5 +42,6 @@ export class NewsletterStatsComponent extends DashBaseComponent implements OnIni
       })
     )
 
+    this.setToolTip("Hier sind die aktuellen Newsletter-Abonnenten nach Status angezeigt. Mit Hover über die unbestätigten Nutzer werden genauere Daten angezeigt.");
   }
 }

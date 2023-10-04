@@ -85,7 +85,7 @@ public class LogService {
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private final String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
-   private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2})";
+   private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2})(.{25})";
 
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -405,14 +405,16 @@ public class LogService {
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
                 LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(2)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
+                boolean isAPI = pre_Matched.group(3).contains("/api/");
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
 
-                if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
                     setViewsByLocation(pre_Matched.group(1), viewsByLocation);
                     erhoeheViewsPerHour2(viewsByHour, dateLog.toLocalTime());
+                    totalClicks++;
 
                     if (matched_articleView.find()) {
                         Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
@@ -425,7 +427,6 @@ public class LogService {
                             //System.out.println(line+"NO SEARCH");
                             processLine(line, "articleView", matched_articleView);
                         }
-                        totalClicks++;
                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                         if(isUnique) {
                             user = new UniqueUser();
@@ -448,7 +449,6 @@ public class LogService {
                                 processLine(line, "blogView", matched_blogView);
                                 // System.out.println(line+" NO SEARCH");
                             }
-                            totalClicks++;
 
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if(isUnique) {
@@ -475,7 +475,6 @@ public class LogService {
                                     processLine(line, "newsView", matched_newsView);
                                     // System.out.println(line+" NO SEARCH");
                                 }
-                                totalClicks++;
 
                                 //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                 if(isUnique) {
@@ -495,7 +494,6 @@ public class LogService {
                                     } else {
                                         processLine(line, "whitepaperView", matched_whitepaperView);
                                     }
-                                    totalClicks++;
 
                                     //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                     if(isUnique) {
@@ -508,7 +506,6 @@ public class LogService {
                                     Matcher matched_podcastView = patternPodcast.matcher(line);
 
                                     if (matched_podcastView.find()) {
-                                        totalClicks++;
                                         //ToDo maybe implement SearchSuccess if applicable
                                         processLine(line, "podcastView", matched_podcastView);
                                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -552,8 +549,6 @@ public class LogService {
                     }
 
                 }
-            } else {
-                System.out.println(line);
             }
         }
         Date dateTime = Calendar.getInstance().getTime();
@@ -589,26 +584,50 @@ public class LogService {
             uni.setDatum(date);
         }
         uniRepo.save(uni);
+        int curHour = LocalDateTime.now().getHour();
 
         UniversalStatsHourly uniHourly;
-        if(uniHourlyRepo.getByStunde(LocalDateTime.now().getHour()) != null) {
-            uniHourly = uniHourlyRepo.getByStunde(LocalDateTime.now().getHour());
-            uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+        if(uniHourlyRepo.getByStunde(curHour) != null) {
+            uniHourly = uniHourlyRepo.getByStunde(curHour);
+            if(curHour != 0) {
+                uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(curHour - 1)).getBesucherAnzahl());
+            } else {
+                uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(23)).getBesucherAnzahl());
+            }
             uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
             uniHourly.setViewsByLocation(viewsByLocation);
             uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
-            uniHourly = setNewsArticelBlogCountForUniversalStats(uniHourly);
-            uniHourly = setAccountTypeAllUniStats(uniHourly);
+            setNewsArticelBlogCountForUniversalStats(uniHourly);
+            setAccountTypeAllUniStats(uniHourly);
         } else {
             uniHourly = new UniversalStatsHourly();
             uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
             uniHourly.setTotalClicks((long) totalClicks);
             uniHourly.setViewsByLocation(viewsByLocation);
             uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
-            uniHourly = setNewsArticelBlogCountForUniversalStats(uniHourly);
-            uniHourly = setAccountTypeAllUniStats(uniHourly);
+            setNewsArticelBlogCountForUniversalStats(uniHourly);
+            setAccountTypeAllUniStats(uniHourly);
             uniHourly.setStunde(LocalDateTime.now().getHour());
         }
+
+        if(LocalDateTime.now().getHour() != 23) {
+            UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(curHour + 1);
+            System.out.println("BEEP BOOP BEEP BOOP BINGBING" + uniHourly1.getStunde());
+            uniHourly1.setViewsByLocation(null);
+            uniHourly1.setTotalClicks(0L);
+            uniHourly1.setBesucherAnzahl(0L);
+            uniHourlyRepo.save(uniHourly1);
+        } else {
+            UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(0);
+            uniHourly1.setViewsByLocation(null);
+            uniHourly1.setTotalClicks(0L);
+            uniHourly1.setBesucherAnzahl(0L);
+            uniHourlyRepo.save(uniHourly1);
+        }
+
+
+
+
         uniHourlyRepo.save(uniHourly);
 
 
@@ -687,9 +706,9 @@ public class LogService {
         return uniHourly;
     }
 
-    @Scheduled(cron = "0 30 9 * * ?")
+    @Scheduled(cron = "0 30 0 * * ?")
     public void endDay() {
-        uniRepo.getSecondLastUniStats().setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+        uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
         uniqueUserRepo.deleteAll();
     }
 

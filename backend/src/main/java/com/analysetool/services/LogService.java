@@ -405,10 +405,11 @@ public class LogService {
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
                 LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(2)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
+                boolean isAPI = pre_Matched.group(3).contains("/api/");
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
 
-                if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
                     setViewsByLocation(pre_Matched.group(1), viewsByLocation);
@@ -548,8 +549,6 @@ public class LogService {
                     }
 
                 }
-            } else {
-                System.out.println(line);
             }
         }
         Date dateTime = Calendar.getInstance().getTime();
@@ -613,6 +612,7 @@ public class LogService {
 
         if(LocalDateTime.now().getHour() != 23) {
             UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(curHour + 1);
+            System.out.println("BEEP BOOP BEEP BOOP BINGBING" + uniHourly1.getStunde());
             uniHourly1.setViewsByLocation(null);
             uniHourly1.setTotalClicks(0L);
             uniHourly1.setBesucherAnzahl(0L);

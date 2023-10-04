@@ -197,8 +197,8 @@ public class LogService {
         updateLetterCountForAll();
 
     }
-    //@Scheduled(cron = "0 0 * * * *") //einmal die Stunde
-    @Scheduled(cron = "0 */2 * * * *") //alle 2min
+    @Scheduled(cron = "0 0 * * * *") //einmal die Stunde
+    //@Scheduled(cron = "0 */2 * * * *") //alle 2min
     public void runScheduled() throws IOException, ParseException {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
@@ -1052,7 +1052,7 @@ public class LogService {
         return logDate;
     }
     public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
-
+        if (!matcher.group(6).matches("\\d+")){
         // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
         String logDay = matcher.group(2);
         String logMonth = matcher.group(3);
@@ -1104,7 +1104,7 @@ public class LogService {
             }
         } catch (Exception e) {
             System.out.println("IGNORE " + matcher.group(2).substring(0, matcher.group(2).length() - 1) + " BECAUSE: " + e.getMessage());
-        }
+        }}
     }
     @Transactional
     public void erhoeheWertFuerLogDatum(long id, LocalDate logDatum, LocalTime logUhrzeit) {
@@ -1205,7 +1205,7 @@ public class LogService {
     }
     }*/
    public void UpdatePerformanceAndViews(Matcher matcher) {
-
+       if (!matcher.group(6).matches("\\d+")){
        // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
        String logDay = matcher.group(2);
        String logMonth = matcher.group(3);
@@ -1255,7 +1255,7 @@ public class LogService {
            }
        } catch (Exception e) {
            System.out.println("IGNORE " + matcher.group(6) + " BECAUSE: " + e.getMessage());
-       }
+       }}
    }
 
 
@@ -1493,6 +1493,7 @@ public class LogService {
     }
     @Transactional
     public void updateViewsByLocation(Matcher matcher) {
+        if (!matcher.group(6).matches("\\d+")){
         String ip = matcher.group(1);
         try {
             long id = postRepository.getIdByName(matcher.group(6));
@@ -1550,7 +1551,7 @@ public class LogService {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }
+        }}
     }
 
     public static Map<String, Map<String, Map<String, Long>>> setViewsByLocation(String ip, Map<String, Map<String, Map<String, Long>>> viewsByLocation) {

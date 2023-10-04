@@ -103,6 +103,7 @@ public class LogService {
     Pattern patternWhitepaperView = Pattern.compile(WhitepaperViewPattern);
     Pattern patternWhitepaperSearchSuccess = Pattern.compile(WhitepaperSSPattern);
     Pattern patternPreMatch = Pattern.compile(prePattern);
+    Pattern reffererPattern=Pattern.compile(ReffererPattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -537,6 +538,10 @@ public class LogService {
                     if (matched_searchPattern.find()) {
                         processLine(line, "search", matched_searchPattern);
                     }
+                    Matcher matched_reffererPattern = reffererPattern.matcher(line);
+                    if (matched_reffererPattern.find()) {
+                        processLine(line, "refferer", matched_searchPattern);
+                    }
 
                     if(user == null) {
                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -726,7 +731,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            //updateSearchStats(matcher);
+            updateSearchStats(matcher);
         }
         if (patternName.equals("blogView")){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
@@ -739,7 +744,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 2.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            //updateSearchStats(matcher);
+            updateSearchStats(matcher);
         }
 
         if(patternName.equals("redirect")){
@@ -786,7 +791,7 @@ public class LogService {
 
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            //updateSearchStats(matcher);
+            updateSearchStats(matcher);
         }
 
         if(patternName.equals("userViewRedirect")){
@@ -838,7 +843,7 @@ public class LogService {
             }
 
         }
-        if(patternName.equals("thisWasUnreached")){
+        if(patternName.equals("refferer")){
 
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
             System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));
@@ -901,7 +906,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING Whitepaper with Search");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            //updateSearchStats(matcher);
+            updateSearchStats(matcher);
         }
 
         if(patternName.equals("whitepaperView")) {
@@ -1005,7 +1010,7 @@ public class LogService {
         String time = matcher.group(5);
         LocalDateTime searchSuccessTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
         LocalDate date = searchSuccessTime.toLocalDate();  // Replace with the date you want to search for
-        System.out.println("GRUPPE 7: "+matcher.group(7));
+        System.out.println("GRUPPE 6: "+matcher.group(6));
         List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
         long id = postRepository.getIdByName(matcher.group(6));
         for(SearchStats s : searchStatsForDate) {

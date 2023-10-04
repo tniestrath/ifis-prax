@@ -93,10 +93,10 @@ input[type="radio"]::after{
   bottom: 0;
 }
 #uni-range-day::before{
-  content: "Heute";
+  content: "24h";
 }
 #uni-range-day::after{
-  content: "Heute";
+  content: "24h";
   color: #951D40;
   transform: scale(0);
   position: fixed;

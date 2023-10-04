@@ -56,7 +56,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           time_filtered.sort((a, b) => {
             return Number.parseInt(a.date) - Number.parseInt(b.date);
           });
-          let sublist  = time_filtered.splice(0, system_time);
+          let sublist  = time_filtered.splice(0, system_time +1);
           time_filtered.push(...sublist);
         } else {
           time_filtered.sort((a, b) => {
@@ -83,7 +83,11 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     var visitorsData : number[] = [];
     for (var callup of callups) {
       if (timeSpan == "day"){
-        timestamps.push(callup.date  + " Uhr");
+        if (callup.date == "0"){
+          timestamps.push("Heute");
+        } else {
+          timestamps.push(callup.date  + " Uhr");
+        }
       }
       else {
         timestamps.push(Util.formatDate(callup.date));
@@ -162,8 +166,12 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
             },
             callbacks: {
               title(tooltipItems): string {
+                if (timeSpan != "day"){
                   // @ts-ignore
                   return Util.getDayString(new Date(callups[tooltipItems.at(0).dataIndex].date).getDay()) + " - " + timestamps[tooltipItems.at(0).dataIndex];
+                }
+                  // @ts-ignore
+                return timestamps[tooltipItems.at(0).dataIndex]
               }
             }
           }

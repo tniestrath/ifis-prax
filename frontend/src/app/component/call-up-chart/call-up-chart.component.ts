@@ -70,7 +70,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
   }
   ngOnInit(): void {
     this.getData();
-    this.setToolTip("Hier werden die Aufrufe und einzigartigen Besucher pro Zeit dargestellt. Unter Heute befindet sich eine Auflistung der letzten 23 Stunden.");
+    this.setToolTip("Hier werden die Aufrufe und einzigartigen Besucher pro Zeit dargestellt. Unter \"24h\" befindet sich eine Auflistung der letzten 23 Stunden.");
   }
 
   createChart(callups : Callup[], timeSpan : string){

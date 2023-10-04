@@ -98,7 +98,6 @@ public class LogService {
     Pattern newsSearchSuccessPattern = Pattern.compile(PresseSSViewPatter);
     Pattern userRedirectPattern = Pattern.compile(RedirectUserPattern);
     Pattern searchPattern = Pattern.compile(SearchPattern);
-    Pattern referPattern = Pattern.compile(ReffererPattern);
     Pattern patternPodcast = Pattern.compile(PodcastPattern);
     Pattern patternWhitepaperView = Pattern.compile(WhitepaperViewPattern);
     Pattern patternWhitepaperSearchSuccess = Pattern.compile(WhitepaperSSPattern);
@@ -844,6 +843,8 @@ public class LogService {
 
         }
         if(patternName.equals("refferer")){
+            int groupCount = matcher.groupCount();
+            System.out.println("Anzahl der Gruppen: " + groupCount);
 
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
             //System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));

@@ -616,11 +616,13 @@ public class LogService {
             uniHourly1.setViewsByLocation(null);
             uniHourly1.setTotalClicks(0L);
             uniHourly1.setBesucherAnzahl(0L);
+            uniHourlyRepo.save(uniHourly1);
         } else {
             UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(0);
             uniHourly1.setViewsByLocation(null);
             uniHourly1.setTotalClicks(0L);
             uniHourly1.setBesucherAnzahl(0L);
+            uniHourlyRepo.save(uniHourly1);
         }
 
 

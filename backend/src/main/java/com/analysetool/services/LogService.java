@@ -539,7 +539,7 @@ public class LogService {
                     }
                     Matcher matched_reffererPattern = reffererPattern.matcher(line);
                     if (matched_reffererPattern.find()) {
-                        processLine(line, "refferer", matched_searchPattern);
+                        processLine(line, "refferer", matched_reffererPattern);
                     }
 
                     if(user == null) {

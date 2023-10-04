@@ -407,6 +407,7 @@ public class LogService {
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
+                totalClicks++;
 
                 if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
@@ -425,7 +426,6 @@ public class LogService {
                             //System.out.println(line+"NO SEARCH");
                             processLine(line, "articleView", matched_articleView);
                         }
-                        totalClicks++;
                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                         if(isUnique) {
                             user = new UniqueUser();
@@ -448,7 +448,6 @@ public class LogService {
                                 processLine(line, "blogView", matched_blogView);
                                 // System.out.println(line+" NO SEARCH");
                             }
-                            totalClicks++;
 
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if(isUnique) {
@@ -475,7 +474,6 @@ public class LogService {
                                     processLine(line, "newsView", matched_newsView);
                                     // System.out.println(line+" NO SEARCH");
                                 }
-                                totalClicks++;
 
                                 //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                 if(isUnique) {
@@ -495,7 +493,6 @@ public class LogService {
                                     } else {
                                         processLine(line, "whitepaperView", matched_whitepaperView);
                                     }
-                                    totalClicks++;
 
                                     //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                     if(isUnique) {
@@ -508,7 +505,6 @@ public class LogService {
                                     Matcher matched_podcastView = patternPodcast.matcher(line);
 
                                     if (matched_podcastView.find()) {
-                                        totalClicks++;
                                         //ToDo maybe implement SearchSuccess if applicable
                                         processLine(line, "podcastView", matched_podcastView);
                                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser

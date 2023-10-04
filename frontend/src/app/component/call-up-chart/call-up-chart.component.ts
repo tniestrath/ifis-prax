@@ -44,23 +44,29 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     if (event !== undefined) {
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
-    this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365*2)).then((res : Callup[]) => {
-      this.data = res;
+    var system_time : number;
+    this.db.getSystemTimeHour().then(res => system_time = res).then(() => {
+      this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365*2)).then((res : Callup[]) => {
+        this.data = res;
 
-      var time_filtered : Callup[] = this.data;
+        var time_filtered : Callup[] = this.data;
 
-      if (this.timeSpan == "day"){
-        time_filtered.sort((a, b) => {
-          return Number.parseInt(a.date) - Number.parseInt(b.date);
-        });
-      } else {
-        time_filtered.sort((a, b) => {
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
-        });
-      }
 
-      this.createChart(time_filtered, this.timeSpan);
-    });
+        if (this.timeSpan == "day"){
+          time_filtered.sort((a, b) => {
+            return Number.parseInt(a.date) - Number.parseInt(b.date);
+          });
+          let sublist  = time_filtered.splice(0, system_time);
+          time_filtered.push(...sublist);
+        } else {
+          time_filtered.sort((a, b) => {
+            return new Date(a.date).getTime() - new Date(b.date).getTime();
+          });
+        }
+
+        this.createChart(time_filtered, this.timeSpan);
+      });
+    })
   }
   ngOnInit(): void {
     this.getData();

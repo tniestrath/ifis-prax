@@ -55,6 +55,7 @@ export enum dbUrl {
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
+  GET_SYSTEM_TIME_HOUR = "/systemLoad/getHour",
 
   LOGIN = "/login?user=USERNAME&pass=PASSWORD",
   VALIDATE = "/validate",
@@ -253,6 +254,9 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION_BY_DAYSBACK), {credentials: "include"}).then(res => res.json());
   }
 
+  async getSystemTimeHour() : Promise<number>{
+    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_TIME_HOUR), {credentials: "include"}).then(res => res.json());
+  }
   async getSystemUsage() : Promise<SystemUsage>{
     return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE), {credentials: "include"}).then(res => res.json());
   }

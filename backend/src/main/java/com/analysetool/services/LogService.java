@@ -843,7 +843,7 @@ public class LogService {
 
         }
         if(patternName.equals("refferer")){
-
+            if (!matcher.group(8).matches("\\d+")){
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
             //System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));
             System.out.println(matcher.group(7));
@@ -896,7 +896,7 @@ public class LogService {
 
 
                     s.setDwell_time(dwell_time);
-                    searchStatRepo.save(s);
+                    searchStatRepo.save(s);}
                 }
             }
 
@@ -1000,7 +1000,7 @@ public class LogService {
     }
 
     public void updateSearchStats(Matcher matcher) {
-
+        if (!matcher.group(6).matches("\\d+")){
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
         byte[] hashBytes = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
         String hashedIp = Hex.toHexString(hashBytes);
@@ -1026,7 +1026,7 @@ public class LogService {
 
                 s.setSearch_success_time(searchSuccessTime);
 
-                searchStatRepo.save(s);
+                searchStatRepo.save(s);}
             }
         }
     }

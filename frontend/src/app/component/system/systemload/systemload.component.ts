@@ -31,6 +31,8 @@ export class SystemloadComponent extends DashBaseComponent implements OnInit{
         this.addData(this.chart_memory, String(res.memory), res.memory);
       })
     }, 1000 * 60);
+
+    this.setToolTip("Hier wird die Systemauslastung der letzten Minute angezeigt.");
   }
 
   addData(chart: any, label: string, newData: number) {

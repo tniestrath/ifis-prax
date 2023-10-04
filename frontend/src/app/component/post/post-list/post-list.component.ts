@@ -72,6 +72,8 @@ export class PostListComponent extends DashBaseComponent implements AfterViewIni
       });
       this.selectorItemsLoaded.next(this.selectorItems);
     });
+
+    this.setToolTip("Hier sind alle Posts und deren Daten aufgelistet, sortierbar nach Art oder Suche.");
   }
 
   ngAfterViewInit(): void {

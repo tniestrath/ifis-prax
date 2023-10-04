@@ -15,7 +15,8 @@ export class Top5PostsComponent extends DashBaseComponent implements OnInit{
   sorter: string = "Performance";
 
   ngOnInit(): void {
-    this.getData()
+    this.getData();
+    this.setToolTip("Hier werden die Top 5 Posts der jeweiligen Kategorie und nach der ausgewählten Statistik gewertet angezeigt.");
   }
 
   protected getData(event?: Event){

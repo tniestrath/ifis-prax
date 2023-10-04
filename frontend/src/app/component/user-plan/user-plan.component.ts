@@ -47,6 +47,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       })
     })
 
+    this.setToolTip("Hier werden die aktuellen Nutzer nach ihren Abonnements, und die in den letzten 24 Stunden angemeldete Nutzer (hinter dem +) angezeigt.");
   }
 
   private readMap(map: Map<string, number>, data: number[]) {

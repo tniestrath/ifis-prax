@@ -14,6 +14,7 @@ import oshi.hardware.CentralProcessor;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.util.tuples.Pair;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -25,6 +26,11 @@ public class SystemLoadController {
     @Autowired
     public SystemLoadController(SystemLoadService systemLoadService) {
         this.systemLoadService = systemLoadService;
+    }
+
+    @GetMapping("/getHour")
+    public int getHour() {
+        return LocalDateTime.now().getHour();
     }
 
     @GetMapping("/average")

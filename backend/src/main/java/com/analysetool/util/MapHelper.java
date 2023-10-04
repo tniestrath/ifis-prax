@@ -24,6 +24,9 @@ public final class MapHelper {
      * @param map2 this map will be merged from.
      */
     public static void mergeLocationMaps(Map<String, Map<String, Map<String, Long>>> map1, Map<String, Map<String, Map<String, Long>>> map2) {
+        if(map2 == null) {
+            return;
+        }
         for (Map.Entry<String, Map<String, Map<String, Long>>> outerEntry : map2.entrySet()) {
             String outerKey = outerEntry.getKey();
             Map<String, Map<String, Long>> innerMap2 = outerEntry.getValue();

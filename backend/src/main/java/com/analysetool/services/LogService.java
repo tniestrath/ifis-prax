@@ -589,26 +589,39 @@ public class LogService {
             uni.setDatum(date);
         }
         uniRepo.save(uni);
+        int curHour = LocalDateTime.now().getHour();
 
         UniversalStatsHourly uniHourly;
-        if(uniHourlyRepo.getByStunde(LocalDateTime.now().getHour()) != null) {
-            uniHourly = uniHourlyRepo.getByStunde(LocalDateTime.now().getHour());
-            uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+        if(uniHourlyRepo.getByStunde(curHour) != null) {
+            uniHourly = uniHourlyRepo.getByStunde(curHour);
+            if(curHour != 0) {
+                uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(curHour - 1)).getBesucherAnzahl());
+            } else {
+                uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(23)).getBesucherAnzahl());
+            }
             uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
             uniHourly.setViewsByLocation(viewsByLocation);
             uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
-            uniHourly = setNewsArticelBlogCountForUniversalStats(uniHourly);
-            uniHourly = setAccountTypeAllUniStats(uniHourly);
+            setNewsArticelBlogCountForUniversalStats(uniHourly);
+            setAccountTypeAllUniStats(uniHourly);
         } else {
             uniHourly = new UniversalStatsHourly();
             uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
             uniHourly.setTotalClicks((long) totalClicks);
             uniHourly.setViewsByLocation(viewsByLocation);
             uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
-            uniHourly = setNewsArticelBlogCountForUniversalStats(uniHourly);
-            uniHourly = setAccountTypeAllUniStats(uniHourly);
+            setNewsArticelBlogCountForUniversalStats(uniHourly);
+            setAccountTypeAllUniStats(uniHourly);
             uniHourly.setStunde(LocalDateTime.now().getHour());
         }
+        if(LocalDateTime.now().getHour() != 23) {
+            UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(curHour + 1);
+            uniHourly1.setViewsByLocation(null);
+        }
+
+
+
+
         uniHourlyRepo.save(uniHourly);
 
 
@@ -687,9 +700,9 @@ public class LogService {
         return uniHourly;
     }
 
-    @Scheduled(cron = "0 30 9 * * ?")
+    @Scheduled(cron = "0 30 0 * * ?")
     public void endDay() {
-        uniRepo.getSecondLastUniStats().setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+        uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
         uniqueUserRepo.deleteAll();
     }
 

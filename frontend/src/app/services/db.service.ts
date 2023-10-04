@@ -51,6 +51,7 @@ export enum dbUrl {
   GET_NEWSLETTER_SUBS = "/newsletter/getStatusAll",
   GET_NEWSLETTER_SUBS_YESTERDAY = "/newsletter/getAmountOfSubsYesterday",
   GET_NEWSLETTER_SUBS_BY_DATERANGE = "/newsletter/getAmountOfSubsByDateRange?daysBackTo=DAYSBACKTO&daysBackFrom=DAYSBACKFROM",
+  GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS = "/newsletter/getMailByStatus?c=STATUS",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -243,6 +244,9 @@ export class DbService {
   }
   async getNewsletterSubsYesterday(){
     return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_YESTERDAY), {credentials: "include"}).then(res => res.json());
+  }
+  async getNewsletterSubsAsMailByStatus(c : string) : Promise<string[]>{
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS).replace("STATUS", c), {credentials: "include"}).then(res => res.json());
   }
 
   async getViewsByLocationLas14(){

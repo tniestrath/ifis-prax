@@ -617,7 +617,6 @@ public class LogService {
         if(LocalDateTime.now().getHour() != 23) {
             UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(curHour + 1);
             uniHourly1.setViewsByLocation(null);
-            uniHourlyRepo.save(uniHourly1);
         }
 
 

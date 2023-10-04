@@ -847,6 +847,8 @@ public class LogService {
 
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
             //System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));
+            System.out.println(matcher.group(7));
+            System.out.println(matcher.group(8));
             String day = matcher.group(2);
             String month = getMonthNumber(matcher.group(3));
             String year = matcher.group(4);

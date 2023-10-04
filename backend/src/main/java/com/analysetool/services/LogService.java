@@ -407,13 +407,13 @@ public class LogService {
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
-                totalClicks++;
 
                 if (dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
                     setViewsByLocation(pre_Matched.group(1), viewsByLocation);
                     erhoeheViewsPerHour2(viewsByHour, dateLog.toLocalTime());
+                    totalClicks++;
 
                     if (matched_articleView.find()) {
                         Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);

@@ -19,6 +19,7 @@ export class NewsletterStatsComponent extends DashBaseComponent implements OnIni
 
   verified_yesterday: number = 0;
   not_jet_verified_yesterday: number = 0;
+  not_jet_verified_mails: string = "";
 
   ngOnInit(): void {
     this.db.getNewsletterSubs().then(res => {
@@ -35,7 +36,11 @@ export class NewsletterStatsComponent extends DashBaseComponent implements OnIni
     })).then(() => {
       this.verified_today = this.verified - this.verified_yesterday;
       this.not_jet_verified_today = this.not_jet_verified - this.not_jet_verified_yesterday;
-    })
+    }).then( () =>
+      this.db.getNewsletterSubsAsMailByStatus("S").then(res => {
+        this.not_jet_verified_mails = res.toString().replace(/,/g, "\n");
+      })
+    )
 
     this.setToolTip("Hier sind die aktuellen Newsletter-Abonnenten nach Status angezeigt. Mit Hover über die unbestätigten Nutzer werden genauere Daten angezeigt.");
   }

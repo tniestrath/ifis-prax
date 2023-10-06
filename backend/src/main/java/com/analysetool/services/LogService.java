@@ -846,6 +846,7 @@ public class LogService {
             }
 
         }
+        /*
         if(patternName.equals("refferer")){
             if (!matcher.group(8).matches("\\d+")){
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
@@ -905,7 +906,7 @@ public class LogService {
             }
 
         }
-
+        */
         if(patternName.equals("whitepaperSearchSuccess")) {
             //Stolen behaviour from articleSearchSuccess
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));

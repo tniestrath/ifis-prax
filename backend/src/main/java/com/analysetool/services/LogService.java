@@ -594,7 +594,11 @@ public class LogService {
         if(uniHourlyRepo.getByStunde(curHour) != null) {
             uniHourly = uniHourlyRepo.getByStunde(curHour);
             if(curHour != 0) {
-                uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(curHour - 1)).getBesucherAnzahl());
+                if(curHour != 1) {
+                    uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(curHour - 1)).getBesucherAnzahl());
+                } else {
+                    uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+                }
             } else {
                 uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(23)).getBesucherAnzahl());
             }
@@ -710,7 +714,7 @@ public class LogService {
         return uniHourly;
     }
 
-    @Scheduled(cron = "0 30 0 * * ?")
+    @Scheduled(cron = "0 50 0 * * ?")
     public void endDay() {
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
         uniqueUserRepo.deleteAll();

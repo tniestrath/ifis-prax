@@ -1,11 +1,13 @@
 package com.analysetool.services;
 
+import com.analysetool.api.PostController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
 import com.analysetool.util.MapHelper;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,9 @@ public class LogService {
     @Autowired
     private UniqueUserRepository uniqueUserRepo;
 
+    @Autowired
+    private UniversalCategoriesDLCRepository universalCategoriesDLCRepo;
+
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
@@ -98,11 +103,11 @@ public class LogService {
     Pattern newsSearchSuccessPattern = Pattern.compile(PresseSSViewPatter);
     Pattern userRedirectPattern = Pattern.compile(RedirectUserPattern);
     Pattern searchPattern = Pattern.compile(SearchPattern);
-    Pattern referPattern = Pattern.compile(ReffererPattern);
     Pattern patternPodcast = Pattern.compile(PodcastPattern);
     Pattern patternWhitepaperView = Pattern.compile(WhitepaperViewPattern);
     Pattern patternWhitepaperSearchSuccess = Pattern.compile(WhitepaperSSPattern);
     Pattern patternPreMatch = Pattern.compile(prePattern);
+    Pattern reffererPattern=Pattern.compile(ReffererPattern);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -127,6 +132,8 @@ public class LogService {
     private universalStatsRepository uniRepo;
     @Autowired
     private UniversalStatsHourlyRepository uniHourlyRepo;
+    @Autowired
+    private PostController postController;
 
 
     @Autowired
@@ -393,6 +400,7 @@ public class LogService {
     public void findAMatch(SysVar sysVar) throws IOException, ParseException {
         String line;
         int totalClicks = 0;
+        int uniqueUsers = 0;
         Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();
         Map<String,Long> viewsByHour = new HashMap<>();
         while ((line = br.readLine()) != null ) {
@@ -408,6 +416,7 @@ public class LogService {
                 boolean isAPI = pre_Matched.group(3).contains("/api/");
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
+                if(isUnique) uniqueUsers++;
 
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
@@ -537,6 +546,10 @@ public class LogService {
                     if (matched_searchPattern.find()) {
                         processLine(line, "search", matched_searchPattern);
                     }
+                    Matcher matched_reffererPattern = reffererPattern.matcher(line);
+                    if (matched_reffererPattern.find()) {
+                        processLine(line, "refferer", matched_reffererPattern);
+                    }
 
                     if(user == null) {
                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -586,14 +599,11 @@ public class LogService {
         uniRepo.save(uni);
         int curHour = LocalDateTime.now().getHour();
 
+        //update the current hour
         UniversalStatsHourly uniHourly;
         if(uniHourlyRepo.getByStunde(curHour) != null) {
             uniHourly = uniHourlyRepo.getByStunde(curHour);
-            if(curHour != 0) {
-                uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(curHour - 1)).getBesucherAnzahl());
-            } else {
-                uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(23)).getBesucherAnzahl());
-            }
+            uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (long) uniqueUsers);
             uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
             uniHourly.setViewsByLocation(viewsByLocation);
             uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
@@ -601,7 +611,7 @@ public class LogService {
             setAccountTypeAllUniStats(uniHourly);
         } else {
             uniHourly = new UniversalStatsHourly();
-            uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+            uniHourly.setBesucherAnzahl((long) uniqueUsers);
             uniHourly.setTotalClicks((long) totalClicks);
             uniHourly.setViewsByLocation(viewsByLocation);
             uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
@@ -610,6 +620,7 @@ public class LogService {
             uniHourly.setStunde(LocalDateTime.now().getHour());
         }
 
+        //Delete the upcoming hour
         if(LocalDateTime.now().getHour() != 23) {
             UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(curHour + 1);
             System.out.println("BEEP BOOP BEEP BOOP BINGBING" + uniHourly1.getStunde());
@@ -706,8 +717,51 @@ public class LogService {
         return uniHourly;
     }
 
-    @Scheduled(cron = "0 30 0 * * ?")
-    public void endDay() {
+    @Scheduled(cron = "0 50 0 * * ?")
+    public void endDay() throws JSONException, ParseException {
+        UniversalCategoriesDLC uniCategories = new UniversalCategoriesDLC();
+
+        uniCategories.setId(uniRepo.getSecondLastUniStats().get(1).getId());
+
+        uniCategories.setBesucherGlobal(uniqueUserRepo.getUserCountByCategory("global"));
+        uniCategories.setBesucherArticle(uniqueUserRepo.getUserCountByCategory("article"));
+        uniCategories.setBesucherNews(uniqueUserRepo.getUserCountByCategory("news"));
+        uniCategories.setBesucherBlog(uniqueUserRepo.getUserCountByCategory("blog"));
+        uniCategories.setBesucherPodcast(uniqueUserRepo.getUserCountByCategory("podcast"));
+        uniCategories.setBesucherWhitepaper(uniqueUserRepo.getUserCountByCategory("whitepaper"));
+        uniCategories.setBesucherRatgeber(uniqueUserRepo.getUserCountByCategory("ratgeber"));
+
+        int viewsGlobal;
+        int viewsArticle = 0;
+        int viewsNews = 0;
+        int viewsBlog = 0;
+        int viewsPodcast = 0;
+        int viewsWhitepaper = 0;
+        int viewsRatgeber = 0;
+
+        for(Post post : postRepository.findAllUserPosts()) {
+            switch(postController.getType(post.getId())) {
+                case("article") : viewsArticle += statsRepo.getClicksByArtId(post.getId());
+                case("news") : viewsNews += statsRepo.getClicksByArtId(post.getId());
+                case("blog") : viewsBlog += statsRepo.getClicksByArtId(post.getId());
+                case("podcast") : viewsPodcast += statsRepo.getClicksByArtId(post.getId());
+                case("whitepaper") : viewsWhitepaper += statsRepo.getClicksByArtId(post.getId());
+                case("ratgeber") : viewsRatgeber += statsRepo.getClicksByArtId(post.getId());
+            }
+        }
+        viewsGlobal = (int) (uniRepo.getSecondLastUniStats().get(1).getTotalClicks() - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber);
+
+
+        uniCategories.setViewsGlobal(viewsGlobal);
+        uniCategories.setViewsArticle(viewsArticle);
+        uniCategories.setViewsNews(viewsNews);
+        uniCategories.setViewsBlog(viewsBlog);
+        uniCategories.setViewsPodcast(viewsPodcast);
+        uniCategories.setViewsWhitepaper(viewsWhitepaper);
+        uniCategories.setViewsRatgeber(viewsRatgeber);
+
+        universalCategoriesDLCRepo.save(uniCategories);
+
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
         uniqueUserRepo.deleteAll();
     }
@@ -726,7 +780,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            //updateSearchStats(matcher);
+            updateSearchStats(matcher);
         }
         if (patternName.equals("blogView")){
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
@@ -739,7 +793,7 @@ public class LogService {
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 2.2");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            //updateSearchStats(matcher);
+            updateSearchStats(matcher);
         }
 
         if(patternName.equals("redirect")){
@@ -786,7 +840,7 @@ public class LogService {
 
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            //updateSearchStats(matcher);
+            updateSearchStats(matcher);
         }
 
         if(patternName.equals("userViewRedirect")){
@@ -838,10 +892,14 @@ public class LogService {
             }
 
         }
-        if(patternName.equals("thisWasUnreached")){
-
+        /*
+        if(patternName.equals("refferer")){
+            if (!matcher.group(8).matches("\\d+")){
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
-            System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));
+            //System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));
+            System.out.println(matcher.group(7));
+            System.out.println(matcher.group(8));
+            System.out.println(line);
             String day = matcher.group(2);
             String month = getMonthNumber(matcher.group(3));
             String year = matcher.group(4);
@@ -889,19 +947,19 @@ public class LogService {
 
 
                     s.setDwell_time(dwell_time);
-                    searchStatRepo.save(s);
+                    searchStatRepo.save(s);}
                 }
             }
 
         }
-
+        */
         if(patternName.equals("whitepaperSearchSuccess")) {
             //Stolen behaviour from articleSearchSuccess
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
             System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING Whitepaper with Search");
             updatePerformanceViewsSearchSuccess(matcher);
             updateViewsByLocation(matcher);
-            //updateSearchStats(matcher);
+            updateSearchStats(matcher);
         }
 
         if(patternName.equals("whitepaperView")) {
@@ -993,7 +1051,7 @@ public class LogService {
     }
 
     public void updateSearchStats(Matcher matcher) {
-
+        if (!matcher.group(6).matches("\\d+")){
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
         byte[] hashBytes = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
         String hashedIp = Hex.toHexString(hashBytes);
@@ -1005,7 +1063,7 @@ public class LogService {
         String time = matcher.group(5);
         LocalDateTime searchSuccessTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
         LocalDate date = searchSuccessTime.toLocalDate();  // Replace with the date you want to search for
-        System.out.println("GRUPPE 7: "+matcher.group(7));
+        System.out.println("GRUPPE 6: "+matcher.group(6));
         List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
         long id = postRepository.getIdByName(matcher.group(6));
         for(SearchStats s : searchStatsForDate) {
@@ -1019,7 +1077,7 @@ public class LogService {
 
                 s.setSearch_success_time(searchSuccessTime);
 
-                searchStatRepo.save(s);
+                searchStatRepo.save(s);}
             }
         }
     }
@@ -1045,7 +1103,7 @@ public class LogService {
         return logDate;
     }
     public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
-
+        if (!matcher.group(6).matches("\\d+")){
         // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
         String logDay = matcher.group(2);
         String logMonth = matcher.group(3);
@@ -1097,7 +1155,7 @@ public class LogService {
             }
         } catch (Exception e) {
             System.out.println("IGNORE " + matcher.group(2).substring(0, matcher.group(2).length() - 1) + " BECAUSE: " + e.getMessage());
-        }
+        }}
     }
     @Transactional
     public void erhoeheWertFuerLogDatum(long id, LocalDate logDatum, LocalTime logUhrzeit) {
@@ -1198,7 +1256,7 @@ public class LogService {
     }
     }*/
    public void UpdatePerformanceAndViews(Matcher matcher) {
-
+       if (!matcher.group(6).matches("\\d+")){
        // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
        String logDay = matcher.group(2);
        String logMonth = matcher.group(3);
@@ -1248,7 +1306,7 @@ public class LogService {
            }
        } catch (Exception e) {
            System.out.println("IGNORE " + matcher.group(6) + " BECAUSE: " + e.getMessage());
-       }
+       }}
    }
 
 
@@ -1486,6 +1544,7 @@ public class LogService {
     }
     @Transactional
     public void updateViewsByLocation(Matcher matcher) {
+        if (!matcher.group(6).matches("\\d+")){
         String ip = matcher.group(1);
         try {
             long id = postRepository.getIdByName(matcher.group(6));
@@ -1543,7 +1602,7 @@ public class LogService {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }
+        }}
     }
 
     public static Map<String, Map<String, Map<String, Long>>> setViewsByLocation(String ip, Map<String, Map<String, Map<String, Long>>> viewsByLocation) {

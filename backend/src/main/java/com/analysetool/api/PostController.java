@@ -447,13 +447,76 @@ public class PostController {
         return obj.toString();
     }
 
-    //STATS
 
-    //ToDo Toten Code aufräumen
-   /* @GetMapping("/{id}")
-    public Optional<PostStats> getStat(@PathVariable Long id) {
-        return statRepository.findById(id);
-    }*/
+    @GetMapping("/getBestPostByTagClicks")
+    public Long getBestPostClicks(long tagId) {
+        return statsRepo.getClicksByArtId(getBestPostByTag(tagId));
+    }
+
+    @GetMapping("/getBestPostByTag")
+    public Long getBestPostByTag(long tagId) {
+        Long bestPost = null;
+        for(Post post : getPostsByTag(tagId)) {
+            if(bestPost == null) bestPost = post.getId();
+            if(statsRepo.getClicksByArtId(post.getId()) > statsRepo.getClicksByArtId(bestPost)) bestPost = post.getId();
+        }
+        return bestPost;
+    }
+
+    @GetMapping("/getAverageClicksByTag")
+    public double getAverageClicksByTag(long tagId) {
+        int value = 0;
+        for(Post post : getPostsByTag(tagId)) {
+            value += statsRepo.getClicksByArtId(post.getId());
+        }
+        return (double) value / getPostsByTag(tagId).size();
+    }
+
+    @GetMapping("/getPostsByTag")
+    public List<Post> getPostsByTag(long tagId) {
+        return postRepo.findAllUserPosts().stream().filter(post -> {
+            try {
+                return getTagsById(post.getId()).contains(tagId);
+            } catch (JSONException e) {
+                return false;
+            }
+        }).toList();
+    }
+
+    public List<Long> getTagsById(long id) throws JSONException {
+        if(!postRepository.findById(id).isPresent()) {return null;}
+        Post post = postRepository.findById(id).get();
+        List<Long> tags = new ArrayList<>();
+
+        List<Long> tagIDs = null;
+        if(termRelationRepo.existsByObjectId(post.getId())){
+            tagIDs = termRelationRepo.getTaxIdByObject(post.getId());
+        }
+        List<WPTerm> terms = new ArrayList<>();
+        if (tagIDs != null) {
+            for (long l : tagIDs) {
+                if (wpTermRepo.existsById(l)) {
+                    if (wpTermRepo.findById(l).isPresent()) {
+                        terms.add(wpTermRepo.findById(l).get());
+                    }
+                }
+            }
+        }
+        for (WPTerm t: terms) {
+            if (wpTermTaxonomyRepo.existsById(t.getId())){
+                if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
+                    WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
+                    if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
+                        tags.add(tt.getTermId());
+                    }
+                }
+            }
+        }
+
+        return tags;
+    }
+
+    //STATS
 
     @GetMapping
     public List<PostStats> getAllStats() {
@@ -755,7 +818,7 @@ public class PostController {
     }
 
 
-    private String getType(@RequestParam long id) throws JSONException, ParseException {
+    public String getType(@RequestParam long id) throws JSONException, ParseException {
         if(!postRepository.findById(id).isPresent()) {return null;}
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();

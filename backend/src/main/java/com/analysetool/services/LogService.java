@@ -1,11 +1,13 @@
 package com.analysetool.services;
 
+import com.analysetool.api.PostController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
 import com.analysetool.util.MapHelper;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,9 @@ public class LogService {
 
     @Autowired
     private UniqueUserRepository uniqueUserRepo;
+
+    @Autowired
+    private UniversalCategoriesDLCRepository universalCategoriesDLCRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -127,6 +132,8 @@ public class LogService {
     private universalStatsRepository uniRepo;
     @Autowired
     private UniversalStatsHourlyRepository uniHourlyRepo;
+    @Autowired
+    private PostController postController;
 
 
     @Autowired
@@ -711,7 +718,50 @@ public class LogService {
     }
 
     @Scheduled(cron = "0 50 0 * * ?")
-    public void endDay() {
+    public void endDay() throws JSONException, ParseException {
+        UniversalCategoriesDLC uniCategories = new UniversalCategoriesDLC();
+
+        uniCategories.setId(uniRepo.getSecondLastUniStats().get(1).getId());
+
+        uniCategories.setBesucherGlobal(uniqueUserRepo.getUserCountByCategory("global"));
+        uniCategories.setBesucherArticle(uniqueUserRepo.getUserCountByCategory("article"));
+        uniCategories.setBesucherNews(uniqueUserRepo.getUserCountByCategory("news"));
+        uniCategories.setBesucherBlog(uniqueUserRepo.getUserCountByCategory("blog"));
+        uniCategories.setBesucherPodcast(uniqueUserRepo.getUserCountByCategory("podcast"));
+        uniCategories.setBesucherWhitepaper(uniqueUserRepo.getUserCountByCategory("whitepaper"));
+        uniCategories.setBesucherRatgeber(uniqueUserRepo.getUserCountByCategory("ratgeber"));
+
+        int viewsGlobal;
+        int viewsArticle = 0;
+        int viewsNews = 0;
+        int viewsBlog = 0;
+        int viewsPodcast = 0;
+        int viewsWhitepaper = 0;
+        int viewsRatgeber = 0;
+
+        for(Post post : postRepository.findAllUserPosts()) {
+            switch(postController.getType(post.getId())) {
+                case("article") : viewsArticle += statsRepo.getClicksByArtId(post.getId());
+                case("news") : viewsNews += statsRepo.getClicksByArtId(post.getId());
+                case("blog") : viewsBlog += statsRepo.getClicksByArtId(post.getId());
+                case("podcast") : viewsPodcast += statsRepo.getClicksByArtId(post.getId());
+                case("whitepaper") : viewsWhitepaper += statsRepo.getClicksByArtId(post.getId());
+                case("ratgeber") : viewsRatgeber += statsRepo.getClicksByArtId(post.getId());
+            }
+        }
+        viewsGlobal = (int) (uniRepo.getSecondLastUniStats().get(1).getTotalClicks() - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber);
+
+
+        uniCategories.setViewsGlobal(viewsGlobal);
+        uniCategories.setViewsArticle(viewsArticle);
+        uniCategories.setViewsNews(viewsNews);
+        uniCategories.setViewsBlog(viewsBlog);
+        uniCategories.setViewsPodcast(viewsPodcast);
+        uniCategories.setViewsWhitepaper(viewsWhitepaper);
+        uniCategories.setViewsRatgeber(viewsRatgeber);
+
+        universalCategoriesDLCRepo.save(uniCategories);
+
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
         uniqueUserRepo.deleteAll();
     }

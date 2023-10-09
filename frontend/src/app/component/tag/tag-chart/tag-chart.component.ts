@@ -138,7 +138,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
             font: {
               size: 18,
               weight: "bold",
-              family: "Helvetica Neue sans-serif"
+              family: "'Helvetica Neue', sans-serif"
             }
           },
           legend: {

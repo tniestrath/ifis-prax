@@ -45,6 +45,8 @@ export enum dbUrl {
   GET_POSTS_TOP_BY_SORTER = "/posts/getTopWithType?sorter=SORTER&type=TYPE&limit=LIMIT",
 
   GET_CALLUPS_BY_TIME = "/bericht/callups?days=DAYS",
+  GET_CALLUP_CATEGORIES_NEWEST = "/bericht/getCallupByCategoryLive",
+
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/bericht/getAccountTypeAllYesterday",
   GET_VIEWS_BY_LOCATION_BY_DAYSBACK = "/bericht/getViewsByLocationLast14",
 
@@ -227,6 +229,9 @@ export class DbService {
 
   async getCallupsByTime(days: number) : Promise<Callup[]> {
     return await fetch(DbService.getUrl(dbUrl.GET_CALLUPS_BY_TIME.replace("DAYS", String(days))), {credentials: "include"}).then(res => res.json());
+  }
+  async getCallupsByCategoriesNewest() : Promise<number[]>{
+    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_NEWEST), {credentials: "include"}).then(res => res.json());
   }
 
   async getUserAccountTypesYesterday() {

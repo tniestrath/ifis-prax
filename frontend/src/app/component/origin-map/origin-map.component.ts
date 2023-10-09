@@ -105,19 +105,19 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
     var timestamps : string[] = [
       Util.formatDate(date),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1))),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)))];
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
+      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true)];
     timestamps.reverse();
     var clicksData : number[] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
     for (var regionClicks of perDayRegionClicks) {

@@ -7,7 +7,13 @@
     <input type="radio" name="time_range" value="day" id="uni-range-day" (change)="getData($event)">
   </form>
   <div class="chart-canvas-box">
-    <canvas id="uni-chart" [ngStyle]="{'visibility': visibility}">{{chart}}</canvas>
+    <div class="uni-chart-box">
+      <canvas id="uni-chart">{{chart}}</canvas>
+    </div>
+    <div class="categories-chart-box">
+      <canvas id="categories-chart">{{categories_chart}}</canvas>
+    </div>
+
   </div>
 
 </div>

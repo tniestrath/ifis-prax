@@ -17,7 +17,7 @@ export default class Util {
     return formattedN;
   }
 
-  static formatDate(date : string | Date) : string{
+  static formatDate(date : string | Date, year? : boolean) : string{
     let formattedDate = "";
     let parsedDate = new Date();
     if (typeof date == "string"){
@@ -32,13 +32,16 @@ export default class Util {
       formattedDate = formattedDate.concat(parsedDate.getDate().toString() + "-");
     }
     if (parsedDate.getMonth() +1 <= 9) {
-      formattedDate = formattedDate.concat("0", (parsedDate.getMonth() +1).toString()  + "-");
+      formattedDate = formattedDate.concat("0", (parsedDate.getMonth() +1).toString());
     } else {
-      formattedDate = formattedDate.concat((parsedDate.getMonth() +1).toString() + "-");
+      formattedDate = formattedDate.concat((parsedDate.getMonth() +1).toString());
+    } if (year){
+      formattedDate = formattedDate.concat("-" + parsedDate.getFullYear().toString());
     }
-    formattedDate = formattedDate.concat(parsedDate.getFullYear().toString());
     return formattedDate;
   }
+
+
 
   static readFormattedDate(date : string){
     let splitted = date.split("-");

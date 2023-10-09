@@ -4,6 +4,7 @@ import {ActiveElement, Chart, ChartEvent, TooltipItem} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
 import _default from "chart.js/dist/plugins/plugin.legend";
 import labels = _default.defaults.labels;
+import {time} from "html2canvas/dist/types/css/types/time";
 
 export class Callup {
   clicks : number = 0;
@@ -23,9 +24,7 @@ export class Callup {
   styleUrls: ['./call-up-chart.component.css', "../../component/dash-base/dash-base.component.css"]
 })
 export class CallUpChartComponent extends DashBaseComponent implements OnInit {
-  visibility: string = "visible";
-
-  canvas_id: string = "uni-chart";
+  categories_chart: any;
 
   timeSpan : string = "month";
 
@@ -38,6 +37,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     ["week", 7],
     ["day", 1]
   ]);
+
 
 
   getData(event?: Event) {
@@ -66,11 +66,99 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
 
         this.createChart(time_filtered, this.timeSpan);
       });
+    });
+    this.db.getCallupsByCategoriesNewest().then(res => {
+      this.createCategoriesChart(res.slice(0, 6), res.slice(7), "heude schmeude")
     })
   }
   ngOnInit(): void {
     this.getData();
     this.setToolTip("Hier werden die Aufrufe und einzigartigen Besucher pro Zeit dargestellt. Unter \"24h\" befindet sich eine Auflistung der letzten 23 Stunden.");
+  }
+
+  createCategoriesChart(clicksData : number[], visitorsData: number[], timestamp : string){
+    if (this.categories_chart){
+      this.categories_chart.destroy();
+    }
+
+    clicksData = [2,3,4,5,6];
+    visitorsData = [1,1,2,2,3];
+    // @ts-ignore
+    this.categories_chart = new Chart("categories-chart", {
+      type: "bar",
+      data:
+        {
+        labels: ["Generell","Artikel","News","Blog","Podcast","Whitepaper","Ratgeber"],
+        datasets: [
+          {
+            label: "Besucher",
+            data: visitorsData,
+            backgroundColor: DashColors.BLUE,
+            borderColor: DashColors.BLUE,
+            stack: "1"
+          },
+          {
+          label: "Aufrufe",
+          data: clicksData,
+          backgroundColor: DashColors.RED,
+          borderColor: DashColors.RED,
+          stack: "1"
+        },
+        ]
+      },
+      options: {
+        clip: false,
+        aspectRatio: .5,
+        maintainAspectRatio: false,
+        layout: {
+        },
+        scales: {
+          y: {
+            min: 0,
+            stack: "1"
+          },
+          x: {
+            display: true
+          }
+        },
+        plugins: {
+          datalabels: {
+            display: false
+          },
+          title: {
+            display: false,
+            text: timestamp,
+            position: "top",
+            fullSize: true,
+            font: {
+              size: 14,
+              weight: "bold",
+              family: "'Helvetica Neue', sans-serif"
+            }
+          },
+          legend: {
+            display: false,
+            position: "bottom"
+          },
+          tooltip: {
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            },
+            callbacks: {
+            }
+          }
+        },
+        interaction: {
+          mode: "x",
+          intersect: true
+        },
+        onClick(event: ChartEvent, elements: ActiveElement[]) {
+        },
+      }
+    })
   }
 
   createChart(callups : Callup[], timeSpan : string){

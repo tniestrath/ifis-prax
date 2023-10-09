@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "UniversalCategoriesDLC")
+@Table(name = "universal_categoriesdlc")
 public class UniversalCategoriesDLC {
 
     @Id

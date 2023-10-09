@@ -393,6 +393,7 @@ public class LogService {
     public void findAMatch(SysVar sysVar) throws IOException, ParseException {
         String line;
         int totalClicks = 0;
+        int uniqueUsers = 0;
         Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();
         Map<String,Long> viewsByHour = new HashMap<>();
         while ((line = br.readLine()) != null ) {
@@ -408,6 +409,7 @@ public class LogService {
                 boolean isAPI = pre_Matched.group(3).contains("/api/");
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
+                if(isUnique) uniqueUsers++;
 
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
@@ -590,18 +592,11 @@ public class LogService {
         uniRepo.save(uni);
         int curHour = LocalDateTime.now().getHour();
 
+        //update the current hour
         UniversalStatsHourly uniHourly;
         if(uniHourlyRepo.getByStunde(curHour) != null) {
             uniHourly = uniHourlyRepo.getByStunde(curHour);
-            if(curHour != 0) {
-                if(curHour != 1) {
-                    uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(curHour - 1)).getBesucherAnzahl());
-                } else {
-                    uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
-                }
-            } else {
-                uniHourly.setBesucherAnzahl(uniqueUserRepo.getUserCountGlobal() - (uniHourlyRepo.getByStunde(23)).getBesucherAnzahl());
-            }
+            uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (long) uniqueUsers);
             uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
             uniHourly.setViewsByLocation(viewsByLocation);
             uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
@@ -609,7 +604,7 @@ public class LogService {
             setAccountTypeAllUniStats(uniHourly);
         } else {
             uniHourly = new UniversalStatsHourly();
-            uniHourly.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+            uniHourly.setBesucherAnzahl((long) uniqueUsers);
             uniHourly.setTotalClicks((long) totalClicks);
             uniHourly.setViewsByLocation(viewsByLocation);
             uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
@@ -618,6 +613,7 @@ public class LogService {
             uniHourly.setStunde(LocalDateTime.now().getHour());
         }
 
+        //Delete the upcoming hour
         if(LocalDateTime.now().getHour() != 23) {
             UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(curHour + 1);
             System.out.println("BEEP BOOP BEEP BOOP BINGBING" + uniHourly1.getStunde());

@@ -9,7 +9,7 @@ public class MathHelper {
     //Mean = Mittelwert
     //StandartDeviation = Standartabweichung
     //AbsoluteDeviation = echte Abweichung
-
+    //rest siehe doc 
 
     // Für float
     /**
@@ -167,8 +167,8 @@ public class MathHelper {
      * @return Der Skewness-Wert der Liste.
      */
     public static double getSkewnessFloat(List<Float> data) {
-        double mean = getMeanFloat(data);  // Diese Methode muss vorhanden sein.
-        double sd = getStandardDeviationFloat(data);  // Diese Methode muss vorhanden sein.
+        double mean = getMeanFloat(data);
+        double sd = getStandardDeviationFloat(data);
         double skewness = 0.0;
 
         for (float value : data) {
@@ -187,8 +187,8 @@ public class MathHelper {
      * @return Der Kurtosis-Wert der Liste.
      */
     public static double getKurtosisFloat(List<Float> data) {
-        double mean = getMeanFloat(data);  // Diese Methode muss vorhanden sein.
-        double sd = getStandardDeviationFloat(data);  // Diese Methode muss vorhanden sein.
+        double mean = getMeanFloat(data);
+        double sd = getStandardDeviationFloat(data);
         double kurtosis = 0.0;
 
         for (float value : data) {

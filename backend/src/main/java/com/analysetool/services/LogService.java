@@ -804,7 +804,7 @@ public class LogService {
         return uniHourly;
     }
 
-    @Scheduled(cron = "0 50 0 * * ?")
+    @Scheduled(cron = "0 20 0 * * ?")
     public void endDay() throws JSONException, ParseException {
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
         uniqueUserRepo.deleteAll();

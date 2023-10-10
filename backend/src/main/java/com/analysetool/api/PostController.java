@@ -979,23 +979,7 @@ public class PostController {
         return new JSONArray(stats).toString();
     }
 
-/*    @GetMapping("/getSimilarPostByTagSimilarity")
-    public String getSimilarPostByTagSimilarity(@RequestParam long postId,@RequestParam float similarityPercentage) throws JSONException {
-        List<Long> tagTaxIdsForPostGiven= termRelRepo.getTaxIdByObject(postId);
-        List<Long> tagIdsForPostGiven= taxTermRepo.getTermIdByTaxId(tagTaxIdsForPostGiven);
-        List<wp_term_relationships> tagTaxIds= termRelRepo.findAll();
-        JSONArray Ergebnis = new JSONArray();
-        List<PostStats> postStats= new ArrayList<>(); // z.b.  PostStats findByArtIdAndAndYear(long artid,int year);
 
-        //...
-
-        for(PostStats p :postStats){
-            JSONObject obj = new JSONObject();
-            obj.put("postId",p.getArtId());
-            obj.put("relevance",p.getRelevance());
-        }
-        return Ergebnis.toString();
-    }*/
 
     /**
      * Endpoint to retrieve posts with similar tags based on a similarity percentage.

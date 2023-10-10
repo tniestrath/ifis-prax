@@ -8,4 +8,9 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      public UniversalCategoriesDLC getById(int id);
 
+     @Query("SELECT u.stunde FROM UniversalCategoriesDLC u ORDER BY u.id DESC LIMIT 1")
+     public int getLastStunde();
+
+     @Query("SELECT u FROM UniversalCategoriesDLC u ORDER BY u.id DESC LIMIT 1")
+     public UniversalCategoriesDLC getLast();
 }

@@ -687,24 +687,45 @@ public class LogService {
 
         //Update UniversalStats with categories
         {
-            UniversalCategoriesDLC uniCategories = new UniversalCategoriesDLC();
-            uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
-            uniCategories.setStunde(curHour);
-            uniCategories.setBesucherGlobal(uniqueUsers);
-            uniCategories.setBesucherArticle(userArticle);
-            uniCategories.setBesucherNews(userNews);
-            uniCategories.setBesucherBlog(userBlog);
-            uniCategories.setBesucherPodcast(userPodcast);
-            uniCategories.setBesucherWhitepaper(userWhitepaper);
-            uniCategories.setBesucherRatgeber(userRatgeber);
-            uniCategories.setViewsGlobal(totalClicks);
-            uniCategories.setViewsArticle(viewsArticle);
-            uniCategories.setViewsNews(viewsNews);
-            uniCategories.setViewsBlog(viewsBlog);
-            uniCategories.setViewsPodcast(viewsPodcast);
-            uniCategories.setViewsWhitepaper(viewsWhitepaper);
-            uniCategories.setViewsRatgeber(viewsRatgeber);
-            universalCategoriesDLCRepo.save(uniCategories);
+            UniversalCategoriesDLC uniCategories;
+            if(universalCategoriesDLCRepo.getLastStunde() != curHour) {
+                uniCategories = new UniversalCategoriesDLC();
+                uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
+                uniCategories.setStunde(curHour);
+                uniCategories.setBesucherGlobal(uniqueUsers);
+                uniCategories.setBesucherArticle(userArticle);
+                uniCategories.setBesucherNews(userNews);
+                uniCategories.setBesucherBlog(userBlog);
+                uniCategories.setBesucherPodcast(userPodcast);
+                uniCategories.setBesucherWhitepaper(userWhitepaper);
+                uniCategories.setBesucherRatgeber(userRatgeber);
+                uniCategories.setViewsGlobal(totalClicks);
+                uniCategories.setViewsArticle(viewsArticle);
+                uniCategories.setViewsNews(viewsNews);
+                uniCategories.setViewsBlog(viewsBlog);
+                uniCategories.setViewsPodcast(viewsPodcast);
+                uniCategories.setViewsWhitepaper(viewsWhitepaper);
+                uniCategories.setViewsRatgeber(viewsRatgeber);
+                universalCategoriesDLCRepo.save(uniCategories);
+            } else {
+                uniCategories = universalCategoriesDLCRepo.getLast();
+                uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
+                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers);
+                uniCategories.setBesucherArticle(uniCategories.getBesucherArticle() + userArticle);
+                uniCategories.setBesucherNews(uniCategories.getBesucherNews() + userNews);
+                uniCategories.setBesucherBlog(uniCategories.getBesucherBlog() + userBlog);
+                uniCategories.setBesucherPodcast(uniCategories.getBesucherPodcast() + userPodcast);
+                uniCategories.setBesucherWhitepaper(uniCategories.getBesucherWhitepaper() + userWhitepaper);
+                uniCategories.setBesucherRatgeber(uniCategories.getBesucherRatgeber() + userRatgeber);
+                uniCategories.setViewsGlobal(totalClicks + uniCategories.getViewsGlobal());
+                uniCategories.setViewsArticle(viewsArticle + uniCategories.getViewsArticle());
+                uniCategories.setViewsNews(viewsNews + uniCategories.getBesucherNews());
+                uniCategories.setViewsBlog(viewsBlog + uniCategories.getViewsBlog());
+                uniCategories.setViewsPodcast(viewsPodcast + uniCategories.getViewsPodcast());
+                uniCategories.setViewsWhitepaper(viewsWhitepaper + uniCategories.getViewsWhitepaper());
+                uniCategories.setViewsRatgeber(viewsRatgeber + uniCategories.getViewsRatgeber());
+                universalCategoriesDLCRepo.save(uniCategories);
+            }
         }
 
 

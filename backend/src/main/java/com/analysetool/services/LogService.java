@@ -692,14 +692,14 @@ public class LogService {
                 uniCategories = new UniversalCategoriesDLC();
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                 uniCategories.setStunde(curHour);
-                uniCategories.setBesucherGlobal(uniqueUsers);
+                uniCategories.setBesucherGlobal(uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber);
                 uniCategories.setBesucherArticle(userArticle);
                 uniCategories.setBesucherNews(userNews);
                 uniCategories.setBesucherBlog(userBlog);
                 uniCategories.setBesucherPodcast(userPodcast);
                 uniCategories.setBesucherWhitepaper(userWhitepaper);
                 uniCategories.setBesucherRatgeber(userRatgeber);
-                uniCategories.setViewsGlobal(totalClicks);
+                uniCategories.setViewsGlobal(totalClicks - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber);
                 uniCategories.setViewsArticle(viewsArticle);
                 uniCategories.setViewsNews(viewsNews);
                 uniCategories.setViewsBlog(viewsBlog);
@@ -710,14 +710,14 @@ public class LogService {
             } else {
                 uniCategories = universalCategoriesDLCRepo.getLast();
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
-                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers);
+                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber);
                 uniCategories.setBesucherArticle(uniCategories.getBesucherArticle() + userArticle);
                 uniCategories.setBesucherNews(uniCategories.getBesucherNews() + userNews);
                 uniCategories.setBesucherBlog(uniCategories.getBesucherBlog() + userBlog);
                 uniCategories.setBesucherPodcast(uniCategories.getBesucherPodcast() + userPodcast);
                 uniCategories.setBesucherWhitepaper(uniCategories.getBesucherWhitepaper() + userWhitepaper);
                 uniCategories.setBesucherRatgeber(uniCategories.getBesucherRatgeber() + userRatgeber);
-                uniCategories.setViewsGlobal(totalClicks + uniCategories.getViewsGlobal());
+                uniCategories.setViewsGlobal(totalClicks + uniCategories.getViewsGlobal() - - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber);
                 uniCategories.setViewsArticle(viewsArticle + uniCategories.getViewsArticle());
                 uniCategories.setViewsNews(viewsNews + uniCategories.getBesucherNews());
                 uniCategories.setViewsBlog(viewsBlog + uniCategories.getViewsBlog());

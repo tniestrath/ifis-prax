@@ -399,8 +399,25 @@ public class LogService {
 
     public void findAMatch(SysVar sysVar) throws IOException, ParseException {
         String line;
+
         int totalClicks = 0;
+        int viewsArticle = 0;
+        int viewsNews = 0;
+        int viewsBlog = 0;
+        int viewsPodcast = 0;
+        int viewsWhitepaper = 0;
+        int viewsRatgeber = 0;
+
+
         int uniqueUsers = 0;
+        int userArticle = 0;
+        int userNews = 0;
+        int userBlog = 0;
+        int userPodcast = 0;
+        int userWhitepaper = 0;
+        int userRatgeber = 0;
+
+
         Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();
         Map<String,Long> viewsByHour = new HashMap<>();
         while ((line = br.readLine()) != null ) {
@@ -416,14 +433,16 @@ public class LogService {
                 boolean isAPI = pre_Matched.group(3).contains("/api/");
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
-                if(isUnique) uniqueUsers++;
 
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
                     setViewsByLocation(pre_Matched.group(1), viewsByLocation);
                     erhoeheViewsPerHour2(viewsByHour, dateLog.toLocalTime());
+
+                    //erhöhe Clicks und Besucher, falls anwendbar
                     totalClicks++;
+                    if(isUnique) uniqueUsers++;
 
                     if (matched_articleView.find()) {
                         Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
@@ -436,8 +455,12 @@ public class LogService {
                             //System.out.println(line+"NO SEARCH");
                             processLine(line, "articleView", matched_articleView);
                         }
+                        //Erhöhe Clicks für Artikel um 1.
+                        viewsArticle++;
+
                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                         if(isUnique) {
+                            userArticle++;
                             user = new UniqueUser();
                             user.setCategory("article");
                             user.setIp(pre_Matched.group(1));
@@ -458,9 +481,12 @@ public class LogService {
                                 processLine(line, "blogView", matched_blogView);
                                 // System.out.println(line+" NO SEARCH");
                             }
+                            //Erhöhe Clicks für Blog um 1.
+                            viewsBlog++;
 
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if(isUnique) {
+                                userBlog++;
                                 user = new UniqueUser();
                                 user.setCategory("blog");
                                 user.setIp(pre_Matched.group(1));
@@ -484,15 +510,19 @@ public class LogService {
                                     processLine(line, "newsView", matched_newsView);
                                     // System.out.println(line+" NO SEARCH");
                                 }
+                                //Erhöhe Clicks für News um 1.
+                                viewsNews++;
 
                                 //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                 if(isUnique) {
+                                    userNews++;
                                     user = new UniqueUser();
                                     user.setCategory("news");
                                     user.setIp(pre_Matched.group(1));
                                     uniqueUserRepo.save(user);
                                 }
-                            } else {
+                            }
+                            else {
                                 Matcher matched_whitepaperView = patternWhitepaperView.matcher(line);
 
                                 if (matched_whitepaperView.find()) {
@@ -503,22 +533,29 @@ public class LogService {
                                     } else {
                                         processLine(line, "whitepaperView", matched_whitepaperView);
                                     }
+                                    //Erhöhe Clicks für Whitepaper um 1.
+                                    viewsWhitepaper++;
 
                                     //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                     if(isUnique) {
+                                        userWhitepaper++;
                                         user = new UniqueUser();
                                         user.setCategory("whitepaper");
                                         user.setIp(pre_Matched.group(1));
                                         uniqueUserRepo.save(user);
                                     }
-                                } else {
+                                }
+                                else {
                                     Matcher matched_podcastView = patternPodcast.matcher(line);
 
                                     if (matched_podcastView.find()) {
                                         //ToDo maybe implement SearchSuccess if applicable
                                         processLine(line, "podcastView", matched_podcastView);
+                                        //Erhöhe Clicks für Podcast um 1.
+                                        viewsPodcast++;
                                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                         if(isUnique) {
+                                            userPodcast++;
                                             user = new UniqueUser();
                                             user.setCategory("podcast");
                                             user.setIp(pre_Matched.group(1));
@@ -551,6 +588,7 @@ public class LogService {
                         processLine(line, "refferer", matched_reffererPattern);
                     }
 
+                    //If user doesnt exist and is unique, make a new one.
                     if(user == null) {
                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                         if(isUnique) {
@@ -564,6 +602,8 @@ public class LogService {
                 }
             }
         }
+
+        //A bunch of variables necessary to update UniStats
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
         dateStirng += Calendar.getInstance().get(Calendar.MONTH) + 1  < 10 ? "0" + Calendar.getInstance().get(Calendar.MONTH) + 1 : Calendar.getInstance().get(Calendar.MONTH) + 1;
@@ -571,75 +611,101 @@ public class LogService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(dateStirng);
-
-
-        UniversalStats uni;
-        if(dateStirng.equalsIgnoreCase(uniLastDateString)) {
-            uni = uniRepo.findTop1ByOrderByDatumDesc();
-            uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
-            uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
-            MapHelper.mergeLocationMaps(viewsByLocation, uni.getViewsByLocation());
-            uni.setViewsByLocation(viewsByLocation);
-            MapHelper.mergeTimeMaps(viewsByHour, uni.getViewsPerHour());
-            uni.setViewsPerHour(viewsByHour);
-            uni.setAnbieterProfileAnzahl(wpUserRepo.count());
-            uni = setNewsArticelBlogCountForUniversalStats(date,uni);
-            uni = setAccountTypeAllUniStats(uni);
-        } else {
-            uni = new UniversalStats();
-            uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
-            uni.setTotalClicks(totalClicks);
-            uni.setViewsByLocation(viewsByLocation);
-            uni.setViewsPerHour(viewsByHour);
-            uni.setAnbieterProfileAnzahl(wpUserRepo.count());
-            uni = setNewsArticelBlogCountForUniversalStats(date,uni);
-            uni = setAccountTypeAllUniStats(uni);
-            uni.setDatum(date);
-        }
-        uniRepo.save(uni);
         int curHour = LocalDateTime.now().getHour();
 
-        //update the current hour
+        //Updating UniversalStats
+        {
+            UniversalStats uni;
+            {
+                if (dateStirng.equalsIgnoreCase(uniLastDateString)) {
+                    uni = uniRepo.findTop1ByOrderByDatumDesc();
+                    uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+                    uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
+                    MapHelper.mergeLocationMaps(viewsByLocation, uni.getViewsByLocation());
+                    uni.setViewsByLocation(viewsByLocation);
+                    MapHelper.mergeTimeMaps(viewsByHour, uni.getViewsPerHour());
+                    uni.setViewsPerHour(viewsByHour);
+                    uni.setAnbieterProfileAnzahl(wpUserRepo.count());
+                    uni = setNewsArticelBlogCountForUniversalStats(date, uni);
+                    uni = setAccountTypeAllUniStats(uni);
+                } else {
+                    uni = new UniversalStats();
+                    uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+                    uni.setTotalClicks(totalClicks);
+                    uni.setViewsByLocation(viewsByLocation);
+                    uni.setViewsPerHour(viewsByHour);
+                    uni.setAnbieterProfileAnzahl(wpUserRepo.count());
+                    uni = setNewsArticelBlogCountForUniversalStats(date, uni);
+                    uni = setAccountTypeAllUniStats(uni);
+                    uni.setDatum(date);
+                }
+                uniRepo.save(uni);
+            }
+        }
+
+        //Update UniversalStatsHourly for this hour
         UniversalStatsHourly uniHourly;
-        if(uniHourlyRepo.getByStunde(curHour) != null) {
-            uniHourly = uniHourlyRepo.getByStunde(curHour);
-            uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (long) uniqueUsers);
-            uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
-            uniHourly.setViewsByLocation(viewsByLocation);
-            uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
-            setNewsArticelBlogCountForUniversalStats(uniHourly);
-            setAccountTypeAllUniStats(uniHourly);
-        } else {
-            uniHourly = new UniversalStatsHourly();
-            uniHourly.setBesucherAnzahl((long) uniqueUsers);
-            uniHourly.setTotalClicks((long) totalClicks);
-            uniHourly.setViewsByLocation(viewsByLocation);
-            uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
-            setNewsArticelBlogCountForUniversalStats(uniHourly);
-            setAccountTypeAllUniStats(uniHourly);
-            uniHourly.setStunde(LocalDateTime.now().getHour());
+        {
+            if (uniHourlyRepo.getByStunde(curHour) != null) {
+                uniHourly = uniHourlyRepo.getByStunde(curHour);
+                uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (long) uniqueUsers);
+                uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
+                uniHourly.setViewsByLocation(viewsByLocation);
+                uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
+                setNewsArticelBlogCountForUniversalStats(uniHourly);
+                setAccountTypeAllUniStats(uniHourly);
+            } else {
+                uniHourly = new UniversalStatsHourly();
+                uniHourly.setBesucherAnzahl((long) uniqueUsers);
+                uniHourly.setTotalClicks((long) totalClicks);
+                uniHourly.setViewsByLocation(viewsByLocation);
+                uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
+                setNewsArticelBlogCountForUniversalStats(uniHourly);
+                setAccountTypeAllUniStats(uniHourly);
+                uniHourly.setStunde(LocalDateTime.now().getHour());
+            }
         }
 
-        //Delete the upcoming hour
-        if(LocalDateTime.now().getHour() != 23) {
-            UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(curHour + 1);
-            System.out.println("BEEP BOOP BEEP BOOP BINGBING" + uniHourly1.getStunde());
-            uniHourly1.setViewsByLocation(null);
-            uniHourly1.setTotalClicks(0L);
-            uniHourly1.setBesucherAnzahl(0L);
-            uniHourlyRepo.save(uniHourly1);
-        } else {
-            UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(0);
-            uniHourly1.setViewsByLocation(null);
-            uniHourly1.setTotalClicks(0L);
-            uniHourly1.setBesucherAnzahl(0L);
-            uniHourlyRepo.save(uniHourly1);
+        //Delete the values of the upcoming hour
+        {
+            if (LocalDateTime.now().getHour() != 23) {
+                UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(curHour + 1);
+                System.out.println("BEEP BOOP BEEP BOOP BINGBING" + uniHourly1.getStunde());
+                uniHourly1.setViewsByLocation(null);
+                uniHourly1.setTotalClicks(0L);
+                uniHourly1.setBesucherAnzahl(0L);
+                uniHourlyRepo.save(uniHourly1);
+            } else {
+                UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(0);
+                uniHourly1.setViewsByLocation(null);
+                uniHourly1.setTotalClicks(0L);
+                uniHourly1.setBesucherAnzahl(0L);
+                uniHourlyRepo.save(uniHourly1);
+            }
+            uniHourlyRepo.save(uniHourly);
         }
 
-
-
-
-        uniHourlyRepo.save(uniHourly);
+        //Update UniversalStats with categories
+        {
+            UniversalCategoriesDLC uniCategories = new UniversalCategoriesDLC();
+            uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
+            uniCategories.setStunde(curHour);
+            uniCategories.setBesucherGlobal(uniqueUsers);
+            uniCategories.setBesucherArticle(userArticle);
+            uniCategories.setBesucherNews(userNews);
+            uniCategories.setBesucherBlog(userBlog);
+            uniCategories.setBesucherPodcast(userPodcast);
+            uniCategories.setBesucherWhitepaper(userWhitepaper);
+            uniCategories.setBesucherRatgeber(userRatgeber);
+            uniCategories.setViewsGlobal(totalClicks);
+            uniCategories.setViewsArticle(viewsArticle);
+            uniCategories.setViewsNews(viewsNews);
+            uniCategories.setViewsBlog(viewsBlog);
+            uniCategories.setViewsPodcast(viewsPodcast);
+            uniCategories.setViewsWhitepaper(viewsWhitepaper);
+            uniCategories.setViewsRatgeber(viewsRatgeber);
+            universalCategoriesDLCRepo.save(uniCategories);
+        }
 
 
     }
@@ -719,49 +785,6 @@ public class LogService {
 
     @Scheduled(cron = "0 50 0 * * ?")
     public void endDay() throws JSONException, ParseException {
-        UniversalCategoriesDLC uniCategories = new UniversalCategoriesDLC();
-
-        uniCategories.setId(uniRepo.getSecondLastUniStats().get(1).getId());
-
-        uniCategories.setBesucherGlobal(uniqueUserRepo.getUserCountByCategory("global"));
-        uniCategories.setBesucherArticle(uniqueUserRepo.getUserCountByCategory("article"));
-        uniCategories.setBesucherNews(uniqueUserRepo.getUserCountByCategory("news"));
-        uniCategories.setBesucherBlog(uniqueUserRepo.getUserCountByCategory("blog"));
-        uniCategories.setBesucherPodcast(uniqueUserRepo.getUserCountByCategory("podcast"));
-        uniCategories.setBesucherWhitepaper(uniqueUserRepo.getUserCountByCategory("whitepaper"));
-        uniCategories.setBesucherRatgeber(uniqueUserRepo.getUserCountByCategory("ratgeber"));
-
-        int viewsGlobal;
-        int viewsArticle = 0;
-        int viewsNews = 0;
-        int viewsBlog = 0;
-        int viewsPodcast = 0;
-        int viewsWhitepaper = 0;
-        int viewsRatgeber = 0;
-
-        for(Post post : postRepository.findAllUserPosts()) {
-            switch(postController.getType(post.getId())) {
-                case("article") : viewsArticle += statsRepo.getClicksByArtId(post.getId());
-                case("news") : viewsNews += statsRepo.getClicksByArtId(post.getId());
-                case("blog") : viewsBlog += statsRepo.getClicksByArtId(post.getId());
-                case("podcast") : viewsPodcast += statsRepo.getClicksByArtId(post.getId());
-                case("whitepaper") : viewsWhitepaper += statsRepo.getClicksByArtId(post.getId());
-                case("ratgeber") : viewsRatgeber += statsRepo.getClicksByArtId(post.getId());
-            }
-        }
-        viewsGlobal = (int) (uniRepo.getSecondLastUniStats().get(1).getTotalClicks() - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber);
-
-
-        uniCategories.setViewsGlobal(viewsGlobal);
-        uniCategories.setViewsArticle(viewsArticle);
-        uniCategories.setViewsNews(viewsNews);
-        uniCategories.setViewsBlog(viewsBlog);
-        uniCategories.setViewsPodcast(viewsPodcast);
-        uniCategories.setViewsWhitepaper(viewsWhitepaper);
-        uniCategories.setViewsRatgeber(viewsRatgeber);
-
-        universalCategoriesDLCRepo.save(uniCategories);
-
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
         uniqueUserRepo.deleteAll();
     }

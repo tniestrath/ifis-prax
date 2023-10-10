@@ -3,6 +3,7 @@ package com.analysetool.api;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -977,6 +978,93 @@ public class PostController {
         }
         return new JSONArray(stats).toString();
     }
+
+/*    @GetMapping("/getSimilarPostByTagSimilarity")
+    public String getSimilarPostByTagSimilarity(@RequestParam long postId,@RequestParam float similarityPercentage) throws JSONException {
+        List<Long> tagTaxIdsForPostGiven= termRelRepo.getTaxIdByObject(postId);
+        List<Long> tagIdsForPostGiven= taxTermRepo.getTermIdByTaxId(tagTaxIdsForPostGiven);
+        List<wp_term_relationships> tagTaxIds= termRelRepo.findAll();
+        JSONArray Ergebnis = new JSONArray();
+        List<PostStats> postStats= new ArrayList<>(); // z.b.  PostStats findByArtIdAndAndYear(long artid,int year);
+
+        //...
+
+        for(PostStats p :postStats){
+            JSONObject obj = new JSONObject();
+            obj.put("postId",p.getArtId());
+            obj.put("relevance",p.getRelevance());
+        }
+        return Ergebnis.toString();
+    }*/
+
+    /**
+     * Endpoint to retrieve posts with similar tags based on a similarity percentage.
+     *
+     * <p>
+     * This endpoint fetches posts that have tags similar to the given post,
+     * based on a provided similarity percentage threshold. For example, if the similarity
+     * percentage is set to 50, it will fetch posts that share at least 50% of their tags
+     * with the given post.
+     * </p>
+     *
+     * <p>
+     * The result includes the post ID, similarity percentage, and relevance. Relevance is retrieved
+     * from the `PostStats` repository for the current year.
+     * </p>
+     *
+     * @param postId The ID of the post for which to find similar posts.
+     * @param similarityPercentage The minimum percentage of tag similarity required to consider a post as similar.
+     *
+     * @return A JSON string representation of posts with their ID, similarity percentage, and relevance.
+     *
+     * @throws JSONException If any error occurs during JSON processing.
+     */
+    @GetMapping("/getSimilarPostByTagSimilarity")
+    public String getSimilarPostByTagSimilarity(@RequestParam long postId, @RequestParam float similarityPercentage) throws JSONException {
+        List<Long> termTaxonomyIdsForPostGiven = termRelRepo.getTaxIdByObject(postId);
+        List<Long> tagIdsForPostGiven = taxTermRepo.getTermIdByTaxId(termTaxonomyIdsForPostGiven);
+
+        JSONArray Ergebnis = new JSONArray();
+        Map<Long, Float> postAndSimilarityMap = new HashMap<>();
+
+        // Liste aller Posts holen
+        List<wp_term_relationships> allPostsRelationships = termRelRepo.findAll();
+        for (wp_term_relationships otherPostRel : allPostsRelationships) {
+            Long otherPostId = otherPostRel.getObjectId();
+            if (otherPostId.equals(postId)) continue; // Ignoriere den gegebenen Post
+
+            List<Long> termTaxonomyIdsForOtherPost = termRelRepo.getTaxIdByObject(otherPostId);
+            List<Long> tagIdsForOtherPost = taxTermRepo.getTermIdByTaxId(termTaxonomyIdsForOtherPost);
+
+            // Ähnlichkeit der Tags berechnen
+            int commonTagsCount = (int) tagIdsForPostGiven.stream().filter(tag -> tagIdsForOtherPost.contains(tag)).count();
+            float currentSimilarityPercentage = (commonTagsCount * 1.0f / tagIdsForPostGiven.size()) * 100;
+
+            if (currentSimilarityPercentage >= similarityPercentage) {
+                postAndSimilarityMap.put(otherPostId, currentSimilarityPercentage);
+            }
+        }
+
+        int currentYear = LocalDate.now().getYear();
+
+        for (Map.Entry<Long, Float> entry : postAndSimilarityMap.entrySet()) {
+            JSONObject obj = new JSONObject();
+            Long otherPostId = entry.getKey();
+            PostStats postStat = statsRepo.findByArtIdAndAndYear(otherPostId, currentYear);
+
+            obj.put("postId", otherPostId);
+            obj.put("similarity", entry.getValue());
+            obj.put("relevance", postStat.getRelevance());
+
+            Ergebnis.put(obj);
+        }
+
+        return Ergebnis.toString();
+    }
+
+
+
+
 
 }
 

@@ -1239,66 +1239,6 @@ public class LogService {
         return viewsPerHour;
     }
 
-    //ToDo Toten Code aufräumen
-  /*  public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
-        try{
-            long id =postRepository.getIdByName(matcher.group(6));
-            checkTheTag(id,true);
-            if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
-                PostStats stats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
-                long views = stats.getClicks();
-                views ++;
-                long searchSuccess= stats.getSearchSuccess();
-            searchSuccess ++;
-            LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-            LocalDateTime Now =  LocalDateTime.now();
-            Duration duration = Duration.between(PostTimestamp, Now);
-            long diffInDays = duration.toDays();
-            float Performance = views;
-            if (diffInDays>0&&views > 0){
-                Performance = (float)views/diffInDays;
-            }
-            statsRepo.updateClicksSearchSuccessRateAndPerformance(id,views,searchSuccess,Performance);
-           // updateDailyClicks(id);
-            erhoeheWertFuerHeutigesDatum( id);
-        }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,1,1,0,(float) 0));
-            //updateDailyClicks(id);
-            erhoeheWertFuerHeutigesDatum( id);
-        }
-            }
-    catch(Exception e){
-
-            System.out.println("IGNORE "+matcher.group(2).substring(0,matcher.group(2).length()-1)+" BECAUSE: "+e.getMessage());
-    }
-    }*/
-    //ToDo Toten Code aufräumen
-   /* public void UpdatePerformanceAndViews(Matcher matcher) {
-        try{
-            long id =postRepository.getIdByName(matcher.group(6));
-            checkTheTag(id,false);
-            if (statsRepo.existsByArtId(id)){
-            long views = statsRepo.getClicksByArtId(id);
-            views ++;
-                LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-                LocalDateTime Now =  LocalDateTime.now();
-                Duration duration = Duration.between(PostTimestamp, Now);
-                long diffInDays = duration.toDays();
-                float Performance = views;
-                if (diffInDays>0&&views > 0){
-                    Performance = (float)views/diffInDays;
-                }
-
-                statsRepo.updateClicksAndPerformanceByArtId(views,id,Performance);
-                //updateDailyClicks(id);
-                erhoeheWertFuerHeutigesDatum( id);
-        }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,1,0,0,(float) 0));//updateDailyClicks(id);
-                erhoeheWertFuerHeutigesDatum( id);}
-            }
-    catch(Exception e){
-            System.out.println("IGNORE "+matcher.group(2).substring(0,matcher.group(2).length()-1)+" BECAUSE: "+e.getMessage());
-       // e.printStackTrace();
-    }
-    }*/
    public void UpdatePerformanceAndViews(Matcher matcher) {
        if (!matcher.group(6).matches("\\d+")){
        // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher

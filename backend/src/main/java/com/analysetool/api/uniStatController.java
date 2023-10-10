@@ -183,32 +183,102 @@ public class uniStatController {
         return html;
     }
 
+
+    /**
+     *
+     * @param date : das Datum, für das die UniStatsNach Kategorie ausgegeben werden sollen.
+     * @param hour : die Stunde, für die ausgegeben werden sollen.
+     * @return eine Liste der Anzahl von Clicks und Besucher nach Category des letzten abgeschlossenen Tages.
+     *      * 0-6 clicks, 7-13 besucher, global-article-news-blog-podcast-whitepaper-ratgeber in order.
+     */
+    @GetMapping("getCallupByCategoryDateAndHour")
+    public List<Integer> getCallupByCategoryHourly(String date, int hour) throws ParseException {
+        List<Integer> clicksByCategory = new ArrayList<>();
+
+        int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
+
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsGlobal());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsArticle());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsNews());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsBlog());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPodcast());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsWhitepaper());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeber());
+
+        List<Integer> besucherByCategory = new ArrayList<>();
+
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherGlobal());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherArticle());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherNews());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherBlog());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPodcast());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherWhitepaper());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeber());
+
+        clicksByCategory.addAll(besucherByCategory);
+        return clicksByCategory;
+    }
+
+    /**
+     *
+     * @param date : Das Datum, für die zusammengefasste Stats ausgegeben werden sollen.
+     * @return eine Liste der Anzahl von Clicks und Besucher nach Category des letzten abgeschlossenen Tages.
+     *      * 0-6 clicks, 7-13 besucher, global-article-news-blog-podcast-whitepaper-ratgeber in order.
+     */
+    @GetMapping("getCallupByCategoryDate")
+    public List<Integer> getCallupByCategoryDaily(String date) throws ParseException {
+        List<Integer> clicksByCategory = new ArrayList<>();
+
+        int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
+
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsGlobalByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsArticleByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsBlogByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPodcastByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberByUniStatId(id));
+
+        List<Integer> besucherByCategory = new ArrayList<>();
+
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserGlobalByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserArticleByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNewsByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserBlogByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPodcastByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberByUniStatId(id));
+
+        clicksByCategory.addAll(besucherByCategory);
+        return clicksByCategory;
+    }
+
     /**
      *
      * @return eine Liste der Anzahl von Clicks und Besucher nach Category des letzten abgeschlossenen Tages.
      * 0-6 clicks, 7-13 besucher, global-article-news-blog-podcast-whitepaper-ratgeber in order.
      */
     @GetMapping("getCallupByCategory")
-    public List<Integer> getCallupByCategory() {
+    public List<Integer> getCallupByCategory(int hour) {
         List<Integer> clicksByCategory = new ArrayList<>();
 
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getViewsGlobal());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getViewsArticle());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getViewsNews());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getViewsBlog());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getViewsPodcast());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getViewsWhitepaper());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getViewsRatgeber());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getViewsGlobal());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getViewsArticle());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getViewsNews());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getViewsBlog());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getViewsPodcast());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getViewsWhitepaper());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getViewsRatgeber());
 
         List<Integer> besucherByCategory = new ArrayList<>();
 
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getBesucherGlobal());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getBesucherArticle());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getBesucherNews());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getBesucherBlog());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getBesucherPodcast());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getBesucherWhitepaper());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(1).getId()).getBesucherRatgeber());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getBesucherGlobal());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getBesucherArticle());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getBesucherNews());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getBesucherBlog());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getBesucherPodcast());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getBesucherWhitepaper());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(1).getId(), hour).getBesucherRatgeber());
 
         clicksByCategory.addAll(besucherByCategory);
         return clicksByCategory;
@@ -222,24 +292,25 @@ public class uniStatController {
     @GetMapping("getCallupByCategoryLive")
     public List<Integer> getCallupByCategoryLive() {
         List<Integer> clicksByCategory = new ArrayList<>();
+        int hour = universalCategoriesDLCRepo.getLastStunde();
 
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getViewsGlobal());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getViewsArticle());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getViewsNews());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getViewsBlog());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getViewsPodcast());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getViewsWhitepaper());
-        clicksByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getViewsRatgeber());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getViewsGlobal());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getViewsArticle());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getViewsNews());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getViewsBlog());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getViewsPodcast());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getViewsWhitepaper());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getViewsRatgeber());
 
         List<Integer> besucherByCategory = new ArrayList<>();
 
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getBesucherGlobal());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getBesucherArticle());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getBesucherNews());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getBesucherBlog());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getBesucherPodcast());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getBesucherWhitepaper());
-        besucherByCategory.add(universalCategoriesDLCRepo.getById(uniRepo.getSecondLastUniStats().get(0).getId()).getBesucherRatgeber());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getBesucherGlobal());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getBesucherArticle());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getBesucherNews());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getBesucherBlog());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getBesucherPodcast());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getBesucherWhitepaper());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uniRepo.getSecondLastUniStats().get(0).getId(), hour).getBesucherRatgeber());
 
         clicksByCategory.addAll(besucherByCategory);
         return clicksByCategory;

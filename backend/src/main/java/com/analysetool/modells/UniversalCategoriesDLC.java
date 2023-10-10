@@ -1,17 +1,20 @@
 package com.analysetool.modells;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "universal_categoriesdlc")
 public class UniversalCategoriesDLC {
 
     @Id
-    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name="uni_stat_id")
+    private int uniStatId;
+
+    @Column(name="stunde")
+    private int stunde;
 
     @Column(name="besucher_global")
     private int besucherGlobal;
@@ -173,6 +176,22 @@ public class UniversalCategoriesDLC {
 
     public void setBesucherArticle(int besucherArticle) {
         this.besucherArticle = besucherArticle;
+    }
+
+    public int getUniStatId() {
+        return uniStatId;
+    }
+
+    public void setUniStatId(int uniStatId) {
+        this.uniStatId = uniStatId;
+    }
+
+    public int getStunde() {
+        return stunde;
+    }
+
+    public void setStunde(int stunde) {
+        this.stunde = stunde;
     }
 }
 

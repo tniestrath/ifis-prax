@@ -2,9 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent, TooltipItem} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
-import _default from "chart.js/dist/plugins/plugin.legend";
-import labels = _default.defaults.labels;
-import {time} from "html2canvas/dist/types/css/types/time";
+import {log10} from "chart.js/helpers";
 
 export class Callup {
   clicks : number = 0;
@@ -29,6 +27,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
   timeSpan : string = "month";
 
   data : Callup[] = [];
+  time_filtered : Callup[] = [];
 
   timeSpanMap = new Map<string, number>([
     ["all_time", 365*2],
@@ -49,26 +48,26 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365*2)).then((res : Callup[]) => {
         this.data = res;
 
-        var time_filtered : Callup[] = this.data;
+        this.time_filtered = this.data;
 
 
         if (this.timeSpan == "day"){
-          time_filtered.sort((a, b) => {
+          this.time_filtered.sort((a, b) => {
             return Number.parseInt(a.date) - Number.parseInt(b.date);
           });
-          let sublist  = time_filtered.splice(0, system_time +1);
-          time_filtered.push(...sublist);
+          let sublist  = this.time_filtered.splice(0, system_time +1);
+          this.time_filtered.push(...sublist);
         } else {
-          time_filtered.sort((a, b) => {
+          this.time_filtered.sort((a, b) => {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
           });
         }
 
-        this.createChart(time_filtered, this.timeSpan);
+        this.createChart(this.time_filtered, this.timeSpan);
       });
     });
     this.db.getCallupsByCategoriesNewest().then(res => {
-      this.createCategoriesChart(res.slice(0, 6), res.slice(7), "heude schmeude")
+      this.createCategoriesChart(res.slice(0, 6), res.slice(7), "Heute")
     })
   }
   ngOnInit(): void {
@@ -81,14 +80,12 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       this.categories_chart.destroy();
     }
 
-    clicksData = [2,3,4,5,6];
-    visitorsData = [1,1,2,2,3];
     // @ts-ignore
     this.categories_chart = new Chart("categories-chart", {
       type: "bar",
       data:
         {
-        labels: ["Generell","Artikel","News","Blog","Podcast","Whitepaper","Ratgeber"],
+        labels: ["Undefiniert","Artikel","News","Blog","Podcast","Whitepaper","Ratgeber"],
         datasets: [
           {
             label: "Besucher",
@@ -126,7 +123,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
             display: false
           },
           title: {
-            display: false,
+            display: true,
             text: timestamp,
             position: "top",
             fullSize: true,
@@ -186,6 +183,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
 
     const max = Math.max.apply(null, clicksData);
 
+    // @ts-ignore
     // @ts-ignore
     this.chart = new Chart("uni-chart", {
       type: "line",
@@ -268,9 +266,25 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           mode: "x",
           intersect: true
         },
-        onClick(event: ChartEvent, elements: ActiveElement[]) {
-        },
+        onClick: this.onClickHandler.bind(this, this.timeSpan, this.time_filtered)
       }
     })
   }
+
+  public onClickHandler(timeSpan : string, callups : Callup[], event : ChartEvent, chartElements : any){
+    this.getCategoriesData(callups[chartElements.at(0).index].date, timeSpan);
+  }
+
+  public getCategoriesData(date : string, timespan : string){
+    if (timespan != "day"){
+      this.db.getCallupsByCategoriesByDate(date).then(res => {
+        this.createCategoriesChart(res.slice(0, 6), res.slice(7), date);
+      });
+    } else if (timespan == "day"){
+      this.db.getCallupsByCategoriesByDateTime(Util.getFormattedNow(), Number(date)).then(res => {
+        this.createCategoriesChart(res.slice(0, 6), res.slice(7), date + " Uhr");
+      });
+    }
+  }
+
 }

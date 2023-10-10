@@ -41,6 +41,12 @@ export default class Util {
     return formattedDate;
   }
 
+  static getFormattedNow(){
+    let now = new Date(Date.now());
+    let formatteddate = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+    return formatteddate;
+  }
+
 
 
   static readFormattedDate(date : string){

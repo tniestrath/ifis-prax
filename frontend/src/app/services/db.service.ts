@@ -6,6 +6,7 @@ import {Post} from "../component/post/Post";
 import {User} from "../page/page-einzel/user/user";
 import {Callup} from "../component/call-up-chart/call-up-chart.component";
 import {SystemUsage} from "../component/system/systemload/systemload.component";
+import Util from "../util/Util";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -45,7 +46,9 @@ export enum dbUrl {
   GET_POSTS_TOP_BY_SORTER = "/posts/getTopWithType?sorter=SORTER&type=TYPE&limit=LIMIT",
 
   GET_CALLUPS_BY_TIME = "/bericht/callups?days=DAYS",
-  GET_CALLUP_CATEGORIES_NEWEST = "/bericht/getCallupByCategoryLive",
+  GET_CALLUP_CATEGORIES_NEWEST = "/bericht/getCallupByCategoryDate?date=NOW",
+  GET_CALLUP_CATEGORIES_BY_DATE = "/bericht/getCallupByCategoryDate?date=DATE",
+  GET_CALLUP_CATEGORIES_BY_DATETIME = "/bericht/getCallupByCategoryDateAndHour?date=DATE&hour=HOUR",
 
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/bericht/getAccountTypeAllYesterday",
   GET_VIEWS_BY_LOCATION_BY_DAYSBACK = "/bericht/getViewsByLocationLast14",
@@ -231,7 +234,13 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_CALLUPS_BY_TIME.replace("DAYS", String(days))), {credentials: "include"}).then(res => res.json());
   }
   async getCallupsByCategoriesNewest() : Promise<number[]>{
-    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_NEWEST), {credentials: "include"}).then(res => res.json());
+    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_NEWEST).replace("NOW", Util.getFormattedNow), {credentials: "include"}).then(res => res.json());
+  }
+  async getCallupsByCategoriesByDateTime(date : string, hour : number) :Promise<number[]>{
+    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATETIME).replace("DATE", date).replace("HOUR", String(hour)), {credentials: "include"}).then(res => res.json());
+  }
+  async getCallupsByCategoriesByDate(date : string) :Promise<number[]>{
+    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", date), {credentials: "include"}).then(res => res.json());
   }
 
   async getUserAccountTypesYesterday() {

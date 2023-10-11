@@ -9,7 +9,7 @@ public class MathHelper {
     //Mean = Mittelwert
     //StandartDeviation = Standartabweichung
     //AbsoluteDeviation = echte Abweichung
-    //rest siehe doc 
+    //rest siehe doc
 
     // Für float
     /**

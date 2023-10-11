@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-
+import com.analysetool.util.MathHelper;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -1045,6 +1045,54 @@ public class PostController {
 
         return Ergebnis.toString();
     }
+
+    /**
+     * Gibt ein JSONArray zurück, das zwei Arrays enthält:
+     * 1. Ähnliche Posts basierend auf der Tag-Ähnlichkeit, ausgenommen die als Ausreißer identifizierten Posts.
+     * 2. Die als Ausreißer identifizierten Posts basierend auf ihrer Relevanz.
+     *
+     * @param postId Der ID des Posts, für den ähnliche Posts gesucht werden sollen.
+     * @param similarityPercentage Der Mindestprozentsatz der Tag-Ähnlichkeit, um als ähnlicher Post betrachtet zu werden.
+     * @return Ein JSONArray, das die ähnlichen Posts und die Ausreißer enthält.
+     * @throws JSONException Bei Problemen bei der Erstellung des JSONArrays.
+     */
+    @GetMapping("/getSimilarPostsAndOutliers")
+    public String getSimilarPostsAndOutliers(@RequestParam long postId, @RequestParam float similarityPercentage) throws JSONException {
+        // 1. Das Ergebnis der getSimilarPostByTagSimilarity Methode abrufen
+        JSONArray originalPostsArray = new JSONArray(getSimilarPostByTagSimilarity(postId, similarityPercentage));
+
+        // 2. Eine Liste der Relevanzwerte aus dem JSONArray extrahieren
+        List<Float> relevanceList = new ArrayList<>();
+        for (int i = 0; i < originalPostsArray.length(); i++) {
+            JSONObject obj = originalPostsArray.getJSONObject(i);
+            relevanceList.add((float) obj.getDouble("relevance"));
+        }
+
+        // 3. Die Ausreißer basierend auf den Relevanzwerten mit Hilfe der getOutliersFloat Methode ermitteln
+        List<Float> outliersValues = MathHelper.getOutliersFloat(relevanceList);
+
+        JSONArray postsArray = new JSONArray();
+        JSONArray outliersArray = new JSONArray();
+
+        for (int i = 0; i < originalPostsArray.length(); i++) {
+            JSONObject obj = originalPostsArray.getJSONObject(i);
+            float relevance = (float) obj.getDouble("relevance");
+
+            if (outliersValues.contains(relevance)) {
+                outliersArray.put(obj);
+            } else {
+                postsArray.put(obj);
+            }
+        }
+
+        // 4. Ein neues JSONArray erstellen, das das bereinigte Ergebnis und die Ausreißer enthält
+        JSONArray combinedResult = new JSONArray();
+        combinedResult.put(postsArray);
+        combinedResult.put(outliersArray);
+
+        return combinedResult.toString();
+    }
+
 
 
 

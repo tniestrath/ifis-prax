@@ -80,6 +80,9 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       this.categories_chart.destroy();
     }
 
+    var c_max = Math.max(...clicksData);
+    var v_max = Math.max(...visitorsData);
+
     // @ts-ignore
     this.categories_chart = new Chart("categories-chart", {
       type: "bar",
@@ -112,15 +115,23 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         scales: {
           y: {
             min: 0,
-            stack: "1"
+            stacked: false,
           },
           x: {
-            display: true
+            stacked: true
           }
         },
         plugins: {
           datalabels: {
-            display: false
+            display: (ctx) => {
+              if (clicksData[ctx.dataIndex] >= (c_max * 0.1) || visitorsData[ctx.dataIndex] >= (v_max * 0.1)){
+                return true;
+              }
+              return false;
+            },
+            font: {
+              size: 8
+            }
           },
           title: {
             display: true,

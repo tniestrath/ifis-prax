@@ -2,7 +2,7 @@
   <canvas id="user_plan_chart">{{chart}}</canvas>
   <div class="legend-box user-plan-content-box">
     <div id="user-plan-item-head">
-      <p>Registriert: </p><p>{{chart_total}}</p><p>{{prev_total_text}}</p>
+      <p>Registriert: </p><div [ngStyle]="{display: 'flex', flexDirection: 'row',  width: '35%', justifyContent: 'space-between'}"><p>{{chart_total}}</p><p>{{prev_total_text}}</p></div>
     </div>
       <div id="legend-box">
         <ul style="display: flex; flex-direction: column; margin: 0px; padding: 0px; height: 100%;">
@@ -12,8 +12,8 @@
               </span>
               <p style="margin: 0px;">Ohne Abo:</p>
             </div>
-            <div style="display: flex; flex-direction: row;">
-              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[0]}}</p>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[0]}}</p>
               <p style="margin: 0;">{{prev_data[0] >= 0 ? "+" + prev_data[0] : prev_data[0].toString()}}</p>
             </div>
           </li>
@@ -23,8 +23,8 @@
               </span>
               <p style="margin: 0px;">Basis:</p>
             </div>
-            <div style="display: flex; flex-direction: row;">
-              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[1]}}</p>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[1]}}</p>
               <p style="margin: 0;">{{prev_data[1] >= 0 ? "+" + prev_data[1] : prev_data[1].toString()}}</p>
             </div>
           </li>
@@ -34,8 +34,8 @@
               </span>
               <p style="margin: 0px;">Basis-Plus:</p>
             </div>
-            <div style="display: flex; flex-direction: row;">
-              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[2]}}</p>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[2]}}</p>
               <p style="margin: 0;">{{prev_data[2] >= 0 ? "+" + prev_data[2] : prev_data[2].toString()}}</p>
             </div>
           </li>
@@ -45,8 +45,8 @@
               </span>
               <p style="margin: 0px;">Plus:</p>
             </div>
-            <div style="display: flex; flex-direction: row;">
-              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[3]}}</p>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[3]}}</p>
               <p style="margin: 0;">{{prev_data[3] >= 0 ? "+" + prev_data[3] : prev_data[3].toString()}}</p>
             </div>
           </li>
@@ -56,8 +56,8 @@
               </span>
               <p style="margin: 0px;">Premium:</p>
             </div>
-            <div style="display: flex; flex-direction: row;">
-              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[4]}}</p>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[4]}}</p>
               <p style="margin: 0;">{{prev_data[4] >= 0 ? "+" + prev_data[4] : prev_data[4].toString()}}</p>
             </div>
           </li>
@@ -67,8 +67,8 @@
               </span>
               <p style="margin: 0px;">Sponsor:</p>
             </div>
-            <div style="display: flex; flex-direction: row;">
-              <p style="width: 4vw; margin: 0px;">{{chart?.data.datasets[0].data[5]}}</p>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[5]}}</p>
               <p style="margin: 0;">{{prev_data[5] >= 0 ? "+" + prev_data[5] : prev_data[5].toString()}}</p>
             </div>
           </li>

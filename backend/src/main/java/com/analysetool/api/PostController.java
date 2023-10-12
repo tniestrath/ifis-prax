@@ -980,7 +980,8 @@ public class PostController {
         return new JSONArray(stats).toString();
     }
 
-
+////////////////////////////////////////////////////////////////////////
+    /////Similar Posts
 
     /**
      * Endpoint to retrieve posts with similar tags based on a similarity percentage.
@@ -1174,7 +1175,8 @@ public class PostController {
         return Ergebnis.toString();
     }
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////Ausreißer
 
     /**
      * Gibt ein JSONArray zurück, das zwei Arrays enthält:

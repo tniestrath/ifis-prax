@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import com.analysetool.util.MathHelper;
 import com.analysetool.modells.*;
@@ -1047,6 +1048,135 @@ public class PostController {
     }
 
     /**
+     * Endpoint, um ähnliche Beiträge basierend auf Tag-Ähnlichkeit und Gesamt-Klicks abzurufen.
+     *
+     * @param postId Der ID des Beitrags, für den ähnliche Beiträge gesucht werden sollen.
+     * @param similarityPercentage Das Mindestprozentsatz der Übereinstimmung von Tags, um als ähnlich betrachtet zu werden.
+     * @return Ein JSON-String, der ähnliche Beiträge basierend auf Tag-Ähnlichkeit und Gesamt-Klicks repräsentiert.
+     * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
+     */
+    @GetMapping("/getSimilarPostByTagAndClicks")
+    public String getSimilarPostByTagAndClicks(@RequestParam long postId, @RequestParam float similarityPercentage) throws JSONException {
+
+        // 1. Tags und Taxonomie-IDs des gegebenen Beitrags abrufen
+        List<Long> termTaxonomyIdsForPostGiven = termRelRepo.getTaxIdByObject(postId);
+        List<Long> tagIdsForPostGiven = taxTermRepo.getTermIdByTaxId(termTaxonomyIdsForPostGiven);
+
+        JSONArray Ergebnis = new JSONArray();
+        Map<Long, Float> postAndSimilarityMap = new HashMap<>();
+
+        // 2. Liste aller Beiträge holen und deren Ähnlichkeit mit dem gegebenen Beitrag berechnen
+        List<wp_term_relationships> allPostsRelationships = termRelRepo.findAll();
+        for (wp_term_relationships otherPostRel : allPostsRelationships) {
+            Long otherPostId = otherPostRel.getObjectId();
+            if (otherPostId.equals(postId)) continue;  // Ignoriere den gegebenen Beitrag
+
+            List<Long> termTaxonomyIdsForOtherPost = termRelRepo.getTaxIdByObject(otherPostId);
+            List<Long> tagIdsForOtherPost = taxTermRepo.getTermIdByTaxId(termTaxonomyIdsForOtherPost);
+
+            // Ähnlichkeit der Tags berechnen
+            int commonTagsCount = (int) tagIdsForPostGiven.stream().filter(tag -> tagIdsForOtherPost.contains(tag)).count();
+            float currentSimilarityPercentage = (commonTagsCount * 1.0f / tagIdsForPostGiven.size()) * 100;
+
+            if (currentSimilarityPercentage >= similarityPercentage) {
+                postAndSimilarityMap.put(otherPostId, currentSimilarityPercentage);
+            }
+        }
+
+        // 3. Ähnliche Beiträge basierend auf ihren Gesamt-Klicks hinzufügen
+        for (Map.Entry<Long, Float> entry : postAndSimilarityMap.entrySet()) {
+            JSONObject obj = new JSONObject();
+            Long otherPostId = entry.getKey();
+            PostStats postStat = statsRepo.findByArtIdAndAndYear(otherPostId, LocalDate.now().getYear());
+
+            obj.put("postId", otherPostId);
+            obj.put("similarity", entry.getValue());
+            obj.put("totalClicks", postStat.getClicks());
+
+            Ergebnis.put(obj);
+        }
+
+        return Ergebnis.toString();
+    }
+
+
+
+
+    /**
+     * Holt ähnliche Beiträge basierend auf der Tag-Ähnlichkeit und bewertet sie nach der Gesamtzahl der Klicks
+     * innerhalb eines gegebenen Datumsbereichs.
+     *
+     * @param postId              Die ID des Beitrags, zu dem ähnliche Beiträge gefunden werden sollen.
+     * @param similarityPercentage Die minimale Tag-Ähnlichkeitsprozentsatz.
+     * @param startDate           Das Startdatum des Datumsbereichs im Format "dd.MM.yyyy".
+     * @param endDate             Das Enddatum des Datumsbereichs im Format "dd.MM.yyyy".
+     * @return Eine Liste von ähnlichen Beiträgen und ihrer Klickanzahl im gegebenen Datumsbereich.
+     * @throws JSONException Wenn ein JSON-Fehler auftritt.
+     */
+    @GetMapping("/getSimilarPostByClicksInRange")
+    public String getSimilarPostByClicksInRange(@RequestParam long postId, @RequestParam float similarityPercentage,
+                                                @RequestParam String startDate, @RequestParam String endDate) throws JSONException {
+
+        List<Long> termTaxonomyIdsForPostGiven = termRelRepo.getTaxIdByObject(postId);
+        List<Long> tagIdsForPostGiven = taxTermRepo.getTermIdByTaxId(termTaxonomyIdsForPostGiven);
+
+        JSONArray Ergebnis = new JSONArray();
+        Map<Long, Float> postAndSimilarityMap = new HashMap<>();
+
+        // Liste aller Posts holen
+        List<wp_term_relationships> allPostsRelationships = termRelRepo.findAll();
+        for (wp_term_relationships otherPostRel : allPostsRelationships) {
+            Long otherPostId = otherPostRel.getObjectId();
+            if (otherPostId.equals(postId)) continue; // Ignoriere den gegebenen Post
+
+            List<Long> termTaxonomyIdsForOtherPost = termRelRepo.getTaxIdByObject(otherPostId);
+            List<Long> tagIdsForOtherPost = taxTermRepo.getTermIdByTaxId(termTaxonomyIdsForOtherPost);
+
+            // Ähnlichkeit der Tags berechnen
+            int commonTagsCount = (int) tagIdsForPostGiven.stream().filter(tag -> tagIdsForOtherPost.contains(tag)).count();
+            float currentSimilarityPercentage = (commonTagsCount * 1.0f / tagIdsForPostGiven.size()) * 100;
+
+            if (currentSimilarityPercentage >= similarityPercentage) {
+                postAndSimilarityMap.put(otherPostId, currentSimilarityPercentage);
+            }
+        }
+
+        LocalDate startLocalDate = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        LocalDate endLocalDate = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+
+        for (Map.Entry<Long, Float> entry : postAndSimilarityMap.entrySet()) {
+            JSONObject obj = new JSONObject();
+            Long otherPostId = entry.getKey();
+
+            // Abruf der Ansichten für das letzte Jahr
+            PostStats postStat = statsRepo.findByArtIdAndAndYear(otherPostId, LocalDate.now().getYear());
+            Map<String, Long> viewsLastYear = postStat.getViewsLastYear();
+
+            // Kumulieren der Ansichten im gegebenen Datumsbereich
+            long totalViewsInRange = viewsLastYear.entrySet().stream()
+                    .filter(e -> {
+                        LocalDate date = LocalDate.of(LocalDate.now().getYear(),
+                                Integer.parseInt(e.getKey().split("\\.")[1]),
+                                Integer.parseInt(e.getKey().split("\\.")[0]));
+                        return (date.isAfter(startLocalDate) || date.isEqual(startLocalDate)) &&
+                                (date.isBefore(endLocalDate) || date.isEqual(endLocalDate));
+                    })
+                    .mapToLong(Map.Entry::getValue)
+                    .sum();
+
+            obj.put("postId", otherPostId);
+            obj.put("similarity", entry.getValue());
+            obj.put("clicks", totalViewsInRange);
+
+            Ergebnis.put(obj);
+        }
+
+        return Ergebnis.toString();
+    }
+
+
+
+    /**
      * Gibt ein JSONArray zurück, das zwei Arrays enthält:
      * 1. Ähnliche Posts basierend auf der Tag-Ähnlichkeit, ausgenommen die als Ausreißer identifizierten Posts.
      * 2. Die als Ausreißer identifizierten Posts basierend auf ihrer Relevanz.
@@ -1092,6 +1222,105 @@ public class PostController {
 
         return combinedResult.toString();
     }
+
+    /**
+     * Endpoint, um ähnliche Beiträge und Ausreißer basierend auf Tag-Ähnlichkeit und Gesamt-Klicks abzurufen.
+     *
+     * @param postId Der ID des Beitrags, für den ähnliche Beiträge und Ausreißer gesucht werden sollen.
+     * @param similarityPercentage Das Mindestprozentsatz der Übereinstimmung von Tags, um als ähnlich betrachtet zu werden.
+     * @return Ein JSON-String, der ähnliche Beiträge und Ausreißer basierend auf Tag-Ähnlichkeit und Gesamt-Klicks repräsentiert.
+     * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
+     */
+    @GetMapping("/getSimilarPostsAndOutliersByClicks")
+    public String getSimilarPostsAndOutliersByClicks(@RequestParam long postId, @RequestParam float similarityPercentage) throws JSONException {
+        // 1. Das Ergebnis der getSimilarPostByTagAndClicks Methode abrufen
+        JSONArray originalPostsArray = new JSONArray(getSimilarPostByTagAndClicks(postId, similarityPercentage));
+
+        // 2. Eine Liste der Gesamt-Klickwerte aus dem JSONArray extrahieren
+        List<Float> clicksList = new ArrayList<>();
+        for (int i = 0; i < originalPostsArray.length(); i++) {
+            JSONObject obj = originalPostsArray.getJSONObject(i);
+            clicksList.add((float) obj.getDouble("totalClicks"));
+        }
+
+        // 3. Die Ausreißer basierend auf den Gesamt-Klickwerten mit Hilfe der getOutliersFloat Methode ermitteln
+        List<Float> outliersValues = MathHelper.getOutliersFloat(clicksList);
+
+        JSONArray postsArray = new JSONArray();
+        JSONArray outliersArray = new JSONArray();
+
+        for (int i = 0; i < originalPostsArray.length(); i++) {
+            JSONObject obj = originalPostsArray.getJSONObject(i);
+            float clicks = (float) obj.getDouble("totalClicks");
+
+            if (outliersValues.contains(clicks)) {
+                outliersArray.put(obj);
+            } else {
+                postsArray.put(obj);
+            }
+        }
+
+        // 4. Ein neues JSONArray erstellen, das das bereinigte Ergebnis und die Ausreißer enthält
+        JSONArray combinedResult = new JSONArray();
+        combinedResult.put(postsArray);
+        combinedResult.put(outliersArray);
+
+        return combinedResult.toString();
+    }
+
+
+
+    /**
+     * Endpoint, um ähnliche Beiträge und Ausreißer basierend auf Clicks innerhalb eines gegebenen Datumsbereichs abzurufen.
+     *
+     * @param postId Der ID des Beitrags, für den ähnliche Beiträge gesucht werden sollen.
+     * @param similarityPercentage Das Mindestprozentsatz der Übereinstimmung von Tags, um als ähnlich betrachtet zu werden.
+     * @param startDate Das Anfangsdatum des Bereichs im Format "dd.MM".
+     * @param endDate Das Enddatum des Bereichs im Format "dd.MM".
+     * @return Ein JSON-String, der ähnliche Beiträge und Ausreißer repräsentiert.
+     * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
+     */
+    @GetMapping("/getSimilarPostsAndOutliersByClicksInRange")
+    public String getSimilarPostsAndOutliersByClicksInRange(@RequestParam long postId,
+                                             @RequestParam float similarityPercentage,
+                                             @RequestParam String startDate,
+                                             @RequestParam String endDate) throws JSONException {
+
+        // 1. Das Ergebnis der getSimilarPostByClicksInRange Methode abrufen
+        JSONArray originalPostsArray = new JSONArray(getSimilarPostByClicksInRange(postId, similarityPercentage, startDate, endDate));
+
+        // 2. Eine Liste der Klicks aus dem JSONArray extrahieren
+        List<Long> clicksList = new ArrayList<>();
+        for (int i = 0; i < originalPostsArray.length(); i++) {
+            JSONObject obj = originalPostsArray.getJSONObject(i);
+            clicksList.add(obj.getLong("clicks"));
+        }
+
+        // 3. Die Ausreißer basierend auf den Klicks mit Hilfe einer geeigneten Methode ermitteln.
+        List<Long> outliersValues = MathHelper.getOutliersLong(clicksList);
+
+        JSONArray postsArray = new JSONArray();
+        JSONArray outliersArray = new JSONArray();
+
+        for (int i = 0; i < originalPostsArray.length(); i++) {
+            JSONObject obj = originalPostsArray.getJSONObject(i);
+            long clicks = obj.getLong("clicks");
+
+            if (outliersValues.contains(clicks)) {
+                outliersArray.put(obj);
+            } else {
+                postsArray.put(obj);
+            }
+        }
+
+        // 4. Ein neues JSONArray erstellen, das das bereinigte Ergebnis und die Ausreißer enthält
+        JSONObject combinedResult = new JSONObject();
+        combinedResult.put("similarPosts", postsArray);
+        combinedResult.put("outliers", outliersArray);
+
+        return combinedResult.toString();
+    }
+
 
 
 

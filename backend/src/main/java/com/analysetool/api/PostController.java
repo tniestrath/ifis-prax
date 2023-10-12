@@ -1109,8 +1109,8 @@ public class PostController {
      *
      * @param postId              Die ID des Beitrags, zu dem ähnliche Beiträge gefunden werden sollen.
      * @param similarityPercentage Die minimale Tag-Ähnlichkeitsprozentsatz.
-     * @param startDate           Das Startdatum des Datumsbereichs im Format "dd.MM.yyyy".
-     * @param endDate             Das Enddatum des Datumsbereichs im Format "dd.MM.yyyy".
+     * @param startDate           Das Startdatum des Datumsbereichs im Format "dd.MM".
+     * @param endDate             Das Enddatum des Datumsbereichs im Format "dd.MM".
      * @return Eine Liste von ähnlichen Beiträgen und ihrer Klickanzahl im gegebenen Datumsbereich.
      * @throws JSONException Wenn ein JSON-Fehler auftritt.
      */

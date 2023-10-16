@@ -15,7 +15,7 @@ public class MatomoService {
         this.restTemplate = new RestTemplate();
     }
 
-    public String getMatomoData(String authToken, String method) {
+    public String getMatomoData( String method) {
         String url = MATOMO_BASE_URL + "?module=API&format=JSON&token_auth=3a485730f2ef726895b30654446d5771"  + "&method=" + method;
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         return response.getBody();

@@ -405,6 +405,17 @@ public class LogService {
         blacklist.add("crawl");
         blacklist.add("parse");
         blacklist.add("Zabbix");
+        blacklist.add("Facebook");
+        blacklist.add("Frog");
+        blacklist.add("Majestic");
+        blacklist.add("Apache");
+        blacklist.add("Scrape");
+        blacklist.add("Scrapy");
+        blacklist.add("HTTrack");
+        blacklist.add("Moreover");
+        blacklist.add("Sitesucker");
+        blacklist.add("Webz.io");
+
 
         int totalClicks = 0;
         int internalClicks = 0;

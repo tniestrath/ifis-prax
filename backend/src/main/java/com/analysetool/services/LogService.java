@@ -431,9 +431,7 @@ public class LogService {
                 boolean isAPI = pre_Matched.group(3).contains("/api/");
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
-                boolean isInternal = pre_Matched.group(1).charAt(0) == 1
-                        && pre_Matched.group(1).charAt(1) == 0
-                        && pre_Matched.group(1).charAt(2) == '.';
+                boolean isInternal = pre_Matched.group(1).startsWith("10.");
 
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI && !isInternal) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));

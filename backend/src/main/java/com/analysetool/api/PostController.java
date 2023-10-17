@@ -864,11 +864,22 @@ public class PostController {
         return type;
     }
 
+    /**
+     *
+     * @return count of all user posts.
+     */
     @GetMapping("/getCountTotalPosts")
     public int getCountTotalPosts() {
         return postRepo.findAllUserPosts().size();
     }
 
+    /**
+     *
+     * @param type ("news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber")
+     * @return count of all posts with the type given.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getCountPostByType")
     public int getCountPostByType(String type) throws JSONException, ParseException {
         int count = 0;

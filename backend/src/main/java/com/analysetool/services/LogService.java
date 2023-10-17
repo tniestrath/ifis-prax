@@ -600,7 +600,6 @@ public class LogService {
 
                 } else if(isInternal) {
                     internalClicks++;
-                    System.out.println("Internal Click detected REEEEEEEEEE");
                 }
             }
         }

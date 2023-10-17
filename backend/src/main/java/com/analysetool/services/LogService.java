@@ -87,7 +87,7 @@ public class LogService {
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private final String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
-   private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2})(.{25})";
+   private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2})(.{25}).*\\[(.*)\\]";
 
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -441,9 +441,12 @@ public class LogService {
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
                 boolean isInternal = pre_Matched.group(1).startsWith("10.");
                 boolean isBlacklisted = false;
-
-                for(String item : blacklist) {
-                    isBlacklisted = pre_Matched.group(4).toLowerCase().contains(item.toLowerCase());
+                try {
+                    for (String item : blacklist) {
+                        isBlacklisted = pre_Matched.group(4).toLowerCase().contains(item.toLowerCase());
+                    }
+                } catch (Exception e) {
+                    System.out.println("Group 4 not correctly created");
                 }
 
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI && !isInternal && !isBlacklisted) {

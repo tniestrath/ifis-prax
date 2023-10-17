@@ -4,20 +4,22 @@ import com.analysetool.api.PostController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
+import com.analysetool.util.IPHelper;
 import com.analysetool.util.MapHelper;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
-import org.springframework.data.mongodb.core.aggregation.SystemVariable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,11 +32,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.analysetool.util.IPHelper;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.bouncycastle.util.encoders.Hex;
-
-import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 
 @Service
@@ -605,6 +602,7 @@ public class LogService {
 
                 } else if(isInternal) {
                     internalClicks++;
+                    System.out.println("Internal Click detected REEEEEEEEEE");
                 }
             }
         }

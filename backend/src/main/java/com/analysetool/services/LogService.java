@@ -110,6 +110,8 @@ public class LogService {
     private int lastLineCounter = 0;
     private boolean liveScanning ;
 
+    ArrayList<String> blacklist = new ArrayList<>();
+
 
     //Toter Code wird bis zum fertigen ConfigReader hier gelassen.
     //private String Pfad=Application.class.getClassLoader().getResource("access.log").getPath();
@@ -397,6 +399,12 @@ public class LogService {
     public void findAMatch(SysVar sysVar) throws IOException, ParseException {
         String line;
 
+
+        blacklist.add("bot");
+        blacklist.add("spider");
+        blacklist.add("crawl");
+        blacklist.add("parse");
+
         int totalClicks = 0;
         int internalClicks = 0;
         int viewsArticle = 0;
@@ -432,8 +440,13 @@ public class LogService {
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
                 boolean isInternal = pre_Matched.group(1).startsWith("10.");
+                boolean isBlacklisted = false;
 
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI && !isInternal) {
+                for(String item : blacklist) {
+                    isBlacklisted = pre_Matched.group(4).toLowerCase().contains(item.toLowerCase());
+                }
+
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI && !isInternal && !isBlacklisted) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
                     setViewsByLocation(pre_Matched.group(1), viewsByLocation);

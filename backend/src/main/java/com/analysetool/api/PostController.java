@@ -820,6 +820,13 @@ public class PostController {
     }
 
 
+    /**
+     *
+     * @param id the id of the post you want the type of.
+     * @return the type of Post "news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber"
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     public String getType(@RequestParam long id) throws JSONException, ParseException {
         if(!postRepository.findById(id).isPresent()) {return null;}
         Post post = postRepository.findById(id).get();
@@ -855,6 +862,21 @@ public class PostController {
         }
 
         return type;
+    }
+
+    @GetMapping("/getCountTotalPosts")
+    public int getCountTotalPosts() {
+        return postRepo.findAllUserPosts().size();
+    }
+
+    @GetMapping("/getCountPostByType")
+    public int getCountPostByType(String type) throws JSONException, ParseException {
+        int count = 0;
+
+        for(Post post : postRepo.findAllUserPosts()) {
+            if(getType(post.getId()).equalsIgnoreCase(type)) count++;
+        }
+        return count;
     }
 
     /**
@@ -1322,12 +1344,6 @@ public class PostController {
 
         return combinedResult.toString();
     }
-
-
-
-
-
-
 
 }
 

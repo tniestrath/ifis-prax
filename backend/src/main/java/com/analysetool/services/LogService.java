@@ -598,7 +598,7 @@ public class LogService {
                         }
                     }
 
-                } else if(isInternal) {
+                } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && isInternal) {
                     internalClicks++;
                 }
             }

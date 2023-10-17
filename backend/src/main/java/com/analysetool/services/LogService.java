@@ -449,7 +449,7 @@ public class LogService {
                 } catch (Exception e) {
                     System.out.println("Group 4 not correctly created");
                 }
-                if(isBlacklisted) System.out.println(pre_Matched.group(4));
+                if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && isBlacklisted) System.out.println(pre_Matched.group(4));
 
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI && !isInternal && !isBlacklisted) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));

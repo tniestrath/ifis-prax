@@ -404,6 +404,7 @@ public class LogService {
         blacklist.add("spider");
         blacklist.add("crawl");
         blacklist.add("parse");
+        blacklist.add("Zabbix");
 
         int totalClicks = 0;
         int internalClicks = 0;
@@ -444,6 +445,7 @@ public class LogService {
                 try {
                     for (String item : blacklist) {
                         isBlacklisted = pre_Matched.group(4).toLowerCase().contains(item.toLowerCase());
+                        System.out.println(pre_Matched.group(4));
                     }
                 } catch (Exception e) {
                     System.out.println("Group 4 not correctly created");

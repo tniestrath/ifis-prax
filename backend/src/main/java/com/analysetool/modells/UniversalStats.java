@@ -59,6 +59,10 @@ public class UniversalStats {
     @Column(name = "total_clicks")
     private Long totalClicks;
 
+    @Column(name="internal_clicks")
+    private int internalClicks;
+
+
     @Lob
     @Column(name = "views_by_location", columnDefinition = "json")
     @JdbcTypeCode(SqlTypes.JSON)
@@ -282,6 +286,14 @@ public class UniversalStats {
 
     public void setAnbieter_abolos_anzahl(long anbieter_abolos_anzahl) {
         this.anbieter_abolos_anzahl = anbieter_abolos_anzahl;
+    }
+
+    public int getInternalClicks() {
+        return internalClicks;
+    }
+
+    public void setInternalClicks(int internalClicks) {
+        this.internalClicks = internalClicks;
     }
 }
 

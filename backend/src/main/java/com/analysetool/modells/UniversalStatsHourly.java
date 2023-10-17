@@ -54,6 +54,9 @@ public class UniversalStatsHourly {
     @Column(name = "total_clicks")
     private Long totalClicks;
 
+    @Column(name="internal_clicks")
+    private int internalClicks;
+
     @Lob
     @Column(name = "views_by_location", columnDefinition = "json")
     @JdbcTypeCode(SqlTypes.JSON)
@@ -177,6 +180,14 @@ public class UniversalStatsHourly {
 
     public void setAnbieterBasicAnzahl(long anbieterBasicAnzahl) {
         this.anbieterBasicAnzahl = anbieterBasicAnzahl;
+    }
+
+    public int getInternalClicks() {
+        return internalClicks;
+    }
+
+    public void setInternalClicks(int internalClicks) {
+        this.internalClicks = internalClicks;
     }
 }
 

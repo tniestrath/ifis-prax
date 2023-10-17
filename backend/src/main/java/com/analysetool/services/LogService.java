@@ -401,6 +401,7 @@ public class LogService {
         String line;
 
         int totalClicks = 0;
+        int internalClicks = 0;
         int viewsArticle = 0;
         int viewsNews = 0;
         int viewsBlog = 0;
@@ -433,8 +434,11 @@ public class LogService {
                 boolean isAPI = pre_Matched.group(3).contains("/api/");
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
+                boolean isInternal = pre_Matched.group(1).charAt(0) == 1
+                        && pre_Matched.group(1).charAt(1) == 0
+                        && pre_Matched.group(1).charAt(2) == '.';
 
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI) {
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI && !isInternal) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
                     setViewsByLocation(pre_Matched.group(1), viewsByLocation);
@@ -599,6 +603,8 @@ public class LogService {
                         }
                     }
 
+                } else if(isInternal) {
+                    internalClicks++;
                 }
             }
         }
@@ -621,6 +627,7 @@ public class LogService {
                     uni = uniRepo.findTop1ByOrderByDatumDesc();
                     uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
                     uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
+                    uni.setInternalClicks(uni.getInternalClicks() + internalClicks);
                     MapHelper.mergeLocationMaps(viewsByLocation, uni.getViewsByLocation());
                     uni.setViewsByLocation(viewsByLocation);
                     MapHelper.mergeTimeMaps(viewsByHour, uni.getViewsPerHour());
@@ -632,6 +639,7 @@ public class LogService {
                     uni = new UniversalStats();
                     uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
                     uni.setTotalClicks(totalClicks);
+                    uni.setInternalClicks(internalClicks);
                     uni.setViewsByLocation(viewsByLocation);
                     uni.setViewsPerHour(viewsByHour);
                     uni.setAnbieterProfileAnzahl(wpUserRepo.count());
@@ -650,6 +658,7 @@ public class LogService {
                 uniHourly = uniHourlyRepo.getByStunde(curHour);
                 uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (long) uniqueUsers);
                 uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
+                uniHourly.setInternalClicks(uniHourly.getInternalClicks() + internalClicks);
                 uniHourly.setViewsByLocation(viewsByLocation);
                 uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly);
@@ -658,6 +667,7 @@ public class LogService {
                 uniHourly = new UniversalStatsHourly();
                 uniHourly.setBesucherAnzahl((long) uniqueUsers);
                 uniHourly.setTotalClicks((long) totalClicks);
+                uniHourly.setInternalClicks(internalClicks);
                 uniHourly.setViewsByLocation(viewsByLocation);
                 uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly);

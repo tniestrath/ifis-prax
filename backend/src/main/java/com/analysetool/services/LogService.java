@@ -87,7 +87,7 @@ public class LogService {
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private final String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
-   private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2}).*\\\"(.{1,20})\\\".\\{(...)\\}.*\\[(.*)\\]";
+   private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2}).*\\\"(.*)\\\".\\{(...)\\}.*\\[(.*)\\]";
 
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -993,67 +993,6 @@ public class LogService {
             }
 
         }
-        /*
-        if(patternName.equals("refferer")){
-            if (!matcher.group(8).matches("\\d+")){
-            SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
-            //System.out.println(matcher.group(1)+" "+matcher.group(2)+" "+matcher.group(3)+" "+matcher.group(4)+" "+matcher.group(5)+" "+matcher.group(8));
-            System.out.println(matcher.group(7));
-            System.out.println(matcher.group(8));
-            System.out.println(line);
-            String day = matcher.group(2);
-            String month = getMonthNumber(matcher.group(3));
-            String year = matcher.group(4);
-            String time = matcher.group(5);
-            LocalDateTime searchSuccessTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
-            LocalDate date = searchSuccessTime.toLocalDate() ;
-
-
-            List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
-
-            long id = postRepository.getIdByName(matcher.group(8));
-            byte[] hashBytesForComparison = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
-            String hashForComparison = Hex.toHexString(hashBytesForComparison);
-
-            for(SearchStats s : searchStatsForDate){
-
-                if(hashForComparison.equals(s.getIpHashed()) && s.getSearchSuccessFlag() && s.getClickedPost().equals(Long.toString(id))){
-
-                    LocalTime search_success_time = s.getSearch_success_time().toLocalTime();
-                    String logHourMinuteSecond = matcher.group(5);
-
-                // Trenne Stunden, Minuten und Sekunden
-                    String[] timeParts = logHourMinuteSecond.split(":");
-                    LocalTime refferer_time = LocalTime.of(Integer.parseInt(timeParts[0]), Integer.parseInt(timeParts[1]), Integer.parseInt(timeParts[2]));
-
-               // Differenz = dwelltime
-                    Duration difference = Duration.between(search_success_time, refferer_time);
-
-                    LocalTime dwell_time;
-
-                // Wenn die Differenz negativ ist oder länger als 24 Stunden beträgt
-                    if (difference.isNegative() || difference.toHours() >= 24) {
-                        dwell_time = LocalTime.of(0, 0, 0);
-                    } else {
-                        // Konvertiere die Dauer in Stunden, Minuten und Sekunden
-                        long totalSeconds = difference.getSeconds();
-                        int hours = (int) (totalSeconds / 3600);
-                        int minutes = (int) ((totalSeconds % 3600) / 60);
-                        int seconds = (int) (totalSeconds % 60);
-
-                        dwell_time = LocalTime.of(hours, minutes, seconds);
-                    }
-
-
-
-
-                    s.setDwell_time(dwell_time);
-                    searchStatRepo.save(s);}
-                }
-            }
-
-        }
-        */
         if(patternName.equals("whitepaperSearchSuccess")) {
             //Stolen behaviour from articleSearchSuccess
             System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
@@ -1502,7 +1441,6 @@ public class LogService {
         try {
             Stats = tagStatRepo.getStatById((int) id);
         } catch (Exception e) {
-            System.out.println("Es wurde nach folgender Tag-ID gefragt" + id);
             return;
         }
         if(termTaxRepo.findByTermId(Stats.getTagId()).getTaxonomy().equalsIgnoreCase("post_tag")) {
@@ -1534,9 +1472,14 @@ public class LogService {
         for(Long l:tagIds){
             if(tagStatRepo.existsByTagId(l.intValue())){
                 updateTagStats(l.intValue(),searchSuccess);}
-            else{ tagStatRepo.save(new TagStat(l.intValue(),0,0,(float)0,(float)0));
-                updateTagStats(l.intValue(),searchSuccess);}
-    }}
+            else {
+                if (termTaxRepo.findByTermId(l.intValue()).getTaxonomy().equals("post_tag")) {
+                    tagStatRepo.save(new TagStat(l.intValue(), 0, 0, (float) 0, (float) 0));
+                    updateTagStats(l.intValue(), searchSuccess);
+                }
+            }
+        }
+    }
 
     public void updateUserActivity(Long period){
         List<WPUser> users = wpUserRepo.findAll();

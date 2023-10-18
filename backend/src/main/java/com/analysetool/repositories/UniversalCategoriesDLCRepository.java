@@ -17,7 +17,7 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      public UniversalCategoriesDLC getLast();
 
      @Query("SELECT u FROM UniversalCategoriesDLC  u WHERE u.uniStatId=:uniID AND u.stunde=:hour")
-     public UniversalCategoriesDLC getByUniStatIdAndStunde(int uniId, int hour);
+     public UniversalCategoriesDLC getByUniStatIdAndStunde(int uniID, int hour);
 
      @Query("SELECT SUM(u.viewsGlobal) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumViewsGlobalByUniStatId(int uniID);

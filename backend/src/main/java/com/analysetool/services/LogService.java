@@ -660,7 +660,7 @@ public class LogService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(dateStirng);
-        int curHour = LocalDateTime.now().getHour();
+        final int curHour = LocalDateTime.now().getHour();
 
         //Updating UniversalStats
         {

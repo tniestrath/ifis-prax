@@ -209,7 +209,7 @@ public class TagsController {
                 obj.put("id", tax.getTermId());
                 obj.put("count", getCount(tax.getTermId().intValue(), new Date()));
                 if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) {
-                    obj.put("relevance", tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance());
+                    obj.put("relevance", (tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance() / tagStatRepo.getMaxRelevance()) * 100);
                     obj.put("views", tagStatRepo.getStatById(tax.getTermId().intValue()).getViews());
                 }
                 else {
@@ -292,7 +292,7 @@ public class TagsController {
             obj.put("name",termRepository.getNameById(tagId));
             obj.put("date", new SimpleDateFormat("yyyy-MM-dd").format(getDate(i)));
             switch (dataType) {
-                case "relevance" -> obj.put("relevance", getRelevance((HashMap<String, Long>) tagStat.getViewsLastYear(), dayOfYear, i));
+                case "relevance" -> obj.put("relevance", (getRelevance((HashMap<String, Long>) tagStat.getViewsLastYear(), dayOfYear, i) / tagStatRepo.getMaxRelevance()) * 100 );
                 case "count" -> obj.put("count", getCount(tagId, getDate(i)));
                 case "views" -> obj.put("views", tagStat.getViewsLastYear().get(String.valueOf(dayOfYear - i)));
             }

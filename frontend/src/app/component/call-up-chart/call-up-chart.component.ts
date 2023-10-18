@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent, TooltipItem} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
-import {log10} from "chart.js/helpers";
 
 export class Callup {
   clicks : number = 0;

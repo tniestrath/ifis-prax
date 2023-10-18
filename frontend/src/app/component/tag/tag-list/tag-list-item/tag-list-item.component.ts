@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input} from '@angular/core';
 import {TagRanking} from "../../Tag";
 import {DbObject} from "../../../../services/DbObject";
 import {SysVars} from "../../../../services/sys-vars-service";
+import Util from "../../../../util/Util";
 
 @Component({
   selector: 'dash-tag-list-item',
@@ -16,6 +17,7 @@ export class TagListItemComponent {
 
   onClick(){
     SysVars.SELECTED_TAG.emit(Number(this.data?.id));
-    console.log(this.data);
   }
+
+  protected readonly Util = Util;
 }

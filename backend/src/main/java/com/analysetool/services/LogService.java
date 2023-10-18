@@ -87,7 +87,7 @@ public class LogService {
     // private String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /s=(\\S+) ";
    private final String SearchPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /\\?s=(\\S+) .*";
 
-   private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2})(.{25}).*\\[(.*)\\]";
+   private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2}).*\\\"(.{1,20})\\\".\\{(...)\\}.*\\[(.*)\\]";
 
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -110,7 +110,9 @@ public class LogService {
     private int lastLineCounter = 0;
     private boolean liveScanning ;
 
-    ArrayList<String> blacklist = new ArrayList<>();
+    ArrayList<String> blacklistUserAgents = new ArrayList<>();
+
+    ArrayList<String> blacklistResponseCodes = new ArrayList<>();
 
 
     //Toter Code wird bis zum fertigen ConfigReader hier gelassen.
@@ -399,22 +401,24 @@ public class LogService {
     public void findAMatch(SysVar sysVar) throws IOException, ParseException {
         String line;
 
+        //Set User-Agents that shouldn't be counted as clicks
+        blacklistUserAgents.add("bot");
+        blacklistUserAgents.add("spider");
+        blacklistUserAgents.add("crawl");
+        blacklistUserAgents.add("parse");
+        blacklistUserAgents.add("Zabbix");
+        blacklistUserAgents.add("Facebook");
+        blacklistUserAgents.add("Frog");
+        blacklistUserAgents.add("Majestic");
+        blacklistUserAgents.add("Apache");
+        blacklistUserAgents.add("Scrape");
+        blacklistUserAgents.add("Scrapy");
+        blacklistUserAgents.add("HTTrack");
+        blacklistUserAgents.add("Moreover");
+        blacklistUserAgents.add("Sitesucker");
+        blacklistUserAgents.add("Webz.io");
 
-        blacklist.add("bot");
-        blacklist.add("spider");
-        blacklist.add("crawl");
-        blacklist.add("parse");
-        blacklist.add("Zabbix");
-        blacklist.add("Facebook");
-        blacklist.add("Frog");
-        blacklist.add("Majestic");
-        blacklist.add("Apache");
-        blacklist.add("Scrape");
-        blacklist.add("Scrapy");
-        blacklist.add("HTTrack");
-        blacklist.add("Moreover");
-        blacklist.add("Sitesucker");
-        blacklist.add("Webz.io");
+        //Set error codes, that shouldn't be counted as clicks.
 
 
         int totalClicks = 0;
@@ -435,6 +439,8 @@ public class LogService {
         int userWhitepaper = 0;
         int userRatgeber = 0;
 
+        int serverErrors = 0;
+
 
         Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();
         Map<String,Long> viewsByHour = new HashMap<>();
@@ -448,21 +454,32 @@ public class LogService {
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
                 LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(pre_Matched.group(2)));
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
-                boolean isAPI = pre_Matched.group(3).contains("/api/");
+                boolean isDevAccess = pre_Matched.group(3).contains("/api/")
+                        || pre_Matched.group(3).contains("/wp-content") || pre_Matched.group(3).contains("/wp-includes")
+                        || pre_Matched.group(3).contains("/wp-admin") || pre_Matched.group(3).contains("/robots.txt");
                 //if a problem with performance comes up, set this to false.
                 boolean isUnique = uniqueUserRepo.findByIP(pre_Matched.group(1)) == null;
+
                 boolean isInternal = pre_Matched.group(1).startsWith("10.");
+
                 boolean isBlacklisted = false;
+
+                boolean isSuccessfulRequest = Integer.parseInt(pre_Matched.group(4)) >= 200 && Integer.parseInt(pre_Matched.group(4)) < 400;
+
+                boolean isServerError = Integer.parseInt(pre_Matched.group(4)) >= 500;
+
+
                 try {
-                    for (String item : blacklist) {
-                        isBlacklisted = pre_Matched.group(4).toLowerCase().contains(item.toLowerCase());
+                    for (String item : blacklistUserAgents) {
+                        isBlacklisted = pre_Matched.group(5).toLowerCase().contains(item.toLowerCase());
                     }
                 } catch (Exception e) {
-                    System.out.println("Group 4 not correctly created");
+                    System.out.println("Group 5 not correctly created");
                 }
-                if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && isBlacklisted) System.out.println(pre_Matched.group(4));
 
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isAPI && !isInternal && !isBlacklisted) {
+                if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && isBlacklisted) System.out.println(pre_Matched.group(5));
+
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isBlacklisted && isSuccessfulRequest) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     Matcher matched_articleView = articleViewPattern.matcher(line);
                     setViewsByLocation(pre_Matched.group(1), viewsByLocation);
@@ -629,6 +646,8 @@ public class LogService {
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && isInternal) {
                     internalClicks++;
+                } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && isServerError) {
+                    serverErrors++;
                 }
             }
         }
@@ -652,6 +671,7 @@ public class LogService {
                     uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
                     uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
                     uni.setInternalClicks(uni.getInternalClicks() + internalClicks);
+                    uni.setServerErrors(uni.getServerErrors() + serverErrors);
                     MapHelper.mergeLocationMaps(viewsByLocation, uni.getViewsByLocation());
                     uni.setViewsByLocation(viewsByLocation);
                     MapHelper.mergeTimeMaps(viewsByHour, uni.getViewsPerHour());
@@ -664,6 +684,7 @@ public class LogService {
                     uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
                     uni.setTotalClicks(totalClicks);
                     uni.setInternalClicks(internalClicks);
+                    uni.setServerErrors(serverErrors);
                     uni.setViewsByLocation(viewsByLocation);
                     uni.setViewsPerHour(viewsByHour);
                     uni.setAnbieterProfileAnzahl(wpUserRepo.count());
@@ -683,6 +704,7 @@ public class LogService {
                 uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (long) uniqueUsers);
                 uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
                 uniHourly.setInternalClicks(uniHourly.getInternalClicks() + internalClicks);
+                uniHourly.setServerErrors(uniHourly.getServerErrors() + serverErrors);
                 uniHourly.setViewsByLocation(viewsByLocation);
                 uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly);
@@ -692,11 +714,12 @@ public class LogService {
                 uniHourly.setBesucherAnzahl((long) uniqueUsers);
                 uniHourly.setTotalClicks((long) totalClicks);
                 uniHourly.setInternalClicks(internalClicks);
+                uniHourly.setServerErrors(serverErrors);
                 uniHourly.setViewsByLocation(viewsByLocation);
                 uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly);
                 setAccountTypeAllUniStats(uniHourly);
-                uniHourly.setStunde(LocalDateTime.now().getHour());
+                uniHourly.setStunde(curHour);
             }
         }
 

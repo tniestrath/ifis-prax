@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -56,6 +54,9 @@ public class UniversalStatsHourly {
 
     @Column(name="internal_clicks")
     private int internalClicks;
+
+    @Column(name = "server_errors")
+    private int serverErrors;
 
     @Lob
     @Column(name = "views_by_location", columnDefinition = "json")
@@ -188,6 +189,14 @@ public class UniversalStatsHourly {
 
     public void setInternalClicks(int internalClicks) {
         this.internalClicks = internalClicks;
+    }
+
+    public int getServerErrors() {
+        return serverErrors;
+    }
+
+    public void setServerErrors(int serverErrors) {
+        this.serverErrors = serverErrors;
     }
 }
 

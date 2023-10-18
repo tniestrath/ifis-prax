@@ -62,6 +62,9 @@ public class UniversalStats {
     @Column(name="internal_clicks")
     private int internalClicks;
 
+    @Column(name= "server_errors")
+    private int serverErrors;
+
 
     @Lob
     @Column(name = "views_by_location", columnDefinition = "json")
@@ -294,6 +297,14 @@ public class UniversalStats {
 
     public void setInternalClicks(int internalClicks) {
         this.internalClicks = internalClicks;
+    }
+
+    public int getServerErrors() {
+        return serverErrors;
+    }
+
+    public void setServerErrors(int serverErrors) {
+        this.serverErrors = serverErrors;
     }
 }
 

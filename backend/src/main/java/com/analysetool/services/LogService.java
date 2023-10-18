@@ -1498,24 +1498,34 @@ public class LogService {
 
     @Transactional
     public void updateTagStats(long id,boolean searchSuccess){
-        TagStat Stats = tagStatRepo.getStatById((int)id);
-        HashMap<String,Long> daily = (HashMap<String, Long>) Stats.getViewsLastYear();
-        Calendar calendar = Calendar.getInstance();
-        int currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
-        long views = daily.get(Integer.toString(currentDayOfYear));
-        views++;
-        daily.put(Integer.toString(currentDayOfYear),views);
-        Stats.setViewsLastYear(daily);
-        views = Stats.getViews();
-        views ++;
-        Stats.setViews(views);
-        Stats.setRelevance(getRelevance(daily,currentDayOfYear,7));
-        if(searchSuccess){
-            int searchS = Stats.getSearchSuccess();
-            searchS++;
-            Stats.setSearchSuccess(searchS);
+        TagStat Stats = null;
+        try {
+            Stats = tagStatRepo.getStatById((int) id);
+        } catch (Exception e) {
+            System.out.println("Es wurde nach folgender Tag-ID gefragt" + id);
+            return;
         }
-        tagStatRepo.save(Stats);
+        if(termTaxRepo.findByTermId(Stats.getTagId()).getTaxonomy().equalsIgnoreCase("post_tag")) {
+            HashMap<String, Long> daily = (HashMap<String, Long>) Stats.getViewsLastYear();
+            Calendar calendar = Calendar.getInstance();
+            int currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
+            long views = daily.get(Integer.toString(currentDayOfYear));
+            views++;
+            daily.put(Integer.toString(currentDayOfYear), views);
+            Stats.setViewsLastYear(daily);
+            views = Stats.getViews();
+            views++;
+            Stats.setViews(views);
+            Stats.setRelevance(getRelevance(daily, currentDayOfYear, 7));
+            if (searchSuccess) {
+                int searchS = Stats.getSearchSuccess();
+                searchS++;
+                Stats.setSearchSuccess(searchS);
+            }
+            tagStatRepo.save(Stats);
+        } else {
+            tagStatRepo.delete(Stats);
+        }
     }
 
     public void checkTheTag(long id,boolean searchSuccess){

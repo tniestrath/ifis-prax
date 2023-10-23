@@ -195,14 +195,13 @@ public class uniStatController {
 
         int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
 
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsGlobal());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsMain());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsArticle());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsNews());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsBlog());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPodcast());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsWhitepaper());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeber());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsMain());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsUeber());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsImpressum());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPreisliste());
@@ -214,14 +213,13 @@ public class uniStatController {
 
         List<Integer> besucherByCategory = new ArrayList<>();
 
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherGlobal());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherMain());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherArticle());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherNews());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherBlog());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPodcast());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherWhitepaper());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeber());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherMain());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherUeber());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherImpressum());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPreisliste());
@@ -247,14 +245,13 @@ public class uniStatController {
 
         int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
 
-        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsGlobalByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsMainByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsArticleByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsBlogByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPodcastByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberByUniStatId(id));
-        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsMainByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsUeberByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImpressumByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPreislisteByUniStatId(id));
@@ -266,14 +263,13 @@ public class uniStatController {
 
         List<Integer> besucherByCategory = new ArrayList<>();
 
-        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserGlobalByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserMainByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserArticleByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNewsByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserBlogByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPodcastByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberByUniStatId(id));
-        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserMainByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserUeberByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImpressumByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPreislisteByUniStatId(id));

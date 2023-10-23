@@ -440,7 +440,7 @@ public class LogService {
                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                         if(isUnique) {
                             userArticle++;
-                            user = new UniqueUser();
+                            user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                             user.setCategory("article");
                             user.setIp(pre_Matched.group(1));
                         } else {
@@ -469,7 +469,7 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if(isUnique) {
                                 userBlog++;
-                                user = new UniqueUser();
+                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                 user.setCategory("blog");
                                 user.setIp(pre_Matched.group(1));
                             }else {
@@ -501,7 +501,7 @@ public class LogService {
                                 //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                 if(isUnique) {
                                     userNews++;
-                                    user = new UniqueUser();
+                                    user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                     user.setCategory("news");
                                     user.setIp(pre_Matched.group(1));
                                 } else {
@@ -527,7 +527,7 @@ public class LogService {
                                     //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                     if(isUnique) {
                                         userWhitepaper++;
-                                        user = new UniqueUser();
+                                        user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                         user.setCategory("whitepaper");
                                         user.setIp(pre_Matched.group(1));
                                     } else {
@@ -546,7 +546,7 @@ public class LogService {
                                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                         if(isUnique) {
                                             userPodcast++;
-                                            user = new UniqueUser();
+                                            user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                             user.setCategory("podcast");
                                             user.setIp(pre_Matched.group(1));
                                         } else {
@@ -564,7 +564,7 @@ public class LogService {
                                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                             if (isUnique) {
                                                 userMain++;
-                                                user = new UniqueUser();
+                                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                 user.setCategory("main");
                                                 user.setIp(pre_Matched.group(1));
                                             } else {
@@ -582,7 +582,7 @@ public class LogService {
                                                 //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                                 if (isUnique) {
                                                     userUeber++;
-                                                    user = new UniqueUser();
+                                                    user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                     user.setCategory("ueber");
                                                     user.setIp(pre_Matched.group(1));
                                                 } else {
@@ -600,7 +600,7 @@ public class LogService {
                                                     //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                                     if (isUnique) {
                                                         userImpressum++;
-                                                        user = new UniqueUser();
+                                                        user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                         user.setCategory("impressum");
                                                         user.setIp(pre_Matched.group(1));
                                                     } else {
@@ -618,7 +618,7 @@ public class LogService {
                                                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                                         if (isUnique) {
                                                             userPreisliste++;
-                                                            user = new UniqueUser();
+                                                            user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                             user.setCategory("preisliste");
                                                             user.setIp(pre_Matched.group(1));
                                                         } else {
@@ -636,7 +636,7 @@ public class LogService {
                                                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                                             if (isUnique) {
                                                                 userPartner++;
-                                                                user = new UniqueUser();
+                                                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                                 user.setCategory("partner");
                                                                 user.setIp(pre_Matched.group(1));
                                                             } else {
@@ -654,7 +654,7 @@ public class LogService {
                                                                 //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                                                 if (isUnique) {
                                                                     userDatenschutz++;
-                                                                    user = new UniqueUser();
+                                                                    user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                                     user.setCategory("datenschutz");
                                                                     user.setIp(pre_Matched.group(1));
                                                                 } else {
@@ -672,7 +672,7 @@ public class LogService {
                                                                     //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                                                     if (isUnique) {
                                                                         userNewsletter++;
-                                                                        user = new UniqueUser();
+                                                                        user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                                         user.setCategory("newsletter");
                                                                         user.setIp(pre_Matched.group(1));
                                                                     } else {
@@ -690,7 +690,7 @@ public class LogService {
                                                                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                                                                         if (isUnique) {
                                                                             userImage++;
-                                                                            user = new UniqueUser();
+                                                                            user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                                             user.setCategory("image");
                                                                             user.setIp(pre_Matched.group(1));
                                                                         } else {
@@ -705,7 +705,7 @@ public class LogService {
                                                                             viewsAGBS++;
                                                                             if (isUnique) {
                                                                                 userAGBS++;
-                                                                                user = new UniqueUser();
+                                                                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                                                 user.setCategory("agbs");
                                                                                 user.setIp(pre_Matched.group(1));
                                                                             } else {
@@ -759,16 +759,6 @@ public class LogService {
                         processLine(line, "refferer",pre_Matched, matched_reffererPattern);
                     }
 
-                    //If user doesnt exist and is unique, make a new one.
-                    if(user == null) {
-                        //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                        if(isUnique) {
-                            user = new UniqueUser();
-                            user.setCategory("global");
-                            user.setIp(pre_Matched.group(1));
-                            uniqueUserRepo.save(user);
-                        }
-                    }
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && isInternal) {
                     internalClicks++;

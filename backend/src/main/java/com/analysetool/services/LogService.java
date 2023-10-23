@@ -413,6 +413,7 @@ public class LogService {
                         user = new UniqueUser();
                         user.setGlobal(1);
                         user.setIp(pre_Matched.group(1));
+                        user.setCategory("global");
                         uniqueUserRepo.save(user);
                     } else {
                         user = uniqueUserRepo.findByIP(pre_Matched.group(1));

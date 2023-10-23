@@ -321,8 +321,7 @@ public class LogService {
         blacklistUserAgents.add("Moreover");
         blacklistUserAgents.add("Sitesucker");
         blacklistUserAgents.add("Webz.io");
-
-        //Set error codes, that shouldn't be counted as clicks.
+        blacklistUserAgents.add("FeedFetcher");
 
 
         int totalClicks = 0;
@@ -390,7 +389,7 @@ public class LogService {
 
                 boolean isServerError = Integer.parseInt(pre_Matched.group(4)) >= 500;
 
-
+                System.out.println("Starte mit so vielen Worten in der Blacklist:" + blacklistUserAgents.size());
                 try {
                     for (String item : blacklistUserAgents) {
                         isBlacklisted = pre_Matched.group(5).toLowerCase().contains(item.toLowerCase());
@@ -401,7 +400,7 @@ public class LogService {
 
                 if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && isBlacklisted) System.out.println(pre_Matched.group(5));
 
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isBlacklisted && isSuccessfulRequest) {
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isBlacklisted && isSuccessfulRequest && !pre_Matched.group(3).contains("securitynews")) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     setViewsByLocation(pre_Matched.group(1), viewsByLocation);
                     erhoeheViewsPerHour2(viewsByHour, dateLog.toLocalTime());

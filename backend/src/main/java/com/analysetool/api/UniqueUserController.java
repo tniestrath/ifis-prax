@@ -22,11 +22,11 @@ public class UniqueUserController {
 
     /**
      *
-     * @param category "article" | "blog" | "news" | "whitepaper" | "podcast" | "global" | "mainPage" | "ueber" | "impressum" | "preisliste" | "partner" | "datenschutz" | "newsletter" | "image"
+     * @param category "article" | "blog" | "news" | "whitepaper" | "podcast" | "ratgeber" | "global" | "main" | "ueber" | "impressum" | "preisliste" | "partner" | "datenschutz" | "newsletter" | "image" | "agb"
      * @return count of all uniqueusers in said category.
      */
-    @GetMapping("/getCountByCategory")
-    public int getCountByCategory(String category) {
+    @GetMapping("/getCountByFirstCategory")
+    public int getCountByFirstCategory(String category) {
         return uniqueUserRepo.getUserCountByCategory(category);
     }
 

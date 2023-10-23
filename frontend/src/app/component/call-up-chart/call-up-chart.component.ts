@@ -66,7 +66,13 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       });
     });
     this.db.getCallupsByCategoriesNewest().then(res => {
-      this.createCategoriesChart(res.slice(0, 6), res.slice(7), "Heute")
+      let views = res.slice(0,6);
+      let footer_views = res.slice(7).reduce((previousValue, currentValue) => previousValue + currentValue);
+      let visitors = res.slice(15,21);
+      let footer_visitors = res.slice(21).reduce((previousValue, currentValue) => previousValue + currentValue);
+      views.push(footer_views);
+      visitors.push(footer_visitors);
+      this.createCategoriesChart(views, visitors, "Heute");
     })
   }
   ngOnInit(): void {
@@ -87,7 +93,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       type: "bar",
       data:
         {
-        labels: ["Startseite","Artikel","News","Blog","Podcast","Whitepaper","Ratgeber", "Footer"],
+        labels: ["Startseite","Artikel","News","Blog","Podcast","Whitepaper","Ratgeber","Footer"],
         datasets: [
           {
             label: "Besucher",
@@ -286,13 +292,30 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
   }
 
   public getCategoriesData(date : string, timespan : string){
+    let views = [];
+    let visitors = [];
+
+    let footer_views = 0;
+    let footer_visitors = 0;
     if (timespan != "day"){
       this.db.getCallupsByCategoriesByDate(date).then(res => {
-        this.createCategoriesChart(res.slice(0, 14), res.slice(15), date);
+        views = res.slice(0,6);
+        footer_views = res.slice(7).reduce((previousValue, currentValue) => previousValue + currentValue);
+        visitors = res.slice(15,21);
+        footer_visitors = res.slice(21).reduce((previousValue, currentValue) => previousValue + currentValue);
+        views.push(footer_views);
+        visitors.push(footer_visitors);
+        this.createCategoriesChart(views, visitors, date);
       });
     } else if (timespan == "day"){
       this.db.getCallupsByCategoriesByDateTime(Util.getFormattedNow(), Number(date)).then(res => {
-        this.createCategoriesChart(res.slice(0, 14), res.slice(15), date + " Uhr");
+        views = res.slice(0,6);
+        footer_views = res.slice(7).reduce((previousValue, currentValue) => previousValue + currentValue);
+        visitors = res.slice(15,21);
+        footer_visitors = res.slice(21).reduce((previousValue, currentValue) => previousValue + currentValue);
+        views.push(footer_views);
+        visitors.push(footer_visitors);
+        this.createCategoriesChart(views, visitors, date + " Uhr");
       });
     }
   }

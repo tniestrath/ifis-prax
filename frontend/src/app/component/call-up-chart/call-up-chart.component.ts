@@ -87,7 +87,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       type: "bar",
       data:
         {
-        labels: ["Undefiniert","Artikel","News","Blog","Podcast","Whitepaper","Ratgeber"],
+        labels: ["Startseite","Artikel","News","Blog","Podcast","Whitepaper","Ratgeber", "Footer"],
         datasets: [
           {
             label: "Besucher",
@@ -288,11 +288,11 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
   public getCategoriesData(date : string, timespan : string){
     if (timespan != "day"){
       this.db.getCallupsByCategoriesByDate(date).then(res => {
-        this.createCategoriesChart(res.slice(0, 6), res.slice(7), date);
+        this.createCategoriesChart(res.slice(0, 7), res.slice(8), date);
       });
     } else if (timespan == "day"){
       this.db.getCallupsByCategoriesByDateTime(Util.getFormattedNow(), Number(date)).then(res => {
-        this.createCategoriesChart(res.slice(0, 6), res.slice(7), date + " Uhr");
+        this.createCategoriesChart(res.slice(0, 7), res.slice(8), date + " Uhr");
       });
     }
   }

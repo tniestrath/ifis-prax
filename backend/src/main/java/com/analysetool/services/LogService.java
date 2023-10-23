@@ -322,6 +322,7 @@ public class LogService {
         blacklistUserAgents.add("Sitesucker");
         blacklistUserAgents.add("Webz.io");
         blacklistUserAgents.add("FeedFetcher");
+        blacklistUserAgents.add("-");
 
 
         int totalClicks = 0;
@@ -400,7 +401,9 @@ public class LogService {
                     System.out.println("Group 5 not correctly created");
                 }
 
-                if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && isBlacklisted) System.out.println(pre_Matched.group(5));
+                if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && isBlacklisted) {
+                    System.out.println(pre_Matched.group(5));
+                }
 
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isBlacklisted && isSuccessfulRequest && !pre_Matched.group(3).contains("securitynews")) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));

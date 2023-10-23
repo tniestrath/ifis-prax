@@ -22,7 +22,7 @@ public class UniqueUserController {
 
     /**
      *
-     * @param category "article" | "blog" | "news" | "whitepaper" | "podcast" | "global"
+     * @param category "article" | "blog" | "news" | "whitepaper" | "podcast" | "global" | "mainPage" | "ueber" | "impressum" | "preisliste" | "partner" | "datenschutz" | "newsletter" | "image"
      * @return count of all uniqueusers in said category.
      */
     @GetMapping("/getCountByCategory")

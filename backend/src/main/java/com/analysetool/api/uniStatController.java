@@ -1,13 +1,4 @@
 package com.analysetool.api;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
@@ -17,6 +8,13 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -189,7 +187,7 @@ public class uniStatController {
      * @param date : das Datum, für das die UniStatsNach Kategorie ausgegeben werden sollen.
      * @param hour : die Stunde, für die ausgegeben werden sollen.
      * @return eine Liste der Anzahl von Clicks und Besucher nach Category des letzten abgeschlossenen Tages.
-     *      * 0-6 clicks, 7-13 besucher, global-article-news-blog-podcast-whitepaper-ratgeber in order.
+     *      * 0-14 clicks, 15-30 besucher, global-article-news-blog-podcast-whitepaper-ratgeber in order.
      */
     @GetMapping("getCallupByCategoryDateAndHour")
     public List<Integer> getCallupByCategoryHourly(String date, int hour) throws ParseException {
@@ -204,6 +202,14 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPodcast());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsWhitepaper());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeber());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsMain());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsUeber());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsImpressum());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPreisliste());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPartner());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsDatenschutz());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsNewsletter());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsImage());
 
         List<Integer> besucherByCategory = new ArrayList<>();
 
@@ -214,6 +220,14 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPodcast());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherWhitepaper());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeber());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherMain());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherUeber());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherImpressum());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPreisliste());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPartner());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherDatenschutz());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherNewsletter());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherImage());
 
         clicksByCategory.addAll(besucherByCategory);
         return clicksByCategory;

@@ -62,24 +62,24 @@ public class LogService {
     private BufferedReader br;
     private String path = "";
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
-    private final String BlogSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
-    private final String ArtikelSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/.*s=(\\S+)\".*";//search +1, view +1,(bei match) vor artikel view pattern
+    private final String BlogSSPattern = "^.*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
+    private final String ArtikelSSPattern = "^.*GET /artikel/(\\S+)/.*s=(\\S+)\".*";//search +1, view +1,(bei match) vor artikel view pattern
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
-    private final String WhitepaperSSPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
-    private final String BlogViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /blog/(\\S+)/";
+    private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
+    private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
     private final String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
     private final String UserViewPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
     //private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+)";//Artikel view +1 bei match
-    private final String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /artikel/(\\S+)/";
-    private final String PresseViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /news/(\\S+)/";
+    private final String ArtikelViewPattern = "^.*GET /artikel/(\\S+)/";
+    private final String NewsViewPatter = "^.*GET /news/";
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
-    private final String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /news/(\\S+)/.*s=(\\S+)\".*";
+    private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
 
-    private final String WhitepaperViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /whitepaper/(\\S+)/";
-    private final String PodcastPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /its-couch/";
+    private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
+    private final String PodcastPattern = "^.*GET /its-couch/";
 
 
     // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
@@ -89,6 +89,24 @@ public class LogService {
 
    private final String prePattern = "^([\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}\\.[\\d]{1,3}).*\\[([\\d]{2}/[a-zA-Z]{3}/[\\d]{4}:[\\d]{2}:[\\d]{2}:[\\d]{2}).*\\\"(.*)\\\".\\{(...)\\}.*\\[(.*)\\]";
 
+   private final String mainPage = "^.*GET /(startseite|( )+)";
+
+   private final String ueber = "^.*GET /ueber-uns/";
+
+   private final String impressum = "^.*GET /impressum/";
+
+    private final String agbs = "^.*GET /agbs/";
+
+    private final String datenschutzerklaerung = "^.*GET /datenschutzerklaerung/";
+
+    private final String preisliste = "^.*GET /preisliste/";
+
+    private final String partner = "^.*GET /unsere-partner-und-sponsoren/";
+
+    private final String newsletter = "^.*GET /newsletter/";
+
+    private final String image = "^.*GET /ziel-des-marktplatz-it-sicherheit/";
+
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
     Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
@@ -96,7 +114,7 @@ public class LogService {
     Pattern blogSearchSuccessPattern = Pattern.compile(BlogSSPattern);
     Pattern redirectPattern = Pattern.compile(RedirectPattern);
     Pattern userViewPattern = Pattern.compile(UserViewPattern);
-    Pattern newsViewPattern = Pattern.compile(PresseViewPatter);
+    Pattern newsViewPattern = Pattern.compile(NewsViewPatter);
     Pattern newsSearchSuccessPattern = Pattern.compile(PresseSSViewPatter);
     Pattern userRedirectPattern = Pattern.compile(RedirectUserPattern);
     Pattern searchPattern = Pattern.compile(SearchPattern);
@@ -105,6 +123,17 @@ public class LogService {
     Pattern patternWhitepaperSearchSuccess = Pattern.compile(WhitepaperSSPattern);
     Pattern patternPreMatch = Pattern.compile(prePattern);
     Pattern reffererPattern=Pattern.compile(ReffererPattern);
+    Pattern mainPagePattern = Pattern.compile(mainPage);
+    Pattern ueberPattern = Pattern.compile(ueber);
+    Pattern impressumPattern = Pattern.compile(impressum);
+    Pattern agbsPattern = Pattern.compile(agbs);
+    Pattern datenschutzerklaerungPattern = Pattern.compile(datenschutzerklaerung);
+    Pattern preislistePattern = Pattern.compile(preisliste);
+    Pattern partnerPattern = Pattern.compile(partner);
+    Pattern newsletterPattern = Pattern.compile(newsletter);
+    Pattern imagePattern = Pattern.compile(image);
+
+
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -429,6 +458,15 @@ public class LogService {
         int viewsPodcast = 0;
         int viewsWhitepaper = 0;
         int viewsRatgeber = 0;
+        int viewsMain = 0;
+        int viewsUeber = 0;
+        int viewsAGBS = 0;
+        int viewsImpressum = 0;
+        int viewsPreisliste = 0;
+        int viewsPartner = 0;
+        int viewsDatenschutz = 0;
+        int viewsNewsletter = 0;
+        int viewsImage = 0;
 
 
         int uniqueUsers = 0;
@@ -438,6 +476,15 @@ public class LogService {
         int userPodcast = 0;
         int userWhitepaper = 0;
         int userRatgeber = 0;
+        int userMain = 0;
+        int userUeber = 0;
+        int userAGBS = 0;
+        int userImpressum = 0;
+        int userPreisliste = 0;
+        int userPartner = 0;
+        int userDatenschutz = 0;
+        int userNewsletter = 0;
+        int userImage = 0;
 
         int serverErrors = 0;
 
@@ -481,13 +528,14 @@ public class LogService {
 
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isBlacklisted && isSuccessfulRequest) {
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
-                    Matcher matched_articleView = articleViewPattern.matcher(line);
                     setViewsByLocation(pre_Matched.group(1), viewsByLocation);
                     erhoeheViewsPerHour2(viewsByHour, dateLog.toLocalTime());
 
                     //erhöhe Clicks und Besucher, falls anwendbar
                     totalClicks++;
                     if(isUnique) uniqueUsers++;
+
+                    Matcher matched_articleView = articleViewPattern.matcher(line);
 
                     if (matched_articleView.find()) {
                         Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
@@ -594,7 +642,6 @@ public class LogService {
                                     Matcher matched_podcastView = patternPodcast.matcher(line);
 
                                     if (matched_podcastView.find()) {
-                                        //ToDo maybe implement SearchSuccess if applicable
                                         processLine(line, "podcastView", matched_podcastView);
                                         //Erhöhe Clicks für Podcast um 1.
                                         viewsPodcast++;
@@ -606,6 +653,142 @@ public class LogService {
                                             user.setIp(pre_Matched.group(1));
                                             uniqueUserRepo.save(user);
                                         }
+                                    } else {
+                                        Matcher matched_main_page = mainPagePattern.matcher(line);
+
+                                        if(matched_main_page.find()) {
+                                            //processLine(line, "mainPageView", matched_main_page);
+                                            //Erhöhe Clicks für Startseite um 1.
+                                            viewsMain++;
+                                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                            if (isUnique) {
+                                                userMain++;
+                                                user = new UniqueUser();
+                                                user.setCategory("main");
+                                                user.setIp(pre_Matched.group(1));
+                                                uniqueUserRepo.save(user);
+                                            }
+                                        } else {
+                                            Matcher matched_ueber = ueberPattern.matcher(line);
+
+                                            if(matched_ueber.find()) {
+                                                //processLine(line, "ueber", matched_ueber);
+                                                //Erhöhe Clicks für Ueber-Uns um 1.
+                                                viewsUeber++;
+                                                //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                                if (isUnique) {
+                                                    userUeber++;
+                                                    user = new UniqueUser();
+                                                    user.setCategory("ueber");
+                                                    user.setIp(pre_Matched.group(1));
+                                                    uniqueUserRepo.save(user);
+                                                }
+                                            } else {
+                                                Matcher matched_impressum = impressumPattern.matcher(line);
+
+                                                if(matched_impressum.find()) {
+                                                    //processLine(line, "impressum", matched_impressum);
+                                                    //Erhöhe Clicks für Impressum um 1.
+                                                    viewsImpressum++;
+                                                    //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                                    if (isUnique) {
+                                                        userImpressum++;
+                                                        user = new UniqueUser();
+                                                        user.setCategory("impressum");
+                                                        user.setIp(pre_Matched.group(1));
+                                                        uniqueUserRepo.save(user);
+                                                    }
+                                                } else {
+                                                    Matcher matched_preisliste = preislistePattern.matcher(line);
+
+                                                    if(matched_preisliste.find()) {
+                                                        //processLine(line, "preisliste", matched_preisliste);
+                                                        //Erhöhe Clicks für Preisliste um 1.
+                                                        viewsPreisliste++;
+                                                        //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                                        if (isUnique) {
+                                                            userPreisliste++;
+                                                            user = new UniqueUser();
+                                                            user.setCategory("preisliste");
+                                                            user.setIp(pre_Matched.group(1));
+                                                            uniqueUserRepo.save(user);
+                                                        }
+                                                    } else {
+                                                        Matcher matched_partner = partnerPattern.matcher(line);
+
+                                                        if(matched_partner.find()) {
+                                                            //processLine(line, "partner", matched_partner);
+                                                            //Erhöhe Clicks für Partner um 1.
+                                                            viewsPartner++;
+                                                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                                            if (isUnique) {
+                                                                userPartner++;
+                                                                user = new UniqueUser();
+                                                                user.setCategory("partner");
+                                                                user.setIp(pre_Matched.group(1));
+                                                                uniqueUserRepo.save(user);
+                                                            }
+                                                        } else {
+                                                            Matcher matched_datenschutz = datenschutzerklaerungPattern.matcher(line);
+
+                                                            if(matched_datenschutz.find()) {
+                                                                //processLine(line, "datenschutz", matched_datenschutz);
+                                                                //Erhöhe Clicks für Datenschutzerkl. um 1.
+                                                                viewsDatenschutz++;
+                                                                //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                                                if (isUnique) {
+                                                                    userDatenschutz++;
+                                                                    user = new UniqueUser();
+                                                                    user.setCategory("datenschutz");
+                                                                    user.setIp(pre_Matched.group(1));
+                                                                    uniqueUserRepo.save(user);
+                                                                }
+                                                            } else {
+                                                                Matcher matched_newsletter = newsletterPattern.matcher(line);
+
+                                                                if(matched_newsletter.find()) {
+                                                                    //processLine(line, "newsletter", matched_newsletter);
+                                                                    //Erhöhe Clicks für Newsletter um 1.
+                                                                    viewsNewsletter++;
+                                                                    //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                                                    if (isUnique) {
+                                                                        userNewsletter++;
+                                                                        user = new UniqueUser();
+                                                                        user.setCategory("newsletter");
+                                                                        user.setIp(pre_Matched.group(1));
+                                                                        uniqueUserRepo.save(user);
+                                                                    }
+                                                                } else {
+                                                                    Matcher matched_image = imagePattern.matcher(line);
+
+                                                                    if(matched_newsletter.find()) {
+                                                                        //processLine(line, "image", matched_image);
+                                                                        //Erhöhe Clicks für Image um 1.
+                                                                        viewsImage++;
+                                                                        //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                                                                        if (isUnique) {
+                                                                            userImage++;
+                                                                            user = new UniqueUser();
+                                                                            user.setCategory("image");
+                                                                            user.setIp(pre_Matched.group(1));
+                                                                            uniqueUserRepo.save(user);
+                                                                        }
+                                                                    }
+
+                                                                }
+
+                                                            }
+
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        }
+
                                     }
                                 }
                             }
@@ -746,9 +929,11 @@ public class LogService {
         {
             UniversalCategoriesDLC uniCategories;
             if(universalCategoriesDLCRepo.getLastStunde() != curHour) {
+                //Create and identify a new row of UniversalCategoriesDLC
                 uniCategories = new UniversalCategoriesDLC();
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                 uniCategories.setStunde(curHour);
+                //Create entries for users.
                 uniCategories.setBesucherGlobal(uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber);
                 uniCategories.setBesucherArticle(userArticle);
                 uniCategories.setBesucherNews(userNews);
@@ -756,6 +941,15 @@ public class LogService {
                 uniCategories.setBesucherPodcast(userPodcast);
                 uniCategories.setBesucherWhitepaper(userWhitepaper);
                 uniCategories.setBesucherRatgeber(userRatgeber);
+                uniCategories.setBesucherMain(userMain);
+                uniCategories.setBesucherUeber(userUeber);
+                uniCategories.setBesucherImpressum(userImpressum);
+                uniCategories.setBesucherPreisliste(userPreisliste);
+                uniCategories.setBesucherPartner(userPartner);
+                uniCategories.setBesucherDatenschutz(userDatenschutz);
+                uniCategories.setBesucherNewsletter(userNewsletter);
+                uniCategories.setBesucherImage(userImage);
+                //Create entries for views.
                 uniCategories.setViewsGlobal(totalClicks - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber);
                 uniCategories.setViewsArticle(viewsArticle);
                 uniCategories.setViewsNews(viewsNews);
@@ -763,10 +957,21 @@ public class LogService {
                 uniCategories.setViewsPodcast(viewsPodcast);
                 uniCategories.setViewsWhitepaper(viewsWhitepaper);
                 uniCategories.setViewsRatgeber(viewsRatgeber);
+                uniCategories.setViewsMain(viewsMain);
+                uniCategories.setViewsUeber(viewsUeber);
+                uniCategories.setViewsImpressum(viewsImpressum);
+                uniCategories.setViewsPreisliste(viewsPreisliste);
+                uniCategories.setViewsPartner(viewsPartner);
+                uniCategories.setViewsDatenschutz(viewsDatenschutz);
+                uniCategories.setViewsNewsletter(viewsNewsletter);
+                uniCategories.setViewsImage(viewsImage);
+                //Save to db.
                 universalCategoriesDLCRepo.save(uniCategories);
             } else {
+                //Since entry for this hour already exists, find it.
                 uniCategories = universalCategoriesDLCRepo.getLast();
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
+                //Update users
                 uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber);
                 uniCategories.setBesucherArticle(uniCategories.getBesucherArticle() + userArticle);
                 uniCategories.setBesucherNews(uniCategories.getBesucherNews() + userNews);
@@ -774,6 +979,15 @@ public class LogService {
                 uniCategories.setBesucherPodcast(uniCategories.getBesucherPodcast() + userPodcast);
                 uniCategories.setBesucherWhitepaper(uniCategories.getBesucherWhitepaper() + userWhitepaper);
                 uniCategories.setBesucherRatgeber(uniCategories.getBesucherRatgeber() + userRatgeber);
+                uniCategories.setBesucherMain(userMain + uniCategories.getBesucherMain());
+                uniCategories.setBesucherUeber(userUeber + uniCategories.getBesucherUeber());
+                uniCategories.setBesucherImpressum(userImpressum + uniCategories.getBesucherImpressum());
+                uniCategories.setBesucherPreisliste(userPreisliste + uniCategories.getBesucherPreisliste());
+                uniCategories.setBesucherPartner(userPartner + uniCategories.getBesucherPartner());
+                uniCategories.setBesucherDatenschutz(userDatenschutz + uniCategories.getBesucherDatenschutz());
+                uniCategories.setBesucherNewsletter(userNewsletter + uniCategories.getBesucherNewsletter());
+                uniCategories.setBesucherImage(userImage + uniCategories.getBesucherImage());
+                //update views
                 uniCategories.setViewsGlobal(totalClicks + uniCategories.getViewsGlobal() - - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber);
                 uniCategories.setViewsArticle(viewsArticle + uniCategories.getViewsArticle());
                 uniCategories.setViewsNews(viewsNews + uniCategories.getBesucherNews());
@@ -781,6 +995,15 @@ public class LogService {
                 uniCategories.setViewsPodcast(viewsPodcast + uniCategories.getViewsPodcast());
                 uniCategories.setViewsWhitepaper(viewsWhitepaper + uniCategories.getViewsWhitepaper());
                 uniCategories.setViewsRatgeber(viewsRatgeber + uniCategories.getViewsRatgeber());
+                uniCategories.setViewsMain(viewsMain + uniCategories.getViewsMain());
+                uniCategories.setViewsUeber(viewsUeber + uniCategories.getViewsUeber());
+                uniCategories.setViewsImpressum(viewsImpressum + uniCategories.getViewsImpressum());
+                uniCategories.setViewsPreisliste(viewsPreisliste + uniCategories.getViewsPreisliste());
+                uniCategories.setViewsPartner(viewsPartner + uniCategories.getViewsPartner());
+                uniCategories.setViewsDatenschutz(viewsDatenschutz + uniCategories.getViewsDatenschutz());
+                uniCategories.setViewsNewsletter(viewsNewsletter + uniCategories.getViewsNewsletter());
+                uniCategories.setViewsImage(viewsImage);
+                //save to db.
                 universalCategoriesDLCRepo.save(uniCategories);
             }
         }
@@ -1009,6 +1232,9 @@ public class LogService {
             UpdatePerformanceAndViews(matcher);
             updateViewsByLocation(matcher);
         }
+
+        //ToDo: If it became necessary, add behaviour for new Patterns here.
+
         /*
         if(patternName.equals("podcastView")) {
             System.out.println("PODCAST VIEW WOOOOHOOO");

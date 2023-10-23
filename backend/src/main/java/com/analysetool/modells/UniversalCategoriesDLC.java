@@ -37,6 +37,30 @@ public class UniversalCategoriesDLC {
     @Column(name="besucher_ratgeber")
     private int besucherRatgeber;
 
+    @Column(name="besucher_main")
+    private int besucherMain;
+
+    @Column(name="besucher_ueber")
+    private int besucherUeber;
+
+    @Column(name="besucher_impressum")
+    private int besucherImpressum;
+
+    @Column(name="besucher_preisliste")
+    private int besucherPreisliste;
+
+    @Column(name="besucher_partner")
+    private int besucherPartner;
+
+    @Column(name="besucher_datenschutz")
+    private int besucherDatenschutz;
+
+    @Column(name="besucher_newsletter")
+    private int besucherNewsletter;
+
+    @Column(name="besucher_image")
+    private int besucherImage;
+
     @Column(name="views_global")
     private int viewsGlobal;
 
@@ -57,6 +81,158 @@ public class UniversalCategoriesDLC {
 
     @Column(name="views_ratgeber")
     private int viewsRatgeber;
+
+    @Column(name="views_main")
+    private int viewsMain;
+
+    @Column(name="views_ueber")
+    private int viewsUeber;
+
+    @Column(name="views_impressum")
+    private int viewsImpressum;
+
+    @Column(name="views_preisliste")
+    private int viewsPreisliste;
+
+    @Column(name="views_partner")
+    private int viewsPartner;
+
+    public int getBesucherMain() {
+        return besucherMain;
+    }
+
+    public void setBesucherMain(int besucherMain) {
+        this.besucherMain = besucherMain;
+    }
+
+    public int getBesucherUeber() {
+        return besucherUeber;
+    }
+
+    public void setBesucherUeber(int besucherUeber) {
+        this.besucherUeber = besucherUeber;
+    }
+
+    public int getBesucherImpressum() {
+        return besucherImpressum;
+    }
+
+    public void setBesucherImpressum(int besucherImpressum) {
+        this.besucherImpressum = besucherImpressum;
+    }
+
+    public int getBesucherPreisliste() {
+        return besucherPreisliste;
+    }
+
+    public void setBesucherPreisliste(int besucherPreisliste) {
+        this.besucherPreisliste = besucherPreisliste;
+    }
+
+    public int getBesucherPartner() {
+        return besucherPartner;
+    }
+
+    public void setBesucherPartner(int besucherPartner) {
+        this.besucherPartner = besucherPartner;
+    }
+
+    public int getBesucherDatenschutz() {
+        return besucherDatenschutz;
+    }
+
+    public void setBesucherDatenschutz(int besucherDatenschutz) {
+        this.besucherDatenschutz = besucherDatenschutz;
+    }
+
+    public int getBesucherNewsletter() {
+        return besucherNewsletter;
+    }
+
+    public void setBesucherNewsletter(int besucherNewsletter) {
+        this.besucherNewsletter = besucherNewsletter;
+    }
+
+    public int getBesucherImage() {
+        return besucherImage;
+    }
+
+    public void setBesucherImage(int besucherImage) {
+        this.besucherImage = besucherImage;
+    }
+
+    public int getViewsMain() {
+        return viewsMain;
+    }
+
+    public void setViewsMain(int viewsMain) {
+        this.viewsMain = viewsMain;
+    }
+
+    public int getViewsUeber() {
+        return viewsUeber;
+    }
+
+    public void setViewsUeber(int viewsUeber) {
+        this.viewsUeber = viewsUeber;
+    }
+
+    public int getViewsImpressum() {
+        return viewsImpressum;
+    }
+
+    public void setViewsImpressum(int viewsImpressum) {
+        this.viewsImpressum = viewsImpressum;
+    }
+
+    public int getViewsPreisliste() {
+        return viewsPreisliste;
+    }
+
+    public void setViewsPreisliste(int viewsPreisliste) {
+        this.viewsPreisliste = viewsPreisliste;
+    }
+
+    public int getViewsPartner() {
+        return viewsPartner;
+    }
+
+    public void setViewsPartner(int viewsPartner) {
+        this.viewsPartner = viewsPartner;
+    }
+
+    public int getViewsDatenschutz() {
+        return viewsDatenschutz;
+    }
+
+    public void setViewsDatenschutz(int viewsDatenschutz) {
+        this.viewsDatenschutz = viewsDatenschutz;
+    }
+
+    public int getViewsNewsletter() {
+        return viewsNewsletter;
+    }
+
+    public void setViewsNewsletter(int viewsNewsletter) {
+        this.viewsNewsletter = viewsNewsletter;
+    }
+
+    public int getViewsImage() {
+        return viewsImage;
+    }
+
+    public void setViewsImage(int viewsImage) {
+        this.viewsImage = viewsImage;
+    }
+
+    @Column(name="views_datenschutz")
+    private int viewsDatenschutz;
+
+    @Column(name="views_newsletter")
+    private int viewsNewsletter;
+
+    @Column(name="views_image")
+    private int viewsImage;
 
     public int getId() {
         return id;

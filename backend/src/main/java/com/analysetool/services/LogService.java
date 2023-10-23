@@ -1337,18 +1337,14 @@ public class LogService {
            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
            LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
            String logDay = String.valueOf(dateLog.getDayOfMonth());
-           String logMonth = String.valueOf(dateLog.getMonth());
            String logYear = String.valueOf(dateLog.getYear());
 
        String logHour = String.valueOf(dateLog.getHour());
        String logMinute = String.valueOf(dateLog.getMinute());
        String logSecond = String.valueOf(dateLog.getSecond());
 
-       // Konvertiere den Monat in eine Zahl
-       int monthNumber = Integer.parseInt(getMonthNumber(logMonth));
-
        // Erstelle LocalDate und LocalTime Objekte
-       LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), monthNumber, Integer.parseInt(logDay));
+       LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), dateLog.getMonth().getValue(), Integer.parseInt(logDay));
        LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
 
        try {

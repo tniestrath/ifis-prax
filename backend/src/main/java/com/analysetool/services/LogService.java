@@ -389,10 +389,12 @@ public class LogService {
 
                 boolean isServerError = Integer.parseInt(pre_Matched.group(4)) >= 500;
 
-                System.out.println("Starte mit so vielen Worten in der Blacklist:" + blacklistUserAgents.size());
                 try {
                     for (String item : blacklistUserAgents) {
                         isBlacklisted = pre_Matched.group(5).toLowerCase().contains(item.toLowerCase());
+                        isBlacklisted = isBlacklisted || pre_Matched.group(5).toLowerCase(Locale.ROOT).contains(item.toLowerCase(Locale.ROOT));
+                        isBlacklisted = isBlacklisted || pre_Matched.group(5).isEmpty();
+                        isBlacklisted = isBlacklisted || pre_Matched.group(5).toLowerCase(Locale.ROOT).matches(item.toLowerCase(Locale.ROOT));
                     }
                 } catch (Exception e) {
                     System.out.println("Group 5 not correctly created");

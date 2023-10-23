@@ -1,7 +1,9 @@
 package com.analysetool.api;
 
+import com.analysetool.services.SystemLoadService;
 import com.analysetool.util.DashConfig;
 import com.analysetool.util.IPHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
@@ -19,6 +21,14 @@ import java.util.regex.Pattern;
 @RequestMapping("/ip")
 public class IPController {
 
+    private final DashConfig config;
+
+    @Autowired
+    public IPController(DashConfig config) {
+        this.config = config;
+    }
+
+
     @GetMapping("/origin")
     public String getOrigin(String ip){
         return IPHelper.getCountryName(ip)
@@ -28,7 +38,6 @@ public class IPController {
 
     @GetMapping("/countUnique")
     public String countIPsInAccessLog() {
-        DashConfig config = new DashConfig();
         String line;
         HashSet<String> set = new HashSet<>();
         try (BufferedReader br = new BufferedReader(new FileReader(config.getAccess()))) {

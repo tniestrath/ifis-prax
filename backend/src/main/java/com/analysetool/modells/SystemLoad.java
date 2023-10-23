@@ -17,6 +17,12 @@ public class SystemLoad {
     @Column(name = "memory_load")
     private double memoryLoad;
 
+    @Column(name = "network_recv")
+    private double networkRecv;
+
+    @Column(name = "network_sent")
+    private double networkSent;
+
     public Long getId() {
         return id;
     }
@@ -47,6 +53,22 @@ public class SystemLoad {
 
     public void setMemoryLoad(double memoryLoad) {
         this.memoryLoad = memoryLoad;
+    }
+
+    public double getNetworkRecv() {
+        return networkRecv;
+    }
+
+    public void setNetworkRecv(double networkRecv) {
+        this.networkRecv = networkRecv;
+    }
+
+    public double getNetworkSent() {
+        return networkSent;
+    }
+
+    public void setNetworkSent(double networkSent) {
+        this.networkSent = networkSent;
     }
 
     @Override

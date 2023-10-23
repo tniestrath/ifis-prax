@@ -1218,7 +1218,7 @@ public class LogService {
         }
     }
     public LocalTime getLocalTimeFromMatcher(Matcher matcher){
-        String logHourMinuteSecond = matcher.group(5);
+        String logHourMinuteSecond = matcher.group(2);
         // Trenne Stunden, Minuten und Sekunden
         String[] timeParts = logHourMinuteSecond.split(":");
         String logHour = timeParts[0];
@@ -1229,33 +1229,21 @@ public class LogService {
         return logTime;
     }
 
-    public LocalDate getLocalDateFromMatcher(Matcher matcher){
-        String logDay = matcher.group(2);
-        String logMonth = matcher.group(3);
-        String logYear = matcher.group(4);
-        // Konvertiere den Monat in eine Zahl
-        int monthNumber = Integer.parseInt(getMonthNumber(logMonth));
-        LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), monthNumber, Integer.parseInt(logDay));
-        return logDate;
-    }
     public void updatePerformanceViewsSearchSuccess(Matcher preMatcher, Matcher patternMatcher) {
         if (!patternMatcher.group(1).matches("\\d+")){
         // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
             LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
         String logDay = String.valueOf(dateLog.getDayOfMonth());
-        String logMonth = dateLog.getMonth().toString();
         String logYear = String.valueOf(dateLog.getYear());
 
         String logHour = String.valueOf(dateLog.getHour());
         String logMinute = String.valueOf(dateLog.getMinute());
         String logSecond = String.valueOf(dateLog.getSecond());
 
-        // Konvertiere den Monat in eine Zahl
-        int monthNumber = Integer.parseInt(getMonthNumber(logMonth));
 
         // Erstelle LocalDate und LocalTime Objekte
-        LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), monthNumber, Integer.parseInt(logDay));
+        LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), dateLog.getMonth().getValue(), Integer.parseInt(logDay));
         LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
 
         try {

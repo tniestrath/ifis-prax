@@ -74,7 +74,7 @@ public class LogService {
     //Blog view +1 bei match
     //private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+)";//Artikel view +1 bei match
     private final String ArtikelViewPattern = "^.*GET /artikel/(\\S+)/";
-    private final String NewsViewPatter = "^.*GET /news/";
+    private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
     private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
 

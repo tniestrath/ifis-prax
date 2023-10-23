@@ -408,7 +408,17 @@ public class LogService {
 
                     //erhöhe Clicks und Besucher, falls anwendbar
                     totalClicks++;
-                    if(isUnique) uniqueUsers++;
+                    if(isUnique) {
+                        uniqueUsers++;
+                        user = new UniqueUser();
+                        user.setGlobal(1);
+                        user.setIp(pre_Matched.group(1));
+                        uniqueUserRepo.save(user);
+                    } else {
+                        user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                        user.setGlobal(1);
+                        uniqueUserRepo.save(user);
+                    }
 
                     Matcher matched_articleView = articleViewPattern.matcher(line);
 

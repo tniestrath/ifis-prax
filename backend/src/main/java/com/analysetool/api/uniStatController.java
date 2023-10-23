@@ -237,7 +237,7 @@ public class uniStatController {
      *
      * @param date : Das Datum, für die zusammengefasste Stats ausgegeben werden sollen.
      * @return eine Liste der Anzahl von Clicks und Besucher nach Category des letzten abgeschlossenen Tages.
-     *      * 0-6 clicks, 7-13 besucher, global-article-news-blog-podcast-whitepaper-ratgeber in order.
+     *      * 0-14 clicks, 15-30 besucher, global-article-news-blog-podcast-whitepaper-ratgeber in order.
      */
     @GetMapping("getCallupByCategoryDate")
     public List<Integer> getCallupByCategoryDaily(String date) throws ParseException {
@@ -252,6 +252,14 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPodcastByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsMainByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsUeberByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImpressumByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPreislisteByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPartnerByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsDatenschutzByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsletterByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImageByUniStatId(id));
 
         List<Integer> besucherByCategory = new ArrayList<>();
 
@@ -262,6 +270,15 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPodcastByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserMainByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserUeberByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImpressumByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPreislisteByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPartnerByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserDatenschutzByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNewsletterByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImageByUniStatId(id));
+
 
         clicksByCategory.addAll(besucherByCategory);
         return clicksByCategory;

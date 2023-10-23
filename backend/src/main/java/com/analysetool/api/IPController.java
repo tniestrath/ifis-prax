@@ -40,7 +40,8 @@ public class IPController {
                 }
             }
         } catch (Exception e) {
-            return "ERROR : " + e.getMessage();
+            e.printStackTrace();
+            return e.toString();
         }
         return String.valueOf(set.size());
     }

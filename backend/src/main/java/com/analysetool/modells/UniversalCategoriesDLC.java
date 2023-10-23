@@ -61,6 +61,9 @@ public class UniversalCategoriesDLC {
     @Column(name="besucher_image")
     private int besucherImage;
 
+    @Column(name="besucher_agbs")
+    private int besucherAGBS;
+
     @Column(name="views_global")
     private int viewsGlobal;
 
@@ -96,6 +99,9 @@ public class UniversalCategoriesDLC {
 
     @Column(name="views_partner")
     private int viewsPartner;
+
+    @Column(name="views_agbs")
+    private int viewsAGBS;
 
     public int getBesucherMain() {
         return besucherMain;
@@ -368,6 +374,22 @@ public class UniversalCategoriesDLC {
 
     public void setStunde(int stunde) {
         this.stunde = stunde;
+    }
+
+    public int getBesucherAGBS() {
+        return besucherAGBS;
+    }
+
+    public void setBesucherAGBS(int besucherAGBS) {
+        this.besucherAGBS = besucherAGBS;
+    }
+
+    public int getViewsAGBS() {
+        return viewsAGBS;
+    }
+
+    public void setViewsAGBS(int viewsAGBS) {
+        this.viewsAGBS = viewsAGBS;
     }
 }
 

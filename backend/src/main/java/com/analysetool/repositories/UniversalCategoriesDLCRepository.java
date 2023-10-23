@@ -40,6 +40,33 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.viewsRatgeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumViewsRatgeberByUniStatId(int uniID);
 
+     @Query("SELECT SUM(u.viewsMain) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsMainByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsUeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsUeberByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsImpressum) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsImpressumByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsPreisliste) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsPreislisteByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsPartner) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsPartnerByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsDatenschutz) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsDatenschutzByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsNewsletter) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsNewsletterByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsImage) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsImageByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsAGBS) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsAGBSByUniStatId(int uniID);
+
 
 
      @Query("SELECT SUM(u.besucherGlobal) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
@@ -62,5 +89,32 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      @Query("SELECT SUM(u.besucherRatgeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserRatgeberByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherMain) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserMainByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherUeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserUeberByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherImpressum) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserImpressumByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherPreisliste) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserPreislisteByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherRatgeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserPartnerByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherDatenschutz) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserDatenschutzByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherNewsletter) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserNewsletterByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherImage) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserImageByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherAGBS) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserAGBSByUniStatId(int uniID);
 
 }

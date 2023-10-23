@@ -302,131 +302,6 @@ public class LogService {
         sysVarRepo.save(SystemVariabeln);
     }
 
-    public void findAMatchDeprecated() throws IOException {
-        String line;
-
-        boolean foundPattern = false;
-
-        while ((line = br.readLine()) != null ) {
-            if(lineCounter!=lastLineCounter){
-                System.out.println("Counting up");
-                while(lineCounter!=lastLineCounter && liveScanning){
-                    br.readLine();
-                    lineCounter++;
-
-                }
-            System.out.println("reached final position");
-            }
-
-           // if (foundPattern) {
-                Matcher matched_articleView = articleViewPattern.matcher(line);
-
-                if (matched_articleView.find()) {
-                    Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
-
-                    foundPattern = true;
-                    if (matched_articleSearchSuccess.find()) {
-                        // Do something with the matched 1.2 patterns
-                        //System.out.println(line+"SEARCH FOUND");
-                        processLine(line,"articleSearchSuccess",matched_articleSearchSuccess);
-                        foundPattern = true;
-                    } else {//1.1 matched
-                        //System.out.println(line+"NO SEARCH");
-                        processLine(line,"articleView",matched_articleView);
-                        foundPattern = true;
-                    }
-                } else {
-                    Matcher matched_blogView = blogViewPattern.matcher(line);
-
-                    if (matched_blogView.find()) {
-                        Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
-
-                        if (matched_blogSearchSuccess.find()) {
-                            // Do something with the matched 2.2 patterns
-                            processLine(line, "blogSearchSuccess", matched_blogSearchSuccess);
-                            foundPattern = false;
-                           // System.out.println(line+" SEARCH FOUND");
-                        } else {
-                            //2.1 match
-                            processLine(line, "blogView", matched_blogView);
-                            foundPattern = false;
-                           // System.out.println(line+" NO SEARCH");
-                        }
-                    }else {
-                        Matcher matched_newsView = newsViewPattern.matcher(line);
-
-                        if (matched_newsView.find()) {
-                            System.out.println("TEST NEWS GEFUNDEN");
-                            Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(line);
-
-                            if (matched_newsSearchSuccess.find()) {
-                                System.out.println("TEST SEARCHSUCCESS GEFUNDEN");
-                                // Do something with the matched 2.2 patterns
-                                processLine(line, "newsSearchSuccess", matched_newsSearchSuccess);
-                                foundPattern = false;
-                                // System.out.println(line+" SEARCH FOUND");
-                            } else {
-                                //2.1 match
-                                processLine(line, "newsView", matched_newsView);
-                                foundPattern = false;
-                                // System.out.println(line+" NO SEARCH");
-                            }
-                        } else {
-                            Matcher matched_whitepaperView = patternWhitepaperView.matcher(line);
-
-                            if(matched_whitepaperView.find()) {
-                                Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
-
-                                if(matched_whitepaperSearchSuccess.find()) {
-                                    processLine(line, "whitepaperSearchSuccess", matched_whitepaperSearchSuccess);
-                                } else {
-                                    processLine(line, "whitepaperView", matched_whitepaperView);
-                                }
-                            } else {
-                                Matcher matched_podcastView = patternPodcast.matcher(line);
-
-                                if(matched_podcastView.find()) {
-                                    //ToDo maybe implement SearchSuccess if applicable
-                                    processLine(line, "podcastView", matched_podcastView);
-                                }
-                            }
-                        }
-                    }
-                }
-
-            Matcher matched_redirect = redirectPattern.matcher(line);
-            if(matched_redirect.find()){
-                processLine(line,"redirect",matched_redirect);
-                }
-            Matcher matched_userView = userViewPattern.matcher(line);
-            if(matched_userView.find()){
-                processLine(line,"userView",matched_userView);
-            }
-            Matcher matched_userRedirect = userRedirectPattern.matcher(line);
-            if(matched_userRedirect.find()){
-                processLine(line,"userViewRedirect",matched_userView);
-            }
-            Matcher matched_searchPattern = searchPattern.matcher(line);
-            if(matched_searchPattern.find()){
-                processLine(line,"search",matched_searchPattern);
-            }
-
-
-
-            lineCounter++;
-            lastLineCounter++;
-            //System.out.println(lineCounter+" "+lastLine);
-            //br.readLine();
-
-        }
-        //updateuseraktivität
-        System.out.println("UPDATING USER ACTIVITY");
-        updateUserActivity((long)3);
-        updateUserStatsForAllUsers();
-        lineCounter = 0 ;
-        System.out.println("END OF LOG");
-    }
-
     public void findAMatch(SysVar sysVar) throws IOException, ParseException {
         String line;
 
@@ -543,10 +418,10 @@ public class LogService {
                         if (matched_articleSearchSuccess.find()) {
                             // Do something with the matched 1.2 patterns
                             //System.out.println(line+"SEARCH FOUND");
-                            processLine(line, "articleSearchSuccess", matched_articleSearchSuccess);
+                            processLine(line, "articleSearchSuccess", pre_Matched, matched_articleSearchSuccess);
                         } else {//1.1 matched
                             //System.out.println(line+"NO SEARCH");
-                            processLine(line, "articleView", matched_articleView);
+                            processLine(line, "articleView",pre_Matched, matched_articleView);
                         }
                         //Erhöhe Clicks für Artikel um 1.
                         viewsArticle++;
@@ -567,11 +442,11 @@ public class LogService {
 
                             if (matched_blogSearchSuccess.find()) {
                                 // Do something with the matched 2.2 patterns
-                                processLine(line, "blogSearchSuccess", matched_blogSearchSuccess);
+                                processLine(line, "blogSearchSuccess",pre_Matched, matched_blogSearchSuccess);
                                 // System.out.println(line+" SEARCH FOUND");
                             } else {
                                 //2.1 match
-                                processLine(line, "blogView", matched_blogView);
+                                processLine(line, "blogView",pre_Matched, matched_blogView);
                                 // System.out.println(line+" NO SEARCH");
                             }
                             //Erhöhe Clicks für Blog um 1.
@@ -596,11 +471,11 @@ public class LogService {
                                 if (matched_newsSearchSuccess.find()) {
                                     System.out.println("TEST SEARCHSUCCESS GEFUNDEN");
                                     // Do something with the matched 2.2 patterns
-                                    processLine(line, "newsSearchSuccess", matched_newsSearchSuccess);
+                                    processLine(line, "newsSearchSuccess", pre_Matched, matched_newsSearchSuccess);
                                     // System.out.println(line+" SEARCH FOUND");
                                 } else {
                                     //2.1 match
-                                    processLine(line, "newsView", matched_newsView);
+                                    processLine(line, "newsView",pre_Matched, matched_newsView);
                                     // System.out.println(line+" NO SEARCH");
                                 }
                                 //Erhöhe Clicks für News um 1.
@@ -622,9 +497,9 @@ public class LogService {
                                     Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
 
                                     if (matched_whitepaperSearchSuccess.find()) {
-                                        processLine(line, "whitepaperSearchSuccess", matched_whitepaperSearchSuccess);
+                                        processLine(line, "whitepaperSearchSuccess",pre_Matched, matched_whitepaperSearchSuccess);
                                     } else {
-                                        processLine(line, "whitepaperView", matched_whitepaperView);
+                                        processLine(line, "whitepaperView",pre_Matched, matched_whitepaperView);
                                     }
                                     //Erhöhe Clicks für Whitepaper um 1.
                                     viewsWhitepaper++;
@@ -642,7 +517,7 @@ public class LogService {
                                     Matcher matched_podcastView = patternPodcast.matcher(line);
 
                                     if (matched_podcastView.find()) {
-                                        processLine(line, "podcastView", matched_podcastView);
+                                        processLine(line, "podcastView",pre_Matched, matched_podcastView);
                                         //Erhöhe Clicks für Podcast um 1.
                                         viewsPodcast++;
                                         //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -773,6 +648,21 @@ public class LogService {
                                                                             user.setIp(pre_Matched.group(1));
                                                                             uniqueUserRepo.save(user);
                                                                         }
+                                                                    } else {
+                                                                        Matcher matched_AGBS = agbsPattern.matcher(line);
+
+                                                                        if(matched_AGBS.find()) {
+                                                                            viewsAGBS++;
+                                                                            if (isUnique) {
+                                                                                userAGBS++;
+                                                                                user = new UniqueUser();
+                                                                                user.setCategory("agbs");
+                                                                                user.setIp(pre_Matched.group(1));
+                                                                                uniqueUserRepo.save(user);
+                                                                            }
+
+                                                                        }
+
                                                                     }
 
                                                                 }
@@ -797,23 +687,23 @@ public class LogService {
 
                     Matcher matched_redirect = redirectPattern.matcher(line);
                     if (matched_redirect.find()) {
-                        processLine(line, "redirect", matched_redirect);
+                        processLine(line, "redirect",pre_Matched, matched_redirect);
                     }
                     Matcher matched_userView = userViewPattern.matcher(line);
                     if (matched_userView.find()) {
-                        processLine(line, "userView", matched_userView);
+                        processLine(line, "userView",pre_Matched, matched_userView);
                     }
                     Matcher matched_userRedirect = userRedirectPattern.matcher(line);
                     if (matched_userRedirect.find()) {
-                        processLine(line, "userViewRedirect", matched_userView);
+                        processLine(line, "userViewRedirect",pre_Matched, matched_userView);
                     }
                     Matcher matched_searchPattern = searchPattern.matcher(line);
                     if (matched_searchPattern.find()) {
-                        processLine(line, "search", matched_searchPattern);
+                        processLine(line, "search",pre_Matched, matched_searchPattern);
                     }
                     Matcher matched_reffererPattern = reffererPattern.matcher(line);
                     if (matched_reffererPattern.find()) {
-                        processLine(line, "refferer", matched_reffererPattern);
+                        processLine(line, "refferer",pre_Matched, matched_reffererPattern);
                     }
 
                     //If user doesnt exist and is unique, make a new one.
@@ -934,7 +824,7 @@ public class LogService {
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                 uniCategories.setStunde(curHour);
                 //Create entries for users.
-                uniCategories.setBesucherGlobal(uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber);
+                uniCategories.setBesucherGlobal(uniqueUsers - - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
                 uniCategories.setBesucherArticle(userArticle);
                 uniCategories.setBesucherNews(userNews);
                 uniCategories.setBesucherBlog(userBlog);
@@ -946,11 +836,12 @@ public class LogService {
                 uniCategories.setBesucherImpressum(userImpressum);
                 uniCategories.setBesucherPreisliste(userPreisliste);
                 uniCategories.setBesucherPartner(userPartner);
+                uniCategories.setBesucherAGBS(userAGBS);
                 uniCategories.setBesucherDatenschutz(userDatenschutz);
                 uniCategories.setBesucherNewsletter(userNewsletter);
                 uniCategories.setBesucherImage(userImage);
                 //Create entries for views.
-                uniCategories.setViewsGlobal(totalClicks - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber);
+                uniCategories.setViewsGlobal(totalClicks - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber - viewsMain - viewsUeber - viewsImpressum - viewsPreisliste - viewsPartner - viewsDatenschutz - viewsNewsletter - viewsImage - viewsAGBS);
                 uniCategories.setViewsArticle(viewsArticle);
                 uniCategories.setViewsNews(viewsNews);
                 uniCategories.setViewsBlog(viewsBlog);
@@ -965,6 +856,7 @@ public class LogService {
                 uniCategories.setViewsDatenschutz(viewsDatenschutz);
                 uniCategories.setViewsNewsletter(viewsNewsletter);
                 uniCategories.setViewsImage(viewsImage);
+                uniCategories.setViewsAGBS(viewsAGBS);
                 //Save to db.
                 universalCategoriesDLCRepo.save(uniCategories);
             } else {
@@ -972,7 +864,7 @@ public class LogService {
                 uniCategories = universalCategoriesDLCRepo.getLast();
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                 //Update users
-                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber);
+                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
                 uniCategories.setBesucherArticle(uniCategories.getBesucherArticle() + userArticle);
                 uniCategories.setBesucherNews(uniCategories.getBesucherNews() + userNews);
                 uniCategories.setBesucherBlog(uniCategories.getBesucherBlog() + userBlog);
@@ -987,10 +879,11 @@ public class LogService {
                 uniCategories.setBesucherDatenschutz(userDatenschutz + uniCategories.getBesucherDatenschutz());
                 uniCategories.setBesucherNewsletter(userNewsletter + uniCategories.getBesucherNewsletter());
                 uniCategories.setBesucherImage(userImage + uniCategories.getBesucherImage());
+                uniCategories.setBesucherAGBS(userAGBS + uniCategories.getBesucherAGBS());
                 //update views
-                uniCategories.setViewsGlobal(totalClicks + uniCategories.getViewsGlobal() - - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber);
+                uniCategories.setViewsGlobal(totalClicks + uniCategories.getViewsGlobal() - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber - viewsMain - viewsUeber - viewsImpressum - viewsPreisliste - viewsPartner - viewsDatenschutz - viewsNewsletter - viewsImage - viewsAGBS);
                 uniCategories.setViewsArticle(viewsArticle + uniCategories.getViewsArticle());
-                uniCategories.setViewsNews(viewsNews + uniCategories.getBesucherNews());
+                uniCategories.setViewsNews(viewsNews + uniCategories.getViewsNews());
                 uniCategories.setViewsBlog(viewsBlog + uniCategories.getViewsBlog());
                 uniCategories.setViewsPodcast(viewsPodcast + uniCategories.getViewsPodcast());
                 uniCategories.setViewsWhitepaper(viewsWhitepaper + uniCategories.getViewsWhitepaper());
@@ -1002,7 +895,8 @@ public class LogService {
                 uniCategories.setViewsPartner(viewsPartner + uniCategories.getViewsPartner());
                 uniCategories.setViewsDatenschutz(viewsDatenschutz + uniCategories.getViewsDatenschutz());
                 uniCategories.setViewsNewsletter(viewsNewsletter + uniCategories.getViewsNewsletter());
-                uniCategories.setViewsImage(viewsImage);
+                uniCategories.setViewsImage(viewsImage + uniCategories.getViewsImage());
+                uniCategories.setViewsAGBS(viewsAGBS + uniCategories.getViewsAGBS());
                 //save to db.
                 universalCategoriesDLCRepo.save(uniCategories);
             }
@@ -1091,39 +985,30 @@ public class LogService {
     }
 
 
-    public void processLine(String line,String patternName,Matcher matcher){
+    public void processLine(String line,String patternName, Matcher preMatcher, Matcher patternMatcher){
         lastLine=line;
         if (patternName.equals("articleView")){
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
-            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.1");
-            UpdatePerformanceAndViews(matcher);
-            updateViewsByLocation(matcher);
+            UpdatePerformanceAndViews(preMatcher,patternMatcher);
+            updateViewsByLocation(preMatcher, patternMatcher);
         }
         if (patternName.equals("articleSearchSuccess")){
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
-            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 1.2");
-            updatePerformanceViewsSearchSuccess(matcher);
-            updateViewsByLocation(matcher);
-            updateSearchStats(matcher);
+            updatePerformanceViewsSearchSuccess(preMatcher, patternMatcher);
+            updateViewsByLocation(preMatcher, patternMatcher);
+            updateSearchStats(preMatcher,patternMatcher);
         }
         if (patternName.equals("blogView")){
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
-            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 2.1");
-            UpdatePerformanceAndViews(matcher);
-            updateViewsByLocation(matcher);
+            UpdatePerformanceAndViews(preMatcher, patternMatcher);
+            updateViewsByLocation(preMatcher, patternMatcher);
         }
         if (patternName.equals("blogSearchSuccess")){
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
-            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING 2.2");
-            updatePerformanceViewsSearchSuccess(matcher);
-            updateViewsByLocation(matcher);
-            updateSearchStats(matcher);
+            updatePerformanceViewsSearchSuccess(preMatcher, patternMatcher);
+            updateViewsByLocation(preMatcher, patternMatcher);
+            updateSearchStats(preMatcher, patternMatcher);
         }
 
         if(patternName.equals("redirect")){
-            System.out.println(matcher.group(3)+" PROCESSING 3");
             //gibts das PostStats objekt? -nein = neues -ja = updaten
-            long id =postRepository.getIdByName(matcher.group(3));
+            long id =postRepository.getIdByName(patternMatcher.group(3));
             if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
                 PostStats stats=statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
                 long views = stats.getClicks();
@@ -1142,35 +1027,24 @@ public class LogService {
         }
 
         if(patternName.equals("userView")){
-            System.out.println(matcher.group(1).replace("+","-")+" PROCESSING 4");
-            if(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).isPresent()){
+            if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()){
                 //updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
-                userViewOrImpression(matcher);
+                userViewOrImpression(patternMatcher);
             }
         }
         if (patternName.equals("newsView")){
-
-            System.out.println(postRepository.getIdByName(matcher.group(1)+" "+matcher.group(1))+" PROCESSING 5.1");
-
-
-
-            UpdatePerformanceAndViews(matcher);
-            updateViewsByLocation(matcher);
+            UpdatePerformanceAndViews(preMatcher,patternMatcher);
+            updateViewsByLocation(preMatcher, patternMatcher);
         }
         if (patternName.equals("newsSearchSuccess")){
-
-            System.out.println(postRepository.getIdByName(matcher.group(5))+matcher.group(6)+" PROCESSING 5.2");
-
-
-            updatePerformanceViewsSearchSuccess(matcher);
-            updateViewsByLocation(matcher);
-            updateSearchStats(matcher);
+            updatePerformanceViewsSearchSuccess(preMatcher, patternMatcher);
+            updateViewsByLocation(preMatcher, patternMatcher);
+            updateSearchStats(preMatcher, patternMatcher);
         }
 
         if(patternName.equals("userViewRedirect")){
-            System.out.println(matcher.group(1).replace("+","-")+" PROCESSING 4_2");
-            if(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).isPresent()){
-                WPUser wpUser=wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get();
+            if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()){
+                WPUser wpUser=wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get();
                 if(userStatsRepo.existsByUserId(wpUser.getId())){
                     UserStats userStats = userStatsRepo.findByUserId(wpUser.getId());
                     long refferings = userStats.getRefferings();
@@ -1189,7 +1063,7 @@ public class LogService {
         }
         if(patternName.equals("search")){
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
-            String ip = matcher.group(1);
+            String ip = patternMatcher.group(1);
             byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
             String ipHash = Hex.toHexString(hashBytes);
             IPHelper.getInstance();
@@ -1204,33 +1078,33 @@ public class LogService {
                 if(city!=null)
                     location = location+" : "+city;
             }
-            String day = matcher.group(2);
-            String month = getMonthNumber(matcher.group(3));
-            String year = matcher.group(4);
-            String time = matcher.group(5);
+            String day = patternMatcher.group(2);
+            String month = getMonthNumber(patternMatcher.group(3));
+            String year = patternMatcher.group(4);
+            String time = patternMatcher.group(5);
             LocalDateTime dateTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
             try {
-                searchStatRepo.save(new SearchStats(ipHash, matcher.group(6), dateTime, location));
+                searchStatRepo.save(new SearchStats(ipHash, patternMatcher.group(6), dateTime, location));
             } catch(Exception e) {
-                System.out.println(matcher.group(6));
+                System.out.println(patternMatcher.group(6));
             }
 
         }
         if(patternName.equals("whitepaperSearchSuccess")) {
             //Stolen behaviour from articleSearchSuccess
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
-            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING Whitepaper with Search");
-            updatePerformanceViewsSearchSuccess(matcher);
-            updateViewsByLocation(matcher);
-            updateSearchStats(matcher);
+            System.out.println("TEST Gruppe1: "+ patternMatcher.group(1)+" Gruppe2 "+patternMatcher.group(2) + "Gruppe3: "+ patternMatcher.group(3));
+            System.out.println(postRepository.getIdByName(patternMatcher.group(6))+patternMatcher.group(6)+" PROCESSING Whitepaper with Search");
+            updatePerformanceViewsSearchSuccess(preMatcher, patternMatcher);
+            updateViewsByLocation(preMatcher, patternMatcher);
+            updateSearchStats(preMatcher, patternMatcher);
         }
 
         if(patternName.equals("whitepaperView")) {
             //Stolen behaviour from articleView
-            System.out.println("TEST Gruppe1: "+ matcher.group(1)+" Gruppe2 "+matcher.group(2) + "Gruppe3: "+ matcher.group(3));
-            System.out.println(postRepository.getIdByName(matcher.group(6))+matcher.group(6)+" PROCESSING Whitepaper View");
-            UpdatePerformanceAndViews(matcher);
-            updateViewsByLocation(matcher);
+            System.out.println("TEST Gruppe1: "+ patternMatcher.group(1)+" Gruppe2 "+patternMatcher.group(2) + "Gruppe3: "+ patternMatcher.group(3));
+            System.out.println(postRepository.getIdByName(patternMatcher.group(6))+patternMatcher.group(6)+" PROCESSING Whitepaper View");
+            UpdatePerformanceAndViews(preMatcher, patternMatcher);
+            updateViewsByLocation(preMatcher, patternMatcher);
         }
 
         //ToDo: If it became necessary, add behaviour for new Patterns here.
@@ -1316,39 +1190,35 @@ public class LogService {
         }
     }
 
-    public void updateSearchStats(Matcher matcher) {
-        if (!matcher.group(6).matches("\\d+")){
+    public void updateSearchStats(Matcher preMatcher,Matcher patternMatcher) {
+        if (!patternMatcher.group(1).matches("\\d+")){
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
-        byte[] hashBytes = digestSHA3.digest(matcher.group(1).getBytes(StandardCharsets.UTF_8));
+        byte[] hashBytes = digestSHA3.digest(patternMatcher.group(1).getBytes(StandardCharsets.UTF_8));
         String hashedIp = Hex.toHexString(hashBytes);
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
+            LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
 
-
-        String day = matcher.group(2);
-        String month = getMonthNumber(matcher.group(3));
-        String year = matcher.group(4);
-        String time = matcher.group(5);
-        LocalDateTime searchSuccessTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
-        LocalDate date = searchSuccessTime.toLocalDate();  // Replace with the date you want to search for
-        System.out.println("GRUPPE 6: "+matcher.group(6));
+            LocalDate date = dateLog.toLocalDate();  // Replace with the date you want to search for
+        System.out.println("GRUPPE 1: "+patternMatcher.group(1));
         List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
-        long id = postRepository.getIdByName(matcher.group(6));
+        long id = postRepository.getIdByName(patternMatcher.group(1));
         for(SearchStats s : searchStatsForDate) {
             //hier weiter searchstring equals nicht so viel sinn mit klicked post
-            if(hashedIp.equals(s.getIpHashed()) && !s.getSearchSuccessFlag() && s.getSearchString().equals(matcher.group(7))) {
+            if(hashedIp.equals(s.getIpHashed()) && !s.getSearchSuccessFlag() && s.getSearchString().equals(patternMatcher.group(7))) {
                 s.setSearchSuccessFlag(true);
 
                 s.setClickedPost(String.valueOf(id));
 
 
 
-                s.setSearch_success_time(searchSuccessTime);
+                s.setSearch_success_time(dateLog);
 
                 searchStatRepo.save(s);}
             }
         }
     }
     public LocalTime getLocalTimeFromMatcher(Matcher matcher){
-        String logHourMinuteSecond = matcher.group(5);
+        String logHourMinuteSecond = matcher.group(2);
         // Trenne Stunden, Minuten und Sekunden
         String[] timeParts = logHourMinuteSecond.split(":");
         String logHour = timeParts[0];
@@ -1359,38 +1229,25 @@ public class LogService {
         return logTime;
     }
 
-    public LocalDate getLocalDateFromMatcher(Matcher matcher){
-        String logDay = matcher.group(2);
-        String logMonth = matcher.group(3);
-        String logYear = matcher.group(4);
-        // Konvertiere den Monat in eine Zahl
-        int monthNumber = Integer.parseInt(getMonthNumber(logMonth));
-        LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), monthNumber, Integer.parseInt(logDay));
-        return logDate;
-    }
-    public void updatePerformanceViewsSearchSuccess(Matcher matcher) {
-        if (!matcher.group(6).matches("\\d+")){
+    public void updatePerformanceViewsSearchSuccess(Matcher preMatcher, Matcher patternMatcher) {
+        if (!patternMatcher.group(1).matches("\\d+")){
         // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
-        String logDay = matcher.group(2);
-        String logMonth = matcher.group(3);
-        String logYear = matcher.group(4);
-        String logHourMinuteSecond = matcher.group(5);
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
+            LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
+        String logDay = String.valueOf(dateLog.getDayOfMonth());
+        String logYear = String.valueOf(dateLog.getYear());
 
-        // Trenne Stunden, Minuten und Sekunden
-        String[] timeParts = logHourMinuteSecond.split(":");
-        String logHour = timeParts[0];
-        String logMinute = timeParts[1];
-        String logSecond = timeParts[2];
+        String logHour = String.valueOf(dateLog.getHour());
+        String logMinute = String.valueOf(dateLog.getMinute());
+        String logSecond = String.valueOf(dateLog.getSecond());
 
-        // Konvertiere den Monat in eine Zahl
-        int monthNumber = Integer.parseInt(getMonthNumber(logMonth));
 
         // Erstelle LocalDate und LocalTime Objekte
-        LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), monthNumber, Integer.parseInt(logDay));
+        LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), dateLog.getMonth().getValue(), Integer.parseInt(logDay));
         LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
 
         try {
-            long id = postRepository.getIdByName(matcher.group(6));
+            long id = postRepository.getIdByName(patternMatcher.group(1));
             checkTheTag(id, true);
 
             if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
@@ -1420,8 +1277,9 @@ public class LogService {
                 erhoeheWertFuerLogDatum(id, logDate, logTime);
             }
         } catch (Exception e) {
-            System.out.println("IGNORE " + matcher.group(2).substring(0, matcher.group(2).length() - 1) + " BECAUSE: " + e.getMessage());
-        }}
+            System.out.println("updatePerformanceViewsSearchSuccess Exception");
+        }
+        }
     }
     @Transactional
     public void erhoeheWertFuerLogDatum(long id, LocalDate logDatum, LocalTime logUhrzeit) {
@@ -1461,29 +1319,24 @@ public class LogService {
         return viewsPerHour;
     }
 
-   public void UpdatePerformanceAndViews(Matcher matcher) {
-       if (!matcher.group(6).matches("\\d+")){
+   public void UpdatePerformanceAndViews(Matcher preMatcher,Matcher patternMatcher) {
+       if (!patternMatcher.group(1).matches("\\d+")){
        // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
-       String logDay = matcher.group(2);
-       String logMonth = matcher.group(3);
-       String logYear = matcher.group(4);
-       String logHourMinuteSecond = matcher.group(5);
+           DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
+           LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
+           String logDay = String.valueOf(dateLog.getDayOfMonth());
+           String logYear = String.valueOf(dateLog.getYear());
 
-       // Trenne Stunden, Minuten und Sekunden
-       String[] timeParts = logHourMinuteSecond.split(":");
-       String logHour = timeParts[0];
-       String logMinute = timeParts[1];
-       String logSecond = timeParts[2];
-
-       // Konvertiere den Monat in eine Zahl
-       int monthNumber = Integer.parseInt(getMonthNumber(logMonth));
+       String logHour = String.valueOf(dateLog.getHour());
+       String logMinute = String.valueOf(dateLog.getMinute());
+       String logSecond = String.valueOf(dateLog.getSecond());
 
        // Erstelle LocalDate und LocalTime Objekte
-       LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), monthNumber, Integer.parseInt(logDay));
+       LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), dateLog.getMonth().getValue(), Integer.parseInt(logDay));
        LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
 
        try {
-           long id = postRepository.getIdByName(matcher.group(6));
+           long id = postRepository.getIdByName(patternMatcher.group(1));
            checkTheTag(id, false);
 
            if (statsRepo.existsByArtId(id)) {
@@ -1511,8 +1364,9 @@ public class LogService {
                erhoeheWertFuerLogDatum(id, logDate, logTime);
            }
        } catch (Exception e) {
-           System.out.println("IGNORE " + matcher.group(6) + " BECAUSE: " + e.getMessage());
-       }}
+           System.out.println("IGNORE " + patternMatcher.group(1) + " BECAUSE: " + e.getMessage());
+       }
+       }
    }
 
 
@@ -1763,11 +1617,11 @@ public class LogService {
        // System.out.println("Interaktionsrate: "+interactionRate+" id: "+user.getId());
     }
     @Transactional
-    public void updateViewsByLocation(Matcher matcher) {
-        if (!matcher.group(6).matches("\\d+")){
-        String ip = matcher.group(1);
+    public void updateViewsByLocation(Matcher preMatcher, Matcher patternMatcher) {
+        if (!patternMatcher.group(1).matches("\\d+")){
+        String ip = preMatcher.group(1);
         try {
-            long id = postRepository.getIdByName(matcher.group(6));
+            long id = postRepository.getIdByName(patternMatcher.group(1));
             IPHelper.getInstance();
             String country = IPHelper.getCountryISO(ip);
             String region = IPHelper.getSubISO(ip);

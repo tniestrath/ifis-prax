@@ -288,11 +288,11 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
   public getCategoriesData(date : string, timespan : string){
     if (timespan != "day"){
       this.db.getCallupsByCategoriesByDate(date).then(res => {
-        this.createCategoriesChart(res.slice(0, 7), res.slice(8), date);
+        this.createCategoriesChart(res.slice(0, 14), res.slice(15), date);
       });
     } else if (timespan == "day"){
       this.db.getCallupsByCategoriesByDateTime(Util.getFormattedNow(), Number(date)).then(res => {
-        this.createCategoriesChart(res.slice(0, 7), res.slice(8), date + " Uhr");
+        this.createCategoriesChart(res.slice(0, 14), res.slice(15), date + " Uhr");
       });
     }
   }

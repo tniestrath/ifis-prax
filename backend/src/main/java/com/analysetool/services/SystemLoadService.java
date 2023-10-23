@@ -10,6 +10,7 @@ import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.NetworkIF;
 
 import java.util.List;
 
@@ -18,6 +19,10 @@ public class SystemLoadService {
 
     private final SystemLoadRepository systemLoadRepository;
     private final SystemInfo systemInfo = new SystemInfo();
+
+    public SystemInfo getSystemInfo() {
+        return systemInfo;
+    }
 
     @Autowired
     public SystemLoadService(SystemLoadRepository systemLoadRepository) {
@@ -28,6 +33,7 @@ public class SystemLoadService {
     public void recordSystemLoad() {
         HardwareAbstractionLayer hal = systemInfo.getHardware();
         CentralProcessor processor = hal.getProcessor();
+        NetworkIF networkIF = systemInfo.getHardware().getNetworkIFs().get(0);
 
         long[] prevTicks = processor.getSystemCpuLoadTicks();
 
@@ -44,11 +50,15 @@ public class SystemLoadService {
         double totalMemory = memory.getTotal();
         double availableMemory = memory.getAvailable();
         double memoryLoad = (totalMemory - availableMemory) / totalMemory;
+        double networkRecv = networkIF.getBytesRecv();
+        double networkSent = networkIF.getBytesSent();
 
         SystemLoad systemLoad = new SystemLoad();
         systemLoad.setCpuLoad(cpuLoad);
         systemLoad.setMemoryLoad(memoryLoad);
         systemLoad.setTimestamp(System.currentTimeMillis());
+        systemLoad.setNetworkRecv(networkRecv);
+        systemLoad.setNetworkSent(networkSent);
 
         systemLoadRepository.save(systemLoad);
     }

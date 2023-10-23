@@ -432,8 +432,11 @@ public class LogService {
                             user = new UniqueUser();
                             user.setCategory("article");
                             user.setIp(pre_Matched.group(1));
-                            uniqueUserRepo.save(user);
+                        } else {
+                            user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                         }
+                        user.setArticle(1);
+                        uniqueUserRepo.save(user);
                     } else {
                         Matcher matched_blogView = blogViewPattern.matcher(line);
 
@@ -458,8 +461,11 @@ public class LogService {
                                 user = new UniqueUser();
                                 user.setCategory("blog");
                                 user.setIp(pre_Matched.group(1));
-                                uniqueUserRepo.save(user);
+                            }else {
+                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                             }
+                            user.setBlog(1);
+                            uniqueUserRepo.save(user);
 
                         } else {
                             Matcher matched_newsView = newsViewPattern.matcher(line);
@@ -487,8 +493,11 @@ public class LogService {
                                     user = new UniqueUser();
                                     user.setCategory("news");
                                     user.setIp(pre_Matched.group(1));
-                                    uniqueUserRepo.save(user);
+                                } else {
+                                    user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                 }
+                                user.setNews(1);
+                                uniqueUserRepo.save(user);
                             }
                             else {
                                 Matcher matched_whitepaperView = patternWhitepaperView.matcher(line);
@@ -510,8 +519,11 @@ public class LogService {
                                         user = new UniqueUser();
                                         user.setCategory("whitepaper");
                                         user.setIp(pre_Matched.group(1));
-                                        uniqueUserRepo.save(user);
+                                    } else {
+                                        user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                     }
+                                    user.setWhitepaper(1);
+                                    uniqueUserRepo.save(user);
                                 }
                                 else {
                                     Matcher matched_podcastView = patternPodcast.matcher(line);
@@ -526,8 +538,11 @@ public class LogService {
                                             user = new UniqueUser();
                                             user.setCategory("podcast");
                                             user.setIp(pre_Matched.group(1));
-                                            uniqueUserRepo.save(user);
+                                        } else {
+                                            user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                         }
+                                        user.setPodcast(1);
+                                        uniqueUserRepo.save(user);
                                     } else {
                                         Matcher matched_main_page = mainPagePattern.matcher(line);
 
@@ -541,8 +556,11 @@ public class LogService {
                                                 user = new UniqueUser();
                                                 user.setCategory("main");
                                                 user.setIp(pre_Matched.group(1));
-                                                uniqueUserRepo.save(user);
+                                            } else {
+                                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                             }
+                                            user.setMain(1);
+                                            uniqueUserRepo.save(user);
                                         } else {
                                             Matcher matched_ueber = ueberPattern.matcher(line);
 
@@ -556,8 +574,11 @@ public class LogService {
                                                     user = new UniqueUser();
                                                     user.setCategory("ueber");
                                                     user.setIp(pre_Matched.group(1));
-                                                    uniqueUserRepo.save(user);
+                                                } else {
+                                                    user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                 }
+                                                user.setUeber(1);
+                                                uniqueUserRepo.save(user);
                                             } else {
                                                 Matcher matched_impressum = impressumPattern.matcher(line);
 
@@ -571,8 +592,11 @@ public class LogService {
                                                         user = new UniqueUser();
                                                         user.setCategory("impressum");
                                                         user.setIp(pre_Matched.group(1));
-                                                        uniqueUserRepo.save(user);
+                                                    } else {
+                                                        user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                     }
+                                                    user.setImpressum(1);
+                                                    uniqueUserRepo.save(user);
                                                 } else {
                                                     Matcher matched_preisliste = preislistePattern.matcher(line);
 
@@ -586,8 +610,11 @@ public class LogService {
                                                             user = new UniqueUser();
                                                             user.setCategory("preisliste");
                                                             user.setIp(pre_Matched.group(1));
-                                                            uniqueUserRepo.save(user);
+                                                        } else {
+                                                            user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                         }
+                                                        user.setPreisliste(1);
+                                                        uniqueUserRepo.save(user);
                                                     } else {
                                                         Matcher matched_partner = partnerPattern.matcher(line);
 
@@ -601,8 +628,11 @@ public class LogService {
                                                                 user = new UniqueUser();
                                                                 user.setCategory("partner");
                                                                 user.setIp(pre_Matched.group(1));
-                                                                uniqueUserRepo.save(user);
+                                                            } else {
+                                                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                             }
+                                                            user.setPartner(1);
+                                                            uniqueUserRepo.save(user);
                                                         } else {
                                                             Matcher matched_datenschutz = datenschutzerklaerungPattern.matcher(line);
 
@@ -616,8 +646,11 @@ public class LogService {
                                                                     user = new UniqueUser();
                                                                     user.setCategory("datenschutz");
                                                                     user.setIp(pre_Matched.group(1));
-                                                                    uniqueUserRepo.save(user);
+                                                                } else {
+                                                                    user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                                 }
+                                                                user.setDatenschutz(1);
+                                                                uniqueUserRepo.save(user);
                                                             } else {
                                                                 Matcher matched_newsletter = newsletterPattern.matcher(line);
 
@@ -631,12 +664,15 @@ public class LogService {
                                                                         user = new UniqueUser();
                                                                         user.setCategory("newsletter");
                                                                         user.setIp(pre_Matched.group(1));
-                                                                        uniqueUserRepo.save(user);
+                                                                    } else {
+                                                                        user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                                     }
+                                                                    user.setNewsletter(1);
+                                                                    uniqueUserRepo.save(user);
                                                                 } else {
                                                                     Matcher matched_image = imagePattern.matcher(line);
 
-                                                                    if(matched_newsletter.find()) {
+                                                                    if(matched_image.find()) {
                                                                         //processLine(line, "image", matched_image);
                                                                         //Erhöhe Clicks für Image um 1.
                                                                         viewsImage++;
@@ -646,8 +682,11 @@ public class LogService {
                                                                             user = new UniqueUser();
                                                                             user.setCategory("image");
                                                                             user.setIp(pre_Matched.group(1));
-                                                                            uniqueUserRepo.save(user);
+                                                                        } else {
+                                                                            user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                                         }
+                                                                        user.setImage(1);
+                                                                        uniqueUserRepo.save(user);
                                                                     } else {
                                                                         Matcher matched_AGBS = agbsPattern.matcher(line);
 
@@ -658,8 +697,11 @@ public class LogService {
                                                                                 user = new UniqueUser();
                                                                                 user.setCategory("agbs");
                                                                                 user.setIp(pre_Matched.group(1));
-                                                                                uniqueUserRepo.save(user);
+                                                                            } else {
+                                                                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
                                                                             }
+                                                                            user.setAgb(1);
+                                                                            uniqueUserRepo.save(user);
 
                                                                         }
 
@@ -803,12 +845,16 @@ public class LogService {
                 System.out.println("BEEP BOOP BEEP BOOP BINGBING" + uniHourly1.getStunde());
                 uniHourly1.setViewsByLocation(null);
                 uniHourly1.setTotalClicks(0L);
+                uniHourly1.setInternalClicks(0);
+                uniHourly1.setServerErrors(0);
                 uniHourly1.setBesucherAnzahl(0L);
                 uniHourlyRepo.save(uniHourly1);
             } else {
                 UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(0);
                 uniHourly1.setViewsByLocation(null);
                 uniHourly1.setTotalClicks(0L);
+                uniHourly1.setInternalClicks(0);
+                uniHourly1.setServerErrors(0);
                 uniHourly1.setBesucherAnzahl(0L);
                 uniHourlyRepo.save(uniHourly1);
             }

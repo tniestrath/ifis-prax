@@ -772,7 +772,9 @@ public class LogService {
                             user.setAgb(1);
                             uniqueUserRepo.save(user);
                             break;
-                            
+                        case "userView":
+                            updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get());
+                            break;
                         default :
                             System.out.println(line);
 

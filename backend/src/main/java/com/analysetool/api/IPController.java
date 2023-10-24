@@ -1,18 +1,15 @@
 package com.analysetool.api;
 
-import com.analysetool.services.SystemLoadService;
 import com.analysetool.util.DashConfig;
 import com.analysetool.util.IPHelper;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,10 +27,16 @@ public class IPController {
 
 
     @GetMapping("/origin")
-    public String getOrigin(String ip){
-        return IPHelper.getCountryName(ip)
-         + " : " + IPHelper.getSubName(ip)
-         +" : " + IPHelper.getCityName(ip);
+    public String getOrigin(String ip) throws JSONException {
+        JSONObject origin = new JSONObject();
+        origin.put("country", IPHelper.getCountryName(ip));
+        origin.put("countryISO", IPHelper.getCountryISO(ip));
+        origin.put("district", IPHelper.getSubName(ip));
+        origin.put("districtISO", IPHelper.getSubISO(ip));
+        origin.put("city", IPHelper.getCityName(ip));
+        origin.put("cityID", IPHelper.getCityNameId(ip));
+
+        return origin.toString();
     }
 
     @GetMapping("/countUnique")

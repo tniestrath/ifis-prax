@@ -324,6 +324,7 @@ public class LogService {
         blacklistUserAgents.add("Webz.io");
         blacklistUserAgents.add("-");
         blacklistUserAgents.add("Index");
+        blacklistUserAgents.add("Go-http-client");
 
 
         int totalClicks = 0;

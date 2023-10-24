@@ -274,7 +274,7 @@ export class DbService {
   async getSystemUsage() : Promise<SystemUsage>{
     return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE), {credentials: "include"}).then(res => res.json());
   }
-  async getSystemUsageNow() : Promise<{cpu : number, memory : number}>{
+  async getSystemUsageNow() : Promise<{cpu : number, memory : number, networkSent : number, networkRecv : number}>{
     return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE_NOW), {credentials: "include"}).then(res => res.json());
   }
 }

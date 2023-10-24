@@ -50,6 +50,8 @@ public class SystemLoadController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("cpu", systemLoadNow.getCpuLoad());
         jsonObject.put("memory", systemLoadNow.getMemoryLoad());
+        jsonObject.put("networkSent", systemLoadNow.getNetworkSent());
+        jsonObject.put("networkRecv", systemLoadNow.getNetworkRecv());
 
         return jsonObject.toString();
     }

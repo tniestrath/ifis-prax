@@ -1,10 +1,9 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {SysVars} from "../../services/sys-vars-service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import Util, {DashColors} from "../../util/Util";
-import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import {tick} from "@angular/core/testing";
+import {Chart} from "chart.js/auto";
 
 export enum Region {
   HH = "Hamburg",

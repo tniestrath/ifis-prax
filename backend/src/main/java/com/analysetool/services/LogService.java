@@ -311,6 +311,7 @@ public class LogService {
         blacklistUserAgents.add("spider");
         blacklistUserAgents.add("crawl");
         blacklistUserAgents.add("parse");
+        blacklistUserAgents.add("fetch");
         blacklistUserAgents.add("Zabbix");
         blacklistUserAgents.add("Facebook");
         blacklistUserAgents.add("Frog");
@@ -322,8 +323,8 @@ public class LogService {
         blacklistUserAgents.add("Moreover");
         blacklistUserAgents.add("Sitesucker");
         blacklistUserAgents.add("Webz.io");
-        blacklistUserAgents.add("FeedFetcher");
         blacklistUserAgents.add("-");
+        blacklistUserAgents.add("Index");
 
 
         int totalClicks = 0;

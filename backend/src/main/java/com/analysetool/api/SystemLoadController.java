@@ -44,13 +44,12 @@ public class SystemLoadController {
 
     @GetMapping("/current")
     public String getCurrentLoad() throws JSONException {
-        List<SystemLoad> allSystemLoads = systemLoadService.getAllSystemLoads();
-        if (allSystemLoads.isEmpty()) return "{}";
+        SystemLoad systemLoadNow = systemLoadService.getNow();
+        if (systemLoadNow == null) return "{}";
 
-        SystemLoad currentLoad = allSystemLoads.get(allSystemLoads.size() - 1);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("cpu", currentLoad.getCpuLoad());
-        jsonObject.put("memory", currentLoad.getMemoryLoad());
+        jsonObject.put("cpu", systemLoadNow.getCpuLoad());
+        jsonObject.put("memory", systemLoadNow.getMemoryLoad());
 
         return jsonObject.toString();
     }

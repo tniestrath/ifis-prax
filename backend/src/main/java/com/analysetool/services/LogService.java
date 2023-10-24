@@ -1038,6 +1038,10 @@ public class LogService {
 
     public void processLine(String line,String patternName, Matcher preMatcher, Matcher patternMatcher){
         lastLine=line;
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
+        LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
+
         if (patternName.equals("articleView")){
             UpdatePerformanceAndViews(preMatcher,patternMatcher);
             updateViewsByLocation(preMatcher, patternMatcher);
@@ -1080,7 +1084,7 @@ public class LogService {
         if(patternName.equals("userView")){
             if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()){
                 //updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
-                userViewOrImpression(patternMatcher);
+                userViewOrImpression(preMatcher,patternMatcher);
             }
         }
         if (patternName.equals("newsView")){
@@ -1129,22 +1133,17 @@ public class LogService {
                 if(city!=null)
                     location = location+" : "+city;
             }
-            String day = patternMatcher.group(2);
-            String month = getMonthNumber(patternMatcher.group(3));
-            String year = patternMatcher.group(4);
-            String time = patternMatcher.group(5);
-            LocalDateTime dateTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
             try {
-                searchStatRepo.save(new SearchStats(ipHash, patternMatcher.group(6), dateTime, location));
+                searchStatRepo.save(new SearchStats(ipHash, patternMatcher.group(1), dateLog, location));
             } catch(Exception e) {
-                System.out.println(patternMatcher.group(6));
+                System.out.println(patternMatcher.group(1));
             }
 
         }
         if(patternName.equals("whitepaperSearchSuccess")) {
             //Stolen behaviour from articleSearchSuccess
-            System.out.println("TEST Gruppe1: "+ patternMatcher.group(1)+" Gruppe2 "+patternMatcher.group(2) + "Gruppe3: "+ patternMatcher.group(3));
-            System.out.println(postRepository.getIdByName(patternMatcher.group(6))+patternMatcher.group(6)+" PROCESSING Whitepaper with Search");
+            System.out.println("TEST Gruppe1: "+ patternMatcher.group(1));
+            System.out.println(postRepository.getIdByName(patternMatcher.group(1))+patternMatcher.group(1)+" PROCESSING Whitepaper with Search");
             updatePerformanceViewsSearchSuccess(preMatcher, patternMatcher);
             updateViewsByLocation(preMatcher, patternMatcher);
             updateSearchStats(preMatcher, patternMatcher);
@@ -1152,8 +1151,7 @@ public class LogService {
 
         if(patternName.equals("whitepaperView")) {
             //Stolen behaviour from articleView
-            System.out.println("TEST Gruppe1: "+ patternMatcher.group(1)+" Gruppe2 "+patternMatcher.group(2) + "Gruppe3: "+ patternMatcher.group(3));
-            System.out.println(postRepository.getIdByName(patternMatcher.group(6))+patternMatcher.group(6)+" PROCESSING Whitepaper View");
+            System.out.println(postRepository.getIdByName(patternMatcher.group(1)) + patternMatcher.group(1)+" PROCESSING Whitepaper View");
             UpdatePerformanceAndViews(preMatcher, patternMatcher);
             updateViewsByLocation(preMatcher, patternMatcher);
         }
@@ -1200,41 +1198,38 @@ public class LogService {
         }
     }
 
-    public void userViewOrImpression(Matcher matcher) {
+    public void userViewOrImpression(Matcher preMatcher,Matcher patternMatcher) {
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
-        String ip = matcher.group(1);
+        String ip = preMatcher.group(1);
         byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
         String ipHash = Hex.toHexString(hashBytes);
 
-        WPUser currentUser = wpUserRepo.findByNicename(matcher.group(6).replace("+","-")).get();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
+        LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
+
+        WPUser currentUser = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get();
 
         if (currentUser == null) {
             // Handle the case where no user is found.
             return;
         }
 
-        String day = matcher.group(2);
-        String month = matcher.group(3);
-        String year = matcher.group(4);
-        String time = matcher.group(5);
-        LocalDateTime requestTime = LocalDateTime.parse(String.format("%s-%s-%sT%s", year, month, day, time));
-
         if (userViewTimes.containsKey(ipHash)) {
             ArrayList<LocalDateTime> times = userViewTimes.get(ipHash);
 
             // Check the time difference between the last request and the current one.
-            if (Duration.between(times.get(times.size() - 1), requestTime).getSeconds() <= 3) {
+            if (Duration.between(times.get(times.size() - 1), dateLog).getSeconds() <= 3) {
                 // This request is an impression.
                 impressions.put(currentUser.getId().toString(), impressions.getOrDefault(currentUser, 0) + 1);
-                times.add(requestTime);
+                times.add(dateLog);
             } else {
                 // This request is a unique view.
                 userViews.put(currentUser.getId().toString(), userViews.getOrDefault(currentUser, 0) + 1);
-                times.add(requestTime);
+                times.add(dateLog);
             }
         } else {
             ArrayList<LocalDateTime> times = new ArrayList<>();
-            times.add(requestTime);
+            times.add(dateLog);
             userViewTimes.put(ipHash, times);
             // This is the first time seeing this IP for the user, so it's a unique view.
             userViews.put(currentUser.getId().toString(), userViews.getOrDefault(currentUser, 0) + 1);

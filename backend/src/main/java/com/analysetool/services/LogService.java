@@ -401,15 +401,14 @@ public class LogService {
 
                 //Schaue, ob der UserAgent auf der Blacklist steht.
                 boolean isBlacklisted = false;
-                try {
                     for (String item : blacklistUserAgents) {
                         isBlacklisted = userAgent.toLowerCase().contains(item.toLowerCase());
                         isBlacklisted = isBlacklisted || userAgent.toLowerCase(Locale.ROOT).contains(item.toLowerCase(Locale.ROOT));
                         isBlacklisted = isBlacklisted || userAgent.isEmpty();
                         isBlacklisted = isBlacklisted || userAgent.toLowerCase(Locale.ROOT).matches(item.toLowerCase(Locale.ROOT));
                     }
-                } catch (Exception e) {
-                    System.out.println("UserAgent Problem mit: " + userAgent);
+                if(isDevAccess || isBlacklisted) {
+                    System.out.println(request + userAgent);
                 }
 
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.

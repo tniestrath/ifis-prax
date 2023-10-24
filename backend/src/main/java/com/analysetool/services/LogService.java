@@ -405,6 +405,10 @@ public class LogService {
                     isBlacklisted = userAgent.matches("(?i).*" + item + ".*");
                 }
 
+                if(isDevAccess || isBlacklisted) {
+                    System.out.println(request + userAgent);
+                }
+
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews")) {
 

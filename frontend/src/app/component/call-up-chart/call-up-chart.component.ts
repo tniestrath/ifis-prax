@@ -78,6 +78,25 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
   ngOnInit(): void {
     this.getData();
     this.setToolTip("Hier werden die Aufrufe und einzigartigen Besucher pro Zeit dargestellt. Unter \"24h\" befindet sich eine Auflistung der letzten 23 Stunden.");
+    var slidedOut = false;
+    var slideOutButton = document.querySelector("#slide-out-button") as HTMLDivElement;
+    var uniChartBox = document.querySelector("#uni-chart-box") as HTMLDivElement;
+    var categoriesChartBox = document.querySelector("#categories-chart-box") as HTMLDivElement;
+    if (slideOutButton && uniChartBox && categoriesChartBox){
+      slideOutButton.addEventListener("click", evt => {
+        if (!slidedOut){
+          uniChartBox.style.width = "49%";
+          categoriesChartBox.style.width = "49%";
+          slideOutButton.innerHTML = "<p>></p>"
+          slidedOut = true;
+        } else {
+          uniChartBox.style.width = "73%";
+          categoriesChartBox.style.width = "25%";
+          slideOutButton.innerHTML = "<p><</p>"
+          slidedOut = false;
+        }
+      })
+    }
   }
 
   createCategoriesChart(clicksData : number[], visitorsData: number[], timestamp : string){

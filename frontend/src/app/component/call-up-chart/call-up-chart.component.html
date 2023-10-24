@@ -7,10 +7,13 @@
     <input type="radio" name="time_range" value="day" id="uni-range-day" (change)="getData($event)">
   </form>
   <div class="chart-canvas-box">
-    <div class="uni-chart-box">
+    <div id="uni-chart-box" [style]="{width:'73%'}">
       <canvas id="uni-chart">{{chart}}</canvas>
     </div>
-    <div class="categories-chart-box">
+    <div id="slide-out-button">
+      <p><</p>
+    </div>
+    <div id="categories-chart-box" [style]="{width:'25%'}">
       <canvas id="categories-chart">{{categories_chart}}</canvas>
     </div>
 

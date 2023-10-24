@@ -1542,7 +1542,9 @@ public class LogService {
                 break;
             case "userView":
                 try {
-                    updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
+                    if(wpUserRepo.findByNicename(patternMatcher.group(6).replace("+","-")).isPresent()) {
+                        updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
+                    }
                 } catch (Exception e) {
                     System.out.println("USERVIEW EXCEPTION BEI: " + line);
                 }

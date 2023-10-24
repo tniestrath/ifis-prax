@@ -1,6 +1,5 @@
 package com.analysetool.util;
 
-import com.analysetool.Application;
 import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
@@ -9,7 +8,6 @@ import com.maxmind.geoip2.model.CityResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.URISyntaxException;
 
 public final class IPHelper {
     private static IPHelper INSTANCE;
@@ -17,7 +15,7 @@ public final class IPHelper {
 
     static {
         try {
-            cityReader = new DatabaseReader.Builder(new File(("C:\\Users\\Robin\\IdeaProjects\\ifis-prax\\backend\\src\\main\\resources\\iplocationdbs\\city.mmdb"))).withCache(new CHMCache()).build();
+            cityReader = new DatabaseReader.Builder(new File(("/var/www/ifis-prax/backend/src/main/resources/iplocationdbs/city.mmdb"))).withCache(new CHMCache()).build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -22,6 +22,7 @@ export class Callup {
 })
 export class CallUpChartComponent extends DashBaseComponent implements OnInit {
   categories_chart: any;
+  slidedOut = false;
 
   timeSpan : string = "month";
 
@@ -36,6 +37,25 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     ["day", 1]
   ]);
 
+  categories =
+    ["Startseite",
+      "Artikel",
+      "News",
+      "Blog",
+      "Podcast",
+      "Whitepaper",
+      "Ratgeber",
+      "Über",
+      "Impressum",
+      "Preisliste",
+      "Partner",
+      "DSV",
+      "Newsletter",
+      "Image-Film",
+      "AGBs"];
+
+  categoriesViews : number[] = [];
+  categoriesVisitors : number[] = [];
 
 
   getData(event?: Event) {
@@ -66,40 +86,55 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       });
     });
     this.db.getCallupsByCategoriesNewest().then(res => {
-      let views = res.slice(0,6);
-      let footer_views = res.slice(7).reduce((previousValue, currentValue) => previousValue + currentValue);
-      let visitors = res.slice(15,21);
-      let footer_visitors = res.slice(21).reduce((previousValue, currentValue) => previousValue + currentValue);
-      views.push(footer_views);
-      visitors.push(footer_visitors);
-      this.createCategoriesChart(views, visitors, "Heute");
+      this.categoriesViews = res.slice(0,15);
+      this.categoriesVisitors = res.slice(15);
+      if (this.slidedOut){
+        this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Heute");
+      } else {
+        this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, "Heute");
+      }
     })
   }
+
+  addData(chart: any) {
+    if (chart == undefined)return;
+    chart.data.labels = this.categories;
+    chart.update("none");
+  }
+
+  removeData(chart: any) {
+    if (chart == undefined)return;
+    chart.data.labels = this.categories.slice(0, 7);
+    chart.update("none");
+  }
+
   ngOnInit(): void {
     this.getData();
     this.setToolTip("Hier werden die Aufrufe und einzigartigen Besucher pro Zeit dargestellt. Unter \"24h\" befindet sich eine Auflistung der letzten 23 Stunden.");
-    var slidedOut = false;
     var slideOutButton = document.querySelector("#slide-out-button") as HTMLDivElement;
     var uniChartBox = document.querySelector("#uni-chart-box") as HTMLDivElement;
     var categoriesChartBox = document.querySelector("#categories-chart-box") as HTMLDivElement;
     if (slideOutButton && uniChartBox && categoriesChartBox){
       slideOutButton.addEventListener("click", evt => {
-        if (!slidedOut){
+        if (!this.slidedOut){
           uniChartBox.style.width = "49%";
           categoriesChartBox.style.width = "49%";
-          slideOutButton.innerHTML = "<p>></p>"
-          slidedOut = true;
+          slideOutButton.innerHTML = "<p style='font-weight: bold'>></p>"
+          this.addData(this.categories_chart);
+          this.slidedOut = true;
+
         } else {
           uniChartBox.style.width = "73%";
           categoriesChartBox.style.width = "25%";
-          slideOutButton.innerHTML = "<p><</p>"
-          slidedOut = false;
+          slideOutButton.innerHTML = "<p style='font-weight: bold'><</p>"
+          this.removeData(this.categories_chart);
+          this.slidedOut = false;
         }
       })
     }
   }
 
-  createCategoriesChart(clicksData : number[], visitorsData: number[], timestamp : string){
+  createCategoriesChart(labels: string[], clicksData : number[], visitorsData: number[], timestamp : string){
     if (this.categories_chart){
       this.categories_chart.destroy();
     }
@@ -112,7 +147,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       type: "bar",
       data:
         {
-        labels: ["Startseite","Artikel","News","Blog","Podcast","Whitepaper","Ratgeber","Footer"],
+        labels: labels,
         datasets: [
           {
             label: "Besucher",
@@ -311,30 +346,25 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
   }
 
   public getCategoriesData(date : string, timespan : string){
-    let views = [];
-    let visitors = [];
-
-    let footer_views = 0;
-    let footer_visitors = 0;
     if (timespan != "day"){
       this.db.getCallupsByCategoriesByDate(date).then(res => {
-        views = res.slice(0,6);
-        footer_views = res.slice(7).reduce((previousValue, currentValue) => previousValue + currentValue);
-        visitors = res.slice(15,21);
-        footer_visitors = res.slice(21).reduce((previousValue, currentValue) => previousValue + currentValue);
-        views.push(footer_views);
-        visitors.push(footer_visitors);
-        this.createCategoriesChart(views, visitors, date);
+        this.categoriesViews = res.slice(0,15);
+        this.categoriesVisitors = res.slice(15);
+        if (this.slidedOut){
+          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date);
+        } else {
+          this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, date);
+        }
       });
     } else if (timespan == "day"){
       this.db.getCallupsByCategoriesByDateTime(Util.getFormattedNow(), Number(date)).then(res => {
-        views = res.slice(0,6);
-        footer_views = res.slice(7).reduce((previousValue, currentValue) => previousValue + currentValue);
-        visitors = res.slice(15,21);
-        footer_visitors = res.slice(21).reduce((previousValue, currentValue) => previousValue + currentValue);
-        views.push(footer_views);
-        visitors.push(footer_visitors);
-        this.createCategoriesChart(views, visitors, date + " Uhr");
+        this.categoriesViews = res.slice(0,15);
+        this.categoriesVisitors = res.slice(15);
+        if (this.slidedOut){
+          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date + "Uhr");
+        } else {
+          this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, date + "Uhr");
+        }
       });
     }
   }

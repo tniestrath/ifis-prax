@@ -1538,18 +1538,30 @@ public class LogService {
 
         switch(whatMatched) {
             case "articleView", "blogView", "newsView", "wpView":
-                UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
-                updateViewsByLocation(ip, postRepository.getIdByName(patternMatcher.group(1)));
+                try {
+                    UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                    updateViewsByLocation(ip, postRepository.getIdByName(patternMatcher.group(1)));
+                } catch (Exception e) {
+                    System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
+                }
                 break;
             case "articleSS", "blogSS", "newsSS", "wpSS":
-                updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
-                updateViewsByLocation(ip, postRepository.getIdByName(patternMatcher.group(1)));
-                updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
+                try {
+                    updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                    updateViewsByLocation(ip, postRepository.getIdByName(patternMatcher.group(1)));
+                    updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
+                } catch(Exception e) {
+                    System.out.println("SS PROCESS LINE EXCEPTION " +line);
+                }
                 break;
             case "podView":
                 break;
             case "userView":
-                updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get());
+                try {
+                    updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get());
+                } catch (Exception e) {
+                    System.out.println("USERVIEW EXCEPTION BEI: " + line);
+                }
                 break;
             case "main":
                 break;

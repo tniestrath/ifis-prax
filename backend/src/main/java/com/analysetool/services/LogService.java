@@ -424,11 +424,11 @@ public class LogService {
                         uniqueUsers++;
                         user = new UniqueUser();
                         user.setGlobal(1);
-                        user.setIp(pre_Matched.group(1));
+                        user.setIp(ip);
                         user.setCategory("global");
                         uniqueUserRepo.save(user);
                     } else {
-                        user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                        user = uniqueUserRepo.findByIP(ip);
                         user.setGlobal(1);
                         uniqueUserRepo.save(user);
                     }
@@ -894,7 +894,7 @@ public class LogService {
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                 uniCategories.setStunde(curHour);
                 //Create entries for users.
-                uniCategories.setBesucherGlobal(uniqueUsers - -userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
+                uniCategories.setBesucherGlobal(uniqueUsers -userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
                 uniCategories.setBesucherArticle(userArticle);
                 uniCategories.setBesucherNews(userNews);
                 uniCategories.setBesucherBlog(userBlog);
@@ -934,7 +934,7 @@ public class LogService {
                 uniCategories = universalCategoriesDLCRepo.getLast();
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                 //Update users
-                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - -userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
+                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
                 uniCategories.setBesucherArticle(uniCategories.getBesucherArticle() + userArticle);
                 uniCategories.setBesucherNews(uniCategories.getBesucherNews() + userNews);
                 uniCategories.setBesucherBlog(uniCategories.getBesucherBlog() + userBlog);

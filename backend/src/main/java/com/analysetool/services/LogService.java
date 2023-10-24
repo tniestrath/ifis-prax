@@ -405,7 +405,7 @@ public class LogService {
                     isBlacklisted = userAgent.matches("(?i).*" + item + ".*");
                 }
 
-                if(isDevAccess || isBlacklisted) {
+                if(isBlacklisted) {
                     System.out.println(request + userAgent);
                 }
 

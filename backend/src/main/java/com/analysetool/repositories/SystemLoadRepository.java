@@ -11,7 +11,7 @@ public interface SystemLoadRepository extends JpaRepository<SystemLoad, Long> {
     //SystemLoad findTopByCpuLoad();
     //SystemLoad findTopByMemoryLoad();
 
-    @Query("SELECT s FROM SystemLoad s WHERE s.id = MAX (s.id)")
+    @Query("SELECT s FROM SystemLoad s ORDER BY s.id DESC LIMIT 1")
     SystemLoad getNetworkNow();
 
     List<SystemLoad> getTop60ByOrderByTimestampDesc();

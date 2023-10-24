@@ -773,7 +773,11 @@ public class LogService {
                             uniqueUserRepo.save(user);
                             break;
                         case "userView":
-                            updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get());
+                            try {
+                                updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
+                            } catch (Exception e) {
+                                System.out.println(patternMatcher.group(1));
+                            }
                             break;
                         default :
                             System.out.println(line);
@@ -1538,7 +1542,7 @@ public class LogService {
                 break;
             case "userView":
                 try {
-                    updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get());
+                    updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
                 } catch (Exception e) {
                     System.out.println("USERVIEW EXCEPTION BEI: " + line);
                 }
@@ -2044,12 +2048,12 @@ public class LogService {
 
 
     @Transactional
-    public void updateUserStats(WPUser user){
-        if(userStatsRepo.existsByUserId(user.getId())){
-            UserStats Stats = userStatsRepo.findByUserId(user.getId());
+    public void updateUserStats(long id){
+        if(userStatsRepo.existsByUserId(id)) {
+            UserStats Stats = userStatsRepo.findByUserId(id);
             long views = Stats.getProfileView() + 1 ;
             Stats.setProfileView(views);
-            List<Post> list = postRepository.findByAuthor(user.getId().intValue());
+            List<Post> list = postRepository.findByAuthor((int)id);
             int count = 0;
             float relevance=0;
             float performance=0;
@@ -2070,7 +2074,7 @@ public class LogService {
             userStatsRepo.save(Stats);
 
 
-        }else{userStatsRepo.save(new UserStats(user.getId(), (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)0));}
+        }else{userStatsRepo.save(new UserStats(id, (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)0));}
     }
 
 

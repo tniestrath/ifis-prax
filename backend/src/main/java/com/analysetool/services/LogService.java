@@ -401,12 +401,10 @@ public class LogService {
 
                 //Schaue, ob der UserAgent auf der Blacklist steht.
                 boolean isBlacklisted = false;
-                    for (String item : blacklistUserAgents) {
-                        isBlacklisted = userAgent.toLowerCase().contains(item.toLowerCase());
-                        isBlacklisted = isBlacklisted || userAgent.toLowerCase(Locale.ROOT).contains(item.toLowerCase(Locale.ROOT));
-                        isBlacklisted = isBlacklisted || userAgent.isEmpty();
-                        isBlacklisted = isBlacklisted || userAgent.toLowerCase(Locale.ROOT).matches(item.toLowerCase(Locale.ROOT));
-                    }
+                for (String item : blacklistUserAgents) {
+                    isBlacklisted = userAgent.matches("(?i).*" + item + ".*");
+                }
+
                 if(isDevAccess || isBlacklisted) {
                     System.out.println(request + userAgent);
                 }
@@ -779,9 +777,11 @@ public class LogService {
                             System.out.println(line);
 
                     }
-                    if(!whatMatched.equals("")) {
-                        processLine(line, ip, whatMatched, dateLog, patternMatcher);
-                    }
+
+                    processLine(line, ip, whatMatched, dateLog, patternMatcher);
+                    //A bunch of variables necessary to update UniStats
+
+
                 }
 
             }

@@ -139,7 +139,29 @@ public class LogService {
     private int lastLineCounter = 0;
     private boolean liveScanning ;
 
-    ArrayList<String> blacklistUserAgents = new ArrayList<>();
+    //Set User-Agents that shouldn't be counted as click
+    String[] blacklistUserAgents = {
+    "bot",
+    "spider",
+    "crawl",
+    "parse",
+    "fetch",
+    "Zabbix",
+    "Facebook",
+    "Frog",
+    "Majestic",
+    "Apache",
+    "Scrape",
+    "Scrapy",
+    "HTTrack",
+    "Moreover",
+    "Sitesucker",
+    "Webz.io",
+    "-",
+    "Index",
+    "Go-http-client",
+    "Iframely"
+    };
 
     ArrayList<String> blacklistResponseCodes = new ArrayList<>();
 
@@ -305,28 +327,6 @@ public class LogService {
 
     public void findAMatch(SysVar sysVar) throws IOException, ParseException {
         String line;
-
-        //Set User-Agents that shouldn't be counted as clicks
-        blacklistUserAgents.add("bot");
-        blacklistUserAgents.add("spider");
-        blacklistUserAgents.add("crawl");
-        blacklistUserAgents.add("parse");
-        blacklistUserAgents.add("fetch");
-        blacklistUserAgents.add("Zabbix");
-        blacklistUserAgents.add("Facebook");
-        blacklistUserAgents.add("Frog");
-        blacklistUserAgents.add("Majestic");
-        blacklistUserAgents.add("Apache");
-        blacklistUserAgents.add("Scrape");
-        blacklistUserAgents.add("Scrapy");
-        blacklistUserAgents.add("HTTrack");
-        blacklistUserAgents.add("Moreover");
-        blacklistUserAgents.add("Sitesucker");
-        blacklistUserAgents.add("Webz.io");
-        blacklistUserAgents.add("-");
-        blacklistUserAgents.add("Index");
-        blacklistUserAgents.add("Go-http-client");
-
 
         int totalClicks = 0;
         int internalClicks = 0;
@@ -982,25 +982,6 @@ public class LogService {
     @Deprecated
     public void findAMatchDeprecated(SysVar sysVar) throws IOException, ParseException {
         String line;
-
-        //Set User-Agents that shouldn't be counted as clicks
-        blacklistUserAgents.add("bot");
-        blacklistUserAgents.add("spider");
-        blacklistUserAgents.add("crawl");
-        blacklistUserAgents.add("parse");
-        blacklistUserAgents.add("Zabbix");
-        blacklistUserAgents.add("Facebook");
-        blacklistUserAgents.add("Frog");
-        blacklistUserAgents.add("Majestic");
-        blacklistUserAgents.add("Apache");
-        blacklistUserAgents.add("Scrape");
-        blacklistUserAgents.add("Scrapy");
-        blacklistUserAgents.add("HTTrack");
-        blacklistUserAgents.add("Moreover");
-        blacklistUserAgents.add("Sitesucker");
-        blacklistUserAgents.add("Webz.io");
-        blacklistUserAgents.add("FeedFetcher");
-        blacklistUserAgents.add("-");
 
 
         int totalClicks = 0;

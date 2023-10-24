@@ -393,7 +393,7 @@ public class LogService {
                         || request.contains("/wp-content") || request.contains("/wp-includes")
                         || request.contains("/wp-admin") || request.contains("/robots.txt");
                 //Filter für IPs.
-                boolean isUnique = uniqueUserRepo.findByIP(ip) == null;
+                boolean isUnique = (uniqueUserRepo.findByIP(ip) == null);
                 boolean isInternal = ip.startsWith("10.");
                 //Filter für Response Codes.
                 boolean isSuccessfulRequest = Integer.parseInt(responseCode) >= 200 && Integer.parseInt(responseCode) < 400;
@@ -543,20 +543,6 @@ public class LogService {
                     } else if(matched_userViews.find()) {
                         whatMatched = "userView";
                         patternMatcher = matched_userViews;
-                    }
-
-                    totalClicks++;
-                    if(isUnique) {
-                        uniqueUsers++;
-                        user = new UniqueUser();
-                        user.setGlobal(1);
-                        user.setIp(pre_Matched.group(1));
-                        user.setCategory("global");
-                        uniqueUserRepo.save(user);
-                    } else {
-                        user = uniqueUserRepo.findByIP(pre_Matched.group(1));
-                        user.setGlobal(1);
-                        uniqueUserRepo.save(user);
                     }
 
                     switch (whatMatched) {

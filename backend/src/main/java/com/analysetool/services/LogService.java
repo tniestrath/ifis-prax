@@ -779,11 +779,9 @@ public class LogService {
                             System.out.println(line);
 
                     }
-
-                    processLine(line, ip, whatMatched, dateLog, patternMatcher);
-                    //A bunch of variables necessary to update UniStats
-
-
+                    if(!whatMatched.equals("")) {
+                        processLine(line, ip, whatMatched, dateLog, patternMatcher);
+                    }
                 }
 
             }

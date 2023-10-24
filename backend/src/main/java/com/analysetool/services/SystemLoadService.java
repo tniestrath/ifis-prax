@@ -37,6 +37,9 @@ public class SystemLoadService {
 
         long[] prevTicks = processor.getSystemCpuLoadTicks();
 
+        double networkRecvOld = networkIF.getBytesRecv();
+        double networkSentOld = networkIF.getBytesSent();
+
         try {
             // Pause zwischen den Messungen
             Thread.sleep(1000); // 1 Sekunde
@@ -50,8 +53,9 @@ public class SystemLoadService {
         double totalMemory = memory.getTotal();
         double availableMemory = memory.getAvailable();
         double memoryLoad = (totalMemory - availableMemory) / totalMemory;
-        double networkRecv = networkIF.getBytesRecv();
-        double networkSent = networkIF.getBytesSent();
+        double networkRecv = networkIF.getBytesRecv() - networkRecvOld;
+        double networkSent = networkIF.getBytesSent() - networkSentOld;
+
 
         SystemLoad systemLoad = new SystemLoad();
         systemLoad.setCpuLoad(cpuLoad);
@@ -65,11 +69,11 @@ public class SystemLoadService {
     @Scheduled(cron = "0 0 0 * * ?") // Jeden Tag um Mitternacht
     @Transactional
     public void deleteOldRecords() {
-        long seventyTwoHoursAgo = System.currentTimeMillis() - (72 * 60 * 60 * 1000); // 72 Stunden in Millisekunden
-        systemLoadRepository.deleteByTimestampBefore(seventyTwoHoursAgo);
+        systemLoadRepository.deleteByTimestampBefore(System.currentTimeMillis() - (72 * 60 * 60 * 1000));// 72 Stunden in Millisekunden
     }
 
 
+    public SystemLoad getNow() { return systemLoadRepository.getNetworkNow();}
 
     public List<SystemLoad> getAllSystemLoads() {
         return systemLoadRepository.findAll();

@@ -373,7 +373,8 @@ public class LogService {
         Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();
         Map<String,Long> viewsByHour = new HashMap<>();
 
-
+        String last_ip = null;
+        String last_request = null;
 
         while ((line = br.readLine()) != null ) {
             UniqueUser user = null;
@@ -401,6 +402,13 @@ public class LogService {
                 //Filter für Response Codes.
                 boolean isSuccessfulRequest = Integer.parseInt(responseCode) >= 200 && Integer.parseInt(responseCode) < 400;
                 boolean isServerError = Integer.parseInt(responseCode) >= 500;
+                //Filter for Spam
+                boolean isSpam = false;
+                if(!(last_ip == null || last_request == null)) {
+                    if (request.equals(last_request) && ip.equals(last_ip)) {
+                        isSpam = true;
+                    }
+                }
 
                 //Schaue, ob der UserAgent auf der Blacklist steht.
                 boolean isBlacklisted = false;
@@ -413,7 +421,7 @@ public class LogService {
                 }
 
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews")) {
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam) {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     setViewsByLocation(ip, viewsByLocation);
@@ -826,10 +834,22 @@ public class LogService {
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
                     //A bunch of variables necessary to update UniStats
 
+                }
+                last_request = request;
+                last_ip = ip;
 
+                if(isServerError) {
+                    serverErrors++;
+                }
+                if(isSpam) {
+                    System.out.println("SPAM!!!: " + ip + request);
+                }
+                if(isInternal) {
+                    internalClicks++;
                 }
 
             }
+
         }
         updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors, viewsByLocation, viewsByHour);
 

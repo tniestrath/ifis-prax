@@ -4,7 +4,7 @@ import {Tag, TagRanking, TagStats} from "../component/tag/Tag";
 import {DbObject} from "./DbObject";
 import {Post} from "../component/post/Post";
 import {User} from "../page/page-einzel/user/user";
-import {Callup} from "../component/call-up-chart/call-up-chart.component";
+import {Callup, CategoriesData} from "../component/call-up-chart/call-up-chart.component";
 import {SystemUsage} from "../component/system/systemload/systemload.component";
 import Util from "../util/Util";
 
@@ -232,13 +232,13 @@ export class DbService {
   async getCallupsByTime(days: number) : Promise<Callup[]> {
     return await fetch(DbService.getUrl(dbUrl.GET_CALLUPS_BY_TIME.replace("DAYS", String(days))), {credentials: "include"}).then(res => res.json());
   }
-  async getCallupsByCategoriesNewest() : Promise<{labels: string[], besucher: number[], clicks: number[]}>{
+  async getCallupsByCategoriesNewest() : Promise<CategoriesData>{
     return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", Util.getFormattedNow), {credentials: "include"}).then(res => res.json());
   }
-  async getCallupsByCategoriesByDateTime(date : string, hour : number) :Promise<{labels: string[], besucher: number[], clicks: number[]}>{
+  async getCallupsByCategoriesByDateTime(date : string, hour : number) :Promise<CategoriesData>{
     return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATETIME).replace("DATE", date).replace("HOUR", String(hour)), {credentials: "include"}).then(res => res.json());
   }
-  async getCallupsByCategoriesByDate(date : string) :Promise<{labels: string[], besucher: number[], clicks: number[]}>{
+  async getCallupsByCategoriesByDate(date : string) :Promise<CategoriesData>{
     return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", date), {credentials: "include"}).then(res => res.json());
   }
 

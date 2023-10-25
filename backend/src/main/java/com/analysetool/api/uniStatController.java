@@ -319,9 +319,9 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserAGBSByUniStatId(id));
 
 
-        JSONObject obj = new JSONObject().put("labels", labelsForCategory);
-        obj.put("besucher", besucherByCategory);
-        obj.put("clicks", clicksByCategory);
+        JSONObject obj = new JSONObject().put("labels", new JSONArray(labelsForCategory));
+        obj.put("besucher", new JSONArray(besucherByCategory));
+        obj.put("clicks", new JSONArray(clicksByCategory));
         return obj.toString();
     }
 

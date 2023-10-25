@@ -856,7 +856,7 @@ public class LogService {
                     serverErrors++;
                 }
                 if(isSpam && !isInternal) {
-                    System.out.println("SPAM!!!: " + ip + request);
+                    System.out.println("SPAM!!!: " + ip + " " + request + " " + userAgent);
                 }
                 if(isInternal) {
                     internalClicks++;

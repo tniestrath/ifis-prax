@@ -39,9 +39,6 @@ public interface UniqueUserRepository extends JpaRepository<UniqueUser, Long> {
     @Query("SELECT count(u.ip) FROM UniqueUser u WHERE u.ratgeber = 1")
     public int getUserCountRatgeber();
 
-    @Query("SELECT count(u.ip) FROM UniqueUser u WHERE u.global = 1")
-    public int getUserCountGlobal();
-
     @Query("SELECT count(u.ip) FROM UniqueUser u WHERE u.main = 1")
     public int getUserCountMain();
 

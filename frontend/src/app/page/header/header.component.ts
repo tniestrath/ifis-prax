@@ -21,16 +21,14 @@ export class HeaderComponent implements AfterViewInit{
     this.navElements = [];
     // COOKIE VALIDATION //
     this.db.validate().then(res  => {
-      console.log(res);
-      var usid = res;
-      if (usid.toString().includes("Invalid") || usid == null || res == null || res == undefined) {
+      if (res.toString().includes("Invalid") || res == null || res.user_id == undefined) {
         SysVars.USER_ID = "0";
         return;
       }
-      this.db.getUserById(String(usid.user_id)).then(res => {
+      this.db.getUserById(String(res.user_id)).then(res => {
         SysVars.login.next(res);
         SysVars.USER_ID = "0";
-        if (usid.user_id == "20" || usid.user_id == "27" || usid.user_id == "52"){
+        if (res.user_id == "20" || res.user_id == "27" || res.user_id == "52"){
           SysVars.ADMIN = true;
         }
         SysVars.ADMIN = false;

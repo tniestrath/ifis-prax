@@ -74,6 +74,8 @@ public class LogService {
     //Blog view +1 bei match
     //private String ArtikelViewPattern = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}).*GET /artikel/(\\S+)";//Artikel view +1 bei match
     private final String ArtikelViewPattern = "^.*GET /artikel/(\\S+)/";
+
+    private final String ratgeberViewPattern = "^.*GET /ratgeber/(\\S+)/";
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
     private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
@@ -132,6 +134,7 @@ public class LogService {
     Pattern partnerPattern = Pattern.compile(partner);
     Pattern newsletterPattern = Pattern.compile(newsletter);
     Pattern imagePattern = Pattern.compile(image);
+    Pattern ratgeberPattern = Pattern.compile(ratgeberViewPattern);
 
 
     private String lastLine = "";
@@ -480,6 +483,9 @@ public class LogService {
                     //Does it match user-view?
                     Matcher matched_userViews = userViewPattern.matcher(request);
 
+                    //Does it match a ratgeber-view
+                    Matcher matched_ratgeber = ratgeberPattern.matcher(request);
+
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
@@ -540,6 +546,9 @@ public class LogService {
                     } else if(matched_userViews.find()) {
                         whatMatched = "userView";
                         patternMatcher = matched_userViews;
+                    } else if(matched_ratgeber.find()) {
+                        whatMatched = "ratgeber";
+                        patternMatcher = matched_ratgeber;
                     }
 
                     switch (whatMatched) {
@@ -792,6 +801,23 @@ public class LogService {
                                 System.out.println(patternMatcher.group(1));
                             }
                             break;
+                        case "ratgeber":
+                            //Erhöhe Clicks für Artikel um 1.
+                            viewsRatgeber++;
+                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                            if(isUnique) {
+                                userArticle++;
+                                user = uniqueUserRepo.findByIP(ip);
+                                user.setCategory("ratgeber");
+                                user.setIp(ip);
+                            } else {
+                                if(uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {userRatgeber++;}
+                                user = uniqueUserRepo.findByIP(ip);
+                            }
+                            user.setRatgeber(1);
+                            uniqueUserRepo.save(user);
+                            break;
+
                         default :
                             System.out.println(line);
 

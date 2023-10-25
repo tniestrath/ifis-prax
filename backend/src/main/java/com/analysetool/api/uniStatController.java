@@ -247,9 +247,9 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherImage());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherAGBS());
 
-        JSONObject obj = new JSONObject().put("labels", labelsForCategory);
-        obj.put("besucher", besucherByCategory);
-        obj.put("clicks", clicksByCategory);
+        JSONObject obj = new JSONObject().put("labels", new JSONArray(labelsForCategory));
+        obj.put("besucher", new JSONArray(besucherByCategory));
+        obj.put("clicks", new JSONArray(clicksByCategory));
         return obj.toString();
     }
 
@@ -257,7 +257,7 @@ public class uniStatController {
      *
      * @param date : Das Datum, für die zusammengefasste Stats ausgegeben werden sollen.
      * @return eine Liste der Anzahl von Clicks und Besucher nach Category des letzten abgeschlossenen Tages.
-     *      * 0-15 clicks, 16-31 besucher, global-article-news-blog-podcast-whitepaper-ratgeber in order.
+     *
      */
     @GetMapping("getCallupByCategoryDate")
     public String getCallupByCategoryDaily(String date) throws ParseException, JSONException {

@@ -560,98 +560,103 @@ public class LogService {
                     }
 
                     switch (whatMatched) {
-                        case "articleView", "articleSS":
+                        case "articleView", "articleSS" -> {
                             //Erhöhe Clicks für Artikel um 1.
                             viewsArticle++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if(isUnique) {
+                            if (isUnique) {
                                 userArticle++;
                                 user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("article");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getArticle() == 0) {userArticle++;}
+                                if (uniqueUserRepo.findByIP(ip).getArticle() == 0) {
+                                    userArticle++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setArticle(1);
                             uniqueUserRepo.save(user);
-                            break;
+                        }
 
-                        //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                        case "blogView", "blogSS":
+                        case "blogView", "blogSS" -> {
                             //Erhöhe Clicks für Blog um 1.
                             viewsBlog++;
 
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if(isUnique) {
+                            if (isUnique) {
                                 userBlog++;
                                 user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("blog");
                                 user.setIp(ip);
-                            }else {
-                                if(uniqueUserRepo.findByIP(ip).getBlog() == 0) {userBlog++;}
+                            } else {
+                                if (uniqueUserRepo.findByIP(ip).getBlog() == 0) {
+                                    userBlog++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setBlog(1);
                             uniqueUserRepo.save(user);
-                            break;
+                        }
 
-                        //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                        case "newsView", "newsSS":
+                        case "newsView", "newsSS" -> {
                             //Erhöhe Clicks für News um 1.
                             viewsNews++;
 
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if(isUnique) {
+                            if (isUnique) {
                                 userNews++;
                                 user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("news");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getNews() == 0) {userNews++;}
+                                if (uniqueUserRepo.findByIP(ip).getNews() == 0) {
+                                    userNews++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setNews(1);
                             uniqueUserRepo.save(user);
-                            break;
+                        }
 
-                        //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                        case "wpView", "wpSS":
+                        case "wpView", "wpSS" -> {
                             //Erhöhe Clicks für Whitepaper um 1.
                             viewsWhitepaper++;
 
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if(isUnique) {
+                            if (isUnique) {
                                 userWhitepaper++;
                                 user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("whitepaper");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getWhitepaper() == 0) {userWhitepaper++;}
+                                if (uniqueUserRepo.findByIP(ip).getWhitepaper() == 0) {
+                                    userWhitepaper++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setWhitepaper(1);
                             uniqueUserRepo.save(user);
-                            break;
-                            
-                        case "podView":
+                        }
+                        case "podView" -> {
                             //Erhöhe Clicks für Podcast um 1.
                             viewsPodcast++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if(isUnique) {
+                            if (isUnique) {
                                 userPodcast++;
                                 user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("podcast");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getPodcast() == 0) {userPodcast++;}
+                                if (uniqueUserRepo.findByIP(ip).getPodcast() == 0) {
+                                    userPodcast++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setPodcast(1);
                             uniqueUserRepo.save(user);
-                            break;
-                            
-                        case "main":
+                        }
+                        case "main" -> {
                             viewsMain++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
@@ -660,14 +665,15 @@ public class LogService {
                                 user.setCategory("main");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getMain() == 0) {userMain++;}
+                                if (uniqueUserRepo.findByIP(ip).getMain() == 0) {
+                                    userMain++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setMain(1);
                             uniqueUserRepo.save(user);
-                            break;
-                            
-                        case "ueber":
+                        }
+                        case "ueber" -> {
                             //Erhöhe Clicks für Ueber-Uns um 1.
                             viewsUeber++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -677,14 +683,15 @@ public class LogService {
                                 user.setCategory("ueber");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getUeber() == 0) {userUeber++;}
+                                if (uniqueUserRepo.findByIP(ip).getUeber() == 0) {
+                                    userUeber++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setUeber(1);
                             uniqueUserRepo.save(user);
-                            break;
-                            
-                        case "impressum":
+                        }
+                        case "impressum" -> {
                             //Erhöhe Clicks für Impressum um 1.
                             viewsImpressum++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -694,14 +701,15 @@ public class LogService {
                                 user.setCategory("impressum");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getImpressum() == 0) {userImpressum++;}
+                                if (uniqueUserRepo.findByIP(ip).getImpressum() == 0) {
+                                    userImpressum++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setImpressum(1);
                             uniqueUserRepo.save(user);
-                            break;
-                            
-                        case "preisliste":
+                        }
+                        case "preisliste" -> {
                             //Erhöhe Clicks für Preisliste um 1.
                             viewsPreisliste++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -711,14 +719,15 @@ public class LogService {
                                 user.setCategory("preisliste");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getPreisliste() == 0) {userPreisliste++;}
+                                if (uniqueUserRepo.findByIP(ip).getPreisliste() == 0) {
+                                    userPreisliste++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setPreisliste(1);
                             uniqueUserRepo.save(user);
-                            break;
-                            
-                        case "partner":
+                        }
+                        case "partner" -> {
                             //Erhöhe Clicks für Partner um 1.
                             viewsPartner++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -728,14 +737,15 @@ public class LogService {
                                 user.setCategory("partner");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getPartner() == 0) {userPartner++;}
+                                if (uniqueUserRepo.findByIP(ip).getPartner() == 0) {
+                                    userPartner++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setPartner(1);
                             uniqueUserRepo.save(user);
-                            break;
-                            
-                        case "datenschutz":
+                        }
+                        case "datenschutz" -> {
                             //Erhöhe Clicks für Datenschutzerkl. um 1.
                             viewsDatenschutz++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -745,14 +755,15 @@ public class LogService {
                                 user.setCategory("datenschutz");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getDatenschutz() == 0) {userDatenschutz++;}
+                                if (uniqueUserRepo.findByIP(ip).getDatenschutz() == 0) {
+                                    userDatenschutz++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setDatenschutz(1);
                             uniqueUserRepo.save(user);
-                            break;
-                            
-                        case "newsletter":
+                        }
+                        case "newsletter" -> {
                             //Erhöhe Clicks für Newsletter um 1.
                             viewsNewsletter++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -762,14 +773,15 @@ public class LogService {
                                 user.setCategory("newsletter");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getNewsletter() == 0) {userNewsletter++;}
+                                if (uniqueUserRepo.findByIP(ip).getNewsletter() == 0) {
+                                    userNewsletter++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setNewsletter(1);
                             uniqueUserRepo.save(user);
-                            break;
-                            
-                        case "image":
+                        }
+                        case "image" -> {
                             //Erhöhe Clicks für Image um 1.
                             viewsImage++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -779,15 +791,16 @@ public class LogService {
                                 user.setCategory("image");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getImage() == 0) {userImage++;}
+                                if (uniqueUserRepo.findByIP(ip).getImage() == 0) {
+                                    userImage++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setImage(1);
                             uniqueUserRepo.save(user);
-                            break;
-                            
-                        case "agb":
-                            //Erhöhe Clicks für AGBS um 1. 
+                        }
+                        case "agb" -> {
+                            //Erhöhe Clicks für AGBS um 1.
                             viewsAGBS++;
                             //Wenn der User Unique ist, erstelle eine Zeile in UniqueUser.
                             if (isUnique) {
@@ -796,39 +809,40 @@ public class LogService {
                                 user.setCategory("agbs");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getAgb() == 0) {userAGBS++;}
+                                if (uniqueUserRepo.findByIP(ip).getAgb() == 0) {
+                                    userAGBS++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setAgb(1);
                             uniqueUserRepo.save(user);
-                            break;
-                        case "userView":
+                        }
+                        case "userView" -> {
                             try {
                                 updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
                             } catch (Exception e) {
                                 System.out.println(patternMatcher.group(1));
                             }
-                            break;
-                        case "ratgeber":
+                        }
+                        case "ratgeber" -> {
                             //Erhöhe Clicks für Artikel um 1.
                             viewsRatgeber++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if(isUnique) {
+                            if (isUnique) {
                                 userArticle++;
                                 user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("ratgeber");
                                 user.setIp(ip);
                             } else {
-                                if(uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {userRatgeber++;}
+                                if (uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {
+                                    userRatgeber++;
+                                }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setRatgeber(1);
                             uniqueUserRepo.save(user);
-                            break;
-
-                        default :
-                            System.out.println(line);
-
+                        }
+                        default -> System.out.println(line);
                     }
 
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);

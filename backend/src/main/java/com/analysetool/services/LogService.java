@@ -1560,7 +1560,7 @@ public class LogService {
         lastLine = line;
 
         switch(whatMatched) {
-            case "articleView", "blogView", "newsView", "wpView":
+            case "articleView", "blogView", "newsView", "wpView", "ratgeber":
                 try {
                     UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                     updateViewsByLocation(ip, postRepository.getIdByName(patternMatcher.group(1)));

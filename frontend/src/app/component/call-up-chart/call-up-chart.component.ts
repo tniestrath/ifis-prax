@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
+import _default from "chart.js/dist/plugins/plugin.legend";
+import labels = _default.defaults.labels;
 
 export class Callup {
   clicks : number = 0;
@@ -86,8 +88,9 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       });
     });
     this.db.getCallupsByCategoriesNewest().then(res => {
-      this.categoriesViews = res.slice(0,15);
-      this.categoriesVisitors = res.slice(15);
+      this.categories = res.labels;
+      this.categoriesViews = res.clicks;
+      this.categoriesVisitors = res.besucher;
       if (this.slidedOut){
         this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Heute");
       } else {
@@ -348,8 +351,9 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
   public getCategoriesData(date : string, timespan : string){
     if (timespan != "day"){
       this.db.getCallupsByCategoriesByDate(date).then(res => {
-        this.categoriesViews = res.slice(0,15);
-        this.categoriesVisitors = res.slice(15);
+        this.categories = res.labels;
+        this.categoriesViews = res.clicks;
+        this.categoriesVisitors = res.besucher;
         if (this.slidedOut){
           this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date);
         } else {
@@ -358,8 +362,9 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       });
     } else if (timespan == "day"){
       this.db.getCallupsByCategoriesByDateTime(Util.getFormattedNow(), Number(date)).then(res => {
-        this.categoriesViews = res.slice(0,15);
-        this.categoriesVisitors = res.slice(15);
+        this.categories = res.labels;
+        this.categoriesViews = res.clicks;
+        this.categoriesVisitors = res.besucher;
         if (this.slidedOut){
           this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date + "Uhr");
         } else {

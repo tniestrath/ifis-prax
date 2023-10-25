@@ -17,15 +17,19 @@
 }
 #slide-out-button{
   height: 100%;
+  width: 20px;
   box-sizing: border-box;
   text-align: center;
   display: flex;
   align-items: center;
-  border: 1px solid #E5E5E5;
+  justify-content: center;
+  border: 2px solid #E5E5E5;
   border-radius: 5px;
+  padding: 0 2px;
 }
 #slide-out-button p {
   margin: 0;
+  font-weight: bold;
   height: fit-content;
 }
 #slide-out-button:hover{

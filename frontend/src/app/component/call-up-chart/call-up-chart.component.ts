@@ -16,6 +16,17 @@ export class Callup {
     this.date = date;
   }
 }
+export class CategoriesData {
+  clicks : number[] = [];
+  besucher : number[] = [];
+  labels : string[] = [];
+
+  constructor(clicks : number[], besucher : number[], labels : string[]) {
+    this.clicks = clicks;
+    this.besucher = besucher;
+    this.labels = labels;
+  }
+}
 
 @Component({
   selector: 'dash-call-up-chart',

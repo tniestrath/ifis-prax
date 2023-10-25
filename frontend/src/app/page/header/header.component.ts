@@ -25,10 +25,9 @@ export class HeaderComponent implements AfterViewInit{
       var usid = res;
       if (usid.toString().includes("Invalid") || usid == null || res == null || res == undefined) {
         SysVars.USER_ID = "0";
-        usid = {user_id: "0"};
         return;
       }
-      this.db.getUserById(String(usid)).then(res => {
+      this.db.getUserById(String(usid.user_id)).then(res => {
         SysVars.login.next(res);
         SysVars.USER_ID = "0";
         SysVars.ADMIN = true;

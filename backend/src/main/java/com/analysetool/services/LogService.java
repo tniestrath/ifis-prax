@@ -397,7 +397,7 @@ public class LogService {
                         || request.contains("/wp-admin") || request.contains("/robots.txt");
                 //Filter für IPs.
                 boolean isUnique = (uniqueUserRepo.findByIP(ip) == null);
-                boolean isInternal = ip.startsWith("10.");
+                boolean isInternal = ip.startsWith("10.") || ip.startsWith("127.");
                 //Filter für Response Codes.
                 boolean isSuccessfulRequest = Integer.parseInt(responseCode) >= 200 && Integer.parseInt(responseCode) < 400;
                 boolean isServerError = Integer.parseInt(responseCode) >= 500;

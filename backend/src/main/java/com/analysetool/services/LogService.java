@@ -546,14 +546,14 @@ public class LogService {
                         case "articleView", "articleSS":
                             //Erhöhe Clicks für Artikel um 1.
                             viewsArticle++;
-
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if(isUnique) {
                                 userArticle++;
                                 user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("article");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
+                                if(uniqueUserRepo.findByIP(ip).getArticle() == 0) {userArticle++;}
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setArticle(1);
@@ -572,6 +572,7 @@ public class LogService {
                                 user.setCategory("blog");
                                 user.setIp(ip);
                             }else {
+                                if(uniqueUserRepo.findByIP(ip).getBlog() == 0) {userBlog++;}
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setBlog(1);
@@ -588,8 +589,9 @@ public class LogService {
                                 userNews++;
                                 user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("news");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
+                                if(uniqueUserRepo.findByIP(ip).getNews() == 0) {userNews++;}
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setNews(1);
@@ -606,8 +608,9 @@ public class LogService {
                                 userWhitepaper++;
                                 user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("whitepaper");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
+                                if(uniqueUserRepo.findByIP(ip).getWhitepaper() == 0) {userWhitepaper++;}
                                 user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setWhitepaper(1);
@@ -620,11 +623,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if(isUnique) {
                                 userPodcast++;
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("podcast");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                if(uniqueUserRepo.findByIP(ip).getPodcast() == 0) {userPodcast++;}
+                                user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setPodcast(1);
                             uniqueUserRepo.save(user);
@@ -635,11 +639,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userMain++;
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("main");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                if(uniqueUserRepo.findByIP(ip).getMain() == 0) {userMain++;}
+                                user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setMain(1);
                             uniqueUserRepo.save(user);
@@ -651,11 +656,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userUeber++;
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("ueber");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                if(uniqueUserRepo.findByIP(ip).getUeber() == 0) {userUeber++;}
+                                user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setUeber(1);
                             uniqueUserRepo.save(user);
@@ -667,11 +673,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userImpressum++;
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("impressum");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                if(uniqueUserRepo.findByIP(ip).getImpressum() == 0) {userImpressum++;}
+                                user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setImpressum(1);
                             uniqueUserRepo.save(user);
@@ -683,11 +690,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userPreisliste++;
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("preisliste");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                if(uniqueUserRepo.findByIP(ip).getPreisliste() == 0) {userPreisliste++;}
+                                user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setPreisliste(1);
                             uniqueUserRepo.save(user);
@@ -699,11 +707,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userPartner++;
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("partner");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                if(uniqueUserRepo.findByIP(ip).getPartner() == 0) {userPartner++;}
+                                user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setPartner(1);
                             uniqueUserRepo.save(user);
@@ -715,11 +724,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userDatenschutz++;
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("datenschutz");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                if(uniqueUserRepo.findByIP(ip).getDatenschutz() == 0) {userDatenschutz++;}
+                                user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setDatenschutz(1);
                             uniqueUserRepo.save(user);
@@ -731,11 +741,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userNewsletter++;
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("newsletter");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                if(uniqueUserRepo.findByIP(ip).getNewsletter() == 0) {userNewsletter++;}
+                                user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setNewsletter(1);
                             uniqueUserRepo.save(user);
@@ -747,11 +758,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userImage++;
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("image");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                if(uniqueUserRepo.findByIP(ip).getImage() == 0) {userImage++;}
+                                user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setImage(1);
                             uniqueUserRepo.save(user);
@@ -763,11 +775,12 @@ public class LogService {
                             //Wenn der User Unique ist, erstelle eine Zeile in UniqueUser.
                             if (isUnique) {
                                 userAGBS++;
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                user = uniqueUserRepo.findByIP(ip);
                                 user.setCategory("agbs");
-                                user.setIp(pre_Matched.group(1));
+                                user.setIp(ip);
                             } else {
-                                user = uniqueUserRepo.findByIP(pre_Matched.group(1));
+                                if(uniqueUserRepo.findByIP(ip).getAgb() == 0) {userAGBS++;}
+                                user = uniqueUserRepo.findByIP(ip);
                             }
                             user.setAgb(1);
                             uniqueUserRepo.save(user);

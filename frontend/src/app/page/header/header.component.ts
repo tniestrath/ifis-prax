@@ -28,10 +28,7 @@ export class HeaderComponent implements AfterViewInit{
       this.db.getUserById(String(res.user_id)).then(res => {
         SysVars.login.next(res);
         SysVars.USER_ID = "0";
-        if (res.user_id == "20" || res.user_id == "27" || res.user_id == "52"){
-          SysVars.ADMIN = true;
-        }
-        SysVars.ADMIN = false;
+        SysVars.ADMIN = true;
       })
     })
 

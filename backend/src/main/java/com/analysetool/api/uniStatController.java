@@ -187,10 +187,28 @@ public class uniStatController {
      * @param date : das Datum, für das die UniStatsNach Kategorie ausgegeben werden sollen.
      * @param hour : die Stunde, für die ausgegeben werden sollen.
      * @return eine Liste der Anzahl von Clicks und Besucher nach Category des letzten abgeschlossenen Tages.
-     *      * 0-15 clicks, 16-31 besucher, global-article-news-blog-podcast-whitepaper-ratgeber in order.
+     *
      */
     @GetMapping("getCallupByCategoryDateAndHour")
-    public List<Integer> getCallupByCategoryHourly(String date, int hour) throws ParseException {
+    public String getCallupByCategoryHourly(String date, int hour) throws ParseException, JSONException {
+
+        List<String> labelsForCategory = new ArrayList<>();
+        labelsForCategory.add("Main");
+        labelsForCategory.add("Article");
+        labelsForCategory.add("News");
+        labelsForCategory.add("Blog");
+        labelsForCategory.add("Podcast");
+        labelsForCategory.add("Whitepaper");
+        labelsForCategory.add("Ratgeber");
+        labelsForCategory.add("Ueber");
+        labelsForCategory.add("Impressum");
+        labelsForCategory.add("Preisliste");
+        labelsForCategory.add("Partner");
+        labelsForCategory.add("Datenschutz");
+        labelsForCategory.add("Newsletter");
+        labelsForCategory.add("Image");
+        labelsForCategory.add("AGBs");
+
         List<Integer> clicksByCategory = new ArrayList<>();
 
         int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
@@ -229,8 +247,10 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherImage());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherAGBS());
 
-        clicksByCategory.addAll(besucherByCategory);
-        return clicksByCategory;
+        JSONObject obj = new JSONObject().put("labels", labelsForCategory);
+        obj.put("besucher", besucherByCategory);
+        obj.put("clicks", clicksByCategory);
+        return obj.toString();
     }
 
     /**
@@ -240,7 +260,26 @@ public class uniStatController {
      *      * 0-15 clicks, 16-31 besucher, global-article-news-blog-podcast-whitepaper-ratgeber in order.
      */
     @GetMapping("getCallupByCategoryDate")
-    public List<Integer> getCallupByCategoryDaily(String date) throws ParseException {
+    public String getCallupByCategoryDaily(String date) throws ParseException, JSONException {
+        List<String> labelsForCategory = new ArrayList<>();
+
+        labelsForCategory.add("Main");
+        labelsForCategory.add("Article");
+        labelsForCategory.add("News");
+        labelsForCategory.add("Blog");
+        labelsForCategory.add("Podcast");
+        labelsForCategory.add("Whitepaper");
+        labelsForCategory.add("Ratgeber");
+        labelsForCategory.add("Ueber");
+        labelsForCategory.add("Impressum");
+        labelsForCategory.add("Preisliste");
+        labelsForCategory.add("Partner");
+        labelsForCategory.add("Datenschutz");
+        labelsForCategory.add("Newsletter");
+        labelsForCategory.add("Image");
+        labelsForCategory.add("AGBs");
+
+
         List<Integer> clicksByCategory = new ArrayList<>();
 
         int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
@@ -280,8 +319,10 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserAGBSByUniStatId(id));
 
 
-        clicksByCategory.addAll(besucherByCategory);
-        return clicksByCategory;
+        JSONObject obj = new JSONObject().put("labels", labelsForCategory);
+        obj.put("besucher", besucherByCategory);
+        obj.put("clicks", clicksByCategory);
+        return obj.toString();
     }
 
     /**

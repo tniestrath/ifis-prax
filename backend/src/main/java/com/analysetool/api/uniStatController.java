@@ -125,7 +125,7 @@ public class uniStatController {
         for(UniversalStats uni : uniRepo.findAll()) {
             MapHelper.mergeLocationMaps(map, uni.getViewsByLocation());
         }
-        return new JSONArray(map).toString();
+        return new JSONObject(map).toString();
     }
 
     /**

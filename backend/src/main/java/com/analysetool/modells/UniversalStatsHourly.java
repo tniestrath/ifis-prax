@@ -14,6 +14,9 @@ public class UniversalStatsHourly {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "uni_stat_id")
+    private int uniStatId;
+
     @Column(name = "stunde")
     private int stunde;
 
@@ -197,6 +200,14 @@ public class UniversalStatsHourly {
 
     public void setServerErrors(int serverErrors) {
         this.serverErrors = serverErrors;
+    }
+
+    public int getUniStatId() {
+        return uniStatId;
+    }
+
+    public void setUniStatId(int uniStatId) {
+        this.uniStatId = uniStatId;
     }
 }
 

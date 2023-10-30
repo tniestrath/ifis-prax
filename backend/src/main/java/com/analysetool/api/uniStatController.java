@@ -57,7 +57,7 @@ public class uniStatController {
 
     /**
      *
-     * @param days  if 1, get hourly stats - if higher get Daily.
+     * @param days  if 1, get hourly stats (for the last 24 hours) - if higher get Daily.
      * @return
      * @throws JSONException
      * @throws ParseException
@@ -79,7 +79,7 @@ public class uniStatController {
                 response.put(callup);
             }
         } else {
-            List<UniversalStatsHourly> universalStatsList = universalStatsHourlyRepo.getAll();
+            List<UniversalStatsHourly> universalStatsList = universalStatsHourlyRepo.getLast24();
             for (UniversalStatsHourly uniStat : universalStatsList) {
                 JSONObject callup = new JSONObject();
                 callup.put("date", uniStat.getStunde());
@@ -106,6 +106,21 @@ public class uniStatController {
     @GetMapping("/getViewsByLocationLast14")
     public String getViewsByLocationLast14(){
         return new JSONArray(uniRepo.findAllTop14ByOrderByDatumDesc()).toString();
+    }
+
+    @GetMapping("/getViewsByLocationLastHour")
+    public String getViewsByLocationLastHour() {
+        return new JSONObject(universalStatsHourlyRepo.getLast().getViewsByLocation()).toString();
+    }
+
+    @GetMapping("/getViewsByLocationLast24")
+    public String getViewsByLocationHoursBack() {
+        return new JSONArray(universalStatsHourlyRepo.getLast24ViewsByLocation()).toString();
+    }
+
+    @GetMapping("/getViewsByLocationAllTime")
+    public String getViewsByLocationAllTime() {
+        return new JSONArray(uniRepo.getViewsByLocationAllTime()).toString();
     }
 
     /**
@@ -283,14 +298,17 @@ public class uniStatController {
         List<Integer> clicksByCategory = new ArrayList<>();
 
         int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
-
+        //Main Page
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsMainByUniStatId(id));
+        //Posts
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsArticleByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsBlogByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPodcastByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperByUniStatId(id));
+        //Ratgeber
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberByUniStatId(id));
+        //Footer
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsUeberByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImpressumByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPreislisteByUniStatId(id));
@@ -302,13 +320,17 @@ public class uniStatController {
 
         List<Integer> besucherByCategory = new ArrayList<>();
 
+        //Main Page
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserMainByUniStatId(id));
+        //Posts
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserArticleByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNewsByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserBlogByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPodcastByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperByUniStatId(id));
+        //Ratgeber
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberByUniStatId(id));
+        //Footer
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserUeberByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImpressumByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPreislisteByUniStatId(id));

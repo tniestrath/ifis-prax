@@ -928,10 +928,6 @@ public class LogService {
                 uniHourly.setTotalClicks((long) totalClicks);
                 uniHourly.setInternalClicks(internalClicks);
                 uniHourly.setServerErrors(serverErrors);
-                uniHourly.setViewsByLocation(viewsByLocation);
-                uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
-                setNewsArticelBlogCountForUniversalStats(uniHourly);
-                setAccountTypeAllUniStats(uniHourly);
             } else {
                 //Since stats for the current hour are the last that were created, update it.
                 uniHourly = uniHourlyRepo.getLast();
@@ -940,11 +936,12 @@ public class LogService {
                 uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
                 uniHourly.setInternalClicks(uniHourly.getInternalClicks() + internalClicks);
                 uniHourly.setServerErrors(uniHourly.getServerErrors() + serverErrors);
-                uniHourly.setViewsByLocation(viewsByLocation);
-                uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
-                setNewsArticelBlogCountForUniversalStats(uniHourly);
-                setAccountTypeAllUniStats(uniHourly);
             }
+            uniHourly.setViewsByLocation(viewsByLocation);
+            uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
+            setNewsArticelBlogCountForUniversalStats(uniHourly);
+            setAccountTypeAllUniStats(uniHourly);
+            uniHourlyRepo.save(uniHourly);
         }
 
         //Update UniversalStats with categories

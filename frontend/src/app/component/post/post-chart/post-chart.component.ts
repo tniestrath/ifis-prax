@@ -227,7 +227,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         postData.push(post.performance*100);
         postDataRelevance.push(post.relevance*100);
         let date = new Date(Date.parse(post.date));
-        let formattedDate = date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
+        let formattedDate = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
         postDataDate.push(formattedDate);
         // @ts-ignore
         postIds.push(post.id);

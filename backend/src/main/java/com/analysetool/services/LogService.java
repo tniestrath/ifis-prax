@@ -917,7 +917,7 @@ public class LogService {
         //Update UniversalStatsHourly for this hour
         UniversalStatsHourly uniHourly;
         {
-            if (uniHourlyRepo.getLastStunde() != curHour) {
+            if (uniHourlyRepo.getLast() == null || uniHourlyRepo.getLastStunde() != curHour) {
                 //Since the stat-row for this hour does not exist, make one
                 uniHourly = new UniversalStatsHourly();
                 //Set identifiers for a row.

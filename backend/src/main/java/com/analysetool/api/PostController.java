@@ -1,5 +1,14 @@
 package com.analysetool.api;
 
+import com.analysetool.modells.*;
+import com.analysetool.repositories.*;
+import com.analysetool.util.MathHelper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,16 +16,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import com.analysetool.util.MathHelper;
-import com.analysetool.modells.*;
-import com.analysetool.repositories.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -875,7 +874,7 @@ public class PostController {
 
     /**
      *
-     * @param type ("news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber")
+     * @param type ("news" | "artikel" | "blog" | "whitepaper")
      * @return count of all posts with the type given.
      * @throws JSONException .
      * @throws ParseException .

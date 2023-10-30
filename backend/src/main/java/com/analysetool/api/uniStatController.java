@@ -109,8 +109,8 @@ public class uniStatController {
     }
 
     @GetMapping("/getViewsByLocationLastHour")
-    public String getViewsByLocationLastHour() throws JSONException {
-        return new JSONArray(universalStatsHourlyRepo.getLast().getViewsByLocation()).toString();
+    public String getViewsByLocationLastHour() {
+        return new JSONObject(universalStatsHourlyRepo.getLast().getViewsByLocation()).toString();
     }
 
     @GetMapping("/getViewsByLocationLast24")

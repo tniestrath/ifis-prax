@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.springframework.cglib.core.Local;
 
 import java.io.Serializable;
 import java.sql.Time;
@@ -335,7 +334,7 @@ public class Events implements Serializable {
     private long postID;
 
     @Column(name = "event_parent")
-    private long eventParent;
+    private Long eventParent;
 
     @Column(name = "event_slug")
     private String postSlug;

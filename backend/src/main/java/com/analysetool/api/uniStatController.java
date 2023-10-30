@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.util.MapHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -119,8 +120,12 @@ public class uniStatController {
     }
 
     @GetMapping("/getViewsByLocationAllTime")
-    public String getViewsByLocationAllTime() {
-        return new JSONArray(uniRepo.getViewsByLocationAllTime()).toString();
+    public String getViewsByLocationAllTime() throws JSONException {
+        Map<String, Map<String, Map<String, Long>>> map = new HashMap<>();
+        for(UniversalStats uni : uniRepo.findAll()) {
+            MapHelper.mergeLocationMaps(map, uni.getViewsByLocation());
+        }
+        return new JSONObject(map).toString();
     }
 
     /**

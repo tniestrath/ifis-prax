@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.springframework.cglib.core.Local;
 
 import java.io.Serializable;
 import java.sql.Time;
@@ -17,7 +16,7 @@ public class Events implements Serializable {
 
     @Id
     @Column(name = "event_id")
-    private long eventID;
+    private Long eventID;
 
     public long getEventID() {
         return eventID;
@@ -332,19 +331,19 @@ public class Events implements Serializable {
     }
 
     @Column(name = "post_id")
-    private long postID;
+    private Long postID;
 
     @Column(name = "event_parent")
-    private long eventParent;
+    private Long eventParent;
 
     @Column(name = "event_slug")
     private String postSlug;
 
     @Column(name="event_owner")
-    private long ownerID;
+    private Long ownerID;
 
     @Column(name="event_status")
-    private int eventStatus;
+    private Integer eventStatus;
 
     @Column(name="event_name")
     private String eventName;
@@ -362,7 +361,7 @@ public class Events implements Serializable {
     private Time eventEndTime;
 
     @Column(name="event_all_day")
-    private int eventAllDay;
+    private Integer eventAllDay;
 
     @Column(name="event_start")
     private LocalDateTime eventStart;
@@ -377,7 +376,7 @@ public class Events implements Serializable {
     private String postContent;
 
     @Column(name="event_rsvp")
-    private int eventRSVP;
+    private Integer eventRSVP;
 
     @Column(name="event_rsvp_date")
     private Date rsvpDate;
@@ -386,22 +385,22 @@ public class Events implements Serializable {
     private Time rsvpTime;
 
     @Column(name="event_rsvp_spaces")
-    private int rsvpSpaces;
+    private Integer rsvpSpaces;
 
     @Column(name="event_spaces")
-    private int eventSpaces;
+    private Integer eventSpaces;
 
     @Column(name="event_private")
-    private int eventPrivate;
+    private Integer eventPrivate;
 
     @Column(name="location_id")
-    private long locationID;
+    private Long locationID;
 
     @Column(name="event_location_type")
     private String locationType;
 
     @Column(name="recurrence_id")
-    private long recurrenceID;
+    private Long recurrenceID;
 
     @Column(name="event_date_created")
     private LocalDateTime eventDateCreated;
@@ -410,10 +409,10 @@ public class Events implements Serializable {
     private LocalDateTime eventDateModified;
 
     @Column(name="recurrence")
-    private int recurrence;
+    private Integer recurrence;
 
     @Column(name="recurrence_interval")
-    private int recurrenceInterval;
+    private Integer recurrenceInterval;
 
     @Column(name="recurrence_freq")
     private String recurrenceFreq;
@@ -422,28 +421,28 @@ public class Events implements Serializable {
     private String recurrenceByDay;
 
     @Column(name="recurrence_byweekno")
-    private int recurrenceByWeekNo;
+    private Integer recurrenceByWeekNo;
 
     @Column(name="recurrence_days")
-    private int recurrenceDays;
+    private Integer recurrenceDays;
 
     @Column(name="recurrence_rsvp_days")
-    private int recurrenceRSVPDays;
+    private Integer recurrenceRSVPDays;
 
     @Column(name="blog_id")
-    private long blogID;
+    private Long blogID;
 
     @Column(name="group_id")
-    private long groupID;
+    private Long groupID;
 
     @Column(name="event_language")
     private String eventLanguage;
 
     @Column(name="event_translation")
-    private int eventTranslation;
+    private Integer eventTranslation;
 
     @Column(name="event_active_status")
-    private int eventActive;
+    private Integer eventActive;
 
 
 }

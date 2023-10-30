@@ -7,23 +7,27 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UniversalStatsHourlyRepository extends JpaRepository<UniversalStatsHourly, Integer> {
 
     @Query("SELECT u FROM UniversalStatsHourly u WHERE u.stunde =:stunde AND u.uniStatId =:uniStatId")
-    public UniversalStatsHourly getByStundeAndUniStatId(int stunde, int uniStatId);
+    UniversalStatsHourly getByStundeAndUniStatId(int stunde, int uniStatId);
 
     @Query("SELECT u FROM UniversalStatsHourly u ORDER BY u.id DESC LIMIT 1")
-    public UniversalStatsHourly getLast();
+    UniversalStatsHourly getLast();
 
     @Query("SELECT u FROM UniversalStatsHourly u ORDER BY u.id DESC LIMIT 24")
-    public List<UniversalStatsHourly> getLast24();
+    List<UniversalStatsHourly> getLast24();
+
+    @Query("SELECT u.viewsByLocation FROM UniversalStatsHourly u ORDER BY u.id DESC LIMIT 24")
+    List<Map<String, Map<String, Map<String, Long>>>> getLast24ViewsByLocation();
 
     @Query("SELECT u.stunde FROM UniversalStatsHourly u ORDER BY u.id DESC LIMIT 1")
-    public int getLastStunde();
+    int getLastStunde();
 
     @Query("SELECT u FROM UniversalStatsHourly  u")
-    public List<UniversalStatsHourly> getAll();
+    List<UniversalStatsHourly> getAll();
 
     @Modifying
     @Transactional

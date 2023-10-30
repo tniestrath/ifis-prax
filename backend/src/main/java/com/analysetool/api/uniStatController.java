@@ -108,6 +108,16 @@ public class uniStatController {
         return new JSONArray(uniRepo.findAllTop14ByOrderByDatumDesc()).toString();
     }
 
+    @GetMapping("/getViewsByLocationLastHour")
+    public String getViewsByLocationLastHour() throws JSONException {
+        return new JSONArray(universalStatsHourlyRepo.getLast().getViewsByLocation()).toString();
+    }
+
+    @GetMapping("/getViewsByLocationLast24")
+    public String getViewsByLocationHoursBack() {
+        return new JSONArray(universalStatsHourlyRepo.getLast24ViewsByLocation()).toString();
+    }
+
     /**
      *
      * @return ein HTML Code, der eine Tabelle mit Statistiken enthält.

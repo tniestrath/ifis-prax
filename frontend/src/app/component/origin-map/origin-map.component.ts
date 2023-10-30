@@ -85,12 +85,12 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
             this.cdr.detectChanges();
           });
         } else {
-          this.db.getOriginMapAll().then(res => {
+          this.db.getViewsByLocation().then(res => {
             this.readData(res, svgElement);
             this.setRegionTooltip(svgElement, this.strongest_region.identifier, this.strongest_region.cities);
             this.cdr.detectChanges();
           })
-          this.db.getViewsByLocationLas14().then(res => {
+          this.db.getViewsByLocationLast14().then(res => {
             this.readOldData(res);
           })
         }

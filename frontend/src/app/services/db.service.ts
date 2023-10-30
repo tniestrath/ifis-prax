@@ -12,6 +12,7 @@ export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
   //HOST = "http://localhost:8080/api", // DEBUG LINE
   PORT = "",
+
   GET_TAGS_ALL = "/tags/getPostTagsIdName",
   GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL = "/tags/allTermsRelevanceAndViews",
   GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL = "/tags/getPostCountAbove?percentage=",
@@ -50,7 +51,8 @@ export enum dbUrl {
   GET_CALLUP_CATEGORIES_BY_DATETIME = "/bericht/getCallupByCategoryDateAndHour?date=DATE&hour=HOUR",
 
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/bericht/getAccountTypeAllYesterday",
-  GET_VIEWS_BY_LOCATION_BY_DAYSBACK = "/bericht/getViewsByLocationLast14",
+  GET_VIEWS_BY_LOCATION_L14 = "/bericht/getViewsByLocationLast14",
+  GET_VIEWS_BY_LOCATION = "/bericht/getViewsByLocationAllTime",
 
   GET_NEWSLETTER_SUBS = "/newsletter/getStatusAll",
   GET_NEWSLETTER_SUBS_YESTERDAY = "/newsletter/getAmountOfSubsYesterday",
@@ -263,9 +265,13 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS).replace("STATUS", c), {credentials: "include"}).then(res => res.json());
   }
 
-  async getViewsByLocationLas14(){
-    return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION_BY_DAYSBACK), {credentials: "include"}).then(res => res.json());
+  async getViewsByLocationLast14(){
+    return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION_L14), {credentials: "include"}).then(res => res.json());
   }
+  async getViewsByLocation(){
+    return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION), {credentials: "include"}).then(res => res.json());
+  }
+
 
   async getSystemTimeHour() : Promise<number>{
     return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_TIME_HOUR), {credentials: "include"}).then(res => res.json());

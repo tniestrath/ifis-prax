@@ -917,18 +917,13 @@ public class LogService {
         //Update UniversalStatsHourly for this hour
         UniversalStatsHourly uniHourly;
         {
-            if (uniHourlyRepo.getByStunde(curHour) != null) {
-                uniHourly = uniHourlyRepo.getByStunde(curHour);
-                uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (long) uniqueUsers);
-                uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
-                uniHourly.setInternalClicks(uniHourly.getInternalClicks() + internalClicks);
-                uniHourly.setServerErrors(uniHourly.getServerErrors() + serverErrors);
-                uniHourly.setViewsByLocation(viewsByLocation);
-                uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
-                setNewsArticelBlogCountForUniversalStats(uniHourly);
-                setAccountTypeAllUniStats(uniHourly);
-            } else {
+            if (uniHourlyRepo.getLastStunde() != curHour) {
+                //Since the stat-row for this hour does not exist, make one
                 uniHourly = new UniversalStatsHourly();
+                //Set identifiers for a row.
+                uniHourly.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
+                uniHourly.setStunde(curHour);
+                //Set the stats-
                 uniHourly.setBesucherAnzahl((long) uniqueUsers);
                 uniHourly.setTotalClicks((long) totalClicks);
                 uniHourly.setInternalClicks(internalClicks);
@@ -937,31 +932,19 @@ public class LogService {
                 uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly);
                 setAccountTypeAllUniStats(uniHourly);
-                uniHourly.setStunde(curHour);
-            }
-        }
-
-        //Delete the values of the upcoming hour
-        {
-            if (LocalDateTime.now().getHour() != 23) {
-                UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(curHour + 1);
-                System.out.println("BEEP BOOP BEEP BOOP BINGBING" + uniHourly1.getStunde());
-                uniHourly1.setViewsByLocation(null);
-                uniHourly1.setTotalClicks(0L);
-                uniHourly1.setInternalClicks(0);
-                uniHourly1.setServerErrors(0);
-                uniHourly1.setBesucherAnzahl(0L);
-                uniHourlyRepo.save(uniHourly1);
             } else {
-                UniversalStatsHourly uniHourly1 = uniHourlyRepo.getByStunde(0);
-                uniHourly1.setViewsByLocation(null);
-                uniHourly1.setTotalClicks(0L);
-                uniHourly1.setInternalClicks(0);
-                uniHourly1.setServerErrors(0);
-                uniHourly1.setBesucherAnzahl(0L);
-                uniHourlyRepo.save(uniHourly1);
+                //Since stats for the current hour are the last that were created, update it.
+                uniHourly = uniHourlyRepo.getLast();
+                //Identifiers already exist, so skip to updating stats.
+                uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (long) uniqueUsers);
+                uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
+                uniHourly.setInternalClicks(uniHourly.getInternalClicks() + internalClicks);
+                uniHourly.setServerErrors(uniHourly.getServerErrors() + serverErrors);
+                uniHourly.setViewsByLocation(viewsByLocation);
+                uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
+                setNewsArticelBlogCountForUniversalStats(uniHourly);
+                setAccountTypeAllUniStats(uniHourly);
             }
-            uniHourlyRepo.save(uniHourly);
         }
 
         //Update UniversalStats with categories

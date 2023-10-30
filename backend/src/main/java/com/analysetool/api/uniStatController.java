@@ -57,7 +57,7 @@ public class uniStatController {
 
     /**
      *
-     * @param days  if 1, get hourly stats - if higher get Daily.
+     * @param days  if 1, get hourly stats (for the last 24 hours) - if higher get Daily.
      * @return
      * @throws JSONException
      * @throws ParseException
@@ -79,7 +79,7 @@ public class uniStatController {
                 response.put(callup);
             }
         } else {
-            List<UniversalStatsHourly> universalStatsList = universalStatsHourlyRepo.getAll();
+            List<UniversalStatsHourly> universalStatsList = universalStatsHourlyRepo.getLast24();
             for (UniversalStatsHourly uniStat : universalStatsList) {
                 JSONObject callup = new JSONObject();
                 callup.put("date", uniStat.getStunde());

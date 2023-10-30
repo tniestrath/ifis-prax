@@ -34,7 +34,7 @@ public interface universalStatsRepository extends JpaRepository<UniversalStats, 
     public UniversalStats getLatestUniStat();
 
     @Query("SELECT u.viewsByLocation FROM UniversalStats u")
-    List<String> getViewsByLocationAllTime();
+    List<Map<String, Map<String, Map<String, Long>>>> getViewsByLocationAllTime();
 
 
 }

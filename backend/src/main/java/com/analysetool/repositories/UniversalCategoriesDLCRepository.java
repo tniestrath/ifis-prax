@@ -102,7 +102,7 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.besucherPreisliste) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserPreislisteByUniStatId(int uniID);
 
-     @Query("SELECT SUM(u.besucherRatgeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     @Query("SELECT SUM(u.besucherPartner) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserPartnerByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherDatenschutz) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")

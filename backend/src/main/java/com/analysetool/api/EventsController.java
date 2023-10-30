@@ -27,8 +27,10 @@ public class EventsController {
         LocalDateTime now = LocalDateTime.now();
         int count = 0;
 
-        for(Events event : eventsRepo.getAll()) {
-            if(event.getEventStart().isAfter(now)) count++;
+        for(Events event : eventsRepo.findAll()) {
+            if(event.getEventStart().isAfter(now)) {
+                count++;
+            }
         }
 
         return count;
@@ -43,8 +45,10 @@ public class EventsController {
         LocalDateTime now = LocalDateTime.now();
         int count = 0;
 
-        for(Events event : eventsRepo.getAll()) {
-            if(event.getEventStart().isBefore(now) && event.getEventEnd().isAfter(now)) count++;
+        for(Events event : eventsRepo.findAll()) {
+            if(event.getEventStart().isBefore(now) && event.getEventEnd().isAfter(now)) {
+                count++;
+            }
         }
         return count;
     }
@@ -54,8 +58,10 @@ public class EventsController {
         LocalDateTime now = LocalDateTime.now();
         int count = 0;
 
-        for(Events event : eventsRepo.getAll()) {
-            if(event.getEventEnd().isBefore(now)) count++;
+        for(Events event : eventsRepo.findAll()) {
+            if(event.getEventEnd().isBefore(now)) {
+                count++;
+            }
         }
         return count;
     }

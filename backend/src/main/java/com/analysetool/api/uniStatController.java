@@ -118,6 +118,11 @@ public class uniStatController {
         return new JSONArray(universalStatsHourlyRepo.getLast24ViewsByLocation()).toString();
     }
 
+    @GetMapping("/getViewsByLocationAllTime")
+    public String getViewsByLocationAllTime() {
+        return new JSONArray(uniRepo.getViewsByLocationAllTime()).toString();
+    }
+
     /**
      *
      * @return ein HTML Code, der eine Tabelle mit Statistiken enthält.

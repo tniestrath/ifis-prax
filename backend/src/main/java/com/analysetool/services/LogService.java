@@ -950,40 +950,40 @@ public class LogService {
                 UniversalStatsHourly uniHourly4 = uniHourlyRepo.getLast();
 
                 uniHourly1.setStunde(1);
-                uniHourly1.setBesucherAnzahl(uniHourlyRepo.getLast().getBesucherAnzahl() / 4);
-                uniHourly1.setTotalClicks(uniHourlyRepo.getLast().getTotalClicks() / 4);
-                uniHourly1.setInternalClicks(uniHourlyRepo.getLast().getInternalClicks() / 4);
-                uniHourly1.setServerErrors(uniHourlyRepo.getLast().getServerErrors() / 4);
+                uniHourly1.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
+                uniHourly1.setTotalClicks(uniHourly4.getTotalClicks() / 4);
+                uniHourly1.setInternalClicks(uniHourly4.getInternalClicks() / 4);
+                uniHourly1.setServerErrors(uniHourly4.getServerErrors() / 4);
                 uniHourly1.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly1);
                 setAccountTypeAllUniStats(uniHourly1);
                 uniHourly1.setViewsByLocation(uniHourly4.getViewsByLocation());
 
                 uniHourly2.setStunde(2);
-                uniHourly2.setBesucherAnzahl(uniHourlyRepo.getLast().getBesucherAnzahl() / 4);
-                uniHourly2.setTotalClicks(uniHourlyRepo.getLast().getTotalClicks() / 4);
-                uniHourly2.setInternalClicks(uniHourlyRepo.getLast().getInternalClicks() / 4);
-                uniHourly2.setServerErrors(uniHourlyRepo.getLast().getServerErrors() / 4);
+                uniHourly2.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
+                uniHourly2.setTotalClicks(uniHourly4.getTotalClicks() / 4);
+                uniHourly2.setInternalClicks(uniHourly4.getInternalClicks() / 4);
+                uniHourly2.setServerErrors(uniHourly4.getServerErrors() / 4);
                 uniHourly2.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly2);
                 setAccountTypeAllUniStats(uniHourly2);
                 uniHourly2.setViewsByLocation(uniHourly4.getViewsByLocation());
 
                 uniHourly3.setStunde(3);
-                uniHourly3.setBesucherAnzahl(uniHourlyRepo.getLast().getBesucherAnzahl() / 4);
-                uniHourly3.setTotalClicks(uniHourlyRepo.getLast().getTotalClicks() / 4);
-                uniHourly3.setInternalClicks(uniHourlyRepo.getLast().getInternalClicks() / 4);
-                uniHourly3.setServerErrors(uniHourlyRepo.getLast().getServerErrors() / 4);
+                uniHourly3.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
+                uniHourly3.setTotalClicks(uniHourly4.getTotalClicks() / 4);
+                uniHourly3.setInternalClicks(uniHourly4.getInternalClicks() / 4);
+                uniHourly3.setServerErrors(uniHourly4.getServerErrors() / 4);
                 uniHourly3.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly3);
                 setAccountTypeAllUniStats(uniHourly3);
                 uniHourly3.setViewsByLocation(uniHourly4.getViewsByLocation());
 
                 uniHourly4.setStunde(4);
-                uniHourly4.setBesucherAnzahl(uniHourlyRepo.getLast().getBesucherAnzahl() / 4);
-                uniHourly4.setTotalClicks(uniHourlyRepo.getLast().getTotalClicks() / 4);
-                uniHourly4.setInternalClicks(uniHourlyRepo.getLast().getInternalClicks() / 4);
-                uniHourly4.setServerErrors(uniHourlyRepo.getLast().getServerErrors() / 4);
+                uniHourly4.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
+                uniHourly4.setTotalClicks(uniHourly4.getTotalClicks() / 4);
+                uniHourly4.setInternalClicks(uniHourly4.getInternalClicks() / 4);
+                uniHourly4.setServerErrors(uniHourly4.getServerErrors() / 4);
                 uniHourly4.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly4);
                 setAccountTypeAllUniStats(uniHourly4);

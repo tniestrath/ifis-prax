@@ -39,11 +39,11 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
         let eventSplits = event.split("|");
         if (eventSplits[0].startsWith("u")) {
           this.upcoming++;
-          this.createEventTooltip(event, "u");
+          this.createEventTooltip(eventSplits[1], "u");
         }
         if (eventSplits[0].startsWith("c")) {
           this.current++;
-          this.createEventTooltip(event, "c");
+          this.createEventTooltip(eventSplits[1], "c");
         }
       }
     }).then( () =>

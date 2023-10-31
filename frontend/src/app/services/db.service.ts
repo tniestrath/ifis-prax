@@ -59,7 +59,7 @@ export enum dbUrl {
   GET_NEWSLETTER_SUBS_BY_DATERANGE = "/newsletter/getAmountOfSubsByDateRange?daysBackTo=DAYSBACKTO&daysBackFrom=DAYSBACKFROM",
   GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS = "/newsletter/getMailByStatus?c=STATUS",
 
-  GET_EVENTS = "/envents/getAmountOfEvents",
+  GET_EVENTS = "/events/getAmountOfEvents",
   GET_EVENTS_YESTERDAY = "/events/getAmountOfEventsCreatedYesterday",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",

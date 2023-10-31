@@ -140,18 +140,23 @@ public class EventsController {
     private String getEventType(Events e) {
         List<Long> termIds = relRepo.existsByObjectId(e.getPostID()) ? relRepo.getTaxIdByObject(e.getPostID()) : null;
         if(termIds != null) {
+            //sonstige
             if(termIds.contains(312L)) {
                 return "s";
             }
+            //Messen
             if(termIds.contains(313L)) {
                 return "m";
             }
+            //Kongresse
             if(termIds.contains(314L)) {
                 return "k";
             }
+            //Seminare/Schulungen
             if(termIds.contains(315L)) {
                 return "r";
             }
+            //Workshops
             if(termIds.contains(316L)) {
                 return "w";
             }

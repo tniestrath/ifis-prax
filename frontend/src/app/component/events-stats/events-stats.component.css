@@ -1,15 +1,15 @@
-.newsletter-stats-box{
+.events-stats-box{
   display: flex;
   justify-content: space-evenly;
   flex-direction: column;
   align-items: center;
 }
-.verified-box{
+.upcomming-box{
   font-size: 1.5vh;
   color: black;
   width: 100%;
 }
-.not-jet-verified-box{
+.current-box{
   font-size: 1vh;
   color: black;
   width: 100%;
@@ -61,7 +61,10 @@ p {
   visibility: visible;
 }
 
-#top {
-  bottom: 32%;
+.top {
+  top: 25%;
+}
+.bottom {
+  bottom: 22%;
 }
 

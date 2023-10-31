@@ -1,19 +1,20 @@
 <div class="component-box events-stats-box">
-  <div class="verified-box">
+  <div class="upcomming-box">
     <div class="number-box" [style]="{color: DashColors.RED}">
+      <span class="tooltip-text top">{{upcoming_names}}</span>
       <p class="number-m"></p>
-      <p class="number-xl" [style]="{width: 'fit-content'}">{{Util.formatNumbers(0)}}</p>
-      <p class="number-m" [style]="{textAlign: 'start'}"></p>
+      <p class="number-xl" [style]="{width: 'fit-content'}">{{Util.formatNumbers(upcoming)}}</p>
+      <p class="number-m" [style]="{textAlign: 'start'}">{{upcoming_today >= 0 ? "+" + upcoming_today : "-" + upcoming_today}}</p>
     </div>
-    <p>Newsletter Abonnenten</p>
+    <p>Anstehende Veranstaltungen</p>
   </div>
-  <div class="not-jet-verified-box">
+  <div class="current-box">
     <div class="number-box" [style]="{color: DashColors.BLUE}">
-      <span class="tooltip-text" id="top"></span>
+      <span class="tooltip-text bottom">{{current_names}}</span>
       <p class="number-s"></p>
-      <p class="number-m" [style]="{width: 'fit-content'}">{{Util.formatNumbers(0)}}</p>
-      <p class="number-s" [style]="{textAlign: 'start'}"></p>
+      <p class="number-m" [style]="{width: 'fit-content'}">{{Util.formatNumbers(current)}}</p>
+      <p class="number-s" [style]="{textAlign: 'start'}">{{current_today >= 0 ? "+" + current_today : "-" + current_today}}</p>
     </div>
-    <p>noch nicht Verifiziert</p>
+    <p>Laufende Veranstaltungen</p>
   </div>
 </div>

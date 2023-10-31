@@ -1085,7 +1085,6 @@ public class LogService {
         }
     }
 
-
     private UniversalStatsHourly setAccountTypeAllUniStats(UniversalStatsHourly uniHourly) {
         HashMap<String, Integer> counts = new HashMap<>();
 
@@ -1397,7 +1396,6 @@ public class LogService {
         }
     }
 
-
     public void updateSearchStats(LocalDateTime dateLog, long id, String ip, String searchString) {
         if (id != 0){
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
@@ -1597,7 +1595,6 @@ public class LogService {
         return viewsPerHour;
     }
 
-
     public void UpdatePerformanceAndViews(LocalDateTime dateLog, long id) {
         if(id != 0) {
             String logDay = String.valueOf(dateLog.getDayOfMonth());
@@ -1645,7 +1642,6 @@ public class LogService {
 
 
     }
-
 
    public void UpdatePerformanceAndViews(Matcher preMatcher,Matcher patternMatcher) {
        if (!patternMatcher.group(1).matches("\\d+")){
@@ -1697,7 +1693,6 @@ public class LogService {
        }
    }
 
-
     @Transactional
     public void updateUserStats(long id){
         if(userStatsRepo.existsByUserId(id)) {
@@ -1727,7 +1722,6 @@ public class LogService {
 
         }else{userStatsRepo.save(new UserStats(id, (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)0));}
     }
-
 
     @Transactional
     public void updateUserStatsForAllUsers() {
@@ -1816,7 +1810,6 @@ public class LogService {
         return viewsPerHour;
     }
 
-
     public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd.MM");
 
@@ -1833,8 +1826,6 @@ public class LogService {
 
         return (float) views / time;
     }
-
-
 
     public float getRelevance(HashMap<String,Long>viewsLastYear,int currentDayOfYear,int time){
         int counter =currentDayOfYear-time;
@@ -2449,7 +2440,6 @@ public class LogService {
         return uniStats ;
     }
 
-
     public UniversalStats setNewsArticelBlogCountForUniversalStats(Date dateStr, UniversalStats uniStats) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -2497,7 +2487,6 @@ public class LogService {
         return uniStats;
     }
 
-
     public UniversalStats setAccountTypeAllUniStats(UniversalStats uniStats){
         HashMap<String, Integer> counts = new HashMap<>();
 
@@ -2534,11 +2523,3 @@ public class LogService {
     }
 
 }
-
-
-
-
-
-
-
-

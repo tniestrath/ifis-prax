@@ -2,6 +2,8 @@ package com.analysetool.api;
 
 import com.analysetool.modells.Events;
 import com.analysetool.repositories.EventsRepository;
+import com.analysetool.repositories.WPTermRepository;
+import com.analysetool.repositories.WpTermRelationshipsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,12 @@ public class EventsController {
 
     @Autowired
     EventsRepository eventsRepo;
+
+    @Autowired
+    WpTermRelationshipsRepository relRepo;
+
+    @Autowired
+    WPTermRepository termRepo;
 
     /**
      *  Counts all the Events that are planned and haven't started yet.
@@ -84,9 +92,9 @@ public class EventsController {
 
             if (createdDate.isBefore(today)) {
                 if(isCurrent(e)) {
-                    events.add("c|" + e.getEventName());
+                    events.add("c|" + getEventType(e));
                 } else if(isUpcoming(e)) {
-                    events.add("u|" + e.getEventName());
+                    events.add("u|" + getEventType(e));
                 }
 
             }
@@ -105,9 +113,9 @@ public class EventsController {
 
         for (Events e : allEvents) {
                 if(isCurrent(e)) {
-                    events.add("c|" + e.getEventName());
+                    events.add("c|" + getEventType(e));
                 } else if(isUpcoming(e)) {
-                    events.add("u|" + e.getEventName());
+                    events.add("u|" + getEventType(e));
                 }
 
         }
@@ -122,6 +130,35 @@ public class EventsController {
     private boolean isUpcoming(Events e) {
         LocalDateTime now = LocalDateTime.now();
         return e.getEventStart().isAfter(now);
+    }
+
+    /**
+     *
+     * @param e the event you want the type for.
+     * @return a char, representing its type 's' (sonstige),'k' (kongresse), 'm' (messe), 'sc'(schulungen), 'w' (workshop)
+     */
+    private String getEventType(Events e) {
+        List<Long> termIds = relRepo.existsByObjectId(e.getPostID()) ? relRepo.getTaxIdByObject(e.getPostID()) : null;
+        if(termIds != null) {
+            if(termIds.contains(312L)) {
+                return "sc";
+            }
+            if(termIds.contains(313L)) {
+                return "m";
+            }
+            if(termIds.contains(314L)) {
+                return "k";
+            }
+            if(termIds.contains(315L)) {
+                return "c";
+            }
+            if(termIds.contains(316L)) {
+                return "w";
+            }
+        } else {
+            return "o";
+        }
+        return "o";
     }
 
 }

@@ -59,6 +59,9 @@ export enum dbUrl {
   GET_NEWSLETTER_SUBS_BY_DATERANGE = "/newsletter/getAmountOfSubsByDateRange?daysBackTo=DAYSBACKTO&daysBackFrom=DAYSBACKFROM",
   GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS = "/newsletter/getMailByStatus?c=STATUS",
 
+  GET_EVENTS = "/envents/getAmountOfEvents",
+  GET_EVENTS_YESTERDAY = "/events/getAmountOfEventsCreatedYesterday",
+
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
   GET_SYSTEM_TIME_HOUR = "/systemLoad/getHour",
@@ -281,5 +284,12 @@ export class DbService {
   }
   async getSystemUsageNow() : Promise<{cpu : number, memory : number, networkSent : number, networkRecv : number}>{
     return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE_NOW), {credentials: "include"}).then(res => res.json());
+  }
+
+  async getEvents() : Promise<string[]> {
+    return await fetch(DbService.getUrl(dbUrl.GET_EVENTS), {credentials: "include"}).then(res => res.json());
+  }
+  async getEventsYesterday() : Promise<string[]> {
+    return await fetch(DbService.getUrl(dbUrl.GET_EVENTS_YESTERDAY), {credentials: "include"}).then(res => res.json());
   }
 }

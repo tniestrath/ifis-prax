@@ -71,7 +71,7 @@ public class EventsController {
 
     /**
      *
-     * @return a List of Strings, each starting with c| (current) or u| (upcoming) and then the name of the event.
+     * @return a List of Strings, each starting with c| (current) or u| (upcoming) and then the name of the event for all events created within the last day.
      */
     @GetMapping("/getAmountOfEventsCreatedYesterday")
     public List<String> getAmountOfEventsCreatedYesterday() {
@@ -96,7 +96,7 @@ public class EventsController {
 
     /**
      *
-     * @return a List of Strings, each starting with c| (current) or u| (upcoming) and then the name of the event.
+     * @return a List of Strings, each starting with c| (current) or u| (upcoming) and then the name of the event for all Events.
      */
     @GetMapping("/getAmountOfEvents")
     public List<String> getAmountOfEvents() {

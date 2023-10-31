@@ -12,25 +12,38 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
   protected readonly DashColors = DashColors;
 
   upcoming : number = 0;
-  upcoming_names : string[] = [];
   upcoming_today : number = 0;
   upcoming_yesterday : number = 0;
 
   current : number = 0;
-  current_names : string[] = [];
   current_today : number = 0;
   current_yesterday : number = 0;
+  current_text : string = "";
+
+
+  u_congresses = 0;
+  u_messes = 0;
+  u_seminars = 0;
+  u_workshops = 0;
+  u_rest = 0;
+
+  c_congresses = 0;
+  c_messes = 0;
+  c_seminars = 0;
+  c_workshops = 0;
+  c_rest = 0;
 
   ngOnInit(): void {
     this.db.getEvents().then(res => {
       for (let event of res) {
-        if (event.startsWith("u")) {
+        let eventSplits = event.split("|");
+        if (eventSplits[0].startsWith("u")) {
           this.upcoming++;
-          this.upcoming_names.push(event.split("|", 2)[1]);
+          this.createEventTooltip(event, "u");
         }
-        if (event.startsWith("c")) {
+        if (eventSplits[0].startsWith("c")) {
           this.current++;
-          this.current_names.push(event.split("|", 2)[1]);
+          this.createEventTooltip(event, "c");
         }
       }
     }).then( () =>
@@ -45,5 +58,37 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
     });
 
     this.setToolTip("Hier sind die aktuellen Veranstaltungen angezeigt. Mit Hover über die Zahlen werden genauere Daten angezeigt.");
+  }
+
+  createEventTooltip(event : string, type: string) {
+    if (type == "u") {
+      if (event.startsWith("k")) this.u_congresses++;
+      if (event.startsWith("m")) this.u_messes++;
+      if (event.startsWith("s")) this.u_seminars++;
+      if (event.startsWith("w")) this.u_workshops++;
+      if (event.startsWith("r")) this.u_rest++;
+    } else {
+      if (event.startsWith("k")) this.c_congresses++;
+      if (event.startsWith("m")) this.c_messes++;
+      if (event.startsWith("s")) this.c_seminars++;
+      if (event.startsWith("w")) this.c_seminars++;
+      if (event.startsWith("r")) this.c_rest++;
+    }
+  }
+
+  getEventToolTip(type : string){
+    if (type == "u") {
+      return  "Kongresse: " + this.u_congresses + "\n" +
+              "Messen: " + this.u_messes + "\n" +
+              "Seminare: " + this.u_seminars + "\n" +
+              "Workshops: " + this.u_workshops + "\n" +
+              "Sonstige: " + this.u_rest + "\n";
+    } else {
+      return  "Kongresse: " + this.c_congresses + "\n" +
+              "Messen: " + this.c_messes + "\n" +
+              "Seminare: " + this.c_seminars + "\n" +
+              "Workshops: " + this.c_workshops + "\n" +
+              "Sonstige: " + this.c_rest + "\n";
+    }
   }
 }

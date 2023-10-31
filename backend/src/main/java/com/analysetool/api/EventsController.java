@@ -141,7 +141,7 @@ public class EventsController {
         List<Long> termIds = relRepo.existsByObjectId(e.getPostID()) ? relRepo.getTaxIdByObject(e.getPostID()) : null;
         if(termIds != null) {
             if(termIds.contains(312L)) {
-                return "sc";
+                return "s";
             }
             if(termIds.contains(313L)) {
                 return "m";
@@ -150,7 +150,7 @@ public class EventsController {
                 return "k";
             }
             if(termIds.contains(315L)) {
-                return "c";
+                return "r";
             }
             if(termIds.contains(316L)) {
                 return "w";

@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -64,6 +67,61 @@ public class EventsController {
             }
         }
         return count;
+    }
+
+    /**
+     *
+     * @return a List of Strings, each starting with c| (current) or u| (upcoming) and then the name of the event for all events created within the last day.
+     */
+    @GetMapping("/getAmountOfEventsCreatedYesterday")
+    public List<String> getAmountOfEventsCreatedYesterday() {
+        List<String> events = new ArrayList<>();
+        List<Events> allEvents = eventsRepo.findAll();
+        LocalDate today = LocalDate.now();
+
+        for (Events e : allEvents) {
+            LocalDate createdDate = e.getEventDateCreated().toLocalDate();
+
+            if (createdDate.isBefore(today)) {
+                if(isCurrent(e)) {
+                    events.add("c|" + e.getEventName());
+                } else if(isUpcoming(e)) {
+                    events.add("u|" + e.getEventName());
+                }
+
+            }
+        }
+        return events;
+    }
+
+    /**
+     *
+     * @return a List of Strings, each starting with c| (current) or u| (upcoming) and then the name of the event for all Events.
+     */
+    @GetMapping("/getAmountOfEvents")
+    public List<String> getAmountOfEvents() {
+        List<String> events = new ArrayList<>();
+        List<Events> allEvents = eventsRepo.findAll();
+
+        for (Events e : allEvents) {
+                if(isCurrent(e)) {
+                    events.add("c|" + e.getEventName());
+                } else if(isUpcoming(e)) {
+                    events.add("u|" + e.getEventName());
+                }
+
+        }
+        return events;
+    }
+
+    private boolean isCurrent(Events e) {
+        LocalDateTime now = LocalDateTime.now();
+        return e.getEventStart().isBefore(now) && e.getEventEnd().isAfter(now);
+    }
+
+    private boolean isUpcoming(Events e) {
+        LocalDateTime now = LocalDateTime.now();
+        return e.getEventStart().isAfter(now);
     }
 
 }

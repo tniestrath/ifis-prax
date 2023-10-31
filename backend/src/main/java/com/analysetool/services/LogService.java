@@ -950,40 +950,40 @@ public class LogService {
                 UniversalStatsHourly uniHourly4 = uniHourlyRepo.getLast();
 
                 uniHourly1.setStunde(1);
-                uniHourly1.setBesucherAnzahl(uniHourlyRepo.getLast().getBesucherAnzahl() / 4);
-                uniHourly1.setTotalClicks(uniHourlyRepo.getLast().getTotalClicks() / 4);
-                uniHourly1.setInternalClicks(uniHourlyRepo.getLast().getInternalClicks() / 4);
-                uniHourly1.setServerErrors(uniHourlyRepo.getLast().getServerErrors() / 4);
+                uniHourly1.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
+                uniHourly1.setTotalClicks(uniHourly4.getTotalClicks() / 4);
+                uniHourly1.setInternalClicks(uniHourly4.getInternalClicks() / 4);
+                uniHourly1.setServerErrors(uniHourly4.getServerErrors() / 4);
                 uniHourly1.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly1);
                 setAccountTypeAllUniStats(uniHourly1);
                 uniHourly1.setViewsByLocation(uniHourly4.getViewsByLocation());
 
                 uniHourly2.setStunde(2);
-                uniHourly2.setBesucherAnzahl(uniHourlyRepo.getLast().getBesucherAnzahl() / 4);
-                uniHourly2.setTotalClicks(uniHourlyRepo.getLast().getTotalClicks() / 4);
-                uniHourly2.setInternalClicks(uniHourlyRepo.getLast().getInternalClicks() / 4);
-                uniHourly2.setServerErrors(uniHourlyRepo.getLast().getServerErrors() / 4);
+                uniHourly2.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
+                uniHourly2.setTotalClicks(uniHourly4.getTotalClicks() / 4);
+                uniHourly2.setInternalClicks(uniHourly4.getInternalClicks() / 4);
+                uniHourly2.setServerErrors(uniHourly4.getServerErrors() / 4);
                 uniHourly2.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly2);
                 setAccountTypeAllUniStats(uniHourly2);
                 uniHourly2.setViewsByLocation(uniHourly4.getViewsByLocation());
 
                 uniHourly3.setStunde(3);
-                uniHourly3.setBesucherAnzahl(uniHourlyRepo.getLast().getBesucherAnzahl() / 4);
-                uniHourly3.setTotalClicks(uniHourlyRepo.getLast().getTotalClicks() / 4);
-                uniHourly3.setInternalClicks(uniHourlyRepo.getLast().getInternalClicks() / 4);
-                uniHourly3.setServerErrors(uniHourlyRepo.getLast().getServerErrors() / 4);
+                uniHourly3.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
+                uniHourly3.setTotalClicks(uniHourly4.getTotalClicks() / 4);
+                uniHourly3.setInternalClicks(uniHourly4.getInternalClicks() / 4);
+                uniHourly3.setServerErrors(uniHourly4.getServerErrors() / 4);
                 uniHourly3.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly3);
                 setAccountTypeAllUniStats(uniHourly3);
                 uniHourly3.setViewsByLocation(uniHourly4.getViewsByLocation());
 
                 uniHourly4.setStunde(4);
-                uniHourly4.setBesucherAnzahl(uniHourlyRepo.getLast().getBesucherAnzahl() / 4);
-                uniHourly4.setTotalClicks(uniHourlyRepo.getLast().getTotalClicks() / 4);
-                uniHourly4.setInternalClicks(uniHourlyRepo.getLast().getInternalClicks() / 4);
-                uniHourly4.setServerErrors(uniHourlyRepo.getLast().getServerErrors() / 4);
+                uniHourly4.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
+                uniHourly4.setTotalClicks(uniHourly4.getTotalClicks() / 4);
+                uniHourly4.setInternalClicks(uniHourly4.getInternalClicks() / 4);
+                uniHourly4.setServerErrors(uniHourly4.getServerErrors() / 4);
                 uniHourly4.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly4);
                 setAccountTypeAllUniStats(uniHourly4);
@@ -1084,7 +1084,6 @@ public class LogService {
             }
         }
     }
-
 
     private UniversalStatsHourly setAccountTypeAllUniStats(UniversalStatsHourly uniHourly) {
         HashMap<String, Integer> counts = new HashMap<>();
@@ -1397,7 +1396,6 @@ public class LogService {
         }
     }
 
-
     public void updateSearchStats(LocalDateTime dateLog, long id, String ip, String searchString) {
         if (id != 0){
             SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
@@ -1597,7 +1595,6 @@ public class LogService {
         return viewsPerHour;
     }
 
-
     public void UpdatePerformanceAndViews(LocalDateTime dateLog, long id) {
         if(id != 0) {
             String logDay = String.valueOf(dateLog.getDayOfMonth());
@@ -1645,7 +1642,6 @@ public class LogService {
 
 
     }
-
 
    public void UpdatePerformanceAndViews(Matcher preMatcher,Matcher patternMatcher) {
        if (!patternMatcher.group(1).matches("\\d+")){
@@ -1697,7 +1693,6 @@ public class LogService {
        }
    }
 
-
     @Transactional
     public void updateUserStats(long id){
         if(userStatsRepo.existsByUserId(id)) {
@@ -1727,7 +1722,6 @@ public class LogService {
 
         }else{userStatsRepo.save(new UserStats(id, (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)0));}
     }
-
 
     @Transactional
     public void updateUserStatsForAllUsers() {
@@ -1816,7 +1810,6 @@ public class LogService {
         return viewsPerHour;
     }
 
-
     public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd.MM");
 
@@ -1833,8 +1826,6 @@ public class LogService {
 
         return (float) views / time;
     }
-
-
 
     public float getRelevance(HashMap<String,Long>viewsLastYear,int currentDayOfYear,int time){
         int counter =currentDayOfYear-time;
@@ -2449,7 +2440,6 @@ public class LogService {
         return uniStats ;
     }
 
-
     public UniversalStats setNewsArticelBlogCountForUniversalStats(Date dateStr, UniversalStats uniStats) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -2497,7 +2487,6 @@ public class LogService {
         return uniStats;
     }
 
-
     public UniversalStats setAccountTypeAllUniStats(UniversalStats uniStats){
         HashMap<String, Integer> counts = new HashMap<>();
 
@@ -2534,11 +2523,3 @@ public class LogService {
     }
 
 }
-
-
-
-
-
-
-
-

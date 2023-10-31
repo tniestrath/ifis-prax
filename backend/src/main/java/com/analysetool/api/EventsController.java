@@ -94,6 +94,26 @@ public class EventsController {
         return events;
     }
 
+    /**
+     *
+     * @return a List of Strings, each starting with c| (current) or u| (upcoming) and then the name of the event.
+     */
+    @GetMapping("/getAmountOfEvents")
+    public List<String> getAmountOfEvents() {
+        List<String> events = new ArrayList<>();
+        List<Events> allEvents = eventsRepo.findAll();
+
+        for (Events e : allEvents) {
+                if(isCurrent(e)) {
+                    events.add("c|" + e.getEventName());
+                } else if(isUpcoming(e)) {
+                    events.add("u|" + e.getEventName());
+                }
+
+        }
+        return events;
+    }
+
     private boolean isCurrent(Events e) {
         LocalDateTime now = LocalDateTime.now();
         return e.getEventStart().isBefore(now) && e.getEventEnd().isAfter(now);

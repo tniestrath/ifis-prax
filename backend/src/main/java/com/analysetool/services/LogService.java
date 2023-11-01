@@ -950,6 +950,7 @@ public class LogService {
                 UniversalStatsHourly uniHourly4 = uniHourlyRepo.getLast();
 
                 uniHourly1.setStunde(1);
+                uniHourly1.setUniStatId(uniHourly4.getUniStatId());
                 uniHourly1.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
                 uniHourly1.setTotalClicks(uniHourly4.getTotalClicks() / 4);
                 uniHourly1.setInternalClicks(uniHourly4.getInternalClicks() / 4);
@@ -960,6 +961,7 @@ public class LogService {
                 uniHourly1.setViewsByLocation(uniHourly4.getViewsByLocation());
 
                 uniHourly2.setStunde(2);
+                uniHourly2.setUniStatId(uniHourly4.getUniStatId());
                 uniHourly2.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
                 uniHourly2.setTotalClicks(uniHourly4.getTotalClicks() / 4);
                 uniHourly2.setInternalClicks(uniHourly4.getInternalClicks() / 4);
@@ -970,6 +972,7 @@ public class LogService {
                 uniHourly2.setViewsByLocation(uniHourly4.getViewsByLocation());
 
                 uniHourly3.setStunde(3);
+                uniHourly3.setUniStatId(uniHourly4.getUniStatId());
                 uniHourly3.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
                 uniHourly3.setTotalClicks(uniHourly4.getTotalClicks() / 4);
                 uniHourly3.setInternalClicks(uniHourly4.getInternalClicks() / 4);
@@ -980,6 +983,7 @@ public class LogService {
                 uniHourly3.setViewsByLocation(uniHourly4.getViewsByLocation());
 
                 uniHourly4.setStunde(4);
+                uniHourly4.setUniStatId(uniHourly4.getUniStatId());
                 uniHourly4.setBesucherAnzahl(uniHourly4.getBesucherAnzahl() / 4);
                 uniHourly4.setTotalClicks(uniHourly4.getTotalClicks() / 4);
                 uniHourly4.setInternalClicks(uniHourly4.getInternalClicks() / 4);

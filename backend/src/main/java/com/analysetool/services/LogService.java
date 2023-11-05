@@ -943,7 +943,7 @@ public class LogService {
             setAccountTypeAllUniStats(uniHourly);
             uniHourlyRepo.save(uniHourly);
 
-            if(curHour == 4) {
+            if(curHour == 4 && uniHourlyRepo.getByStundeAndUniStatId(1, uniHourlyRepo.getLast().getUniStatId()) == null) {
                 UniversalStatsHourly uniHourly1 = new UniversalStatsHourly();
                 UniversalStatsHourly uniHourly2 = new UniversalStatsHourly();
                 UniversalStatsHourly uniHourly3 = new UniversalStatsHourly();

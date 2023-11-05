@@ -39,7 +39,7 @@ public class EventsController {
         int count = 0;
 
         for(Events event : eventsRepo.findAll()) {
-            if(event.getEventStart().isAfter(now)) {
+            if(event.getEventStart().isAfter(now) && isActive(event)) {
                 count++;
             }
         }
@@ -57,7 +57,7 @@ public class EventsController {
         int count = 0;
 
         for(Events event : eventsRepo.findAll()) {
-            if(event.getEventStart().isBefore(now) && event.getEventEnd().isAfter(now)) {
+            if(event.getEventStart().isBefore(now) && event.getEventEnd().isAfter(now) && isActive(event)) {
                 count++;
             }
         }
@@ -70,7 +70,7 @@ public class EventsController {
         int count = 0;
 
         for(Events event : eventsRepo.findAll()) {
-            if(event.getEventEnd().isBefore(now)) {
+            if(event.getEventEnd().isBefore(now) && isActive(event)) {
                 count++;
             }
         }
@@ -90,7 +90,7 @@ public class EventsController {
         for (Events e : allEvents) {
             LocalDate createdDate = e.getEventDateCreated().toLocalDate();
 
-            if (createdDate.isBefore(today)) {
+            if (createdDate.isBefore(today) && isActive(e)) {
                 if(isCurrent(e)) {
                     events.add("c|" + getEventType(e));
                 } else if(isUpcoming(e)) {
@@ -112,11 +112,13 @@ public class EventsController {
         List<Events> allEvents = eventsRepo.findAll();
 
         for (Events e : allEvents) {
-                if(isCurrent(e)) {
+            if(isActive(e)) {
+                if (isCurrent(e)) {
                     events.add("c|" + getEventType(e));
-                } else if(isUpcoming(e)) {
+                } else if (isUpcoming(e)) {
                     events.add("u|" + getEventType(e));
                 }
+            }
 
         }
         return events;
@@ -139,7 +141,7 @@ public class EventsController {
      */
     private String getEventType(Events e) {
         List<Long> termIds = relRepo.existsByObjectId(e.getPostID()) ? relRepo.getTaxIdByObject(e.getPostID()) : null;
-        if(termIds != null) {
+        if(termIds != null && isActive(e)) {
             //sonstige
             if(termIds.contains(312L)) {
                 return "s";
@@ -166,4 +168,7 @@ public class EventsController {
         return "o";
     }
 
+    private boolean isActive(Events e) {
+        return e.getEventStatus() == 1;
+    }
 }

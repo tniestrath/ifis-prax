@@ -1,40 +1,42 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
-import {DashBaseComponent} from "../dash-base/dash-base.component";
+import Util, {DashColors} from "../../../util/Util";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
-import Util, {DashColors} from "../../util/Util";
 
 @Component({
-  selector: 'dash-user-plan',
-  templateUrl: './user-plan.component.html',
-  styleUrls: ['./user-plan.component.css', "../../component/dash-base/dash-base.component.css"]
+  selector: 'dash-post-type',
+  templateUrl: './post-type.component.html',
+  styleUrls: ['./post-type.component.css', "../../dash-base/dash-base.component.css"]
 })
-export class UserPlanComponent extends DashBaseComponent implements OnInit{
+export class PostTypeComponent extends DashBaseComponent implements OnInit{
 
-  colors : string[] = [DashColors.GREY, DashColors.BLUE, DashColors.DARK_BLUE, DashColors.RED, DashColors.DARK_RED, DashColors.BLACK];
+  protected readonly DashColors = DashColors;
+
+  colors : string[] = [DashColors.NEWS, DashColors.BLOG, DashColors.ARTICLE, DashColors.WHITEPAPER, DashColors.PODCAST];
   chart_total : number = 0;
   prev_total : number = 0;
   prev_total_text : any;
 
-  labels = ["Ohne Abo", "Basic", "Basic-Plus", "Plus", "Premium", "Sponsor"];
+  labels = ["News", "Blogs", "Artikel", "Whitepaper", "Podcasts"];
 
-  data = [0,0,0,0,0,0];
-  prev_data = [0,0,0,0,0,0];
+  data = [0,0,0,0,0];
+  prev_data = [0,0,0,0,0];
+
 
   ngOnInit(): void {
     if (this.chart != undefined) {
       this.chart.destroy();
     }
 
-
-    this.db.getUserAccountTypes().then(res => {
+    this.db.getPostsPerType().then(res => {
       let map : Map<string, number> = new Map(Object.entries(res));
       this.readMap(map, this.data);
-      this.chart = this.createChart("user_plan_chart", this.labels, this.data, undefined);
+      this.chart = this.createChart("post_type_chart", this.labels, this.data, undefined);
       this.chart_total = this.data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
       this.cdr.detectChanges();
-    }).finally(() => {
-      this.db.getUserAccountTypesYesterday().then(res => {
+    }).finally(()=> {
+      this.db.getPostsPerTypeYesterday().then(res => {
         let map : Map<string, number> = new Map(Object.entries(res));
         this.readMap(map, this.prev_data);
         for (var i = 0; i < this.data.length; i++) {
@@ -46,37 +48,6 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       })
     })
 
-    this.setToolTip("Hier werden die aktuellen Nutzer nach ihren Abonnements, und die in den letzten 24 Stunden angemeldete Nutzer (hinter dem +) angezeigt.");
-  }
-
-  private readMap(map: Map<string, number>, data: number[]) {
-    map.delete("Administrator");
-    map.forEach((value, key) => {
-      if (key == "Anbieter") {
-        this.labels[0] = "Ohne Abo";
-        data[0] = (value == 0 || value == undefined ? 0 : value)
-      }
-      if (key == "Basic") {
-        this.labels[1] = key;
-        data[1] = (value == 0 || value == undefined ? 0 : value)
-      }
-      if (key == "Basic-Plus") {
-        this.labels[2] = key;
-        data[2] = (value == 0 || value == undefined ? 0 : value)
-      }
-      if (key == "Plus") {
-        this.labels[3] = key;
-        data[3] = (value == 0 || value == undefined ? 0 : value)
-      }
-      if (key == "Premium") {
-        this.labels[4] = key;
-        data[4] = (value == 0 || value == undefined ? 0 : value)
-      }
-      if (key == "Sponsor") {
-        this.labels[5] = key;
-        data[5] = (value == 0 || value == undefined ? 0 : value)
-      }
-    })
   }
 
   createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){
@@ -164,5 +135,30 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     })
   }
 
-  protected readonly DashColors = DashColors;
+
+  private readMap(map: Map<string, number>, data: number[]) {
+    map.forEach((value, key) => {
+      if (key == "News") {
+        this.labels[0] = key;
+        data[0] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Blogs") {
+        this.labels[1] = key;
+        data[1] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Artikel") {
+        this.labels[2] = key;
+        data[2] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Whitepaper") {
+        this.labels[3] = key;
+        data[3] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Podcasts") {
+        this.labels[4] = key;
+        data[4] = (value == 0 || value == undefined ? 0 : value)
+      }
+    })
+  }
+
 }

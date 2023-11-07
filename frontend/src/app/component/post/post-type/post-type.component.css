@@ -1,0 +1,32 @@
+.post-ty-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  height: 100%;
+}
+canvas{
+  padding: 5px;
+  max-height: 50%;
+  max-width: 100%;
+}
+.legend-box{
+  padding: 5px 5px 5px;
+  height: 50%;
+  width: calc(100% - 10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+.legend-box p {
+  margin: 0;
+  font-size: calc((0.8vh + 1vw)/2 * 1.5) !important;
+}
+
+#post-type-item-head{
+  margin: 5px 4px;
+  font-weight: bold;
+  font-size: calc((0.8vh + 1vw)/2 * 1.5);
+  display: flex;
+  justify-content: space-between;
+}

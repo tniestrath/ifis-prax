@@ -44,6 +44,7 @@ import { Top5PostsComponent, Top5ArticleComponent, Top5BlogComponent, Top5NewsCo
 import { NewsletterStatsComponent } from './component/newsletter-stats/newsletter-stats.component';
 import { EventsStatsComponent } from './component/events-stats/events-stats.component';
 import { SystemloadComponent } from './component/system/systemload/systemload.component';
+import { PostTypeComponent } from './component/post/post-type/post-type.component';
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import { SystemloadComponent } from './component/system/systemload/systemload.co
     Top5WhitepaperComponent,
     NewsletterStatsComponent,
     EventsStatsComponent,
-    SystemloadComponent
+    SystemloadComponent,
+    PostTypeComponent
   ],
     imports: [
         BrowserModule,

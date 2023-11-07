@@ -1010,45 +1010,103 @@ public class LogService {
             UniversalCategoriesDLC uniCategories;
             if(universalCategoriesDLCRepo.getLastStunde() != curHour) {
                 //Create and identify a new row of UniversalCategoriesDLC
-                uniCategories = new UniversalCategoriesDLC();
-                uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
-                uniCategories.setStunde(curHour);
-                //Create entries for users.
-                uniCategories.setBesucherGlobal(uniqueUsers -userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
-                uniCategories.setBesucherArticle(userArticle);
-                uniCategories.setBesucherNews(userNews);
-                uniCategories.setBesucherBlog(userBlog);
-                uniCategories.setBesucherPodcast(userPodcast);
-                uniCategories.setBesucherWhitepaper(userWhitepaper);
-                uniCategories.setBesucherRatgeber(userRatgeber);
-                uniCategories.setBesucherMain(userMain);
-                uniCategories.setBesucherUeber(userUeber);
-                uniCategories.setBesucherImpressum(userImpressum);
-                uniCategories.setBesucherPreisliste(userPreisliste);
-                uniCategories.setBesucherPartner(userPartner);
-                uniCategories.setBesucherAGBS(userAGBS);
-                uniCategories.setBesucherDatenschutz(userDatenschutz);
-                uniCategories.setBesucherNewsletter(userNewsletter);
-                uniCategories.setBesucherImage(userImage);
-                //Create entries for views.
-                uniCategories.setViewsGlobal(totalClicks - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber - viewsMain - viewsUeber - viewsImpressum - viewsPreisliste - viewsPartner - viewsDatenschutz - viewsNewsletter - viewsImage - viewsAGBS);
-                uniCategories.setViewsArticle(viewsArticle);
-                uniCategories.setViewsNews(viewsNews);
-                uniCategories.setViewsBlog(viewsBlog);
-                uniCategories.setViewsPodcast(viewsPodcast);
-                uniCategories.setViewsWhitepaper(viewsWhitepaper);
-                uniCategories.setViewsRatgeber(viewsRatgeber);
-                uniCategories.setViewsMain(viewsMain);
-                uniCategories.setViewsUeber(viewsUeber);
-                uniCategories.setViewsImpressum(viewsImpressum);
-                uniCategories.setViewsPreisliste(viewsPreisliste);
-                uniCategories.setViewsPartner(viewsPartner);
-                uniCategories.setViewsDatenschutz(viewsDatenschutz);
-                uniCategories.setViewsNewsletter(viewsNewsletter);
-                uniCategories.setViewsImage(viewsImage);
-                uniCategories.setViewsAGBS(viewsAGBS);
-                //Save to db.
-                universalCategoriesDLCRepo.save(uniCategories);
+                int viewsGlobal = totalClicks - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber - viewsMain - viewsUeber - viewsImpressum - viewsPreisliste - viewsPartner - viewsDatenschutz - viewsNewsletter - viewsImage - viewsAGBS;
+                int usersGlobal = uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS;
+                if(curHour == 4
+                        && universalCategoriesDLCRepo.getByUniStatIdAndStunde(universalCategoriesDLCRepo.getLast().getUniStatId(), 1) == null
+                        && universalCategoriesDLCRepo.getByUniStatIdAndStunde(universalCategoriesDLCRepo.getLast().getUniStatId(), 2) == null
+                        && universalCategoriesDLCRepo.getByUniStatIdAndStunde(universalCategoriesDLCRepo.getLast().getUniStatId(), 3) == null
+                        && universalCategoriesDLCRepo.getByUniStatIdAndStunde(universalCategoriesDLCRepo.getLast().getUniStatId(), 4) == null) {
+                    ArrayList<UniversalCategoriesDLC> catList = new ArrayList<>();
+                    catList.add(new UniversalCategoriesDLC());
+                    catList.add(new UniversalCategoriesDLC());
+                    catList.add(new UniversalCategoriesDLC());
+                    catList.add(new UniversalCategoriesDLC());
+
+                    for(UniversalCategoriesDLC cat : catList) {
+                        cat.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
+                        cat.setStunde(curHour);
+                        //Create entries for users.
+                        cat.setBesucherGlobal(usersGlobal / 4);
+                        cat.setBesucherArticle(userArticle / 4);
+                        cat.setBesucherNews(userNews / 4);
+                        cat.setBesucherBlog(userBlog / 4);
+                        cat.setBesucherPodcast(userPodcast / 4);
+                        cat.setBesucherWhitepaper(userWhitepaper / 4);
+                        cat.setBesucherRatgeber(userRatgeber / 4);
+                        cat.setBesucherMain(userMain / 4);
+                        cat.setBesucherUeber(userUeber / 4);
+                        cat.setBesucherImpressum(userImpressum / 4);
+                        cat.setBesucherPreisliste(userPreisliste / 4);
+                        cat.setBesucherPartner(userPartner / 4);
+                        cat.setBesucherAGBS(userAGBS / 4);
+                        cat.setBesucherDatenschutz(userDatenschutz / 4);
+                        cat.setBesucherNewsletter(userNewsletter / 4);
+                        cat.setBesucherImage(userImage / 4);
+                        //Create entries for views.
+                        cat.setViewsGlobal(viewsGlobal / 4);
+                        cat.setViewsArticle(viewsArticle / 4);
+                        cat.setViewsNews(viewsNews / 4);
+                        cat.setViewsBlog(viewsBlog / 4);
+                        cat.setViewsPodcast(viewsPodcast / 4);
+                        cat.setViewsWhitepaper(viewsWhitepaper / 4);
+                        cat.setViewsRatgeber(viewsRatgeber / 4);
+                        cat.setViewsMain(viewsMain / 4);
+                        cat.setViewsUeber(viewsUeber / 4);
+                        cat.setViewsImpressum(viewsImpressum / 4);
+                        cat.setViewsPreisliste(viewsPreisliste / 4);
+                        cat.setViewsPartner(viewsPartner / 4);
+                        cat.setViewsDatenschutz(viewsDatenschutz / 4);
+                        cat.setViewsNewsletter(viewsNewsletter / 4);
+                        cat.setViewsImage(viewsImage / 4);
+                        cat.setViewsAGBS(viewsAGBS / 4);
+                        universalCategoriesDLCRepo.save(cat);
+                    }
+
+
+
+
+                } else {
+                    uniCategories = new UniversalCategoriesDLC();
+                    uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
+                    uniCategories.setStunde(curHour);
+                    //Create entries for users.
+                    uniCategories.setBesucherGlobal(usersGlobal);
+                    uniCategories.setBesucherArticle(userArticle);
+                    uniCategories.setBesucherNews(userNews);
+                    uniCategories.setBesucherBlog(userBlog);
+                    uniCategories.setBesucherPodcast(userPodcast);
+                    uniCategories.setBesucherWhitepaper(userWhitepaper);
+                    uniCategories.setBesucherRatgeber(userRatgeber);
+                    uniCategories.setBesucherMain(userMain);
+                    uniCategories.setBesucherUeber(userUeber);
+                    uniCategories.setBesucherImpressum(userImpressum);
+                    uniCategories.setBesucherPreisliste(userPreisliste);
+                    uniCategories.setBesucherPartner(userPartner);
+                    uniCategories.setBesucherAGBS(userAGBS);
+                    uniCategories.setBesucherDatenschutz(userDatenschutz);
+                    uniCategories.setBesucherNewsletter(userNewsletter);
+                    uniCategories.setBesucherImage(userImage);
+                    //Create entries for views.
+                    uniCategories.setViewsGlobal(viewsGlobal);
+                    uniCategories.setViewsArticle(viewsArticle);
+                    uniCategories.setViewsNews(viewsNews);
+                    uniCategories.setViewsBlog(viewsBlog);
+                    uniCategories.setViewsPodcast(viewsPodcast);
+                    uniCategories.setViewsWhitepaper(viewsWhitepaper);
+                    uniCategories.setViewsRatgeber(viewsRatgeber);
+                    uniCategories.setViewsMain(viewsMain);
+                    uniCategories.setViewsUeber(viewsUeber);
+                    uniCategories.setViewsImpressum(viewsImpressum);
+                    uniCategories.setViewsPreisliste(viewsPreisliste);
+                    uniCategories.setViewsPartner(viewsPartner);
+                    uniCategories.setViewsDatenschutz(viewsDatenschutz);
+                    uniCategories.setViewsNewsletter(viewsNewsletter);
+                    uniCategories.setViewsImage(viewsImage);
+                    uniCategories.setViewsAGBS(viewsAGBS);
+                    //Save to db.
+                    universalCategoriesDLCRepo.save(uniCategories);
+                }
             } else {
                 //Since entry for this hour already exists, find it.
                 uniCategories = universalCategoriesDLCRepo.getLast();

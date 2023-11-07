@@ -1226,6 +1226,7 @@ public class LogService {
 
     @Scheduled(cron = "0 20 0 * * ?")
     public void endDay() throws JSONException, ParseException {
+        updateGeo();
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
         uniqueUserRepo.deleteAll();
     }
@@ -1239,6 +1240,7 @@ public class LogService {
                 try {
                     UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                     updateViewsByLocation(ip, postRepository.getIdByName(patternMatcher.group(1)));
+                    updateIPsByPost(ip, postRepository.getIdByName(patternMatcher.group(1)));
                 } catch (Exception e) {
                     System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
                 }
@@ -1258,6 +1260,7 @@ public class LogService {
                 try {
                     if(wpUserRepo.findByNicename(patternMatcher.group(6).replace("+","-")).isPresent()) {
                         updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
+                        updateIPsByUser(ip, wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
                     }
                 } catch (Exception e) {
                     System.out.println("USERVIEW EXCEPTION BEI: " + line);
@@ -2588,4 +2591,13 @@ public class LogService {
         return uniStats;
     }
 
+    private void updateIPsByPost(String ip, long id) {
+    }
+
+    private void updateIPsByUser(String ip, long id) {
+    }
+
+    private void updateGeo() {
+
+    };
 }

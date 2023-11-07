@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClicksByCountryRepository extends JpaRepository<ClicksByCountry, Long> {
 
-    @Query("SELECT u FROM ClicksByCountry u WHERE u.uniStatId =:id AND u.country=:country")
+    @Query("SELECT u FROM ClicksByCountry u WHERE u.uniStatId =:uniStatId AND u.country=:country")
     public ClicksByCountry getByUniIDAndCountry(int uniStatId, String country);
 }

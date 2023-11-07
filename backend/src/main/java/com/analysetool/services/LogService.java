@@ -63,6 +63,18 @@ public class LogService {
     @Autowired
     private IPsByUserRepository iPsByUserRepository;
 
+    @Autowired
+    private ClicksByCountryRepository clicksByCountryRepo;
+
+    @Autowired
+    private ClicksByBundeslandRepository clicksByBundeslandRepo;
+
+    @Autowired
+    private PostGeoRepository postGeoRepo;
+
+    @Autowired
+    private UserGeoRepository userGeoRepo;
+
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
@@ -1233,6 +1245,7 @@ public class LogService {
 
     @Scheduled(cron = "0 20 0 * * ?")
     public void endDay() throws JSONException, ParseException {
+        updateClicksBy();
         updateGeo();
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
         uniqueUserRepo.deleteAll();
@@ -2618,6 +2631,7 @@ public class LogService {
                 IPsByPost iPsByPost = iPsByPostRepository.findById(id).get();
                 JSONArray obj = new JSONArray(iPsByPost.getIps());
                 obj.put(ip);
+                iPsByPost.setIps(obj.toString());
                 iPsByPostRepository.save(iPsByPost);
             } else {
                 IPsByPost iPsByPost = new IPsByPost();
@@ -2636,6 +2650,7 @@ public class LogService {
                 IPsByUser iPsByUser = iPsByUserRepository.findById(id).get();
                 JSONArray obj = new JSONArray(iPsByUser.getIps());
                 obj.put(ip);
+                iPsByUser.setIps(obj.toString());
                 iPsByUserRepository.save(iPsByUser);
             } else {
                 IPsByUser iPsByUser = new IPsByUser();
@@ -2648,22 +2663,119 @@ public class LogService {
         }
     }
 
-    private void updateGeo() {
+    private void updateClicksBy() {
         int uniId = uniRepo.getLatestUniStat().getId();
+        String ip;
         for(UniqueUser user : uniqueUserRepo.findAll()) {
+            ip = user.getIp();
             ClicksByCountry clicksByCountry;
             ClicksByBundesland clicksByBundesland = new ClicksByBundesland();
             clicksByBundesland.setUniStatId(uniId);
-            PostGeo postGeo;
-            UserGeo userGeo;
             if(IPHelper.getCountryISO(user.getIp()).equals("DE")) {
-
-            } else {
-
+                //Update ClicksByBundesland
+                clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getCountryName(ip)) == null
+                        ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
+                clicksByBundesland.setUniStatId(uniId);
+                clicksByBundesland.setBundesland(IPHelper.getCountryName(ip));
+                clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
             }
+            //Update ClicksByCountry
+            clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null
+                    ? new ClicksByCountry() : clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip));
+            clicksByCountry.setUniStatId(uniId);
+            clicksByCountry.setCountry(IPHelper.getCountryName(ip));
+            clicksByCountry.setClicks(clicksByCountry.getClicks() + 1);
+
 
         }
+    }
 
+    private void updateGeo() {
+        updatePostGeo();
+        updateUserGeo();
+    }
 
+    private void updatePostGeo() {
+        PostGeo postGeo = null;
+        try {
+            for (IPsByPost post : iPsByPostRepository.findAll()) {
+                postGeo = postGeoRepo.findById(post.getPost_id()).isEmpty() ? new PostGeo() : postGeoRepo.findById(post.getPost_id()).get();
+                postGeo.setPost_id(post.getPost_id());
+                JSONArray json = new JSONArray(post.getIps());
+                postGeo.setUniStatId(uniRepo.getSecondLastUniStats().get(1).getId());
+                for (int i = 0; i < json.length(); i++) {
+                    if (IPHelper.getCountryISO((String) json.get(i)).equals("DE")) {
+                        switch (IPHelper.getSubISO((String) json.get(i))) {
+                            case "HH" -> postGeo.setHh(postGeo.getHh() + 1);
+                            case "HB" -> postGeo.setHb(postGeo.getHb() + 1);
+                            case "BE" -> postGeo.setBe(postGeo.getBe() + 1);
+                            case "MV" -> postGeo.setMv(postGeo.getMv() + 1);
+                            case "BB" -> postGeo.setBb(postGeo.getBb() + 1);
+                            case "SN" -> postGeo.setSn(postGeo.getSn() + 1);
+                            case "ST" -> postGeo.setSt(postGeo.getSt() + 1);
+                            case "BY" -> postGeo.setBye(postGeo.getBye() + 1);
+                            case "SL" -> postGeo.setSl(postGeo.getSl() + 1);
+                            case "RP" -> postGeo.setRp(postGeo.getRp() + 1);
+                            case "SH" -> postGeo.setSh(postGeo.getSh() + 1);
+                            case "TH" -> postGeo.setTh(postGeo.getTh() + 1);
+                            case "NB" -> postGeo.setNb(postGeo.getNb() + 1);
+                            case "HE" -> postGeo.setHe(postGeo.getHe() + 1);
+                            case "BW" -> postGeo.setBW(postGeo.getBW() + 1);
+                            case "NW" -> postGeo.setNW(postGeo.getNW() + 1);
+                            default -> System.out.println("Unbekanntes Bundesland entdeckt");
+                        }
+                    } else {
+                        postGeo.setAusland(postGeo.getAusland() + 1);
+                    }
+                }
+            }
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+        if(postGeo != null) {
+            postGeoRepo.save(postGeo);
+        }
+    }
+
+    private void updateUserGeo() {
+        UserGeo userGeo = null;
+        try {
+            for (IPsByUser user : iPsByUserRepository.findAll()) {
+                userGeo = userGeoRepo.findById(user.getUser_id()).isEmpty() ? new UserGeo() : userGeoRepo.findById(user.getUser_id()).get();
+                userGeo.setUser_id(user.getUser_id());
+                userGeo.setUniStatId(uniRepo.getSecondLastUniStats().get(1).getId());
+                JSONArray json = new JSONArray(user.getIps());
+                for (int i = 0; i < json.length(); i++) {
+                    if (IPHelper.getCountryISO((String) json.get(i)).equals("DE")) {
+                        switch (IPHelper.getSubISO((String) json.get(i))) {
+                            case "HH" -> userGeo.setHh(userGeo.getHh() + 1);
+                            case "HB" -> userGeo.setHb(userGeo.getHb() + 1);
+                            case "BE" -> userGeo.setBe(userGeo.getBe() + 1);
+                            case "MV" -> userGeo.setMv(userGeo.getMv() + 1);
+                            case "BB" -> userGeo.setBb(userGeo.getBb() + 1);
+                            case "SN" -> userGeo.setSn(userGeo.getSn() + 1);
+                            case "ST" -> userGeo.setSt(userGeo.getSt() + 1);
+                            case "BY" -> userGeo.setBye(userGeo.getBye() + 1);
+                            case "SL" -> userGeo.setSl(userGeo.getSl() + 1);
+                            case "RP" -> userGeo.setRp(userGeo.getRp() + 1);
+                            case "SH" -> userGeo.setSh(userGeo.getSh() + 1);
+                            case "TH" -> userGeo.setTh(userGeo.getTh() + 1);
+                            case "NB" -> userGeo.setNb(userGeo.getNb() + 1);
+                            case "HE" -> userGeo.setHe(userGeo.getHe() + 1);
+                            case "BW" -> userGeo.setBW(userGeo.getBW() + 1);
+                            case "NW" -> userGeo.setNW(userGeo.getNW() + 1);
+                            default -> System.out.println("Unbekanntes Bundesland entdeckt");
+                        }
+                    } else {
+                        userGeo.setAusland(userGeo.getAusland() + 1);
+                    }
+                }
+            }
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+        if(userGeo != null) {
+            userGeoRepo.save(userGeo);
+        }
     }
 }

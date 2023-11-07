@@ -13,7 +13,7 @@ public class ClicksByBundesland implements Serializable {
     private Long id;
 
     @Column(name = "bundesland")
-    private String city_name;
+    private String bundesland;
 
     @Column(name = "uni_stat_id")
     private int uniStatId;
@@ -30,14 +30,6 @@ public class ClicksByBundesland implements Serializable {
     }
 
 
-    public int getUmkreis() {
-        return umkreis;
-    }
-
-    public void setUmkreis(int umkreis) {
-        this.umkreis = umkreis;
-    }
-
     public int getClicks() {
         return clicks;
     }
@@ -52,5 +44,13 @@ public class ClicksByBundesland implements Serializable {
 
     public void setUniStatId(int uniStatId) {
         this.uniStatId = uniStatId;
+    }
+
+    public String getBundesland() {
+        return bundesland;
+    }
+
+    public void setBundesland(String bundesland) {
+        this.bundesland = bundesland;
     }
 }

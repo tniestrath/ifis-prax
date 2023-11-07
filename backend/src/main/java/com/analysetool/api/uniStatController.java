@@ -568,7 +568,29 @@ public class uniStatController {
         return top5JsonArray.toString();
     }
 
+    @GetMapping("/getPostsByType")
+    public String getPostsByType() {
+        HashMap<String, Integer> map = new HashMap<>();
+        UniversalStats uniStat = uniRepo.getLatestUniStat();
+        return makeTypeMap(map, uniStat);
+    }
 
+    @GetMapping("/getPostsByTypeYesterday")
+    public String getPostsByTypeYesterday(){
+        HashMap<String, Integer> map = new HashMap<>();
+        UniversalStats uniStat = uniRepo.getSecondLastUniStats().get(1);
+        return makeTypeMap(map, uniStat);
+    }
+
+    private String makeTypeMap(HashMap<String, Integer> map, UniversalStats uniStat) {
+        map.put("Blogs", Math.toIntExact(uniStat.getAnzahlBlog()));
+        map.put("News", Math.toIntExact(uniStat.getAnzahlNews()));
+        map.put("Artikel", Math.toIntExact(uniStat.getAnzahlArtikel()));
+        map.put("Whitepaper", Math.toIntExact(uniStat.getAnzahlWhitepaper()));
+        map.put("Podcasts", Math.toIntExact(uniStat.getAnzahlPodcast()));
+
+        return new JSONObject(map).toString();
+    }
 
 
     ///////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\

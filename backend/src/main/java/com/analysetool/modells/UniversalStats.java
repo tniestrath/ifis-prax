@@ -47,6 +47,12 @@ public class UniversalStats {
     @Column(name = "anzahl_blog")
     private Long anzahlBlog;
 
+    @Column(name = "anzahl_whitepaper")
+    private Long anzahlWhitepaper;
+
+    @Column(name = "anzahl_podcast")
+    private Long anzahlPodcast;
+
     @Column(name = "datum")
     private Date datum;
 
@@ -248,6 +254,30 @@ public class UniversalStats {
 
     public void setDatum(Date datum) {
         this.datum = datum;
+    }
+
+    public Long getAnzahlWhitepaper() {
+        return anzahlWhitepaper;
+    }
+
+    public void setAnzahlWhitepaper(Long anzahlWhitepaper) {
+        this.anzahlWhitepaper = anzahlWhitepaper;
+    }
+
+    public Long getAnzahlPodcast() {
+        return anzahlPodcast;
+    }
+
+    public void setAnzahlPodcast(Long anzahlPodcast) {
+        this.anzahlPodcast = anzahlPodcast;
+    }
+
+    public String getViewsPerHourString() {
+        return viewsPerHourString;
+    }
+
+    public void setViewsPerHourString(String viewsPerHourString) {
+        this.viewsPerHourString = viewsPerHourString;
     }
 
     @Override

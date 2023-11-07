@@ -10,6 +10,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.bouncycastle.util.encoders.Hex;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
@@ -55,6 +56,12 @@ public class LogService {
 
     @Autowired
     private UniversalCategoriesDLCRepository universalCategoriesDLCRepo;
+
+    @Autowired
+    private IPsByPostRepository iPsByPostRepository;
+
+    @Autowired
+    private IPsByUserRepository iPsByUserRepository;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -2521,10 +2528,14 @@ public class LogService {
         long artikelCounter = 0;
         long newsCounter = 0;
         long blogCounter = 0;
+        long whiteCounter = 0;
+        long podCounter = 0;
 
         int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+        int tagIdWhite = termRepo.findBySlug("whitepaper").getId().intValue();
+        int tagIdPod = termRepo.findBySlug("podcast").getId().intValue();
 
         for (Post post : posts) {
             LocalDateTime postDateTime = post.getDate(); // Nehmen wir an, das ist vom Typ LocalDateTime
@@ -2543,6 +2554,14 @@ public class LogService {
                         if (termTax.getTermId() == tagIdPresse) {
                             newsCounter++;
                         }
+
+                        if (termTax.getTermId() == tagIdWhite) {
+                            whiteCounter++;
+                        }
+
+                        if (termTax.getTermId() == tagIdPod) {
+                            podCounter++;
+                        }
                     }
                 }
             }
@@ -2552,6 +2571,8 @@ public class LogService {
         uniStats.setAnzahlArtikel(artikelCounter);
         uniStats.setAnzahlNews(newsCounter);
         uniStats.setAnzahlBlog(blogCounter);
+        uniStats.setAnzahlWhitepaper(whiteCounter);
+        uniStats.setAnzahlWhitepaper(podCounter);
 
         return uniStats;
     }
@@ -2591,13 +2612,58 @@ public class LogService {
         return uniStats;
     }
 
-    private void updateIPsByPost(String ip, long id) {
+    private void updateIPsByPost(String ip, long id) throws JSONException {
+        if(postRepository.findById(id).isPresent()) {
+            if(iPsByPostRepository.findById(id).isPresent()) {
+                IPsByPost iPsByPost = iPsByPostRepository.findById(id).get();
+                JSONArray obj = new JSONArray(iPsByPost.getIps());
+                obj.put(ip);
+                iPsByPostRepository.save(iPsByPost);
+            } else {
+                IPsByPost iPsByPost = new IPsByPost();
+                iPsByPost.setPost_id(id);
+                JSONArray array = new JSONArray();
+                array.put(ip);
+                iPsByPost.setIps(array.toString());
+                iPsByPostRepository.save(iPsByPost);
+            }
+        }
     }
 
-    private void updateIPsByUser(String ip, long id) {
+    private void updateIPsByUser(String ip, long id) throws JSONException {
+        if(userStatsRepo.findById((int)id).isPresent()) {
+            if(iPsByUserRepository.findById(id).isPresent()) {
+                IPsByUser iPsByUser = iPsByUserRepository.findById(id).get();
+                JSONArray obj = new JSONArray(iPsByUser.getIps());
+                obj.put(ip);
+                iPsByUserRepository.save(iPsByUser);
+            } else {
+                IPsByUser iPsByUser = new IPsByUser();
+                iPsByUser.setUser_id(id);
+                JSONArray array = new JSONArray();
+                array.put(ip);
+                iPsByUser.setIps(array.toString());
+                iPsByUserRepository.save(iPsByUser);
+            }
+        }
     }
 
     private void updateGeo() {
+        int uniId = uniRepo.getLatestUniStat().getId();
+        for(UniqueUser user : uniqueUserRepo.findAll()) {
+            ClicksByCountry clicksByCountry;
+            ClicksByBundesland clicksByBundesland = new ClicksByBundesland();
+            clicksByBundesland.setUniStatId(uniId);
+            PostGeo postGeo;
+            UserGeo userGeo;
+            if(IPHelper.getCountryISO(user.getIp()).equals("DE")) {
 
-    };
+            } else {
+
+            }
+
+        }
+
+
+    }
 }

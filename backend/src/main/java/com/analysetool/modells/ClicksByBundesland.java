@@ -29,13 +29,6 @@ public class ClicksByBundesland implements Serializable {
         this.id = id;
     }
 
-    public String getCity_name() {
-        return city_name;
-    }
-
-    public void setCity_name(String city_name) {
-        this.city_name = city_name;
-    }
 
     public int getUmkreis() {
         return umkreis;
@@ -51,5 +44,13 @@ public class ClicksByBundesland implements Serializable {
 
     public void setClicks(int clicks) {
         this.clicks = clicks;
+    }
+
+    public int getUniStatId() {
+        return uniStatId;
+    }
+
+    public void setUniStatId(int uniStatId) {
+        this.uniStatId = uniStatId;
     }
 }

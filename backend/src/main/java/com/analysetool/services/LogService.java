@@ -921,7 +921,8 @@ public class LogService {
             if(curHour == 4
                     && uniHourlyRepo.getByStundeAndUniStatId(1, uniHourlyRepo.getLast().getUniStatId()) == null
                     && uniHourlyRepo.getByStundeAndUniStatId(2, uniHourlyRepo.getLast().getUniStatId()) == null
-                    && uniHourlyRepo.getByStundeAndUniStatId(3, uniHourlyRepo.getLast().getUniStatId()) == null) {
+                    && uniHourlyRepo.getByStundeAndUniStatId(3, uniHourlyRepo.getLast().getUniStatId()) == null
+                    && uniHourlyRepo.getLastStunde() != curHour) {
                 UniversalStatsHourly uniHourly1 = new UniversalStatsHourly();
                 UniversalStatsHourly uniHourly2 = new UniversalStatsHourly();
                 UniversalStatsHourly uniHourly3 = new UniversalStatsHourly();

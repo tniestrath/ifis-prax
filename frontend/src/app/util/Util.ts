@@ -94,6 +94,7 @@ export enum DashColors {
   DARK_BLUE_50 = "rgba(53,70,87, .5)",
 
   BLACK = "rgb(0,0,0)",
+  PODCAST = "rgb(0,0,0)",
   PLAN_SPONSOR = "rgb(0,0,0)",
 
   BLACK_50 = "rgba(0,0,0, .5)",

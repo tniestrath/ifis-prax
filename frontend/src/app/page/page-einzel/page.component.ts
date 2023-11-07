@@ -29,6 +29,7 @@ import {
 import {NewsletterStatsComponent} from "../../component/newsletter-stats/newsletter-stats.component";
 import {SystemloadComponent} from "../../component/system/systemload/systemload.component";
 import {EventsStatsComponent} from "../../component/events-stats/events-stats.component";
+import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
 
 @Component({
   selector: 'dash-page',
@@ -92,7 +93,8 @@ export class PageComponent implements OnInit {
       {type: CallUpChartComponent, row: 1, col: 2, height: 2, width: 4},
       {type: NewsletterStatsComponent, row: 1, col: 6, height: 1, width: 1},
       {type: SystemloadComponent, row: 2, col: 6, height: 1, width: 1},
-      {type: OriginMapComponent, row: 3, col: 1, height: 2, width: 3},
+      {type: PostTypeComponent, row: 3, col: 1, height: 2, width: 1},
+      {type: OriginMapComponent, row: 3, col: 2, height: 2, width: 3},
       {type: EventsStatsComponent, row: 3, col: 6, height: 1, width: 1},
       {type: ClicksByTimeComponent, row: 3, col: 5, height: 2, width: 1}
     ];

@@ -197,14 +197,17 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         plugins: {
           datalabels: {
             display: (ctx) => {
-              if ((clicksData[ctx.dataIndex] >= (c_max * 0.1) || visitorsData[ctx.dataIndex] >= (v_max * 0.1) )&& clicksData[ctx.dataIndex] > (visitorsData[ctx.dataIndex] * 1.5)){
+              if ((clicksData[ctx.dataIndex] >= (c_max * 0.2) || visitorsData[ctx.dataIndex] >= (v_max * 0.2) )&& clicksData[ctx.dataIndex] > (visitorsData[ctx.dataIndex] * 1.2)){
                 return true;
               }
               return false;
             },
             font: {
               size: 8
-            }
+            },
+            anchor: "end",
+            align: "bottom",
+            clamp: true
           },
           title: {
             display: true,

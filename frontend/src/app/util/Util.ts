@@ -41,8 +41,9 @@ export default class Util {
     return formattedDate;
   }
 
-  static getFormattedNow(){
+  static getFormattedNow(offset_day?: number){
     let now = new Date(Date.now());
+    if (offset_day) now.setDate(now.getDate() + offset_day);
     let formatteddate = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
     return formatteddate;
   }

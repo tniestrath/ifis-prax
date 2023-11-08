@@ -47,7 +47,7 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
         this.cdr.detectChanges();
       })
     })
-
+  this.setToolTip("Hier werden");
   }
 
   createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){

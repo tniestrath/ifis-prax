@@ -4,6 +4,7 @@ import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
 import _default from "chart.js/dist/plugins/plugin.legend";
 import labels = _default.defaults.labels;
+import {SysVars} from "../../services/sys-vars-service";
 
 export class Callup {
   clicks : number = 0;
@@ -375,15 +376,20 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         }
       });
     } else if (timespan == "day"){
-      this.db.getCallupsByCategoriesByDateTime(Util.getFormattedNow(), Number(date)).then(res => {
-        this.categories = res.labels;
-        this.categoriesViews = res.clicks;
-        this.categoriesVisitors = res.besucher;
-        if (this.slidedOut){
-          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date + "Uhr");
-        } else {
-          this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, date + "Uhr");
-        }
+      this.db.getSystemTimeHour().then(currHour => {
+        let requestDate;
+        if (Number(date) > currHour) requestDate = Util.getFormattedNow(-1);
+        else requestDate = Util.getFormattedNow();
+        this.db.getCallupsByCategoriesByDateTime(requestDate, Number(date)).then(res => {
+          this.categories = res.labels;
+          this.categoriesViews = res.clicks;
+          this.categoriesVisitors = res.besucher;
+          if (this.slidedOut){
+            this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date + "Uhr");
+          } else {
+            this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, date + "Uhr");
+          }
+        });
       });
     }
   }

@@ -12,6 +12,7 @@ import java.io.Serializable;
 public class IPsByUser implements Serializable {
 
     @Id
+    @Column(name="userId")
     private Long user_id;
 
     @Column(name = "ips")

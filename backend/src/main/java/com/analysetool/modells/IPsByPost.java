@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class IPsByPost implements Serializable {
 
     @Id
+    @Column(name="post_id")
     private Long post_id;
 
     @Column(name = "ips")

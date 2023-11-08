@@ -2585,7 +2585,7 @@ public class LogService {
         uniStats.setAnzahlNews(newsCounter);
         uniStats.setAnzahlBlog(blogCounter);
         uniStats.setAnzahlWhitepaper(whiteCounter);
-        uniStats.setAnzahlWhitepaper(podCounter);
+        uniStats.setAnzahlPodcast(podCounter);
 
         return uniStats;
     }

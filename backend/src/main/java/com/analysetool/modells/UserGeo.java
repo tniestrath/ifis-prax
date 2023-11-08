@@ -12,6 +12,7 @@ import java.io.Serializable;
 public class UserGeo implements Serializable {
 
     @Id
+    @Column(name="user_id")
     private Long user_id;
 
     @Column(name="uni_stat_id")

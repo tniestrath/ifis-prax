@@ -12,6 +12,7 @@ import java.io.Serializable;
 public class PostGeo implements Serializable {
 
     @Id
+    @Column(name="post_id")
     private Long post_id;
 
     @Column(name="uni_stat_id")

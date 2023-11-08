@@ -2698,6 +2698,7 @@ public class LogService {
 
     private void updatePostGeo() {
         PostGeo postGeo = null;
+        System.out.println("POST GEO UPDATE");
         try {
             for (IPsByPost post : iPsByPostRepository.findAll()) {
                 postGeo = postGeoRepo.findById(post.getPost_id()).isEmpty() ? new PostGeo() : postGeoRepo.findById(post.getPost_id()).get();
@@ -2740,6 +2741,7 @@ public class LogService {
 
     private void updateUserGeo() {
         UserGeo userGeo = null;
+        System.out.println("USER GEO UPDATE");
         try {
             for (IPsByUser user : iPsByUserRepository.findAll()) {
                 userGeo = userGeoRepo.findById(user.getUser_id()).isEmpty() ? new UserGeo() : userGeoRepo.findById(user.getUser_id()).get();

@@ -1276,9 +1276,10 @@ public class LogService {
                 break;
             case "userView":
                 try {
-                    if(wpUserRepo.findByNicename(patternMatcher.group(6).replace("+","-")).isPresent()) {
-                        updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
-                        updateIPsByUser(ip, wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
+                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
+                        updateUserStats(userId);
+                        updateIPsByUser(ip, userId);
                     }
                 } catch (Exception e) {
                     System.out.println("USERVIEW EXCEPTION BEI: " + line);

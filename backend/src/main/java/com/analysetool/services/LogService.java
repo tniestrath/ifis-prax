@@ -2671,11 +2671,10 @@ public class LogService {
         for(UniqueUser user : uniqueUserRepo.findAll()) {
             ip = user.getIp();
             ClicksByCountry clicksByCountry;
-            ClicksByBundesland clicksByBundesland = new ClicksByBundesland();
-            clicksByBundesland.setUniStatId(uniId);
+            ClicksByBundesland clicksByBundesland;
             if(IPHelper.getCountryISO(user.getIp()).equals("DE")) {
                 //Update ClicksByBundesland
-                clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getCountryName(ip)) == null
+                clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                         ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
                 clicksByBundesland.setUniStatId(uniId);
                 clicksByBundesland.setBundesland(IPHelper.getCountryName(ip));

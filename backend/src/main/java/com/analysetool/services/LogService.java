@@ -2764,7 +2764,7 @@ public class LogService {
                             case "RP" -> userGeo.setRp(userGeo.getRp() + 1);
                             case "SH" -> userGeo.setSh(userGeo.getSh() + 1);
                             case "TH" -> userGeo.setTh(userGeo.getTh() + 1);
-                            case "NB" -> userGeo.setNb(userGeo.getNb() + 1);
+                            case "NI" -> userGeo.setNb(userGeo.getNb() + 1);
                             case "HE" -> userGeo.setHe(userGeo.getHe() + 1);
                             case "BW" -> userGeo.setBW(userGeo.getBW() + 1);
                             case "NW" -> userGeo.setNW(userGeo.getNW() + 1);

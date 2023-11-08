@@ -43,8 +43,8 @@ export enum dbUrl {
   GET_POSTS_ALL = "/posts/getAllPostsWithStats",
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
-  GET_POSTS_PER_TYPE = "/posts/getPostsByType",
-  GET_POSTS_PER_TYPE_YESTERDAY = "/posts/getPostsByTypeYesterday",
+  GET_POSTS_PER_TYPE = "/bericht/getPostsByType",
+  GET_POSTS_PER_TYPE_YESTERDAY = "/bericht/getPostsByTypeYesterday",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
   GET_POSTS_TOP_BY_SORTER = "/posts/getTopWithType?sorter=SORTER&type=TYPE&limit=LIMIT",
 

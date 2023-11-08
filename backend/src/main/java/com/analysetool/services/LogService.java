@@ -1276,9 +1276,10 @@ public class LogService {
                 break;
             case "userView":
                 try {
-                    if(wpUserRepo.findByNicename(patternMatcher.group(6).replace("+","-")).isPresent()) {
-                        updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
-                        updateIPsByUser(ip, wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
+                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
+                        updateUserStats(userId);
+                        updateIPsByUser(ip, userId);
                     }
                 } catch (Exception e) {
                     System.out.println("USERVIEW EXCEPTION BEI: " + line);
@@ -2625,8 +2626,8 @@ public class LogService {
 
     private void updateIPsByPost(String ip, long id) throws JSONException {
         if(postRepository.findById(id).isPresent()) {
-            if(iPsByPostRepository.findById(id).isPresent()) {
-                IPsByPost iPsByPost = iPsByPostRepository.findById(id).get();
+            if(iPsByPostRepository.getByID(id) != null) {
+                IPsByPost iPsByPost = iPsByPostRepository.getByID(id);
                 JSONArray obj = new JSONArray(iPsByPost.getIps());
                 obj.put(ip);
                 iPsByPost.setIps(obj.toString());
@@ -2644,8 +2645,8 @@ public class LogService {
 
     private void updateIPsByUser(String ip, long id) throws JSONException {
         if(userStatsRepo.findById((int)id).isPresent()) {
-            if(iPsByUserRepository.findById(id).isPresent()) {
-                IPsByUser iPsByUser = iPsByUserRepository.findById(id).get();
+            if(iPsByUserRepository.getByID(id) != null) {
+                IPsByUser iPsByUser = iPsByUserRepository.getByID(id);
                 JSONArray obj = new JSONArray(iPsByUser.getIps());
                 obj.put(ip);
                 iPsByUser.setIps(obj.toString());
@@ -2699,7 +2700,7 @@ public class LogService {
         try {
             for (IPsByPost post : iPsByPostRepository.findAll()) {
                 System.out.println(post.getPost_id());
-                postGeo = postGeoRepo.findById(post.getPost_id()).isEmpty() ? new PostGeo() : postGeoRepo.findById(post.getPost_id()).get();
+                postGeo = postGeoRepo.findByPostId(post.getPost_id()) == null ? new PostGeo() : postGeoRepo.findByPostId(post.getPost_id());
                 postGeo.setPost_id(post.getPost_id());
                 JSONArray json = new JSONArray(post.getIps());
                 postGeo.setUniStatId(uniRepo.getSecondLastUniStats().get(1).getId());
@@ -2740,7 +2741,7 @@ public class LogService {
         System.out.println("USER GEO UPDATE");
         try {
             for (IPsByUser user : iPsByUserRepository.findAll()) {
-                userGeo = userGeoRepo.findById(user.getUser_id()).isEmpty() ? new UserGeo() : userGeoRepo.findById(user.getUser_id()).get();
+                userGeo = userGeoRepo.findByUserId(user.getUser_id()) == null ? new UserGeo() : userGeoRepo.findByUserId(user.getUser_id());
                 userGeo.setUser_id(user.getUser_id());
                 userGeo.setUniStatId(uniRepo.getSecondLastUniStats().get(1).getId());
                 JSONArray json = new JSONArray(user.getIps());

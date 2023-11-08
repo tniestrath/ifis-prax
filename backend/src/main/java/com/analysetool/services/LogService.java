@@ -885,6 +885,7 @@ public class LogService {
 
         }
         updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors, viewsByLocation, viewsByHour);
+        updateClicksBy();
         updateGeo();
 
 
@@ -1249,7 +1250,7 @@ public class LogService {
         updateClicksBy();
         updateGeo();
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
-        uniqueUserRepo.deleteAll();
+        deleteOldIPs();
     }
 
 
@@ -2778,5 +2779,11 @@ public class LogService {
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private void deleteOldIPs() {
+        iPsByUserRepository.deleteAll();
+        iPsByPostRepository.deleteAll();
+        uniqueUserRepo.deleteAll();
     }
 }

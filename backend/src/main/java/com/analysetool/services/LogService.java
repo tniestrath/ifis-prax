@@ -885,8 +885,6 @@ public class LogService {
 
         }
         updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors, viewsByLocation, viewsByHour);
-
-
     }
 
     private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors, Map<String, Map<String, Map<String, Long>>> viewsByLocation, Map<String, Long> viewsByHour) throws ParseException {
@@ -1248,7 +1246,7 @@ public class LogService {
         updateClicksBy();
         updateGeo();
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
-        uniqueUserRepo.deleteAll();
+        deleteOldIPs();
     }
 
 
@@ -2585,7 +2583,7 @@ public class LogService {
         uniStats.setAnzahlNews(newsCounter);
         uniStats.setAnzahlBlog(blogCounter);
         uniStats.setAnzahlWhitepaper(whiteCounter);
-        uniStats.setAnzahlWhitepaper(podCounter);
+        uniStats.setAnzahlPodcast(podCounter);
 
         return uniStats;
     }
@@ -2664,20 +2662,20 @@ public class LogService {
     }
 
     private void updateClicksBy() {
-        int uniId = uniRepo.getLatestUniStat().getId();
+        int uniId = uniRepo.getSecondLastUniStats().get(1).getId();
         String ip;
         for(UniqueUser user : uniqueUserRepo.findAll()) {
             ip = user.getIp();
             ClicksByCountry clicksByCountry;
-            ClicksByBundesland clicksByBundesland = new ClicksByBundesland();
-            clicksByBundesland.setUniStatId(uniId);
+            ClicksByBundesland clicksByBundesland;
             if(IPHelper.getCountryISO(user.getIp()).equals("DE")) {
                 //Update ClicksByBundesland
-                clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getCountryName(ip)) == null
+                clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                         ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
                 clicksByBundesland.setUniStatId(uniId);
                 clicksByBundesland.setBundesland(IPHelper.getCountryName(ip));
                 clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
+                clicksByBundeslandRepo.save(clicksByBundesland);
             }
             //Update ClicksByCountry
             clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null
@@ -2685,7 +2683,7 @@ public class LogService {
             clicksByCountry.setUniStatId(uniId);
             clicksByCountry.setCountry(IPHelper.getCountryName(ip));
             clicksByCountry.setClicks(clicksByCountry.getClicks() + 1);
-
+            clicksByCountryRepo.save(clicksByCountry);
 
         }
     }
@@ -2697,8 +2695,10 @@ public class LogService {
 
     private void updatePostGeo() {
         PostGeo postGeo = null;
+        System.out.println("POST GEO UPDATE");
         try {
             for (IPsByPost post : iPsByPostRepository.findAll()) {
+                System.out.println(post.getPost_id());
                 postGeo = postGeoRepo.findById(post.getPost_id()).isEmpty() ? new PostGeo() : postGeoRepo.findById(post.getPost_id()).get();
                 postGeo.setPost_id(post.getPost_id());
                 JSONArray json = new JSONArray(post.getIps());
@@ -2728,17 +2728,16 @@ public class LogService {
                         postGeo.setAusland(postGeo.getAusland() + 1);
                     }
                 }
+                postGeoRepo.save(postGeo);
             }
         } catch(Exception e) {
             System.out.println(e.getMessage());
-        }
-        if(postGeo != null) {
-            postGeoRepo.save(postGeo);
         }
     }
 
     private void updateUserGeo() {
         UserGeo userGeo = null;
+        System.out.println("USER GEO UPDATE");
         try {
             for (IPsByUser user : iPsByUserRepository.findAll()) {
                 userGeo = userGeoRepo.findById(user.getUser_id()).isEmpty() ? new UserGeo() : userGeoRepo.findById(user.getUser_id()).get();
@@ -2760,7 +2759,7 @@ public class LogService {
                             case "RP" -> userGeo.setRp(userGeo.getRp() + 1);
                             case "SH" -> userGeo.setSh(userGeo.getSh() + 1);
                             case "TH" -> userGeo.setTh(userGeo.getTh() + 1);
-                            case "NB" -> userGeo.setNb(userGeo.getNb() + 1);
+                            case "NI" -> userGeo.setNb(userGeo.getNb() + 1);
                             case "HE" -> userGeo.setHe(userGeo.getHe() + 1);
                             case "BW" -> userGeo.setBW(userGeo.getBW() + 1);
                             case "NW" -> userGeo.setNW(userGeo.getNW() + 1);
@@ -2770,12 +2769,16 @@ public class LogService {
                         userGeo.setAusland(userGeo.getAusland() + 1);
                     }
                 }
+                userGeoRepo.save(userGeo);
             }
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
-        if(userGeo != null) {
-            userGeoRepo.save(userGeo);
-        }
+    }
+
+    private void deleteOldIPs() {
+        iPsByUserRepository.deleteAll();
+        iPsByPostRepository.deleteAll();
+        uniqueUserRepo.deleteAll();
     }
 }

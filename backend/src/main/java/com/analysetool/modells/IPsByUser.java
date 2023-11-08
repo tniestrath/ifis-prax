@@ -1,9 +1,6 @@
 package com.analysetool.modells;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 
@@ -12,6 +9,10 @@ import java.io.Serializable;
 public class IPsByUser implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name="userId")
     private Long user_id;
 
     @Column(name = "ips")
@@ -31,5 +32,13 @@ public class IPsByUser implements Serializable {
 
     public void setIps(String ips) {
         this.ips = ips;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

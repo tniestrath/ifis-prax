@@ -1,9 +1,6 @@
 package com.analysetool.modells;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 
@@ -12,6 +9,10 @@ import java.io.Serializable;
 public class PostGeo implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name="post_id")
     private Long post_id;
 
     @Column(name="uni_stat_id")
@@ -218,5 +219,13 @@ public class PostGeo implements Serializable {
 
     public void setAusland(int ausland) {
         this.ausland = ausland;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

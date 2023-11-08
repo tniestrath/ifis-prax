@@ -16,7 +16,10 @@ export class Top5PostsComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit(): void {
     this.getData();
-    this.setToolTip("Hier werden die Top 5 Posts der jeweiligen Kategorie und nach der ausgewählten Statistik gewertet angezeigt.");
+    this.setToolTip("Hier werden die Top 5 Posts der jeweiligen Kategorie und nach der ausgewählten Statistik gewertet angezeigt.\n" +
+      "Clicks sind die Aufrufe eines Posts.\n" +
+      "Performance bedeutet: Clicks innerhalb der ersten 7 Tage nach Veröffentlichung im Vergleich zu anderen Posts.\n" +
+      "Relevanz bedeutet: Clicks in den letzten 7 Tagen im Vergleich zu anderen Posts.");
   }
 
   protected getData(event?: Event){

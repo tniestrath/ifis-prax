@@ -2693,7 +2693,7 @@ public class LogService {
 
     private void updateGeo() {
         updatePostGeo();
-        updateUserGeo();
+        //updateUserGeo();
     }
 
     private void updatePostGeo() {
@@ -2701,6 +2701,7 @@ public class LogService {
         System.out.println("POST GEO UPDATE");
         try {
             for (IPsByPost post : iPsByPostRepository.findAll()) {
+                System.out.println(post.getPost_id());
                 postGeo = postGeoRepo.findById(post.getPost_id()).isEmpty() ? new PostGeo() : postGeoRepo.findById(post.getPost_id()).get();
                 postGeo.setPost_id(post.getPost_id());
                 JSONArray json = new JSONArray(post.getIps());

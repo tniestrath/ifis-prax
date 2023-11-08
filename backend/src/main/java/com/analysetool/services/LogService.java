@@ -2731,12 +2731,10 @@ public class LogService {
                         postGeo.setAusland(postGeo.getAusland() + 1);
                     }
                 }
+                postGeoRepo.save(postGeo);
             }
         } catch(Exception e) {
             System.out.println(e.getMessage());
-        }
-        if(postGeo != null) {
-            postGeoRepo.save(postGeo);
         }
     }
 
@@ -2774,12 +2772,10 @@ public class LogService {
                         userGeo.setAusland(userGeo.getAusland() + 1);
                     }
                 }
+                userGeoRepo.save(userGeo);
             }
         } catch(Exception e) {
             System.out.println(e.getMessage());
-        }
-        if(userGeo != null) {
-            userGeoRepo.save(userGeo);
         }
     }
 }

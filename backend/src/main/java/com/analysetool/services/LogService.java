@@ -885,6 +885,7 @@ public class LogService {
 
         }
         updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors, viewsByLocation, viewsByHour);
+        updateGeo();
 
 
     }

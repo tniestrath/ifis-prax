@@ -2679,6 +2679,7 @@ public class LogService {
                 clicksByBundesland.setUniStatId(uniId);
                 clicksByBundesland.setBundesland(IPHelper.getCountryName(ip));
                 clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
+                clicksByBundeslandRepo.save(clicksByBundesland);
             }
             //Update ClicksByCountry
             clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null
@@ -2686,14 +2687,14 @@ public class LogService {
             clicksByCountry.setUniStatId(uniId);
             clicksByCountry.setCountry(IPHelper.getCountryName(ip));
             clicksByCountry.setClicks(clicksByCountry.getClicks() + 1);
-
+            clicksByCountryRepo.save(clicksByCountry);
 
         }
     }
 
     private void updateGeo() {
         updatePostGeo();
-        //updateUserGeo();
+        updateUserGeo();
     }
 
     private void updatePostGeo() {

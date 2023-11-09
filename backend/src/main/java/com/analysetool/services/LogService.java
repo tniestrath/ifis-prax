@@ -2674,7 +2674,7 @@ public class LogService {
                 clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                         ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
                 clicksByBundesland.setUniStatId(uniId);
-                clicksByBundesland.setBundesland(IPHelper.getCountryName(ip));
+                clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
                 clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
                 clicksByBundeslandRepo.save(clicksByBundesland);
             }

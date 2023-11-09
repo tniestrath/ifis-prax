@@ -117,6 +117,7 @@ public class SearchStatsController {
                         obj.put("Umkreis", a.getUmkreis());
                         obj.put("Count",a.getCount_found());
                 }
+                    anbieterSearches.remove(a);
                 }
                 Ergebnis.put(obj);
             }
@@ -153,6 +154,7 @@ public class SearchStatsController {
                         obj.put("Umkreis", a.getUmkreis());
                         obj.put("Count",a.getCount_found());
                     }
+                    anbieterSearches.remove(a);
                 }
                 Ergebnis.put(obj);
             }

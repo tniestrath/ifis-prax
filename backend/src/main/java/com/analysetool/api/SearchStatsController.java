@@ -162,5 +162,42 @@ public class SearchStatsController {
         return Ergebnis.toString();
     }
 
+    /**
+     * Endpoint, schlechte Ausreißer basierend auf den gefundenen Anbietern innerhalb eines Radius einer gewissen Anzahl an Anbietersuchen zu ermitteln.
+     *
+     * @return Ein JSON-String, der schlechte Ausreißer repräsentiert(nur wenige oder keine Anbieter).
+     * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
+     */
+    @GetMapping("/getBadOutlierForXProviderSearches")
+    public String getBadOutlierAllProviderSearches(@RequestParam int AnzahlDerZuÜberprüfendenSuchen) throws JSONException {
+        JSONArray Ergebnis = new JSONArray();
+        List<AnbieterSearch> anbieterSearches= anbieterSearchRepo.findLastX(AnzahlDerZuÜberprüfendenSuchen);
+        List<Integer> counts=new ArrayList<>();
+
+        for(AnbieterSearch a:anbieterSearches){
+            counts.add(a.getCount_found());}
+        double mittelwert = MathHelper.getMeanInt(counts);
+        //alle Ausreißer
+        List<Integer> Outlier = MathHelper.getOutliersInt(counts);
+
+        for(Integer i:Outlier) {
+
+            //schlechte Ausreißer ermitteln
+            if (i < mittelwert) {
+                JSONObject obj = new JSONObject();
+                for(AnbieterSearch a:anbieterSearches) {
+                    if (a.getCount_found() == i) {
+                        obj.put("Ort", a.getCity_name());
+                        obj.put("Umkreis", a.getUmkreis());
+                        obj.put("Count",a.getCount_found());
+                    }
+                    anbieterSearches.remove(a);
+                }
+                Ergebnis.put(obj);
+            }
+        }
+        return Ergebnis.toString();
+    }
+
 }
 

@@ -54,5 +54,6 @@
   left: 0;
   height: 5px;
   width: 10%;
+  border-radius: 5px;
   background-color: #7a1833;
 }

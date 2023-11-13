@@ -1284,6 +1284,7 @@ public class LogService {
                     }
                 } catch (Exception e) {
                     System.out.println("USERVIEW EXCEPTION BEI: " + line);
+                    e.printStackTrace();
                 }
                 break;
             case "main":

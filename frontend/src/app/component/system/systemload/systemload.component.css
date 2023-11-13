@@ -27,7 +27,7 @@
 .systemload-content p{
   margin: 0;
   padding: 5px;
-  font-size: calc(.5vh + .5vw);
+  font-size: calc(.6vh + .6vw);
   text-align: center;
 }
 canvas{

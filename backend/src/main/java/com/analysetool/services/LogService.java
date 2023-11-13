@@ -2709,7 +2709,9 @@ public class LogService {
                 for (int i = 0; i < json.length(); i++) {
                     if (IPHelper.getCountryISO((String) json.get(i)).equals("DE")) {
                         String subISO = IPHelper.getSubISO((String) json.get(i));
-                        if (subISO.equals("HH")) {
+                        if(subISO == null) {
+                            System.out.println(json.get(i));
+                        } else if (subISO.equals("HH")) {
                             postGeo.setHh(postGeo.getHh() + 1);
                         } else if (subISO.equals("HB")) {
                             postGeo.setHb(postGeo.getHb() + 1);

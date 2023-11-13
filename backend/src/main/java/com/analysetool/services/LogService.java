@@ -2711,7 +2711,7 @@ public class LogService {
                         if (IPHelper.getCountryISO((String) json.get(i)).equals("DE")) {
                             String subISO = IPHelper.getSubISO((String) json.get(i));
                             if (subISO == null) {
-                                System.out.println(json.get(i));
+                                System.out.println("Folgende IP ist regionslos" + json.get(i));
                             } else if (subISO.equals("HH")) {
                                 postGeo.setHh(postGeo.getHh() + 1);
                             } else if (subISO.equals("HB")) {
@@ -2750,6 +2750,8 @@ public class LogService {
                         } else {
                             postGeo.setAusland(postGeo.getAusland() + 1);
                         }
+                    } else {
+                        System.out.println("Diese IP ist landlos" + json.get(i));
                     }
                 }
                 postGeoRepo.save(postGeo);

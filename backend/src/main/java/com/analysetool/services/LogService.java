@@ -2646,7 +2646,7 @@ public class LogService {
     }
 
     private void updateIPsByUser(String ip, long id) throws JSONException {
-        if(userStatsRepo.findById((int)id).isPresent()) {
+        if(userStatsRepo.findByUserId(id) != null) {
             if(iPsByUserRepository.getByID(id) != null) {
                 IPsByUser iPsByUser = iPsByUserRepository.getByID(id);
                 JSONArray obj = new JSONArray(iPsByUser.getIps());

@@ -43,3 +43,16 @@
 .nav-element:hover{
   background-color: #EFEFEF;
 }
+
+#loading-bar{
+  position: absolute;
+  width: 100%;
+  height: 5px;
+}
+#loading-bar-progress{
+  position: absolute;
+  left: 0;
+  height: 5px;
+  width: 10%;
+  background-color: #7a1833;
+}

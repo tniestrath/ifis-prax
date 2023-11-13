@@ -16,6 +16,7 @@ export class HeaderComponent implements AfterViewInit{
   navElementsBackup = ["Overview", "Posts", "Tags", "Users"];
   navElements = this.navElementsBackup;
 
+  loadingBar_process : any;
 
   constructor(private cs : CookieService, private db : DbService) {
     this.navElements = [];
@@ -29,6 +30,7 @@ export class HeaderComponent implements AfterViewInit{
         SysVars.login.next(res);
         SysVars.USER_ID = "0";
         SysVars.ADMIN = true;
+        this.stopAndHideLoadingBar();
       })
     })
 
@@ -37,11 +39,12 @@ export class HeaderComponent implements AfterViewInit{
       cs.set("user", user.id + ":" + user.displayName);
       this.selected.next("Overview");
       SysVars.USER_ID = "0";
+      this.stopAndHideLoadingBar();
     })
   }
 
   ngOnInit(): void {
-
+    this.showAndStartLoadingBar();
   }
 
   setSelected(page : string){
@@ -50,5 +53,47 @@ export class HeaderComponent implements AfterViewInit{
 
   ngAfterViewInit(): void {
     this.selected.next("Landing");
+  }
+
+  hideLoadingBar(){
+    let loadingBar = document.getElementById("loading-bar");
+    // @ts-ignore
+    loadingBar.style.display = "none";
+  }
+  showLoadingbar(){
+    let loadingBar = document.getElementById("loading-bar");
+    // @ts-ignore
+    loadingBar.style.display = "block";
+  }
+  startLoadingBar(){
+    let loadingBar = document.getElementById("loading-bar");
+    let loadingBarProgress = document.getElementById("loading-bar-progress");
+    // @ts-ignore
+    let progress = -loadingBarProgress.clientWidth;
+    // @ts-ignore
+    loadingBar.style.display = "block";
+    this.loadingBar_process = setInterval(() => {
+      if (loadingBarProgress != null){
+        loadingBarProgress.style.left = (progress++) + "px";
+
+        if (progress > document.body.clientWidth){
+          progress = -loadingBarProgress.clientWidth;
+        }
+      }
+
+    }, 4);
+  }
+  stopLoadingBar(){
+    clearInterval(this.loadingBar_process);
+  }
+
+  stopAndHideLoadingBar(){
+    this.stopLoadingBar();
+    this.hideLoadingBar();
+  }
+
+  showAndStartLoadingBar(){
+    this.startLoadingBar();
+    this.showLoadingbar();
   }
 }

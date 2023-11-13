@@ -2647,15 +2647,15 @@ public class LogService {
 
     private void updateIPsByUser(String ip, long id) throws JSONException {
         if(userStatsRepo.findByUserId(id) != null) {
-            if(iPsByUserRepository.getByID(id) != null) {
-                IPsByUser iPsByUser = iPsByUserRepository.getByID(id);
+            if(iPsByUserRepository.getByUserID(id) != null) {
+                IPsByUser iPsByUser = iPsByUserRepository.getByUserID(id);
                 JSONArray obj = new JSONArray(iPsByUser.getIps());
                 obj.put(ip);
                 iPsByUser.setIps(obj.toString());
                 iPsByUserRepository.save(iPsByUser);
             } else {
                 IPsByUser iPsByUser = new IPsByUser();
-                iPsByUser.setUserId(id);
+                iPsByUser.setUser_id(id);
                 JSONArray array = new JSONArray();
                 array.put(ip);
                 iPsByUser.setIps(array.toString());
@@ -2765,8 +2765,8 @@ public class LogService {
         System.out.println("USER GEO UPDATE");
         try {
             for (IPsByUser user : iPsByUserRepository.findAll()) {
-                userGeo = userGeoRepo.findByUserId(user.getUserId()) == null ? new UserGeo() : userGeoRepo.findByUserId(user.getUserId());
-                userGeo.setUser_id(user.getUserId());
+                userGeo = userGeoRepo.findByUserId(user.getUser_id()) == null ? new UserGeo() : userGeoRepo.findByUserId(user.getUser_id());
+                userGeo.setUser_id(user.getUser_id());
                 userGeo.setUniStatId(uniRepo.getSecondLastUniStats().get(1).getId());
                 JSONArray json = new JSONArray(user.getIps());
                 for (int i = 0; i < json.length(); i++) {

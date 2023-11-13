@@ -2700,6 +2700,7 @@ public class LogService {
         PostGeo postGeo = null;
         System.out.println("POST GEO UPDATE");
         try {
+            System.out.println(iPsByPostRepository.findAll().size());
             for (IPsByPost post : iPsByPostRepository.findAll()) {
                 System.out.println(post.getPost_id());
                 postGeo = postGeoRepo.findByPostId(post.getPost_id()) == null ? new PostGeo() : postGeoRepo.findByPostId(post.getPost_id());

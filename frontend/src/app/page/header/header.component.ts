@@ -80,7 +80,6 @@ export class HeaderComponent implements AfterViewInit{
       this.loadingBar_process = setInterval(() => {
         if (loadingBarProgress != null){
           loadingBarProgress.style.left = (progress++) + "px";
-
           if (progress > document.body.clientWidth){
             progress = -loadingBarProgress.clientWidth;
           }

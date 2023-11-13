@@ -16,7 +16,7 @@ export class HeaderComponent implements AfterViewInit{
   navElementsBackup = ["Overview", "Posts", "Tags", "Users"];
   navElements = this.navElementsBackup;
 
-  loadingBar_process : any;
+  loadingBar_process : any = null;
 
   constructor(private cs : CookieService, private db : DbService) {
     this.navElements = [];
@@ -45,6 +45,10 @@ export class HeaderComponent implements AfterViewInit{
 
   ngOnInit(): void {
     this.showAndStartLoadingBar();
+    this.db.status.subscribe(status => {
+      if (status == 0) this.stopAndHideLoadingBar();
+      if (status == 1) this.showAndStartLoadingBar();
+    })
   }
 
   setSelected(page : string){
@@ -72,19 +76,22 @@ export class HeaderComponent implements AfterViewInit{
     let progress = -loadingBarProgress.clientWidth;
     // @ts-ignore
     loadingBar.style.display = "block";
-    this.loadingBar_process = setInterval(() => {
-      if (loadingBarProgress != null){
-        loadingBarProgress.style.left = (progress++) + "px";
+    if (this.loadingBar_process == null){
+      this.loadingBar_process = setInterval(() => {
+        if (loadingBarProgress != null){
+          loadingBarProgress.style.left = (progress++) + "px";
 
-        if (progress > document.body.clientWidth){
-          progress = -loadingBarProgress.clientWidth;
+          if (progress > document.body.clientWidth){
+            progress = -loadingBarProgress.clientWidth;
+          }
         }
-      }
 
-    }, 4);
+      }, 4);
+    }
   }
   stopLoadingBar(){
     clearInterval(this.loadingBar_process);
+    this.loadingBar_process = null;
   }
 
   stopAndHideLoadingBar(){

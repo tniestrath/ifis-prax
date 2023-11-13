@@ -103,7 +103,7 @@ export class DbService {
   }
   setFinished(html_code : number){
     this.requestCount--;
-    if (html_code > 200 && html_code < 400 && this.requestCount == 0){
+    if (html_code >= 200 && html_code < 400 && this.requestCount == 0){
       this.setStatus(0);
     }
   }

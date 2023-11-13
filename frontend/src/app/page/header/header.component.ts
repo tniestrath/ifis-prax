@@ -84,7 +84,6 @@ export class HeaderComponent implements AfterViewInit{
             progress = -loadingBarProgress.clientWidth;
           }
         }
-
       }, 4);
     }
   }

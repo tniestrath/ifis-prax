@@ -1,18 +1,18 @@
 package com.analysetool.api;
 
+import com.analysetool.modells.AnbieterSearch;
 import com.analysetool.modells.SearchStats;
+import com.analysetool.repositories.AnbieterSearchRepository;
 import com.analysetool.repositories.SearchStatsRepository;
+import com.analysetool.util.MathHelper;
 import org.json.JSONArray;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.analysetool.modells.AnbieterSearch;
-import com.analysetool.repositories.AnbieterSearchRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.analysetool.util.MathHelper;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -96,7 +96,7 @@ public class SearchStatsController {
      */
     @GetMapping("/getBadOutlierLast15ProviderSearches")
     public String getBadOutlierLast15ProviderSearches() throws JSONException {
-        JSONArray Ergebnis = new JSONArray();
+        /*JSONArray Ergebnis = new JSONArray();
         List<AnbieterSearch> anbieterSearches= anbieterSearchRepo.findTop15ById();
         List<Integer> counts=new ArrayList<>();
 
@@ -122,7 +122,9 @@ public class SearchStatsController {
                 Ergebnis.put(obj);
             }
         }
-        return Ergebnis.toString();
+        return Ergebnis.toString(); */
+        return  "Tim, bitte nur Code hochladen der auch funktioniert KEKW - findTop15ById erwartet eine Id, du gibst ihm aber keine, UND bei findLastX funktioniert" +
+                "die Logik mit Limit nicht. ChatGPT lügt dich an.";
     }
 
     /**
@@ -164,12 +166,13 @@ public class SearchStatsController {
 
     /**
      * Endpoint, schlechte Ausreißer basierend auf den gefundenen Anbietern innerhalb eines Radius einer gewissen Anzahl an Anbietersuchen zu ermitteln.
-     * @param 0 returned alle Suchen
+     * @param AnzahlDerZuUeberpruefendenSuchen returned alle Suchen
      * @return Ein JSON-String, der schlechte Ausreißer repräsentiert(nur wenige oder keine Anbieter).
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
     @GetMapping("/getBadOutlierForXProviderSearches")
     public String getBadOutlierAllProviderSearches(@RequestParam int AnzahlDerZuUeberpruefendenSuchen) throws JSONException {
+        /*
         JSONArray Ergebnis = new JSONArray();
 
         List<AnbieterSearch> anbieterSearches = new ArrayList<>();
@@ -202,6 +205,9 @@ public class SearchStatsController {
             }
         }
         return Ergebnis.toString();
+         */
+        return  "Tim, bitte nur Code hochladen der auch funktioniert KEKW - findTop15ById erwartet eine Id, du gibst ihm aber keine, UND bei findLastX funktioniert" +
+                "die Logik mit Limit nicht. ChatGPT lügt dich an. 2";
     }
 
 }

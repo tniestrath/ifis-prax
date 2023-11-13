@@ -13,17 +13,17 @@ public class IPsByUser implements Serializable {
     private Long id;
 
     @Column(name="userId")
-    private Long user_id;
+    private Long userId;
 
     @Column(name = "ips")
     private String ips;
 
-    public Long getUser_id() {
-        return user_id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser_id(Long post_id) {
-        this.user_id = post_id;
+    public void setUserId(Long post_id) {
+        this.userId = post_id;
     }
 
     public String getIps() {

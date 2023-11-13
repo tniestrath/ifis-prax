@@ -344,6 +344,7 @@ public class LogService {
         saveStatsToDatabase();
 
         sysVarRepo.save(SystemVariabeln);
+        updateGeo();
     }
 
 
@@ -1039,10 +1040,11 @@ public class LogService {
                     catList.add(new UniversalCategoriesDLC());
                     catList.add(new UniversalCategoriesDLC());
                     catList.add(new UniversalCategoriesDLC());
-
+                    int i = 1;
                     for(UniversalCategoriesDLC cat : catList) {
                         cat.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
-                        cat.setStunde(curHour);
+                        cat.setStunde(i);
+                        i++;
                         //Create entries for users.
                         cat.setBesucherGlobal(usersGlobal / 4);
                         cat.setBesucherArticle(userArticle / 4);
@@ -2674,7 +2676,7 @@ public class LogService {
                 clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                         ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
                 clicksByBundesland.setUniStatId(uniId);
-                clicksByBundesland.setBundesland(IPHelper.getCountryName(ip));
+                clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
                 clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
                 clicksByBundeslandRepo.save(clicksByBundesland);
             }

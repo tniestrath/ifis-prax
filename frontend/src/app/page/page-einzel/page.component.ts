@@ -130,7 +130,6 @@ export class PageComponent implements OnInit {
     this.pageSelected.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
       console.log(page);
-      this.db.resetStatus();
       this.displayContent = "grid";
       switch (page) {
         case "Users":{
@@ -141,22 +140,27 @@ export class PageComponent implements OnInit {
             this.displayContent = "none";
             this.loadSelector(this.filterValues);
           }
+          this.db.resetStatus();
           break;
         }
         case "Tags":{
           this.cardsLoaded.next(this.getTagsPageCards());
+          this.db.resetStatus();
           break;
         }
         case "Posts":{
           this.cardsLoaded.next(this.getPostsPageCards());
+          this.db.resetStatus();
           break;
         }
         case "Overview":{
           this.cardsLoaded.next(this.getAdminPageCards());
+          this.db.resetStatus();
           break;
         }
         case "Statistics":{
           this.cardsLoaded.next(this.getStatsPageCards());
+          this.db.resetStatus();
           break;
         }
         case "Landing":{

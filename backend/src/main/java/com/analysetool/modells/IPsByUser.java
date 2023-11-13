@@ -22,8 +22,8 @@ public class IPsByUser implements Serializable {
         return userId;
     }
 
-    public void setUserId(Long post_id) {
-        this.userId = post_id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getIps() {

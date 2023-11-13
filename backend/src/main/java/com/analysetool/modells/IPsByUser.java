@@ -12,18 +12,18 @@ public class IPsByUser implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="userId")
-    private Long userId;
+    @Column(name="user_id")
+    private Long user_id;
 
     @Column(name = "ips")
     private String ips;
 
-    public Long getUserId() {
-        return userId;
+    public Long getUser_id() {
+        return user_id;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser_id(Long userId) {
+        this.user_id = userId;
     }
 
     public String getIps() {

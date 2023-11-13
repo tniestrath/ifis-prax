@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IPsByUserRepository extends JpaRepository<IPsByUser, Long> {
 
-    @Query("SELECT u FROM IPsByUser u WHERE u.userId=:userid")
+    @Query("SELECT u FROM IPsByUser u WHERE u.user_id=:userid")
     public IPsByUser getByUserID(long userid);
 }

@@ -344,6 +344,7 @@ public class LogService {
         saveStatsToDatabase();
 
         sysVarRepo.save(SystemVariabeln);
+        updateGeo();
     }
 
 
@@ -1039,10 +1040,11 @@ public class LogService {
                     catList.add(new UniversalCategoriesDLC());
                     catList.add(new UniversalCategoriesDLC());
                     catList.add(new UniversalCategoriesDLC());
-
+                    int i = 1;
                     for(UniversalCategoriesDLC cat : catList) {
                         cat.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
-                        cat.setStunde(curHour);
+                        cat.setStunde(i);
+                        i++;
                         //Create entries for users.
                         cat.setBesucherGlobal(usersGlobal / 4);
                         cat.setBesucherArticle(userArticle / 4);

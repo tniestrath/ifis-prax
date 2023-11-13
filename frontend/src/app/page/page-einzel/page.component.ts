@@ -129,7 +129,8 @@ export class PageComponent implements OnInit {
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
-      console.log(page + " : "+ SysVars.USER_ID);
+      console.log(page);
+      this.db.resetStatus();
       this.displayContent = "grid";
       switch (page) {
         case "Users":{

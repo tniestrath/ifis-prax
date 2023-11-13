@@ -94,18 +94,22 @@ export class DbService {
     return DbService.host + DbService.port + prompt;
   }
 
-  setStatus(status_code : number){
+  private setStatus(status_code : number){
     this.status.next(status_code);
   }
-  setLoading(){
+  private setLoading(){
     this.requestCount++;
     this.setStatus(1);
   }
-  setFinished(html_code : number){
-    this.requestCount--;
+  private setFinished(html_code : number){
     if (html_code >= 200 && html_code < 400 && this.requestCount == 0){
       this.setStatus(0);
+      this.requestCount--;
     }
+  }
+  public resetStatus(){
+    this.requestCount = 0;
+    this.setStatus(0);
   }
 
   async login(username : string, userpass : string) {

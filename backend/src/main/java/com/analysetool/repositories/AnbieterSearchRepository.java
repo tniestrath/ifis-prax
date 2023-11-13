@@ -11,8 +11,10 @@ import java.util.List;
 public interface AnbieterSearchRepository extends JpaRepository<AnbieterSearch, Long> {
 
 
-    List<AnbieterSearch>findTop15ById();
-    @Query(value = "SELECT * FROM AnbieterSearch ORDER BY id DESC LIMIT :x", nativeQuery = true)
-    List<AnbieterSearch> findLastX(int x);
+    List<AnbieterSearch>findTop15ById(Long id);
+
+    //Limit funktioniert in Queries so nicht, ChatGPT lügt. Limit lässt sich nicht als Variable angeben.
+    @Query(value = "SELECT u FROM AnbieterSearch u ORDER BY u.id DESC LIMIT 10")
+    List<AnbieterSearch> findLast10();
 
 }

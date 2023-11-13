@@ -2708,24 +2708,41 @@ public class LogService {
                 postGeo.setUniStatId(uniRepo.getSecondLastUniStats().get(1).getId());
                 for (int i = 0; i < json.length(); i++) {
                     if (IPHelper.getCountryISO((String) json.get(i)).equals("DE")) {
-                        switch (IPHelper.getSubISO((String) json.get(i))) {
-                            case "HH" -> postGeo.setHh(postGeo.getHh() + 1);
-                            case "HB" -> postGeo.setHb(postGeo.getHb() + 1);
-                            case "BE" -> postGeo.setBe(postGeo.getBe() + 1);
-                            case "MV" -> postGeo.setMv(postGeo.getMv() + 1);
-                            case "BB" -> postGeo.setBb(postGeo.getBb() + 1);
-                            case "SN" -> postGeo.setSn(postGeo.getSn() + 1);
-                            case "ST" -> postGeo.setSt(postGeo.getSt() + 1);
-                            case "BY" -> postGeo.setBye(postGeo.getBye() + 1);
-                            case "SL" -> postGeo.setSl(postGeo.getSl() + 1);
-                            case "RP" -> postGeo.setRp(postGeo.getRp() + 1);
-                            case "SH" -> postGeo.setSh(postGeo.getSh() + 1);
-                            case "TH" -> postGeo.setTh(postGeo.getTh() + 1);
-                            case "NB" -> postGeo.setNb(postGeo.getNb() + 1);
-                            case "HE" -> postGeo.setHe(postGeo.getHe() + 1);
-                            case "BW" -> postGeo.setBW(postGeo.getBW() + 1);
-                            case "NW" -> postGeo.setNW(postGeo.getNW() + 1);
-                            default -> System.out.println("Unbekanntes Bundesland entdeckt");
+                        String subISO = IPHelper.getSubISO((String) json.get(i));
+                        if (subISO.equals("HH")) {
+                            postGeo.setHh(postGeo.getHh() + 1);
+                        } else if (subISO.equals("HB")) {
+                            postGeo.setHb(postGeo.getHb() + 1);
+                        } else if (subISO.equals("BE")) {
+                            postGeo.setBe(postGeo.getBe() + 1);
+                        } else if (subISO.equals("MV")) {
+                            postGeo.setMv(postGeo.getMv() + 1);
+                        } else if (subISO.equals("BB")) {
+                            postGeo.setBb(postGeo.getBb() + 1);
+                        } else if (subISO.equals("SN")) {
+                            postGeo.setSn(postGeo.getSn() + 1);
+                        } else if (subISO.equals("ST")) {
+                            postGeo.setSt(postGeo.getSt() + 1);
+                        } else if (subISO.equals("BY")) {
+                            postGeo.setBye(postGeo.getBye() + 1);
+                        } else if (subISO.equals("SL")) {
+                            postGeo.setSl(postGeo.getSl() + 1);
+                        } else if (subISO.equals("RP")) {
+                            postGeo.setRp(postGeo.getRp() + 1);
+                        } else if (subISO.equals("SH")) {
+                            postGeo.setSh(postGeo.getSh() + 1);
+                        } else if (subISO.equals("TH")) {
+                            postGeo.setTh(postGeo.getTh() + 1);
+                        } else if (subISO.equals("NB")) {
+                            postGeo.setNb(postGeo.getNb() + 1);
+                        } else if (subISO.equals("HE")) {
+                            postGeo.setHe(postGeo.getHe() + 1);
+                        } else if (subISO.equals("BW")) {
+                            postGeo.setBW(postGeo.getBW() + 1);
+                        } else if (subISO.equals("NW")) {
+                            postGeo.setNW(postGeo.getNW() + 1);
+                        } else {
+                            System.out.println("Unbekanntes Bundesland entdeckt");
                         }
                     } else {
                         postGeo.setAusland(postGeo.getAusland() + 1);

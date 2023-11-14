@@ -87,6 +87,7 @@ export class DbService {
 
   public status : Subject<number> = new Subject<number>();
   private requestCount = 0;
+  private failedRequestCount = 0;
 
   constructor(private sanitizer : DomSanitizer) { }
 
@@ -102,7 +103,7 @@ export class DbService {
     this.setStatus(1);
   }
   private setFinished(html_code : number, url : string){
-    console.log("ERR: " + html_code + " @ " + url);
+    console.log("STATUS: " + html_code + " @ " + url);
     if (html_code >= 200 && html_code < 400){
       this.requestCount--;
       if (this.requestCount <= 0){
@@ -125,7 +126,7 @@ export class DbService {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGINNAME) + login, {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USER_BY_LOGINNAME); return res.json()});
   }
-  async getUserById(id : string){
+  async getUserById(id : string) : Promise<User>{
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_ID) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USER_BY_ID); return res.json()});
   }
@@ -365,7 +366,19 @@ export class DbService {
   }
   async getSystemUsageNow() : Promise<{cpu : number, memory : number, networkSent : number, networkRecv : number}>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE_NOW), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_SYSTEM_USAGE_NOW); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE_NOW), {credentials: "include"}).then(res => {
+      this.setFinished(res.status, dbUrl.GET_SYSTEM_USAGE_NOW);
+
+      if (res.status < 200 || res.status >= 400){
+        this.failedRequestCount++;
+        if (this.failedRequestCount >= 5) {
+          this.failedRequestCount = 0;
+          location.reload();
+        }
+      }
+
+      return res.json()
+    });
   }
 
   async getEvents() : Promise<string[]> {

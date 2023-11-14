@@ -36,7 +36,7 @@ export class HeaderComponent implements AfterViewInit{
     })
 
     SysVars.login.subscribe(user => {
-       this.navElements = this.navElementsBackup;
+      this.navElements = this.navElementsBackup;
       cs.set("user", user.id + ":" + user.displayName);
       this.selected.next("Overview");
       SysVars.USER_ID = "0";

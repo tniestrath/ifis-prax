@@ -47,7 +47,7 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
         this.cdr.detectChanges();
       })
     })
-  this.setToolTip("Hier werden");
+  this.setToolTip("Hier werden die Menge an Posts nach ihrem Typen aufgeschlüsselt.");
   }
 
   createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){

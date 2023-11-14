@@ -1,8 +1,7 @@
 package com.analysetool.api;
-import com.analysetool.Application;
+
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
-
 import com.analysetool.util.DashConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONArray;
@@ -11,20 +10,21 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
-import static com.analysetool.util.MapHelper.*;
+import static com.analysetool.util.MapHelper.mergeLocationMaps;
+import static com.analysetool.util.MapHelper.mergeTimeMaps;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -108,16 +108,21 @@ public class UserController {
         JSONArray response = new JSONArray();
         for (WPUser i : list) {
             JSONObject obj = new JSONObject();
+            obj.put("id",i.getId());
+            obj.put("email",i.getEmail());
+            obj.put("displayName",i.getNicename());
             if(userStatsRepository.existsByUserId(i.getId())){
                 UserStats statsUser = userStatsRepository.findByUserId(i.getId());
-                obj.put("id",i.getId());
-                obj.put("email",i.getEmail());
-                obj.put("displayName",i.getDisplayName());
                 obj.put("profileViews", statsUser.getProfileView());
                 obj.put("postViews", postController.getViewsOfUserById(i.getId()));
                 obj.put("postCount", postController.getPostCountOfUserById(i.getId()));
                 obj.put ("performance",statsUser.getAveragePerformance());
 
+            } else {
+                obj.put("profileViews", 0);
+                obj.put("postViews",0);
+                obj.put("postCount",0);
+                obj.put ("performance",0);
             }
             if (wpUserMetaRepository.existsByUserId(i.getId())){
                 String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(i.getId());
@@ -129,16 +134,8 @@ public class UserController {
                 if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
                 if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
                 if (wpUserMeta.contains("premium-anbieter-sponsoren")) obj.put("accountType", "sponsor");
-            }
-            else {obj.put("id",i.getId());
-                obj.put("email",i.getEmail());
-                obj.put("displayName",i.getNicename());
+            }else {
                 obj.put( "accountType" ,"undefined");
-                obj.put("profileViews", 0);
-                obj.put("postViews",0);
-                obj.put("postCount",0);
-                obj.put ("performance",0);
-
             }
             obj.put("usedPotential", getPotentialByID(Math.toIntExact(i.getId()), (String) obj.get("accountType")));
             response.put(obj);

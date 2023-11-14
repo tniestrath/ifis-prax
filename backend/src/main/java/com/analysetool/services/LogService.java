@@ -335,11 +335,6 @@ public class LogService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            endDay();
-        } catch(JSONException e) {
-            System.out.println("END DAY FAILED ------------------------------------");
-        }
         //setUniversalStats(SystemVariabeln);
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);

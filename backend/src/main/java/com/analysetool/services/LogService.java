@@ -2715,7 +2715,7 @@ public class LogService {
         try {
             for (IPsByPost post : iPsByPostRepository.findAll()) {
                 System.out.println(post.getPost_id());
-                postGeo = postGeoRepo.findByPostId(post.getPost_id()) == null ? new PostGeo() : postGeoRepo.findByPostId(post.getPost_id());
+                postGeo = postGeoRepo.findByPostIdAndUniStatId(post.getPost_id(), uniRepo.getLatestUniStat().getId()) == null ? new PostGeo() : postGeoRepo.findByPostIdAndUniStatId(post.getPost_id(), uniRepo.getLatestUniStat().getId());
                 postGeo.setPost_id(post.getPost_id());
                 JSONArray json = new JSONArray(post.getIps());
                 postGeo.setUniStatId(uniRepo.getSecondLastUniStats().get(1).getId());

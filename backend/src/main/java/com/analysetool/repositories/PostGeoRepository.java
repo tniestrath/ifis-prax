@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostGeoRepository extends JpaRepository<PostGeo, Long> {
 
-    @Query("SELECT u FROM PostGeo  u WHERE u.post_id=:postId")
-    public PostGeo findByPostId(long postId);
+    @Query("SELECT u FROM PostGeo  u WHERE u.post_id=:postId AND u.uniStatId=:uniStatId")
+    PostGeo findByPostIdAndUniStatId(long postId, int uniStatId);
 }

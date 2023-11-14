@@ -77,13 +77,13 @@ export class SearchbarComponent implements OnInit{
       this.onDbObjectSelected("0", "");
       SysVars.CURRENT_PAGE = "Users";
     } else {
-      this.cs.deleteAll();
+      this.cs.deleteAll("/");
       SysVars.WELCOME = true;
       location.reload();
     }
   }
   onLogoutClick() {
-    this.cs.deleteAll();
+    this.cs.deleteAll("/");
     SysVars.WELCOME = true;
     location.reload();
   }

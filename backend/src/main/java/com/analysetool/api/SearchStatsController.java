@@ -123,8 +123,7 @@ public class SearchStatsController {
             }
         }
         return Ergebnis.toString(); */
-        return  "Tim, bitte nur Code hochladen der auch funktioniert KEKW - findTop15ById erwartet eine Id, du gibst ihm aber keine, UND bei findLastX funktioniert" +
-                "die Logik mit Limit nicht. ChatGPT lügt dich an.";
+        return  ":(";
     }
 
     /**
@@ -206,8 +205,7 @@ public class SearchStatsController {
         }
         return Ergebnis.toString();
          */
-        return  "Tim, bitte nur Code hochladen der auch funktioniert KEKW - findTop15ById erwartet eine Id, du gibst ihm aber keine, UND bei findLastX funktioniert" +
-                "die Logik mit Limit nicht. ChatGPT lügt dich an. 2";
+        return  ":(";
     }
 
 }

@@ -1244,9 +1244,20 @@ public class LogService {
 
     @Scheduled(cron = "0 20 0 * * ?")
     public void endDay() throws JSONException, ParseException {
-        updateClicksBy();
-        updateGeo();
+        try {
+            updateClicksBy();
+        } catch (Exception e) {
+            System.out.println("-------------------------------------------------------------FEHLER BEI UPDATE CLICKS");
+            e.printStackTrace();
+        }
+        try {
+            updateGeo();
+        } catch (Exception e) {
+        System.out.println("---------------------------------------------------------------------FEHLER BEI UPDATEGEO");
+        e.printStackTrace();
+        }
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+
         deleteOldIPs();
     }
 
@@ -2676,7 +2687,11 @@ public class LogService {
                 clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                         ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
                 clicksByBundesland.setUniStatId(uniId);
-                clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
+                if (IPHelper.getSubISO(ip) == null) {
+                    clicksByBundesland.setBundesland("Unbekannt");
+                } else {
+                    clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
+                }
                 clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
                 clicksByBundeslandRepo.save(clicksByBundesland);
             }

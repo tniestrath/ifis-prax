@@ -17,6 +17,7 @@ export class HeaderComponent implements AfterViewInit{
   navElements = this.navElementsBackup;
 
   loadingBar_process : any = null;
+  html_err_code : string = "";
 
   constructor(private cs : CookieService, private db : DbService) {
     this.navElements = [];
@@ -47,7 +48,8 @@ export class HeaderComponent implements AfterViewInit{
     this.showAndStartLoadingBar();
     this.db.status.subscribe(status => {
       if (status == 0) this.stopAndHideLoadingBar();
-      if (status == 1) this.showAndStartLoadingBar();
+      else if (status == 1) this.showAndStartLoadingBar();
+      else this.setLoadingBarErrorCode(status);
     })
   }
 
@@ -63,11 +65,15 @@ export class HeaderComponent implements AfterViewInit{
     let loadingBar = document.getElementById("loading-bar");
     // @ts-ignore
     loadingBar.style.display = "none";
+
+    return loadingBar;
   }
   showLoadingbar(){
     let loadingBar = document.getElementById("loading-bar");
     // @ts-ignore
     loadingBar.style.display = "block";
+
+    return loadingBar;
   }
   startLoadingBar(){
     let loadingBar = document.getElementById("loading-bar");
@@ -86,6 +92,7 @@ export class HeaderComponent implements AfterViewInit{
         }
       }, 4);
     }
+    return {loadingBar, loadingBarProgress};
   }
   stopLoadingBar(){
     clearInterval(this.loadingBar_process);
@@ -100,5 +107,11 @@ export class HeaderComponent implements AfterViewInit{
   showAndStartLoadingBar(){
     this.startLoadingBar();
     this.showLoadingbar();
+  }
+
+  setLoadingBarErrorCode(html_err_code : string | number){
+    // @ts-ignore
+    this.startLoadingBar();
+    this.html_err_code = "Err: " + String(html_err_code);
   }
 }

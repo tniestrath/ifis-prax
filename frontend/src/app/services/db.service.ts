@@ -103,11 +103,14 @@ export class DbService {
     this.setStatus(1);
   }
   private setFinished(html_code : number){
+    console.log(html_code);
     if (html_code >= 200 && html_code < 400){
       this.requestCount--;
       if (this.requestCount <= 0){
         this.setStatus(0);
       }
+    } else {
+      this.setStatus(html_code);
     }
   }
   public resetStatus(){
@@ -192,16 +195,14 @@ export class DbService {
 
   async getUserImgSrc(id : string){
     this.setLoading();
-    const blob = await fetch(DbService.getUrl(dbUrl.GET_USER_IMG) + id).then(res => res.blob());
+    const blob = await fetch(DbService.getUrl(dbUrl.GET_USER_IMG) + id).then(res => {this.setFinished(res.status); return res.blob()});
     const reader = new FileReader();
     reader.readAsDataURL(blob);
     return new Promise<string>((resolve, reject) => {
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
-        this.setFinished(200);
           resolve(reader.result);
         } else {
-        this.setFinished(500);
           reject(new Error('Failed to create data URL from blob'));
         }
       };

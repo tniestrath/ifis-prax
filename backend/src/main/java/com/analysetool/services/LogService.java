@@ -2685,13 +2685,12 @@ public class LogService {
                 clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                         ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
                 clicksByBundesland.setUniStatId(uniId);
-                if (IPHelper.getSubISO(ip) == null) {
-                    clicksByBundesland.setBundesland("Unbekannt");
-                } else {
+                if (IPHelper.getSubISO(ip) != null) {
                     clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
+                    clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
+                    clicksByBundeslandRepo.save(clicksByBundesland);
                 }
-                clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
-                clicksByBundeslandRepo.save(clicksByBundesland);
+
             }
             //Update ClicksByCountry
             clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null
@@ -2749,7 +2748,7 @@ public class LogService {
                                 postGeo.setSh(postGeo.getSh() + 1);
                             } else if (subISO.equals("TH")) {
                                 postGeo.setTh(postGeo.getTh() + 1);
-                            } else if (subISO.equals("NB")) {
+                            } else if (subISO.equals("NI")) {
                                 postGeo.setNb(postGeo.getNb() + 1);
                             } else if (subISO.equals("HE")) {
                                 postGeo.setHe(postGeo.getHe() + 1);

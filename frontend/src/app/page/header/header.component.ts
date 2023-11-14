@@ -112,6 +112,10 @@ export class HeaderComponent implements AfterViewInit{
   setLoadingBarErrorCode(html_err_code : string | number){
     // @ts-ignore
     this.startLoadingBar();
-    this.html_err_code = "Err: " + String(html_err_code);
+    if (html_err_code != undefined){
+      this.html_err_code = "Err: " + String(html_err_code);
+    } else {
+      this.html_err_code = "Err: Timed Out";
+    }
   }
 }

@@ -95,7 +95,6 @@ export class DbService {
   }
 
   private setStatus(status_code : number){
-    console.log("REQUESTS ACTIVE: " + this.requestCount);
     this.status.next(status_code);
   }
   private setLoading(){
@@ -103,7 +102,7 @@ export class DbService {
     this.setStatus(1);
   }
   private setFinished(html_code : number){
-    console.log(html_code);
+    console.log("ERR: " + html_code);
     if (html_code >= 200 && html_code < 400){
       this.requestCount--;
       if (this.requestCount <= 0){

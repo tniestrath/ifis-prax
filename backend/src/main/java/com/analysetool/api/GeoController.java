@@ -1,6 +1,8 @@
 package com.analysetool.api;
 
+import com.analysetool.modells.ClicksByBundesland;
 import com.analysetool.modells.PostGeo;
+import com.analysetool.modells.UserGeo;
 import com.analysetool.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -88,13 +90,12 @@ public class GeoController {
             liste.add(geo.getSh());
             liste.add(geo.getTh());
             liste.add(geo.getNb());
-            liste.add(geo.getHb());
             liste.add(geo.getHe());
             liste.add(geo.getBW());
             liste.add(geo.getNW());
             liste.add(geo.getAusland());
         }
-        for(LocalDate date : dateStart.datesUntil(dateEnd).toList()) {
+        for(LocalDate date : dateStart.plusDays(1).datesUntil(dateEnd).toList()) {
             geo = postGeoRepo.findByPostIdAndUniStatId(id, uniStatRepo.getByDatum(date).getId());
             if(geo != null) {
                 liste.set(0, geo.getHh() + liste.get(0));
@@ -110,13 +111,100 @@ public class GeoController {
                 liste.set(10, geo.getSh() + liste.get(10));
                 liste.set(11, geo.getTh() + liste.get(11));
                 liste.set(12, geo.getNb() + liste.get(12));
-                liste.set(13, geo.getHb() + liste.get(13));
-                liste.set(14, geo.getHe() + liste.get(14));
-                liste.set(15, geo.getBW() + liste.get(15));
-                liste.set(16, geo.getNW() + liste.get(16));
-                liste.set(17, geo.getAusland() + liste.get(17));
+                liste.set(14, geo.getHe() + liste.get(13));
+                liste.set(15, geo.getBW() + liste.get(14));
+                liste.set(16, geo.getNW() + liste.get(15));
+                liste.set(17, geo.getAusland() + liste.get(16));
             }
 
+        }
+        return liste;
+    }
+
+
+    @GetMapping("/getUserGeoByIDAndDay")
+    public List<Integer> getUserGeoByIDAndDay(long id, String start, String end){
+        List<Integer> liste = new ArrayList<>();
+        LocalDate dateStart = Date.valueOf(start).toLocalDate();
+        LocalDate dateEnd = Date.valueOf(end).toLocalDate();
+
+        UserGeo geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.getByDatum(dateStart).getId());
+        if(geo != null) {
+            liste.add(geo.getHh());
+            liste.add(geo.getHb());
+            liste.add(geo.getBe());
+            liste.add(geo.getMv());
+            liste.add(geo.getBb());
+            liste.add(geo.getSn());
+            liste.add(geo.getSt());
+            liste.add(geo.getBye());
+            liste.add(geo.getSl());
+            liste.add(geo.getRp());
+            liste.add(geo.getSh());
+            liste.add(geo.getTh());
+            liste.add(geo.getNb());
+            liste.add(geo.getHe());
+            liste.add(geo.getBW());
+            liste.add(geo.getNW());
+            liste.add(geo.getAusland());
+        }
+        for(LocalDate date : dateStart.plusDays(1).datesUntil(dateEnd).toList()) {
+            geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.getByDatum(date).getId());
+            if(geo != null) {
+                liste.set(0, geo.getHh() + liste.get(0));
+                liste.set(1, geo.getHb() + liste.get(1));
+                liste.set(2, geo.getBe() + liste.get(2));
+                liste.set(3, geo.getMv() + liste.get(3));
+                liste.set(4, geo.getBb() + liste.get(4));
+                liste.set(5, geo.getSn() + liste.get(5));
+                liste.set(6, geo.getSt() + liste.get(6));
+                liste.set(7, geo.getBye() + liste.get(7));
+                liste.set(8, geo.getSl() + liste.get(8));
+                liste.set(9, geo.getRp() + liste.get(9));
+                liste.set(10, geo.getSh() + liste.get(10));
+                liste.set(11, geo.getTh() + liste.get(11));
+                liste.set(12, geo.getNb() + liste.get(12));
+                liste.set(14, geo.getHe() + liste.get(13));
+                liste.set(15, geo.getBW() + liste.get(14));
+                liste.set(16, geo.getNW() + liste.get(15));
+                liste.set(17, geo.getAusland() + liste.get(16));
+            }
+
+        }
+        return liste;
+    }
+
+    @GetMapping("/getTotalGermanGeoByDay")
+    public List<Integer> getTotalGermanGeoByDay(String start, String end) {
+        List<Integer> liste = new ArrayList<>();
+        LocalDate dateStart = Date.valueOf(start).toLocalDate();
+        LocalDate dateEnd = Date.valueOf(end).toLocalDate();
+
+        for(int i = 0; i < 16; i++) {
+            liste.add(0);
+        }
+
+        for(LocalDate date : dateStart.datesUntil(dateEnd).toList()) {
+            int uniId = uniStatRepo.getByDatum(date).getId();
+            for(ClicksByBundesland clicksByB : clicksByBundeslandRepo.getByUniID(uniId)) {
+                switch(clicksByB.getBundesland()) {
+                    case "HH" -> liste.set(0, liste.get(0) + clicksByB.getClicks());
+                    case "HB" -> liste.set(1, liste.get(1) + clicksByB.getClicks());
+                    case "BE" -> liste.set(2, liste.get(2) + clicksByB.getClicks());
+                    case "BB" -> liste.set(3, liste.get(3) + clicksByB.getClicks());
+                    case "SN" -> liste.set(4, liste.get(4) + clicksByB.getClicks());
+                    case "ST" -> liste.set(5, liste.get(5) + clicksByB.getClicks());
+                    case "BY" -> liste.set(6, liste.get(6) + clicksByB.getClicks());
+                    case "SL" -> liste.set(7, liste.get(7) + clicksByB.getClicks());
+                    case "RP" -> liste.set(8, liste.get(8) + clicksByB.getClicks());
+                    case "SH" -> liste.set(9, liste.get(9) + clicksByB.getClicks());
+                    case "TH" -> liste.set(10, liste.get(10) + clicksByB.getClicks());
+                    case "NI" -> liste.set(11, liste.get(11) + clicksByB.getClicks());
+                    case "HE" -> liste.set(13, liste.get(13) + clicksByB.getClicks());
+                    case "BW" -> liste.set(14, liste.get(14) + clicksByB.getClicks());
+                    case "NW" -> liste.set(15, liste.get(15) + clicksByB.getClicks());
+                }
+            }
         }
         return liste;
     }

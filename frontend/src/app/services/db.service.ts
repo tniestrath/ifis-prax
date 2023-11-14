@@ -101,8 +101,8 @@ export class DbService {
     this.requestCount++;
     this.setStatus(1);
   }
-  private setFinished(html_code : number){
-    console.log("ERR: " + html_code);
+  private setFinished(html_code : number, url : string){
+    console.log("ERR: " + html_code + " @ " + url);
     if (html_code >= 200 && html_code < 400){
       this.requestCount--;
       if (this.requestCount <= 0){
@@ -119,24 +119,24 @@ export class DbService {
 
   async login(username : string, userpass : string) {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.LOGIN).replace("USERNAME", username).replace("PASSWORD", userpass), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.blob()});
+    return await fetch(DbService.getUrl(dbUrl.LOGIN).replace("USERNAME", username).replace("PASSWORD", userpass), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.LOGIN); return res.blob()});
   }
   async getUserByLogin(login : string) : Promise<User> {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGINNAME) + login, {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_LOGINNAME) + login, {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USER_BY_LOGINNAME); return res.json()});
   }
   async getUserById(id : string){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_ID) + id, {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_ID) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USER_BY_ID); return res.json()});
   }
 
   async validate() : Promise<{"user_id":string}>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.VALIDATE), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.VALIDATE), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.VALIDATE); return res.json()});
   }
   async manualValidate(value : string) : Promise<number>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.MANUAL_VALIDATE).replace("VALUE", value), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.MANUAL_VALIDATE).replace("VALUE", value), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.MANUAL_VALIDATE); return res.json()});
   }
 
   async loadAllTags(){
@@ -148,26 +148,26 @@ export class DbService {
       for (let tag of res) {
         DbService.Tags.push(tag);
       }
-    this.setFinished(res.status);
+    this.setFinished(res.status, dbUrl.GET_TAGS_ALL);
     });
   }
   async getAllTagsWithRelevanceAndViews(){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL); return res.json()});
   }
 
   async getTagPostCount(id : string){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_TAG_POST_COUNT) + id, {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_TAG_POST_COUNT) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_TAG_POST_COUNT); return res.json()});
   }
   async getAllTagsPostCount(percentage : number) : Promise<Map<string, number>>{
     this.setLoading();
-    return await fetch(DbService.getUrl((dbUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL) + percentage) , {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl((dbUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL) + percentage) , {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL); return res.json()});
   }
 
   async getTagRanking() {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_TAG_RANKING), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_TAG_RANKING), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_TAG_RANKING); return res.json()});
   }
 
   async loadAllUsers() {
@@ -175,26 +175,25 @@ export class DbService {
     if (DbService.Users.length > 0){
       return;
     }
-    await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL), {credentials: "include"}).then(res => res.json()).then(res => {
+    await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL), {credentials: "include"}).then(res =>{this.setFinished(res.status, dbUrl.GET_USERS_ALL); return res.json()}).then(res => {
       for (let user of res) {
         DbService.Users.push(user);
       }
-    this.setFinished(res.status);
     });
   }
 
   async getUserPostsDay(id : string){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_PER_DAY) + id, {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_PER_DAY) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POSTS_PER_USER_PER_DAY); return res.json()});
   }
   async getUserPostsWithStats(id : string){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_WITH_STATS) + id, {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_WITH_STATS) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POSTS_PER_USER_WITH_STATS); return res.json()});
   }
 
   async getUserImgSrc(id : string){
     this.setLoading();
-    const blob = await fetch(DbService.getUrl(dbUrl.GET_USER_IMG) + id).then(res => {this.setFinished(res.status); return res.blob()});
+    const blob = await fetch(DbService.getUrl(dbUrl.GET_USER_IMG) + id).then(res => {this.setFinished(res.status, dbUrl.GET_USER_IMG); return res.blob()});
     const reader = new FileReader();
     reader.readAsDataURL(blob);
     return new Promise<string>((resolve, reject) => {
@@ -213,37 +212,37 @@ export class DbService {
 
   async getUserClicks(id : string){
     this.setLoading();
-    return fetch(DbService.getUrl(dbUrl.GET_USER_CLICKS + id) , {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()}).catch(reason => {return "NO DATA"});
+    return fetch(DbService.getUrl(dbUrl.GET_USER_CLICKS + id) , {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USER_CLICKS); return res.json()}).catch(reason => {return "NO DATA"});
   }
 
   async getUserBestPost(id: string, type: string){
     this.setLoading();
-    return fetch(DbService.getUrl(dbUrl.GET_POST_BY_USERS_BEST).replace("ID", id).replace("TYPE", type), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()}).catch(reason => {return new Post()});
+    return fetch(DbService.getUrl(dbUrl.GET_POST_BY_USERS_BEST).replace("ID", id).replace("TYPE", type), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POST_BY_USERS_BEST); return res.json()}).catch(reason => {return new Post()});
   }
 
   async getUserNewestPost(id: string): Promise<Post> {
     this.setLoading();
-    return fetch(DbService.getUrl(dbUrl.GET_POSTS_NEWEST_BY_USER_WITH_STATS) + id, {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return fetch(DbService.getUrl(dbUrl.GET_POSTS_NEWEST_BY_USER_WITH_STATS) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POSTS_NEWEST_BY_USER_WITH_STATS); return res.json()});
   }
 
   async getUserAccountTypes() : Promise<Map<string, number>>{
     this.setLoading();
-    return fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_ALL)).then(res => {this.setFinished(res.status); return res.json()});
+    return fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_ALL)).then(res => {this.setFinished(res.status, dbUrl.GET_USERS_ACCOUNTTYPES_ALL); return res.json()});
   }
 
   async hasUserPost(id : number) {
     this.setLoading();
-    return fetch(DbService.getUrl(dbUrl.HAS_USER_POST) + id).then(res => {this.setFinished(res.status); return res.json()});
+    return fetch(DbService.getUrl(dbUrl.HAS_USER_POST) + id).then(res => {this.setFinished(res.status, dbUrl.HAS_USER_POST); return res.json()});
   }
 
   async getMaxPerformance(){
     this.setLoading();
-    let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_PERFORMANCE), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_PERFORMANCE), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POST_MAX_PERFORMANCE); return res.json()});
     return max;
   }
   async getMaxRelevance(){
     this.setLoading();
-    let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_RELEVANCE), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_RELEVANCE), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POST_MAX_RELEVANCE); return res.json()});
     return max;
   }
 
@@ -261,120 +260,120 @@ export class DbService {
 
   async getPostsAll(){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POSTS_ALL); return res.json()});
   }
 
   async getPostById(id: number) : Promise<Post> {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_POST).replace("ID", String(id)), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_POST).replace("ID", String(id)), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POST); return res.json()});
   }
 
   async getPostsPerType() : Promise<Map<string,number>> {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_TYPE), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_TYPE), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POSTS_PER_TYPE); return res.json()});
   }
   async getPostsPerTypeYesterday() : Promise<Map<string,number>> {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_TYPE_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_TYPE_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POSTS_PER_TYPE_YESTERDAY); return res.json()});
   }
 
   async getOriginMapByUser(id : number){
     this.setLoading();
-    return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id, {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USER_ORIGIN_MAP); return res.json()});
   }
 
   async getOriginMapAll() {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.GET_USERS_ALL_ORIGIN_MAP)) , {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.GET_USERS_ALL_ORIGIN_MAP)) , {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USERS_ALL_ORIGIN_MAP); return res.json()});
   }
 
   async getClicksByTime(id : number){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id, {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id, {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USER_VIEWS_PER_HOUR); return res.json()});
   }
   async getClicksByTimeAll() : Promise<number[]>{
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.GET_USERS_ALL_VIEWS_PER_HOUR)), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.GET_USERS_ALL_VIEWS_PER_HOUR)), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USERS_ALL_VIEWS_PER_HOUR); return res.json()});
   }
 
   async getTagStatsByID(id: number, timeSpan: number, dataType: string) : Promise<TagStats[]> {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_TAGSTATS_BY_ID).replace("ID", String(id)).replace("DAYS", String(timeSpan)).replace("TYPE", dataType), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_TAGSTATS_BY_ID).replace("ID", String(id)).replace("DAYS", String(timeSpan)).replace("TYPE", dataType), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_TAGSTATS_BY_ID); return res.json()});
   }
 
   async getCallupsByTime(days: number) : Promise<Callup[]> {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_CALLUPS_BY_TIME.replace("DAYS", String(days))), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_CALLUPS_BY_TIME.replace("DAYS", String(days))), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_CALLUPS_BY_TIME); return res.json()});
   }
   async getCallupsByCategoriesNewest() : Promise<CategoriesData>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", Util.getFormattedNow()), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", Util.getFormattedNow()), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_CALLUP_CATEGORIES_BY_DATE); return res.json()});
   }
   async getCallupsByCategoriesByDateTime(date : string, hour : number) :Promise<CategoriesData>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATETIME).replace("DATE", date).replace("HOUR", String(hour)), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATETIME).replace("DATE", date).replace("HOUR", String(hour)), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_CALLUP_CATEGORIES_BY_DATETIME); return res.json()});
   }
   async getCallupsByCategoriesByDate(date : string) :Promise<CategoriesData>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", date), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", date), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_CALLUP_CATEGORIES_BY_DATE); return res.json()});
   }
 
   async getUserAccountTypesYesterday() {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY); return res.json()});
   }
 
   async getTopPostsBySorterWithType(sorter: string, type: string, limit: number) : Promise<Post[]>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_TOP_BY_SORTER).replace("SORTER", sorter).replace("TYPE", type).replace("LIMIT", String(limit)), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_TOP_BY_SORTER).replace("SORTER", sorter).replace("TYPE", type).replace("LIMIT", String(limit)), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_POSTS_TOP_BY_SORTER); return res.json()});
   }
 
   async getNewsletterSubs(){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_NEWSLETTER_SUBS); return res.json()});
   }
   async getNewsletterSubsByDateRange(daysBackTo : number, daysBackFrom : number){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_BY_DATERANGE).replace("DAYSBACKTO", String(daysBackTo)).replace("DAYSBACKFROM", String(daysBackFrom)), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_BY_DATERANGE).replace("DAYSBACKTO", String(daysBackTo)).replace("DAYSBACKFROM", String(daysBackFrom)), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_NEWSLETTER_SUBS_BY_DATERANGE); return res.json()});
   }
   async getNewsletterSubsYesterday(){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_NEWSLETTER_SUBS_YESTERDAY); return res.json()});
   }
   async getNewsletterSubsAsMailByStatus(c : string) : Promise<string[]>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS).replace("STATUS", c), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS).replace("STATUS", c), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS); return res.json()});
   }
 
   async getViewsByLocationLast14(){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION_L14), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION_L14), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_VIEWS_BY_LOCATION_L14); return res.json()});
   }
   async getViewsByLocation(){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_VIEWS_BY_LOCATION); return res.json()});
   }
 
 
   async getSystemTimeHour() : Promise<number>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_TIME_HOUR), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_TIME_HOUR), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_SYSTEM_TIME_HOUR); return res.json()});
   }
   async getSystemUsage() : Promise<SystemUsage>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_SYSTEM_USAGE); return res.json()});
   }
   async getSystemUsageNow() : Promise<{cpu : number, memory : number, networkSent : number, networkRecv : number}>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE_NOW), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_USAGE_NOW), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_SYSTEM_USAGE_NOW); return res.json()});
   }
 
   async getEvents() : Promise<string[]> {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_EVENTS), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_EVENTS), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_EVENTS); return res.json()});
   }
   async getEventsYesterday() : Promise<string[]> {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_EVENTS_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_EVENTS_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_EVENTS_YESTERDAY); return res.json()});
   }
 }

@@ -8,6 +8,10 @@
   top: 0;
   left: 0;
   right: 0;
+  position: relative;
+  margin: 0;
+  box-shadow: 0 5px 5px rgba(0,0,0,.2);
+  z-index: 10;
 }
 .page-header-title{
   display: flex;

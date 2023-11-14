@@ -2779,7 +2779,7 @@ public class LogService {
         System.out.println("USER GEO UPDATE");
         try {
             for (IPsByUser user : iPsByUserRepository.findAll()) {
-                userGeo = userGeoRepo.findByUserId(user.getUser_id()) == null ? new UserGeo() : userGeoRepo.findByUserId(user.getUser_id());
+                userGeo = userGeoRepo.findByUserIdAndUniStatId(user.getUser_id(), uniRepo.getLatestUniStat().getId()) == null ? new UserGeo() : userGeoRepo.findByUserIdAndUniStatId(user.getUser_id(), uniRepo.getLatestUniStat().getId());
                 userGeo.setUser_id(user.getUser_id());
                 userGeo.setUniStatId(uniRepo.getSecondLastUniStats().get(1).getId());
                 JSONArray json = new JSONArray(user.getIps());

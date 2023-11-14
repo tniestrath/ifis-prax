@@ -32,6 +32,8 @@ import java.util.*;
 
 public class LoginController {
 
+    @Autowired UserController userController;
+
     public Authentication adminAuthentication = new Authentication() {
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -146,7 +148,8 @@ public class LoginController {
                     responseCookie = h.getValue();
                 }
             }
-            if (responseCookie.isEmpty()){
+            String userData = userController.getUserByLogin(user);
+            if (responseCookie.isEmpty() || !(new JSONObject(userData).get("accountType").equals("admin"))){
                 responseCookie = "LOGIN REJECTED";
             }
 

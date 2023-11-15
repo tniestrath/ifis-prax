@@ -22,7 +22,6 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
   prev_data = [0,0,0,0,0,0];
 
   oaList: HTMLParagraphElement[] = [];
-  basicList: HTMLParagraphElement[] = [];
   bpList: HTMLParagraphElement[] = [];
   plusList: HTMLParagraphElement[] = [];
   premiumList: HTMLParagraphElement[] = [];
@@ -52,11 +51,16 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         this.cdr.detectChanges();
       }).finally(() => {
         this.db.getUserAccountTypesAllNew().then(res => {
-            this.oaList = this.formatArray(res.ohne);
-            this.basicList = this.formatArray(res.basis);
-            this.bpList = this.formatArray(res.basisPlus);
-            this.premiumList = this.formatArray(res.premium);
-            this.sponsorList = this.formatArray(res.sponsor);
+          // @ts-ignore
+          document.getElementById("oaList").append(...this.formatArray(res.ohne));
+          // @ts-ignore
+          document.getElementById("basicList").append(...this.formatArray(res.basis));
+          // @ts-ignore
+          document.getElementById("bpList").append(...this.formatArray(res["basis-plus"]));
+          // @ts-ignore
+          document.getElementById("plusList").append(...this.formatArray(res.plus));
+          // @ts-ignore
+          document.getElementById("premiumList").append(...this.formatArray(res.premium));
         })
       })
     })
@@ -67,21 +71,21 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
   formatArray(array: string[]) : HTMLParagraphElement[]{
     var result: HTMLParagraphElement[] = [];
-    for (let username in array) {
+    for (let username of array) {
       if (username.startsWith("+")){
-        let p = new HTMLParagraphElement();
+        let p = document.createElement("p");
         p.style.color = DashColors.GREEN;
         p.innerText = username.slice(1);
         result.push(p);
       }
       if (username.startsWith("-")){
-        let p = new HTMLParagraphElement();
+        let p = document.createElement("p");
         p.style.color = DashColors.RED;
         p.innerText = username.slice(1);
         result.push(p);
       }
       if (username.startsWith("&")){
-        let p = new HTMLParagraphElement();
+        let p = document.createElement("p");
         p.style.color = DashColors.BLUE;
         p.innerText = username.slice(1);
         result.push(p);

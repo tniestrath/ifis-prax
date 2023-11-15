@@ -325,7 +325,7 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getUserAccountTypesAllNew() : Promise<{ohne: string[], basis: string[], basisPlus: string[], plus: string[], premium: string[], sponsor: string[]}>{
+  async getUserAccountTypesAllNew() : Promise<{ohne: string[], basis: string[], "basis-plus": string[], plus: string[], premium: string[], sponsor: string[]}>{
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_ALL_NEW), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }

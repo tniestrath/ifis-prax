@@ -14,6 +14,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,10 +73,10 @@ public class GeoController {
     @GetMapping("/getPostGeoByIDAndDay")
     public List<Integer> getPostGeoByIDAndDay(long id, String start, String end){
         List<Integer> liste = new ArrayList<>();
-        LocalDate dateStart = Date.valueOf(start).toLocalDate();
-        LocalDate dateEnd = Date.valueOf(end).toLocalDate();
+        Date dateStart = Date.valueOf(start);
+        Date dateEnd = Date.valueOf(end);
 
-        PostGeo geo = postGeoRepo.findByPostIdAndUniStatId(id, uniStatRepo.getByDatum(dateStart).getId());
+        PostGeo geo = postGeoRepo.findByPostIdAndUniStatId(id, uniStatRepo.findByDatum(dateStart).get().getId());
         if(geo != null) {
             liste.add(geo.getHh());
             liste.add(geo.getHb());
@@ -95,9 +96,13 @@ public class GeoController {
             liste.add(geo.getNW());
             liste.add(geo.getAusland());
         }
-        for(LocalDate date : dateStart.plusDays(1).datesUntil(dateEnd).toList()) {
-            geo = postGeoRepo.findByPostIdAndUniStatId(id, uniStatRepo.getByDatum(date).getId());
-            if(geo != null) {
+        for(LocalDate date : dateStart.toLocalDate().plusDays(1).datesUntil(dateEnd.toLocalDate()).toList()) {
+            boolean isGeo = false;
+            if(uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                geo = postGeoRepo.findByPostIdAndUniStatId(id, uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId());
+                isGeo = true;
+            }
+            if(geo != null && isGeo) {
                 liste.set(0, geo.getHh() + liste.get(0));
                 liste.set(1, geo.getHb() + liste.get(1));
                 liste.set(2, geo.getBe() + liste.get(2));
@@ -125,10 +130,10 @@ public class GeoController {
     @GetMapping("/getUserGeoByIDAndDay")
     public List<Integer> getUserGeoByIDAndDay(long id, String start, String end){
         List<Integer> liste = new ArrayList<>();
-        LocalDate dateStart = Date.valueOf(start).toLocalDate();
-        LocalDate dateEnd = Date.valueOf(end).toLocalDate();
+        Date dateStart = Date.valueOf(start);
+        Date dateEnd = Date.valueOf(end);
 
-        UserGeo geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.getByDatum(dateStart).getId());
+        UserGeo geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.findByDatum(dateStart).get().getId());
         if(geo != null) {
             liste.add(geo.getHh());
             liste.add(geo.getHb());
@@ -148,9 +153,13 @@ public class GeoController {
             liste.add(geo.getNW());
             liste.add(geo.getAusland());
         }
-        for(LocalDate date : dateStart.plusDays(1).datesUntil(dateEnd).toList()) {
-            geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.getByDatum(date).getId());
-            if(geo != null) {
+        for(LocalDate date : dateStart.toLocalDate().plusDays(1).datesUntil(dateEnd.toLocalDate()).toList()) {
+            boolean isGeo = false;
+            if(uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId());
+                isGeo = true;
+            }
+            if(geo != null && isGeo) {
                 liste.set(0, geo.getHh() + liste.get(0));
                 liste.set(1, geo.getHb() + liste.get(1));
                 liste.set(2, geo.getBe() + liste.get(2));
@@ -177,32 +186,37 @@ public class GeoController {
     @GetMapping("/getTotalGermanGeoByDay")
     public List<Integer> getTotalGermanGeoByDay(String start, String end) {
         List<Integer> liste = new ArrayList<>();
-        LocalDate dateStart = Date.valueOf(start).toLocalDate();
-        LocalDate dateEnd = Date.valueOf(end).toLocalDate();
+        Date dateStart = Date.valueOf(start);
+        Date dateEnd = Date.valueOf(end);
 
         for(int i = 0; i < 16; i++) {
             liste.add(0);
         }
 
-        for(LocalDate date : dateStart.datesUntil(dateEnd).toList()) {
-            int uniId = uniStatRepo.getByDatum(date).getId();
-            for(ClicksByBundesland clicksByB : clicksByBundeslandRepo.getByUniID(uniId)) {
-                switch(clicksByB.getBundesland()) {
-                    case "HH" -> liste.set(0, liste.get(0) + clicksByB.getClicks());
-                    case "HB" -> liste.set(1, liste.get(1) + clicksByB.getClicks());
-                    case "BE" -> liste.set(2, liste.get(2) + clicksByB.getClicks());
-                    case "BB" -> liste.set(3, liste.get(3) + clicksByB.getClicks());
-                    case "SN" -> liste.set(4, liste.get(4) + clicksByB.getClicks());
-                    case "ST" -> liste.set(5, liste.get(5) + clicksByB.getClicks());
-                    case "BY" -> liste.set(6, liste.get(6) + clicksByB.getClicks());
-                    case "SL" -> liste.set(7, liste.get(7) + clicksByB.getClicks());
-                    case "RP" -> liste.set(8, liste.get(8) + clicksByB.getClicks());
-                    case "SH" -> liste.set(9, liste.get(9) + clicksByB.getClicks());
-                    case "TH" -> liste.set(10, liste.get(10) + clicksByB.getClicks());
-                    case "NI" -> liste.set(11, liste.get(11) + clicksByB.getClicks());
-                    case "HE" -> liste.set(13, liste.get(13) + clicksByB.getClicks());
-                    case "BW" -> liste.set(14, liste.get(14) + clicksByB.getClicks());
-                    case "NW" -> liste.set(15, liste.get(15) + clicksByB.getClicks());
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).toList()) {
+            int uniId = 0;
+            if(uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+            }
+            if(uniId != 0) {
+                for (ClicksByBundesland clicksByB : clicksByBundeslandRepo.getByUniID(uniId)) {
+                    switch (clicksByB.getBundesland()) {
+                        case "HH" -> liste.set(0, liste.get(0) + clicksByB.getClicks());
+                        case "HB" -> liste.set(1, liste.get(1) + clicksByB.getClicks());
+                        case "BE" -> liste.set(2, liste.get(2) + clicksByB.getClicks());
+                        case "BB" -> liste.set(3, liste.get(3) + clicksByB.getClicks());
+                        case "SN" -> liste.set(4, liste.get(4) + clicksByB.getClicks());
+                        case "ST" -> liste.set(5, liste.get(5) + clicksByB.getClicks());
+                        case "BY" -> liste.set(6, liste.get(6) + clicksByB.getClicks());
+                        case "SL" -> liste.set(7, liste.get(7) + clicksByB.getClicks());
+                        case "RP" -> liste.set(8, liste.get(8) + clicksByB.getClicks());
+                        case "SH" -> liste.set(9, liste.get(9) + clicksByB.getClicks());
+                        case "TH" -> liste.set(10, liste.get(10) + clicksByB.getClicks());
+                        case "NI" -> liste.set(11, liste.get(11) + clicksByB.getClicks());
+                        case "HE" -> liste.set(13, liste.get(13) + clicksByB.getClicks());
+                        case "BW" -> liste.set(14, liste.get(14) + clicksByB.getClicks());
+                        case "NW" -> liste.set(15, liste.get(15) + clicksByB.getClicks());
+                    }
                 }
             }
         }

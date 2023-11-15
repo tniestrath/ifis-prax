@@ -446,27 +446,6 @@ public class uniStatController {
 
     /**
      *
-     * @return ein JSON-String, der die Anzahl der Accounts pro Account-Typ enthält.
-     */
-    @GetMapping("/getAccountTypeAllYesterday")
-    public String getAccTypes() {
-        HashMap<String, Long> map = new HashMap<>();
-        UniversalStats uni = uniRepo.findAll().get(uniRepo.findAll().size() -2);
-
-        map.put("Anbieter", uni.getAnbieter_abolos_anzahl());
-        map.put("Basic", uni.getAnbieterBasicAnzahl());
-        map.put("Basic-Plus", uni.getAnbieterBasicPlusAnzahl());
-        map.put("Plus", uni.getAnbieterPlusAnzahl());
-        map.put("Premium", uni.getAnbieterPremiumAnzahl());
-        map.put("Sponsor", uni.getAnbieterPremiumSponsorenAnzahl());
-
-
-        return new JSONObject(map).toString();
-
-    }
-
-    /**
-     *
      * @param id  die ID des Posts, für den die Clicks ermittelt werden sollen.
      * @param daysBack wie viele Tage zurückgeschaut werden soll.
      * @return  JSONObject, dass die ID des Posts, den Namen und die Clicks des gewünschten Tages enthält.

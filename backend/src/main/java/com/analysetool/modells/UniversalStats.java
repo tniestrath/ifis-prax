@@ -1,4 +1,5 @@
 package com.analysetool.modells;
+
 import com.analysetool.util.MapHelper;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;

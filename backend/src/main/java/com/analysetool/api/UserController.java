@@ -360,11 +360,11 @@ public class UserController {
     public String getNewUsersall() throws JSONException {
         JSONObject obj = new JSONObject();
         obj.put("ohne", getNewUserSchmarotzer());
-        obj.put("basis", getNewUsersByType("basis"));
-        obj.put("basis-plus", getNewUsersByType("basis-plus"));
-        obj.put("plus", getNewUsersByType("plus"));
-        obj.put("premium", getNewUsersByType("premium"));
-        obj.put("sponsor", getNewUsersByType("sponsor"));
+        obj.put("basis", getNewUsersByTypeToday("basis"));
+        obj.put("basis-plus", getNewUsersByTypeToday("basis-plus"));
+        obj.put("plus", getNewUsersByTypeToday("plus"));
+        obj.put("premium", getNewUsersByTypeToday("premium"));
+        obj.put("sponsor", getNewUsersByTypeToday("sponsor"));
         return obj.toString();
 
     }

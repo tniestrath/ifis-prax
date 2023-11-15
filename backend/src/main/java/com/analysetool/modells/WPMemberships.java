@@ -50,7 +50,7 @@ public class WPMemberships {
     private LocalDateTime startdate;
 
     @Column(name="enddate")
-    private LocalDateTime enddate;
+    private String enddate;
 
     @Column(name="modified")
     private Timestamp modified;
@@ -159,11 +159,11 @@ public class WPMemberships {
         this.startdate = startdate;
     }
 
-    public LocalDateTime getEnddate() {
+    public String getEnddate() {
         return enddate;
     }
 
-    public void setEnddate(LocalDateTime enddate) {
+    public void setEnddate(String enddate) {
         this.enddate = enddate;
     }
 

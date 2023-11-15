@@ -19,10 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.analysetool.util.MapHelper.mergeLocationMaps;
 import static com.analysetool.util.MapHelper.mergeTimeMaps;
@@ -358,14 +355,29 @@ public class UserController {
     }
 
     @GetMapping("/getNewUsersAll")
-    public String getNewUsersall() throws JSONException {
+    public String getNewUsersAll() throws JSONException {
         JSONObject obj = new JSONObject();
-        obj.put("ohne", getNewUserSchmarotzer());
-        obj.put("basis", getNewUsersByTypeToday("basis"));
-        obj.put("basis-plus", getNewUsersByTypeToday("basis-plus"));
-        obj.put("plus", getNewUsersByTypeToday("plus"));
-        obj.put("premium", getNewUsersByTypeToday("premium"));
-        obj.put("sponsor", getNewUsersByTypeToday("sponsor"));
+
+        Comparator<String> customComparator = Comparator.comparing(s -> s.charAt(0));
+        List<String> ohne = getNewUserSchmarotzer();
+        List<String> basis = getNewUsersByType("basis");
+        List<String> basis_plus = getNewUsersByType("basis-plus");
+        List<String> plus = getNewUsersByType("plus");
+        List<String> premium = getNewUsersByType("premium");
+        List<String> sponsor = getNewUsersByType("sponsor");
+        ohne.sort(customComparator);
+        basis.sort(customComparator);
+        basis_plus.sort(customComparator);
+        plus.sort(customComparator);
+        premium.sort(customComparator);
+        sponsor.sort(customComparator);
+
+        obj.put("ohne", ohne);
+        obj.put("basis", basis);
+        obj.put("basis-plus", basis_plus);
+        obj.put("plus", plus);
+        obj.put("premium", premium);
+        obj.put("sponsor", sponsor);
         return obj.toString();
 
     }
@@ -386,36 +398,40 @@ public class UserController {
     public List<String> getNewUsersByType(String type) {
         List<String> list = new ArrayList<>();
         for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
-            if(type.equals("basis-plus") &&  member.getMembership_id() == 7) {
-                list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
-            } else if(type.equals("sponsor") && member.getMembership_id() == 6) {
-                list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
-            } else if(type.equals("premium") && member.getMembership_id() == 5) {
-                list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
-            } else if(type.equals("plus") && member.getMembership_id() == 3) {
-                list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
-            } else if(type.equals("basis") && member.getMembership_id() == 1) {
-                list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
-            }
+            listAddByType(type, list, member);
         }
         return list;
+    }
+
+    private void listAddByType(String type, List<String> list, WPMemberships member) {
+        if(type.equals("basis-plus") &&  member.getMembership_id() == 7) {
+            listAdd(list, member);
+        } else if(type.equals("sponsor") && member.getMembership_id() == 6) {
+            listAdd(list, member);
+        } else if(type.equals("premium") && member.getMembership_id() == 5) {
+            listAdd(list, member);
+        } else if(type.equals("plus") && member.getMembership_id() == 3) {
+            listAdd(list, member);
+        } else if(type.equals("basis") && member.getMembership_id() == 1) {
+            listAdd(list, member);
+        }
+    }
+
+    private void listAdd(List<String> list, WPMemberships member) {
+        if(userRepository.findById(member.getUser_id()).isPresent()) {
+            switch (member.getStatus()) {
+                case "active" -> list.add("+" + userRepository.findById(member.getUser_id()).get().getDisplayName());
+                case "cancelled" -> list.add("-" + userRepository.findById(member.getUser_id()).get().getDisplayName());
+                case "changed" -> list.add("&" + userRepository.findById(member.getUser_id()).get().getDisplayName());
+            }
+        }
     }
 
     public List<String> getNewUsersByTypeToday(String type) {
         List<String> list = new ArrayList<>();
         for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
             if(member.getModified().after(uniRepo.getLatestUniStat().getDatum())) {
-                if (type.equals("basis-plus") && member.getMembership_id() == 7) {
-                    list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
-                } else if (type.equals("sponsor") && member.getMembership_id() == 6) {
-                    list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
-                } else if (type.equals("premium") && member.getMembership_id() == 5) {
-                    list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
-                } else if (type.equals("plus") && member.getMembership_id() == 3) {
-                    list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
-                } else if (type.equals("basis") && member.getMembership_id() == 1) {
-                    list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
-                }
+                listAddByType(type, list, member);
             }
         }
         return list;

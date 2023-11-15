@@ -21,12 +21,12 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
   data = [0,0,0,0,0,0];
   prev_data = [0,0,0,0,0,0];
 
-  oaList = "";
-  basicList = "";
-  bpList = "";
-  plusList = "";
-  premiumList = "";
-  sponsorList = "";
+  oaList: HTMLParagraphElement[] = [];
+  basicList: HTMLParagraphElement[] = [];
+  bpList: HTMLParagraphElement[] = [];
+  plusList: HTMLParagraphElement[] = [];
+  premiumList: HTMLParagraphElement[] = [];
+  sponsorList: HTMLParagraphElement[] = [];
 
   ngOnInit(): void {
     if (this.chart != undefined) {
@@ -50,10 +50,44 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         this.prev_total = this.prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
         this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
         this.cdr.detectChanges();
+      }).finally(() => {
+        this.db.getUserAccountTypesAllNew().then(res => {
+            this.oaList = this.formatArray(res.ohne);
+            this.basicList = this.formatArray(res.basis);
+            this.bpList = this.formatArray(res.basisPlus);
+            this.premiumList = this.formatArray(res.premium);
+            this.sponsorList = this.formatArray(res.sponsor);
+        })
       })
     })
 
     this.setToolTip("Hier werden die aktuellen Nutzer nach ihren Abonnements, und die in den letzten 24 Stunden angemeldete Nutzer (hinter dem +) angezeigt.");
+  }
+
+
+  formatArray(array: string[]) : HTMLParagraphElement[]{
+    var result: HTMLParagraphElement[] = [];
+    for (let username in array) {
+      if (username.startsWith("+")){
+        let p = new HTMLParagraphElement();
+        p.style.color = "rgb(0,255,0)"
+        p.innerText = username.slice(1);
+        result.push(p);
+      }
+      if (username.startsWith("-")){
+        let p = new HTMLParagraphElement();
+        p.style.color = "rgb(255,0,0)"
+        p.innerText = username.slice(1);
+        result.push(p);
+      }
+      if (username.startsWith("&")){
+        let p = new HTMLParagraphElement();
+        p.style.color = "rgb(0,0,255)"
+        p.innerText = username.slice(1);
+        result.push(p);
+      }
+    }
+    return result;
   }
 
   private readMap(map: Map<string, number>, data: number[]) {

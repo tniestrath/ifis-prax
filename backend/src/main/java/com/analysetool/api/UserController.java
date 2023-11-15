@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -373,8 +374,10 @@ public class UserController {
         List<Long> listCheck = wpMemberRepo.getAllActiveMembersIds();
         List<String> listResponse = new ArrayList<>();
         for(WPUser user : userRepository.findAll()) {
-            if(!listCheck.contains(user.getId())) {
-                listResponse.add(user.getDisplayName());
+            if(user.getRegistered().isAfter(LocalDateTime.now().minusHours(LocalDateTime.now().getHour()).minusMinutes(LocalDateTime.now().getMinute()))) {
+                if (!listCheck.contains(user.getId())) {
+                    listResponse.add(user.getDisplayName());
+                }
             }
         }
         return listResponse;

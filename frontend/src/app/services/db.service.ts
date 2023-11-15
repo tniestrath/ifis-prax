@@ -32,6 +32,8 @@ export enum dbUrl {
 
   GET_USERS_ALL = "/users/getAllNew",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
+  GET_USERS_ACCOUNTTYPES_YESTERDAY = "/users/getAccountTypeAllYesterday",
+  GET_USERS_ACCOUNTTYPES_ALL_NEW = "/users/getNewUsersAll",
   GET_USERS_ALL_ORIGIN_MAP = "/users/getAllViewsByLocation",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
 
@@ -53,7 +55,6 @@ export enum dbUrl {
   GET_CALLUP_CATEGORIES_BY_DATE = "/bericht/getCallupByCategoryDate?date=DATE",
   GET_CALLUP_CATEGORIES_BY_DATETIME = "/bericht/getCallupByCategoryDateAndHour?date=DATE&hour=HOUR",
 
-  GET_USERS_ACCOUNTTYPES_YESTERDAY = "/bericht/getAccountTypeAllYesterday",
   GET_VIEWS_BY_LOCATION_L14 = "/bericht/getViewsByLocationLast14",
   GET_VIEWS_BY_LOCATION = "/bericht/getViewsByLocationAllTime",
 
@@ -322,6 +323,11 @@ export class DbService {
   async getUserAccountTypesYesterday() {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY); return res.json()});
+  }
+
+  async getUserAccountTypesAllNew(){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ACCOUNTTYPES_ALL_NEW), {credentials: "include"}).then(res => {this.setFinished(res.status, dbUrl.GET_USERS_ACCOUNTTYPES_ALL_NEW); return res.json()});
   }
 
   async getTopPostsBySorterWithType(sorter: string, type: string, limit: number) : Promise<Post[]>{

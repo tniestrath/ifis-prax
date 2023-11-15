@@ -14,7 +14,11 @@
             </div>
             <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[0]}}</p>
-              <p style="margin: 0;">{{prev_data[0] >= 0 ? "+" + prev_data[0] : prev_data[0].toString()}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[0] >= 0 ? "+" + prev_data[0] : prev_data[0].toString()}}
+                <span class="tooltip-text">{{oaList}}</span>
+              </p>
+
             </div>
           </li>
           <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
@@ -25,7 +29,10 @@
             </div>
             <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[1]}}</p>
-              <p style="margin: 0;">{{prev_data[1] >= 0 ? "+" + prev_data[1] : prev_data[1].toString()}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[1] >= 0 ? "+" + prev_data[1] : prev_data[1].toString()}}
+                <span class="tooltip-text">{{basicList}}</span>
+              </p>
             </div>
           </li>
           <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
@@ -36,7 +43,10 @@
             </div>
             <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[2]}}</p>
-              <p style="margin: 0;">{{prev_data[2] >= 0 ? "+" + prev_data[2] : prev_data[2].toString()}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[2] >= 0 ? "+" + prev_data[2] : prev_data[2].toString()}}
+                <span class="tooltip-text">{{bpList}}</span>
+              </p>
             </div>
           </li>
           <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
@@ -47,7 +57,10 @@
             </div>
             <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[3]}}</p>
-              <p style="margin: 0;">{{prev_data[3] >= 0 ? "+" + prev_data[3] : prev_data[3].toString()}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[3] >= 0 ? "+" + prev_data[3] : prev_data[3].toString()}}
+                <span class="tooltip-text">{{plusList}}</span>
+              </p>
             </div>
           </li>
           <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
@@ -58,7 +71,10 @@
             </div>
             <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[4]}}</p>
-              <p style="margin: 0;">{{prev_data[4] >= 0 ? "+" + prev_data[4] : prev_data[4].toString()}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[4] >= 0 ? "+" + prev_data[4] : prev_data[4].toString()}}
+                <span class="tooltip-text">{{premiumList}}</span>
+              </p>
             </div>
           </li>
           <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
@@ -69,7 +85,10 @@
             </div>
             <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[5]}}</p>
-              <p style="margin: 0;">{{prev_data[5] >= 0 ? "+" + prev_data[5] : prev_data[5].toString()}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[5] >= 0 ? "+" + prev_data[5] : prev_data[5].toString()}}
+                <span class="tooltip-text">{{sponsorList}}</span>
+              </p>
             </div>
           </li>
         </ul>

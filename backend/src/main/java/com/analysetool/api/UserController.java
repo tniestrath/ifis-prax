@@ -18,10 +18,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.*;
 
 import static com.analysetool.util.MapHelper.mergeLocationMaps;
 import static com.analysetool.util.MapHelper.mergeTimeMaps;
@@ -56,6 +56,10 @@ public class UserController {
     private WpTermRelationshipsRepository termRelRepo;
     @Autowired
     private WpTermTaxonomyRepository termTaxRepo;
+    @Autowired
+    private universalStatsRepository uniRepo;
+    @Autowired
+    private WPMembershipRepository wpMemberRepo;
 
     private final DashConfig config;
 
@@ -328,6 +332,90 @@ public class UserController {
                     counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
     });
         return new JSONObject(counts).toString();
+    }
+
+
+    /**
+     *
+     * @return ein JSON-String, der die Anzahl der Accounts pro Account-Typ enthält.
+     */
+    @GetMapping("/getAccountTypeAllYesterday")
+    public String getAccTypes() {
+        HashMap<String, Long> map = new HashMap<>();
+        UniversalStats uni = uniRepo.findAll().get(uniRepo.findAll().size() -2);
+
+        map.put("Anbieter", uni.getAnbieter_abolos_anzahl());
+        map.put("Basic", uni.getAnbieterBasicAnzahl());
+        map.put("Basic-Plus", uni.getAnbieterBasicPlusAnzahl());
+        map.put("Plus", uni.getAnbieterPlusAnzahl());
+        map.put("Premium", uni.getAnbieterPremiumAnzahl());
+        map.put("Sponsor", uni.getAnbieterPremiumSponsorenAnzahl());
+
+
+        return new JSONObject(map).toString();
+
+    }
+
+    @GetMapping("/getNewUsersAll")
+    public String getNewUsersall() throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("ohne", getNewUserSchmarotzer());
+        obj.put("basis", getNewUsersByType("basis"));
+        obj.put("basis-plus", getNewUsersByType("basis-plus"));
+        obj.put("plus", getNewUsersByType("plus"));
+        obj.put("premium", getNewUsersByType("premium"));
+        obj.put("sponsor", getNewUsersByType("sponsor"));
+        return obj.toString();
+
+    }
+
+    public List<String> getNewUserSchmarotzer() {
+        List<Long> listCheck = wpMemberRepo.getAllActiveMembersIds();
+        List<String> listResponse = new ArrayList<>();
+        for(WPUser user : userRepository.findAll()) {
+            if(!listCheck.contains(user.getId())) {
+                listResponse.add(user.getDisplayName());
+            }
+        }
+        return listResponse;
+    }
+
+    public List<String> getNewUsersByType(String type) {
+        List<String> list = new ArrayList<>();
+        for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
+            if(type.equals("basis-plus") &&  member.getMembership_id() == 7) {
+                list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
+            } else if(type.equals("sponsor") && member.getMembership_id() == 6) {
+                list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
+            } else if(type.equals("premium") && member.getMembership_id() == 5) {
+                list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
+            } else if(type.equals("plus") && member.getMembership_id() == 3) {
+                list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
+            } else if(type.equals("basis") && member.getMembership_id() == 1) {
+                list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
+            }
+        }
+        return list;
+    }
+
+    public List<String> getNewUsersByTypeToday(String type) {
+        List<String> list = new ArrayList<>();
+        for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
+            if(member.getModified().after(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.of(ZoneId.systemDefault().getId()))))) {
+                if (type.equals("basis-plus") && member.getMembership_id() == 7) {
+                    list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
+                } else if (type.equals("sponsor") && member.getMembership_id() == 6) {
+                    list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
+                } else if (type.equals("premium") && member.getMembership_id() == 5) {
+                    list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
+                } else if (type.equals("plus") && member.getMembership_id() == 3) {
+                    list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
+                } else if (type.equals("basis") && member.getMembership_id() == 1) {
+                    list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
+                }
+            }
+        }
+        return list;
     }
 
 

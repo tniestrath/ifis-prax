@@ -6,7 +6,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -90,7 +89,7 @@ public class UniversalStats {
     public UniversalStats() {
     }
 
-    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum, Long totalClicks, Map<String, Long> viewsPerHour, Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
+    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, LocalDate datum, Long totalClicks, Map<String, Long> viewsPerHour, Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
         this.besucherAnzahl = besucherAnzahl;
         this.anbieterProfileAnzahl = anbieterProfileAnzahl;
         this.anzahlArtikel = anzahlArtikel;
@@ -127,7 +126,7 @@ public class UniversalStats {
         return (Map) map;
     }
 
-    public UniversalStats(Date datum) {
+    public UniversalStats(LocalDate datum) {
         this.datum = datum;
         this.viewsPerHour = setJson();
         this.viewsByLocation = MapHelper.initializeViewsByLocation(new HashMap<>());
@@ -250,11 +249,11 @@ public class UniversalStats {
         this.anzahlBlog = anzahlBlog;
     }
 
-    public Date getDatum() {
+    public LocalDate getDatum() {
         return datum;
     }
 
-    public void setDatum(Date datum) {
+    public void setDatum(LocalDate datum) {
         this.datum = datum;
     }
 

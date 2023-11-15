@@ -189,7 +189,11 @@ public class UserController {
     public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
         long viewsBlog = 0;
         long viewsArtikel = 0;
-        long viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
+        long viewsProfile = 0;
+        try {
+            viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
+        } catch (NullPointerException ignored) {
+        }
         int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
 
@@ -372,12 +376,12 @@ public class UserController {
         premium.sort(customComparator);
         sponsor.sort(customComparator);
 
-        obj.put("ohne", ohne);
-        obj.put("basis", basis);
-        obj.put("basis-plus", basis_plus);
-        obj.put("plus", plus);
-        obj.put("premium", premium);
-        obj.put("sponsor", sponsor);
+        obj.put("ohne", new JSONArray(ohne));
+        obj.put("basis", new JSONArray(basis));
+        obj.put("basis-plus", new JSONArray(basis_plus));
+        obj.put("plus", new JSONArray(plus));
+        obj.put("premium", new JSONArray(premium));
+        obj.put("sponsor", new JSONArray(sponsor));
         return obj.toString();
 
     }

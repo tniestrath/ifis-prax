@@ -372,12 +372,12 @@ public class UserController {
         premium.sort(customComparator);
         sponsor.sort(customComparator);
 
-        obj.put("ohne", ohne);
-        obj.put("basis", basis);
-        obj.put("basis-plus", basis_plus);
-        obj.put("plus", plus);
-        obj.put("premium", premium);
-        obj.put("sponsor", sponsor);
+        obj.put("ohne", new JSONArray(ohne));
+        obj.put("basis", new JSONArray(basis));
+        obj.put("basis-plus", new JSONArray(basis_plus));
+        obj.put("plus", new JSONArray(plus));
+        obj.put("premium", new JSONArray(premium));
+        obj.put("sponsor", new JSONArray(sponsor));
         return obj.toString();
 
     }

@@ -923,7 +923,7 @@ public class LogService {
                     uni.setAnbieterProfileAnzahl(wpUserRepo.count());
                     uni = setNewsArticelBlogCountForUniversalStats(date, uni);
                     uni = setAccountTypeAllUniStats(uni);
-                    uni.setDatum(date);
+                    uni.setDatum(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
                 }
                 uniRepo.save(uni);
             }
@@ -2304,7 +2304,7 @@ public class LogService {
                         InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
                         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-                        UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date), bufferedReader,SystemVariabeln);
+                        UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()), bufferedReader,SystemVariabeln);
                         uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
                         //m
                         uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
@@ -2339,7 +2339,7 @@ public class LogService {
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader);*/
 
                     br = new BufferedReader(new FileReader(Pfad));
-                    UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date), br,SystemVariabeln);
+                    UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()), br,SystemVariabeln);
                     uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
                     uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
                     uniStats = setAccountTypeAllUniStats(uniStats);

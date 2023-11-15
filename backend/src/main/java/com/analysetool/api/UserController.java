@@ -189,7 +189,11 @@ public class UserController {
     public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
         long viewsBlog = 0;
         long viewsArtikel = 0;
-        long viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
+        long viewsProfile = 0;
+        try {
+            viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
+        } catch (NullPointerException ignored) {
+        }
         int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
 

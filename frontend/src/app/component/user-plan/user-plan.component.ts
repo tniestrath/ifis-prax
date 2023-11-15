@@ -70,19 +70,19 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     for (let username in array) {
       if (username.startsWith("+")){
         let p = new HTMLParagraphElement();
-        p.style.color = "rgb(0,255,0)"
+        p.style.color = DashColors.GREEN;
         p.innerText = username.slice(1);
         result.push(p);
       }
       if (username.startsWith("-")){
         let p = new HTMLParagraphElement();
-        p.style.color = "rgb(255,0,0)"
+        p.style.color = DashColors.RED;
         p.innerText = username.slice(1);
         result.push(p);
       }
       if (username.startsWith("&")){
         let p = new HTMLParagraphElement();
-        p.style.color = "rgb(0,0,255)"
+        p.style.color = DashColors.BLUE;
         p.innerText = username.slice(1);
         result.push(p);
       }

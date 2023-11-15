@@ -70,6 +70,9 @@ export default class Util {
   }
 }
 export enum DashColors {
+  GREEN = "rgb(134,218,118)",
+  OK = "rgb(134,218,118)",
+
   RED = "rgb(148,28,62)",
   BLOG = "rgb(148,28,62)",
   PLAN_PLUS = "rgb(148,28,62)",

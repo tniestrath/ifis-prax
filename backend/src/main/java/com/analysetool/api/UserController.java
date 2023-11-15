@@ -18,11 +18,11 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import static com.analysetool.util.MapHelper.mergeLocationMaps;
 import static com.analysetool.util.MapHelper.mergeTimeMaps;
@@ -404,7 +404,7 @@ public class UserController {
     public List<String> getNewUsersByTypeToday(String type) {
         List<String> list = new ArrayList<>();
         for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
-            if(member.getModified().after(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.of(ZoneId.systemDefault().getId()))))) {
+            if(member.getModified().after(uniRepo.getLatestUniStat().getDatum())) {
                 if (type.equals("basis-plus") && member.getMembership_id() == 7) {
                     list.add(userRepository.findById(member.getUser_id()).get().getDisplayName());
                 } else if (type.equals("sponsor") && member.getMembership_id() == 6) {

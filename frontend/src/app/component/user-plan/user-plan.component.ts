@@ -61,7 +61,8 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       })
     })
 
-    this.setToolTip("Hier werden die aktuellen Nutzer nach ihren Abonnements, und die in den letzten 24 Stunden angemeldete Nutzer (hinter dem +) angezeigt.");
+    this.setToolTip("Hier werden die aktuellen Nutzer nach ihren Abonnements, und die in den letzten 24 Stunden angemeldete Nutzer (hinter dem +) angezeigt. +" +
+      "\n Bei Hover über die angemeldeten Nutzer werden diese angezeigt. Grün für Neuanmeldung, Blau für einen Planwechsel und Rot für jemanden der sein Abonnement gekündigt hat.");
   }
 
 

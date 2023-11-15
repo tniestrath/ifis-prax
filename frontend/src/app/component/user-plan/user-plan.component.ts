@@ -76,20 +76,23 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       if (username.startsWith("+")){
         let p = document.createElement("p");
         p.style.color = DashColors.GREEN;
+        p.style.margin = String(0);
         p.innerText = username.slice(1);
         result.push(p);
       }
-      if (username.startsWith("-")){
-        let p = document.createElement("p");
-        p.style.color = DashColors.RED;
-        p.innerText = username.slice(1);
-        result.push(p);
+      else if (username.startsWith("-")){
+        let p1 = document.createElement("p");
+        p1.style.color = DashColors.RED;
+        p1.style.margin = String(0);
+        p1.innerText = username.slice(1);
+        result.push(p1);
       }
-      if (username.startsWith("&")){
-        let p = document.createElement("p");
-        p.style.color = DashColors.BLUE;
-        p.innerText = username.slice(1);
-        result.push(p);
+      else if (username.startsWith("&")){
+        let p2 = document.createElement("p");
+        p2.style.color = DashColors.BLUE;
+        p2.style.margin = String(0);
+        p2.innerText = username.slice(1);
+        result.push(p2);
       }
     }
     return result;

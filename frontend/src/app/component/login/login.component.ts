@@ -1,7 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {SysVars} from "../../services/sys-vars-service";
-import {User} from "../../page/page-einzel/user/user";
+
+enum Reason {
+  CORRECT,
+  INCORRECT,
+  ERR_502
+}
 
 @Component({
   selector: 'dash-login',
@@ -9,7 +14,8 @@ import {User} from "../../page/page-einzel/user/user";
   styleUrls: ['./login.component.css', "../../component/dash-base/dash-base.component.css"]
 })
 export class LoginComponent extends DashBaseComponent implements OnInit{
-  incorrect = false;
+  loginError = false;
+  loginErrorMsg : string = "";
 
   ngOnInit(): void {
     this.setToolTip("Sie können sich hier mit den Login-Daten Ihres Marktplatz-Kontos anmelden.");
@@ -21,10 +27,10 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
         console.log(ans);
         ans = decodeURIComponent(ans);
         this.cs.deleteAll();
-        this.styleLogin(false);
+        this.styleLogin(Reason.CORRECT);
         //CHECK LOGIN
         if (ans.includes("LOGIN REJECTED")){
-          this.styleLogin(true);
+          this.styleLogin(Reason.INCORRECT);
           return;
         }
         this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));
@@ -37,18 +43,25 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
         });
         this.cdr.detectChanges();
       });
+    }).catch(reason => {
+      this.styleLogin(Reason.ERR_502);
+      return;
     });
   }
 
-  styleLogin(incorrect : boolean){
-    this.incorrect = incorrect;
-    if (incorrect){
-      var inputs = document.getElementsByTagName("input");
+  styleLogin(reason : Reason){
+    var inputs = document.getElementsByTagName("input");
+    if (reason == Reason.INCORRECT){
+      this.loginError = true;
+      this.loginErrorMsg = "Anmeldedaten inkorrekt";
       for (let i = 0; i < inputs.length ; i++) {
         inputs[i].style.borderRadius = "5px";
         inputs[i].style.border = "1px solid red";
       }
-
+    }
+    if (reason == Reason.ERR_502){
+      this.loginError = true;
+      this.loginErrorMsg = "Server antwortet nicht"
     }
   }
 

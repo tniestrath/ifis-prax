@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {Chart} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import Util, {DashColors} from "../../util/Util";
 
@@ -21,6 +21,13 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
   data = [0,0,0,0,0,0];
   prev_data = [0,0,0,0,0,0];
 
+  oaList = "";
+  basicList = "";
+  bpList = "";
+  plusList = "";
+  premiumList = "";
+  sponsorList = "";
+
   ngOnInit(): void {
     if (this.chart != undefined) {
       this.chart.destroy();
@@ -30,7 +37,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     this.db.getUserAccountTypes().then(res => {
       let map : Map<string, number> = new Map(Object.entries(res));
       this.readMap(map, this.data);
-      this.chart = this.createChart("user_plan_chart", this.labels, this.data, undefined);
+      this.chart = this.createChart("user_plan_chart", this.labels, this.data);
       this.chart_total = this.data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
       this.cdr.detectChanges();
     }).finally(() => {
@@ -79,7 +86,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     })
   }
 
-  createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){
+  createChart(canvas_id : string, labels : string[], realData : number[]){
     const donughtInner  = {
       id: "donughtInner",
       afterDatasetsDraw(chart: Chart, args: EmptyObject, options: 0, cancelable: false) {
@@ -112,7 +119,16 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         // @ts-ignore
         ctx.fillText(totalText, x, y);
       }
-    }
+    };
+    const shadowPlugin = {
+      beforeDraw: (chart: Chart, args : EmptyObject, options: 0) => {
+        const { ctx } = chart;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 5;
+        ctx.shadowOffsetY = 5;
+      },
+    };
 
 
 
@@ -160,8 +176,8 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         }
       },
       //@ts-ignore
-      plugins: [donughtInner]
-    })
+      plugins: [donughtInner],
+    });
   }
 
   protected readonly DashColors = DashColors;

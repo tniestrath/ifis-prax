@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class UniversalStats {
     private Long anzahlPodcast;
 
     @Column(name = "datum")
-    private LocalDate datum;
+    private Date datum;
 
     @Column(name = "anbieter_abolos_anzahl")
     private long anbieter_abolos_anzahl;

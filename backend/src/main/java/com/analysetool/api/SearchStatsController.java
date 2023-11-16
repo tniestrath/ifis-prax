@@ -9,10 +9,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-
+import com.analysetool.modells.EventSearch;
+import com.analysetool.repositories.EventSearchRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -23,6 +30,8 @@ public class SearchStatsController {
     private SearchStatsRepository searchStatsRepository;
     @Autowired
     AnbieterSearchRepository anbieterSearchRepo;
+    @Autowired
+    private EventSearchRepository eventSearchRepo;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -207,6 +216,46 @@ public class SearchStatsController {
          */
         return  ":(";
     }
+
+    /**
+     * Findet und liefert eine Liste von EventSearch-Objekten als JSON-String,
+     * die als schlechte Ausreißer aufgrund ihres resultCount-Wertes identifiziert wurden,
+     * begrenzt auf eine bestimmte Anzahl der zuletzt hinzugefügten Eventsearches.
+     * Diese Methode holt die letzten 'limit' EventSearch-Objekte, sortiert nach ihrer ID in absteigender Reihenfolge,
+     * berechnet die Ausreißer für ihre resultCount-Werte und filtert die entsprechenden Events heraus.
+     *
+     * @param limit Die maximale Anzahl von EventSearch-Objekten, die zurückgegeben werden sollen.
+     * @return Ein String, der ein JSON-Array von EventSearch-Objekten repräsentiert.
+     *         Jedes Objekt im Array ist ein schlechter Ausreißer basierend auf dem resultCount-Wert.
+     *         Bei einem Fehler in der Verarbeitung wird eine Fehlermeldung zurückgegeben.
+     */
+    @GetMapping("/badOutliersEventSearch")
+    public String findBadOutliersEventSearch(@RequestParam int limit) {
+        try {
+            // Erstellen eines Pageable-Objekts mit der gewünschten Anzahl und Sortierung
+            Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
+            Page<EventSearch> eventSearchPage = eventSearchRepo.findAllByOrderByIdDesc(pageable);
+            List<EventSearch> latestEventSearches = eventSearchPage.getContent();
+
+            //Ermittlung von Ausreißern
+            List<Integer> resultCounts = latestEventSearches.stream()
+                    .map(EventSearch::getResultCount)
+                    .collect(Collectors.toList());
+            List<Integer> outlierValues = MathHelper.getOutliersInt(resultCounts);
+            List<EventSearch> filteredEventSearches = latestEventSearches.stream()
+                    .filter(eventSearch -> outlierValues.contains(eventSearch.getResultCount()))
+                    .collect(Collectors.toList());
+
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonResult = mapper.writeValueAsString(filteredEventSearches);
+
+            return jsonResult;
+        } catch (Exception e) {
+            return "Fehler beim Verarbeiten der Daten";
+        }
+    }
+
+
 
 }
 

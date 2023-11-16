@@ -232,18 +232,19 @@ public class SearchStatsController {
     @GetMapping("/badOutliersEventSearch")
     public String findBadOutliersEventSearch(@RequestParam int limit) {
         try {
-            // Erstellen eines Pageable-Objekts mit der gewünschten Anzahl und Sortierung
             Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
             Page<EventSearch> eventSearchPage = eventSearchRepo.findAllByOrderByIdDesc(pageable);
             List<EventSearch> latestEventSearches = eventSearchPage.getContent();
 
-            //Ermittlung von Ausreißern
             List<Integer> resultCounts = latestEventSearches.stream()
                     .map(EventSearch::getResultCount)
                     .collect(Collectors.toList());
-            List<Integer> outlierValues = MathHelper.getOutliersInt(resultCounts);
+            double iqr = MathHelper.getInterquartileRangeInt(resultCounts);
+            double q1 = MathHelper.getLowerQuartileInt(resultCounts);
+            double lowerBound = q1 - 1.5 * iqr;
+
             List<EventSearch> filteredEventSearches = latestEventSearches.stream()
-                    .filter(eventSearch -> outlierValues.contains(eventSearch.getResultCount()))
+                    .filter(eventSearch -> eventSearch.getResultCount() < lowerBound)
                     .collect(Collectors.toList());
 
             ObjectMapper mapper = new ObjectMapper();

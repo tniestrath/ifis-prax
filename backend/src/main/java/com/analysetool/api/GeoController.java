@@ -212,54 +212,54 @@ public class GeoController {
             if(uniId != 0) {
                 //Add all stats from ClicksByBundesland
                 for (ClicksByBundesland clicksByB : clicksByBundeslandRepo.getByUniID(uniId)) {
-                    if(json.get(clicksByB.getBundesland()) != null) {
+                    try {
                         json.put(clicksByB.getBundesland(), clicksByB.getClicks() + Integer.parseInt(json.get(clicksByB.getBundesland()).toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put(clicksByB.getBundesland(), clicksByB.getClicks());
                     }
                     total += clicksByB.getClicks();
                 }
                 //..For Belgium
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium") != null) {
-                    if(json.get("BG") != null) {
+                    try {
                         json.put("BG", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks() + Integer.parseInt(json.get("BG").toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put("BG", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks();
                 }
                 //..For the Netherlands
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands") != null) {
-                    if(json.get("NL") != null) {
+                    try {
                         json.put("NL", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks() + Integer.parseInt(json.get("NL").toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put("NL", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks();
                 }
                 //..For Austria
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria") != null) {
-                    if(json.get("AT") != null) {
+                    try {
                         json.put("AT", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks() + Integer.parseInt(json.get("AT").toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put("AT", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks();
                 }
                 //..For Luxembourg
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg") != null) {
-                    if(json.get("LU") != null) {
+                    try {
                         json.put("LU", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks() + Integer.parseInt(json.get("LU").toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put("LU", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks();
                 }
                 //..and for Switzerland.
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland") != null) {
-                    if(json.get("SW") != null) {
+                    try {
                         json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks() + Integer.parseInt(json.get("SW").toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks();
@@ -293,54 +293,54 @@ public class GeoController {
             if(uniId != 0) {
                 //Add all stats from ClicksByBundesland
                 for (ClicksByBundesland clicksByB : clicksByBundeslandRepo.getByUniID(uniId)) {
-                    if(json.get(clicksByB.getBundesland()) != null) {
+                    try {
                         json.put(clicksByB.getBundesland(), clicksByB.getClicks() + Integer.parseInt(json.get(clicksByB.getBundesland()).toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put(clicksByB.getBundesland(), clicksByB.getClicks());
                     }
                     total += clicksByB.getClicks();
                 }
                 //..For Belgium
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium") != null) {
-                    if(json.get("BG") != null) {
+                    try {
                         json.put("BG", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks() + Integer.parseInt(json.get("BG").toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put("BG", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks();
                 }
                 //..For the Netherlands
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands") != null) {
-                    if(json.get("NL") != null) {
+                    try {
                         json.put("NL", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks() + Integer.parseInt(json.get("NL").toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put("NL", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks();
                 }
                 //..For Austria
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria") != null) {
-                    if(json.get("AT") != null) {
+                    try {
                         json.put("AT", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks() + Integer.parseInt(json.get("AT").toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put("AT", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks();
                 }
                 //..For Luxembourg
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg") != null) {
-                    if(json.get("LU") != null) {
+                    try {
                         json.put("LU", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks() + Integer.parseInt(json.get("LU").toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put("LU", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks();
                 }
                 //..and for Switzerland.
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland") != null) {
-                    if(json.get("SW") != null) {
+                    try {
                         json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks() + Integer.parseInt(json.get("SW").toString()));
-                    } else {
+                    } catch (JSONException e) {
                         json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks();

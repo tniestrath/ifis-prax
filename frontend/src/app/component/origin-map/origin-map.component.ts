@@ -245,10 +245,11 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     }
     this.perDayRegionClicks = this.perDayRegionClicks.reverse();
   }
-  readData(data : Map<string,number>, svgElement: any){
+  readData(data : any, svgElement: any){
+    let map : Map<string, number> = new Map(Object.entries(data));
     // @ts-ignore
-    this.totalDE = (data as Map<string,number>).get("total");
-    for (const region of data){
+    this.totalDE = map.get("total");
+    for (const region of map){
       if (String(region.at(0)) == "total") continue;
       this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
       //this.setRegionTooltip(svgElement, String(region.at(0)), region.cities);

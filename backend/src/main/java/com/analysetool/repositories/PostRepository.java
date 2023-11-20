@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -34,7 +33,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    public String getContentById(long pId);
 
 
-   @Query("SELECT p FROM Post p WHERE p.status = 'publish' AND p.type = 'post'")
+   @Query("SELECT p FROM Post p WHERE p.status = 'publish' AND p.type = 'post' ORDER BY p.date DESC")
    List<Post> findAllUserPosts();
 
 

@@ -144,7 +144,7 @@ public class SearchStatsController {
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
     @GetMapping("/getBadOutlierForXProviderSearches")
-    public String getBadOutlierForXProviderSearches(@RequestParam int limit) throws JSONException {
+    public String getBadOutlierForXProviderSearches(@RequestParam int limit)  {
         try {
             List<AnbieterSearch> anbieterSearches = new ArrayList<>();
             if (limit > 0) {

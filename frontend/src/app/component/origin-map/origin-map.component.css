@@ -11,21 +11,33 @@
   display: flex;
   width: calc(100% - 45px);
   height: 30px;
-  padding: 5px;
   position: relative;
   box-sizing: border-box;
   border-radius: 5px;
   border: 1px solid #A0A0A0;
-
   left: 5px;
   top: 5px;
 
 }
 .origin-map-title > p{
   margin: 0;
-  width: 100%;
+  padding: 5px 15px;
   text-align: center;
 }
+.origin-map-title > input{
+  border: none;
+  border-right: 1px solid #A0A0A0;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+.origin-map-title > label{
+  padding-left: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-left: 1px solid #A0A0A0;
+  border-radius: 5px;
+}
+
 .origin-map-map-box{
   height: 100%;
   width: 50%;

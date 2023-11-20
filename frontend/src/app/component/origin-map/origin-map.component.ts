@@ -73,6 +73,20 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       "Mit einem Click auf eine Region werden genauere Informationen angezeigt.");
     this.isRegionSelected = "none";
     this.showCharts = "none";
+
+    this.db.getGeoTimespan().then(res => {
+      let startDate = res[0].split('T')[0];
+      let endDate = res[1].split('T')[0];
+
+      let startDatePicker = document.getElementById("geoStartDate");
+      startDatePicker?.setAttribute('min', startDate);
+      startDatePicker?.setAttribute('max', endDate);
+
+      let endDatePicker = document.getElementById("geoEndDate");
+      endDatePicker?.setAttribute('min', startDate);
+      endDatePicker?.setAttribute('max', endDate);
+    });
+
     setTimeout(() => {
       this.isScaled = true;
       const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
@@ -81,13 +95,11 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         if (SysVars.CURRENT_PAGE == "Users") {
           this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID)).then(res => {
             this.readData(res, svgElement);
-            this.setRegionTooltip(svgElement, this.strongest_region.identifier, this.strongest_region.cities);
             this.cdr.detectChanges();
           });
         } else {
-          this.db.getOriginMapAll().then(res => {
+          this.db.getGeoAll().then(res => {
             this.readData(res, svgElement);
-            this.setRegionTooltip(svgElement, this.strongest_region.identifier, this.strongest_region.cities);
             this.cdr.detectChanges();
           })
           this.db.getViewsByLocationLast14().then(res => {
@@ -252,51 +264,10 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     for (const region of map){
       if (String(region.at(0)) == "total") continue;
       this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
-      //this.setRegionTooltip(svgElement, String(region.at(0)), region.cities);
+      this.setRegionTooltip(svgElement, String(region.at(0)));
       if (Number(region.at(1)) > this.strongest_region.clicks) this.strongest_region = {identifier: String(region.at(0)), clicks: Number(region.at(1)), cities: []};
     }
   }
-
-  /*readData(global: { [x: string]: any}, svgElement: any){
-    this.totalDE = global["DE"]["gesamt"]["gesamt"];
-    this.totalGlobal = global["global"]["gesamt"]["gesamt"];
-    const region_clicks: SVG_Region[] = [];
-
-    for (const country in global){
-      if (country == "DE"){
-          for (const region in global["DE"]){
-            let clicks = global[country][region]["gesamt"];
-            let cityArray: SVG_City[] = [];
-            for (const city in global[country][region]) {
-              if (city != "gesamt") {
-                cityArray.push({clicks: global[country][region][city], name: city});
-              }
-            }
-            cityArray.sort((a, b) =>  b.clicks - a.clicks);
-            cityArray.push({clicks: clicks, name: "gesamt"});
-            region_clicks.push({identifier: region, clicks: clicks, cities: cityArray})
-          }
-      }
-      else {
-        let clicks = global[country]["gesamt"]["gesamt"];
-        let cityArray: SVG_City[] = [];
-        for (const city in global[country][country]) {
-          if (city != "gesamt") {
-            cityArray.push({clicks: global[country][country][city], name: city});
-          }
-        }
-        cityArray.sort((a, b) =>  b.clicks - a.clicks);
-        cityArray.push({clicks: clicks, name: "gesamt"});
-        if (country == "BE") region_clicks.push({identifier: "BG", clicks: clicks, cities: cityArray});
-        else region_clicks.push({identifier: country, clicks: clicks, cities: cityArray});
-      }
-    }
-    for (const region of region_clicks){
-      this.setRegionColor(svgElement, region.identifier, region.clicks, this.totalDE);
-      this.setRegionTooltip(svgElement, region.identifier, region.cities);
-      if (region.clicks > this.strongest_region.clicks) this.strongest_region = region;
-    }
-  }*/
 
   setRegionColor(svg : any, region : string, clicks : number, clicks_global : number){
     var pathElement = svg.querySelector("#" + region) ?? null;
@@ -306,7 +277,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
   }
 
-  setRegionTooltip(svg: any, region : string, cities : {name : string, clicks : number}[]){
+  setRegionTooltip(svg: any, region : string){
     var pathElement = svg.querySelector("#" + region) ?? null;
     var tooltipElement = document.getElementById("tooltip") ?? new HTMLElement();
     var tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
@@ -316,48 +287,52 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     if (pathElement == null){return}
 
     pathElement.addEventListener('click', () => {
-      tooltipHeader.style.paddingBottom = "5px";
-      tooltipHeader.innerText = this.getRegionFullName(region);
+      this.db.getGeoByRegion(region).then((res: Map<string,number>) => {
+        let data : Map<string, number> = new Map(Object.entries(res));
+        if (data.has("error")) return;
+        tooltipHeader.style.paddingBottom = "5px";
+        tooltipHeader.innerText = this.getRegionFullName(region);
 
-      tooltipCities.replaceChildren();
-      if (cities.length > 20){
-        let gesamt = cities[cities.length-1];
-        cities = cities.slice(0, 20);
-        cities.push(gesamt);
-      }
-      for (const city of cities) {
+        tooltipCities.replaceChildren();
         let cityElement = document.createElement('div', );
         let cityName = document.createElement('div');
         let cityClicks = document.createElement('div');
-        cityElement.style.fontSize = "calc((.9vw + .9vh)/2)";
-        cityElement.style.display = "flex";
-        cityElement.style.flexDirection = "row";
-        cityElement.style.justifyContent = "space-between";
-        if (city.name == "gesamt"){
-          cityElement.style.marginTop = "3px";
-          cityElement.style.paddingTop = "2px";
-          cityElement.style.borderTop = "1px dashed #000";
+        cityElement.style.marginTop = "3px";
+        cityElement.style.paddingTop = "2px";
+        cityElement.style.borderTop = "1px dashed #000";
+
+        for (const city of data) {
+          let cityElement = document.createElement('div', );
+          let cityName = document.createElement('div');
+          let cityClicks = document.createElement('div');
+          cityElement.style.fontSize = "calc((.9vw + .9vh)/2)";
+          cityElement.style.display = "flex";
+          cityElement.style.flexDirection = "row";
+          cityElement.style.justifyContent = "space-between";
+          cityName.innerText = String(city.at(0));
+          cityClicks.innerText = Util.formatNumbers(Number(city.at(1)));
+
+
+          cityElement.appendChild(cityName);
+          cityElement.appendChild(cityClicks);
+          tooltipCities.appendChild(cityElement);
+
+          this.isRegionSelected = "block";
+          if (SysVars.CURRENT_PAGE == "Overview") {
+            this.showCharts = "block";
+            tooltipElement.classList.remove("width50");
+            tooltipCharts.classList.remove("hidden");
+            this.createChart(this.perDayRegionClicks, region);
+          }
+          else {
+            tooltipElement.classList.add("width50");
+            tooltipCharts.classList.add("hidden");
+          }
         }
-        cityName.innerText = city.name;
-        cityClicks.innerText = Util.formatNumbers(city.clicks);
-
-
         cityElement.appendChild(cityName);
         cityElement.appendChild(cityClicks);
         tooltipCities.appendChild(cityElement);
-
-        this.isRegionSelected = "block";
-        if (SysVars.CURRENT_PAGE == "Overview") {
-          this.showCharts = "block";
-          tooltipElement.classList.remove("width50");
-          tooltipCharts.classList.remove("hidden");
-          this.createChart(this.perDayRegionClicks, region);
-        }
-        else {
-          tooltipElement.classList.add("width50");
-          tooltipCharts.classList.add("hidden");
-        }
-      }
+      });
     });
     pathElement.addEventListener('mouseenter', () => {
       pathElement.style.strokeWidth = "10px";

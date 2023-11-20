@@ -65,7 +65,11 @@ export enum dbUrl {
   GET_EVENTS = "/events/getAmountOfEvents",
   GET_EVENTS_YESTERDAY = "/events/getAmountOfEventsCreatedYesterday",
 
-  GET_ORIGIN_MAP_GERMANY_ALL_TIME = "/geo/getTotalGermanGeoAllTime",
+  GET_GEO_GERMANY_ALL_TIME = "/geo/getTotalGermanGeoAllTime",
+  GET_GEO_GERMANY_ALL_TIME_BY_REGION = "/geo/getRegionGermanGeoAllTime?region=REGION",
+  GET_GEO_LAST_TIMESTAMP = "/geo/lastEntry",
+  GET_GEO_FIRST_TIMESTAMP = "/geo/firstEntry",
+  GET_GEO_TIMESPAN = "/geo/geoRange",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -291,9 +295,25 @@ export class DbService {
     return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getOriginMapAll() : Promise<Map<string,number>> {
+  async getGeoAll() : Promise<Map<string,number>> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.GET_ORIGIN_MAP_GERMANY_ALL_TIME)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.GET_GEO_GERMANY_ALL_TIME)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getGeoByRegion(region : string) : Promise<Map<string,number>> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION).replace("REGION", region)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getGeoStart() : Promise<string> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_GEO_FIRST_TIMESTAMP)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getGeoEnd() : Promise<string> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_GEO_LAST_TIMESTAMP)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getGeoTimespan() : Promise<string[]> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_GEO_TIMESPAN)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getClicksByTime(id : number){

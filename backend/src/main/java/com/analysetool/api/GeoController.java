@@ -189,7 +189,7 @@ public class GeoController {
      *
      * @param start a String representing the start date of calculation format: YYYY-MM-DD
      * @param end a String representing the end date of calculation format: YYYY-MM-DD
-     * @return a json-string containing the clicks of each bundesland and adjacent country of interest.
+     * @return a json-string containing the clicks of each bundesland and adjacent country of interest, labeled by their ISO-Code for bundesland and english name for countries.
      * @throws JSONException if something unexpected happened.
      */
     @GetMapping("/getTotalGermanGeoByDay")

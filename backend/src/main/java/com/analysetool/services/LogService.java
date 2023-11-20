@@ -75,6 +75,9 @@ public class LogService {
     @Autowired
     private UserGeoRepository userGeoRepo;
 
+    @Autowired
+    private ClicksByBundeslandCitiesDLCRepository clicksByBundeslandCityRepo;
+
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
@@ -2676,19 +2679,34 @@ public class LogService {
     private void updateClicksBy() {
         int uniId = uniRepo.getSecondLastUniStats().get(1).getId();
         String ip;
+
+        //For all UniqueUsers we have saved, iterate:
         for(UniqueUser user : uniqueUserRepo.findAll()) {
             ip = user.getIp();
             ClicksByCountry clicksByCountry;
             ClicksByBundesland clicksByBundesland;
+            ClicksByBundeslandCitiesDLC clicksByBundeslandCitiesDLC;
+            //If the country is Germany, try to update ClicksByBundesland
             if(IPHelper.getCountryISO(user.getIp()).equals("DE")) {
-                //Update ClicksByBundesland
                 clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                         ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
+
                 clicksByBundesland.setUniStatId(uniId);
+                //If the ip can be matched to a bundesland, update and save it. Otherwise, don't.
                 if (IPHelper.getSubISO(ip) != null) {
                     clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
                     clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
                     clicksByBundeslandRepo.save(clicksByBundesland);
+                    //If the ip can be matched to a city, set, update and save ClicksByBundeslandCitiesDLC
+                    if(IPHelper.getCityName(ip) != null) {
+                        clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
+                                ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
+                        clicksByBundeslandCitiesDLC.setUni_id(uniId);
+                        clicksByBundeslandCitiesDLC.setBundesland(IPHelper.getSubISO(ip));
+                        clicksByBundeslandCitiesDLC.setCity(IPHelper.getCityName(ip));
+                        clicksByBundeslandCitiesDLC.setClicks(clicksByBundeslandCitiesDLC.getClicks() + 1);
+                        clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
+                    }
                 }
 
             }

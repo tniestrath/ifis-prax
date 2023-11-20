@@ -274,7 +274,7 @@ public class GeoController {
     }
 
     @GetMapping("/getTotalGermanGeoAllTime")
-    public JSONObject getTotalGermanGeoAllTime() throws JSONException {
+    public String getTotalGermanGeoAllTime() throws JSONException {
         JSONObject json = new JSONObject();
         Date dateStart = new Date(uniStatRepo.getEarliestUniStat().getDatum().getTime());
         Date dateEnd = new Date(uniStatRepo.getLatestUniStat().getDatum().getTime());
@@ -351,6 +351,6 @@ public class GeoController {
             }
 
         }
-        return json;
+        return json.toString();
     }
 }

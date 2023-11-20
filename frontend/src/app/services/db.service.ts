@@ -11,7 +11,7 @@ import {Subject, Subscription} from "rxjs";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
-  //HOST = "http://localhost:8080/api", // DEBUG LINE
+  //HOST = "http://localhost:8080/api", // DEBUG
   PORT = "",
 
   GET_TAGS_ALL = "/tags/getPostTagsIdName",
@@ -80,20 +80,18 @@ export enum dbUrl {
 })
 export class DbService {
 
-  private static host = dbUrl.HOST;
-  private static port = dbUrl.PORT;
-
   public static Tags : Tag[] = [];
   public static Users : User[] = [];
 
   public status : Subject<number> = new Subject<number>();
   private requestCount = 0;
   private failedRequestCount = 0;
+  private lastFail : string = dbUrl.HOST;
 
   constructor(private sanitizer : DomSanitizer) { }
 
   private static getUrl( prompt : string){
-    return DbService.host + DbService.port + prompt;
+    return dbUrl.HOST + dbUrl.PORT + prompt;
   }
 
   private setStatus(status_code : number){
@@ -105,12 +103,20 @@ export class DbService {
   }
   private setFinished(html_code : number, url : string){
     console.log("STATUS: " + html_code + " @ " + url);
+
     if (html_code >= 200 && html_code < 400){
       this.requestCount--;
-      if (this.requestCount <= 0){
+      if (this.lastFail == url){
+        this.lastFail = dbUrl.HOST;
+        this.failedRequestCount--;
+        this.setStatus(0);
+      }
+      else if (this.requestCount <= 0){
         this.setStatus(0);
       }
     } else {
+      this.lastFail = url;
+      this.failedRequestCount++;
       this.setStatus(html_code);
     }
   }

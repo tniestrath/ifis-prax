@@ -201,9 +201,12 @@ public class GeoController {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
-        Date dateTrueEnd = new Date(uniStatRepo.getLatestUniStat().getDatum().getTime());
+        Date dateTrueEnd = new Date(uniStatRepo.getSecondLastUniStats().get(1).getDatum().getTime());
         if(dateEnd.after(dateTrueEnd)) {
             dateEnd = dateTrueEnd;
+        }
+        if(dateStart.after(dateTrueEnd)) {
+            dateStart = dateTrueEnd;
         }
         int total = 0;
 
@@ -395,10 +398,14 @@ public class GeoController {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
-        Date dateTrueEnd = new Date(uniStatRepo.getLatestUniStat().getDatum().getTime());
+        Date dateTrueEnd = new Date(uniStatRepo.getSecondLastUniStats().get(1).getDatum().getTime());
         if(dateEnd.after(dateTrueEnd)) {
             dateEnd = dateTrueEnd;
         }
+        if(dateStart.after(dateTrueEnd)) {
+            dateStart = dateTrueEnd;
+        }
+
         int countDays = (int) dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).count();
 
         //Iterate over all days in the interval.
@@ -429,9 +436,12 @@ public class GeoController {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
-        Date dateTrueEnd = new Date(uniStatRepo.getLatestUniStat().getDatum().getTime());
+        Date dateTrueEnd = new Date(uniStatRepo.getSecondLastUniStats().get(1).getDatum().getTime());
         if(dateEnd.after(dateTrueEnd)) {
             dateEnd = dateTrueEnd;
+        }
+        if(dateStart.after(dateTrueEnd)) {
+            dateStart = dateTrueEnd;
         }
 
         //Iterate over all days in the interval.

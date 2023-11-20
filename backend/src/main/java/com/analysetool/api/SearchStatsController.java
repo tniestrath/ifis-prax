@@ -224,7 +224,7 @@ public class SearchStatsController {
      * Diese Methode holt die letzten 'limit' EventSearch-Objekte, sortiert nach ihrer ID in absteigender Reihenfolge,
      * berechnet die Ausreißer für ihre resultCount-Werte und filtert die entsprechenden Events heraus.
      *
-     * @param limit Die maximale Anzahl von EventSearch-Objekten, die zurückgegeben werden sollen.
+     * @param limit Die maximale Anzahl von EventSearch-Objekten, die zurückgegeben werden sollen.0=alle
      * @return Ein String, der ein JSON-Array von EventSearch-Objekten repräsentiert.
      *         Jedes Objekt im Array ist ein schlechter Ausreißer basierend auf dem resultCount-Wert.
      *         Bei einem Fehler in der Verarbeitung wird eine Fehlermeldung zurückgegeben.
@@ -232,9 +232,12 @@ public class SearchStatsController {
     @GetMapping("/badOutliersEventSearch")
     public String findBadOutliersEventSearch(@RequestParam int limit) {
         try {
+            List<EventSearch> latestEventSearches= new ArrayList<>();
+            if(limit>0){
             Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
             Page<EventSearch> eventSearchPage = eventSearchRepo.findAllByOrderByIdDesc(pageable);
-            List<EventSearch> latestEventSearches = eventSearchPage.getContent();
+            latestEventSearches = eventSearchPage.getContent();}
+            else if(limit==0){ latestEventSearches = eventSearchRepo.findAll();}
 
             List<Integer> resultCounts = latestEventSearches.stream()
                     .map(EventSearch::getResultCount)

@@ -434,7 +434,6 @@ public class UserController {
     public List<String> getNewUsersByTypeToday(String type) {
         List<String> list = new ArrayList<>();
         for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
-            System.out.println(uniRepo.getLatestUniStat().getDatum().getTime());
             if(member.getModified().after(uniRepo.getLatestUniStat().getDatum())) {
                 listAddByType(type, list, member);
             }

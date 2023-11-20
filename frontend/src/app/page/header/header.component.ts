@@ -49,7 +49,7 @@ export class HeaderComponent implements AfterViewInit{
     this.db.status.subscribe(status => {
       if (status == 0) this.stopAndHideLoadingBar();
       else if (status == 1) this.showAndStartLoadingBar();
-      else this.setLoadingBarErrorCode(status);
+      else {this.setLoadingBarErrorCode(status); this.showAndStartLoadingBar()}
     })
   }
 
@@ -81,7 +81,6 @@ export class HeaderComponent implements AfterViewInit{
     // @ts-ignore
     let progress = -loadingBarProgress.clientWidth;
     // @ts-ignore
-    loadingBar.style.display = "block";
     if (this.loadingBar_process == null){
       this.loadingBar_process = setInterval(() => {
         if (loadingBarProgress != null){
@@ -102,6 +101,7 @@ export class HeaderComponent implements AfterViewInit{
   stopAndHideLoadingBar(){
     this.stopLoadingBar();
     this.hideLoadingBar();
+    this.setLoadingBarErrorCode(0);
   }
 
   showAndStartLoadingBar(){
@@ -111,7 +111,6 @@ export class HeaderComponent implements AfterViewInit{
 
   setLoadingBarErrorCode(html_err_code : string | number){
     // @ts-ignore
-    this.startLoadingBar();
     if (html_err_code != undefined && html_err_code != 0){
       this.html_err_code = "Err: " + String(html_err_code);
     } else if (html_err_code != 0) {

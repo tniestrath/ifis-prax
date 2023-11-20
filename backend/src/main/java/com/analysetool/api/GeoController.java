@@ -211,7 +211,7 @@ public class GeoController {
         int total = 0;
 
         //Iterate over all days in the interval.
-        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).toList()) {
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
             int uniId = 0;
 
             //Check if we have stats for the day we are checking
@@ -292,7 +292,7 @@ public class GeoController {
         int total = 0;
 
         //Iterate over all days in the interval.
-        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).toList()) {
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
             int uniId = 0;
 
             //Check if we have stats for the day we are checking
@@ -406,10 +406,10 @@ public class GeoController {
             dateStart = dateTrueEnd;
         }
 
-        int countDays = (int) dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).count();
+        int countDays = (int) dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).count();
 
         //Iterate over all days in the interval.
-        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).toList()) {
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
             int uniId = 0;
 
             //Check if we have stats for the day we are checking
@@ -445,7 +445,7 @@ public class GeoController {
         }
 
         //Iterate over all days in the interval.
-        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).toList()) {
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
             int uniId = 0;
 
             //Check if we have stats for the day we are checking
@@ -467,4 +467,13 @@ public class GeoController {
     }
 
 
+    @GetMapping("/lastEntry")
+    public String getLastEntry() {
+        return uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().toInstant().toString();
+    }
+
+    @GetMapping("/firstEntry")
+    public String getFirstEntry() {
+        return uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().toInstant().toString();
+    }
 }

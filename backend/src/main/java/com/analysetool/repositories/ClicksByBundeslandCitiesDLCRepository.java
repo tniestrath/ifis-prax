@@ -22,4 +22,10 @@ public interface ClicksByBundeslandCitiesDLCRepository extends JpaRepository<Cli
     @Query("SELECT COUNT(DISTINCT(u.uni_id)) FROM ClicksByBundeslandCitiesDLC u")
     int getCountDays();
 
+    @Query("SELECT u.uni_id FROM ClicksByBundeslandCitiesDLC u ORDER BY u.uni_id DESC LIMIT 1")
+    int getLastEntry();
+
+    @Query("SELECT u.uni_id FROM ClicksByBundeslandCitiesDLC u ORDER BY u.uni_id ASC LIMIT 1")
+    int getFirstEntry();
+
 }

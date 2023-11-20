@@ -197,6 +197,7 @@ public class GeoController {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
+        int total = 0;
 
         //Iterate over all days in the interval.
         for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).toList()) {
@@ -216,6 +217,7 @@ public class GeoController {
                     } else {
                         json.put(clicksByB.getBundesland(), clicksByB.getClicks());
                     }
+                    total += clicksByB.getClicks();
                 }
                 //..For Belgium
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium") != null) {
@@ -224,6 +226,7 @@ public class GeoController {
                     } else {
                         json.put("BG", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks());
                     }
+                    total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks();
                 }
                 //..For the Netherlands
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands") != null) {
@@ -232,6 +235,7 @@ public class GeoController {
                     } else {
                         json.put("NL", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks());
                     }
+                    total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks();
                 }
                 //..For Austria
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria") != null) {
@@ -240,6 +244,7 @@ public class GeoController {
                     } else {
                         json.put("AT", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks());
                     }
+                    total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks();
                 }
                 //..For Luxembourg
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg") != null) {
@@ -248,6 +253,7 @@ public class GeoController {
                     } else {
                         json.put("LU", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks());
                     }
+                    total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks();
                 }
                 //..and for Switzerland.
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland") != null) {
@@ -256,7 +262,10 @@ public class GeoController {
                     } else {
                         json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks());
                     }
+                    total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks();
                 }
+
+                json.put("total", total);
 
             }
 

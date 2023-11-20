@@ -1086,7 +1086,7 @@ public class PostController {
      * Endpoint, um ähnliche Beiträge basierend auf Tag-Ähnlichkeit und Gesamt-Klicks abzurufen.
      *
      * @param postId Der ID des Beitrags, für den ähnliche Beiträge gesucht werden sollen.
-     * @param similarityPercentage Das Mindestprozentsatz der Übereinstimmung von Tags, um als ähnlich betrachtet zu werden.
+     * @param similarityPercentage Der Mindestprozentsatz der Übereinstimmung von Tags, um als ähnlich betrachtet zu werden.
      * @return Ein JSON-String, der ähnliche Beiträge basierend auf Tag-Ähnlichkeit und Gesamt-Klicks repräsentiert.
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
@@ -1142,11 +1142,11 @@ public class PostController {
      * innerhalb eines gegebenen Datumsbereichs.
      *
      * @param postId              Die ID des Beitrags, zu dem ähnliche Beiträge gefunden werden sollen.
-     * @param similarityPercentage Die minimale Tag-Ähnlichkeitsprozentsatz.
+     * @param similarityPercentage Der minimale Tag-Ähnlichkeitsprozentsatz.
      * @param startDate           Das Startdatum des Datumsbereichs im Format "dd.MM".
      * @param endDate             Das Enddatum des Datumsbereichs im Format "dd.MM".
      * @return Eine Liste von ähnlichen Beiträgen und ihrer Klickanzahl im gegebenen Datumsbereich.
-     * @throws JSONException Wenn ein JSON-Fehler auftritt.
+     * @throws JSONException wenn ein JSON-Fehler auftritt.
      */
     @GetMapping("/getSimilarPostByClicksInRange")
     public String getSimilarPostByClicksInRange(@RequestParam long postId, @RequestParam float similarityPercentage,
@@ -1263,7 +1263,7 @@ public class PostController {
      * Endpoint, um ähnliche Beiträge und Ausreißer basierend auf Tag-Ähnlichkeit und Gesamt-Klicks abzurufen.
      *
      * @param postId Der ID des Beitrags, für den ähnliche Beiträge und Ausreißer gesucht werden sollen.
-     * @param similarityPercentage Das Mindestprozentsatz der Übereinstimmung von Tags, um als ähnlich betrachtet zu werden.
+     * @param similarityPercentage Der Mindestprozentsatz der Übereinstimmung von Tags, um als ähnlich betrachtet zu werden.
      * @return Ein JSON-String, der ähnliche Beiträge und Ausreißer basierend auf Tag-Ähnlichkeit und Gesamt-Klicks repräsentiert.
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
@@ -1310,7 +1310,7 @@ public class PostController {
      * Endpoint, um ähnliche Beiträge und Ausreißer basierend auf Clicks innerhalb eines gegebenen Datumsbereichs abzurufen.
      *
      * @param postId Der ID des Beitrags, für den ähnliche Beiträge gesucht werden sollen.
-     * @param similarityPercentage Das Mindestprozentsatz der Übereinstimmung von Tags, um als ähnlich betrachtet zu werden.
+     * @param similarityPercentage Der Mindestprozentsatz der Übereinstimmung von Tags, um als ähnlich betrachtet zu werden.
      * @param startDate Das Anfangsdatum des Bereichs im Format "dd.MM".
      * @param endDate Das Enddatum des Bereichs im Format "dd.MM".
      * @return Ein JSON-String, der ähnliche Beiträge und Ausreißer repräsentiert.

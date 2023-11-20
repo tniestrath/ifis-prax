@@ -245,8 +245,18 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     }
     this.perDayRegionClicks = this.perDayRegionClicks.reverse();
   }
+  readData(data : Map<string,number>, svgElement: any){
+    // @ts-ignore
+    this.totalDE = data.get("total");
+    for (const region of data){
+      if (String(region.at(0)) == "total") continue;
+      this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
+      //this.setRegionTooltip(svgElement, String(region.at(0)), region.cities);
+      if (Number(region.at(1)) > this.strongest_region.clicks) this.strongest_region = {identifier: String(region.at(0)), clicks: Number(region.at(1)), cities: []};
+    }
+  }
 
-  readData(global: { [x: string]: any}, svgElement: any){
+  /*readData(global: { [x: string]: any}, svgElement: any){
     this.totalDE = global["DE"]["gesamt"]["gesamt"];
     this.totalGlobal = global["global"]["gesamt"]["gesamt"];
     const region_clicks: SVG_Region[] = [];
@@ -285,7 +295,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       this.setRegionTooltip(svgElement, region.identifier, region.cities);
       if (region.clicks > this.strongest_region.clicks) this.strongest_region = region;
     }
-  }
+  }*/
 
   setRegionColor(svg : any, region : string, clicks : number, clicks_global : number){
     var pathElement = svg.querySelector("#" + region) ?? null;

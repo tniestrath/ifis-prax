@@ -201,13 +201,13 @@ public class GeoController {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
-        Date dateTrueEnd = new Date(uniStatRepo.getSecondLastUniStats().get(1).getDatum().getTime());
-        if(dateEnd.after(dateTrueEnd)) {
-            dateEnd = dateTrueEnd;
+
+        if(dateStart.after(dateEnd)) {
+            Date datePuffer = dateEnd;
+            dateEnd = dateStart;
+            dateStart = datePuffer;
         }
-        if(dateStart.after(dateTrueEnd)) {
-            dateStart = dateTrueEnd;
-        }
+
         int total = 0;
 
         //Iterate over all days in the interval.
@@ -289,6 +289,11 @@ public class GeoController {
         JSONObject json = new JSONObject();
         Date dateStart = new Date(uniStatRepo.getEarliestUniStat().getDatum().getTime());
         Date dateEnd = new Date(uniStatRepo.getLatestUniStat().getDatum().getTime());
+        if(dateStart.after(dateEnd)) {
+            Date datePuffer = dateEnd;
+            dateEnd = dateStart;
+            dateStart = datePuffer;
+        }
         int total = 0;
 
         //Iterate over all days in the interval.
@@ -398,12 +403,10 @@ public class GeoController {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
-        Date dateTrueEnd = new Date(uniStatRepo.getSecondLastUniStats().get(1).getDatum().getTime());
-        if(dateEnd.after(dateTrueEnd)) {
-            dateEnd = dateTrueEnd;
-        }
-        if(dateStart.after(dateTrueEnd)) {
-            dateStart = dateTrueEnd;
+        if(dateStart.after(dateEnd)) {
+            Date datePuffer = dateEnd;
+            dateEnd = dateStart;
+            dateStart = datePuffer;
         }
 
         int countDays = (int) dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).count();
@@ -436,13 +439,12 @@ public class GeoController {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
-        Date dateTrueEnd = new Date(uniStatRepo.getSecondLastUniStats().get(1).getDatum().getTime());
-        if(dateEnd.after(dateTrueEnd)) {
-            dateEnd = dateTrueEnd;
+        if(dateStart.after(dateEnd)) {
+            Date datePuffer = dateEnd;
+            dateEnd = dateStart;
+            dateStart = datePuffer;
         }
-        if(dateStart.after(dateTrueEnd)) {
-            dateStart = dateTrueEnd;
-        }
+
 
         //Iterate over all days in the interval.
         for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {

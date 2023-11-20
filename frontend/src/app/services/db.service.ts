@@ -34,7 +34,6 @@ export enum dbUrl {
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/users/getAccountTypeAllYesterday",
   GET_USERS_ACCOUNTTYPES_ALL_NEW = "/users/getNewUsersAll",
-  GET_USERS_ALL_ORIGIN_MAP = "/users/getAllViewsByLocation",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
 
   GET_POST = "/posts/getPostStatsByIdWithAuthor?id=ID",
@@ -65,6 +64,8 @@ export enum dbUrl {
 
   GET_EVENTS = "/events/getAmountOfEvents",
   GET_EVENTS_YESTERDAY = "/events/getAmountOfEventsCreatedYesterday",
+
+  GET_ORIGIN_MAP_GERMANY_ALL_TIME = "/geo/getTotalGermanGeoAllTime",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -290,9 +291,9 @@ export class DbService {
     return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getOriginMapAll() {
+  async getOriginMapAll() : Promise<Map<string,number>> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.GET_USERS_ALL_ORIGIN_MAP)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.GET_ORIGIN_MAP_GERMANY_ALL_TIME)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getClicksByTime(id : number){

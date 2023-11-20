@@ -174,19 +174,21 @@ public class SearchStatsController {
 
     /**
      * Endpoint, schlechte Ausreißer basierend auf den gefundenen Anbietern innerhalb eines Radius einer gewissen Anzahl an Anbietersuchen zu ermitteln.
-     * @param AnzahlDerZuUeberpruefendenSuchen returned alle Suchen
+     * @param limit = 0 benutzt alle Suchen, sonst normales limit
      * @return Ein JSON-String, der schlechte Ausreißer repräsentiert(nur wenige oder keine Anbieter).
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
     @GetMapping("/getBadOutlierForXProviderSearches")
-    public String getBadOutlierAllProviderSearches(@RequestParam int AnzahlDerZuUeberpruefendenSuchen) throws JSONException {
-        /*
+    public String getBadOutlierForXProviderSearches(@RequestParam int limit) throws JSONException {
+
         JSONArray Ergebnis = new JSONArray();
 
         List<AnbieterSearch> anbieterSearches = new ArrayList<>();
 
-        if(AnzahlDerZuUeberpruefendenSuchen>0){
-        anbieterSearches=anbieterSearchRepo.findLastX(AnzahlDerZuUeberpruefendenSuchen);} else if (AnzahlDerZuUeberpruefendenSuchen==0) {anbieterSearches=anbieterSearchRepo.findAll();}
+        if(limit>0){
+            Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
+            Page<AnbieterSearch>anbieterPage=anbieterSearchRepo.findAllByOrderByIdDesc(pageable);
+            anbieterSearches=anbieterPage.getContent();} else if (limit==0) {anbieterSearches=anbieterSearchRepo.findAll();}
 
         List<Integer> counts=new ArrayList<>();
 
@@ -213,8 +215,7 @@ public class SearchStatsController {
             }
         }
         return Ergebnis.toString();
-         */
-        return  ":(";
+
     }
 
     /**

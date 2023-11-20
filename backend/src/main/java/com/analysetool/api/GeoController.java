@@ -272,4 +272,85 @@ public class GeoController {
         }
         return json.toString();
     }
+
+    @GetMapping("/getTotalGermanGeoAllTime")
+    public String getTotalGermanGeoAllTime() throws JSONException {
+        JSONObject json = new JSONObject();
+        Date dateStart = new Date(uniStatRepo.getEarliestUniStat().getDatum().getTime());
+        Date dateEnd = new Date(uniStatRepo.getLatestUniStat().getDatum().getTime());
+        int total = 0;
+
+        //Iterate over all days in the interval.
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).toList()) {
+            int uniId = 0;
+
+            //Check if we have stats for the day we are checking
+            if(uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+            }
+
+            //If we do have stats, put stats for the day into the json.
+            if(uniId != 0) {
+                //Add all stats from ClicksByBundesland
+                for (ClicksByBundesland clicksByB : clicksByBundeslandRepo.getByUniID(uniId)) {
+                    if(json.get(clicksByB.getBundesland()) != null) {
+                        json.put(clicksByB.getBundesland(), clicksByB.getClicks() + Integer.parseInt(json.get(clicksByB.getBundesland()).toString()));
+                    } else {
+                        json.put(clicksByB.getBundesland(), clicksByB.getClicks());
+                    }
+                    total += clicksByB.getClicks();
+                }
+                //..For Belgium
+                if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium") != null) {
+                    if(json.get("BG") != null) {
+                        json.put("BG", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks() + Integer.parseInt(json.get("BG").toString()));
+                    } else {
+                        json.put("BG", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks());
+                    }
+                    total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks();
+                }
+                //..For the Netherlands
+                if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands") != null) {
+                    if(json.get("NL") != null) {
+                        json.put("NL", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks() + Integer.parseInt(json.get("NL").toString()));
+                    } else {
+                        json.put("NL", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks());
+                    }
+                    total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks();
+                }
+                //..For Austria
+                if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria") != null) {
+                    if(json.get("AT") != null) {
+                        json.put("AT", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks() + Integer.parseInt(json.get("AT").toString()));
+                    } else {
+                        json.put("AT", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks());
+                    }
+                    total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks();
+                }
+                //..For Luxembourg
+                if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg") != null) {
+                    if(json.get("LU") != null) {
+                        json.put("LU", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks() + Integer.parseInt(json.get("LU").toString()));
+                    } else {
+                        json.put("LU", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks());
+                    }
+                    total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks();
+                }
+                //..and for Switzerland.
+                if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland") != null) {
+                    if(json.get("SW") != null) {
+                        json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks() + Integer.parseInt(json.get("SW").toString()));
+                    } else {
+                        json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks());
+                    }
+                    total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks();
+                }
+
+                json.put("total", total);
+
+            }
+
+        }
+        return json.toString();
+    }
 }

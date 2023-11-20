@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.analysetool.modells.EventSearch;
 import com.analysetool.repositories.EventSearchRepository;
@@ -96,7 +98,7 @@ public class SearchStatsController {
         }
         return response.toString();
     }
-    
+
 
     /**
      * Endpoint, schlechte Ausreißer basierend auf den gefundenen Anbietern innerhalb eines Radius aller Anbietersuchen zu ermitteln.
@@ -143,41 +145,35 @@ public class SearchStatsController {
      */
     @GetMapping("/getBadOutlierForXProviderSearches")
     public String getBadOutlierForXProviderSearches(@RequestParam int limit) throws JSONException {
-
-        JSONArray Ergebnis = new JSONArray();
-
-        List<AnbieterSearch> anbieterSearches = new ArrayList<>();
-
-        if(limit>0){
-            Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
-            Page<AnbieterSearch>anbieterPage=anbieterSearchRepo.findAllByOrderByIdDesc(pageable);
-            anbieterSearches=anbieterPage.getContent();} else if (limit==0) {anbieterSearches=anbieterSearchRepo.findAll();}
-
-        List<Integer> counts=new ArrayList<>();
-
-        for(AnbieterSearch a:anbieterSearches){
-            counts.add(a.getCount_found());}
-        double mittelwert = MathHelper.getMeanInt(counts);
-        //alle Ausreißer
-        List<Integer> Outlier = MathHelper.getOutliersInt(counts);
-
-        for(Integer i:Outlier) {
-
-            //schlechte Ausreißer ermitteln
-            if (i < mittelwert) {
-                JSONObject obj = new JSONObject();
-                for(AnbieterSearch a:anbieterSearches) {
-                    if (a.getCount_found() == i) {
-                        obj.put("Ort", a.getCity_name());
-                        obj.put("Umkreis", a.getUmkreis());
-                        obj.put("Count",a.getCount_found());
-                    }
-                    anbieterSearches.remove(a);
-                }
-                Ergebnis.put(obj);
+        try {
+            List<AnbieterSearch> anbieterSearches = new ArrayList<>();
+            if (limit > 0) {
+                Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
+                Page<AnbieterSearch> anbieterPage = anbieterSearchRepo.findAllByOrderByIdDesc(pageable);
+                anbieterSearches = anbieterPage.getContent();
+            } else if (limit == 0) {
+                anbieterSearches = anbieterSearchRepo.findAll();
             }
+
+            List<Integer> counts = anbieterSearches.stream()
+                    .map(AnbieterSearch::getCount_found)
+                    .collect(Collectors.toList());
+
+            double iqr = MathHelper.getInterquartileRangeInt(counts);
+            double q1 = MathHelper.getLowerQuartileInt(counts);
+            double lowerBound = q1 - 1.5 * iqr;
+
+            List<AnbieterSearch> filteredAnbieterSearches = anbieterSearches.stream()
+                    .filter(anbieterSearch -> anbieterSearch.getCount_found() < lowerBound)
+                    .collect(Collectors.toList());
+
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonResult = mapper.writeValueAsString(filteredAnbieterSearches);
+
+            return jsonResult;
+        } catch (Exception e) {
+            return "Fehler beim Verarbeiten der Daten: " + e.getMessage();
         }
-        return Ergebnis.toString();
 
     }
 

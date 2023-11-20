@@ -1,6 +1,7 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.ClicksByBundesland;
+import com.analysetool.modells.ClicksByBundeslandCitiesDLC;
 import com.analysetool.modells.PostGeo;
 import com.analysetool.modells.UserGeo;
 import com.analysetool.repositories.*;
@@ -36,6 +37,9 @@ public class GeoController {
 
     @Autowired
     private ClicksByBundeslandRepository clicksByBundeslandRepo;
+
+    @Autowired
+    private ClicksByBundeslandCitiesDLCRepository clicksByBundeslandCitiesDLCRepo;
 
     @Autowired
     private PostGeoRepository postGeoRepo;
@@ -197,10 +201,17 @@ public class GeoController {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
+        Date dateTrueEnd = new Date(uniStatRepo.getSecondLastUniStats().get(1).getDatum().getTime());
+        if(dateEnd.after(dateTrueEnd)) {
+            dateEnd = dateTrueEnd;
+        }
+        if(dateStart.after(dateTrueEnd)) {
+            dateStart = dateTrueEnd;
+        }
         int total = 0;
 
         //Iterate over all days in the interval.
-        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).toList()) {
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
             int uniId = 0;
 
             //Check if we have stats for the day we are checking
@@ -281,7 +292,7 @@ public class GeoController {
         int total = 0;
 
         //Iterate over all days in the interval.
-        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate()).toList()) {
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
             int uniId = 0;
 
             //Check if we have stats for the day we are checking
@@ -352,5 +363,114 @@ public class GeoController {
 
         }
         return json.toString();
+    }
+
+    @GetMapping("/getRegionGermanGeoAllTime")
+    public String getRegionGermanGeoAllTime(String region) throws JSONException {
+        JSONObject json = new JSONObject();
+        for(ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByBundesland(region)) {
+            try {
+                json.put(cityClicks.getCity(), cityClicks.getClicks() + Integer.parseInt(json.get(cityClicks.getCity()).toString()));
+            } catch (JSONException e) {
+                json.put(cityClicks.getCity(), cityClicks.getClicks());
+            }
+        }
+        return json.toString();
+    }
+
+    @GetMapping("/getRegionGermanGeoAllTimeAverages")
+    public String getRegionGermanGeoAllTimeAverage(String region) throws JSONException {
+        JSONObject json = new JSONObject();
+        int countDays = clicksByBundeslandCitiesDLCRepo.getCountDays();
+        for(ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByBundesland(region)) {
+
+            try {
+                json.put(cityClicks.getCity(), (cityClicks.getClicks() / countDays) + Integer.parseInt(json.get(cityClicks.getCity()).toString()));
+            } catch (JSONException e) {
+                json.put(cityClicks.getCity(), cityClicks.getClicks() / countDays);
+            }
+        }
+        return json.toString();
+    }
+
+    @GetMapping("/getRegionGermanGeoByDaysAverages")
+    public String getRegionGermanGeoByDaysAverages(String region, String start, String end) throws JSONException {
+        JSONObject json = new JSONObject();
+        Date dateStart = Date.valueOf(start);
+        Date dateEnd = Date.valueOf(end);
+        Date dateTrueEnd = new Date(uniStatRepo.getSecondLastUniStats().get(1).getDatum().getTime());
+        if(dateEnd.after(dateTrueEnd)) {
+            dateEnd = dateTrueEnd;
+        }
+        if(dateStart.after(dateTrueEnd)) {
+            dateStart = dateTrueEnd;
+        }
+
+        int countDays = (int) dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).count();
+
+        //Iterate over all days in the interval.
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
+            int uniId = 0;
+
+            //Check if we have stats for the day we are checking
+            if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+            }
+            if(uniId != 0) {
+                for(ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByUniIDAndBundesland(uniId, region)) {
+                    //
+                    try {
+                        json.put(cityClicks.getCity(), (cityClicks.getClicks() / countDays) + Integer.parseInt(json.get(cityClicks.getCity()).toString()));
+                    } catch (JSONException e) {
+                        json.put(cityClicks.getCity(), cityClicks.getClicks() / countDays);
+                    }
+                }
+            }
+
+        }
+        return json.toString();
+    }
+
+    @GetMapping("/getRegionGermanGeoByDays")
+    public String getRegionGermanGeoByDays(String region, String start, String end) throws JSONException {
+        JSONObject json = new JSONObject();
+        Date dateStart = Date.valueOf(start);
+        Date dateEnd = Date.valueOf(end);
+        Date dateTrueEnd = new Date(uniStatRepo.getSecondLastUniStats().get(1).getDatum().getTime());
+        if(dateEnd.after(dateTrueEnd)) {
+            dateEnd = dateTrueEnd;
+        }
+        if(dateStart.after(dateTrueEnd)) {
+            dateStart = dateTrueEnd;
+        }
+
+        //Iterate over all days in the interval.
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
+            int uniId = 0;
+
+            //Check if we have stats for the day we are checking
+            if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+            }
+            if(uniId != 0) {
+                for(ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByUniIDAndBundesland(uniId, region)) {
+                    try {
+                        json.put(cityClicks.getCity(), (cityClicks.getClicks()) + Integer.parseInt(json.get(cityClicks.getCity()).toString()));
+                    } catch (JSONException e) {
+                        json.put(cityClicks.getCity(), cityClicks.getClicks());
+                    }
+                }
+            }
+
+        }
+        return json.toString();
+    }
+
+
+    @GetMapping("/geoRange")
+    public String[] getDateRange() {
+        String[] string;
+        string = new String[]{uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().toInstant().toString(), uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().toInstant().toString()};
+        return string;
     }
 }

@@ -467,13 +467,10 @@ public class GeoController {
     }
 
 
-    @GetMapping("/lastEntry")
-    public String getLastEntry() {
-        return uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().toInstant().toString();
-    }
-
-    @GetMapping("/firstEntry")
-    public String getFirstEntry() {
-        return uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().toInstant().toString();
+    @GetMapping("/geoRange")
+    public String[] getDateRange() {
+        String[] string;
+        string = new String[]{uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().toInstant().toString(), uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().toInstant().toString()};
+        return string;
     }
 }

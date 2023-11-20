@@ -247,7 +247,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   }
   readData(data : Map<string,number>, svgElement: any){
     // @ts-ignore
-    this.totalDE = data.get("total");
+    this.totalDE = (data as Map<string,number>).get("total");
     for (const region of data){
       if (String(region.at(0)) == "total") continue;
       this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);

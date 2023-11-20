@@ -364,11 +364,11 @@ public class UserController {
 
         Comparator<String> customComparator = Comparator.comparing(s -> s.charAt(0));
         List<String> ohne = getNewUserSchmarotzer();
-        List<String> basis = getNewUsersByType("basis");
-        List<String> basis_plus = getNewUsersByType("basis-plus");
-        List<String> plus = getNewUsersByType("plus");
-        List<String> premium = getNewUsersByType("premium");
-        List<String> sponsor = getNewUsersByType("sponsor");
+        List<String> basis = getNewUsersByTypeToday("basis");
+        List<String> basis_plus = getNewUsersByTypeToday("basis-plus");
+        List<String> plus = getNewUsersByTypeToday("plus");
+        List<String> premium = getNewUsersByTypeToday("premium");
+        List<String> sponsor = getNewUsersByTypeToday("sponsor");
         ohne.sort(customComparator);
         basis.sort(customComparator);
         basis_plus.sort(customComparator);
@@ -434,6 +434,7 @@ public class UserController {
     public List<String> getNewUsersByTypeToday(String type) {
         List<String> list = new ArrayList<>();
         for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
+            System.out.println(uniRepo.getLatestUniStat().getDatum().getTime());
             if(member.getModified().after(uniRepo.getLatestUniStat().getDatum())) {
                 listAddByType(type, list, member);
             }

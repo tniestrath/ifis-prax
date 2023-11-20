@@ -2700,7 +2700,7 @@ public class LogService {
                     //If the ip can be matched to a city, set, update and save ClicksByBundeslandCitiesDLC
                     if(IPHelper.getCityName(ip) != null) {
                         clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
-                                ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
+                                ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip));
                         clicksByBundeslandCitiesDLC.setUni_id(uniId);
                         clicksByBundeslandCitiesDLC.setBundesland(IPHelper.getSubISO(ip));
                         clicksByBundeslandCitiesDLC.setCity(IPHelper.getCityName(ip));

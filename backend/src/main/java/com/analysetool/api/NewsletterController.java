@@ -1,10 +1,8 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.Newsletter;
-import com.analysetool.modells.UniversalStats;
 import com.analysetool.repositories.NewsletterRepository;
 import com.analysetool.services.LogService;
-import jakarta.persistence.Transient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,46 +71,6 @@ public class NewsletterController {
         return newsRepo.getMailAndStatusAll();
     }
 
-    /**
-     * Get locations of subscribers within a specific date range.
-     *
-     * <p>This method fetches all subscribers from the Newsletter repository,
-     * then filters them based on their creation dates. Subscribers created within
-     * the provided date range (specified by the number of days back from today for the start and end)
-     * are processed to populate views by location.</p>
-     *
-     * @param daysBackTo The end of the date range, specified as the number of days back from today.
-     *                    A lower numerical value means a date closer to today.
-     * @param daysBackFrom The start of the date range, specified as the number of days back from today.
-     *                   A higher numerical value means a date further in the past.
-     * @return A string representation of all subscribers (for debugging purposes).
-     */
-    @GetMapping("/getLocationsOfSubsByDateRange")
-    public String getLocationsOfSubsByDateRange(@RequestParam int daysBackFrom, @RequestParam int daysBackTo) {
-        if (daysBackTo < daysBackFrom) {
-            throw new IllegalArgumentException("daysBackTo should be greater or equal to daysBackFrom");
-        }
-
-        Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();
-        List<Newsletter> allSubs = newsRepo.findAll();
-
-        LocalDate fromDate = LocalDate.now().minusDays(daysBackFrom); // Startdatum
-        LocalDate toDate = LocalDate.now().minusDays(daysBackTo); // Enddatum
-
-        for (Newsletter n : allSubs) {
-            if (n.getCreated() == null || n.getIp() == null) {
-                continue;
-            }
-
-            LocalDate createdDate = n.getCreated().atZone(ZoneId.systemDefault()).toLocalDate();
-
-            if (!createdDate.isBefore(fromDate) && !createdDate.isAfter(toDate)) {
-                viewsByLocation = LogService.setViewsByLocation(n.getIp(), viewsByLocation);
-            }
-        }
-
-        return viewsByLocation.toString();
-    }
 
     /**
      * Retrieves the distribution of subscriptions by hour within a specific date range.

@@ -2,7 +2,6 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
-import com.analysetool.util.MapHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -97,35 +96,6 @@ public class uniStatController {
     public String getViewsPerHourByDaysBack(@RequestParam int daysBack) throws ParseException {
         String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(daysBack).format(DateTimeFormatter.ISO_DATE);
         return uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(dateString)).get().getViewsPerHour().toString();
-    }
-    @GetMapping(value="/getViewsByLocationByDaysBack")
-    public String getViewsByLocationByDaysBack(@RequestParam int daysBack) throws ParseException {
-        String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(daysBack).format(DateTimeFormatter.ISO_DATE);
-        JSONArray jsonArray = new JSONArray();
-        return uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(dateString)).get().getViewsByLocation().toString();
-    }
-    @GetMapping("/getViewsByLocationLast14")
-    public String getViewsByLocationLast14(){
-        return new JSONArray(uniRepo.findAllTop14ByOrderByDatumDesc()).toString();
-    }
-
-    @GetMapping("/getViewsByLocationLastHour")
-    public String getViewsByLocationLastHour() {
-        return new JSONObject(universalStatsHourlyRepo.getLast().getViewsByLocation()).toString();
-    }
-
-    @GetMapping("/getViewsByLocationLast24")
-    public String getViewsByLocationHoursBack() {
-        return new JSONArray(universalStatsHourlyRepo.getLast24ViewsByLocation()).toString();
-    }
-
-    @GetMapping("/getViewsByLocationAllTime")
-    public String getViewsByLocationAllTime() throws JSONException {
-        Map<String, Map<String, Map<String, Long>>> map = new HashMap<>();
-        for(UniversalStats uni : uniRepo.findAll()) {
-            MapHelper.mergeLocationMaps(map, uni.getViewsByLocation());
-        }
-        return new JSONObject(map).toString();
     }
 
     /**

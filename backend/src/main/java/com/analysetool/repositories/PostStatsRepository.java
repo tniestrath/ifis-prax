@@ -1,14 +1,12 @@
 package com.analysetool.repositories;
 
-import com.analysetool.modells.Post;
 import com.analysetool.modells.PostStats;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-//import org.springframework.data.repository.query.Param;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -150,12 +148,6 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
     @Query("SELECT MAX(s.relevance) FROM PostStats s")
     public float getMaxRelevance();
-
-    @Query("SELECT s.viewsByLocation FROM PostStats s WHERE s.artId=:artId")
-    public HashMap getViewsByLocation(int artId);
-
-    @Query("SELECT s.viewsByLocation FROM PostStats s")
-    public List<HashMap> getAllViewsByLocation();
 
     @Query("SELECT s.viewsPerHour FROM PostStats s WHERE s.artId=:artId")
     public HashMap getViewsPerHour(int artId);

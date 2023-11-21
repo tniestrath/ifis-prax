@@ -475,4 +475,52 @@ public class GeoController {
         string = new String[]{uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().toInstant().plusSeconds(8000).toString(), uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().toInstant().plusSeconds(8000).toString()};
         return string;
     }
+
+    @GetMapping("/getRegionalGeoAsListsByDates")
+    public String getRegionalGeoAsListByDates(String start, String end, String region) throws JSONException {
+        JSONObject jsonResponse = new JSONObject();
+        Date dateStart = Date.valueOf(start);
+        Date dateEnd = Date.valueOf(end);
+        List<String> listOfDates = new ArrayList<>();
+        List<Integer> listOfData = new ArrayList<>();
+
+
+        if(dateStart.after(dateEnd)) {
+            Date datePuffer = dateEnd;
+            dateEnd = dateStart;
+            dateStart = datePuffer;
+        }
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
+            int uniId = 0;
+
+            //Check if we have stats for the day we are checking
+            if(uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+            }
+
+            if(uniId != 0) {
+                listOfDates.add(date.toString());
+                if(region.equals("NL") || region.equals("AT") || region.equals("CH") || region.equals("LU")) {
+                    switch (region) {
+                        case "NL" ->
+                                listOfData.add(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks());
+                        case "AT" ->
+                                listOfData.add(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks());
+                        case "LU" ->
+                                listOfData.add(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks());
+                    }
+                } else if(region.equals("BG")) {
+                    listOfData.add(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks());
+                } else {
+                    listOfData.add(clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, region).getClicks());
+                }
+
+            }
+
+        }
+        jsonResponse.put("dates", listOfDates);
+        jsonResponse.put("data", listOfData);
+        return jsonResponse.toString();
+
+    }
 }

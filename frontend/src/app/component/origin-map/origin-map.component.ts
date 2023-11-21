@@ -75,16 +75,33 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     this.showCharts = "none";
 
     this.db.getGeoTimespan().then(res => {
+      let startDatePicker = document.getElementById("geoStartDate") as HTMLInputElement;
+      let endDatePicker = document.getElementById("geoEndDate") as HTMLInputElement;
+      if (res == undefined){
+        startDatePicker.disabled = true;
+        endDatePicker.disabled = true;
+        return;
+      } else {
+        startDatePicker.disabled = false;
+        endDatePicker.disabled = false;
+      }
       let startDate = res[0].split('T')[0];
       let endDate = res[1].split('T')[0];
 
-      let startDatePicker = document.getElementById("geoStartDate");
-      startDatePicker?.setAttribute('min', startDate);
-      startDatePicker?.setAttribute('max', endDate);
+      if (startDate == endDate){
+        startDatePicker.value = startDate;
+        endDatePicker.value = startDate;
+        startDatePicker.disabled = true;
+        endDatePicker.disabled = true;
+        return;
+      }
 
-      let endDatePicker = document.getElementById("geoEndDate");
-      endDatePicker?.setAttribute('min', startDate);
-      endDatePicker?.setAttribute('max', endDate);
+      startDatePicker.min = startDate;
+      startDatePicker.max = endDate;
+
+      endDatePicker.min = startDate;
+      endDatePicker.max = endDate;
+
     });
 
     setTimeout(() => {

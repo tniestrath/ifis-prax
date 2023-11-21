@@ -306,7 +306,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     pathElement.addEventListener('click', () => {
       this.db.getGeoByRegion(region).then((res: Map<string,number>) => {
         let data : Map<string, number> = new Map(Object.entries(res));
-        if (data.has("error")) return;
         tooltipHeader.style.paddingBottom = "5px";
         tooltipHeader.innerText = this.getRegionFullName(region);
 
@@ -324,39 +323,39 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         cityName.innerText = "Gesamt";
         cityClicks.innerText = Util.formatNumbers(region_clicks);
 
-        for (const city of data) {
-          let cityElement = document.createElement('div', );
-          let cityName = document.createElement('div');
-          let cityClicks = document.createElement('div');
-          cityElement.style.fontSize = "calc((.9vw + .9vh)/2)";
-          cityElement.style.display = "flex";
-          cityElement.style.flexDirection = "row";
-          cityElement.style.justifyContent = "space-between";
-          cityName.innerText = String(city.at(0));
-          cityClicks.innerText = Util.formatNumbers(Number(city.at(1)));
+        if (!data.has("error")) {
+          for (const city of data) {
+            let cityElement = document.createElement('div',);
+            let cityName = document.createElement('div');
+            let cityClicks = document.createElement('div');
+            cityElement.style.fontSize = "calc((.9vw + .9vh)/2)";
+            cityElement.style.display = "flex";
+            cityElement.style.flexDirection = "row";
+            cityElement.style.justifyContent = "space-between";
+            cityName.innerText = String(city.at(0));
+            cityClicks.innerText = Util.formatNumbers(Number(city.at(1)));
 
 
+            cityElement.appendChild(cityName);
+            cityElement.appendChild(cityClicks);
+            tooltipCities.appendChild(cityElement);
+          }
+            this.isRegionSelected = "block";
+            if (SysVars.CURRENT_PAGE == "Overview") {
+              this.showCharts = "block";
+              tooltipElement.classList.remove("width50");
+              tooltipCharts.classList.remove("hidden");
+              this.createChart(this.perDayRegionClicks, region);
+            } else {
+              tooltipElement.classList.add("width50");
+              tooltipCharts.classList.add("hidden");
+            }
+        }
           cityElement.appendChild(cityName);
           cityElement.appendChild(cityClicks);
           tooltipCities.appendChild(cityElement);
-
-          this.isRegionSelected = "block";
-          if (SysVars.CURRENT_PAGE == "Overview") {
-            this.showCharts = "block";
-            tooltipElement.classList.remove("width50");
-            tooltipCharts.classList.remove("hidden");
-            this.createChart(this.perDayRegionClicks, region);
-          }
-          else {
-            tooltipElement.classList.add("width50");
-            tooltipCharts.classList.add("hidden");
-          }
-        }
-        cityElement.appendChild(cityName);
-        cityElement.appendChild(cityClicks);
-        tooltipCities.appendChild(cityElement);
+        });
       });
-    });
     pathElement.addEventListener('mouseenter', () => {
       pathElement.style.strokeWidth = "10px";
     });

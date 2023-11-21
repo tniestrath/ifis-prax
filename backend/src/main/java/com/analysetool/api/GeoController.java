@@ -269,9 +269,9 @@ public class GeoController {
                 //..and for Switzerland.
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland") != null) {
                     try {
-                        json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks() + Integer.parseInt(json.get("SW").toString()));
+                        json.put("CH", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks() + Integer.parseInt(json.get("CH").toString()));
                     } catch (JSONException e) {
-                        json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks());
+                        json.put("CH", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks();
                 }
@@ -355,9 +355,9 @@ public class GeoController {
                 //..and for Switzerland.
                 if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland") != null) {
                     try {
-                        json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks() + Integer.parseInt(json.get("SW").toString()));
+                        json.put("CH", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks() + Integer.parseInt(json.get("CH").toString()));
                     } catch (JSONException e) {
-                        json.put("SW", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks());
+                        json.put("CH", clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks());
                     }
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks();
                 }

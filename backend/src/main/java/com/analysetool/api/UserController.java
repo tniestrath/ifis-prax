@@ -18,7 +18,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 import static com.analysetool.util.MapHelper.mergeLocationMaps;
@@ -390,7 +392,7 @@ public class UserController {
         List<Long> listCheck = wpMemberRepo.getAllActiveMembersIds();
         List<String> listResponse = new ArrayList<>();
         for(WPUser user : userRepository.findAll()) {
-            if(user.getRegistered().isAfter(LocalDateTime.now().minusHours(LocalDateTime.now().getHour()).minusMinutes(LocalDateTime.now().getMinute()))) {
+            if(user.getRegistered().isAfter(LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT))) {
                 if (!listCheck.contains(user.getId())) {
                     listResponse.add(user.getDisplayName());
                 }

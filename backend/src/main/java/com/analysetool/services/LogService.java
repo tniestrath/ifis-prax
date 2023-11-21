@@ -401,8 +401,6 @@ public class LogService {
 
         int serverErrors = 0;
 
-
-        Map<String, Map<String, Map<String, Long>>> viewsByLocation = new HashMap<>();
         Map<String,Long> viewsByHour = new HashMap<>();
 
         String last_ip = null;
@@ -456,7 +454,6 @@ public class LogService {
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam) {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
-                    setViewsByLocation(ip, viewsByLocation);
                     erhoeheViewsPerHour2(viewsByHour, dateLog.toLocalTime());
 
                     //erhöhe Clicks und Besucher, falls anwendbar
@@ -941,10 +938,10 @@ public class LogService {
             }
 
         }
-        updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors, viewsByLocation, viewsByHour);
+        updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors, viewsByHour);
     }
 
-    private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors, Map<String, Map<String, Map<String, Long>>> viewsByLocation, Map<String, Long> viewsByHour) throws ParseException {
+    private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors, Map<String, Long> viewsByHour) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
         dateStirng += Calendar.getInstance().get(Calendar.MONTH) + 1  < 10 ? "0" + Calendar.getInstance().get(Calendar.MONTH) + 1 : Calendar.getInstance().get(Calendar.MONTH) + 1;
@@ -964,8 +961,6 @@ public class LogService {
                     uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
                     uni.setInternalClicks(uni.getInternalClicks() + internalClicks);
                     uni.setServerErrors(uni.getServerErrors() + serverErrors);
-                    MapHelper.mergeLocationMaps(viewsByLocation, uni.getViewsByLocation());
-                    uni.setViewsByLocation(viewsByLocation);
                     MapHelper.mergeTimeMaps(viewsByHour, uni.getViewsPerHour());
                     uni.setViewsPerHour(viewsByHour);
                     uni.setAnbieterProfileAnzahl(wpUserRepo.count());
@@ -977,7 +972,6 @@ public class LogService {
                     uni.setTotalClicks(totalClicks);
                     uni.setInternalClicks(internalClicks);
                     uni.setServerErrors(serverErrors);
-                    uni.setViewsByLocation(viewsByLocation);
                     uni.setViewsPerHour(viewsByHour);
                     uni.setAnbieterProfileAnzahl(wpUserRepo.count());
                     uni = setNewsArticelBlogCountForUniversalStats(date, uni);
@@ -1011,7 +1005,6 @@ public class LogService {
                 uniHourly1.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly1);
                 setAccountTypeAllUniStats(uniHourly1);
-                uniHourly1.setViewsByLocation(viewsByLocation);
 
                 uniHourly2.setStunde(2);
                 uniHourly2.setUniStatId(uniRepo.getLatestUniStat().getId());
@@ -1022,7 +1015,6 @@ public class LogService {
                 uniHourly2.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly2);
                 setAccountTypeAllUniStats(uniHourly2);
-                uniHourly2.setViewsByLocation(viewsByLocation);
 
                 uniHourly3.setStunde(3);
                 uniHourly3.setUniStatId(uniRepo.getLatestUniStat().getId());
@@ -1033,7 +1025,6 @@ public class LogService {
                 uniHourly3.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly3);
                 setAccountTypeAllUniStats(uniHourly3);
-                uniHourly3.setViewsByLocation(viewsByLocation);
 
                 uniHourly4.setUniStatId(uniRepo.getLatestUniStat().getId());
                 uniHourly4.setBesucherAnzahl((long) uniqueUsers / 4);
@@ -1043,7 +1034,6 @@ public class LogService {
                 uniHourly4.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly4);
                 setAccountTypeAllUniStats(uniHourly4);
-                uniHourly4.setViewsByLocation(viewsByLocation);
 
                 uniHourlyRepo.save(uniHourly1);
                 uniHourlyRepo.save(uniHourly2);
@@ -1071,7 +1061,6 @@ public class LogService {
                     uniHourly.setInternalClicks(uniHourly.getInternalClicks() + internalClicks);
                     uniHourly.setServerErrors(uniHourly.getServerErrors() + serverErrors);
                 }
-                uniHourly.setViewsByLocation(viewsByLocation);
                 uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
                 setNewsArticelBlogCountForUniversalStats(uniHourly);
                 setAccountTypeAllUniStats(uniHourly);
@@ -1340,7 +1329,6 @@ public class LogService {
             case "articleView", "blogView", "newsView", "wpView", "ratgeberPost":
                 try {
                     UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
-                    updateViewsByLocation(ip, postRepository.getIdByName(patternMatcher.group(1)));
                     updateIPsByPost(ip, postRepository.getIdByName(patternMatcher.group(1)));
                 } catch (Exception e) {
                     System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
@@ -1349,7 +1337,6 @@ public class LogService {
             case "articleSS", "blogSS", "newsSS", "wpSS":
                 try {
                     updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
-                    updateViewsByLocation(ip, postRepository.getIdByName(patternMatcher.group(1)));
                     updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
                 } catch(Exception e) {
                     System.out.println("SS PROCESS LINE EXCEPTION " +line);
@@ -1398,155 +1385,6 @@ public class LogService {
 
     }
 
-    @Deprecated
-    public void processLine(String line,String patternName, Matcher preMatcher, Matcher patternMatcher){
-        lastLine=line;
-
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
-        LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
-
-        if (patternName.equals("articleView")){
-            UpdatePerformanceAndViews(preMatcher,patternMatcher);
-            updateViewsByLocation(preMatcher, patternMatcher);
-        }
-        if (patternName.equals("articleSearchSuccess")){
-            updatePerformanceViewsSearchSuccess(preMatcher, patternMatcher);
-            updateViewsByLocation(preMatcher, patternMatcher);
-            updateSearchStats(preMatcher,patternMatcher);
-        }
-        if (patternName.equals("blogView")){
-            UpdatePerformanceAndViews(preMatcher, patternMatcher);
-            updateViewsByLocation(preMatcher, patternMatcher);
-        }
-        if (patternName.equals("blogSearchSuccess")){
-            updatePerformanceViewsSearchSuccess(preMatcher, patternMatcher);
-            updateViewsByLocation(preMatcher, patternMatcher);
-            updateSearchStats(preMatcher, patternMatcher);
-        }
-
-        if (patternName.equals("newsView")){
-            UpdatePerformanceAndViews(preMatcher,patternMatcher);
-            updateViewsByLocation(preMatcher, patternMatcher);
-        }
-        if (patternName.equals("newsSearchSuccess")){
-            updatePerformanceViewsSearchSuccess(preMatcher, patternMatcher);
-            updateViewsByLocation(preMatcher, patternMatcher);
-            updateSearchStats(preMatcher, patternMatcher);
-        }
-
-        if(patternName.equals("whitepaperSearchSuccess")) {
-            //Stolen behaviour from articleSearchSuccess
-            System.out.println("TEST Gruppe1: "+ patternMatcher.group(6));
-            System.out.println(postRepository.getIdByName(patternMatcher.group(6))+patternMatcher.group(6)+" PROCESSING Whitepaper with Search");
-            updatePerformanceViewsSearchSuccess(preMatcher, patternMatcher);
-            updateViewsByLocation(preMatcher, patternMatcher);
-            updateSearchStats(preMatcher, patternMatcher);
-        }
-
-        if(patternName.equals("whitepaperView")) {
-            //Stolen behaviour from articleView
-            System.out.println(postRepository.getIdByName(patternMatcher.group(1)) + patternMatcher.group(1)+" PROCESSING Whitepaper View");
-            UpdatePerformanceAndViews(preMatcher, patternMatcher);
-            updateViewsByLocation(preMatcher, patternMatcher);
-        }
-
-        if(patternName.equals("userView")){
-            if(wpUserRepo.findByNicename(patternMatcher.group(6).replace("+","-")).isPresent()){
-                //updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
-                //userViewOrImpression(preMatcher,patternMatcher);
-            }
-        }
-
-        //ToDo: Add these to the new findAMatch, and to the new processLine (just add cases to switches)
-
-        if(patternName.equals("redirect")){
-            //gibts das PostStats objekt? -nein = neues -ja = updaten
-            long id =postRepository.getIdByName(patternMatcher.group(3));
-            if (statsRepo.existsByArtIdAndYear(id,aktuellesJahr)){
-                PostStats stats=statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
-                long views = stats.getClicks();
-                long refferings =stats.getRefferings();
-                refferings++;
-                float article_reffering_rate= ((float)refferings/views);
-                System.out.println("RefRate :"+article_reffering_rate);
-                stats.setClicks(views);
-                stats.setReferrings(refferings);
-                statsRepo.save(stats);
-                //statsRepo.updateRefferingsAndRateByArtId(article_reffering_rate,refferings,id);
-
-            }else{  statsRepo.save(new PostStats(id,(float) 0,(float) 0,0,0,1,(float) 0));
-            }
-
-        }
-
-        if(patternName.equals("userViewRedirect")){
-            if(wpUserRepo.findByNicename(patternMatcher.group(6).replace("+","-")).isPresent()){
-                WPUser wpUser=wpUserRepo.findByNicename(patternMatcher.group(6).replace("+","-")).get();
-                if(userStatsRepo.existsByUserId(wpUser.getId())){
-                    UserStats userStats = userStatsRepo.findByUserId(wpUser.getId());
-                    long refferings = userStats.getRefferings();
-                    long views = userStats.getProfileView();
-                    refferings ++;
-                    userStats.setRefferings(refferings);
-                    if(views!=0){
-                        userStats.setRefferingRate((float)refferings/views);
-                    }
-                    userStatsRepo.save(userStats);
-                }else{
-                    userStatsRepo.save(new UserStats(wpUser.getId(), (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)1));
-                }
-
-            }
-        }
-        if(patternName.equals("search")){
-            SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
-            String ip = preMatcher.group(1);
-            byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
-            String ipHash = Hex.toHexString(hashBytes);
-            IPHelper.getInstance();
-            String country = IPHelper.getCountryISO(ip);
-            String region = IPHelper.getSubISO(ip);
-            String city = IPHelper.getCityName(ip);
-            String location="";
-            if(country!=null){
-                location=country;
-                if(region!=null)
-                    location= location+" : "+region;
-                if(city!=null)
-                    location = location+" : "+city;
-            }
-            try {
-                searchStatRepo.save(new SearchStats(ipHash, patternMatcher.group(6), dateLog, location));
-            } catch(Exception e) {
-                System.out.println(patternMatcher.group(6));
-            }
-
-        }
-        /*
-        if(patternName.equals("userView")){
-            if(wpUserRepo.findByNicename(patternMatcher.group(6).replace("+","-")).isPresent()){
-                //updateUserStats(wpUserRepo.findByNicename(matcher.group(1).replace("+","-")).get());
-                userViewOrImpression(preMatcher,patternMatcher);
-            }
-        }
-        */
-
-        //ToDo: If it became necessary, add behaviour for new Patterns here.
-
-        /*
-        if(patternName.equals("podcastView")) {
-            System.out.println("PODCAST VIEW WOOOOHOOO");
-            UpdatePerformanceAndViews(matcher);
-            updateViewsByLocation(matcher);
-        }
-        */
-
-        System.out.println("UPDATING USER ACTIVITY");
-        updateUserActivity((long)3);
-        updateUserStatsForAllUsers();
-        lineCounter = 0 ;
-        System.out.println("END OF LOG");
-    }
     public String hashIp(String ip){
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
         byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
@@ -2116,179 +1954,6 @@ public class LogService {
     }
 
 
-    @Transactional
-    public void updateViewsByLocation(String ip, long id) {
-        if (id != 0){
-            try {
-                IPHelper.getInstance();
-                String country = IPHelper.getCountryISO(ip);
-                String region = IPHelper.getSubISO(ip);
-                String city = IPHelper.getCityName(ip);
-
-                if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
-                    PostStats stats = statsRepo.getStatByArtID(id);
-
-                    // Holt die aktuelle Map oder erstellt eine neue, falls sie null ist.
-                    Map<String, Map<String, Map<String, Long>>> viewsByLocation = stats.getViewsByLocation();
-                    if (viewsByLocation == null) {
-                        viewsByLocation = new HashMap<>();
-                        stats.setViewsByLocation(viewsByLocation);
-                    }
-
-                    // Standard Schlüssel setzen
-                    String countryKey = "global";
-                    String regionKey = "gesamt";
-
-                    if (country != null && !country.isEmpty()) {
-                        countryKey = country;
-                        regionKey = (region != null && !region.isEmpty()) ? region : "gesamt";
-                        if(!country.equals("DE")) {
-                            regionKey = country;
-                        }
-
-                        // Map der Regionen für das gegebene Land holen
-                        Map<String, Map<String, Long>> regions = viewsByLocation.computeIfAbsent(countryKey, k -> new HashMap<>());
-
-                        // Map der Städte für die gegebene Region holen
-                        Map<String, Long> cities = regions.computeIfAbsent(regionKey, k -> new HashMap<>());
-
-                        // Aktualisieren der Anzahl der Views für die Stadt
-                        if (city != null && !city.isEmpty()) {
-                            cities.merge(city, 1L, Long::sum);
-                        }
-
-                        // Aktualisieren der "gesamt" Views für Region
-                        cities.merge("gesamt", 1L, Long::sum);
-
-                        // Aktualisieren der "gesamt" Views für Land
-                        Map<String, Long> countryTotal = regions.computeIfAbsent("gesamt", k -> new HashMap<>());
-                        countryTotal.merge("gesamt", 1L, Long::sum);
-                    }
-
-                    // Aktualisieren der "gesamt" Views für Global
-                    Map<String, Map<String, Long>> globalTotal = viewsByLocation.computeIfAbsent("global", k -> new HashMap<>());
-                    globalTotal.computeIfAbsent("gesamt", k -> new HashMap<>()).merge("gesamt", 1L, Long::sum);
-
-                    // Persistieren der Änderungen
-                    statsRepo.save(stats);
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-
-
-    @Transactional
-    public void updateViewsByLocation(Matcher preMatcher, Matcher patternMatcher) {
-        if (!patternMatcher.group(1).matches("\\d+")){
-        String ip = preMatcher.group(1);
-        try {
-            long id = postRepository.getIdByName(patternMatcher.group(1));
-            IPHelper.getInstance();
-            String country = IPHelper.getCountryISO(ip);
-            String region = IPHelper.getSubISO(ip);
-            String city = IPHelper.getCityName(ip);
-
-            if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
-                PostStats stats = statsRepo.getStatByArtID(id);
-
-                // Holt die aktuelle Map oder erstellt eine neue, falls sie null ist.
-                Map<String, Map<String, Map<String, Long>>> viewsByLocation = stats.getViewsByLocation();
-                if (viewsByLocation == null) {
-                    viewsByLocation = new HashMap<>();
-                    stats.setViewsByLocation(viewsByLocation);
-                }
-
-                // Standard Schlüssel setzen
-                String countryKey = "global";
-                String regionKey = "gesamt";
-
-                if (country != null && !country.isEmpty()) {
-                    countryKey = country;
-                    regionKey = (region != null && !region.isEmpty()) ? region : "gesamt";
-                    if(!country.equals("DE")) {
-                        regionKey = country;
-                    }
-
-                    // Map der Regionen für das gegebene Land holen
-                    Map<String, Map<String, Long>> regions = viewsByLocation.computeIfAbsent(countryKey, k -> new HashMap<>());
-
-                    // Map der Städte für die gegebene Region holen
-                    Map<String, Long> cities = regions.computeIfAbsent(regionKey, k -> new HashMap<>());
-
-                    // Aktualisieren der Anzahl der Views für die Stadt
-                    if (city != null && !city.isEmpty()) {
-                        cities.merge(city, 1L, Long::sum);
-                    }
-
-                    // Aktualisieren der "gesamt" Views für Region
-                    cities.merge("gesamt", 1L, Long::sum);
-
-                    // Aktualisieren der "gesamt" Views für Land
-                    Map<String, Long> countryTotal = regions.computeIfAbsent("gesamt", k -> new HashMap<>());
-                    countryTotal.merge("gesamt", 1L, Long::sum);
-                }
-
-                // Aktualisieren der "gesamt" Views für Global
-                Map<String, Map<String, Long>> globalTotal = viewsByLocation.computeIfAbsent("global", k -> new HashMap<>());
-                globalTotal.computeIfAbsent("gesamt", k -> new HashMap<>()).merge("gesamt", 1L, Long::sum);
-
-                // Persistieren der Änderungen
-                statsRepo.save(stats);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }}
-    }
-
-    public static Map<String, Map<String, Map<String, Long>>> setViewsByLocation(String ip, Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
-        try {
-            String country = IPHelper.getCountryISO(ip);
-            String region = IPHelper.getSubISO(ip);
-            String city = IPHelper.getCityName(ip);
-
-            // Standard Schlüssel setzen
-            String countryKey = "global";
-            String regionKey = "gesamt";
-
-            if (country != null && !country.isEmpty()) {
-                countryKey = country;
-                regionKey = (region != null && !region.isEmpty()) ? region : "gesamt";
-                if (!country.equals("DE")) {
-                    regionKey = country;
-                }
-
-                // Map der Regionen für das gegebene Land holen oder erstellen
-                Map<String, Map<String, Long>> regions = viewsByLocation.computeIfAbsent(countryKey, k -> new HashMap<>());
-
-                // Map der Städte für die gegebene Region holen oder erstellen
-                Map<String, Long> cities = regions.computeIfAbsent(regionKey, k -> new HashMap<>());
-
-                // Aktualisieren der Anzahl der Views für die Stadt
-                if (city != null && !city.isEmpty()) {
-                    cities.merge(city, 1L, Long::sum);
-                }
-
-                // Aktualisieren der "gesamt" Views für die Region
-                cities.merge("gesamt", 1L, Long::sum);
-
-                // Aktualisieren der "gesamt" Views für das Land
-                Map<String, Long> countryTotal = regions.computeIfAbsent("gesamt", k -> new HashMap<>());
-                countryTotal.merge("gesamt", 1L, Long::sum);
-            }
-
-            // Aktualisieren der "gesamt" Views für Global
-            Map<String, Map<String, Long>> globalTotal = viewsByLocation.computeIfAbsent("global", k -> new HashMap<>());
-            globalTotal.computeIfAbsent("gesamt", k -> new HashMap<>()).merge("gesamt", 1L, Long::sum);
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
-        return viewsByLocation;
-    }
-
     private static String getMonthNumber(String monthName) {
         Map<String, String> months = new HashMap<>();
         months.put("Jan", "01");
@@ -2438,7 +2103,6 @@ public class LogService {
     @Transactional
     public UniversalStats proccessLinesOfOldLog(UniversalStats uniStat, BufferedReader bufferedReader, SysVar Systemvariabeln) throws IOException {
 
-        Map<String, Map<String, Map<String, Long>>> viewsByLocation = uniStat.getViewsByLocation();//hiermit weiter und mit setViewsByLocation
         Map<String,Long>viewsPerHour=uniStat.getViewsPerHour();
 
         ArrayList<String> uniqueIps = new ArrayList<>();
@@ -2467,7 +2131,6 @@ public class LogService {
                 if (matcher1_2.find()) {
                     // Do something with the matched 1.2 patterns
                     if(!uniqueIps.contains(hashIp(matcher1_2.group(1)))){uniqueIps.add(hashIp(matcher1_2.group(1)));
-                        viewsByLocation=setViewsByLocation(matcher1_2.group(1),viewsByLocation);
                     }
                     LocalTime logtime = getLocalTimeFromMatcher(matcher1_2);
                     viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
@@ -2476,7 +2139,6 @@ public class LogService {
                 } else {//1.1 matched
 
                     if(!uniqueIps.contains(hashIp(matcher1_1.group(1)))){uniqueIps.add(hashIp(matcher1_1.group(1)));
-                        viewsByLocation=setViewsByLocation(matcher1_1.group(1),viewsByLocation);
                     }
                     LocalTime logtime = getLocalTimeFromMatcher(matcher1_1);
                     viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
@@ -2494,7 +2156,7 @@ public class LogService {
                     if (matcher2_2.find()) {
                         // Do something with the matched 2.2 patterns
 
-                        if(!uniqueIps.contains(hashIp(matcher2_2.group(1)))){uniqueIps.add(hashIp(matcher2_2.group(1))); viewsByLocation=setViewsByLocation(matcher2_2.group(1),viewsByLocation);
+                        if(!uniqueIps.contains(hashIp(matcher2_2.group(1)))){uniqueIps.add(hashIp(matcher2_2.group(1)));
                         }
                         LocalTime logtime = getLocalTimeFromMatcher(matcher2_2);
                         viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
@@ -2503,7 +2165,7 @@ public class LogService {
                     } else {
                         //2.1 match
 
-                        if(!uniqueIps.contains(hashIp(matcher2_1.group(1)))){uniqueIps.add(hashIp(matcher2_1.group(1))); viewsByLocation=setViewsByLocation(matcher2_1.group(1),viewsByLocation);
+                        if(!uniqueIps.contains(hashIp(matcher2_1.group(1)))){uniqueIps.add(hashIp(matcher2_1.group(1)));
                         }
                         LocalTime logtime = getLocalTimeFromMatcher(matcher2_1);
                         viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
@@ -2517,13 +2179,13 @@ public class LogService {
 
                         Matcher matcher5_2 = newsSearchSuccessPattern.matcher(line);
                         if (matcher5_2.find()) {
-                            if(!uniqueIps.contains(hashIp(matcher5_2.group(1)))){uniqueIps.add(hashIp(matcher5_2.group(1))); viewsByLocation=setViewsByLocation(matcher5_2.group(1),viewsByLocation);
+                            if(!uniqueIps.contains(hashIp(matcher5_2.group(1)))){uniqueIps.add(hashIp(matcher5_2.group(1)));
                             }
                             LocalTime logtime = getLocalTimeFromMatcher(matcher5_2);
                             viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
                             allClicks++;
                         } else {
-                            if(!uniqueIps.contains(hashIp(matcher5_1.group(1)))){uniqueIps.add(hashIp(matcher5_1.group(1))); viewsByLocation=setViewsByLocation(matcher5_1.group(1),viewsByLocation);
+                            if(!uniqueIps.contains(hashIp(matcher5_1.group(1)))){uniqueIps.add(hashIp(matcher5_1.group(1)));
                             }
                             LocalTime logtime = getLocalTimeFromMatcher(matcher5_1);
                             viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
@@ -2535,7 +2197,7 @@ public class LogService {
 
             Matcher matcher3 = redirectPattern.matcher(line);
             if (matcher3.find()) {
-                if(!uniqueIps.contains(hashIp(matcher3.group(1)))){uniqueIps.add(hashIp(matcher3.group(1))); viewsByLocation=setViewsByLocation(matcher3.group(1),viewsByLocation);
+                if(!uniqueIps.contains(hashIp(matcher3.group(1)))){uniqueIps.add(hashIp(matcher3.group(1)));
                 }
                 LocalTime logtime = getLocalTimeFromMatcher(matcher3);
                 viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
@@ -2543,7 +2205,7 @@ public class LogService {
             }
             Matcher matcher4 = userViewPattern.matcher(line);
             if (matcher4.find()) {
-                if(!uniqueIps.contains(hashIp(matcher4.group(1)))){uniqueIps.add(hashIp(matcher4.group(1))); viewsByLocation=setViewsByLocation(matcher4.group(1),viewsByLocation);
+                if(!uniqueIps.contains(hashIp(matcher4.group(1)))){uniqueIps.add(hashIp(matcher4.group(1)));
                 }
                 LocalTime logtime = getLocalTimeFromMatcher(matcher4);
                 viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
@@ -2551,7 +2213,7 @@ public class LogService {
             }
             Matcher matcher4_2 = userRedirectPattern.matcher(line);
             if (matcher4_2.find()) {
-                if(!uniqueIps.contains(hashIp(matcher4_2.group(1)))){uniqueIps.add(hashIp(matcher4_2.group(1))); viewsByLocation=setViewsByLocation(matcher4_2.group(1),viewsByLocation);
+                if(!uniqueIps.contains(hashIp(matcher4_2.group(1)))){uniqueIps.add(hashIp(matcher4_2.group(1)));
                 }
                 LocalTime logtime = getLocalTimeFromMatcher(matcher4_2);
                 viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
@@ -2560,7 +2222,7 @@ public class LogService {
             Matcher matcher6_1 = searchPattern.matcher(line);
             if (matcher6_1.find()) {
 
-                if(!uniqueIps.contains(hashIp(matcher6_1.group(1)))){uniqueIps.add(hashIp(matcher6_1.group(1))); viewsByLocation=setViewsByLocation(matcher6_1.group(1),viewsByLocation);
+                if(!uniqueIps.contains(hashIp(matcher6_1.group(1)))){uniqueIps.add(hashIp(matcher6_1.group(1)));
                 }
                 LocalTime logtime = getLocalTimeFromMatcher(matcher6_1);
                 viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
@@ -2571,7 +2233,6 @@ public class LogService {
 
         uniStat.setBesucherAnzahl((long) uniqueIps.size()+Besucher);
         uniStat.setTotalClicks(allClicks);
-        uniStat.setViewsByLocation(viewsByLocation);
         uniStat.setViewsPerHour(viewsPerHour);
         return uniStat;
     }

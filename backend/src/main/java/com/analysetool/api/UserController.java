@@ -3,7 +3,6 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,13 +16,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
-import static com.analysetool.util.MapHelper.mergeLocationMaps;
 import static com.analysetool.util.MapHelper.mergeTimeMaps;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -230,57 +227,6 @@ public class UserController {
         obj.put("viewsProfile", viewsProfile);
         return obj.toString();
 
-    }
-
-    @GetMapping("/getAllViewsByLocation")
-    public String getAllViewsByLocation() {
-        List<HashMap> posts = statRepository.getAllViewsByLocation();
-        HashMap map = new HashMap<>();
-        for(HashMap locMap : posts) {
-            if(locMap != null) {
-                mergeLocationMaps(map, locMap);
-            }
-
-        }
-        return new JSONObject(map).toString();
-    }
-
-    @GetMapping("/getViewsByLocation")
-    public String getViewsByLocation(@RequestParam int id) throws JSONException, ParseException, JsonProcessingException {
-        List<Post> posts= postRepository.findByAuthor(id);
-        HashMap map = new HashMap<>();
-        int count = 0;
-        for(Post post : posts) {
-            if(statRepository.getViewsByLocation(post.getId().intValue()) != null) {
-                if (count == 0) {
-                    map = statRepository.getViewsByLocation(post.getId().intValue());
-                    count++;
-                } else {
-                    mergeLocationMaps(map, statRepository.getViewsByLocation(post.getId().intValue()));
-                }
-            }
-
-        }
-        return new JSONObject(map).toString();
-    }
-
-    @GetMapping("/getViewsPerHour")
-    public String getViewsPerHour(@RequestParam int id) throws JSONException, ParseException, JsonProcessingException {
-        List<Post> posts= postRepository.findByAuthor(id);
-        HashMap map = new HashMap<>();
-        int count = 0;
-        for(Post post : posts) {
-            if(statRepository.getViewsByLocation(post.getId().intValue()) != null) {
-                if (count == 0) {
-                    map = statRepository.getViewsPerHour(post.getId().intValue());
-                    count++;
-                } else {
-                    mergeTimeMaps(map, statRepository.getViewsPerHour(post.getId().intValue()));
-                }
-            }
-
-        }
-        return map.values().toString();
     }
 
     @GetMapping("/getAllViewsPerHour")

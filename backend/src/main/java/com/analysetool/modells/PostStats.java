@@ -53,10 +53,6 @@ public class PostStats {
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, Long> viewsPerHour = new HashMap<>();
 
-    @Lob
-    @Column(name = "views_by_location", columnDefinition = "json")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Map<String, Map<String, Long>>> viewsByLocation;
 
     @Column(name="lettercount", columnDefinition = "int")
     private int lettercount;
@@ -111,7 +107,6 @@ public class PostStats {
         Calendar kalender = Calendar.getInstance();
         int aktuellesJahr = kalender.get(Calendar.YEAR);
         this.year=aktuellesJahr;
-        this.viewsByLocation=new HashMap<>();
         this.lettercount = lettercount;
     }
 
@@ -309,14 +304,6 @@ public class PostStats {
                 ", referrings=" + refferings +
                 ", performance=" + performance +
                 '}';
-    }
-
-    public Map<String, Map<String, Map<String, Long>>> getViewsByLocation() {
-        return viewsByLocation;
-    }
-
-    public void setViewsByLocation(Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
-        this.viewsByLocation = viewsByLocation;
     }
 
     public void setLettercount(int lettercount) {

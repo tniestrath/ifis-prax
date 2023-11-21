@@ -1,6 +1,5 @@
 package com.analysetool.modells;
 
-import com.analysetool.util.MapHelper;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -72,12 +71,6 @@ public class UniversalStats {
     @Column(name= "server_errors")
     private int serverErrors;
 
-
-    @Lob
-    @Column(name = "views_by_location", columnDefinition = "json")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Map<String, Map<String, Long>>> viewsByLocation;
-
     @Lob
     @Column(name = "views_per_hour", columnDefinition = "json")
     @JdbcTypeCode(SqlTypes.JSON)
@@ -89,7 +82,7 @@ public class UniversalStats {
     public UniversalStats() {
     }
 
-    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum, Long totalClicks, Map<String, Long> viewsPerHour, Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
+    public UniversalStats(Long besucherAnzahl, Long anbieterProfileAnzahl, Long anzahlArtikel, Long anzahlNews, Long anzahlBlog, Date datum, Long totalClicks, Map<String, Long> viewsPerHour) {
         this.besucherAnzahl = besucherAnzahl;
         this.anbieterProfileAnzahl = anbieterProfileAnzahl;
         this.anzahlArtikel = anzahlArtikel;
@@ -98,7 +91,6 @@ public class UniversalStats {
         this.datum = datum;
         this.totalClicks = totalClicks;
         this.viewsPerHour=viewsPerHour;
-        this.viewsByLocation=viewsByLocation;
     }
 
     public Map<String,Long> setJson(){
@@ -129,20 +121,10 @@ public class UniversalStats {
     public UniversalStats(Date datum) {
         this.datum = datum;
         this.viewsPerHour = setJson();
-        this.viewsByLocation = MapHelper.initializeViewsByLocation(new HashMap<>());
-
     }
 
     public void setTotalClicks(long totalClicks) {
         this.totalClicks = totalClicks;
-    }
-
-    public Map<String, Map<String, Map<String, Long>>> getViewsByLocation() {
-        return viewsByLocation;
-    }
-
-    public void setViewsByLocation(Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
-        this.viewsByLocation = viewsByLocation;
     }
 
     public Map<String, Long> getViewsPerHour() {

@@ -1,10 +1,6 @@
 package com.analysetool.modells;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
-import java.util.Map;
 
 @Entity
 @Table(name = "universal_stats_hourly")
@@ -60,11 +56,6 @@ public class UniversalStatsHourly {
 
     @Column(name = "server_errors")
     private int serverErrors;
-
-    @Lob
-    @Column(name = "views_by_location", columnDefinition = "json")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, Map<String, Map<String, Long>>> viewsByLocation;
 
     public int getId() {
         return id;
@@ -152,14 +143,6 @@ public class UniversalStatsHourly {
 
     public void setTotalClicks(Long totalClicks) {
         this.totalClicks = totalClicks;
-    }
-
-    public Map<String, Map<String, Map<String, Long>>> getViewsByLocation() {
-        return viewsByLocation;
-    }
-
-    public void setViewsByLocation(Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
-        this.viewsByLocation = viewsByLocation;
     }
 
     public long getAnbieterPlusAnzahl() {

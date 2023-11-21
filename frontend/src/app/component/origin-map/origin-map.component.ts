@@ -25,7 +25,7 @@ export enum Region {
 
   NL = "Niederlande",
   BG = "Belgien",
-  SW = "Schweiz",
+  CH = "Schweiz",
   AT = "Österreich",
   LU = "Luxemburg"
 }

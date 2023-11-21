@@ -352,6 +352,33 @@ public class uniStatController {
         return obj.toString();
     }
 
+    @GetMapping("/getRatgeberDetailedDaily")
+    public String getRatgeberDetailedByDate(String date) throws ParseException, JSONException {
+        List<String> labelsForCategory = new ArrayList<>();
+
+        labelsForCategory.add("posts");
+        labelsForCategory.add("glossar");
+        labelsForCategory.add("buch");
+
+        List<Integer> clicksByCategory = new ArrayList<>();
+        List<Integer> besucherByCategory = new ArrayList<>();
+
+        int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
+
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberPostByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberGlossarByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberBuchByUniStatId(id));
+
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberPostByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberGlossarByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberBuchByUniStatId(id));
+
+        JSONObject obj = new JSONObject().put("labels", new JSONArray(labelsForCategory));
+        obj.put("besucher", new JSONArray(besucherByCategory));
+        obj.put("clicks", new JSONArray(clicksByCategory));
+        return obj.toString();
+    }
+
     /**
      *
      * @return eine HTML-Seite, die den Bericht wie in der Methode getLetzte, nur für die letzten 7 Tage erstellt.

@@ -37,6 +37,15 @@ public class UniversalCategoriesDLC {
     @Column(name="besucher_ratgeber")
     private int besucherRatgeber;
 
+    @Column(name="besucher_ratgeber_post")
+    private int besucherRatgeberPost;
+
+    @Column(name="besucher_ratgeber_glossar")
+    private int besucherRatgeberGlossar;
+
+    @Column(name="besucher_ratgeber_buch")
+    private int besucherRatgeberBuch;
+
     @Column(name="besucher_main")
     private int besucherMain;
 
@@ -84,6 +93,15 @@ public class UniversalCategoriesDLC {
 
     @Column(name="views_ratgeber")
     private int viewsRatgeber;
+
+    @Column(name="views_ratgeber_post")
+    private int viewsRatgeberPost;
+
+    @Column(name="views_ratgeber_glossar")
+    private int viewsRatgeberGlossar;
+
+    @Column(name="views_ratgeber_buch")
+    private int viewsRatgeberBuch;
 
     @Column(name="views_main")
     private int viewsMain;
@@ -390,6 +408,54 @@ public class UniversalCategoriesDLC {
 
     public void setViewsAGBS(int viewsAGBS) {
         this.viewsAGBS = viewsAGBS;
+    }
+
+    public int getBesucherRatgeberPost() {
+        return besucherRatgeberPost;
+    }
+
+    public void setBesucherRatgeberPost(int besucherRatgeberPost) {
+        this.besucherRatgeberPost = besucherRatgeberPost;
+    }
+
+    public int getBesucherRatgeberGlossar() {
+        return besucherRatgeberGlossar;
+    }
+
+    public void setBesucherRatgeberGlossar(int besucherRatgeberGlossar) {
+        this.besucherRatgeberGlossar = besucherRatgeberGlossar;
+    }
+
+    public int getBesucherRatgeberBuch() {
+        return besucherRatgeberBuch;
+    }
+
+    public void setBesucherRatgeberBuch(int besucherRatgeberBuch) {
+        this.besucherRatgeberBuch = besucherRatgeberBuch;
+    }
+
+    public int getViewsRatgeberPost() {
+        return viewsRatgeberPost;
+    }
+
+    public void setViewsRatgeberPost(int viewsRatgeberPost) {
+        this.viewsRatgeberPost = viewsRatgeberPost;
+    }
+
+    public int getViewsRatgeberGlossar() {
+        return viewsRatgeberGlossar;
+    }
+
+    public void setViewsRatgeberGlossar(int viewsRatgeberGlossar) {
+        this.viewsRatgeberGlossar = viewsRatgeberGlossar;
+    }
+
+    public int getViewsRatgeberBuch() {
+        return viewsRatgeberBuch;
+    }
+
+    public void setViewsRatgeberBuch(int viewsRatgeberBuch) {
+        this.viewsRatgeberBuch = viewsRatgeberBuch;
     }
 }
 

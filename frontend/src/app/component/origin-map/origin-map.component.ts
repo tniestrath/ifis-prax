@@ -119,9 +119,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
             this.readData(res, svgElement);
             this.cdr.detectChanges();
           })
-          this.db.getViewsByLocationLast14().then(res => {
+          /*this.db.getViewsByLocationLast14().then(res => {
             this.readOldData(res);
-          })
+          })*/
         }
       }
     }, 100);

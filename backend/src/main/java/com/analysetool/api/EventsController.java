@@ -4,6 +4,7 @@ import com.analysetool.modells.Events;
 import com.analysetool.repositories.EventsRepository;
 import com.analysetool.repositories.WPTermRepository;
 import com.analysetool.repositories.WpTermRelationshipsRepository;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,6 +168,18 @@ public class EventsController {
             return "o";
         }
         return "o";
+    }
+
+    @GetMapping("/getNewEvents")
+    public String getNewEvents() {
+        List<Events> listEvents = eventsRepo.findAll();
+        List<String> listNewEvents = new ArrayList<>();
+        for(Events e : listEvents) {
+            if (e.getEventDateCreated().isAfter(LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT))){
+                listNewEvents.add(e.getEventName());
+            }
+        }
+        return new JSONArray(listNewEvents).toString();
     }
 
     private boolean isActive(Events e) {

@@ -394,7 +394,7 @@ public class UserController {
         for(WPUser user : userRepository.findAll()) {
             if(user.getRegistered().isAfter(LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT))) {
                 if (!listCheck.contains(user.getId())) {
-                    listResponse.add(user.getDisplayName());
+                    listResponse.add("+" + user.getDisplayName());
                 }
             }
         }

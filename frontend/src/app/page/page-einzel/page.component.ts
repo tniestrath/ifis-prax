@@ -42,7 +42,7 @@ export class PageComponent implements OnInit {
   selectorItems : SelectorItem[] = [];
   selectorItemsLoaded = new Subject<SelectorItem[]>();
   searchValue = "";
-  filterValues : { accType : string, perf : string } = {accType: "all", perf : "all"};
+  filterValues : { accType : string, sort : string } = {accType: "all", sort : "uid"};
 
   @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
@@ -121,8 +121,8 @@ export class PageComponent implements OnInit {
     this.loadSelector(this.filterValues);
   }
 
-  onFilterChange(filter : {accType : string, perf : string}){
-    this.filterValues = {accType : filter.accType, perf : filter.perf};
+  onFilterChange(filter: { accType: string; sort: string }){
+    this.filterValues = {accType : filter.accType, sort : filter.sort};
     this.loadSelector(this.filterValues)
   }
 
@@ -176,19 +176,11 @@ export class PageComponent implements OnInit {
 
   }
 
-  loadSelector(filter: {accType : string, perf : string}){
+  loadSelector(filter: {accType : string, sort : string}){
       this.db.loadAllUsers().then(() => {
         this.selectorItems = [];
         for (let u of DbService.Users) {
-          let performance = (u.performance || 0);
-          if (performance <= 33){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 33, u.accountType, u.potential, u.img)));
-          } if (performance > 33 && performance <= 66){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 66, u.accountType, u.potential, u.img)));
-          } if (performance > 66){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, 100, u.accountType, u.potential, u.img)));
-          }
-
+          this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, u.performance, u.accountType, u.potential, u.img)));
         }
       }).then(() => {
         this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||
@@ -198,17 +190,17 @@ export class PageComponent implements OnInit {
         if (filter.accType != "all"){
           this.selectorItems = this.selectorItems.filter((item ) => (item.data as User).accountType == filter.accType);
         }
-        switch (filter.perf) {
-          case "low": {
-            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance <= 33);
+        switch (filter.sort) {
+          case "uid": {
+            this.selectorItems = this.selectorItems.sort((a, b) => (Number(a.data.id) - Number(b.data.id)));
             break;
           }
-          case "medium": {
-            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance > 33 && (item.data as User).performance <= 66);
+          case "views": {
+            this.selectorItems = this.selectorItems.sort((a, b) => ( (b.data as User).profileViews + (b.data as User).postViews ) - ( (a.data as User).profileViews + (a.data as User).postViews ) );
             break;
           }
-          case "high": {
-            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance > 66);
+          case "performance": {
+            this.selectorItems = this.selectorItems.sort((a, b) => (b.data as User).performance - (a.data as User).performance);
             break;
           }
           default: break;

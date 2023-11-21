@@ -88,13 +88,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       let startDate = res[0].split('T')[0];
       let endDate = res[1].split('T')[0];
 
-      if (startDate == endDate){
-        startDatePicker.value = startDate;
-        endDatePicker.value = startDate;
-        startDatePicker.disabled = true;
-        endDatePicker.disabled = true;
-        return;
-      }
+      startDatePicker.value = startDate;
+      endDatePicker.value = endDate;
 
       startDatePicker.min = startDate;
       startDatePicker.max = endDate;
@@ -102,6 +97,11 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       endDatePicker.min = startDate;
       endDatePicker.max = endDate;
 
+      if (startDate == endDate){
+        startDatePicker.disabled = true;
+        endDatePicker.disabled = true;
+        return;
+      }
     });
 
     setTimeout(() => {

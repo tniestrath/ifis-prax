@@ -16,7 +16,7 @@ export class SearchbarComponent implements OnInit{
   @Output() searchInput :string = "";
   @Output() currentSearch = new EventEmitter<string>();
   @Output() selected = new EventEmitter<DbObject>();
-  @Output() filter = new EventEmitter<{ accType : string, perf : string }>();
+  @Output() filter = new EventEmitter<{ accType : string, sort : string }>();
 
   page : string = "user";
 
@@ -102,10 +102,11 @@ export class SearchbarComponent implements OnInit{
         this.filter_dropdown.style.width = "640px";
         this.filter_dropdown.style.height = "100px";
         this.filter_dropdown.style.position = "absolute";
-        this.filter_dropdown.style.top = "60px";
-        this.filter_dropdown.style.right = "5px";
+        this.filter_dropdown.style.top = "65px";
+        this.filter_dropdown.style.right = "0";
         this.filter_dropdown.style.boxSizing = "border-box";
         this.filter_dropdown.style.border = "2px solid #A0A0A0";
+        this.filter_dropdown.style.boxShadow = "0 5px 5px rgba(0,0,0,.2)"
         this.filter_dropdown.style.borderRadius = "5px";
         this.filter_dropdown.style.backgroundColor = "white";
         this.filter_dropdown.style.padding = "5px";
@@ -121,8 +122,16 @@ export class SearchbarComponent implements OnInit{
           'width: 82px;' +
           'height: 20px;';
 
+        let sorter_styles= '' +
+          'margin-right: 5px;' +
+          'border: 1px solid #A0A0A0;' +
+          'border-radius: 5px;' +
+          'text-align: center;' +
+          'width: 126px;' +
+          'height: 20px;';
+
         let selected_account_filter = "all";
-        let selected_performance_filter = "all";
+        let selected_sort = "uid";
 
         let label_accountType = document.createElement("div");
         let filter_accountTypeWithoutPlan = document.createElement("div");
@@ -133,11 +142,10 @@ export class SearchbarComponent implements OnInit{
         let filter_accountTypeSponsor = document.createElement("div");
         let filter_accountTypeAll = document.createElement("div");
 
-        let label_performance = document.createElement("div");
-        let filter_peformance33 = document.createElement("div");
-        let filter_peformance66 = document.createElement("div");
-        let filter_peformance100 = document.createElement("div");
-        let filter_peformanceAll = document.createElement("div");
+        let label_sort_by = document.createElement("div");
+        let filter_sort_views = document.createElement("div");
+        let filter_sort_performance = document.createElement("div");
+        let filter_sort_uid = document.createElement("div");
 
         label_accountType.innerText = "Abo Model";
         label_accountType.style.width = "100%";
@@ -162,7 +170,7 @@ export class SearchbarComponent implements OnInit{
           filter_accountTypeAll.style.color = "black";
           selected_account_filter = "ohne abo";
 
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+          this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
         this.filter_dropdown.appendChild(filter_accountTypeWithoutPlan);
 
@@ -186,7 +194,7 @@ export class SearchbarComponent implements OnInit{
           filter_accountTypeAll.style.color = "black";
           selected_account_filter = "basis";
 
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+          this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
         this.filter_dropdown.appendChild(filter_accountTypeBasic);
 
@@ -211,7 +219,7 @@ export class SearchbarComponent implements OnInit{
           filter_accountTypeAll.style.color = "black";
           selected_account_filter = "basis-plus";
 
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+          this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
         this.filter_dropdown.appendChild(filter_accountTypeBasicPlus);
 
@@ -235,7 +243,7 @@ export class SearchbarComponent implements OnInit{
           filter_accountTypeAll.style.color = "black";
           selected_account_filter = "plus";
 
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+          this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
         this.filter_dropdown.appendChild(filter_accountTypePlus);
 
@@ -259,7 +267,7 @@ export class SearchbarComponent implements OnInit{
           filter_accountTypeAll.style.color = "black";
           selected_account_filter = "premium";
 
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+          this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
         this.filter_dropdown.appendChild(filter_accountTypePremium);
 
@@ -283,7 +291,7 @@ export class SearchbarComponent implements OnInit{
           filter_accountTypeAll.style.color = "black";
           selected_account_filter = "sponsor";
 
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+          this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
         this.filter_dropdown.appendChild(filter_accountTypeSponsor);
 
@@ -306,87 +314,65 @@ export class SearchbarComponent implements OnInit{
           filter_accountTypeAll.style.color = "#951D40";
           selected_account_filter = "all";
 
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+          this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
         filter_accountTypeAll.style.color = "#951D40";
         this.filter_dropdown.appendChild(filter_accountTypeAll);
 
-        label_performance.innerText = "Performance";
-        label_performance.style.width = "100%";
-        this.filter_dropdown.appendChild(label_performance);
+        label_sort_by.innerText = "Sortieren nach";
+        label_sort_by.style.width = "100%";
+        this.filter_dropdown.appendChild(label_sort_by);
 
-        filter_peformance33.id = "filter_performance_33";
-        filter_peformance33.innerText = "Niedrig";
-        filter_peformance33.style.cssText = filter_styles;
-        filter_peformance33.addEventListener("mouseenter",
-          () => filter_peformance33.style.borderColor = "black");
-        filter_peformance33.addEventListener("mouseleave",
-          () => filter_peformance33.style.borderColor = "#A0A0A0");
-        filter_peformance33.addEventListener("click", () => {
-          filter_peformance33.style.color = "#951D40";
-          filter_peformance66.style.color = "black";
-          filter_peformance100.style.color = "black";
-          filter_peformanceAll.style.color = "black";
-          selected_performance_filter = "low";
+        filter_sort_views.id = "filter_sort_views";
+        filter_sort_views.innerText = "Views";
+        filter_sort_views.style.cssText = sorter_styles;
+        filter_sort_views.addEventListener("mouseenter",
+          () => filter_sort_views.style.borderColor = "black");
+        filter_sort_views.addEventListener("mouseleave",
+          () => filter_sort_views.style.borderColor = "#A0A0A0");
+        filter_sort_views.addEventListener("click", () => {
+          filter_sort_views.style.color = "#951D40";
+          filter_sort_performance.style.color = "black";
+          filter_sort_uid.style.color = "black";
+          selected_sort = "views";
 
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+          this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
-        this.filter_dropdown.appendChild(filter_peformance33);
+        this.filter_dropdown.appendChild(filter_sort_views);
 
-        filter_peformance66.id = "filter_performance_66";
-        filter_peformance66.innerText = "Mittel";
-        filter_peformance66.style.cssText = filter_styles;
-        filter_peformance66.addEventListener("mouseenter",
-          () => filter_peformance66.style.borderColor = "black");
-        filter_peformance66.addEventListener("mouseleave",
-          () => filter_peformance66.style.borderColor = "#A0A0A0");
-        filter_peformance66.addEventListener("click", () => {
-          filter_peformance33.style.color = "black";
-          filter_peformance66.style.color = "#951D40";
-          filter_peformance100.style.color = "black";
-          filter_peformanceAll.style.color = "black";
-          selected_performance_filter = "medium";
+        filter_sort_performance.id = "filter_sort_performance";
+        filter_sort_performance.innerText = "Performance";
+        filter_sort_performance.style.cssText = sorter_styles;
+        filter_sort_performance.addEventListener("mouseenter",
+          () => filter_sort_performance.style.borderColor = "black");
+        filter_sort_performance.addEventListener("mouseleave",
+          () => filter_sort_performance.style.borderColor = "#A0A0A0");
+        filter_sort_performance.addEventListener("click", () => {
+          filter_sort_views.style.color = "black";
+          filter_sort_performance.style.color = "#951D40";
+          filter_sort_uid.style.color = "black";
+          selected_sort = "performance";
 
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+          this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
-        this.filter_dropdown.appendChild(filter_peformance66);
+        this.filter_dropdown.appendChild(filter_sort_performance);
 
-        filter_peformance100.id = "filter_performance_100";
-        filter_peformance100.innerText = "Hoch";
-        filter_peformance100.style.cssText = filter_styles;
-        filter_peformance100.addEventListener("mouseenter",
-          () => filter_peformance100.style.borderColor = "black");
-        filter_peformance100.addEventListener("mouseleave",
-          () => filter_peformance100.style.borderColor = "#A0A0A0");
-        filter_peformance100.addEventListener("click", () => {
-          filter_peformance33.style.color = "black";
-          filter_peformance66.style.color = "black";
-          filter_peformance100.style.color = "#951D40";
-          filter_peformanceAll.style.color = "black";
-          selected_performance_filter = "high";
+        filter_sort_uid.id = "filter_sort_uid";
+        filter_sort_uid.innerText = "Erstellungsdatum";
+        filter_sort_uid.style.cssText = sorter_styles;
+        filter_sort_uid.addEventListener("mouseenter",
+          () => filter_sort_uid.style.borderColor = "black");
+        filter_sort_uid.addEventListener("mouseleave",
+          () => filter_sort_uid.style.borderColor = "#A0A0A0");
+        filter_sort_uid.addEventListener("click", () => {
+          filter_sort_views.style.color = "black";
+          filter_sort_performance.style.color = "black";
+          filter_sort_uid.style.color = "#951D40";
+          selected_sort = "uid";
 
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
+          this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
-        this.filter_dropdown.appendChild(filter_peformance100);
-
-        filter_peformanceAll.id = "filter_performance_all";
-        filter_peformanceAll.innerText = "Alle";
-        filter_peformanceAll.style.cssText = filter_styles;
-        filter_peformanceAll.addEventListener("mouseenter",
-          () => filter_peformanceAll.style.borderColor = "black");
-        filter_peformanceAll.addEventListener("mouseleave",
-          () => filter_peformanceAll.style.borderColor = "#A0A0A0");
-        filter_peformanceAll.addEventListener("click", () => {
-          filter_peformance33.style.color = "black";
-          filter_peformance66.style.color = "black";
-          filter_peformance100.style.color = "black";
-          filter_peformanceAll.style.color = "#951D40";
-          selected_performance_filter = "all";
-
-          this.filter.emit({accType: selected_account_filter, perf: selected_performance_filter});
-        })
-        filter_peformanceAll.style.color = "#951D40";
-        this.filter_dropdown.appendChild(filter_peformanceAll);
+        this.filter_dropdown.appendChild(filter_sort_uid);
 
         this.element.nativeElement.appendChild(this.filter_dropdown);
       }

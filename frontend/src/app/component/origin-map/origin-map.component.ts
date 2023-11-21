@@ -281,7 +281,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     for (const region of map){
       if (String(region.at(0)) == "total") continue;
       this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
-      this.setRegionTooltip(svgElement, String(region.at(0)));
+      this.setRegionTooltip(svgElement, String(region.at(0)), Number(region.at(1)));
       if (Number(region.at(1)) > this.strongest_region.clicks) this.strongest_region = {identifier: String(region.at(0)), clicks: Number(region.at(1)), cities: []};
     }
   }
@@ -294,7 +294,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
   }
 
-  setRegionTooltip(svg: any, region : string){
+  setRegionTooltip(svg: any, region: string, region_clicks: number){
     var pathElement = svg.querySelector("#" + region) ?? null;
     var tooltipElement = document.getElementById("tooltip") ?? new HTMLElement();
     var tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
@@ -317,6 +317,12 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         cityElement.style.marginTop = "3px";
         cityElement.style.paddingTop = "2px";
         cityElement.style.borderTop = "1px dashed #000";
+        cityElement.style.fontSize = "calc((1vw + 1vh)/2)";
+        cityElement.style.display = "flex";
+        cityElement.style.flexDirection = "row";
+        cityElement.style.justifyContent = "space-between";
+        cityName.innerText = "Gesamt";
+        cityClicks.innerText = Util.formatNumbers(region_clicks);
 
         for (const city of data) {
           let cityElement = document.createElement('div', );

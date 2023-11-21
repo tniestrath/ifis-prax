@@ -2710,6 +2710,26 @@ public class LogService {
                         }
                     }
 
+                } else if(IPHelper.getCountryISO(user.getIp()).equals("BE")) {
+                    if (IPHelper.getCityName(ip) != null) {
+                        clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip)) == null
+                                ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip));
+                        clicksByBundeslandCitiesDLC.setUni_id(uniId);
+                        clicksByBundeslandCitiesDLC.setBundesland("BG");
+                        clicksByBundeslandCitiesDLC.setCity(IPHelper.getCityName(ip));
+                        clicksByBundeslandCitiesDLC.setClicks(clicksByBundeslandCitiesDLC.getClicks() + 1);
+                        clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
+                    }
+                } else if(IPHelper.getCountryISO(user.getIp()).equals("NL") || IPHelper.getCountryISO(user.getIp()).equals("AT") || IPHelper.getCountryISO(user.getIp()).equals("CH") || IPHelper.getCountryISO(user.getIp()).equals("LU")){
+                    if (IPHelper.getCityName(ip) != null) {
+                        clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip)) == null
+                                ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip));
+                        clicksByBundeslandCitiesDLC.setUni_id(uniId);
+                        clicksByBundeslandCitiesDLC.setBundesland(IPHelper.getCountryISO(ip));
+                        clicksByBundeslandCitiesDLC.setCity(IPHelper.getCityName(ip));
+                        clicksByBundeslandCitiesDLC.setClicks(clicksByBundeslandCitiesDLC.getClicks() + 1);
+                        clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
+                    }
                 }
                 //Update ClicksByCountry
                 clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null

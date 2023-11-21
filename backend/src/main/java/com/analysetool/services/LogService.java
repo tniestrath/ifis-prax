@@ -885,6 +885,7 @@ public class LogService {
             }
 
         }
+        updateClicksBy();
         updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors, viewsByLocation, viewsByHour);
     }
 
@@ -2687,37 +2688,39 @@ public class LogService {
             ClicksByBundesland clicksByBundesland;
             ClicksByBundeslandCitiesDLC clicksByBundeslandCitiesDLC;
             //If the country is Germany, try to update ClicksByBundesland
-            if(IPHelper.getCountryISO(user.getIp()).equals("DE")) {
-                clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
-                        ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
+            if (IPHelper.getCountryISO(user.getIp()) != null) {
+                if (IPHelper.getCountryISO(user.getIp()).equals("DE")) {
+                    clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
+                            ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
 
-                clicksByBundesland.setUniStatId(uniId);
-                //If the ip can be matched to a bundesland, update and save it. Otherwise, don't.
-                if (IPHelper.getSubISO(ip) != null) {
-                    clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
-                    clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
-                    clicksByBundeslandRepo.save(clicksByBundesland);
-                    //If the ip can be matched to a city, set, update and save ClicksByBundeslandCitiesDLC
-                    if(IPHelper.getCityName(ip) != null) {
-                        clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
-                                ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip));
-                        clicksByBundeslandCitiesDLC.setUni_id(uniId);
-                        clicksByBundeslandCitiesDLC.setBundesland(IPHelper.getSubISO(ip));
-                        clicksByBundeslandCitiesDLC.setCity(IPHelper.getCityName(ip));
-                        clicksByBundeslandCitiesDLC.setClicks(clicksByBundeslandCitiesDLC.getClicks() + 1);
-                        clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
+                    clicksByBundesland.setUniStatId(uniId);
+                    //If the ip can be matched to a bundesland, update and save it. Otherwise, don't.
+                    if (IPHelper.getSubISO(ip) != null) {
+                        clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
+                        clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
+                        clicksByBundeslandRepo.save(clicksByBundesland);
+                        //If the ip can be matched to a city, set, update and save ClicksByBundeslandCitiesDLC
+                        if (IPHelper.getCityName(ip) != null) {
+                            clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip)) == null
+                                    ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip));
+                            clicksByBundeslandCitiesDLC.setUni_id(uniId);
+                            clicksByBundeslandCitiesDLC.setBundesland(IPHelper.getSubISO(ip));
+                            clicksByBundeslandCitiesDLC.setCity(IPHelper.getCityName(ip));
+                            clicksByBundeslandCitiesDLC.setClicks(clicksByBundeslandCitiesDLC.getClicks() + 1);
+                            clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
+                        }
                     }
+
                 }
+                //Update ClicksByCountry
+                clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null
+                        ? new ClicksByCountry() : clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip));
+                clicksByCountry.setUniStatId(uniId);
+                clicksByCountry.setCountry(IPHelper.getCountryName(ip));
+                clicksByCountry.setClicks(clicksByCountry.getClicks() + 1);
+                clicksByCountryRepo.save(clicksByCountry);
 
             }
-            //Update ClicksByCountry
-            clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null
-                    ? new ClicksByCountry() : clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip));
-            clicksByCountry.setUniStatId(uniId);
-            clicksByCountry.setCountry(IPHelper.getCountryName(ip));
-            clicksByCountry.setClicks(clicksByCountry.getClicks() + 1);
-            clicksByCountryRepo.save(clicksByCountry);
-
         }
     }
 

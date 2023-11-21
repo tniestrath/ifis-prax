@@ -544,6 +544,50 @@ public class MathHelper {
     }
 
     /**
+     * Diese Methode findet Ausreißer, die unterhalb der unteren Grenze liegen.
+     * Die untere Grenze wird bestimmt durch Q1 (unteres Quartil) minus 1,5-mal dem IQR (Interquartilsabstand).
+     *
+     * @param data Die Liste von Integer-Werten, in der nach Ausreißern gesucht werden soll.
+     * @return Eine Liste von Integer-Werten, die unterhalb der unteren Grenze liegen.
+     */
+    public static List<Integer> getLowerBoundOutliersInt(List<Integer> data) {
+        double q1 = getLowerQuartileInt(data);
+        double iqr = getInterquartileRangeInt(data);
+        double lowerBound = q1 - 1.5 * iqr;
+
+        List<Integer> lowerOutliers = new ArrayList<>();
+        for (int value : data) {
+            if (value < lowerBound) {
+                lowerOutliers.add(value);
+            }
+        }
+        return lowerOutliers;
+    }
+
+    /**
+     * Diese Methode findet Ausreißer, die oberhalb der oberen Grenze liegen.
+     * Die obere Grenze wird bestimmt durch Q3 (oberes Quartil) plus 1,5-mal dem IQR (Interquartilsabstand).
+     *
+     * @param data Die Liste von Integer-Werten, in der nach Ausreißern gesucht werden soll.
+     * @return Eine Liste von Integer-Werten, die oberhalb der oberen Grenze liegen.
+     */
+    public static List<Integer> getUpperBoundOutliersInt(List<Integer> data) {
+        double q3 = getUpperQuartileInt(data);
+        double iqr = getInterquartileRangeInt(data);
+        double upperBound = q3 + 1.5 * iqr;
+
+        List<Integer> upperOutliers = new ArrayList<>();
+        for (int value : data) {
+            if (value > upperBound) {
+                upperOutliers.add(value);
+            }
+        }
+        return upperOutliers;
+    }
+
+
+
+    /**
      * Berechnet den Skewness-Wert (Schiefe) einer Liste von Integer-Werten.
      * @param data Eine Liste von Integer-Werten.
      * @return Der Skewness-Wert der Liste.

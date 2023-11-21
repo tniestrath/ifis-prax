@@ -18,7 +18,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -473,7 +472,7 @@ public class GeoController {
     @GetMapping("/geoRange")
     public String[] getDateRange() {
         String[] string;
-        string = new String[]{uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().toInstant().atOffset(ZoneOffset.ofHours(0)).toString(), uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().toInstant().atOffset(ZoneOffset.ofHours(0)).toString()};
+        string = new String[]{uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().toInstant().plusSeconds(8000).toString(), uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().toInstant().plusSeconds(8000).toString()};
         return string;
     }
 }

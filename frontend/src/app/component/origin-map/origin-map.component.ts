@@ -60,7 +60,7 @@ interface SVG_City {
 })
 export class OriginMapComponent extends DashBaseComponent implements OnInit{
   totalDE: number = 0;
-  totalGlobal: number = 0;
+  percentage: number = 0;
   isScaled = false;
 
   strongest_region: SVG_Region = {identifier: "", cities: [], clicks: 0};
@@ -278,8 +278,10 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     let map : Map<string, number> = new Map(Object.entries(data));
     // @ts-ignore
     this.totalDE = map.get("total");
+    // @ts-ignore
+    this.percentage = map.get("totalPercentage");
     for (const region of map){
-      if (String(region.at(0)) == "total") continue;
+      if (String(region.at(0)) == "total" || String(region.at(0)) == "totalPercentage") continue;
       this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
       this.setRegionTooltip(svgElement, String(region.at(0)), Number(region.at(1)));
       if (Number(region.at(1)) > this.strongest_region.clicks) this.strongest_region = {identifier: String(region.at(0)), clicks: Number(region.at(1)), cities: []};
@@ -387,4 +389,5 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     return 'rgb(' + r + ',' + g + ',' + b + ')';
   }
 
+  protected readonly Math = Math;
 }

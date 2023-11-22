@@ -15,4 +15,7 @@ public interface ClicksByCountryRepository extends JpaRepository<ClicksByCountry
 
     @Query("SELECT u FROM ClicksByCountry u WHERE u.uniStatId =:uniStatId")
     List<ClicksByCountry> getByUniID(int uniStatId);
+
+    @Query("SELECT SUM(u.clicks) FROM ClicksByCountry u WHERE u.uniStatId=:uniStatId")
+    int getClicksAusland(int uniStatId);
 }

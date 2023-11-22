@@ -29,7 +29,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1391,14 +1390,12 @@ public class LogService {
             UserStats userStats = userStatsRepo.findByUserId(Long.valueOf(user));
 
             long views = userViews.get(user);
-            long currentImpressions = impressions.getOrDefault(user, 0);
 
             if (userStats == null) {
-                userStats = new UserStats(Long.parseLong(user), views, currentImpressions);
+                userStats = new UserStats(Long.parseLong(user), views);
             } else {
                 // Addiere die Werte zu den vorhandenen Statistiken
                 userStats.setProfileView(userStats.getProfileView() + views);
-                userStats.setImpressions(userStats.getImpressions() + currentImpressions);
             }
 
             userStatsRepo.save(userStats);
@@ -1705,118 +1702,17 @@ public class LogService {
     @Transactional
     public void updateUserStats(long id){
         if(userStatsRepo.existsByUserId(id)) {
+
             UserStats Stats = userStatsRepo.findByUserId(id);
             long views = Stats.getProfileView() + 1 ;
             Stats.setProfileView(views);
-            List<Post> list = postRepository.findByAuthor((int)id);
-            int count = 0;
-            float relevance=0;
-            float performance=0;
-            for(Post p:list){
-                if(statsRepo.existsByArtId(p.getId())){
-                    PostStats PostStats = statsRepo.getStatByArtID(p.getId());
-                    count ++;
-                    relevance=relevance+PostStats.getRelevance();
-                    performance=performance+PostStats.getPerformance();
-                }
-            }
-            if(count !=0){
-                relevance=relevance/count;
-                performance=performance/count;
-                Stats.setAveragePerformance(performance);
-                Stats.setAverageRelevance(relevance);
-            }
             userStatsRepo.save(Stats);
 
+        }else {
 
-        }else{userStatsRepo.save(new UserStats(id, (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)0));}
-    }
+            userStatsRepo.save(new UserStats(id, 1));
 
-    @Transactional
-    public void updateUserStatsForAllUsers() {
-        List<WPUser> allUsers = wpUserRepo.findAll();
-
-        for (WPUser user : allUsers) {
-            if (userStatsRepo.existsByUserId(user.getId())) {
-                UserStats stats = userStatsRepo.findByUserId(user.getId());
-                long views = stats.getProfileView() + 1;
-                stats.setProfileView(views);
-
-                List<Post> posts = postRepository.findByAuthor(user.getId().intValue());
-                int count = 0;
-                float relevance = 0;
-                float performance = 0;
-
-                for (Post post : posts) {
-                    if (statsRepo.existsByArtId(post.getId())) {
-                        PostStats postStats = statsRepo.getStatByArtID(post.getId());
-                        count++;
-                        relevance += postStats.getRelevance();
-                        performance += postStats.getPerformance();
-                    }
-                }
-
-                if (count != 0) {
-                    relevance = relevance / count;
-                    performance = performance / count;
-                    stats.setAveragePerformance(performance);
-                    stats.setAverageRelevance(relevance);
-                }
-
-                userStatsRepo.save(stats);
-            } else {
-                userStatsRepo.save(new UserStats(user.getId(), (float) 0,(float) 0, 0,(float) 0,(float) 0,(float)0,(long)0));
-            }
         }
-    }
-
-    @Transactional
-    public void updateDailyClicks(long id){
-        PostStats PostStats = statsRepo.getStatByArtID(id);
-        HashMap<String,Long> daily = (HashMap<String, Long>) PostStats.getViewsLastYear();
-        Calendar calendar = Calendar.getInstance();
-        int currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
-        long views = daily.get(Integer.toString(currentDayOfYear));
-        views++;
-        daily.put(Integer.toString(currentDayOfYear),views);
-        PostStats.setViewsLastYear(daily);
-        PostStats.setRelevance(getRelevance(daily,currentDayOfYear,7));
-        statsRepo.save(PostStats);
-
-    }
-
-    @Transactional
-    public void erhoeheWertFuerHeutigesDatum(long id) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
-
-        PostStats postStats = statsRepo.findByArtIdAndAndYear(id,aktuellesJahr);
-        HashMap<String, Long> daily = (HashMap<String, Long>) postStats.getViewsLastYear();
-
-        // Das heutige Datum im Format dd.MM abrufen
-        String heutigesDatum = LocalDate.now().format(formatter);
-
-        // Den Wert für das heutige Datum in der HashMap um 1 erhöhen
-        long aktuellerWert = daily.getOrDefault(heutigesDatum, 0L);
-        daily.put(heutigesDatum, aktuellerWert + 1);
-        postStats.setViewsPerHour(erhoeheViewsPerHour(postStats));
-        postStats.setViewsLastYear(daily);
-        postStats.setRelevance(getRelevance2(daily, heutigesDatum, 7));
-
-        statsRepo.save(postStats);
-    }
-
-    @Transactional
-    public Map<String,Long> erhoeheViewsPerHour(PostStats stats){
-        Map<String,Long> viewsPerHour =stats.getViewsPerHour();
-        LocalTime jetzt = LocalTime.now();
-        int stunde = jetzt.getHour();
-        if(stunde != 0){stunde--;}else{stunde=23;}
-        long views= viewsPerHour.getOrDefault(Integer.toString(stunde),0L);
-        views++;
-        viewsPerHour.put(Integer.toString(stunde),views);
-        stats.setViewsPerHour(viewsPerHour);
-
-        return viewsPerHour;
     }
 
     public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
@@ -1891,82 +1787,6 @@ public class LogService {
             }
         }
     }
-
-    public void updateUserActivity(Long period){
-        List<WPUser> users = wpUserRepo.findAll();
-        List<Post> posts= new ArrayList<>();
-        UserStats stats = null ;
-        float postfreq = 0 ;
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime postTime= now.minusMonths(period);
-        long daysDifference = ChronoUnit.DAYS.between(postTime, now);
-        int counter =0;
-        for(WPUser user: users){
-            posts=postRepository.findByAuthor(user.getId().intValue());
-            counter = 0 ;
-            if(!posts.isEmpty()){
-            for (Post post:posts){
-                if(postTime.isBefore(post.getDate())&& post.getStatus().equals("publish") && post.getType().equals("post")){counter ++;}
-            }
-            if(counter!=0){
-            postfreq=(float)daysDifference/counter;
-            }}else{postfreq=0;}
-            if (userStatsRepo.existsByUserId(user.getId())){
-                stats = userStatsRepo.findByUserId(user.getId());
-            }else{stats = new UserStats(user.getId(), (float) 0,(float) 0, 1,(float) 0,(float) 0,(float)0,(long)0);}
-            stats.setPostFrequence(postfreq);
-            userStatsRepo.save(stats);
-            updateInteractionRate(user,stats,posts);
-        }
-
-    }
-
-    public void updateInteractionRate(WPUser user,UserStats stats, List<Post>posts){
-        int commentCount=0;
-        int answeredComments=0;
-        float interactionRate=0;
-        List<Comments> comments = new ArrayList<>();
-        for(Post post:posts){
-            if(post.getStatus().equals("publish") && post.getType().equals("post")){
-                comments=commentRepo.findByPostId(post.getId());
-                for(Comments comment:comments){
-                    if (comment.getUserId() == user.getId()) {
-                        if (commentRepo.findByCommentId(comment.getParentCommentId()).getUserId() != user.getId()) {
-                            answeredComments++;
-                        }
-                    } else {
-                        commentCount++;
-                    }
-                }
-            }
-
-        }
-        if(answeredComments!=0){
-        interactionRate=(float)answeredComments/commentCount;}
-        stats.setInteractionRate(interactionRate);
-        userStatsRepo.save(stats);
-       // System.out.println("Interaktionsrate: "+interactionRate+" id: "+user.getId());
-    }
-
-
-    private static String getMonthNumber(String monthName) {
-        Map<String, String> months = new HashMap<>();
-        months.put("Jan", "01");
-        months.put("Feb", "02");
-        months.put("Mar", "03");
-        months.put("Apr", "04");
-        months.put("May", "05");
-        months.put("Jun", "06");
-        months.put("Jul", "07");
-        months.put("Aug", "08");
-        months.put("Sep", "09");
-        months.put("Oct", "10");
-        months.put("Nov", "11");
-        months.put("Dec", "12");
-
-        return months.getOrDefault(monthName.substring(0, 3), "00");
-    }
-
 
     public void updateLetterCount(long id) {
 

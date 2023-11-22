@@ -344,6 +344,7 @@ public class LogService {
         saveStatsToDatabase();
 
         sysVarRepo.save(SystemVariabeln);
+        endDay();
     }
 
 

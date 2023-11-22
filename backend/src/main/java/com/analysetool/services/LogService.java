@@ -1305,12 +1305,14 @@ public class LogService {
     @Scheduled(cron = "0 20 0 * * ?")
     public void endDay() throws JSONException, ParseException {
         try {
+            System.out.println("UPDATE CLICKS AUSGEFÜHRT HIER!");
             updateClicksBy();
         } catch (Exception e) {
             System.out.println("-------------------------------------------------------------FEHLER BEI UPDATE CLICKS");
             e.printStackTrace();
         }
         try {
+            System.out.println("UPDATE GEO AUSGEFÜHRT HIER!");
             updateGeo();
         } catch (Exception e) {
         System.out.println("---------------------------------------------------------------------FEHLER BEI UPDATEGEO");
@@ -2422,7 +2424,7 @@ public class LogService {
             ClicksByBundesland clicksByBundesland;
             ClicksByBundeslandCitiesDLC clicksByBundeslandCitiesDLC;
             //If the country is Germany, try to update ClicksByBundesland
-            if (IPHelper.getCountryISO(user.getIp()) != null) {
+            if (IPHelper.getCountryISO(ip) != null) {
                 if (IPHelper.getCountryISO(user.getIp()).equals("DE")) {
                     clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                             ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
@@ -2445,7 +2447,7 @@ public class LogService {
                         }
                     }
 
-                } else if(IPHelper.getCountryISO(user.getIp()).equals("BE")) {
+                } else if(IPHelper.getCountryISO(ip).equals("BE")) {
                     if (IPHelper.getCityName(ip) != null) {
                         clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip)) == null
                                 ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip));
@@ -2455,7 +2457,7 @@ public class LogService {
                         clicksByBundeslandCitiesDLC.setClicks(clicksByBundeslandCitiesDLC.getClicks() + 1);
                         clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
                     }
-                } else if(IPHelper.getCountryISO(user.getIp()).equals("NL") || IPHelper.getCountryISO(user.getIp()).equals("AT") || IPHelper.getCountryISO(user.getIp()).equals("CH") || IPHelper.getCountryISO(user.getIp()).equals("LU")){
+                } else if(IPHelper.getCountryISO(ip).equals("NL") || IPHelper.getCountryISO(ip).equals("AT") || IPHelper.getCountryISO(ip).equals("CH") || IPHelper.getCountryISO(ip).equals("LU")){
                     if (IPHelper.getCityName(ip) != null) {
                         clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip)) == null
                                 ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip));

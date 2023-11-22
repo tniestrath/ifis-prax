@@ -326,12 +326,6 @@ public class LogService {
         this.liveScanning = liveScanning;
         this.path = path;
         if(!liveScanning){
-
-            String pathOfOldLog = "/var/log/nginx/access.log-" + getDay(0) + ".gz";
-            FileInputStream fileInputStream = new FileInputStream(pathOfOldLog);
-            GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
-            InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
-            br = new BufferedReader(inputStreamReader);
             findAMatch(SystemVariabeln);
             SystemVariabeln.setLastLineCount(0);
         }
@@ -339,7 +333,6 @@ public class LogService {
         lastLine = SystemVariabeln.getLastLine();
         lineCounter = 0;
         try  {
-            br = new BufferedReader(new FileReader(path));
             findAMatch(SystemVariabeln);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1302,11 +1295,12 @@ public class LogService {
         return uniHourly;
     }
 
-    @Scheduled(cron = "0 20 0 * * ?")
-    public void endDay() throws JSONException, ParseException {
+    @Scheduled(cron = "0 45 0 * * ?")
+    public void endDay() {
         try {
             System.out.println("UPDATE CLICKS AUSGEFÜHRT HIER!");
             updateClicksBy();
+            System.out.println("KEIN FEHLER BEI UPDATE CLICKS");
         } catch (Exception e) {
             System.out.println("-------------------------------------------------------------FEHLER BEI UPDATE CLICKS");
             e.printStackTrace();
@@ -1314,6 +1308,7 @@ public class LogService {
         try {
             System.out.println("UPDATE GEO AUSGEFÜHRT HIER!");
             updateGeo();
+            System.out.println("KEIN FEHLER BEI UPDATE GEO");
         } catch (Exception e) {
         System.out.println("---------------------------------------------------------------------FEHLER BEI UPDATEGEO");
         e.printStackTrace();
@@ -2426,17 +2421,20 @@ public class LogService {
             //If the country is Germany, try to update ClicksByBundesland
             if (IPHelper.getCountryISO(ip) != null) {
                 if (IPHelper.getCountryISO(user.getIp()).equals("DE")) {
+                    System.out.println("TRY TO UPDATE CLICKSBYBUNDESLAND");
                     clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                             ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
 
                     clicksByBundesland.setUniStatId(uniId);
                     //If the ip can be matched to a bundesland, update and save it. Otherwise, don't.
                     if (IPHelper.getSubISO(ip) != null) {
+                        System.out.println("SUCCESS IN TRY TO UPDATE CLICKSBYBUNDESLAND");
                         clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
                         clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
                         clicksByBundeslandRepo.save(clicksByBundesland);
                         //If the ip can be matched to a city, set, update and save ClicksByBundeslandCitiesDLC
                         if (IPHelper.getCityName(ip) != null) {
+                            System.out.println("TRY TO UPDATE CLICKSBYBUNDESLAND");
                             clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip)) == null
                                     ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip));
                             clicksByBundeslandCitiesDLC.setUni_id(uniId);
@@ -2448,6 +2446,7 @@ public class LogService {
                     }
 
                 } else if(IPHelper.getCountryISO(ip).equals("BE")) {
+                    System.out.println("TRY TO UPDATE CLICKSBYCITY FOR BELGIUM");
                     if (IPHelper.getCityName(ip) != null) {
                         clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip)) == null
                                 ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip));
@@ -2458,6 +2457,7 @@ public class LogService {
                         clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
                     }
                 } else if(IPHelper.getCountryISO(ip).equals("NL") || IPHelper.getCountryISO(ip).equals("AT") || IPHelper.getCountryISO(ip).equals("CH") || IPHelper.getCountryISO(ip).equals("LU")){
+                    System.out.println("TRY TO UPDATE CLICKSBYCITY FOR OTHER COUNTRIES");
                     if (IPHelper.getCityName(ip) != null) {
                         clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip)) == null
                                 ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip));
@@ -2469,6 +2469,7 @@ public class LogService {
                     }
                 }
                 //Update ClicksByCountry
+                System.out.println("TRY TO UPDATE CLICKSBYCOUNTRY");
                 clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null
                         ? new ClicksByCountry() : clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip));
                 clicksByCountry.setUniStatId(uniId);

@@ -302,7 +302,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     var tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
     var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
     var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
-    var citiesList : any[] = [];
 
     if (pathElement == null){return}
 
@@ -316,6 +315,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         let cityElement = document.createElement('div', );
         let cityName = document.createElement('div');
         let cityClicks = document.createElement('div');
+
+        var citiesList : any[] = [];
+
         cityElement.style.marginTop = "3px";
         cityElement.style.paddingTop = "2px";
         cityElement.style.borderTop = "1px dashed #000";

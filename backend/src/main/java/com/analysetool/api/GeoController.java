@@ -207,6 +207,9 @@ public class GeoController {
 
         double total = 0;
 
+        json.put("total", 0);
+        json.put("totalPercentage", 0);
+
         //Iterate over all days in the interval.
         for (LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
             int uniId = 0;
@@ -294,6 +297,7 @@ public class GeoController {
         }
         double total = 0;
         json.put("total", 0);
+        json.put("totalPercentage", 0);
 
         //Iterate over all days in the interval.
         for (LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {

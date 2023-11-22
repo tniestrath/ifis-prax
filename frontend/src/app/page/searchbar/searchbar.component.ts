@@ -372,6 +372,7 @@ export class SearchbarComponent implements OnInit{
 
           this.filter.emit({accType: selected_account_filter, sort: selected_sort});
         })
+        filter_sort_uid.style.color = "#951D40";
         this.filter_dropdown.appendChild(filter_sort_uid);
 
         this.element.nativeElement.appendChild(this.filter_dropdown);

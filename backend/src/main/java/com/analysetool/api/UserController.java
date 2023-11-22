@@ -175,7 +175,6 @@ public class UserController {
     public String getUserStat(@RequestParam Long id) throws JSONException {
         JSONObject obj = new JSONObject();
         UserStats user = userStatsRepository.findByUserId(id);
-        obj.put("Postfrequenz",user.getPostFrequence());
         obj.put("Profilaufrufe",user.getProfileView());
         return obj.toString();
     }

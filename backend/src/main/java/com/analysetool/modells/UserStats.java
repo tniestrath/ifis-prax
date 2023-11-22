@@ -17,20 +17,7 @@ public class UserStats {
     public UserStats(long userId, long profileView) {
         this.userId = userId;
         this.profileView = profileView;
-        this.postFrequence = postFrequence;
     }
-
-    public float getPostFrequence() {
-        return postFrequence;
-    }
-
-    public void setPostFrequence(float postFrequence) {
-        this.postFrequence = postFrequence;
-    }
-
-    @Column(name = "post_freq")
-    private float postFrequence;
-
     public UserStats(){}
 
     public int getIduser_stats() {

@@ -328,6 +328,7 @@ public class LogService {
         lastLine = SystemVariabeln.getLastLine();
         lineCounter = 0;
         try  {
+            br = new BufferedReader(new FileReader(path));
             findAMatch(SystemVariabeln);
         } catch (Exception e) {
             e.printStackTrace();

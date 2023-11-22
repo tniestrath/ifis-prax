@@ -117,7 +117,6 @@ public class UserController {
                 obj.put("profileViews", statsUser.getProfileView());
                 obj.put("postViews", postController.getViewsOfUserById(i.getId()));
                 obj.put("postCount", postController.getPostCountOfUserById(i.getId()));
-                obj.put ("performance",statsUser.getAveragePerformance());
 
             } else {
                 obj.put("profileViews", 0);
@@ -176,9 +175,6 @@ public class UserController {
     public String getUserStat(@RequestParam Long id) throws JSONException {
         JSONObject obj = new JSONObject();
         UserStats user = userStatsRepository.findByUserId(id);
-        obj.put("Interaktionsrate",user.getInteractionRate());
-        obj.put("Average Performance",user.getAveragePerformance());
-        obj.put("Average Relevance",user.getAverageRelevance());
         obj.put("Postfrequenz",user.getPostFrequence());
         obj.put("Profilaufrufe",user.getProfileView());
         return obj.toString();

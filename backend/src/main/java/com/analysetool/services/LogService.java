@@ -339,7 +339,7 @@ public class LogService {
         updateWordCountForAll();
         saveStatsToDatabase();
 
-        if(LocalDateTime.now().getHour() == 0) {
+        if(LocalDateTime.now().getHour() == 5) {
             endDay();
         }
         sysVarRepo.save(SystemVariabeln);

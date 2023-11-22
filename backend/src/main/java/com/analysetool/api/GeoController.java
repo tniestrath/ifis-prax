@@ -205,7 +205,10 @@ public class GeoController {
             dateStart = datePuffer;
         }
 
-        int total = 0;
+        double total = 0;
+
+        json.put("total", 0);
+        json.put("totalPercentage", 0);
 
         //Iterate over all days in the interval.
         for (LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
@@ -273,7 +276,8 @@ public class GeoController {
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks();
                 }
 
-                json.put("total", (total / clicksByCountryRepo.getClicksAusland(uniId)) + json.getInt("total"));
+                json.put("total", total);
+                json.put("totalPercentage", ((total / clicksByCountryRepo.getClicksAusland(uniId))) + json.getInt("totalPercentage"));
 
             }
 
@@ -284,15 +288,16 @@ public class GeoController {
     @GetMapping("/getTotalGermanGeoAllTime")
     public String getTotalGermanGeoAllTime() throws JSONException {
         JSONObject json = new JSONObject();
-        Date dateStart = new Date(uniStatRepo.getEarliestUniStat().getDatum().getTime());
-        Date dateEnd = new Date(uniStatRepo.getLatestUniStat().getDatum().getTime());
+        Date dateStart = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().getTime());
+        Date dateEnd = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().getTime());
         if (dateStart.after(dateEnd)) {
             Date datePuffer = dateEnd;
             dateEnd = dateStart;
             dateStart = datePuffer;
         }
-        int total = 0;
+        double total = 0;
         json.put("total", 0);
+        json.put("totalPercentage", 0);
 
         //Iterate over all days in the interval.
         for (LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
@@ -360,8 +365,8 @@ public class GeoController {
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks();
                 }
 
-
-                json.put("total", (total / clicksByCountryRepo.getClicksAusland(uniId)) + json.getInt("total"));
+                json.put("total", total);
+                json.put("totalPercentage", (total / clicksByCountryRepo.getClicksAusland(uniId)) + json.getInt("totalPercentage"));
 
 
             }
@@ -527,8 +532,8 @@ public class GeoController {
     @GetMapping("/getUserGeoWithPostsAllTime")
     public String getUserGeoTotalAllTime(int userId) throws JSONException {
         JSONObject json = new JSONObject();
-        Date dateStart = new Date(uniStatRepo.getEarliestUniStat().getDatum().getTime());
-        Date dateEnd = new Date(uniStatRepo.getLatestUniStat().getDatum().getTime());
+        Date dateStart = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().getTime());
+        Date dateEnd = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().getTime());
 
         int total = 0;
 

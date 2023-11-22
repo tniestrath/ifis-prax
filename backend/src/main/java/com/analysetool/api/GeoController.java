@@ -284,8 +284,8 @@ public class GeoController {
     @GetMapping("/getTotalGermanGeoAllTime")
     public String getTotalGermanGeoAllTime() throws JSONException {
         JSONObject json = new JSONObject();
-        Date dateStart = new Date(uniStatRepo.getEarliestUniStat().getDatum().getTime());
-        Date dateEnd = new Date(uniStatRepo.getLatestUniStat().getDatum().getTime());
+        Date dateStart = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().getTime());
+        Date dateEnd = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().getTime());
         if (dateStart.after(dateEnd)) {
             Date datePuffer = dateEnd;
             dateEnd = dateStart;
@@ -527,8 +527,8 @@ public class GeoController {
     @GetMapping("/getUserGeoWithPostsAllTime")
     public String getUserGeoTotalAllTime(int userId) throws JSONException {
         JSONObject json = new JSONObject();
-        Date dateStart = new Date(uniStatRepo.getEarliestUniStat().getDatum().getTime());
-        Date dateEnd = new Date(uniStatRepo.getLatestUniStat().getDatum().getTime());
+        Date dateStart = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().getTime());
+        Date dateEnd = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().getTime());
 
         int total = 0;
 

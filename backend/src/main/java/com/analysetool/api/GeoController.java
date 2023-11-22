@@ -578,7 +578,7 @@ public class GeoController {
     }
 
     @GetMapping("/getUserGeoWithPostsByDays")
-    public String getUserGeoTotalAllTime(int userId, String start, String end) throws JSONException {
+    public String getUserGeoTotalByDays(int userId, String start, String end) throws JSONException {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);

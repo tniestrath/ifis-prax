@@ -325,10 +325,6 @@ public class LogService {
     public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws IOException, ParseException {
         this.liveScanning = liveScanning;
         this.path = path;
-        if(!liveScanning){
-            findAMatch(SystemVariabeln);
-            SystemVariabeln.setLastLineCount(0);
-        }
         lastLineCounter=SystemVariabeln.getLastLineCount();
         lastLine = SystemVariabeln.getLastLine();
         lineCounter = 0;
@@ -343,6 +339,9 @@ public class LogService {
         updateWordCountForAll();
         saveStatsToDatabase();
 
+        if(LocalDateTime.now().getHour() == 0) {
+            endDay();
+        }
         sysVarRepo.save(SystemVariabeln);
     }
 
@@ -1295,7 +1294,6 @@ public class LogService {
         return uniHourly;
     }
 
-    @Scheduled(cron = "0 45 0 * * ?")
     public void endDay() {
         try {
             System.out.println("UPDATE CLICKS AUSGEFÜHRT HIER!");

@@ -51,8 +51,6 @@ input:disabled{
   justify-content: center;
 }
 #Ebene_1{
-  padding-top: 5px;
-  margin: 5px;
   border-radius: 5px;
   max-height: 90%;
 }
@@ -91,6 +89,7 @@ path{
   font-size: 80%;
 }
 .origin-map-total{
+  margin-top: 5px;
   height: 5%;
   font-size: 1vw;
 }

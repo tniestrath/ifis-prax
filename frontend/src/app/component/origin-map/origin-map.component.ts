@@ -18,7 +18,7 @@ export enum Region {
   RP = "Rheinland-Pfalz",
   SH = "Schleswig-Holstein",
   TH = "Thüringen",
-  NB = "Niedersachsen",
+  NI = "Niedersachsen",
   HE = "Hessen",
   BW = "Baden-Württemberg",
   NW = "Nordrhein-Westfalen",
@@ -300,6 +300,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     var tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
     var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
     var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
+    var citiesList : any[] = [];
 
     if (pathElement == null){return}
 
@@ -338,7 +339,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
             cityElement.appendChild(cityName);
             cityElement.appendChild(cityClicks);
-            tooltipCities.appendChild(cityElement);
+            citiesList.push({element: cityElement, clicks: city.at(1) as number});
           }
             this.isRegionSelected = "block";
             if (SysVars.CURRENT_PAGE == "Overview") {
@@ -351,9 +352,12 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
               tooltipCharts.classList.add("hidden");
             }
         }
-          cityElement.appendChild(cityName);
-          cityElement.appendChild(cityClicks);
-          tooltipCities.appendChild(cityElement);
+        citiesList.sort((a: {element: HTMLElement, clicks: number; }, b: {element: HTMLElement, clicks: number; }) => b.clicks - a.clicks);
+        citiesList = citiesList.map((a: { element: HTMLElement, clicks: number }) => {return a.element});
+        tooltipCities.append(...citiesList);
+        cityElement.appendChild(cityName);
+        cityElement.appendChild(cityClicks);
+        tooltipCities.appendChild(cityElement);
         });
       });
     pathElement.addEventListener('mouseenter', () => {

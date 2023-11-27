@@ -292,9 +292,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   readData(data : any, svgElement: any){
     let map : Map<string, number> = new Map(Object.entries(data));
     // @ts-ignore
-    this.totalDE = map.get("total");
+    this.totalDE = map.get("totalDACH");
     // @ts-ignore
-    this.percentage = map.get("totalPercentage");
+    this.percentage = this.totalDE / map.get("total");
     for (const region of map){
       if (String(region.at(0)) == "total" || String(region.at(0)) == "totalPercentage") continue;
       this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);

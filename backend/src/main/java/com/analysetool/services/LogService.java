@@ -15,7 +15,6 @@ import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.util.RegexFlags;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -437,6 +436,10 @@ public class LogService {
                 boolean isBlacklisted = false;
                 for (String item : blacklistUserAgents) {
                     isBlacklisted = userAgent.matches("^.*" + item + ".*") && !isBlacklisted;
+                }
+
+                if(isBlacklisted) {
+                    System.out.println(request + userAgent + " : BANNED");
                 }
 
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
@@ -910,23 +913,22 @@ public class LogService {
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
                     //A bunch of variables necessary to update UniStats
 
+                } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead))) {
+                    if(isBlacklisted) {
+                        System.out.println("BANNED!!!!!!!!! : " + line);
+                    }
+                    if(isSpam && !isInternal) {
+                        System.out.println("SPAM!!!: " + ip + " " + request + " " + userAgent);
+                    }
+                    if(isServerError) {
+                        serverErrors++;
+                    }
+                    if(isInternal) {
+                        internalClicks++;
+                    }
                 }
                 last_request = request;
                 last_ip = ip;
-
-                if(isServerError) {
-                    serverErrors++;
-                }
-                if(isBlacklisted) {
-                    System.out.println(request + userAgent + " : BANNED");
-                }
-                else if(isSpam && !isInternal) {
-                    System.out.println("SPAM!!!: " + ip + " " + request + " " + userAgent);
-                }
-                if(isInternal) {
-                    internalClicks++;
-                }
-
             }
 
         }

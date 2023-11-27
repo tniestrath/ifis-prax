@@ -248,13 +248,11 @@ public class UserController {
         JSONObject clicks = new JSONObject();
         JSONObject averages = new JSONObject();
 
-        counts.put("admin", 0);
         counts.put("basis", 0);
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
 
-        clicks.put("admin", 0);
         clicks.put("basis", 0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
@@ -265,24 +263,38 @@ public class UserController {
             String userMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.getId());
             if(userMeta.contains("basis-anbieter")) {
                 counts.put("basis", counts.getInt("basis") + 1);
-                clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                try {
+                    clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                } catch (Exception ignored) {}
             } else if(userMeta.contains("basis-anbieter-plus")) {
                 counts.put("basis-plus", counts.getInt("basis-plus") + 1);
-                clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                try {
+                    clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                } catch (Exception ignored) {}
             } else if(userMeta.contains("plus-anbieter")) {
                 counts.put("plus", counts.getInt("plus") + 1);
-                clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                try {
+                    clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                } catch (Exception ignored) {}
             } else if(userMeta.contains("premium-anbieter")) {
                 counts.put("premium", counts.getInt("premium") + 1);
-                clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                try {
+                    clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                } catch (Exception ignored) {}
             }
         }
-
-        averages.put("admin", clicks.getInt("admin") / counts.getInt("admin"));
-        averages.put("basis", clicks.getInt("basis") / counts.getInt("basis"));
-        averages.put("basis-plus", clicks.getInt("basis-plus") / counts.getInt("basis-plus"));
-        averages.put("plus", clicks.getInt("plus") / counts.getInt("plus"));
-        averages.put("premium", clicks.getInt("premium") / counts.getInt("premium"));
+        if(counts.getInt("basis") != 0) {
+            averages.put("basis", clicks.getInt("basis") / counts.getInt("basis"));
+        }
+        if(counts.getInt("basis-plus") != 0) {
+            averages.put("basis-plus", clicks.getInt("basis-plus") / counts.getInt("basis-plus"));
+        }
+        if(counts.getInt("plus") != 0) {
+            averages.put("plus", clicks.getInt("plus") / counts.getInt("plus"));
+        }
+        if(counts.getInt("premium") != 0) {
+            averages.put("premium", clicks.getInt("premium") / counts.getInt("premium"));
+        }
 
         return averages.toString();
 

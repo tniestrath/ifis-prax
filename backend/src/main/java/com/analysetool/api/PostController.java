@@ -845,23 +845,33 @@ public class PostController {
             switch (getType(post.getId())) {
                 case "news" -> {
                     counts.put("news", counts.getInt("news") + 1);
-                    clicks.put("news", clicks.getInt("news") + statsRepo.getClicksByArtId(post.getId()));
+                    try {
+                        clicks.put("news", clicks.getInt("news") + statsRepo.getClicksByArtId(post.getId()));
+                    } catch (Exception ignored) {}
                 }
                 case "artikel" -> {
                     counts.put("artikel", counts.getInt("artikel") + 1);
+                    try {
                     clicks.put("artikel", clicks.getInt("artikel") + statsRepo.getClicksByArtId(post.getId()));
+                    } catch (Exception ignored) {}
                 }
                 case "blog" -> {
                     counts.put("blog", counts.getInt("blog") + 1);
-                    clicks.put("blog", clicks.getInt("blog") + statsRepo.getClicksByArtId(post.getId()));
+                    try {
+                        clicks.put("blog", clicks.getInt("blog") + statsRepo.getClicksByArtId(post.getId()));
+                    } catch (Exception ignored) {}
                 }
                 case "whitepaper" -> {
                     counts.put("whitepaper", counts.getInt("whitepaper") + 1);
-                    clicks.put("whitepaper", clicks.getInt("whitepaper") + statsRepo.getClicksByArtId(post.getId()));
+                    try {
+                        clicks.put("whitepaper", clicks.getInt("whitepaper") + statsRepo.getClicksByArtId(post.getId()));
+                    } catch (Exception ignored) {}
                 }
                 case "ratgeber" -> {
                     counts.put("ratgeber", counts.getInt("ratgeber") + 1);
-                    clicks.put("ratgeber", clicks.getInt("ratgeber") + statsRepo.getClicksByArtId(post.getId()));
+                    try {
+                        clicks.put("ratgeber", clicks.getInt("ratgeber") + statsRepo.getClicksByArtId(post.getId()));
+                    } catch (Exception ignored) {}
                 }
                 case "podcast" -> {
                     counts.put("podcast", counts.getInt("podcast") + 1);

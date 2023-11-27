@@ -206,9 +206,10 @@ public class GeoController {
         }
 
         double total = 0;
+        int count = 0;
 
+        json.put("totalDACH", 0);
         json.put("total", 0);
-        json.put("totalPercentage", 0);
 
         //Iterate over all days in the interval.
         for (LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
@@ -221,6 +222,8 @@ public class GeoController {
 
             //If we do have stats, put stats for the day into the json.
             if (uniId != 0) {
+                count++;
+
                 //Add all stats from ClicksByBundesland
                 for (ClicksByBundesland clicksByB : clicksByBundeslandRepo.getByUniID(uniId)) {
                     try {
@@ -276,8 +279,8 @@ public class GeoController {
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks();
                 }
 
-                json.put("total", total);
-                json.put("totalPercentage", ((clicksByCountryRepo.getClicksAusland(uniId) / total)) + json.getDouble("totalPercentage"));
+                json.put("totalDACH", total);
+                json.put("total", (clicksByCountryRepo.getClicksAusland(uniId)) + json.getDouble("totalPercentage"));
 
             }
 
@@ -296,8 +299,9 @@ public class GeoController {
             dateStart = datePuffer;
         }
         double total = 0;
+        int count = 0;
+        json.put("totalDACH", 0);
         json.put("total", 0);
-        json.put("totalPercentage", 0);
 
         //Iterate over all days in the interval.
         for (LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
@@ -310,6 +314,7 @@ public class GeoController {
 
             //If we do have stats, put stats for the day into the json.
             if (uniId != 0) {
+                count++;
                 //Add all stats from ClicksByBundesland
                 for (ClicksByBundesland clicksByB : clicksByBundeslandRepo.getByUniID(uniId)) {
                     try {
@@ -365,13 +370,13 @@ public class GeoController {
                     total += clicksByCountryRepo.getByUniIDAndCountry(uniId, "Switzerland").getClicks();
                 }
 
-                json.put("total", total);
-                json.put("totalPercentage", ((clicksByCountryRepo.getClicksAusland(uniId) / total)) + json.getDouble("totalPercentage"));
-
+                json.put("totalDACH", total);
+                json.put("total", (clicksByCountryRepo.getClicksAusland(uniId)) + json.getDouble("totalPercentage"));
 
             }
 
         }
+        json.put("totalPercentage", json.getDouble("totalPercentage")  / count);
         return json.toString();
     }
 

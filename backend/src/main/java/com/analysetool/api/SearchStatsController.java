@@ -187,32 +187,31 @@ public class SearchStatsController {
     @GetMapping("/badOutliersEventSearch")
     public String findBadOutliersEventSearch(@RequestParam int limit) {
         try {
-            List<EventSearch> latestEventSearches= new ArrayList<>();
-            if(limit>0){
-            Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
-            Page<EventSearch> eventSearchPage = eventSearchRepo.findAllByOrderByIdDesc(pageable);
-            latestEventSearches = eventSearchPage.getContent();}
-            else if(limit==0){ latestEventSearches = eventSearchRepo.findAll();}
+            List<EventSearch> latestEventSearches = new ArrayList<>();
+            if (limit > 0) {
+                Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
+                latestEventSearches = eventSearchRepo.findAllByOrderByIdDesc(pageable).getContent();
+            } else if (limit == 0) {
+                latestEventSearches = eventSearchRepo.findAll();
+            }
 
             List<Integer> resultCounts = latestEventSearches.stream()
                     .map(EventSearch::getResultCount)
                     .collect(Collectors.toList());
-            double iqr = MathHelper.getInterquartileRangeInt(resultCounts);
-            double q1 = MathHelper.getLowerQuartileInt(resultCounts);
-            double lowerBound = q1 - 1.5 * iqr;
+
+            List<Integer> lowerBoundOutliers = MathHelper.getLowerBoundOutliersInt(resultCounts);
 
             List<EventSearch> filteredEventSearches = latestEventSearches.stream()
-                    .filter(eventSearch -> eventSearch.getResultCount() < lowerBound)
+                    .filter(eventSearch -> lowerBoundOutliers.contains(eventSearch.getResultCount()))
                     .collect(Collectors.toList());
 
             ObjectMapper mapper = new ObjectMapper();
-            String jsonResult = mapper.writeValueAsString(filteredEventSearches);
-
-            return jsonResult;
+            return mapper.writeValueAsString(filteredEventSearches);
         } catch (Exception e) {
             return "Fehler beim Verarbeiten der Daten";
         }
     }
+
 
 
 

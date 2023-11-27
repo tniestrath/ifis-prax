@@ -68,6 +68,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   showCharts: string = "none";
   perDayRegionClicks: SVG_Region[][] = [];
 
+  controller = new AbortController();
+
   ngOnInit() {
     this.setToolTip("Dies ist eine Karte, die durch Färbung die Orte angibt, von denen am meisten auf den Marktplatz zugegriffen wird. " +
       "Mit einem Click auf eine Region werden genauere Informationen angezeigt.");
@@ -81,14 +83,18 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     startDatePicker.onchange = ev => {
       // @ts-ignore
       this.db.getGeoByDates(ev.target.value, endDatePicker.value).then(res => {
-        this.readData(res, svgElement);
+        //this.controller.abort();
+        // @ts-ignore
+        this.readData(res, svgElement, ev.target.value, endDatePicker.value);
         this.cdr.detectChanges();
       });
       };
     endDatePicker.onchange = ev => {
       // @ts-ignore
       this.db.getGeoByDates(startDatePicker.value, ev.target.value).then(res => {
-        this.readData(res, svgElement);
+        //this.controller.abort();
+        // @ts-ignore
+        this.readData(res, svgElement, startDatePicker.value, ev.target.value);
         this.cdr.detectChanges();
       });
     };
@@ -129,12 +135,12 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         // @ts-ignore
         if (SysVars.CURRENT_PAGE == "Users") {
           this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID)).then(res => {
-            this.readData(res, svgElement);
+            this.readData(res, svgElement, startDatePicker.value, endDatePicker.value);
             this.cdr.detectChanges();
           });
         } else {
           this.db.getGeoAll().then(res => {
-            this.readData(res, svgElement);
+            this.readData(res, svgElement, startDatePicker.value, endDatePicker.value);
             this.cdr.detectChanges();
           });
         }
@@ -289,7 +295,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     }
     this.perDayRegionClicks = this.perDayRegionClicks.reverse();
   }
-  readData(data : any, svgElement: any){
+  readData(data : any, svgElement: any, startDate : string, endDate : string){
     let map : Map<string, number> = new Map(Object.entries(data));
     // @ts-ignore
     this.totalDE = map.get("totalDACH");
@@ -298,7 +304,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     for (const region of map){
       if (String(region.at(0)) == "total" || String(region.at(0)) == "totalPercentage") continue;
       this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
-      this.setRegionTooltip(svgElement, String(region.at(0)), Number(region.at(1)));
+      this.setRegionTooltip(svgElement, String(region.at(0)), Number(region.at(1)), startDate, endDate);
       if (Number(region.at(1)) > this.strongest_region.clicks) this.strongest_region = {identifier: String(region.at(0)), clicks: Number(region.at(1)), cities: []};
     }
   }
@@ -311,7 +317,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
   }
 
-  setRegionTooltip(svg: any, region: string, region_clicks: number){
+  setRegionTooltip(svg: any, region: string, region_clicks: number, startDate : string, endDate : string){
     var pathElement = svg.querySelector("#" + region) ?? null;
     var tooltipElement = document.getElementById("tooltip") ?? new HTMLElement();
     var tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
@@ -319,9 +325,10 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
 
     if (pathElement == null){return}
+    let { signal }  = this.controller;
 
     pathElement.addEventListener('click', () => {
-      this.db.getGeoByRegion(region).then((res: Map<string,number>) => {
+      this.db.getGeoByRegionByDates(region, startDate, endDate).then((res: Map<string,number>) => {
         let data : Map<string, number> = new Map(Object.entries(res));
         tooltipHeader.style.paddingBottom = "5px";
         tooltipHeader.innerText = this.getRegionFullName(region);
@@ -378,13 +385,13 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         cityElement.appendChild(cityClicks);
         tooltipCities.appendChild(cityElement);
         });
-      });
+      }, { signal });
     pathElement.addEventListener('mouseenter', () => {
       pathElement.style.strokeWidth = "10px";
-    });
+    }, { signal });
     pathElement.addEventListener('mouseleave', () => {
       pathElement.style.strokeWidth = "2px";
-    });
+    }, { signal });
   }
 
   getRegionFullName(shortcode: string): string {

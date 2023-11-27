@@ -68,6 +68,7 @@ export enum dbUrl {
   GET_GEO_GERMANY_ALL_TIME = "/geo/getTotalGermanGeoAllTime",
   GET_GEO_GERMANY_BY_DATES = "/geo/getTotalGermanGeoByDay?start=START&end=END",
   GET_GEO_GERMANY_ALL_TIME_BY_REGION = "/geo/getRegionGermanGeoAllTime?region=REGION",
+  GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES = "/geo/getRegionGermanGeoAllTime?region=REGION&start=START&end=END",
   GET_GEO_LAST_TIMESTAMP = "/geo/lastEntry",
   GET_GEO_FIRST_TIMESTAMP = "/geo/firstEntry",
   GET_GEO_TIMESPAN = "/geo/geoRange",
@@ -307,6 +308,11 @@ export class DbService {
   async getGeoByRegion(region : string) : Promise<Map<string,number>> {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION).replace("REGION", region)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getGeoByRegionByDates(region : string, start? : string, end? : string) : Promise<Map<string,number>> {
+    this.setLoading();
+    if (start && end) return await fetch((DbService.getUrl(dbUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES).replace("REGION", region).replace("START", start).replace("END", end)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    else return await fetch((DbService.getUrl(dbUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION).replace("REGION", region)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getGeoStart() : Promise<string> {
     this.setLoading();

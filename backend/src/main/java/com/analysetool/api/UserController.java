@@ -265,16 +265,24 @@ public class UserController {
             String userMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.getId());
             if(userMeta.contains("basis-anbieter")) {
                 counts.put("basis", counts.getInt("basis") + 1);
-                clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                try {
+                    clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                } catch (Exception ignored) {}
             } else if(userMeta.contains("basis-anbieter-plus")) {
                 counts.put("basis-plus", counts.getInt("basis-plus") + 1);
-                clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                try {
+                    clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                } catch (Exception ignored) {}
             } else if(userMeta.contains("plus-anbieter")) {
                 counts.put("plus", counts.getInt("plus") + 1);
-                clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                try {
+                    clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                } catch (Exception ignored) {}
             } else if(userMeta.contains("premium-anbieter")) {
                 counts.put("premium", counts.getInt("premium") + 1);
-                clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                try {
+                    clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+                } catch (Exception ignored) {}
             }
         }
 

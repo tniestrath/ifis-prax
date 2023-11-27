@@ -821,6 +821,66 @@ public class PostController {
         return count;
     }
 
+    @GetMapping("/getAveragesByTypesAll")
+    public String getAverageByTypesAll() throws JSONException, ParseException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("news", 0);
+        counts.put("artikel", 0);
+        counts.put("blog", 0);
+        counts.put("whitepaper", 0);
+        counts.put("ratgeber", 0);
+        counts.put("podcast", 0);
+
+        clicks.put("news", 0);
+        clicks.put("artikel", 0);
+        clicks.put("blog", 0);
+        clicks.put("whitepaper", 0);
+        clicks.put("ratgeber", 0);
+        clicks.put("podcast", 0);
+
+        for(Post post : postRepo.findAll()) {
+            switch (getType(post.getId())) {
+                case "news" -> {
+                    counts.put("news", counts.getInt("news") + 1);
+                    clicks.put("news", clicks.getInt("news") + statsRepo.getClicksByArtId(post.getId()));
+                }
+                case "artikel" -> {
+                    counts.put("artikel", counts.getInt("artikel") + 1);
+                    clicks.put("artikel", clicks.getInt("artikel") + statsRepo.getClicksByArtId(post.getId()));
+                }
+                case "blog" -> {
+                    counts.put("blog", counts.getInt("blog") + 1);
+                    clicks.put("blog", clicks.getInt("blog") + statsRepo.getClicksByArtId(post.getId()));
+                }
+                case "whitepaper" -> {
+                    counts.put("whitepaper", counts.getInt("whitepaper") + 1);
+                    clicks.put("whitepaper", clicks.getInt("whitepaper") + statsRepo.getClicksByArtId(post.getId()));
+                }
+                case "ratgeber" -> {
+                    counts.put("ratgeber", counts.getInt("ratgeber") + 1);
+                    clicks.put("ratgeber", clicks.getInt("ratgeber") + statsRepo.getClicksByArtId(post.getId()));
+                }
+                case "podcast" -> {
+                    counts.put("podcast", counts.getInt("podcast") + 1);
+                    clicks.put("podcast", clicks.getInt("podcast") + 1);
+                }
+
+            }
+        }
+        averages.put("news", clicks.getInt("news") / counts.getInt("news"));
+        averages.put("artikel", clicks.getInt("artikel") / counts.getInt("artikel"));
+        averages.put("blog", clicks.getInt("blog") / counts.getInt("blog"));
+        averages.put("whitepaper", clicks.getInt("whitepaper") / counts.getInt("whitepaper"));
+        averages.put("ratgeber", clicks.getInt("ratgeber") / counts.getInt("ratgeber"));
+        averages.put("podcast", clicks.getInt("podcast") / counts.getInt("podcast"));
+
+        return averages.toString();
+
+    }
+
 
 
     /**

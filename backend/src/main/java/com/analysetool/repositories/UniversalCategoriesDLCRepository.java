@@ -76,8 +76,6 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.viewsAGBS) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumViewsAGBSByUniStatId(int uniID);
 
-
-
      @Query("SELECT SUM(u.besucherGlobal) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserGlobalByUniStatId(int uniID);
 
@@ -134,5 +132,126 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      @Query("SELECT SUM(u.besucherAGBS) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserAGBSByUniStatId(int uniID);
+
+
+
+
+
+     @Query("SELECT SUM(u.viewsGlobal) FROM UniversalCategoriesDLC u")
+     public int getSumViewsGlobalAllTime();
+
+     @Query("SELECT SUM(u.viewsArticle) FROM UniversalCategoriesDLC u")
+     public int getSumViewsArticleAllTime();
+
+     @Query("SELECT SUM(u.viewsNews) FROM UniversalCategoriesDLC u")
+     public int getSumViewsNewsAllTime();
+
+     @Query("SELECT SUM(u.viewsBlog) FROM UniversalCategoriesDLC u")
+     public int getSumViewsBlogAllTime();
+
+     @Query("SELECT SUM(u.viewsPodcast) FROM UniversalCategoriesDLC u")
+     public int getSumViewsPodcastAllTime();
+
+     @Query("SELECT SUM(u.viewsWhitepaper) FROM UniversalCategoriesDLC u")
+     public int getSumViewsWhitepaperAllTime();
+
+     @Query("SELECT SUM(u.viewsRatgeber) FROM UniversalCategoriesDLC u")
+     public int getSumViewsRatgeberAllTime();
+
+     @Query("SELECT SUM(u.viewsRatgeberPost) FROM UniversalCategoriesDLC u")
+     public int getSumViewsRatgeberPostAllTime();
+
+     @Query("SELECT SUM(u.viewsRatgeberGlossar) FROM UniversalCategoriesDLC u")
+     public int getSumViewsRatgeberGlossarAllTime();
+
+     @Query("SELECT SUM(u.viewsRatgeberBuch) FROM UniversalCategoriesDLC u")
+     public int getSumViewsRatgeberBuchAllTime();
+
+     @Query("SELECT SUM(u.viewsMain) FROM UniversalCategoriesDLC u")
+     public int getSumViewsMainAllTime();
+
+     @Query("SELECT SUM(u.viewsUeber) FROM UniversalCategoriesDLC u")
+     public int getSumViewsUeberAllTime();
+
+     @Query("SELECT SUM(u.viewsImpressum) FROM UniversalCategoriesDLC u")
+     public int getSumViewsImpressumAllTime();
+
+     @Query("SELECT SUM(u.viewsPreisliste) FROM UniversalCategoriesDLC u")
+     public int getSumViewsPreislisteAllTime();
+
+     @Query("SELECT SUM(u.viewsPartner) FROM UniversalCategoriesDLC u")
+     public int getSumViewsPartnerAllTime();
+
+     @Query("SELECT SUM(u.viewsDatenschutz) FROM UniversalCategoriesDLC u")
+     public int getSumViewsDatenschutzAllTime();
+
+     @Query("SELECT SUM(u.viewsNewsletter) FROM UniversalCategoriesDLC u")
+     public int getSumViewsNewsletterAllTime();
+
+     @Query("SELECT SUM(u.viewsImage) FROM UniversalCategoriesDLC u")
+     public int getSumViewsImageAllTime();
+
+     @Query("SELECT SUM(u.viewsAGBS) FROM UniversalCategoriesDLC u")
+     public int getSumViewsAGBSAllTime();
+
+
+
+     @Query("SELECT SUM(u.besucherGlobal) FROM UniversalCategoriesDLC u")
+     public int getSumUserGlobalAllTime();
+
+     @Query("SELECT SUM(u.besucherArticle) FROM UniversalCategoriesDLC u")
+     public int getSumUserArticleAllTime();
+
+     @Query("SELECT SUM(u.besucherNews) FROM UniversalCategoriesDLC u")
+     public int getSumUserNewsAllTime();
+
+     @Query("SELECT SUM(u.besucherBlog) FROM UniversalCategoriesDLC u")
+     public int getSumUserBlogAllTime();
+
+     @Query("SELECT SUM(u.besucherPodcast) FROM UniversalCategoriesDLC u")
+     public int getSumUserPodcastAllTime();
+
+     @Query("SELECT SUM(u.besucherWhitepaper) FROM UniversalCategoriesDLC u")
+     public int getSumUserWhitepaperAllTime();
+
+     @Query("SELECT SUM(u.besucherRatgeber) FROM UniversalCategoriesDLC u ")
+     public int getSumUserRatgeberAllTime();
+
+     @Query("SELECT SUM(u.besucherRatgeberPost) FROM UniversalCategoriesDLC u")
+     public int getSumUserRatgeberPostAllTime();
+
+     @Query("SELECT SUM(u.besucherRatgeberGlossar) FROM UniversalCategoriesDLC u")
+     public int getSumUserRatgeberGlossarAllTime();
+
+     @Query("SELECT SUM(u.besucherRatgeberBuch) FROM UniversalCategoriesDLC u")
+     public int getSumUserRatgeberBuchAllTime();
+
+     @Query("SELECT SUM(u.besucherMain) FROM UniversalCategoriesDLC u")
+     public int getSumUserMainAllTime();
+
+     @Query("SELECT SUM(u.besucherUeber) FROM UniversalCategoriesDLC u")
+     public int getSumUserUeberAllTime();
+
+     @Query("SELECT SUM(u.besucherImpressum) FROM UniversalCategoriesDLC u")
+     public int getSumUserImpressumAllTime();
+
+     @Query("SELECT SUM(u.besucherPreisliste) FROM UniversalCategoriesDLC u")
+     public int getSumUserPreislisteAllTime();
+
+     @Query("SELECT SUM(u.besucherPartner) FROM UniversalCategoriesDLC u")
+     public int getSumUserPartnerAllTime();
+
+     @Query("SELECT SUM(u.besucherDatenschutz) FROM UniversalCategoriesDLC u")
+     public int getSumUserDatenschutzAllTime();
+
+     @Query("SELECT SUM(u.besucherNewsletter) FROM UniversalCategoriesDLC u")
+     public int getSumUserNewsletterAllTime();
+
+     @Query("SELECT SUM(u.besucherImage) FROM UniversalCategoriesDLC u")
+     public int getSumUserImageAllTime();
+
+     @Query("SELECT SUM(u.besucherAGBS) FROM UniversalCategoriesDLC u")
+     public int getSumUserAGBSAllTime();
+
 
 }

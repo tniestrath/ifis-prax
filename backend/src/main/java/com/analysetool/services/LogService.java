@@ -439,10 +439,6 @@ public class LogService {
                     isBlacklisted = userAgent.matches("^.*" + item + ".*") && !isBlacklisted;
                 }
 
-                if(isBlacklisted) {
-                    System.out.println(request + userAgent + " : BANNED");
-                }
-
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam) {
 
@@ -921,7 +917,10 @@ public class LogService {
                 if(isServerError) {
                     serverErrors++;
                 }
-                if(isSpam && !isInternal) {
+                if(isBlacklisted) {
+                    System.out.println(request + userAgent + " : BANNED");
+                }
+                else if(isSpam && !isInternal) {
                     System.out.println("SPAM!!!: " + ip + " " + request + " " + userAgent);
                 }
                 if(isInternal) {

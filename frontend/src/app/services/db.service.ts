@@ -66,6 +66,7 @@ export enum dbUrl {
   GET_EVENTS_YESTERDAY = "/events/getAmountOfEventsCreatedYesterday",
 
   GET_GEO_GERMANY_ALL_TIME = "/geo/getTotalGermanGeoAllTime",
+  GET_GEO_GERMANY_BY_DATES = "/geo/getTotalGermanGeoByDay?start=START&end=END",
   GET_GEO_GERMANY_ALL_TIME_BY_REGION = "/geo/getRegionGermanGeoAllTime?region=REGION",
   GET_GEO_LAST_TIMESTAMP = "/geo/lastEntry",
   GET_GEO_FIRST_TIMESTAMP = "/geo/firstEntry",
@@ -298,6 +299,10 @@ export class DbService {
   async getGeoAll() : Promise<Map<string,number>> {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.GET_GEO_GERMANY_ALL_TIME)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getGeoByDates(start : string, end : string) : Promise<Map<string,number>> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_GEO_GERMANY_BY_DATES).replace("START", start).replace("END", end)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getGeoByRegion(region : string) : Promise<Map<string,number>> {
     this.setLoading();

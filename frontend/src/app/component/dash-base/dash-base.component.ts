@@ -63,7 +63,7 @@ export class DashBaseComponent implements OnDestroy{
       "  right: -8px;\n" +
       "  min-height: 30px;\n" +
       "  width: 15.5vw;\n" +
-      "  z-index: 1;");
+      "  z-index: 100;");
     tooltipContainer.appendChild(this.tooltip);
     this.helpButton.addEventListener("mouseenter", () => {this.tooltip.style.visibility = "visible"; this.cdr.detectChanges()});
     this.helpButton.addEventListener("mouseleave", () => {this.tooltip.style.visibility = "hidden"; this.cdr.detectChanges()});

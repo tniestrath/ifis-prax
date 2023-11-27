@@ -74,6 +74,25 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     this.isRegionSelected = "none";
     this.showCharts = "none";
 
+    let startDatePicker = document.getElementById("geoStartDate") as HTMLInputElement;
+    let endDatePicker = document.getElementById("geoEndDate") as HTMLInputElement;
+    const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
+
+    startDatePicker.onchange = ev => {
+      // @ts-ignore
+      this.db.getGeoByDates(ev.target.value, endDatePicker.value).then(res => {
+        this.readData(res, svgElement);
+        this.cdr.detectChanges();
+      });
+      };
+    endDatePicker.onchange = ev => {
+      // @ts-ignore
+      this.db.getGeoByDates(startDatePicker.value, ev.target.value).then(res => {
+        this.readData(res, svgElement);
+        this.cdr.detectChanges();
+      });
+    };
+
     this.db.getGeoTimespan().then(res => {
       let startDatePicker = document.getElementById("geoStartDate") as HTMLInputElement;
       let endDatePicker = document.getElementById("geoEndDate") as HTMLInputElement;
@@ -106,7 +125,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
     setTimeout(() => {
       this.isScaled = true;
-      const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
       if (svgElement) {
         // @ts-ignore
         if (SysVars.CURRENT_PAGE == "Users") {
@@ -118,10 +136,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           this.db.getGeoAll().then(res => {
             this.readData(res, svgElement);
             this.cdr.detectChanges();
-          })
-          /*this.db.getViewsByLocationLast14().then(res => {
-            this.readOldData(res);
-          })*/
+          });
         }
       }
     }, 100);

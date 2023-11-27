@@ -16,10 +16,10 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
   prev_total : number = 0;
   prev_total_text : any;
 
-  labels = ["Ohne Abo", "Basic", "Basic-Plus", "Plus", "Premium", "Sponsor"];
+  labels = ["Ohne Abo", "Basic", "Basic-Plus", "Plus", "Premium"];
 
-  data = [0,0,0,0,0,0];
-  prev_data = [0,0,0,0,0,0];
+  data = [0,0,0,0,0];
+  prev_data = [0,0,0,0,0];
 
   oaList: HTMLParagraphElement[] = [];
   bpList: HTMLParagraphElement[] = [];
@@ -120,10 +120,6 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       if (key == "Premium") {
         this.labels[4] = key;
         data[4] = (value == 0 || value == undefined ? 0 : value)
-      }
-      if (key == "Sponsor") {
-        this.labels[5] = key;
-        data[5] = (value == 0 || value == undefined ? 0 : value)
       }
     })
   }

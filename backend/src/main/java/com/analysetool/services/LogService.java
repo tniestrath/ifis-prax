@@ -172,25 +172,26 @@ public class LogService {
 
     //Set User-Agents that shouldn't be counted as click
     String[] blacklistUserAgents = {
-    "bot",
-    "spider",
-    "crawl",
-    "parse",
-    "fetch",
-    "Zabbix",
-    "Facebook",
-    "Frog",
-    "Majestic",
-    "Apache",
-    "Scrape",
-    "Scrapy",
-    "HTTrack",
-    "Moreover",
-    "Sitesucker",
-    "Webz.io",
-    "Index",
-    "Go-http-client",
-    "Iframely"
+        "bot",
+        "spider",
+        "crawl",
+        "parse",
+        "fetch",
+        "Zabbix",
+        "Facebook",
+        "Frog",
+        "Majestic",
+        "Apache",
+        "Scrape",
+        "Scrapy",
+        "HTTrack",
+        "Moreover",
+        "Sitesucker",
+        "Webz.io",
+        "Index",
+        "Go-http-client",
+        "Iframely",
+        "http"
     };
 
     ArrayList<String> blacklistResponseCodes = new ArrayList<>();

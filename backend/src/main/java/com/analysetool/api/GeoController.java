@@ -277,7 +277,7 @@ public class GeoController {
                 }
 
                 json.put("total", total);
-                json.put("totalPercentage", ((clicksByCountryRepo.getClicksAusland(uniId) / total)) + json.getInt("totalPercentage"));
+                json.put("totalPercentage", ((clicksByCountryRepo.getClicksAusland(uniId) / total)) + json.getDouble("totalPercentage"));
 
             }
 
@@ -366,7 +366,7 @@ public class GeoController {
                 }
 
                 json.put("total", total);
-                json.put("totalPercentage", ((clicksByCountryRepo.getClicksAusland(uniId) / total)) + json.getInt("totalPercentage"));
+                json.put("totalPercentage", ((clicksByCountryRepo.getClicksAusland(uniId) / total)) + json.getDouble("totalPercentage"));
 
 
             }

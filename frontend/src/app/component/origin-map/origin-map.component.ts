@@ -60,7 +60,7 @@ interface SVG_City {
 })
 export class OriginMapComponent extends DashBaseComponent implements OnInit{
   totalDE: number = 0;
-  totalGlobal: number = 0;
+  percentage: number = 0;
   isScaled = false;
 
   strongest_region: SVG_Region = {identifier: "", cities: [], clicks: 0};
@@ -73,6 +73,25 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       "Mit einem Click auf eine Region werden genauere Informationen angezeigt.");
     this.isRegionSelected = "none";
     this.showCharts = "none";
+
+    let startDatePicker = document.getElementById("geoStartDate") as HTMLInputElement;
+    let endDatePicker = document.getElementById("geoEndDate") as HTMLInputElement;
+    const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
+
+    startDatePicker.onchange = ev => {
+      // @ts-ignore
+      this.db.getGeoByDates(ev.target.value, endDatePicker.value).then(res => {
+        this.readData(res, svgElement);
+        this.cdr.detectChanges();
+      });
+      };
+    endDatePicker.onchange = ev => {
+      // @ts-ignore
+      this.db.getGeoByDates(startDatePicker.value, ev.target.value).then(res => {
+        this.readData(res, svgElement);
+        this.cdr.detectChanges();
+      });
+    };
 
     this.db.getGeoTimespan().then(res => {
       let startDatePicker = document.getElementById("geoStartDate") as HTMLInputElement;
@@ -106,7 +125,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
     setTimeout(() => {
       this.isScaled = true;
-      const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
       if (svgElement) {
         // @ts-ignore
         if (SysVars.CURRENT_PAGE == "Users") {
@@ -118,10 +136,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           this.db.getGeoAll().then(res => {
             this.readData(res, svgElement);
             this.cdr.detectChanges();
-          })
-          /*this.db.getViewsByLocationLast14().then(res => {
-            this.readOldData(res);
-          })*/
+          });
         }
       }
     }, 100);
@@ -278,8 +293,10 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     let map : Map<string, number> = new Map(Object.entries(data));
     // @ts-ignore
     this.totalDE = map.get("total");
+    // @ts-ignore
+    this.percentage = map.get("totalPercentage");
     for (const region of map){
-      if (String(region.at(0)) == "total") continue;
+      if (String(region.at(0)) == "total" || String(region.at(0)) == "totalPercentage") continue;
       this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
       this.setRegionTooltip(svgElement, String(region.at(0)), Number(region.at(1)));
       if (Number(region.at(1)) > this.strongest_region.clicks) this.strongest_region = {identifier: String(region.at(0)), clicks: Number(region.at(1)), cities: []};
@@ -300,7 +317,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     var tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
     var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
     var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
-    var citiesList : any[] = [];
 
     if (pathElement == null){return}
 
@@ -314,6 +330,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         let cityElement = document.createElement('div', );
         let cityName = document.createElement('div');
         let cityClicks = document.createElement('div');
+
+        var citiesList : any[] = [];
+
         cityElement.style.marginTop = "3px";
         cityElement.style.paddingTop = "2px";
         cityElement.style.borderTop = "1px dashed #000";
@@ -387,4 +406,5 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     return 'rgb(' + r + ',' + g + ',' + b + ')';
   }
 
+  protected readonly Math = Math;
 }

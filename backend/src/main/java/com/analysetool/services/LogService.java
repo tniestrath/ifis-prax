@@ -187,7 +187,6 @@ public class LogService {
     "Moreover",
     "Sitesucker",
     "Webz.io",
-    "-",
     "Index",
     "Go-http-client",
     "Iframely"
@@ -435,11 +434,11 @@ public class LogService {
                 //Schaue, ob der UserAgent auf der Blacklist steht.
                 boolean isBlacklisted = false;
                 for (String item : blacklistUserAgents) {
-                    isBlacklisted = userAgent.matches("(?i).*" + item + ".*");
+                    isBlacklisted = userAgent.matches("^.*" + item + ".*");
                 }
 
                 if(isBlacklisted) {
-                    System.out.println(request + userAgent);
+                    System.out.println(request + userAgent + " : BANNED");
                 }
 
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.

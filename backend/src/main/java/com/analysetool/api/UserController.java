@@ -248,13 +248,11 @@ public class UserController {
         JSONObject clicks = new JSONObject();
         JSONObject averages = new JSONObject();
 
-        counts.put("admin", 0);
         counts.put("basis", 0);
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
 
-        clicks.put("admin", 0);
         clicks.put("basis", 0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
@@ -286,7 +284,6 @@ public class UserController {
             }
         }
 
-        averages.put("admin", clicks.getInt("admin") / counts.getInt("admin"));
         averages.put("basis", clicks.getInt("basis") / counts.getInt("basis"));
         averages.put("basis-plus", clicks.getInt("basis-plus") / counts.getInt("basis-plus"));
         averages.put("plus", clicks.getInt("plus") / counts.getInt("plus"));

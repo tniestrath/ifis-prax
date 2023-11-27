@@ -280,7 +280,7 @@ public class GeoController {
                 }
 
                 json.put("totalDACH", total);
-                json.put("total", (clicksByCountryRepo.getClicksAusland(uniId)) + json.getDouble("totalPercentage"));
+                json.put("total", (clicksByCountryRepo.getClicksAusland(uniId)) + json.getDouble("total"));
 
             }
 
@@ -371,12 +371,10 @@ public class GeoController {
                 }
 
                 json.put("totalDACH", total);
-                json.put("total", (clicksByCountryRepo.getClicksAusland(uniId)) + json.getDouble("totalPercentage"));
-
+                json.put("total", (clicksByCountryRepo.getClicksAusland(uniId)) + json.getDouble("total"));
             }
 
         }
-        json.put("totalPercentage", json.getDouble("totalPercentage")  / count);
         return json.toString();
     }
 

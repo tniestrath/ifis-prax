@@ -77,20 +77,6 @@
               </p>
             </div>
           </li>
-          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
-            <div style="height: 2vh; display: flex; align-items: center;">
-              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.BLACK}">
-              </span>
-              <p style="margin: 0px;">Sponsor:</p>
-            </div>
-            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
-              <p style="margin: 0px;">{{chart?.data.datasets[0].data[5]}}</p>
-              <p class="tooltip-box" style="margin: 0;">
-                {{prev_data[5] >= 0 ? "+" + prev_data[5] : prev_data[5].toString()}}
-                <span id="sponsorList" class="tooltip-text"></span>
-              </p>
-            </div>
-          </li>
         </ul>
       </div>
   </div>

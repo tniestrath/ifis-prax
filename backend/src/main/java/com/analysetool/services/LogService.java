@@ -108,6 +108,8 @@ public class LogService {
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
     private final String PodcastPattern = "^.*GET /its-couch/";
 
+    private final String PodcastViewPattern = "^.*GET /wp-content/uploads/(\\d{4})/(\\d{2})/(\\S+).mp3";
+
 
     // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
     private final String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";

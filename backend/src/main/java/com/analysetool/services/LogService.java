@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.util.RegexFlags;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -171,25 +172,26 @@ public class LogService {
 
     //Set User-Agents that shouldn't be counted as click
     String[] blacklistUserAgents = {
-    "bot",
-    "spider",
-    "crawl",
-    "parse",
-    "fetch",
-    "Zabbix",
-    "Facebook",
-    "Frog",
-    "Majestic",
-    "Apache",
-    "Scrape",
-    "Scrapy",
-    "HTTrack",
-    "Moreover",
-    "Sitesucker",
-    "Webz.io",
-    "Index",
-    "Go-http-client",
-    "Iframely"
+        "bot",
+        "spider",
+        "crawl",
+        "parse",
+        "fetch",
+        "Zabbix",
+        "Facebook",
+        "Frog",
+        "Majestic",
+        "Apache",
+        "Scrape",
+        "Scrapy",
+        "HTTrack",
+        "Moreover",
+        "Sitesucker",
+        "Webz.io",
+        "Index",
+        "Go-http-client",
+        "Iframely",
+        "http"
     };
 
     ArrayList<String> blacklistResponseCodes = new ArrayList<>();
@@ -434,7 +436,7 @@ public class LogService {
                 //Schaue, ob der UserAgent auf der Blacklist steht.
                 boolean isBlacklisted = false;
                 for (String item : blacklistUserAgents) {
-                    isBlacklisted = userAgent.matches("^.*" + item + ".*");
+                    isBlacklisted = userAgent.matches("^.*" + item + ".*") && !isBlacklisted;
                 }
 
                 if(isBlacklisted) {

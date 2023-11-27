@@ -322,6 +322,81 @@ public class uniStatController {
         return obj.toString();
     }
 
+
+    @GetMapping("getCallupByCategoryAllTime")
+    public String getCallupByCategoryAllTime() throws ParseException, JSONException {
+        List<String> labelsForCategory = new ArrayList<>();
+
+        labelsForCategory.add("Main");
+        labelsForCategory.add("Article");
+        labelsForCategory.add("News");
+        labelsForCategory.add("Blog");
+        labelsForCategory.add("Podcast");
+        labelsForCategory.add("Whitepaper");
+        labelsForCategory.add("Ratgeber");
+        labelsForCategory.add("Ueber");
+        labelsForCategory.add("Impressum");
+        labelsForCategory.add("Preisliste");
+        labelsForCategory.add("Partner");
+        labelsForCategory.add("Datenschutz");
+        labelsForCategory.add("Newsletter");
+        labelsForCategory.add("Image");
+        labelsForCategory.add("AGBs");
+
+
+        List<Integer> clicksByCategory = new ArrayList<>();
+
+        //Main Page
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsMainAllTime());
+        //Posts
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsArticleAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsBlogAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPodcastAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperAllTime());
+        //Ratgeber
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberAllTime());
+        //Footer
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsUeberAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImpressumAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPreislisteAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPartnerAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsDatenschutzAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsletterAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImageAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsAGBSAllTime());
+
+        List<Integer> besucherByCategory = new ArrayList<>();
+
+        //Main Page
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserMainAllTime());
+        //Posts
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserArticleAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNewsAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserBlogAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPodcastAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperAllTime());
+        //Ratgeber
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberAllTime());
+        //Footer
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserUeberAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImpressumAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPreislisteAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPartnerAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserDatenschutzAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNewsletterAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImageAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserAGBSAllTime());
+
+
+        JSONObject obj = new JSONObject().put("labels", new JSONArray(labelsForCategory));
+        obj.put("besucher", new JSONArray(besucherByCategory));
+        obj.put("clicks", new JSONArray(clicksByCategory));
+        return obj.toString();
+    }
+
+
+
     @GetMapping("/getRatgeberDetailedDaily")
     public String getRatgeberDetailedByDate(String date) throws ParseException, JSONException {
         List<String> labelsForCategory = new ArrayList<>();

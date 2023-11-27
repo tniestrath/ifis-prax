@@ -242,6 +242,51 @@ public class UserController {
         return Arrays.toString(orderedViews);
     }
 
+    @GetMapping("/getUserAveragesByType")
+    public String getUserAveragesByType() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("admin", 0);
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+
+        clicks.put("admin", 0);
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+
+
+        for(WPUser user : userRepository.findAll()) {
+            String userMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.getId());
+            if(userMeta.contains("basis-anbieter")) {
+                counts.put("basis", counts.getInt("basis") + 1);
+                clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+            } else if(userMeta.contains("basis-anbieter-plus")) {
+                counts.put("basis-plus", counts.getInt("basis-plus") + 1);
+                clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+            } else if(userMeta.contains("plus-anbieter")) {
+                counts.put("plus", counts.getInt("plus") + 1);
+                clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+            } else if(userMeta.contains("premium-anbieter")) {
+                counts.put("premium", counts.getInt("premium") + 1);
+                clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(user.getId()).getProfileView());
+            }
+        }
+
+        averages.put("admin", clicks.getInt("admin") / counts.getInt("admin"));
+        averages.put("basis", clicks.getInt("basis") / counts.getInt("basis"));
+        averages.put("basis-plus", clicks.getInt("basis-plus") / counts.getInt("basis-plus"));
+        averages.put("plus", clicks.getInt("plus") / counts.getInt("plus"));
+        averages.put("premium", clicks.getInt("premium") / counts.getInt("premium"));
+
+        return averages.toString();
+
+    }
 
     @GetMapping("/getClickTotalOnPostsOfUser")
     public int getClickTotalOnPostsOfUser (int uid){

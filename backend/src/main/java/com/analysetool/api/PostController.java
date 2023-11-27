@@ -880,12 +880,24 @@ public class PostController {
 
             }
         }
-        averages.put("news", clicks.getInt("news") / counts.getInt("news"));
-        averages.put("artikel", clicks.getInt("artikel") / counts.getInt("artikel"));
-        averages.put("blog", clicks.getInt("blog") / counts.getInt("blog"));
-        averages.put("whitepaper", clicks.getInt("whitepaper") / counts.getInt("whitepaper"));
-        averages.put("ratgeber", clicks.getInt("ratgeber") / counts.getInt("ratgeber"));
-        averages.put("podcast", clicks.getInt("podcast") / counts.getInt("podcast"));
+        if(counts.getInt("news") != 0) {
+            averages.put("news", clicks.getInt("news") / counts.getInt("news"));
+        }
+        if(counts.getInt("artikel") != 0) {
+            averages.put("artikel", clicks.getInt("artikel") / counts.getInt("artikel"));
+        }
+        if(counts.getInt("blog") != 0) {
+            averages.put("blog", clicks.getInt("blog") / counts.getInt("blog"));
+        }
+        if(counts.getInt("whitepaper") != 0) {
+            averages.put("whitepaper", clicks.getInt("whitepaper") / counts.getInt("whitepaper"));
+        }
+        if(counts.getInt("ratgeber") != 0) {
+            averages.put("ratgeber", clicks.getInt("ratgeber") / counts.getInt("ratgeber"));
+        }
+        if(counts.getInt("podcast") != 0) {
+            averages.put("podcast", clicks.getInt("podcast") / counts.getInt("podcast"));
+        }
 
         return averages.toString();
 

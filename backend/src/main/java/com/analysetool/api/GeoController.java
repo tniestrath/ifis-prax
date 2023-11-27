@@ -221,7 +221,7 @@ public class GeoController {
             }
 
             //If we do have stats, put stats for the day into the json.
-            if (uniId != 0) {
+            if (uniId != 0 && clicksByBundeslandRepo.getByUniID(uniId) != null) {
                 count++;
 
                 //Add all stats from ClicksByBundesland
@@ -313,7 +313,7 @@ public class GeoController {
             }
 
             //If we do have stats, put stats for the day into the json.
-            if (uniId != 0) {
+            if (uniId != 0 && clicksByBundeslandRepo.getByUniID(uniId) != null) {
                 count++;
                 //Add all stats from ClicksByBundesland
                 for (ClicksByBundesland clicksByB : clicksByBundeslandRepo.getByUniID(uniId)) {
@@ -391,6 +391,38 @@ public class GeoController {
         return json.toString();
     }
 
+    @GetMapping("/getRegionGermanGeoByDate")
+    public String getRegionGermanGeoByDate(String region, String start, String end) throws JSONException {
+        JSONObject json = new JSONObject();
+        Date dateStart = Date.valueOf(start);
+        Date dateEnd = Date.valueOf(end);
+
+        if (dateStart.after(dateEnd)) {
+            Date datePuffer = dateEnd;
+            dateEnd = dateStart;
+            dateStart = datePuffer;
+        }
+
+        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
+
+            int uniId = 0;
+
+            //Check if we have stats for the day we are checking
+            if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+            }
+
+            for (ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByUniIDAndBundesland(uniId, region)) {
+                try {
+                    json.put(cityClicks.getCity(), cityClicks.getClicks() + Integer.parseInt(json.get(cityClicks.getCity()).toString()));
+                } catch (JSONException e) {
+                    json.put(cityClicks.getCity(), cityClicks.getClicks());
+                }
+            }
+        }
+        return json.toString();
+    }
+
     @GetMapping("/getRegionGermanGeoAllTimeAverages")
     public String getRegionGermanGeoAllTimeAverage(String region) throws JSONException {
         JSONObject json = new JSONObject();
@@ -427,7 +459,7 @@ public class GeoController {
             if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
                 uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
             }
-            if (uniId != 0) {
+            if (uniId != 0 && clicksByBundeslandRepo.getByUniID(uniId) != null) {
                 for (ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByUniIDAndBundesland(uniId, region)) {
                     //
                     try {
@@ -462,7 +494,7 @@ public class GeoController {
             if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
                 uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
             }
-            if (uniId != 0) {
+            if (uniId != 0 && clicksByBundeslandRepo.getByUniID(uniId) != null) {
                 for (ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByUniIDAndBundesland(uniId, region)) {
                     try {
                         json.put(cityClicks.getCity(), (cityClicks.getClicks()) + Integer.parseInt(json.get(cityClicks.getCity()).toString()));
@@ -506,7 +538,7 @@ public class GeoController {
                 uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
             }
 
-            if (uniId != 0) {
+            if (uniId != 0 && clicksByBundeslandRepo.getByUniID(uniId) != null) {
                 listOfDates.add(date.toString());
                 if (region.equals("NL") || region.equals("AT") || region.equals("CH") || region.equals("LU")) {
                     switch (region) {
@@ -568,6 +600,8 @@ public class GeoController {
             }
 
             //If we do have stats, put stats for the day into the json.
+
+            //ToDo add clause to prevent access of non-generated userGeo
             if (uniId != 0) {
                 UserGeo user = userGeoRepo.findByUserIdAndUniStatId(userId, uniId);
                 setRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());
@@ -626,6 +660,8 @@ public class GeoController {
             }
 
             //If we do have stats, put stats for the day into the json.
+
+            //ToDo add clause to prevent access of non-generated userGeo
             if (uniId != 0) {
                 UserGeo user = userGeoRepo.findByUserIdAndUniStatId(userId, uniId);
                 setRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());

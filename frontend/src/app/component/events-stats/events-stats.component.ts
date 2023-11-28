@@ -71,7 +71,7 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
       if (event.startsWith("k")) this.c_congresses++;
       if (event.startsWith("m")) this.c_messes++;
       if (event.startsWith("s")) this.c_seminars++;
-      if (event.startsWith("w")) this.c_seminars++;
+      if (event.startsWith("w")) this.c_workshops++;
       if (event.startsWith("r")) this.c_rest++;
     }
   }

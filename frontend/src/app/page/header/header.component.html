@@ -1,11 +1,5 @@
 <div class="page-header">
   <img src="../../assets/ifismpdashboard.png"/>
-  <div class="page-header-title" >
-    <h1>Dashboard</h1>
-  </div>
-  <a href="http://analyse.it-sicherheit.de/api/bericht/letzte7Tage" class="nav-element bericht" *ngIf="navElements.length">
-    Bericht
-  </a>
 
   <div *ngFor="let element of navElements">
     <div class="nav-element" [innerText]="element" (click)="setSelected(element)"></div>

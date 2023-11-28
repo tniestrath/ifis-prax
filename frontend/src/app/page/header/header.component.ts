@@ -13,7 +13,7 @@ import {CookieService} from "ngx-cookie-service";
 export class HeaderComponent implements AfterViewInit{
 
   @Output() selected = new Subject<string>();
-  navElementsBackup = ["Overview", "Posts", "Tags", "Users"];
+  navElementsBackup = ["Übersicht", "Beiträge", "Themen", "Anbieter", "Inhalte"];
   navElements = this.navElementsBackup;
 
   loadingBar_process : any = null;
@@ -38,7 +38,7 @@ export class HeaderComponent implements AfterViewInit{
     SysVars.login.subscribe(user => {
       this.navElements = this.navElementsBackup;
       cs.set("user", user.id + ":" + user.displayName);
-      this.selected.next("Overview");
+      this.selected.next("Übersicht");
       SysVars.USER_ID = "0";
       this.stopAndHideLoadingBar();
     })

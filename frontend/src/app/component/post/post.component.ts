@@ -6,7 +6,7 @@ import {SysVars} from "../../services/sys-vars-service";
 @Component({
   selector: 'dash-post',
   templateUrl: './post.component.html',
-  styleUrls: ['./post.component.css', "../../component/dash-base/dash-base.component.html"]
+  styleUrls: ['./post.component.css', "../../component/dash-base/dash-base.component.css"]
 })
 export class PostComponent extends DashBaseComponent implements OnInit{
   post: Post = new Post();

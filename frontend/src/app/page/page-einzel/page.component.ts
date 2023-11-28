@@ -30,6 +30,7 @@ import {NewsletterStatsComponent} from "../../component/newsletter-stats/newslet
 import {SystemloadComponent} from "../../component/system/systemload/systemload.component";
 import {EventsStatsComponent} from "../../component/events-stats/events-stats.component";
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
+import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
 
 @Component({
   selector: 'dash-page',
@@ -87,7 +88,7 @@ export class PageComponent implements OnInit {
     ];
   }
 
-  getAdminPageCards() {
+  getOverviewPageCards() {
     return [
       {type: UserPlanComponent, row: 1, col: 1, height: 2, width: 1},
       {type: CallUpChartComponent, row: 1, col: 2, height: 2, width: 4},
@@ -99,9 +100,10 @@ export class PageComponent implements OnInit {
     ];
   }
 
-  getStatsPageCards() {
+  getContentPageCards() {
     return [
-      {type: CallUpChartComponent, row: 1, col: 2, height: 2, width: 4}
+      {type: DashBaseComponent,  row: 2, col: 2, height: 2, width: 2},
+      {type: DashBaseComponent,  row: 3, col: 4, height: 2, width: 2}
     ];
   }
 
@@ -109,7 +111,7 @@ export class PageComponent implements OnInit {
     if (id != "0") {
       this.displayContent = "grid";
       this.cardsLoaded.next(this.getUserPageCards());
-      SysVars.CURRENT_PAGE = "Users";
+      SysVars.CURRENT_PAGE = "Anbieter";
     } else {
       this.displayContent = "none";
     }
@@ -129,10 +131,9 @@ export class PageComponent implements OnInit {
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
-      console.log(page);
       this.displayContent = "grid";
       switch (page) {
-        case "Users":{
+        case "Anbieter":{
           if (SysVars.USER_ID != "0" && SysVars.ADMIN){
             this.displayContent = "grid";
             this.cardsLoaded.next(this.getUserPageCards());
@@ -143,27 +144,27 @@ export class PageComponent implements OnInit {
           this.db.resetStatus();
           break;
         }
-        case "Tags":{
+        case "Themen":{
           this.cardsLoaded.next(this.getTagsPageCards());
           this.db.resetStatus();
           break;
         }
-        case "Posts":{
+        case "Beiträge":{
           this.cardsLoaded.next(this.getPostsPageCards());
           this.db.resetStatus();
           break;
         }
-        case "Overview":{
-          this.cardsLoaded.next(this.getAdminPageCards());
+        case "Übersicht":{
+          this.cardsLoaded.next(this.getOverviewPageCards());
           this.db.resetStatus();
           break;
         }
-        case "Statistics":{
-          this.cardsLoaded.next(this.getStatsPageCards());
+        case "Inhalte":{
+          this.cardsLoaded.next(this.getContentPageCards());
           this.db.resetStatus();
           break;
         }
-        case "Landing":{
+        case "Login":{
           this.cardsLoaded.next(this.getLandingPageCards());
           break;
         }

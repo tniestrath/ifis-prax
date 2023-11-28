@@ -144,13 +144,12 @@ public class SearchStatsController {
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
     @GetMapping("/getBadOutlierForXProviderSearches")
-    public String getBadOutlierForXProviderSearches(@RequestParam int limit)  {
+    public String getBadOutlierForXProviderSearches(@RequestParam int limit) {
         try {
             List<AnbieterSearch> anbieterSearches = new ArrayList<>();
             if (limit > 0) {
                 Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
-                Page<AnbieterSearch> anbieterPage = anbieterSearchRepo.findAllByOrderByIdDesc(pageable);
-                anbieterSearches = anbieterPage.getContent();
+                anbieterSearches = anbieterSearchRepo.findAllByOrderByIdDesc(pageable).getContent();
             } else if (limit == 0) {
                 anbieterSearches = anbieterSearchRepo.findAll();
             }
@@ -159,23 +158,19 @@ public class SearchStatsController {
                     .map(AnbieterSearch::getCount_found)
                     .collect(Collectors.toList());
 
-            double iqr = MathHelper.getInterquartileRangeInt(counts);
-            double q1 = MathHelper.getLowerQuartileInt(counts);
-            double lowerBound = q1 - 1.5 * iqr;
+            List<Integer> lowerBoundOutliers = MathHelper.getLowerBoundOutliersInt(counts);
 
             List<AnbieterSearch> filteredAnbieterSearches = anbieterSearches.stream()
-                    .filter(anbieterSearch -> anbieterSearch.getCount_found() < lowerBound)
+                    .filter(anbieterSearch -> lowerBoundOutliers.contains(anbieterSearch.getCount_found()))
                     .collect(Collectors.toList());
 
             ObjectMapper mapper = new ObjectMapper();
-            String jsonResult = mapper.writeValueAsString(filteredAnbieterSearches);
-
-            return jsonResult;
+            return mapper.writeValueAsString(filteredAnbieterSearches);
         } catch (Exception e) {
             return "Fehler beim Verarbeiten der Daten: " + e.getMessage();
         }
-
     }
+
 
     /**
      * Findet und liefert eine Liste von EventSearch-Objekten als JSON-String,
@@ -192,32 +187,31 @@ public class SearchStatsController {
     @GetMapping("/badOutliersEventSearch")
     public String findBadOutliersEventSearch(@RequestParam int limit) {
         try {
-            List<EventSearch> latestEventSearches= new ArrayList<>();
-            if(limit>0){
-            Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
-            Page<EventSearch> eventSearchPage = eventSearchRepo.findAllByOrderByIdDesc(pageable);
-            latestEventSearches = eventSearchPage.getContent();}
-            else if(limit==0){ latestEventSearches = eventSearchRepo.findAll();}
+            List<EventSearch> latestEventSearches = new ArrayList<>();
+            if (limit > 0) {
+                Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
+                latestEventSearches = eventSearchRepo.findAllByOrderByIdDesc(pageable).getContent();
+            } else if (limit == 0) {
+                latestEventSearches = eventSearchRepo.findAll();
+            }
 
             List<Integer> resultCounts = latestEventSearches.stream()
                     .map(EventSearch::getResultCount)
                     .collect(Collectors.toList());
-            double iqr = MathHelper.getInterquartileRangeInt(resultCounts);
-            double q1 = MathHelper.getLowerQuartileInt(resultCounts);
-            double lowerBound = q1 - 1.5 * iqr;
+
+            List<Integer> lowerBoundOutliers = MathHelper.getLowerBoundOutliersInt(resultCounts);
 
             List<EventSearch> filteredEventSearches = latestEventSearches.stream()
-                    .filter(eventSearch -> eventSearch.getResultCount() < lowerBound)
+                    .filter(eventSearch -> lowerBoundOutliers.contains(eventSearch.getResultCount()))
                     .collect(Collectors.toList());
 
             ObjectMapper mapper = new ObjectMapper();
-            String jsonResult = mapper.writeValueAsString(filteredEventSearches);
-
-            return jsonResult;
+            return mapper.writeValueAsString(filteredEventSearches);
         } catch (Exception e) {
             return "Fehler beim Verarbeiten der Daten";
         }
     }
+
 
 
 

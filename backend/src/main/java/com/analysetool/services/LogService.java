@@ -108,6 +108,8 @@ public class LogService {
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
     private final String PodcastPattern = "^.*GET /its-couch/";
 
+    private final String PodcastViewPattern = "^.*GET /wp-content/uploads/(\\d{4})/(\\d{2})/(\\S+).mp3";
+
 
     // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
     private final String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"(https?:/.*/(artikel|blog|pressemitteilung)/(\\S*)/)";
@@ -162,6 +164,8 @@ public class LogService {
     Pattern ratgeberPostViewPattern = Pattern.compile(ratgeberView);
     Pattern ratgeberGlossarViewPattern = Pattern.compile(ratgeberGlossarView);
     Pattern ratgeberBuchViewPattern = Pattern.compile(ratgeberBuchView);
+
+    Pattern podcastViewPattern = Pattern.compile(PodcastViewPattern);
 
 
     private String lastLine = "";
@@ -479,9 +483,6 @@ public class LogService {
                     Matcher matched_whitepaperView = patternWhitepaperView.matcher(request);
                     Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(request);
 
-                    //Does it match podcast-type?
-                    Matcher matched_podcastView = patternPodcast.matcher(request);
-
                     //Does it match the main-page-type?
                     Matcher matched_main_page = mainPagePattern.matcher(request);
 
@@ -521,6 +522,9 @@ public class LogService {
                     //Does it match a ratgeber-buch view
                     Matcher matched_ratgeber_buch = ratgeberBuchViewPattern.matcher(request);
 
+                    //Does it match a podcast-view
+                    Matcher matched_podcast_view = podcastViewPattern.matcher(request);
+
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
@@ -548,9 +552,9 @@ public class LogService {
                     } else if(matched_whitepaperSearchSuccess.find()) {
                         whatMatched = "wpSS";
                         patternMatcher = matched_whitepaperSearchSuccess;
-                    } else if(matched_podcastView.find()) {
+                    } else if(matched_podcast_view.find()) {
                         whatMatched = "podView";
-                        patternMatcher = matched_podcastView;
+                        patternMatcher = matched_podcast_view;
                     } else if(matched_main_page.find()) {
                         whatMatched = "main";
                         patternMatcher = matched_main_page;

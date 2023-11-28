@@ -313,7 +313,7 @@ public class GeoController {
             }
 
             //If we do have stats, put stats for the day into the json.
-            if (uniId != 0 && clicksByBundeslandRepo.getByUniID(uniId) != null) {
+            if (uniId != 0 && !clicksByBundeslandRepo.getByUniID(uniId).isEmpty()) {
                 count++;
                 //Add all stats from ClicksByBundesland
                 for (ClicksByBundesland clicksByB : clicksByBundeslandRepo.getByUniID(uniId)) {
@@ -459,7 +459,7 @@ public class GeoController {
             if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
                 uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
             }
-            if (uniId != 0 && clicksByBundeslandRepo.getByUniID(uniId) != null) {
+            if (uniId != 0 && !clicksByBundeslandRepo.getByUniID(uniId).isEmpty()) {
                 for (ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByUniIDAndBundesland(uniId, region)) {
                     //
                     try {
@@ -494,7 +494,7 @@ public class GeoController {
             if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
                 uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
             }
-            if (uniId != 0 && clicksByBundeslandRepo.getByUniID(uniId) != null) {
+            if (uniId != 0 && !clicksByBundeslandRepo.getByUniID(uniId).isEmpty()) {
                 for (ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByUniIDAndBundesland(uniId, region)) {
                     try {
                         json.put(cityClicks.getCity(), (cityClicks.getClicks()) + Integer.parseInt(json.get(cityClicks.getCity()).toString()));

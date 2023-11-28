@@ -1020,13 +1020,32 @@ public class PostController {
             if(json.get("type").toString().toLowerCase().contains("blog")  ||
                     json.get("type").toString().toLowerCase().contains("news") ||
                     json.get("type").toString().toLowerCase().contains("artikel") ||
-                    json.get("type").toString().toLowerCase().contains("whitepaper") || json.get("type").toString().toLowerCase().contains("podcast") || json.get("type").toString().toLowerCase().contains("ratgeber")
+                    json.get("type").toString().toLowerCase().contains("whitepaper")
             ){
                 stats.add(json);
             }
         }
         return new JSONArray(stats).toString();
     }
+
+    @GetMapping("/getAllOCWithStats")
+    public String getAllOC() throws JSONException, ParseException {
+        List<Post> posts = postRepo.findAllUserPosts();
+
+        List<JSONObject> stats = new ArrayList<>();
+
+        for(Post post : posts) {
+            JSONObject json = new JSONObject(PostStatsByIdForFrontend(post.getId()));
+            if(json.get("type").toString().toLowerCase().contains("podcast") || json.get("type").toString().toLowerCase().contains("ratgeber")) {
+                stats.add(json);
+            }
+        }
+        return new JSONArray(stats).toString();
+
+    }
+
+
+
 
 ////////////////////////////////////////////////////////////////////////
     /////Similar Posts

@@ -803,7 +803,7 @@ public class PostController {
     }
 
     /**
-     *
+     * Endpoint for retrieval for the amount of total posts on the website.
      * @return count of all user posts.
      */
     @GetMapping("/getCountTotalPosts")
@@ -812,7 +812,7 @@ public class PostController {
     }
 
     /**
-     *
+     *  Endpoint for retrieval for the amount of posts on the website of a certain type.
      * @param type ("news" | "artikel" | "blog" | "whitepaper")
      * @return count of all posts with the type given.
      * @throws JSONException .

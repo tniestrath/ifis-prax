@@ -130,6 +130,9 @@ input[value="clicks"]{
   margin-bottom: 10px;
   width: 100%;
 }
+.post-detail > p{
+  line-break: anywhere;
+}
 .post-label {
   position: relative;
   top: -.7vh;

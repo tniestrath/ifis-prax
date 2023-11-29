@@ -310,7 +310,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
   setupHistoryChart(region: string) {
     this.db.getGeoByRegionByDatesListed(region, this.startDate, this.endDate).then(res => {
-      console.log(res.data)
       this.createChart(res.data, res.dates)
     });
   }

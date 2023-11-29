@@ -3,6 +3,7 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.MathHelper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1142,8 +1143,22 @@ public class PostController {
 
 
     @GetMapping("/getOutliersByViewsAndTags")
-    public String getOutliersByViewsAndTags(@RequestParam Long termId){
-        List<PostStats>
+    public String getOutliersByViewsAndTags(@RequestParam Long termId)  {
+        List<PostStats> postStats = getPostStatsByTermId(termId);
+
+        List<Long> views = postStats.stream()
+                .map(PostStats::getClicks)
+                .collect(Collectors.toList());
+        List<Long> outliers = MathHelper.getOutliersLong(views);
+
+        List<PostStats> filteredPostStats = postStats.stream()
+                .filter(postStat -> outliers.contains(postStat.getClicks()))
+                .collect(Collectors.toList());
+
+        ObjectMapper mapper = new ObjectMapper();
+        try{
+        return mapper.writeValueAsString(filteredPostStats);}
+        catch (Exception e){return "Computer sagt nein";}
     }
 
 

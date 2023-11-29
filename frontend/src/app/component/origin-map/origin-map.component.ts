@@ -183,7 +183,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
                 size: ctx => {return ctx.chart.width / 25},
               },
               callback: (tickValue, index) => {
-                return Util.getDayString(Util.readFormattedDate(dates[index]).getDay());
+                return Util.getDayString(new Date(dates[index]).getDay());
               }
             }
           }
@@ -310,6 +310,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
   setupHistoryChart(region: string) {
     this.db.getGeoByRegionByDatesListed(region, this.startDate, this.endDate).then(res => {
+      console.log(res.data)
       this.createChart(res.data, res.dates)
     });
   }

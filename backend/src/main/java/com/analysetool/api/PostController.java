@@ -1071,26 +1071,49 @@ public class PostController {
     }
 
     /**
-     * Endpoint to retrieve Posts- and PostStats for Original Content, such as "podcast" or "ratgeber" type posts.
-     * @return a JSON String of all "podcast" and "ratgeber" posts with their respective stats.
+     * Endpoint to retrieve all podcast-posts-stats.
+     * @return a JSON String of all "podcast" posts with their respective stats.
      * @throws JSONException .
      * @throws ParseException .
      */
-    @GetMapping("/getAllOCWithStats")
-    public String getAllOC() throws JSONException, ParseException {
+    @GetMapping("/getAllPodcastsWithStats")
+    public String getAllPodcasts() throws JSONException, ParseException {
         List<Post> posts = postRepo.findAllUserPosts();
 
         List<JSONObject> stats = new ArrayList<>();
 
         for(Post post : posts) {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(post.getId()));
-            if(json.get("type").toString().toLowerCase().contains("podcast") || json.get("type").toString().toLowerCase().contains("ratgeber")) {
+            if(json.get("type").toString().toLowerCase().contains("podcast")) {
                 stats.add(json);
             }
         }
         return new JSONArray(stats).toString();
 
     }
+
+    /**
+     * Endpoint to retrieve all ratgeber-posts-stats.
+     * @return a JSON String of all "ratgeber" posts with their respective stats.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
+    @GetMapping("/getAllRatgeberWithStats")
+    public String getAllRatgeber() throws JSONException, ParseException {
+        List<Post> posts = postRepo.findAllUserPosts();
+
+        List<JSONObject> stats = new ArrayList<>();
+
+        for(Post post : posts) {
+            JSONObject json = new JSONObject(PostStatsByIdForFrontend(post.getId()));
+            if(json.get("type").toString().toLowerCase().contains("ratgeber")) {
+                stats.add(json);
+            }
+        }
+        return new JSONArray(stats).toString();
+
+    }
+
 
 
 

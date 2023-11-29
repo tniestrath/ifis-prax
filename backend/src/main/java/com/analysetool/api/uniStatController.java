@@ -424,6 +424,32 @@ public class uniStatController {
         return obj.toString();
     }
 
+
+    @GetMapping("/getRatgeberDetailedAllTime")
+    public String getRatgeberDetailedAllTime() throws JSONException {
+        List<String> labelsForCategory = new ArrayList<>();
+
+        labelsForCategory.add("posts");
+        labelsForCategory.add("glossar");
+        labelsForCategory.add("buch");
+
+        List<Integer> clicksByCategory = new ArrayList<>();
+        List<Integer> besucherByCategory = new ArrayList<>();
+
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberPostAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberGlossarAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberBuchAllTime());
+
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberPostAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberGlossarAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberBuchAllTime());
+
+        JSONObject obj = new JSONObject().put("labels", new JSONArray(labelsForCategory));
+        obj.put("besucher", new JSONArray(besucherByCategory));
+        obj.put("clicks", new JSONArray(clicksByCategory));
+        return obj.toString();
+    }
+
     /**
      *
      * @return eine HTML-Seite, die den Bericht wie in der Methode getLetzte, nur für die letzten 7 Tage erstellt.

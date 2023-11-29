@@ -253,5 +253,4 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.besucherAGBS) FROM UniversalCategoriesDLC u")
      public int getSumUserAGBSAllTime();
 
-
 }

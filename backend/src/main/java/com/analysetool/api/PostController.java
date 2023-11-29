@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -1118,6 +1119,16 @@ public class PostController {
         }
         return new JSONArray(stats).toString();
 
+    }
+
+
+    public List<Post> getPostsByTermId(Long termId) {
+        List<Long> postIds = termRelRepo.findByTermTaxonomyId(termId)
+                .stream()
+                .map(wp_term_relationships::getObjectId)
+                .collect(Collectors.toList());
+
+        return postRepo.findAllById(postIds);
     }
 
 

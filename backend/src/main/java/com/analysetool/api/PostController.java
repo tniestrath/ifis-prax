@@ -491,6 +491,12 @@ public class PostController {
         }).toList();
     }
 
+    /**
+     * Utility Function to get all Tag-Ids for a specific post.
+     * @param id the id of the post you want to get tags for.
+     * @return a List of Ids, corresponding to Tags (Terms in the database)
+     * @throws JSONException .
+     */
     public List<Long> getTagsById(long id) throws JSONException {
         if(!postRepository.findById(id).isPresent()) {return null;}
         Post post = postRepository.findById(id).get();

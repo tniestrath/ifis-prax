@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -551,11 +552,15 @@ public class GeoController {
                     listOfData.add(clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, region).getClicks());
                 }
 
+            } else {
+                listOfDates.add(date.toString());
+                listOfData.add(null);
             }
 
         }
-        jsonResponse.put("dates", listOfDates);
-        jsonResponse.put("data", listOfData);
+
+        jsonResponse.put("dates", new JSONArray(listOfDates));
+        jsonResponse.put("data", new JSONArray(listOfData));
         return jsonResponse.toString();
 
     }

@@ -1177,6 +1177,53 @@ public class PostController {
         catch (Exception e){return "Computer sagt nein";}
     }
 
+    @GetMapping("/getOutliersByViewsOrRelevanceAndTags")
+    public String getOutliersByViewsOrRelevanceAndTags(@RequestParam Long termId, @RequestParam String type) {
+        List<PostStats> postStats = statsRepo.findByArtId(termId);
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        if ("views".equals(type)) {
+            List<Long> views = postStats.stream()
+                    .map(PostStats::getClicks)
+                    .collect(Collectors.toList());
+            List<Long> outliers = MathHelper.getOutliersLong(views);
+
+            result = postStats.stream()
+                    .filter(postStat -> outliers.contains(postStat.getClicks()))
+                    .map(postStat -> {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("postName", postRepository.findById(postStat.getArtId()).get().getSlug());
+                        map.put("value", postStat.getClicks());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+        } else if ("relevance".equals(type)) {
+            List<Float> relevances = postStats.stream()
+                    .map(PostStats::getRelevance)
+                    .collect(Collectors.toList());
+            List<Float> outliers = MathHelper.getOutliersFloat(relevances);
+
+            result = postStats.stream()
+                    .filter(postStat -> outliers.contains(postStat.getRelevance()))
+                    .map(postStat -> {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("postName", postRepository.findById(postStat.getArtId()).get().getSlug());
+                        map.put("value", postStat.getRelevance());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(result);
+        } catch (Exception e) {
+            return "computadora dice que no";
+        }
+    }
+
+
+
 
 
 

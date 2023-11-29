@@ -18,7 +18,7 @@ import {OriginMapComponent} from "../../component/origin-map/origin-map.componen
 import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
-import {PostListComponent} from "../../component/post/post-list/post-list.component";
+import {PodcastListComponent, PostListComponent} from "../../component/post/post-list/post-list.component";
 import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
 import {CallUpChartComponent} from "../../component/call-up-chart/call-up-chart.component";
 import {
@@ -102,8 +102,7 @@ export class PageComponent implements OnInit {
 
   getContentPageCards() {
     return [
-      {type: DashBaseComponent,  row: 2, col: 2, height: 2, width: 2},
-      {type: DashBaseComponent,  row: 3, col: 4, height: 2, width: 2}
+      {type: PodcastListComponent,  row: 1, col: 1, height: 4, width: 2}
     ];
   }
 

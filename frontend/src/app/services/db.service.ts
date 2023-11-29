@@ -72,6 +72,9 @@ export enum dbUrl {
   GET_GEO_FIRST_TIMESTAMP = "/geo/firstEntry",
   GET_GEO_TIMESPAN = "/geo/geoRange",
 
+  GET_PODCAST_ALL = "/posts/getAllPodcastsWithStats",
+  GET_RATGEBER_ALL = "/posts/getAllRatgeberWithStats",
+
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
   GET_SYSTEM_TIME_HOUR = "/systemLoad/getHour",
@@ -328,6 +331,11 @@ export class DbService {
   async getGeoTimespan() : Promise<string[]> {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.GET_GEO_TIMESPAN)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getPodcastsAll() : Promise<Post[]> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_PODCAST_ALL)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getClicksByTime(id : number){

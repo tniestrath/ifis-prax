@@ -35,7 +35,7 @@ import { OriginMapComponent } from './component/origin-map/origin-map.component'
 import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time.component';
 import { TagPieComponent } from './component/tag/tag-pie/tag-pie.component';
 import { ImgFallbackDirective } from './img-fallback.directive';
-import { PostListComponent } from './component/post/post-list/post-list.component';
+import { PostListComponent, PodcastListComponent } from './component/post/post-list/post-list.component';
 import { PostListItemComponent } from './component/post/post-list/post-list-item/post-list-item.component';
 import { TagChartComponent } from './component/tag/tag-chart/tag-chart.component';
 import { CallUpChartComponent } from './component/call-up-chart/call-up-chart.component';
@@ -76,6 +76,7 @@ import { PostTypeComponent } from './component/post/post-type/post-type.componen
     TagPieComponent,
     ImgFallbackDirective,
     PostListComponent,
+    PodcastListComponent,
     PostListItemComponent,
     TagChartComponent,
     CallUpChartComponent,

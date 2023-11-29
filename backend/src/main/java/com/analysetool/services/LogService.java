@@ -106,9 +106,8 @@ public class LogService {
     private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
 
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
-    private final String PodcastPattern = "^.*GET /its-couch/";
 
-    private final String PodcastViewPattern = "^.*GET /wp-content/uploads/(\\d{4})/(\\d{2})/(\\S+).mp3";
+    private final String PodcastViewPattern = "^.*GET /podcast/(\\S+)/";
 
 
     // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
@@ -147,7 +146,6 @@ public class LogService {
     Pattern newsSearchSuccessPattern = Pattern.compile(PresseSSViewPatter);
     Pattern userRedirectPattern = Pattern.compile(RedirectUserPattern);
     Pattern searchPattern = Pattern.compile(SearchPattern);
-    Pattern patternPodcast = Pattern.compile(PodcastPattern);
     Pattern patternWhitepaperView = Pattern.compile(WhitepaperViewPattern);
     Pattern patternWhitepaperSearchSuccess = Pattern.compile(WhitepaperSSPattern);
     Pattern patternPreMatch = Pattern.compile(prePattern);
@@ -1327,7 +1325,7 @@ public class LogService {
         lastLine = line;
 
         switch(whatMatched) {
-            case "articleView", "blogView", "newsView", "wpView", "ratgeberPost":
+            case "articleView", "blogView", "newsView", "wpView", "ratgeberPost", "podView":
                 try {
                     UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                     updateIPsByPost(ip, postRepository.getIdByName(patternMatcher.group(1)));
@@ -1342,8 +1340,6 @@ public class LogService {
                 } catch(Exception e) {
                     System.out.println("SS PROCESS LINE EXCEPTION " +line);
                 }
-                break;
-            case "podView":
                 break;
             case "userView":
                 try {

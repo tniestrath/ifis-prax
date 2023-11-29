@@ -1131,6 +1131,21 @@ public class PostController {
         return postRepo.findAllById(postIds);
     }
 
+    public List<PostStats> getPostStatsByTermId(Long termId){
+        List<Long> postIds = termRelRepo.findByTermTaxonomyId(termId)
+                .stream()
+                .map(wp_term_relationships::getObjectId)
+                .collect(Collectors.toList());
+
+        return statsRepo.findAllByArtIdIn(postIds);
+    }
+
+
+    @GetMapping("/getOutliersByViewsAndTags")
+    public String getOutliersByViewsAndTags(@RequestParam Long termId){
+        List<PostStats>
+    }
+
 
 
 

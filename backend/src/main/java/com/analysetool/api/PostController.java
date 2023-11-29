@@ -412,7 +412,7 @@ public class PostController {
                 if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
                     WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
                     if (Objects.equals(tt.getTaxonomy(), "category")){
-                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1) {
+                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
                             type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
                         }
                     } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
@@ -491,6 +491,12 @@ public class PostController {
         }).toList();
     }
 
+    /**
+     * Utility Function to get all Tag-Ids for a specific post.
+     * @param id the id of the post you want to get tags for.
+     * @return a List of Ids, corresponding to Tags (Terms in the database)
+     * @throws JSONException .
+     */
     public List<Long> getTagsById(long id) throws JSONException {
         if(!postRepository.findById(id).isPresent()) {return null;}
         Post post = postRepository.findById(id).get();
@@ -789,7 +795,7 @@ public class PostController {
                 if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
                     WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
                     if (Objects.equals(tt.getTaxonomy(), "category")){
-                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1) {
+                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
                             type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
                         }
                     } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
@@ -803,7 +809,7 @@ public class PostController {
     }
 
     /**
-     *
+     * Endpoint for retrieval for the amount of total posts on the website.
      * @return count of all user posts.
      */
     @GetMapping("/getCountTotalPosts")
@@ -812,7 +818,7 @@ public class PostController {
     }
 
     /**
-     *
+     *  Endpoint for retrieval for the amount of posts on the website of a certain type.
      * @param type ("news" | "artikel" | "blog" | "whitepaper")
      * @return count of all posts with the type given.
      * @throws JSONException .
@@ -1106,7 +1112,7 @@ public class PostController {
 
         for(Post post : posts) {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(post.getId()));
-            if(json.get("type").toString().toLowerCase().contains("ratgeber")) {
+            if(json.get("type").toString().toLowerCase().contains("ratgeber") || json.get("type").toString().toLowerCase().contains("cyber-risk-check")) {
                 stats.add(json);
             }
         }

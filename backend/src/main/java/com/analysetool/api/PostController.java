@@ -1141,7 +1141,23 @@ public class PostController {
         return statsRepo.findAllByArtIdIn(postIds);
     }
 
-
+    /**
+     * Retrieves a list of {@code PostStats} objects that are considered outliers based on their views (clicks)
+     * for a given term ID. Outliers are determined using the {@code MathHelper.getOutliersLong} method.
+     *
+     * @param termId The term ID used to filter the post statistics. This is typically an identifier
+     *               for a specific category or tag in a blog or article system.
+     * @return A JSON string representing a list of {@code PostStats} objects that are outliers.
+     *         In case of an exception during JSON processing, a simple error message is returned.
+     *         If no outliers are found, an empty JSON array is returned.
+     * @implNote This method relies on {@code getPostStatsByTermId} to fetch the relevant post statistics
+     *           and {@code MathHelper.getOutliersLong} to determine outliers based on views.
+     *           It uses Jackson's {@code ObjectMapper} to convert the list of {@code PostStats} to JSON.
+     * @apiNote The term ID must be a valid identifier existing in the database. The method does not
+     *          handle cases where the term ID does not exist or is null.
+     * @exception Exception A generic exception is caught and a simple error message is returned.
+     *            This is a placeholder for more specific exception handling based on the application's requirements.
+     */
     @GetMapping("/getOutliersByViewsAndTags")
     public String getOutliersByViewsAndTags(@RequestParam Long termId)  {
         List<PostStats> postStats = getPostStatsByTermId(termId);

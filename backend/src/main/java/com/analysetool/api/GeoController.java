@@ -505,7 +505,7 @@ public class GeoController {
     }
 
     @GetMapping("/getRegionGermanGeoByDateAsList")
-    public String getRegionalGeoAsListByDates(String start, String end, String region) throws JSONException {
+    public String getRegionalGeoAsListByDates(String region, String start, String end) throws JSONException {
         JSONObject jsonResponse = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);

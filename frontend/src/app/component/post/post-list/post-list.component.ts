@@ -4,6 +4,7 @@ import {SelectorItem} from "../../../page/selector/selector.component";
 import {Subject} from "rxjs";
 import {PostListItemComponent} from "./post-list-item/post-list-item.component";
 import {Post} from "../Post";
+import {Top5PostsComponent} from "../top5-posts/top5-posts.component";
 
 @Component({
   selector: 'dash-post-list',
@@ -80,4 +81,21 @@ export class PostListComponent extends DashBaseComponent implements AfterViewIni
 
   }
 
+}
+
+@Component({
+  selector: 'dash-list-podcast',
+  templateUrl: './post-list.component.html',
+  styleUrls: ['./post-list.component.css', "../../dash-base/dash-base.component.css", "./podcast-list.component.css"]
+})
+export class PodcastListComponent extends PostListComponent{
+
+  override ngOnInit() {
+    this.db.getPodcastsAll().then( (res: Post[])  => {
+      for (const valueElement of res) {
+        this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+      }
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+  }
 }

@@ -375,6 +375,13 @@ public class PostController {
     }
 
 
+    /**
+     * Endpoint for retrieval of a single posts full-statistics, identified by its id.
+     * @param id the id of the post you want to fetch stats for.
+     * @return a JSON String containing keys and values for each of a posts statistics, identifiers and adjacent information such as its type.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getPostStatsByIdWithAuthor")
     public String PostStatsByIdForFrontend(@RequestParam long id) throws JSONException, ParseException {
         if(!postRepository.findById(id).isPresent()) {return null;}
@@ -909,7 +916,7 @@ public class PostController {
      *
      * @param sorter sorter "relevance" | "performance" | "clicks" - chooses what statistic you want to sort by.
      * @param type "news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber"
-     * @return
+     * @return a JSON String of the Top Posts (as many as Limit) with post-type being type and sorted by sorter.
      */
     @GetMapping("/getTopWithType")
     public String getTopWithType(@RequestParam String sorter, String type, int limit) throws JSONException, ParseException {
@@ -946,6 +953,13 @@ public class PostController {
         return jsonString != null? jsonString : errorString;
     }
 
+    /**
+     * Endpoint for retrieval of the top 5 posts sorted by a specific sorter.
+     * @param sorter "relevance" or "performance".
+     * @return a JSON String containing the stats, identifiers etc. of the top5 posts compared by given metric.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getTop5")
     public String getTop5(String sorter) throws JSONException, ParseException {
         List<PostStats> top = null;
@@ -971,17 +985,30 @@ public class PostController {
         return jsonString != null? jsonString : errorString;
     }
 
-
+    /**
+     * debug call to manually set the lettercount of a post.
+     * @param lettercount the lettercount you want to set.
+     * @param id the postId of the post you want to set lettercount for.
+     */
     @GetMapping("/testLetterCount")
     public void updateLetterCount(int lettercount, long id) {
         statsRepo.updateLetterCount(lettercount, id);
     }
 
+    /**
+     * Endpoint for retrieval of a posts creation date.
+     * @param id the id of the post you want the creation date for.
+     * @return the Creation-Date of the post as a String.
+     */
     @GetMapping("/getDate")
     public String getDate(long id) {
         return postRepository.getDateById(id).toString();
     }
 
+    /**
+     * Endpoint for retrieval of all Dates (value) of Posts-creation by postId (name) in a JSON String.
+     * @return JSON String of: int PostId, String Date for all Posts.
+     */
     @GetMapping("/getAllDates")
     public String getAllDates() {
         Map<Integer, String> answer = new HashMap<>();
@@ -991,11 +1018,20 @@ public class PostController {
         return new JSONObject(answer).toString();
     }
 
+    /**
+     * Endpoint for retrieval of Relevance for a specific Post identified by their ID.
+     * @param id the id of the Post you want to get relevance stat for.
+     * @return float of the posts relevance stat.
+     */
     @GetMapping("/getRelevanceById")
     public float getRelevanceById(long id) {
         return statRepository.getRelevanceById(id);
     }
 
+    /**
+     * Endpoint for retrieval of posts with their relevance.
+     * @return a JSON String containing: int postId (name) and float relevance (value).
+     */
     @GetMapping("/getAllRelevance")
     public String getAllRelevance() {
         Map<Integer, Float> answer = new HashMap<>();
@@ -1008,6 +1044,12 @@ public class PostController {
         return new JSONObject(answer).toString();
     }
 
+    /**
+     * Endpoint for retrieval of ALL Posts that are not Original Content (User Posts (Blog, Article, Whitepaper), News)
+     * @return a JSON String containing all stats, identifiers, type and more for all posts.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getAllPostsWithStats")
     public String getAll() throws JSONException, ParseException {
         List<Post> posts = postRepo.findAllUserPosts();
@@ -1028,6 +1070,12 @@ public class PostController {
         return new JSONArray(stats).toString();
     }
 
+    /**
+     * Endpoint to retrieve Posts- and PostStats for Original Content, such as "podcast" or "ratgeber" type posts.
+     * @return a JSON String of all "podcast" and "ratgeber" posts with their respective stats.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getAllOCWithStats")
     public String getAllOC() throws JSONException, ParseException {
         List<Post> posts = postRepo.findAllUserPosts();

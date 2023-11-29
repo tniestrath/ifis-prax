@@ -74,6 +74,13 @@ public class GeoController {
         return clicksByCountryRepo.getByUniIDAndCountry(id, country).getClicks();
     }
 
+    /**
+     * Endpoint for retrieval of a Posts Geolocation-stats by their id, only using data gathered between Date start and Date end.
+     * @param id the posts id you want stats for.
+     * @param start a String containing an ISO-Format Date, marking the starting date (inclusive).
+     * @param end a String containing an ISO-Format Date, marking the ending date. (inclusive)
+     * @return a List of Geolocation Data in a specific order, marked for change.
+     */
     @GetMapping("/getPostGeoByIDAndDay")
     public List<Integer> getPostGeoByIDAndDay(long id, String start, String end) {
         List<Integer> liste = new ArrayList<>();
@@ -130,7 +137,13 @@ public class GeoController {
         return liste;
     }
 
-
+    /**
+     * Endpoint for retrieval of a Users Geolocation Data gathered between two Dates.
+     * @param id the users' id.
+     * @param start the starting date as a string in iso-format (inclusive).
+     * @param end the ending date as a string in iso-format. (inclusive)
+     * @return a List of Geolocation Data for the given user in a specific order.
+     */
     @GetMapping("/getUserGeoByIDAndDay")
     public List<Integer> getUserGeoByIDAndDay(long id, String start, String end) {
         List<Integer> liste = new ArrayList<>();
@@ -188,8 +201,9 @@ public class GeoController {
     }
 
     /**
-     * @param start a String representing the start date of calculation format: YYYY-MM-DD
-     * @param end   a String representing the end date of calculation format: YYYY-MM-DD
+     * Endpoint for retrieval of all Global Geolocation Data gathered between the two Dates for the DACH region.
+     * @param start a String representing the start date of calculation format: YYYY-MM-DD (inclusive).
+     * @param end   a String representing the end date of calculation format: YYYY-MM-DD, (inclusive).
      * @return a json-string containing the clicks of each bundesland and adjacent country of interest, labeled by their ISO-Code for bundesland and english name for countries.
      * @throws JSONException if something unexpected happened.
      */
@@ -288,6 +302,11 @@ public class GeoController {
         return json.toString();
     }
 
+    /**
+     * Endpoint for retrieval of all Global Geolocation Data gathered for the DACH region.
+     * @return a json-string containing the clicks of each bundesland and adjacent country of interest, labeled by their ISO-Code for bundesland and english name for countries.
+     * @throws JSONException .
+     */
     @GetMapping("/getTotalGermanGeoAllTime")
     public String getTotalGermanGeoAllTime() throws JSONException {
         JSONObject json = new JSONObject();
@@ -396,29 +415,31 @@ public class GeoController {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
-
         if (dateStart.after(dateEnd)) {
             Date datePuffer = dateEnd;
             dateEnd = dateStart;
             dateStart = datePuffer;
         }
 
-        for(LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
 
+        //Iterate over all days in the interval.
+        for (LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
             int uniId = 0;
 
             //Check if we have stats for the day we are checking
             if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
                 uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
             }
-
-            for (ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByUniIDAndBundesland(uniId, region)) {
-                try {
-                    json.put(cityClicks.getCity(), cityClicks.getClicks() + Integer.parseInt(json.get(cityClicks.getCity()).toString()));
-                } catch (JSONException e) {
-                    json.put(cityClicks.getCity(), cityClicks.getClicks());
+            if (uniId != 0 && !clicksByBundeslandRepo.getByUniID(uniId).isEmpty() && !clicksByCountryRepo.getByUniID(uniId).isEmpty()) {
+                for (ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByUniIDAndBundesland(uniId, region)) {
+                    try {
+                        json.put(cityClicks.getCity(), (cityClicks.getClicks()) + Integer.parseInt(json.get(cityClicks.getCity()).toString()));
+                    } catch (JSONException e) {
+                        json.put(cityClicks.getCity(), cityClicks.getClicks());
+                    }
                 }
             }
+
         }
         return json.toString();
     }
@@ -474,39 +495,6 @@ public class GeoController {
         return json.toString();
     }
 
-    @GetMapping("/getRegionGermanGeoByDays")
-    public String getRegionGermanGeoByDays(String region, String start, String end) throws JSONException {
-        JSONObject json = new JSONObject();
-        Date dateStart = Date.valueOf(start);
-        Date dateEnd = Date.valueOf(end);
-        if (dateStart.after(dateEnd)) {
-            Date datePuffer = dateEnd;
-            dateEnd = dateStart;
-            dateStart = datePuffer;
-        }
-
-
-        //Iterate over all days in the interval.
-        for (LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
-            int uniId = 0;
-
-            //Check if we have stats for the day we are checking
-            if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
-                uniId = uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
-            }
-            if (uniId != 0 && !clicksByBundeslandRepo.getByUniID(uniId).isEmpty() && !clicksByCountryRepo.getByUniID(uniId).isEmpty()) {
-                for (ClicksByBundeslandCitiesDLC cityClicks : clicksByBundeslandCitiesDLCRepo.getByUniIDAndBundesland(uniId, region)) {
-                    try {
-                        json.put(cityClicks.getCity(), (cityClicks.getClicks()) + Integer.parseInt(json.get(cityClicks.getCity()).toString()));
-                    } catch (JSONException e) {
-                        json.put(cityClicks.getCity(), cityClicks.getClicks());
-                    }
-                }
-            }
-
-        }
-        return json.toString();
-    }
 
 
     @GetMapping("/geoRange")
@@ -516,8 +504,16 @@ public class GeoController {
         return string;
     }
 
-    @GetMapping("/getRegionalGeoAsListsByDates")
-    public String getRegionalGeoAsListByDates(String start, String end, String region) throws JSONException {
+    /**
+     * Endpoint for retrieval of a regions Geolocation Data with dates.
+     * @param region the region or DACH country you want stats for.
+     * @param start the Date to start gathering Geo-Data (inclusive).
+     * @param end the Date to end gathering Geo-Data (inclusive).
+     * @return a JSON String with "dates" on containing the dates data was gathered for, a matching List in "data" containing the respective stats.
+     * @throws JSONException .
+     */
+    @GetMapping("/getRegionGermanGeoByDateAsList")
+    public String getRegionalGeoAsListByDates(String region, String start, String end) throws JSONException {
         JSONObject jsonResponse = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);

@@ -159,6 +159,34 @@ public class MathHelper {
         }
         return outliers;
     }
+    public static List<Float> getLowerBoundOutliersFloat(List<Float> data) {
+        double q1 = getLowerQuartileFloat(data);
+        double iqr = getInterquartileRangeFloat(data);
+        double lowerBound = q1 - 1.5 * iqr;
+
+        List<Float> lowerOutliers = new ArrayList<>();
+        for (float value : data) {
+            if (value < lowerBound) {
+                lowerOutliers.add(value);
+            }
+        }
+        return lowerOutliers;
+    }
+
+    public static List<Float> getUpperBoundOutliersFloat(List<Float> data) {
+        double q3 = getUpperQuartileFloat(data);
+        double iqr = getInterquartileRangeFloat(data);
+        double upperBound = q3 + 1.5 * iqr;
+
+        List<Float> upperOutliers = new ArrayList<>();
+        for (float value : data) {
+            if (value > upperBound) {
+                upperOutliers.add(value);
+            }
+        }
+        return upperOutliers;
+    }
+
 
     /**
      * Berechnet den Skewness-Wert (Schiefe) einer Liste von Float-Werten.
@@ -352,6 +380,34 @@ public class MathHelper {
         }
         return outliers;
     }
+    public static List<Double> getLowerBoundOutliersDouble(List<Double> data) {
+        double q1 = getLowerQuartileDouble(data);
+        double iqr = getInterquartileRangeDouble(data);
+        double lowerBound = q1 - 1.5 * iqr;
+
+        List<Double> lowerOutliers = new ArrayList<>();
+        for (double value : data) {
+            if (value < lowerBound) {
+                lowerOutliers.add(value);
+            }
+        }
+        return lowerOutliers;
+    }
+
+    public static List<Double> getUpperBoundOutliersDouble(List<Double> data) {
+        double q3 = getUpperQuartileDouble(data);
+        double iqr = getInterquartileRangeDouble(data);
+        double upperBound = q3 + 1.5 * iqr;
+
+        List<Double> upperOutliers = new ArrayList<>();
+        for (double value : data) {
+            if (value > upperBound) {
+                upperOutliers.add(value);
+            }
+        }
+        return upperOutliers;
+    }
+
 
     /**
      * Berechnet den Skewness-Wert (Schiefe) einer Liste von Double-Werten.
@@ -780,6 +836,35 @@ public class MathHelper {
         }
         return outliers;
     }
+
+    public static List<Long> getLowerBoundOutliersLong(List<Long> data) {
+        double q1 = getLowerQuartileLong(data);
+        double iqr = getInterquartileRangeLong(data);
+        double lowerBound = q1 - 1.5 * iqr;
+
+        List<Long> lowerOutliers = new ArrayList<>();
+        for (long value : data) {
+            if (value < lowerBound) {
+                lowerOutliers.add(value);
+            }
+        }
+        return lowerOutliers;
+    }
+
+    public static List<Long> getUpperBoundOutliersLong(List<Long> data) {
+        double q3 = getUpperQuartileLong(data);
+        double iqr = getInterquartileRangeLong(data);
+        double upperBound = q3 + 1.5 * iqr;
+
+        List<Long> upperOutliers = new ArrayList<>();
+        for (long value : data) {
+            if (value > upperBound) {
+                upperOutliers.add(value);
+            }
+        }
+        return upperOutliers;
+    }
+
 
     /**
      * Berechnet den Skewness-Wert (Schiefe) einer Liste von Long-Werten.

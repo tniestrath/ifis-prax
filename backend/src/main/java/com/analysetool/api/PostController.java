@@ -1177,9 +1177,25 @@ public class PostController {
         catch (Exception e){return "Computer sagt nein";}
     }
 
+    /**
+     * Retrieves outliers based on views or relevance for posts associated with a given term ID.
+     * This method filters posts statistics by views or relevance and identifies outliers in those metrics.
+     * It then fetches the corresponding post names based on the outliers and returns them along with the outlier values.
+     *
+     * @param termId The term ID used to find related post statistics. It refers to the ID of the term (e.g., a category or tag) in a blog or content system.
+     * @param type   The type of metric to consider for finding outliers. It can be either "views" or "relevance".
+     *               If "views" is specified, the method looks for outliers in post views (clicks).
+     *               If "relevance" is specified, the method looks for outliers in the relevance score of the posts.
+     * @return       A JSON string representing a list of maps, each map containing the post name (slug) and its corresponding outlier value (either views or relevance).
+     *               Returns a simple error message if any exception occurs during JSON processing.
+     * @throws Exception Thrown if there is an issue with JSON processing. In practice, this is typically a JsonProcessingException.
+     * @implNote This method uses {@link MathHelper#getOutliersLong(List)} or {@link MathHelper#getOutliersFloat(List)} (based on the 'type' parameter)
+     *           to determine outliers and then fetches the corresponding post names using the {@code PostRepository}.
+     *           It uses Jackson's {@code ObjectMapper} to convert the list of results to a JSON string.
+     */
     @GetMapping("/getOutliersByViewsOrRelevanceAndTags")
     public String getOutliersByViewsOrRelevanceAndTags(@RequestParam Long termId, @RequestParam String type) {
-        List<PostStats> postStats = statsRepo.findByArtId(termId);
+        List<PostStats> postStats = getPostStatsByTermId(termId);
         List<Map<String, Object>> result = new ArrayList<>();
 
         if ("views".equals(type)) {

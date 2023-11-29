@@ -137,7 +137,13 @@ public class GeoController {
         return liste;
     }
 
-
+    /**
+     * Endpoint for retrieval of a Users Geolocation Data gathered between two Dates.
+     * @param id the users' id.
+     * @param start the starting date as a string in iso-format.
+     * @param end the ending date as a string in iso-format.
+     * @return a List of Geolocation Data for the given user in a specific order..
+     */
     @GetMapping("/getUserGeoByIDAndDay")
     public List<Integer> getUserGeoByIDAndDay(long id, String start, String end) {
         List<Integer> liste = new ArrayList<>();
@@ -498,7 +504,7 @@ public class GeoController {
         return string;
     }
 
-    @GetMapping("/getRegionalGeoAsListsByDates")
+    @GetMapping("/getRegionGermanGeoByDateAsList")
     public String getRegionalGeoAsListByDates(String start, String end, String region) throws JSONException {
         JSONObject jsonResponse = new JSONObject();
         Date dateStart = Date.valueOf(start);

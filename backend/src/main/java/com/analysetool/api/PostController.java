@@ -1106,7 +1106,7 @@ public class PostController {
 
         for(Post post : posts) {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(post.getId()));
-            if(json.get("type").toString().toLowerCase().contains("ratgeber")) {
+            if(json.get("type").toString().toLowerCase().contains("ratgeber") || json.get("type").toString().toLowerCase().contains("cyber-risk-check")) {
                 stats.add(json);
             }
         }

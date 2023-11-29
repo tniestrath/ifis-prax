@@ -54,8 +54,6 @@ export enum dbUrl {
   GET_CALLUP_CATEGORIES_BY_DATE = "/bericht/getCallupByCategoryDate?date=DATE",
   GET_CALLUP_CATEGORIES_BY_DATETIME = "/bericht/getCallupByCategoryDateAndHour?date=DATE&hour=HOUR",
 
-  GET_VIEWS_BY_LOCATION_L14 = "/bericht/getViewsByLocationLast14",
-  GET_VIEWS_BY_LOCATION = "/bericht/getViewsByLocationAllTime",
 
   GET_NEWSLETTER_SUBS = "/newsletter/getStatusAll",
   GET_NEWSLETTER_SUBS_YESTERDAY = "/newsletter/getAmountOfSubsYesterday",
@@ -68,7 +66,8 @@ export enum dbUrl {
   GET_GEO_GERMANY_ALL_TIME = "/geo/getTotalGermanGeoAllTime",
   GET_GEO_GERMANY_BY_DATES = "/geo/getTotalGermanGeoByDay?start=START&end=END",
   GET_GEO_GERMANY_ALL_TIME_BY_REGION = "/geo/getRegionGermanGeoAllTime?region=REGION",
-  GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES = "/geo/getRegionGermanGeoAllTime?region=REGION&start=START&end=END",
+  GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES = "/geo/getRegionGermanGeoByDate?region=REGION&start=START&end=END",
+  GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES_LISTED = "/geo/getRegionGermanGeoByDateAsList?region=REGION&start=START&end=END",
   GET_GEO_LAST_TIMESTAMP = "/geo/lastEntry",
   GET_GEO_FIRST_TIMESTAMP = "/geo/firstEntry",
   GET_GEO_TIMESPAN = "/geo/geoRange",
@@ -314,6 +313,10 @@ export class DbService {
     if (start && end) return await fetch((DbService.getUrl(dbUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES).replace("REGION", region).replace("START", start).replace("END", end)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
     else return await fetch((DbService.getUrl(dbUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION).replace("REGION", region)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
+  async getGeoByRegionByDatesListed(region : string, start : string, end : string) : Promise<{ data: number[], dates : string[] }> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES_LISTED).replace("REGION", region).replace("START", start).replace("END", end)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
   async getGeoStart() : Promise<string> {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.GET_GEO_FIRST_TIMESTAMP)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
@@ -389,16 +392,6 @@ export class DbService {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS).replace("STATUS", c), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-
-  async getViewsByLocationLast14(){
-    this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION_L14), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
-  }
-  async getViewsByLocation(){
-    this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_VIEWS_BY_LOCATION), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
-  }
-
 
   async getSystemTimeHour() : Promise<number>{
     this.setLoading();

@@ -68,6 +68,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   showCharts: string = "none";
   perDayRegionClicks: SVG_Region[][] = [];
 
+  startDate : string = "";
+  endDate : string = "";
+
   ngOnInit() {
     this.setToolTip("Dies ist eine Karte, die durch Färbung die Orte angibt, von denen am meisten auf den Marktplatz zugegriffen wird. " +
       "Mit einem Click auf eine Region werden genauere Informationen angezeigt.");
@@ -83,6 +86,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       this.db.getGeoByDates(ev.target.value, endDatePicker.value).then(res => {
         // @ts-ignore
         this.readData(res, svgElement, ev.target.value, endDatePicker.value);
+        // @ts-ignore
+        this.startDate = ev.target.value;
         this.cdr.detectChanges();
       });
       };
@@ -91,6 +96,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       this.db.getGeoByDates(startDatePicker.value, ev.target.value).then(res => {
         // @ts-ignore
         this.readData(res, svgElement, startDatePicker.value, ev.target.value);
+        // @ts-ignore
+        this.endDate = ev.target.value;
         this.cdr.detectChanges();
       });
     };
@@ -106,19 +113,19 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         startDatePicker.disabled = false;
         endDatePicker.disabled = false;
       }
-      let startDate = res[0].split('T')[0];
-      let endDate = res[1].split('T')[0];
+      this.startDate = res[0].split('T')[0];
+      this.endDate = res[1].split('T')[0];
 
-      startDatePicker.value = startDate;
-      endDatePicker.value = endDate;
+      startDatePicker.value = this.startDate;
+      endDatePicker.value = this.endDate;
 
-      startDatePicker.min = startDate;
-      startDatePicker.max = endDate;
+      startDatePicker.min = this.startDate;
+      startDatePicker.max = this.endDate;
 
-      endDatePicker.min = startDate;
-      endDatePicker.max = endDate;
+      endDatePicker.min = this.startDate;
+      endDatePicker.max = this.endDate;
 
-      if (startDate == endDate){
+      if (this.startDate == this.endDate){
         startDatePicker.disabled = true;
         endDatePicker.disabled = true;
         return;
@@ -144,47 +151,17 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     }, 100);
   }
 
-  createChart(perDayRegionClicks : SVG_Region[][], region: string){
+  createChart(data : number[], dates: string[]){
     this.chart?.destroy();
-    var date = new Date(Date.now());
-
-    var timestamps : string[] = [
-      Util.formatDate(date),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true),
-      Util.formatDate(new Date(date.setDate(date.getDate() - 1)), true)];
-    timestamps.reverse();
-    var clicksData : number[] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-    for (var regionClicks of perDayRegionClicks) {
-      for (var clicks of regionClicks){
-        if (clicks.identifier == region){
-          let index = perDayRegionClicks.indexOf(regionClicks);
-          clicksData[index] = clicks.clicks;
-        }
-      }
-    }
-
-    const max = Math.max(...clicksData);
-
 
     // @ts-ignore
     this.chart = new Chart("region-by-date", {
       type: "line",
       data: {
-        labels: timestamps,
+        labels: dates,
         datasets: [{
           label: "Aufrufe",
-          data: clicksData,
+          data: data,
           backgroundColor: DashColors.RED,
           borderColor: DashColors.RED,
           borderJoinStyle: 'round',
@@ -196,8 +173,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
         aspectRatio: .5,
         scales: {
           y: {
-            min: 0,
-            max: max
+            min: 0
           },
           x: {
             display: true,
@@ -207,7 +183,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
                 size: ctx => {return ctx.chart.width / 25},
               },
               callback: (tickValue, index) => {
-                return Util.getDayString(Util.readFormattedDate(timestamps[index]).getDay());
+                return Util.getDayString(Util.readFormattedDate(dates[index]).getDay());
               }
             }
           }
@@ -250,47 +226,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     })
   }
 
-  readOldData(globals: { [x: string]: any}[]){
-    for (let i = 0; i < globals.length; i++) {
-      const region_clicks: SVG_Region[] = [];
-      for (const country in globals[i]){
-        if (country == "DE"){
-          for (const region in globals[i]["DE"]){
-            let clicks = globals[i][country][region]["gesamt"];
-            let cityArray: SVG_City[] = [];
-            for (const city in globals[i][country][region]) {
-              if (city != "gesamt") {
-                cityArray.push({clicks: globals[i][country][region][city], name: city});
-              }
-            }
-            cityArray.sort((a, b) =>  b.clicks - a.clicks);
-            cityArray.push({clicks: clicks, name: "gesamt"});
-            if (Number.isNaN(clicks)) clicks = 0;
-            region_clicks.push({identifier: region, clicks: clicks, cities: cityArray})
-          }
-        }
-        else {
-          let clicks = 0;
-          if (globals[i][country]["gesamt"] != undefined) {
-            clicks = globals[i][country]["gesamt"].gesamt;
-          }
-          let cityArray: SVG_City[] = [];
-          for (const city in globals[i][country][country]) {
-            if (city != "gesamt") {
-              cityArray.push({clicks: globals[i][country][country][city], name: city});
-            }
-          }
-          cityArray.sort((a, b) =>  b.clicks - a.clicks);
-          cityArray.push({clicks: clicks, name: "gesamt"});
-          if (Number.isNaN(clicks)) clicks = 0;
-          if (country == "BE") region_clicks.push({identifier: "BG", clicks: clicks, cities: cityArray});
-          else region_clicks.push({identifier: country, clicks: clicks, cities: cityArray});
-        }
-      }
-      this.perDayRegionClicks.push(region_clicks);
-    }
-    this.perDayRegionClicks = this.perDayRegionClicks.reverse();
-  }
   readData(data : any, svgElement: any, startDate : string, endDate : string){
     let map : Map<string, number> = new Map(Object.entries(data));
     // @ts-ignore
@@ -300,7 +235,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     for (const region of map){
       if (String(region.at(0)) == "total" || String(region.at(0)) == "totalPercentage") continue;
       this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
-      this.setRegionTooltip(svgElement, String(region.at(0)), Number(region.at(1)), startDate, endDate);
+      this.setRegionTooltip(svgElement, String(region.at(0)), Number(region.at(1)));
       if (Number(region.at(1)) > this.strongest_region.clicks) this.strongest_region = {identifier: String(region.at(0)), clicks: Number(region.at(1)), cities: []};
     }
   }
@@ -313,8 +248,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
   }
 
-  setupCities(region: string, region_clicks: number, startDate : string, endDate : string, tooltipElement: HTMLElement, tooltipCharts: HTMLElement, tooltipHeader : HTMLElement, tooltipCities : HTMLElement){
-    this.db.getGeoByRegionByDates(region, startDate, endDate).then((res: Map<string,number>) => {
+  setupCities(region: string, region_clicks: number, tooltipElement: HTMLElement, tooltipCharts: HTMLElement, tooltipHeader : HTMLElement, tooltipCities : HTMLElement){
+    this.db.getGeoByRegionByDates(region, this.startDate, this.endDate).then((res: Map<string,number>) => {
       let data : Map<string, number> = new Map(Object.entries(res));
       tooltipHeader.style.paddingBottom = "5px";
       tooltipHeader.innerText = this.getRegionFullName(region);
@@ -354,11 +289,11 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           citiesList.push({element: cityElement, clicks: city.at(1) as number});
         }
         this.isRegionSelected = "block";
-        if (SysVars.CURRENT_PAGE == "Overview") {
+        if (SysVars.CURRENT_PAGE == "Übersicht") {
           this.showCharts = "block";
           tooltipElement.classList.remove("width50");
           tooltipCharts.classList.remove("hidden");
-          this.createChart(this.perDayRegionClicks, region);
+          this.setupHistoryChart(region);
         } else {
           tooltipElement.classList.add("width50");
           tooltipCharts.classList.add("hidden");
@@ -373,23 +308,30 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     });
   }
 
-  setRegionTooltip(svg: any, region: string, region_clicks: number, startDate : string, endDate : string){
+  setupHistoryChart(region: string) {
+    this.db.getGeoByRegionByDatesListed(region, this.startDate, this.endDate).then(res => {
+      this.createChart(res.data, res.dates)
+    });
+  }
+
+  setRegionTooltip(svg: any, region: string, region_clicks: number){
     var pathElement = svg.querySelector("#" + region) ?? null;
+    if (pathElement == null) return;
+    if (pathElement.eventListeners().length > 0) return;
     var tooltipElement = document.getElementById("tooltip") ?? new HTMLElement();
     var tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
     var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
     var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
 
-    if (pathElement == null){return}
-    let fu = () => this.setupCities(region, region_clicks, startDate, endDate, tooltipElement, tooltipCharts, tooltipHeader, tooltipCities);
+
+    let fu = () => {
+      this.setupCities(region, region_clicks, tooltipElement, tooltipCharts, tooltipHeader, tooltipCities);
+    };
     let fa = () => {pathElement.style.strokeWidth = "10px";}
     let fum = () => {pathElement.style.strokeWidth = "2px";}
 
-    pathElement.removeEventListener('click', fu)
     pathElement.addEventListener('click', fu);
-    pathElement.removeEventListener('mouseenter', fa);
     pathElement.addEventListener('mouseenter', fa);
-    pathElement.removeEventListener('mouseenter', fum);
     pathElement.addEventListener('mouseleave', fum);
   }
 
@@ -413,4 +355,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   }
 
   protected readonly Math = Math;
+
+
 }

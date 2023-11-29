@@ -77,7 +77,7 @@ public class GeoController {
     /**
      * Endpoint for retrieval of a Posts Geolocation-stats by their id, only using data gathered between Date start and Date end.
      * @param id the posts id you want stats for.
-     * @param start a String containing an ISO-Format Date, marking the starting date.
+     * @param start a String containing an ISO-Format Date, marking the starting date (inclusive).
      * @param end a String containing an ISO-Format Date, marking the ending date. (inclusive)
      * @return a List of Geolocation Data in a specific order, marked for change.
      */
@@ -140,7 +140,7 @@ public class GeoController {
     /**
      * Endpoint for retrieval of a Users Geolocation Data gathered between two Dates.
      * @param id the users' id.
-     * @param start the starting date as a string in iso-format.
+     * @param start the starting date as a string in iso-format (inclusive).
      * @param end the ending date as a string in iso-format. (inclusive)
      * @return a List of Geolocation Data for the given user in a specific order.
      */
@@ -202,8 +202,8 @@ public class GeoController {
 
     /**
      * Endpoint for retrieval of all Global Geolocation Data gathered between the two Dates for the DACH region.
-     * @param start a String representing the start date of calculation format: YYYY-MM-DD
-     * @param end   a String representing the end date of calculation format: YYYY-MM-DD, (inclusive)
+     * @param start a String representing the start date of calculation format: YYYY-MM-DD (inclusive).
+     * @param end   a String representing the end date of calculation format: YYYY-MM-DD, (inclusive).
      * @return a json-string containing the clicks of each bundesland and adjacent country of interest, labeled by their ISO-Code for bundesland and english name for countries.
      * @throws JSONException if something unexpected happened.
      */
@@ -507,7 +507,7 @@ public class GeoController {
     /**
      * Endpoint for retrieval of a regions Geolocation Data with dates.
      * @param region the region or DACH country you want stats for.
-     * @param start the Date to start gathering Geo-Data.
+     * @param start the Date to start gathering Geo-Data (inclusive).
      * @param end the Date to end gathering Geo-Data (inclusive).
      * @return a JSON String with "dates" on containing the dates data was gathered for, a matching List in "data" containing the respective stats.
      * @throws JSONException .

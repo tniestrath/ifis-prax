@@ -539,17 +539,40 @@ public class GeoController {
                 listOfDates.add(date.toString());
                 if (region.equals("NL") || region.equals("AT") || region.equals("CH") || region.equals("LU")) {
                     switch (region) {
-                        case "NL" ->
+                        case "NL" -> {
+                            if (clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands") != null) {
                                 listOfData.add(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Netherlands").getClicks());
-                        case "AT" ->
+                            } else {
+                                listOfData.add(0);
+                            }
+                        }
+                        case "AT" -> {
+                            if (clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria") != null) {
                                 listOfData.add(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Austria").getClicks());
-                        case "LU" ->
+                            } else {
+                                listOfData.add(0);
+                            }
+                        }
+                        case "LU" -> {
+                            if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg") != null) {
                                 listOfData.add(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Luxembourg").getClicks());
+                            } else {
+                                listOfData.add(0);
+                            }
+                        }
                     }
                 } else if (region.equals("BG")) {
-                    listOfData.add(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks());
+                    if(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium") != null) {
+                        listOfData.add(clicksByCountryRepo.getByUniIDAndCountry(uniId, "Belgium").getClicks());
+                    } else {
+                        listOfData.add(0);
+                    }
                 } else {
-                    listOfData.add(clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, region).getClicks());
+                    if(clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, region) != null) {
+                        listOfData.add(clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, region).getClicks());
+                    } else {
+                        listOfData.add(0);
+                    }
                 }
 
             } else {

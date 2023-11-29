@@ -412,7 +412,7 @@ public class PostController {
                 if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
                     WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
                     if (Objects.equals(tt.getTaxonomy(), "category")){
-                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1) {
+                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
                             type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
                         }
                     } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
@@ -789,7 +789,7 @@ public class PostController {
                 if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
                     WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
                     if (Objects.equals(tt.getTaxonomy(), "category")){
-                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1) {
+                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
                             type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
                         }
                     } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {

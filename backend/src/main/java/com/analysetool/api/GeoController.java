@@ -551,6 +551,9 @@ public class GeoController {
                     listOfData.add(clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, region).getClicks());
                 }
 
+            } else {
+                listOfDates.add(date.toString());
+                listOfData.add(null);
             }
 
         }

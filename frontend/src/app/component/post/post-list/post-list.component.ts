@@ -11,7 +11,7 @@ import {Top5PostsComponent} from "../top5-posts/top5-posts.component";
   templateUrl: './post-list.component.html',
   styleUrls: ['./post-list.component.css', "../../dash-base/dash-base.component.css"]
 })
-export class PostListComponent extends DashBaseComponent implements AfterViewInit{
+export class PostListComponent extends DashBaseComponent{
   selectorItems : SelectorItem[] = [];
   selectorItemsBackup = this.selectorItems;
   selectorItemsLoaded = new Subject<SelectorItem[]>();
@@ -73,14 +73,7 @@ export class PostListComponent extends DashBaseComponent implements AfterViewIni
       });
       this.selectorItemsLoaded.next(this.selectorItems);
     });
-
-    this.setToolTip("Hier sind alle Posts und deren Daten aufgelistet, sortierbar nach Art oder Suche.");
   }
-
-  ngAfterViewInit(): void {
-
-  }
-
 }
 
 @Component({
@@ -91,10 +84,35 @@ export class PostListComponent extends DashBaseComponent implements AfterViewIni
 export class PodcastListComponent extends PostListComponent{
 
   override ngOnInit() {
+    // @ts-ignore
+    (document.getElementById("post-search") as HTMLInputElement).placeholder = "Podcast suchen";
+
     this.db.getPodcastsAll().then( (res: Post[])  => {
       for (const valueElement of res) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        this.selectorItems.sort((a, b) => Number(b.data.id) - Number(a.data.id));
       }
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+
+
+    this.search_input = document.getElementById("post-search");
+    this.search_input.addEventListener("input", (event : any) => {
+      this.selectorItems = this.selectorItemsBackup.filter((item) => {
+        return (item.data as Post).title.toUpperCase().includes(event.target.value.toUpperCase());
+      });
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+
+    this.type_input_all = document.getElementById("post-type-all");
+    this.type_input_all.addEventListener("change", () => {
+      this.selectorItems = this.selectorItemsBackup.sort((a, b) => Number(b.data.id) - Number(a.data.id));
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+
+    this.type_input_whitepaper = document.getElementById("post-type-whitepaper");
+    this.type_input_whitepaper.addEventListener("change", () => {
+      this.selectorItems.sort((a, b) => Number((b.data as Post).clicks) - Number((a.data as Post).clicks));
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }

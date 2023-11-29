@@ -32,6 +32,10 @@ export class PostListItemComponent implements OnInit{
         this.typeColor = DashColors.WHITEPAPER;
         break;
       }
+      case "podcast_first_series": {
+        this.typeColor = DashColors.PODCAST;
+        break;
+      }
     }
     this.formattedDate = new Date(this.data.date).toLocaleDateString();
     if (this.data.tags != null && this.data.tags.length > 0){

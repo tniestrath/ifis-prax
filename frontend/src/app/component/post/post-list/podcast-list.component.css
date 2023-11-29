@@ -1,19 +1,13 @@
-
 input[type="radio"]{
   display: none;
 }
 #post-type-all::before{
   content: "Datum";
-  color: #A0A0A0;
-  transform: scale(1);
-  transition: 120ms transform ease-in-out;
+
 }
 #post-type-all::after{
   content: "Datum";
-  color: #951D40;
-  transform: scale(0);
-  position: fixed;
-  bottom: 0;
+
 }
 #post-type-whitepaper::before{
   content: "Clicks";

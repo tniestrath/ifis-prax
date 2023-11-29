@@ -95,7 +95,7 @@ export class SearchbarComponent implements OnInit{
   }
 
   onFilterClick() {
-    if (SysVars.CURRENT_PAGE == "Users") {
+    if (SysVars.CURRENT_PAGE == "Anbieter") {
       if (!document.getElementById("filter_dropdown")) {
         this.filter_dropdown = document.createElement("div");
         this.filter_dropdown.id = "filter_dropdown";

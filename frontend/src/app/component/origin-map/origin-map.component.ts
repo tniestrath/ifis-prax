@@ -66,16 +66,26 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   strongest_region: SVG_Region = {identifier: "", cities: [], clicks: 0};
   isRegionSelected: string = "none";
   showCharts: string = "none";
-  perDayRegionClicks: SVG_Region[][] = [];
+  selectedRegion: string = "";
 
   startDate : string = "";
   endDate : string = "";
+
+  tooltipElement: HTMLElement = document.createElement("div");
+  tooltipCharts: HTMLElement = document.createElement("div");
+  tooltipHeader: HTMLElement = document.createElement("div");
+  tooltipCities: HTMLElement = document.createElement("div");
 
   ngOnInit() {
     this.setToolTip("Dies ist eine Karte, die durch Färbung die Orte angibt, von denen am meisten auf den Marktplatz zugegriffen wird. " +
       "Mit einem Click auf eine Region werden genauere Informationen angezeigt.");
     this.isRegionSelected = "none";
     this.showCharts = "none";
+
+    this.tooltipElement = document.getElementById("tooltip") ?? new HTMLElement();
+    this.tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
+    this.tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
+    this.tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
 
     let startDatePicker = document.getElementById("geoStartDate") as HTMLInputElement;
     let endDatePicker = document.getElementById("geoEndDate") as HTMLInputElement;
@@ -85,9 +95,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       // @ts-ignore
       this.db.getGeoByDates(ev.target.value, endDatePicker.value).then(res => {
         // @ts-ignore
-        this.readData(res, svgElement, ev.target.value, endDatePicker.value);
-        // @ts-ignore
         this.startDate = ev.target.value;
+        // @ts-ignore
+        this.readData(res, svgElement, ev.target.value, endDatePicker.value);
         this.cdr.detectChanges();
       });
       };
@@ -95,9 +105,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       // @ts-ignore
       this.db.getGeoByDates(startDatePicker.value, ev.target.value).then(res => {
         // @ts-ignore
-        this.readData(res, svgElement, startDatePicker.value, ev.target.value);
-        // @ts-ignore
         this.endDate = ev.target.value;
+        // @ts-ignore
+        this.readData(res, svgElement, startDatePicker.value, ev.target.value);
         this.cdr.detectChanges();
       });
     };
@@ -233,7 +243,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     // @ts-ignore
     this.percentage = this.totalDE / map.get("total");
     for (const region of map){
-      if (String(region.at(0)) == "total" || String(region.at(0)) == "totalPercentage") continue;
+      if (String(region.at(0)) == "total" || String(region.at(0)) == "totalDACH") continue;
       this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
       this.setRegionTooltip(svgElement, String(region.at(0)), Number(region.at(1)));
       if (Number(region.at(1)) > this.strongest_region.clicks) this.strongest_region = {identifier: String(region.at(0)), clicks: Number(region.at(1)), cities: []};
@@ -248,13 +258,13 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
   }
 
-  setupCities(region: string, region_clicks: number, tooltipElement: HTMLElement, tooltipCharts: HTMLElement, tooltipHeader : HTMLElement, tooltipCities : HTMLElement){
+  setupCities(region: string, region_clicks: number){
     this.db.getGeoByRegionByDates(region, this.startDate, this.endDate).then((res: Map<string,number>) => {
       let data : Map<string, number> = new Map(Object.entries(res));
-      tooltipHeader.style.paddingBottom = "5px";
-      tooltipHeader.innerText = this.getRegionFullName(region);
+      this.tooltipHeader.style.paddingBottom = "5px";
+      this.tooltipHeader.innerText = this.getRegionFullName(region);
 
-      tooltipCities.replaceChildren();
+      this.tooltipCities.replaceChildren();
       let cityElement = document.createElement('div', );
       let cityName = document.createElement('div');
       let cityClicks = document.createElement('div');
@@ -272,7 +282,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       cityClicks.innerText = Util.formatNumbers(region_clicks);
 
       if (!data.has("error")) {
+        let i = 0;
         for (const city of data) {
+          if (i > 24) continue;
           let cityElement = document.createElement('div',);
           let cityName = document.createElement('div');
           let cityClicks = document.createElement('div');
@@ -287,46 +299,46 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           cityElement.appendChild(cityName);
           cityElement.appendChild(cityClicks);
           citiesList.push({element: cityElement, clicks: city.at(1) as number});
+          i++;
         }
         this.isRegionSelected = "block";
         if (SysVars.CURRENT_PAGE == "Übersicht") {
           this.showCharts = "block";
-          tooltipElement.classList.remove("width50");
-          tooltipCharts.classList.remove("hidden");
+          this.tooltipElement.classList.remove("width50");
+          this.tooltipCharts.classList.remove("hidden");
           this.setupHistoryChart(region);
         } else {
-          tooltipElement.classList.add("width50");
-          tooltipCharts.classList.add("hidden");
+          this.tooltipElement.classList.add("width50");
+          this.tooltipCharts.classList.add("hidden");
         }
       }
       citiesList.sort((a: {element: HTMLElement, clicks: number; }, b: {element: HTMLElement, clicks: number; }) => b.clicks - a.clicks);
       citiesList = citiesList.map((a: { element: HTMLElement, clicks: number }) => {return a.element});
-      tooltipCities.append(...citiesList);
+      this.tooltipCities.append(...citiesList);
       cityElement.appendChild(cityName);
       cityElement.appendChild(cityClicks);
-      tooltipCities.appendChild(cityElement);
+      this.tooltipCities.appendChild(cityElement);
     });
   }
 
   setupHistoryChart(region: string) {
     this.db.getGeoByRegionByDatesListed(region, this.startDate, this.endDate).then(res => {
-      this.createChart(res.data, res.dates)
+      this.createChart(res.data, res.dates);
     });
   }
 
   setRegionTooltip(svg: any, region: string, region_clicks: number){
     var pathElement = svg.querySelector("#" + region) ?? null;
     if (pathElement == null) return;
-    if (pathElement.eventListeners().length > 0) return;
-    var tooltipElement = document.getElementById("tooltip") ?? new HTMLElement();
-    var tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
-    var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
-    var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
-
 
     let fu = () => {
-      this.setupCities(region, region_clicks, tooltipElement, tooltipCharts, tooltipHeader, tooltipCities);
+      this.setupCities(region, region_clicks);
+      this.selectedRegion = region;
     };
+    if (this.selectedRegion == region){
+      fu();
+    }
+    if (pathElement.eventListeners().length > 0) return;
     let fa = () => {pathElement.style.strokeWidth = "10px";}
     let fum = () => {pathElement.style.strokeWidth = "2px";}
 

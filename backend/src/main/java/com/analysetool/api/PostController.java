@@ -1208,8 +1208,8 @@ public class PostController {
                     .filter(postStat -> outliers.contains(postStat.getClicks()))
                     .map(postStat -> {
                         Map<String, Object> map = new HashMap<>();
-                        map.put("postName", postRepository.findById(postStat.getArtId()).get().getSlug());
-                        map.put("value", postStat.getClicks());
+                        map.put("postName", postRepository.findById(postStat.getArtId()).get().getTitle());
+                        map.put("views", postStat.getClicks());
                         return map;
                     })
                     .collect(Collectors.toList());
@@ -1223,8 +1223,8 @@ public class PostController {
                     .filter(postStat -> outliers.contains(postStat.getRelevance()))
                     .map(postStat -> {
                         Map<String, Object> map = new HashMap<>();
-                        map.put("postName", postRepository.findById(postStat.getArtId()).get().getSlug());
-                        map.put("value", postStat.getRelevance());
+                        map.put("postName", postRepository.findById(postStat.getArtId()).get().getTitle());
+                        map.put("relevanz", postStat.getRelevance());
                         return map;
                     })
                     .collect(Collectors.toList());

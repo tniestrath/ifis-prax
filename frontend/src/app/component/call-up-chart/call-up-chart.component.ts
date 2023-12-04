@@ -247,7 +247,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
             },
             callbacks: {
             }
-          }
+          },
         },
         interaction: {
           mode: "x",
@@ -361,7 +361,43 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
                 return timestamps[tooltipItems.at(0).dataIndex]
               }
             }
-          }
+          },
+          annotation: {
+            annotations: [
+              {
+                type: "line",
+                scaleID: "y",
+                borderColor: DashColors.RED,
+                value: (Number(clicksData.reduce((previousValue, currentValue) => previousValue + currentValue, 0)) / timestamps.length),
+                borderWidth: 2,
+                label: {
+                  content: Util.formatNumbers((Number(clicksData.reduce((previousValue, currentValue) => previousValue + currentValue, 0)) / timestamps.length).toFixed()) + " Ø",
+                  display: true,
+                  position: "center",
+                  padding: 2,
+                  font: {
+                    size: 10
+                  }
+                }
+              },
+              {
+                type: "line",
+                scaleID: "y",
+                borderColor: DashColors.BLUE,
+                value: (Number(visitorsData.reduce((previousValue, currentValue) => previousValue + currentValue, 0)) / timestamps.length),
+                borderWidth: 2,
+                label: {
+                  content: Util.formatNumbers((Number(visitorsData.reduce((previousValue, currentValue) => previousValue + currentValue, 0)) / timestamps.length).toFixed()) + " Ø",
+                  display: true,
+                  position: "center",
+                  padding: 2,
+                  font: {
+                    size: 10
+                  }
+                }
+              }
+            ]
+          },
         },
         interaction: {
           mode: "x",

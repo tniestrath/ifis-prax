@@ -41,6 +41,9 @@ public class PostController {
     private WpTermTaxonomyRepository taxTermRepo;
     @Autowired
     private WPUserRepository userRepo;
+    @Autowired
+    private PostTypeRepository postTypeRepo;
+
     PostRepository postRepository;
     PostStatsRepository statsRepo;
     WpTermRelationshipsRepository termRelationRepo;
@@ -64,89 +67,6 @@ public class PostController {
     @GetMapping("/getall")
     public List<Post> getAllPosts() {
         return postRepository.findAll();
-
-        /*JSONArray list = new JSONArray();
-        List<Post> posts;
-        List<String> tags = new ArrayList<>();
-        DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
-        if (published){
-            posts = postRepository.findPublishedPosts();
-        } else {
-            posts = postRepository.findAll();
-        }
-        if (stats) {
-            String type = "";
-            if (!posts.isEmpty()) {
-                for (Post i : posts) {
-                    if (i.getType().equals("post")) {
-                        PostStats PostStats = null;
-                        if (statsRepo.existsByArtId(i.getId())) {
-                            PostStats = statsRepo.getStatByArtID(i.getId());
-                        }
-                        List<Long> tagIDs = null;
-                        if (termRelationRepo.existsByObjectId(i.getId())) {
-                            tagIDs = termRelationRepo.getTaxIdByObject(i.getId());
-                        }
-                        List<WPTerm> terms = new ArrayList<>();
-                        if (tagIDs != null) {
-                            for (long l : tagIDs) {
-                                if (wpTermRepo.existsById(l)) {
-                                    if (wpTermRepo.findById(l).isPresent()) {
-                                        terms.add(wpTermRepo.findById(l).get());
-                                    }
-                                }
-                            }
-                        }
-                        for (WPTerm t : terms) {
-                            if (wpTermTaxonomyRepo.existsById(t.getId())) {
-                                if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()) {
-                                    WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
-                                    if (Objects.equals(tt.getTaxonomy(), "category") && tt.getTermId() != 1) {
-                                        if (wpTermRepo.findById(tt.getTermId()).isPresent()) {
-                                            type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
-                                            switch (type) {
-                                                case "artikel":
-                                                    break;
-                                                case "blog":
-                                                    break;
-                                                case "news":
-                                                    break;
-                                                default:
-                                                    type = "default";
-                                                    break;
-                                            }
-                                        }
-                                    } else {
-                                        tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
-                                    }
-                                }
-                            }
-                        }
-
-                        JSONObject obj = new JSONObject();
-                        Date date = onlyDate.parse(i.getDate().toString());
-                        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-                        obj.put("id", i.getId());
-                        obj.put("title", i.getTitle());
-                        obj.put("date", formattedDate);
-                        obj.put("type", type);
-                        obj.put("tags", tags);
-                        if (PostStats != null) {
-                            obj.put("performance", PostStats.getPerformance());
-                            obj.put("relevance", PostStats.getRelevance());
-                        } else {
-                            obj.put("performance", 0);
-                            obj.put("relevance", 0);
-                        }
-                        if (!obj.get("type").equals("default")) {
-                            list.put(obj);
-                        }
-                    }
-                }
-            }
-        }
-        return list.toString();*/
     }
 
     @GetMapping("/publishedPosts")
@@ -215,29 +135,8 @@ public class PostController {
                             }
                         }
                     }
-                    for (WPTerm t : terms) {
-                        if (wpTermTaxonomyRepo.existsById(t.getId())) {
-                            if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()) {
-                                WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
-                                if (Objects.equals(tt.getTaxonomy(), "category") && tt.getTermId() != 1) {
-                                    if (wpTermRepo.findById(tt.getTermId()).isPresent()) {
-                                        type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
-                                        switch (type) {
-                                            case "artikel":
-                                                break;
-                                            case "blog":
-                                                break;
-                                            case "news":
-                                                break;
-                                            default:
-                                                type = "default";
-                                                break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+
+                    type = getType(id);
 
                     JSONObject obj = new JSONObject();
                     Date date = onlyDate.parse(i.getDate().toString());
@@ -254,16 +153,6 @@ public class PostController {
                         obj.put("performance", 0);
                         obj.put("relevance", 0);
                     }
-
-                    //ToDo Toten Code aufräumen
-               /* if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
-                    String currentId = list.getJSONObject(list.length() - 1).getString("title");
-                   // double currentCount = list.getJSONObject(list.length() - 1).getDouble("performance");
-                    list.getJSONObject(list.length() - 1).put("title", currentId + "," + i.getTitle());
-                    //list.getJSONObject(list.length() - 1).put("performance", currentCount + 1);
-                } else {
-                    list.put(obj);
-                }*/
                     if (!obj.get("type").equals("default")) {
                         list.put(obj);
                     }
@@ -331,16 +220,14 @@ public class PostController {
             if (wpTermTaxonomyRepo.existsById(t.getId())){
                 if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
                     WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
-                    if (Objects.equals(tt.getTaxonomy(), "category")){
-                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1) {
-                            type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
-                        }
-                    } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
+                    if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
                         tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
                     }
                 }
             }
         }
+
+        type = getType(id);
 
         JSONObject obj = new JSONObject();
         DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -413,16 +300,14 @@ public class PostController {
             if (wpTermTaxonomyRepo.existsById(t.getId())){
                 if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
                     WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
-                    if (Objects.equals(tt.getTaxonomy(), "category")){
-                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
-                            type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
-                        }
-                    } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
+                    if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
                         tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
                     }
                 }
             }
         }
+
+        type = getType(id);
 
         JSONObject obj = new JSONObject();
         DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -775,6 +660,15 @@ public class PostController {
      */
     public String getType(@RequestParam long id) throws JSONException, ParseException {
         if(!postRepository.findById(id).isPresent()) {return null;}
+
+        if(postTypeRepo.getType((int) id) != null) {
+            if(!postTypeRepo.getType((int) id).contains("cyber-risk")) {
+                return postTypeRepo.getType((int) id);
+            } else {
+                return "ratgeber";
+            }
+        }
+
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
         String type = "default";
@@ -1060,21 +954,31 @@ public class PostController {
      */
     @GetMapping("/getAllPostsWithStats")
     public String getAll() throws JSONException, ParseException {
-        List<Post> posts = postRepo.findAllUserPosts();
 
         List<JSONObject> stats = new ArrayList<>();
 
 
-        for(Post post : posts) {
-            JSONObject json = new JSONObject(PostStatsByIdForFrontend(post.getId()));
-            if(json.get("type").toString().toLowerCase().contains("blog")  ||
-                    json.get("type").toString().toLowerCase().contains("news") ||
-                    json.get("type").toString().toLowerCase().contains("artikel") ||
-                    json.get("type").toString().toLowerCase().contains("whitepaper")
-            ){
+        for(Integer postId : postTypeRepo.getPostsByType("blog")) {
+                JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
                 stats.add(json);
-            }
         }
+        for(Integer postId : postTypeRepo.getPostsByType("news")) {
+            JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
+            stats.add(json);
+        }
+        for(Integer postId : postTypeRepo.getPostsByType("news")) {
+            JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
+            stats.add(json);
+        }
+        for(Integer postId : postTypeRepo.getPostsByType("artikel")) {
+            JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
+            stats.add(json);
+        }
+        for(Integer postId : postTypeRepo.getPostsByType("whitepaper")) {
+            JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
+            stats.add(json);
+        }
+
         return new JSONArray(stats).toString();
     }
 
@@ -1086,15 +990,14 @@ public class PostController {
      */
     @GetMapping("/getAllPodcastsWithStats")
     public String getAllPodcasts() throws JSONException, ParseException {
-        List<Post> posts = postRepo.findAllUserPosts();
 
         List<JSONObject> stats = new ArrayList<>();
 
-        for(Post post : posts) {
-            JSONObject json = new JSONObject(PostStatsByIdForFrontend(post.getId()));
-            if(json.get("type").toString().toLowerCase().contains("podcast")) {
-                stats.add(json);
-            }
+
+
+        for(Integer postId : postTypeRepo.getPostsByType("podcast_first_series")) {
+            JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
+            stats.add(json);
         }
         return new JSONArray(stats).toString();
 
@@ -1112,11 +1015,9 @@ public class PostController {
 
         List<JSONObject> stats = new ArrayList<>();
 
-        for(Post post : posts) {
-            JSONObject json = new JSONObject(PostStatsByIdForFrontend(post.getId()));
-            if(json.get("type").toString().toLowerCase().contains("ratgeber") || json.get("type").toString().toLowerCase().contains("cyber-risk-check")) {
-                stats.add(json);
-            }
+        for(Integer postId : postTypeRepo.getPostsByType("cyber-risk-check")) {
+            JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
+            stats.add(json);
         }
         return new JSONArray(stats).toString();
 

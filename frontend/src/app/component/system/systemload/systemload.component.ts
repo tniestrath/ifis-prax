@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {DashColors} from "../../../util/Util";
+import {SysVars} from "../../../services/sys-vars-service";
 
 
 export interface SystemUsage {
@@ -24,12 +25,13 @@ export class SystemloadComponent extends DashBaseComponent implements OnInit{
       this.createMemoryChart(res.memory_record);
     })
     setInterval(() => {
-      this.db.getSystemUsageNow().then(res => {
-        this.addData(this.chart, String(res.cpu), res.cpu);
-        this.addData(this.chart_memory, String(res.memory), res.memory);
-      })
+      if (SysVars.CURRENT_PAGE == "Übersicht"){
+        this.db.getSystemUsageNow().then(res => {
+          this.addData(this.chart, String(res.cpu), res.cpu);
+          this.addData(this.chart_memory, String(res.memory), res.memory);
+        });
+      }
     }, 1000 * 60);
-
     this.setToolTip("Hier wird die Systemauslastung der letzten Stunde angezeigt.");
   }
 

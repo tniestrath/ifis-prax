@@ -10,6 +10,11 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -314,6 +319,8 @@ public class PostController {
         Date date = onlyDate.parse(post.getDate().toString());
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
+        String filepath = postMetaRepo.getFilePath(id);
+
         obj.put("id", post.getId());
         obj.put("title", post.getTitle());
         obj.put("date", formattedDate);
@@ -326,6 +333,11 @@ public class PostController {
             obj.put("relevance", ((float)PostStats.getRelevance()/maxRelevance));
             obj.put("clicks", PostStats.getClicks().toString());
             obj.put("lettercount", PostStats.getLettercount());
+            if(getType(id).contains("podcast")) {
+                try {
+                    obj.put("duration", getAudioDuration(filepath));
+                } catch (Exception ignored) {}
+            }
         }else {
             obj.put("performance",0);
             obj.put("relevance",0);
@@ -1500,6 +1512,19 @@ public class PostController {
         combinedResult.put("outliers", outliersArray);
 
         return combinedResult.toString();
+    }
+
+
+    public double getAudioDuration(String filePath) throws IOException, UnsupportedAudioFileException {
+        File audioFile = new File(filePath);
+
+        // Get the audio file format
+        AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audioFile);
+
+        // Get the audio file duration in seconds
+        long microsecondDuration = (Long) fileFormat.properties().get("duration");
+
+        return microsecondDuration / 1_000_000.0;
     }
 
 }

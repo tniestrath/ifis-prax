@@ -1,0 +1,25 @@
+input[type="radio"]{
+  display: none;
+}
+#post-type-all::before{
+  content: "Datum";
+
+}
+#post-type-all::after{
+  content: "Datum";
+
+}
+#post-type-whitepaper::before{
+  content: "Clicks";
+}
+#post-type-whitepaper::after{
+  content: "Clicks";
+  color: #951D40;
+}
+
+#post-type-all{
+  display: grid;
+}
+#post-type-whitepaper{
+  display: grid;
+}

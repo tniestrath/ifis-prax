@@ -1,6 +1,83 @@
 <div class="component-box user-plan-box">
   <canvas id="user_plan_chart">{{chart}}</canvas>
   <div class="legend-box user-plan-content-box">
-    <p class="user-plan-item-head">Angemeldete Nutzer: {{chart_total}}</p>
+    <div id="user-plan-item-head">
+      <p>Registriert: </p><div [ngStyle]="{display: 'flex', flexDirection: 'row',  width: '35%', justifyContent: 'space-between'}"><p>{{chart_total}}</p><p>{{prev_total_text}}</p></div>
+    </div>
+      <div id="legend-box">
+        <ul style="display: flex; flex-direction: column; margin: 0px; padding: 0px; height: 100%;">
+          <li style="display: flex; height: 2vh;; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.GREY}">
+              </span>
+              <p style="margin: 0px;">Ohne Abo:</p>
+            </div>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[0]}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[0] >= 0 ? "+" + prev_data[0] : prev_data[0].toString()}}
+                <span id="oaList" class="tooltip-text"></span>
+              </p>
+
+            </div>
+          </li>
+          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.BLUE}">
+              </span>
+              <p style="margin: 0px;">Basis:</p>
+            </div>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[1]}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[1] >= 0 ? "+" + prev_data[1] : prev_data[1].toString()}}
+                <span id="basicList" class="tooltip-text"></span>
+              </p>
+            </div>
+          </li>
+          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.DARK_BLUE}">
+              </span>
+              <p style="margin: 0px;">Basis-Plus:</p>
+            </div>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[2]}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[2] >= 0 ? "+" + prev_data[2] : prev_data[2].toString()}}
+                <span id="bpList" class="tooltip-text"></span>
+              </p>
+            </div>
+          </li>
+          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.RED}">
+              </span>
+              <p style="margin: 0px;">Plus:</p>
+            </div>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[3]}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[3] >= 0 ? "+" + prev_data[3] : prev_data[3].toString()}}
+                <span id="plusList" class="tooltip-text"></span>
+              </p>
+            </div>
+          </li>
+          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.DARK_RED}">
+              </span>
+              <p style="margin: 0px;">Premium:</p>
+            </div>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[4]}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[4] >= 0 ? "+" + prev_data[4] : prev_data[4].toString()}}
+                <span id="premiumList" class="tooltip-text"></span>
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
   </div>
 </div>

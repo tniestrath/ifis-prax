@@ -1,0 +1,6 @@
+/*{
+  "/api": {
+    "target": "http://analyse.it-sicherheit.de:8080",
+    "secure": false
+  }
+}*/

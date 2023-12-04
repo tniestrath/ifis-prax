@@ -55,15 +55,15 @@ export class DashBaseComponent implements OnDestroy{
       "  border: 1px solid #A0A0A0;\n" +
       "  box-sizing: border-box;\n" +
       "  text-align: left;\n" +
-      "  font-size: 15px;\n" +
+      "  font-size: 1.5vh;\n" +
       "  padding: 5px;\n" +
       "  border-radius: 5px;\n" +
       "  position: absolute;\n" +
       "  top: -24px;\n" +
       "  right: -8px;\n" +
       "  min-height: 30px;\n" +
-      "  min-width: 250px;\n" +
-      "  z-index: 1;");
+      "  width: 15.5vw;\n" +
+      "  z-index: 100;");
     tooltipContainer.appendChild(this.tooltip);
     this.helpButton.addEventListener("mouseenter", () => {this.tooltip.style.visibility = "visible"; this.cdr.detectChanges()});
     this.helpButton.addEventListener("mouseleave", () => {this.tooltip.style.visibility = "hidden"; this.cdr.detectChanges()});

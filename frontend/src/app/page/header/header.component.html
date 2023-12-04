@@ -1,10 +1,12 @@
 <div class="page-header">
   <img src="../../assets/ifismpdashboard.png"/>
-  <div class="page-header-title" (click)="setSelected('Users')">
-    <h1>Dashboard</h1>
-  </div>
 
   <div *ngFor="let element of navElements">
     <div class="nav-element" [innerText]="element" (click)="setSelected(element)"></div>
   </div>
 </div>
+<div id="loading-bar">
+  <div id="loading-bar-progress"></div>
+  {{html_err_code}}
+</div>
+

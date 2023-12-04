@@ -86,7 +86,7 @@ export class PotentialComponent extends DashBaseComponent implements OnInit, OnD
   }
 
   ngOnInit(): void {
-    this.createChart(["Artikel","Blogeinträge", "Pressemitteilungen", "Interaktion"], [2,4,5, 8], [5,5,5,5], null);
+    this.createChart(["Artikel","Blogeinträge", "News", "Interaktion"], [2,4,5, 8], [5,5,5,5], null);
   }
 
 

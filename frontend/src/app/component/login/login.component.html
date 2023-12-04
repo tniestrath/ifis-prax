@@ -4,7 +4,7 @@
     <form name="login-form" (submit)="onSubmit(username.value, userpass.value)">
       <input #username name="user-name" type="text" placeholder="Nutzername">
       <input #userpass name="user-pass" type="password" placeholder="Passwort">
-      <label id="login-submit-label" *ngIf="incorrect" for="login-submit" >Anmeldedaten inkorrekt</label>
+      <label id="login-submit-label" *ngIf="loginError" for="login-submit" >{{loginErrorMsg}}</label>
       <button id="login-submit" type="submit" name="login-submit">Anmelden</button>
     </form>
   </div>

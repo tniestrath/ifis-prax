@@ -5,11 +5,13 @@ export class User extends DbObject {
   constructor(public override id: string,
               public email: string,
               public displayName: string,
-              public accountType: string, // basic plus premium admin ?customer?
-              public postCount: number,
-              public potential: number,
-              public performance: number,
+              public profileViews: number,
               public postViews: number,
+              public postCount: number,
+              public performance: number,
+              public accountType: string, // basic plus premium admin ?customer?
+              public potential: number,
+
               public img: SafeUrl) {
     super(id, displayName);
   }

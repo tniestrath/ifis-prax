@@ -19,7 +19,8 @@ public class SearchStats {
     @Column
     private Boolean searchSuccessFlag;
 
-    @Column(length = 100)
+
+    @Column(columnDefinition = "TEXT")
     private String searchString;
 
     @Column

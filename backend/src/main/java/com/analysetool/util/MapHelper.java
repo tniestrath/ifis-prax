@@ -24,6 +24,9 @@ public final class MapHelper {
      * @param map2 this map will be merged from.
      */
     public static void mergeLocationMaps(Map<String, Map<String, Map<String, Long>>> map1, Map<String, Map<String, Map<String, Long>>> map2) {
+        if(map2 == null) {
+            return;
+        }
         for (Map.Entry<String, Map<String, Map<String, Long>>> outerEntry : map2.entrySet()) {
             String outerKey = outerEntry.getKey();
             Map<String, Map<String, Long>> innerMap2 = outerEntry.getValue();
@@ -51,6 +54,29 @@ public final class MapHelper {
         }
     }
 
+    /**
+     *
+     * @param viewsByLocation
+     * @return
+     */
+    public static Map<String, Map<String, Map<String, Long>>> initializeViewsByLocation(Map<String, Map<String, Map<String, Long>>> viewsByLocation) {
+        String[] germanStates = {"HH", "HB", "BE", "MV", "BB", "SN", "ST", "BY", "SL", "RP", "SH", "TH", "NB", "HE", "BW", "NW"};
+        String[] otherCountries = {"NL", "BG", "SW", "AT", "LU"};
+
+        Map<String, Long> zeroMap = new HashMap<>();
+        zeroMap.put("gesamt", 0L);
+
+        for (String state : germanStates) {
+            viewsByLocation.computeIfAbsent("DE", k -> new HashMap<>()).put(state, new HashMap<>(zeroMap));
+        }
+
+        for (String country : otherCountries) {
+            viewsByLocation.computeIfAbsent(country, k -> new HashMap<>()).put(country, new HashMap<>(zeroMap));
+        }
+
+        return viewsByLocation;
+    }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     //Only private methods used internally from this point forward.
@@ -76,6 +102,7 @@ public final class MapHelper {
             innermostMap1.merge(key, value, Long::sum);
         }
     }
+
 
 
 }

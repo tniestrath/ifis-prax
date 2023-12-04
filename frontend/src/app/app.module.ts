@@ -1,4 +1,4 @@
-import {ModuleWithProviders, NgModule} from '@angular/core';
+import {NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -23,7 +23,7 @@ import { DashBaseComponent } from './component/dash-base/dash-base.component';
 import { ClicksComponent } from './component/clicks/clicks.component';
 import { TagListComponent } from './component/tag/tag-list/tag-list.component';
 import { TagListItemComponent } from './component/tag/tag-list/tag-list-item/tag-list-item.component';
-import { PostChartComponent } from './component/post-chart/post-chart.component';
+import { PostChartComponent } from './component/post/post-chart/post-chart.component';
 import { GridComponent } from './grid/grid.component';
 import { GridCardDirective } from './grid/grid-card.directive';
 import { RelevanceComponent } from './component/gauge/relevance/relevance.component';
@@ -34,6 +34,17 @@ import { LoginComponent } from './component/login/login.component';
 import { OriginMapComponent } from './component/origin-map/origin-map.component';
 import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time.component';
 import { TagPieComponent } from './component/tag/tag-pie/tag-pie.component';
+import { ImgFallbackDirective } from './img-fallback.directive';
+import { PostListComponent, PodcastListComponent } from './component/post/post-list/post-list.component';
+import { PostListItemComponent } from './component/post/post-list/post-list-item/post-list-item.component';
+import { TagChartComponent } from './component/tag/tag-chart/tag-chart.component';
+import { CallUpChartComponent } from './component/call-up-chart/call-up-chart.component';
+import { OriginByTimeChartComponent } from './component/origin-by-time-chart/origin-by-time-chart.component';
+import { Top5PostsComponent, Top5ArticleComponent, Top5BlogComponent, Top5NewsComponent, Top5WhitepaperComponent } from './component/post/top5-posts/top5-posts.component';
+import { NewsletterStatsComponent } from './component/newsletter-stats/newsletter-stats.component';
+import { EventsStatsComponent } from './component/events-stats/events-stats.component';
+import { SystemloadComponent } from './component/system/systemload/systemload.component';
+import { PostTypeComponent } from './component/post/post-type/post-type.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +73,23 @@ import { TagPieComponent } from './component/tag/tag-pie/tag-pie.component';
     LoginComponent,
     OriginMapComponent,
     ClicksByTimeComponent,
-    TagPieComponent
+    TagPieComponent,
+    ImgFallbackDirective,
+    PostListComponent,
+    PodcastListComponent,
+    PostListItemComponent,
+    TagChartComponent,
+    CallUpChartComponent,
+    OriginByTimeChartComponent,
+    Top5PostsComponent,
+    Top5ArticleComponent,
+    Top5BlogComponent,
+    Top5NewsComponent,
+    Top5WhitepaperComponent,
+    NewsletterStatsComponent,
+    EventsStatsComponent,
+    SystemloadComponent,
+    PostTypeComponent
   ],
     imports: [
         BrowserModule,

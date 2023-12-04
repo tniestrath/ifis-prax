@@ -6,7 +6,7 @@ import {SysVars} from "../../services/sys-vars-service";
 @Component({
   selector: 'dash-post',
   templateUrl: './post.component.html',
-  styleUrls: ['./post.component.css', "../../component/dash-base/dash-base.component.html"]
+  styleUrls: ['./post.component.css', "../../component/dash-base/dash-base.component.css"]
 })
 export class PostComponent extends DashBaseComponent implements OnInit{
   post: Post = new Post();
@@ -17,30 +17,26 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   formattedSSR: number = 0;
 
   ngOnInit(): void {
+    this.setToolTip("Hier werden Ihnen Einzelheiten zu einem Post angezeigt. " +
+      "Diesen können Sie links im Graphen anclicken um hier Details anzeigen zu lassen.");
     this.db.getUserNewestPost(SysVars.USER_ID).then(res => {
-      Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value => {
-        this.formatPost(res, value[0], value[1], false)
-      })
+        this.formatPost(res, false)
     });
 
     SysVars.SELECTED_POST_ID.subscribe(id => {
-      Promise.all([this.db.getMaxPerformance(), this.db.getMaxRelevance()]).then(value =>
-      {
-        this.db.getPostById(id).then(res => {
-          this.formatPost(res, value[0], value[1], true)})
-      })
-
-    });
+      this.db.getPostById(id).then(res => {
+          this.formatPost(res, true)})
+      });
   }
 
-  formatPost(res : Post, maxPerf : number, maxRel : number, isSelected : boolean){
+  formatPost(res : Post, isSelected : boolean){
     if (isSelected){
       switch (res.type) {
         case "artikel": res.type = "Ausgewählter Artikel";
           break;
         case "blog": res.type = "Ausgewählter Blog Eintrag";
           break;
-        case "pressemitteilung": res.type = "Ausgewählte Pressemitteilung";
+        case "news": res.type = "Ausgewählter News Beitrag";
           break;
       }
     } else {
@@ -49,18 +45,18 @@ export class PostComponent extends DashBaseComponent implements OnInit{
           break;
         case "blog": res.type = "Ihr aktuellster Blog Eintrag";
           break;
-        case "pressemitteilung": res.type = "Ihre aktuellste Pressemitteilung";
+        case "news": res.type = "Ihr aktuellster News Beitrag";
           break;
       }
     }
     this.formattedDate = new Date(res.date).toLocaleDateString();
     this.formattedTags = res.tags?.toString().replace("[", "").replace("]", "");
-    this.formattedPerformance = (res.performance / maxPerf) * 100;
-    this.formattedRelevanz = (res.relevance / maxRel) * 100;
+    this.formattedPerformance = res.performance * 100;
+    this.formattedRelevanz = res.relevance * 100;
     // @ts-ignore
     this.formattedSSR = res.searchSuccessRate * 100;
 
     // @ts-ignore
-    this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, res.performance, res.relevance, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate, res.lettercount);
+    this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, res.performance, res.relevance, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate, res.lettercount, res.authors);
   }
 }

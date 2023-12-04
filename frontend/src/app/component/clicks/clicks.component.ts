@@ -3,6 +3,7 @@ import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import {SysVars} from "../../services/sys-vars-service";
+import Util, {DashColors} from "../../util/Util";
 
 @Component({
   selector: 'dash-clicks',
@@ -11,12 +12,13 @@ import {SysVars} from "../../services/sys-vars-service";
 })
 export class ClicksComponent extends DashBaseComponent implements OnInit, AfterViewInit{
 
-  colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
+  colors : string[] = [DashColors.ARTICLE, DashColors.BLOG, DashColors.NEWS];
   c_chart: any;
   p_chart: any;
 
   c_chart_total : number = 0;
   p_chart_total : number  = 0;
+  isError: boolean = false;
 
   createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){
 
@@ -37,32 +39,20 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
         //@ts-ignore
         const total : number = data.datasets[0].data.reduce((a, b) => a + b, 0);
         ctx.beginPath();
-        ctx.arc(x, y, chart.chartArea.width / 6, 0, 2 * Math.PI, false);
+        ctx.arc(x, y, Math.sqrt(chart.chartArea.width * chart.chartArea.height) / 6, 0, 2 * Math.PI, false);
         ctx.closePath();
         ctx.fill();
 
 
         ctx.globalCompositeOperation = 'source-over';
 
-        var totalText = String(total);
-        if (total > 1000){
-          totalText = +parseFloat(String(total / 1000)).toFixed( 1 ) + "K";
-        }
-        else if (total > 9999){
-          totalText = (total/1000).toFixed() + "K";
-        }
-        else if (total > 1000000){
-          totalText = (total/1000000).toFixed(1) + "M";
-        }
-        else if (total > 9999999){
-          totalText = (total/1000000).toFixed() + "M";
-        }
+        var totalText = Util.formatNumbers(total);
         ctx.font = (chart.chartArea.height / 6.5) + "px sans-serif";
         ctx.fillStyle = "#fff";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         // @ts-ignore
-        ctx.fillText(totalText, x, y);
+        ctx.fillText(totalText, x, y+2);
       }
     }
 
@@ -200,6 +190,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
   }
 
   ngOnInit(): void {
+    this.setToolTip("Hier sehen Sie wie die Impressionen ihres Profils und Ihrer Beiträge auf einzelne Bereiche verteilt sind.");
     if (this.c_chart != undefined) {
       this.c_chart.destroy();
     }
@@ -209,14 +200,21 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
     this.c_chart_total = 0;
     this.p_chart_total = 0;
 
-    this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsPresse: number}) => {
-      this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "Pressemitteilung"], [res.viewsArtikel,res.viewsBlog, res.viewsPresse], undefined);
-      this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsPresse)], undefined);
-      this.createLegend("clicks-content-box", this.c_chart);
-      this.createLegend("clicks-profile-box", this.p_chart);
-      this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsPresse;
-      this.p_chart_total = res.viewsProfile + this.c_chart_total;
-      this.cdr.detectChanges();
+    this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsPresse: number} | string) => {
+      if (typeof res !== "string"){
+        this.isError = false;
+        this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News"], [res.viewsArtikel,res.viewsBlog, res.viewsPresse], undefined);
+        this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsPresse)], undefined);
+        this.createLegend("clicks-content-box", this.c_chart);
+        this.createLegend("clicks-profile-box", this.p_chart);
+        this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsPresse;
+        this.p_chart_total = res.viewsProfile + this.c_chart_total;
+        this.cdr.detectChanges();
+      }
+      else {
+        this.isError = true;
+        this.cdr.detectChanges();
+      }
 
       //this.pdf.exportAsPDF(this.p_chart);
     })

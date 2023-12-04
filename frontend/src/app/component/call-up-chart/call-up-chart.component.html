@@ -1,0 +1,22 @@
+<div class="component-box chart-box">
+  <form class="uni-chart-form">
+    <input type="radio" name="time_range" value="all_time" id="uni-range-alltime" (change)="getData($event)">
+    <input type="radio" name="time_range" value="half_year" id="uni-range-halfyear" (change)="getData($event)">
+    <input type="radio" name="time_range" value="month" id="uni-range-month" checked (change)="getData($event)">
+    <input type="radio" name="time_range" value="week" id="uni-range-week" (change)="getData($event)">
+    <input type="radio" name="time_range" value="day" id="uni-range-day" (change)="getData($event)">
+  </form>
+  <div class="chart-canvas-box">
+    <div id="uni-chart-box" [style]="{width:'73%'}">
+      <canvas id="uni-chart">{{chart}}</canvas>
+    </div>
+    <div id="slide-out-button">
+      <p><</p>
+    </div>
+    <div id="categories-chart-box" [style]="{width:'25%'}">
+      <canvas id="categories-chart">{{categories_chart}}</canvas>
+    </div>
+
+  </div>
+
+</div>

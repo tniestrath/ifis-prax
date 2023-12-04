@@ -1,0 +1,44 @@
+<div class="component-box top5-box">
+  <div class="top5-header">
+    <div class="top5-title">
+      <p>Top 5 {{getTypeString()}} sortiert nach {{this.sorter}}</p>
+    </div>
+    <input type="radio" [id]="'top5-'+ postType + '-performance'" [name]="postType" value="performance" checked (change)="getData($event)">
+    <input type="radio" [id]="'top5-'+ postType + '-relevance'" [name]="postType" value="relevance" (change)="getData($event)">
+    <input type="radio" [id]="'top5-'+ postType + '-clicks'" [name]="postType" value="clicks" (change)="getData($event)">
+  </div>
+  <div class="top5-post-box">
+    <div class="post-box" *ngFor="let data of dataArray">
+      <div class="post-details">
+        <div class="post-detail" [style]="{'borderColor': data['typeColor'], 'border': '2px solid'}">
+          <div class="post-label" [style]="{'color': data['typeColor'], 'font-weight': 'bold'}">{{data["type"].toUpperCase()}}</div>
+          <p>{{getTitleSliced(String(data["title"]))}}</p>
+        </div>
+        <div class="post-detail-group-3">
+          <div class="post-detail">
+            <div class="post-label">Datum</div>
+            <p>{{data["date"]}}</p>
+          </div>
+          <div class="post-detail">
+            <div class="post-label" >Clicks</div>
+            <p>{{Util.formatNumbers(data["clicks"])}}</p>
+          </div>
+          <div class="post-detail">
+            <div class="post-label" >Zeichen</div>
+            <p>{{Util.formatNumbers(data["lettercount"])}}</p>
+          </div>
+        </div>
+        <div class="post-detail-group-2">
+          <div class="post-detail">
+            <div class="post-label">Autoren</div>
+            <p>{{data["authors"]}}</p>
+          </div>
+          <div class="post-detail">
+            <div class="post-label">Themen</div>
+            <p>{{String(data["tags"]).replace("[", "").replace("]", "")}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

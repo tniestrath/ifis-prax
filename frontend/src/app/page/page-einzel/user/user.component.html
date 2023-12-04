@@ -1,10 +1,13 @@
 <div class="user-box" (click)="onClick()">
-  <img alt="" [src]="getUserImg()">
+  <img alt="" [src]="getUserImg()" dashImgFallback>
   <div class="user-name-box">
     <p>{{data.displayName}}</p>
   </div>
   <div class="user-type-box">
     <p>{{data.accountType}}</p>
+  </div>
+  <div class="user-id-box">
+    <p>{{data.id}}</p>
   </div>
   <div class="user-potential-box">
     <div class="potential-background">
@@ -15,9 +18,9 @@
     <p>{{data.email}}</p>
   </div>
   <div class="user-post-count-box">
-    <p>Posts: {{data.postCount}}</p>
+    <p>Views: {{Util.formatNumbers(data.profileViews + data.postViews)}}</p>
   </div>
   <div class="user-performance-box">
-    <img [src]="'assets/performance_icon_' + data.performance + '.png'" alt="performance indicator">
+    <img [src]="'assets/performance_icon_' + performance_image_id + '.png'" alt="performance indicator">
   </div>
 </div>

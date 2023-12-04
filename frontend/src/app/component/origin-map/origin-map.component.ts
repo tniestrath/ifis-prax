@@ -1,12 +1,9 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {SysVars} from "../../services/sys-vars-service";
-import {User} from "../../page/page-einzel/user/user";
-import {DbObject} from "../../services/DbObject";
-import {DbService} from "../../services/db.service";
-import {CookieService} from "ngx-cookie-service";
-import {PdfService} from "../../services/pdf.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import Util, {DashColors} from "../../util/Util";
+import {Chart} from "chart.js/auto";
 
 export enum Region {
   HH = "Hamburg",
@@ -21,16 +18,26 @@ export enum Region {
   RP = "Rheinland-Pfalz",
   SH = "Schleswig-Holstein",
   TH = "Thüringen",
-  NB = "Niedersachsen",
+  NI = "Niedersachsen",
   HE = "Hessen",
   BW = "Baden-Württemberg",
   NW = "Nordrhein-Westfalen",
 
   NL = "Niederlande",
   BG = "Belgien",
-  SW = "Schweiz",
+  CH = "Schweiz",
   AT = "Österreich",
   LU = "Luxemburg"
+}
+
+interface SVG_Region {
+  identifier : string,
+  clicks : number,
+  cities : SVG_City[]
+}
+interface SVG_City {
+  name : string,
+  clicks : number
 }
 
 @Component({
@@ -53,154 +60,297 @@ export enum Region {
 })
 export class OriginMapComponent extends DashBaseComponent implements OnInit{
   totalDE: number = 0;
-  totalGlobal: number = 0;
+  percentage: number = 0;
   isScaled = false;
 
+  strongest_region: SVG_Region = {identifier: "", cities: [], clicks: 0};
+  isRegionSelected: string = "none";
+  showCharts: string = "none";
+  selectedRegion: string = "";
+
+  region_clicks : SVG_Region[] = [];
+
+  startDate : string = "";
+  endDate : string = "";
+
+  tooltipElement: HTMLElement = document.createElement("div");
+  tooltipCharts: HTMLElement = document.createElement("div");
+  tooltipHeader: HTMLElement = document.createElement("div");
+  tooltipCities: HTMLElement = document.createElement("div");
+
   ngOnInit() {
+    this.setToolTip("Dies ist eine Karte, die durch Färbung die Orte angibt, von denen am meisten auf den Marktplatz zugegriffen wird. " +
+      "Mit einem Click auf eine Region werden genauere Informationen angezeigt.");
+    this.isRegionSelected = "none";
+    this.showCharts = "none";
+
+    this.tooltipElement = document.getElementById("tooltip") ?? new HTMLElement();
+    this.tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
+    this.tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
+    this.tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
+
+    let startDatePicker = document.getElementById("geoStartDate") as HTMLInputElement;
+    let endDatePicker = document.getElementById("geoEndDate") as HTMLInputElement;
+    const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
+
+    startDatePicker.onchange = ev => {
+      // @ts-ignore
+      this.db.getGeoByDates(ev.target.value, endDatePicker.value).then(res => {
+        // @ts-ignore
+        this.startDate = ev.target.value;
+        // @ts-ignore
+        this.readData(res, svgElement);
+        this.cdr.detectChanges();
+      });
+      };
+    endDatePicker.onchange = ev => {
+      // @ts-ignore
+      this.db.getGeoByDates(startDatePicker.value, ev.target.value).then(res => {
+        // @ts-ignore
+        this.endDate = ev.target.value;
+        // @ts-ignore
+        this.readData(res, svgElement);
+        this.cdr.detectChanges();
+      });
+    };
+
+    this.db.getGeoTimespan().then(res => {
+      let startDatePicker = document.getElementById("geoStartDate") as HTMLInputElement;
+      let endDatePicker = document.getElementById("geoEndDate") as HTMLInputElement;
+      if (res == undefined){
+        startDatePicker.disabled = true;
+        endDatePicker.disabled = true;
+        return;
+      } else {
+        startDatePicker.disabled = false;
+        endDatePicker.disabled = false;
+      }
+      this.startDate = res[0].split('T')[0];
+      this.endDate = res[1].split('T')[0];
+
+      startDatePicker.value = this.startDate;
+      endDatePicker.value = this.endDate;
+
+      startDatePicker.min = this.startDate;
+      startDatePicker.max = this.endDate;
+
+      endDatePicker.min = this.startDate;
+      endDatePicker.max = this.endDate;
+
+      if (this.startDate == this.endDate){
+        startDatePicker.disabled = true;
+        endDatePicker.disabled = true;
+        return;
+      }
+    });
+
     setTimeout(() => {
       this.isScaled = true;
-      const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
       if (svgElement) {
         // @ts-ignore
         if (SysVars.CURRENT_PAGE == "Users") {
           this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID)).then(res => {
-            this.buildMap(res, svgElement);
+            this.readData(res, svgElement);
             this.cdr.detectChanges();
           });
         } else {
-          this.db.getOriginMapAll().then(res => {
-            this.buildMap(res, svgElement);
+          this.db.getGeoAll().then(res => {
+            this.readData(res, svgElement);
             this.cdr.detectChanges();
-          })
+          });
         }
       }
     }, 100);
   }
 
+  createChart(data : number[], dates: string[]){
+    this.chart?.destroy();
 
-buildMap(ip_map: { [x: string]: any; hasOwnProperty: (arg0: string) => any; }, svgElement: any){
-
-
-    var global_gesamt = 0;
-    for (const country in ip_map) {
-      var country_gesamt = 0;
-      if (ip_map.hasOwnProperty(country)) {
-        // @ts-ignore
-        const regions = ip_map[country];
-        for (const region in regions) {
-          if (regions.hasOwnProperty(region)) {
-            const cities = regions[region];
-
-            var cityArray = [];
-            var region_gesamt = 0;
-            for (const name in cities) {
-              if (cities.hasOwnProperty(name)) {
-                const clicks: number = cities[name];
-                cityArray.push({name, clicks})
-                if (name == "gesamt") {
-                  region_gesamt = clicks;
-                }
-              }
-            }
-            if (country == "DE") {
-              if (region == "gesamt") {
-                this.totalDE = region_gesamt;
-              }
-            } else {
-              this.totalGlobal = region_gesamt - this.totalDE;
-
-            }
-            if (region != "gesamt") {
-              if (country == "BG") {
-
-              } else if (country == "BE") {
-                if (region == "BE") {
-                  this.setRegionTooltip(svgElement, "BG", cityArray);
-                  this.setRegionColor(svgElement, "BG", region_gesamt);
-                }
-              } else {
-                this.setRegionTooltip(svgElement, region, cityArray);
-                this.setRegionColor(svgElement, region, region_gesamt);
+    // @ts-ignore
+    this.chart = new Chart("region-by-date", {
+      type: "line",
+      data: {
+        labels: dates,
+        datasets: [{
+          label: "Aufrufe",
+          data: data,
+          backgroundColor: DashColors.RED,
+          borderColor: DashColors.RED,
+          borderJoinStyle: 'round',
+          borderWidth: 5
+        }]
+      },
+      options: {
+        clip: false,
+        aspectRatio: .5,
+        scales: {
+          y: {
+            min: 0
+          },
+          x: {
+            display: true,
+            ticks: {
+              maxRotation: 0,
+              font: {
+                size: ctx => {return ctx.chart.width / 25},
+              },
+              callback: (tickValue, index) => {
+                return Util.getDayString(new Date(dates[index]).getDay());
               }
             }
           }
+        },
+        plugins: {
+          datalabels: {
+            display: false
+          },
+          title: {
+            display: false,
+            text: "",
+            position: "bottom",
+            fullSize: true,
+            font: {
+              size: 18,
+              weight: "bold",
+              family: 'Times New Roman'
+            }
+          },
+          legend: {
+            display: false,
+            position: "bottom"
+          },
+          tooltip: {
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            },
+            callbacks: {
+            }
+          }
+        },
+        interaction: {
+          mode: "nearest",
+          intersect: true
         }
       }
+    })
+  }
+
+  readData(data : any, svgElement: any){
+    let map : Map<string, number> = new Map(Object.entries(data));
+    // @ts-ignore
+    this.totalDE = map.get("totalDACH");
+    // @ts-ignore
+    this.percentage = this.totalDE / map.get("total");
+    this.region_clicks = [];
+    for (const region of map){
+      if (String(region.at(0)) == "total" || String(region.at(0)) == "totalDACH") continue;
+      this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
+      this.region_clicks.push({identifier: String(region.at(0)), clicks: Number(region.at(1)), cities: []});
+      this.setRegionTooltip(svgElement, String(region.at(0)));
     }
   }
 
-  setRegionColor(svg : any, region : string, clicks : number){
+  setRegionColor(svg : any, region : string, clicks : number, clicks_global : number){
     var pathElement = svg.querySelector("#" + region) ?? null;
     if (pathElement == null){return}
     pathElement.style =
-      "fill:" + this.interpolateColor( "rgb(90, 121, 149)", "rgb(122, 24, 51)", 100, Math.max(Math.min(clicks/this.totalDE, .5), .1)*200) +
+      "fill:" + this.interpolateColor( "rgb(90, 121, 149)", "rgb(122, 24, 51)", clicks_global,  Math.max(clicks*1.5, clicks_global/8)) +
       ";stroke:#FFFFFF;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"
   }
 
-  setRegionTooltip(svg: any, region : string, cities : {name : string, clicks : number}[]){
-    var pathElement = svg.querySelector("#" + region) ?? null;
-    var tooltip = document.getElementById('tooltip') ?? new HTMLDivElement();
-    var tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLDivElement();
-    var tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLDivElement();
+  setupCities(region: string, region_clicks: SVG_Region[]){
+    // @ts-ignore
+    let gesamt = region_clicks.find(value => value.identifier == region).clicks;
 
-    if (pathElement == null){return}
+    this.db.getGeoByRegionByDates(region, this.startDate, this.endDate).then((res: Map<string,number>) => {
+      let data : Map<string, number> = new Map(Object.entries(res));
+      this.tooltipHeader.style.paddingBottom = "5px";
+      this.tooltipHeader.innerText = this.getRegionFullName(region);
 
-    pathElement.addEventListener('click', () => {
-      var pathBoundingBox = pathElement.getBoundingClientRect();
-      var pathCenterX = pathBoundingBox.x + pathBoundingBox.width / 2;
-      var pathCenterY = pathBoundingBox.y + pathBoundingBox.height / 2;
+      this.tooltipCities.replaceChildren();
+      let cityElement = document.createElement('div', );
+      let cityName = document.createElement('div');
+      let cityClicks = document.createElement('div');
 
-      tooltip.style.display = 'block';
-      tooltip.style.left = pathCenterX - tooltip.offsetWidth / 2 + 'px';
-      tooltip.style.top = pathCenterY - tooltip.offsetHeight / 2 + 'px';
-      tooltipHeader.style.paddingBottom = "5px";
-      tooltipHeader.innerText = this.getRegionFullName(region);
+      var citiesList : any[] = [];
 
-      tooltipCities.replaceChildren();
-      for (const city of cities) {
-        let cityElement = document.createElement('div');
-        let cityName = document.createElement('div');
-        let cttyClicks = document.createElement('div');
-        cityElement.style.fontSize = "12px";
-        cityElement.style.display = "flex";
-        cityElement.style.flexDirection = "row";
-        cityElement.style.justifyContent = "space-between";
-        if (city.name == "gesamt"){
-          cityElement.style.paddingTop = "10px";
+      cityElement.style.marginTop = "3px";
+      cityElement.style.paddingTop = "2px";
+      cityElement.style.borderTop = "1px dashed #000";
+      cityElement.style.fontSize = "calc((1vw + 1vh)/2)";
+      cityElement.style.display = "flex";
+      cityElement.style.flexDirection = "row";
+      cityElement.style.justifyContent = "space-between";
+      cityName.innerText = "Gesamt";
+      cityClicks.innerText = Util.formatNumbers(gesamt);
+
+      if (!data.has("error")) {
+        let i = 0;
+        for (const city of data) {
+          let cityElement = document.createElement('div',);
+          let cityName = document.createElement('div');
+          let cityClicks = document.createElement('div');
+          cityElement.style.fontSize = "calc((.9vw + .9vh)/2)";
+          cityElement.style.display = "flex";
+          cityElement.style.flexDirection = "row";
+          cityElement.style.justifyContent = "space-between";
+          cityName.innerText = String(city.at(0));
+          cityClicks.innerText = Util.formatNumbers(Number(city.at(1)));
+
+
+          cityElement.appendChild(cityName);
+          cityElement.appendChild(cityClicks);
+          citiesList.push({element: cityElement, clicks: city.at(1) as number});
+          i++;
         }
-        cityName.innerText = city.name;
-        if (city.clicks >= 1000000){
-          cttyClicks.innerText = String((city.clicks/1000000).toFixed(1) + "M");
+        this.isRegionSelected = "block";
+        if (SysVars.CURRENT_PAGE == "Übersicht") {
+          this.showCharts = "block";
+          this.tooltipElement.classList.remove("width50");
+          this.tooltipCharts.classList.remove("hidden");
+          this.setupHistoryChart(region);
+        } else {
+          this.tooltipElement.classList.add("width50");
+          this.tooltipCharts.classList.add("hidden");
         }
-        else if (city.clicks >= 1000){
-          cttyClicks.innerText = String((city.clicks/1000).toFixed(1) + "K");
-        }
-        else {
-          cttyClicks.innerText = String(city.clicks);
-        }
-
-
-        cityElement.appendChild(cityName);
-        cityElement.appendChild(cttyClicks);
-        tooltipCities.appendChild(cityElement);
       }
+      citiesList.sort((a: {element: HTMLElement, clicks: number; }, b: {element: HTMLElement, clicks: number; }) => b.clicks - a.clicks);
+      citiesList.splice(24);
+      citiesList = citiesList.map((a: { element: HTMLElement, clicks: number }) => {return a.element});
+      this.tooltipCities.append(...citiesList);
+      cityElement.appendChild(cityName);
+      cityElement.appendChild(cityClicks);
+      this.tooltipCities.append(cityElement);
+    });
+  }
 
+  setupHistoryChart(region: string) {
+    this.db.getGeoByRegionByDatesListed(region, this.startDate, this.endDate).then(res => {
+      this.createChart(res.data, res.dates);
     });
-    pathElement.addEventListener('mouseenter', () => {
-      pathElement.style.strokeWidth = "10px";
-    });
+  }
 
-    tooltip.addEventListener('click', () => {
-      tooltip.style.display = 'block';
-    })
+  setRegionTooltip(svg: any, region: string){
+    var pathElement = svg.querySelector("#" + region) ?? null;
+    if (pathElement == null) return;
+    let fu = () => {
+      this.setupCities(region, this.region_clicks);
+      this.selectedRegion = region;
+    };
+    if (this.selectedRegion == region){
+      fu();
+    }
+    if (pathElement.eventListeners().length > 0) return;
+    let fa = () => {pathElement.style.strokeWidth = "10px";}
+    let fum = () => {pathElement.style.strokeWidth = "2px";}
 
-    pathElement.addEventListener('mouseleave', () => {
-      pathElement.style.strokeWidth = "2px";
-    });
-    tooltip.addEventListener('mouseleave', () => {
-      tooltip.style.display = 'none';
-      pathElement.style.strokeWidth = "2px";
-    });
+    pathElement.removeEventListener('click', fu);
+    pathElement.addEventListener('click', fu);
+    pathElement.addEventListener('mouseenter', fa);
+    pathElement.addEventListener('mouseleave', fum);
   }
 
   getRegionFullName(shortcode: string): string {
@@ -221,5 +371,8 @@ buildMap(ip_map: { [x: string]: any; hasOwnProperty: (arg0: string) => any; }, s
 
     return 'rgb(' + r + ',' + g + ',' + b + ')';
   }
+
+  protected readonly Math = Math;
+
 
 }

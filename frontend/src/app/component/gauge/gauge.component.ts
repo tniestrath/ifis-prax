@@ -21,11 +21,14 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
   postID : string = "10445";
   postName: string = "";
 
+
   createChart(labels : string[], data : number[], onClick : EventEmitter<number> | null){
     Chart.defaults.color = "#000"
     if (this.chart){
       this.chart.destroy();
     }
+
+    const canvas  = document.querySelector("#gauge");
 
     const gaugeChartText  = {
       id: "gaugeChartText",
@@ -42,7 +45,8 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
 
         ctx.textAlign = "center";
         ctx.textBaseline = "bottom";
-        ctx.font = chart.chartArea.height/2 + "px sans-serif";
+        // @ts-ignore
+        ctx.font = canvas.width/4 + "px sans-serif";
 
         //@ts-ignore
         ctx.fillText(score.toFixed(), x, y + chart.chartArea.height/8);
@@ -122,15 +126,18 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.setToolTip("Ihr Beitrag mit der höchsten berechneten Performance (aufg. Aufrufe der ersten 7 Tage)");
 
-    this.db.getMaxPerformance().then(max => {
       this.db.getUserBestPost(SysVars.USER_ID, "performance").then(data => {
         let post : Post = data;
-        this.createChart(["Score", "Grey"],[((post.performance || 0) / max)*100 , 100-(((post.performance || 0) / max)*100)],null);
-        this.postName = post.title;
+        this.createChart(["Score", "Grey"],[(post.performance || 0)*100 , 100-((post.performance || 0)*100)],null);
+
+        if (post.title.length > 30){
+          this.postName = post.title.slice(0, 25) + " ...";
+        } else {
+          this.postName = post.title;
+        }
 
         this.cdr.detectChanges();
       });
-    })
   }
 
 }

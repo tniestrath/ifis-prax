@@ -1,7 +1,8 @@
-import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {Chart} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
+import Util, {DashColors} from "../../util/Util";
 
 @Component({
   selector: 'dash-user-plan',
@@ -10,22 +11,120 @@ import {EmptyObject} from "chart.js/dist/types/basic";
 })
 export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
-  colors : string[] = ["#5A7995", "rgb(148,28,62)", "rgb(84, 16, 35, 33)"];
-  chart_total: any;
+  colors : string[] = [DashColors.GREY, DashColors.BLUE, DashColors.DARK_BLUE, DashColors.RED, DashColors.DARK_RED, DashColors.BLACK];
+  chart_total : number = 0;
+  prev_total : number = 0;
+  prev_total_text : any;
+
+  labels = ["Ohne Abo", "Basic", "Basic-Plus", "Plus", "Premium"];
+
+  data = [0,0,0,0,0];
+  prev_data = [0,0,0,0,0];
+
+  oaList: HTMLParagraphElement[] = [];
+  bpList: HTMLParagraphElement[] = [];
+  plusList: HTMLParagraphElement[] = [];
+  premiumList: HTMLParagraphElement[] = [];
+  sponsorList: HTMLParagraphElement[] = [];
 
   ngOnInit(): void {
     if (this.chart != undefined) {
       this.chart.destroy();
     }
 
-    this.chart = this.createChart("user_plan_chart", ["Basic", "Plus", "Premium"],[1173,223,35], undefined);
-    this.createLegend("user-plan-content-box", this.chart);
-    this.chart_total = 1173 + 223 + 35;
 
-    this.cdr.detectChanges();
+    this.db.getUserAccountTypes().then(res => {
+      let map : Map<string, number> = new Map(Object.entries(res));
+      this.readMap(map, this.data);
+      this.chart = this.createChart("user_plan_chart", this.labels, this.data);
+      this.chart_total = this.data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      this.cdr.detectChanges();
+    }).finally(() => {
+      this.db.getUserAccountTypesYesterday().then(res => {
+        let map : Map<string, number> = new Map(Object.entries(res));
+        this.readMap(map, this.prev_data);
+        for (var i = 0; i < this.data.length; i++) {
+          this.prev_data[i] = this.data[i] - this.prev_data[i];
+        }
+        this.prev_total = this.prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+        this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
+        this.cdr.detectChanges();
+      }).finally(() => {
+        this.db.getUserAccountTypesAllNew().then(res => {
+          // @ts-ignore
+          document.getElementById("oaList").append(...this.formatArray(res.ohne));
+          // @ts-ignore
+          document.getElementById("basicList").append(...this.formatArray(res.basis));
+          // @ts-ignore
+          document.getElementById("bpList").append(...this.formatArray(res["basis-plus"]));
+          // @ts-ignore
+          document.getElementById("plusList").append(...this.formatArray(res.plus));
+          // @ts-ignore
+          document.getElementById("premiumList").append(...this.formatArray(res.premium));
+        })
+      })
+    })
+
+    this.setToolTip("Hier werden die aktuellen Nutzer nach ihren Abonnements, und die in den letzten 24 Stunden angemeldete Nutzer (hinter dem +) angezeigt. +" +
+      "\n Bei Hover über die angemeldeten Nutzer werden diese angezeigt. Grün für Neuanmeldung, Blau für einen Planwechsel und Rot für jemanden der sein Abonnement gekündigt hat.");
   }
 
-  createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){
+
+  formatArray(array: string[]) : HTMLParagraphElement[]{
+    var result: HTMLParagraphElement[] = [];
+    for (let username of array) {
+      if (username.startsWith("+")){
+        let p = document.createElement("p");
+        p.style.color = DashColors.GREEN;
+        p.style.margin = String(0);
+        p.innerText = username.slice(1);
+        result.push(p);
+      }
+      else if (username.startsWith("-")){
+        let p1 = document.createElement("p");
+        p1.style.color = DashColors.RED;
+        p1.style.margin = String(0);
+        p1.innerText = username.slice(1);
+        result.push(p1);
+      }
+      else if (username.startsWith("&")){
+        let p2 = document.createElement("p");
+        p2.style.color = DashColors.BLUE;
+        p2.style.margin = String(0);
+        p2.innerText = username.slice(1);
+        result.push(p2);
+      }
+    }
+    return result;
+  }
+
+  private readMap(map: Map<string, number>, data: number[]) {
+    map.delete("Administrator");
+    map.forEach((value, key) => {
+      if (key == "Anbieter") {
+        this.labels[0] = "Ohne Abo";
+        data[0] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Basic") {
+        this.labels[1] = key;
+        data[1] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Basic-Plus") {
+        this.labels[2] = key;
+        data[2] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Plus") {
+        this.labels[3] = key;
+        data[3] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Premium") {
+        this.labels[4] = key;
+        data[4] = (value == 0 || value == undefined ? 0 : value)
+      }
+    })
+  }
+
+  createChart(canvas_id : string, labels : string[], realData : number[]){
     const donughtInner  = {
       id: "donughtInner",
       afterDatasetsDraw(chart: Chart, args: EmptyObject, options: 0, cancelable: false) {
@@ -43,26 +142,14 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         //@ts-ignore
         const total : number = data.datasets[0].data.reduce((a, b) => a + b, 0);
         ctx.beginPath();
-        ctx.arc(x, y, chart.chartArea.width / 6, 0, 2 * Math.PI, false);
+        ctx.arc(x, y, Math.sqrt(chart.chartArea.width * chart.chartArea.height)/ 6, 0, 2 * Math.PI, false);
         ctx.closePath();
         ctx.fill();
 
 
         ctx.globalCompositeOperation = 'source-over';
 
-        var totalText = String(total);
-        if (total > 1000){
-          totalText = +parseFloat(String(total / 1000)).toFixed( 1 ) + "K";
-        }
-        if (total > 9999){
-          totalText = (total/1000).toFixed() + "K";
-        }
-        if (total > 1000000){
-          totalText = (total/1000000).toFixed(1) + "M";
-        }
-        if (total > 9999999){
-          totalText = (total/10000000).toFixed() + "M";
-        }
+        var totalText = Util.formatNumbers(total);
         ctx.font = (chart.chartArea.height / 6.5) + "px sans-serif";
         ctx.fillStyle = "#fff";
         ctx.textAlign = "center";
@@ -70,7 +157,16 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         // @ts-ignore
         ctx.fillText(totalText, x, y);
       }
-    }
+    };
+    const shadowPlugin = {
+      beforeDraw: (chart: Chart, args : EmptyObject, options: 0) => {
+        const { ctx } = chart;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 5;
+        ctx.shadowOffsetY = 5;
+      },
+    };
 
 
 
@@ -118,54 +214,9 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         }
       },
       //@ts-ignore
-      plugins: [donughtInner]
-    })
-  }
-
-  createLegend(legend_class : string, chart : any){
-    const legendBox = document.querySelector("."+legend_class);
-
-    const legendContainer = document.createElement("DIV");
-    legendContainer.setAttribute("id", legend_class + "_legend");
-
-    const ul = document.createElement("UL");
-    ul.style.display = "flex";
-    ul.style.flexDirection = "column";
-    ul.style.margin = "0";
-    ul.style.padding = "0";
-
-    chart.legend.legendItems.forEach((dataset: { text: any; index: any; fillStyle: any}, index: any) => {
-      const text = dataset.text;
-      const datasetIndex = dataset.index;
-      const bgColor = dataset.fillStyle;
-
-      const li = document.createElement("LI");
-      li.classList.add("clicks-item-li");
-      li.style.display = "flex";
-      li.style.alignItems = "center";
-      li.style.flexDirection = "row";
-      li.style.height = "20px";
-      li.style.margin = "5px";
-      const spanBox = document.createElement("SPAN");
-      spanBox.classList.add("clicks-item-span");
-      spanBox.style.display = "inline-block";
-      spanBox.style.height = "100%";
-      spanBox.style.width = "20px";
-      spanBox.style.marginRight = "5px";
-      spanBox.style.borderRadius = "5px";
-      spanBox.style.backgroundColor = bgColor;
-
-      const p = document.createElement("P");
-      p.classList.add("clicks-item-text");
-      p.innerText = text + ": " + chart.data.datasets[0].data[datasetIndex];
-
-      ul.appendChild(li);
-      li.appendChild(spanBox);
-      li.appendChild(p);
+      plugins: [donughtInner],
     });
-
-    legendBox?.appendChild(legendContainer);
-    legendContainer.appendChild(ul);
   }
 
+  protected readonly DashColors = DashColors;
 }

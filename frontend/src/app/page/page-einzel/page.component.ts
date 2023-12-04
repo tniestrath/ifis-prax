@@ -5,14 +5,12 @@ import {DbService} from "../../services/db.service";
 import {UserComponent} from "./user/user.component";
 import {Observable, Subject} from "rxjs";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
-import {PostChartComponent} from "../../component/post-chart/post-chart.component";
+import {PostChartComponent} from "../../component/post/post-chart/post-chart.component";
 import {GaugeComponent} from "../../component/gauge/gauge.component";
 import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
 import {PostComponent} from "../../component/post/post.component";
 import {SysVars} from "../../services/sys-vars-service";
-import {PotentialComponent} from "../../component/potential/potential.component";
-import {TagComponent} from "../../component/tag/tag/tag.component";
 import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
 import {User} from "./user/user";
@@ -20,6 +18,19 @@ import {OriginMapComponent} from "../../component/origin-map/origin-map.componen
 import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
+import {PodcastListComponent, PostListComponent} from "../../component/post/post-list/post-list.component";
+import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
+import {CallUpChartComponent} from "../../component/call-up-chart/call-up-chart.component";
+import {
+  Top5ArticleComponent,
+  Top5BlogComponent, Top5NewsComponent,
+  Top5PostsComponent, Top5WhitepaperComponent
+} from "../../component/post/top5-posts/top5-posts.component";
+import {NewsletterStatsComponent} from "../../component/newsletter-stats/newsletter-stats.component";
+import {SystemloadComponent} from "../../component/system/systemload/systemload.component";
+import {EventsStatsComponent} from "../../component/events-stats/events-stats.component";
+import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
+import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
 
 @Component({
   selector: 'dash-page',
@@ -32,7 +43,7 @@ export class PageComponent implements OnInit {
   selectorItems : SelectorItem[] = [];
   selectorItemsLoaded = new Subject<SelectorItem[]>();
   searchValue = "";
-  filterValues : { accType : string, perf : string } = {accType: "all", perf : "all"};
+  filterValues : { accType : string, sort : string } = {accType: "all", sort : "uid"};
 
   @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
@@ -42,7 +53,7 @@ export class PageComponent implements OnInit {
 
   getLandingPageCards(){
     return [
-      {type: LoginComponent, row: 2, col: 2, height: 2, width: 3},
+      {type: LoginComponent, row: 2, col: 3, height: 2, width: 2},
     ];
   }
 
@@ -62,29 +73,44 @@ export class PageComponent implements OnInit {
   }
   getTagsPageCards() {
     return [
-      {type: TagListComponent, row: 1, col: 1, height: 4, width: 2},
-      {type: TagPieComponent, row: 1, col: 3, height: 2, width: 2}
+      {type: TagListComponent, row: 1, col: 5, height: 2, width: 2},
+      {type: TagPieComponent, row: 3, col: 5, height: 2, width: 2},
+      {type: TagChartComponent, row: 1, col: 1, height: 2, width: 4}
     ];
   }
   getPostsPageCards() {
     return [
-      {type: PostComponent, row: 1, col: 1, height: 3, width: 2},
+      {type: PostListComponent, row: 1, col: 1, height: 4, width: 2},
+      {type: Top5ArticleComponent, row: 1, col: 3, height: 1, width: 4},
+      {type: Top5BlogComponent, row: 2, col: 3, height: 1, width: 4},
+      {type: Top5NewsComponent, row: 3, col: 3, height: 1, width: 4},
+      {type: Top5WhitepaperComponent, row: 4, col: 3, height: 1, width: 4}
     ];
   }
 
-  getAdminPageCards() {
+  getOverviewPageCards() {
     return [
       {type: UserPlanComponent, row: 1, col: 1, height: 2, width: 1},
-      {type: OriginMapComponent, row: 1, col: 2, height: 2, width: 2},
-      {type: ClicksByTimeComponent, row: 1, col: 4, height: 2, width: 2}
-
+      {type: CallUpChartComponent, row: 1, col: 2, height: 2, width: 4},
+      {type: NewsletterStatsComponent, row: 1, col: 6, height: 1, width: 1},
+      {type: SystemloadComponent, row: 3, col: 5, height: 2, width: 2},
+      {type: PostTypeComponent, row: 3, col: 1, height: 2, width: 1},
+      {type: OriginMapComponent, row: 3, col: 2, height: 2, width: 3},
+      {type: EventsStatsComponent, row: 2, col: 6, height: 1, width: 1}
     ];
   }
 
-  onSelected(id: string, name: string){
-    if (id != "0"){
+  getContentPageCards() {
+    return [
+      {type: PodcastListComponent,  row: 1, col: 1, height: 4, width: 2}
+    ];
+  }
+
+  onSelected(id: string, name: string) {
+    if (id != "0") {
       this.displayContent = "grid";
       this.cardsLoaded.next(this.getUserPageCards());
+      SysVars.CURRENT_PAGE = "Anbieter";
     } else {
       this.displayContent = "none";
     }
@@ -96,18 +122,17 @@ export class PageComponent implements OnInit {
     this.loadSelector(this.filterValues);
   }
 
-  onFilterChange(filter : {accType : string, perf : string}){
-    this.filterValues = {accType : filter.accType, perf : filter.perf};
+  onFilterChange(filter: { accType: string; sort: string }){
+    this.filterValues = {accType : filter.accType, sort : filter.sort};
     this.loadSelector(this.filterValues)
   }
 
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
-      console.log(page + " : "+ SysVars.USER_ID);
       this.displayContent = "grid";
       switch (page) {
-        case "Users":{
+        case "Anbieter":{
           if (SysVars.USER_ID != "0" && SysVars.ADMIN){
             this.displayContent = "grid";
             this.cardsLoaded.next(this.getUserPageCards());
@@ -115,21 +140,30 @@ export class PageComponent implements OnInit {
             this.displayContent = "none";
             this.loadSelector(this.filterValues);
           }
+          this.db.resetStatus();
           break;
         }
-        case "Tags":{
+        case "Themen":{
           this.cardsLoaded.next(this.getTagsPageCards());
+          this.db.resetStatus();
           break;
         }
-        case "Posts":{
+        case "Beiträge":{
           this.cardsLoaded.next(this.getPostsPageCards());
+          this.db.resetStatus();
           break;
         }
-        case "Overview":{
-          this.cardsLoaded.next(this.getAdminPageCards());
+        case "Übersicht":{
+          this.cardsLoaded.next(this.getOverviewPageCards());
+          this.db.resetStatus();
           break;
         }
-        case "Landing":{
+        case "Inhalte":{
+          this.cardsLoaded.next(this.getContentPageCards());
+          this.db.resetStatus();
+          break;
+        }
+        case "Login":{
           this.cardsLoaded.next(this.getLandingPageCards());
           break;
         }
@@ -142,21 +176,11 @@ export class PageComponent implements OnInit {
 
   }
 
-  loadSelector(filter: {accType : string, perf : string}){
-    this.db.getMaxPerformance().then(res => {
-      const max_performance = res;
+  loadSelector(filter: {accType : string, sort : string}){
       this.db.loadAllUsers().then(() => {
         this.selectorItems = [];
         for (let u of DbService.Users) {
-          let performance = ((u.performance || 0) / max_performance)*100;
-          if (performance <= 33){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.accountType, u.postViews, 50, 33, u.postViews, u.img)));
-          } if (performance > 33 && performance <= 66){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.accountType, u.postViews, 50, 66, u.postViews, u.img)));
-          } if (performance > 66){
-            this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.accountType, u.postViews, 50, 100, u.postViews, u.img)));
-          }
-
+          this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, u.performance, u.accountType, u.potential, u.img)));
         }
       }).then(() => {
         this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||
@@ -166,23 +190,22 @@ export class PageComponent implements OnInit {
         if (filter.accType != "all"){
           this.selectorItems = this.selectorItems.filter((item ) => (item.data as User).accountType == filter.accType);
         }
-        switch (filter.perf) {
-          case "low": {
-            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance < 33);
+        switch (filter.sort) {
+          case "uid": {
+            this.selectorItems = this.selectorItems.sort((a, b) => (Number(a.data.id) - Number(b.data.id)));
             break;
           }
-          case "medium": {
-            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance >= 33 && (item.data as User).performance < 66);
+          case "views": {
+            this.selectorItems = this.selectorItems.sort((a, b) => ( (b.data as User).profileViews + (b.data as User).postViews ) - ( (a.data as User).profileViews + (a.data as User).postViews ) );
             break;
           }
-          case "high": {
-            this.selectorItems = this.selectorItems.filter(item => (item.data as User).performance >= 66);
+          case "performance": {
+            this.selectorItems = this.selectorItems.sort((a, b) => (b.data as User).performance - (a.data as User).performance);
             break;
           }
           default: break;
         }
       }).finally(() =>
         this.selectorItemsLoaded.next(this.selectorItems));
-    })
-  }
+    }
 }

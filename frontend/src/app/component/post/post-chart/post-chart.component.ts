@@ -1,15 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {Post} from "../post/Post";
-import {SysVars} from "../../services/sys-vars-service";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
+import {Post} from "../Post";
+import {SysVars} from "../../../services/sys-vars-service";
 import {EmptyObject} from "chart.js/dist/types/basic";
+import {DashColors} from "../../../util/Util";
 
 
 @Component({
   selector: 'dash-post-chart',
   templateUrl: './post-chart.component.html',
-  styleUrls: ['./post-chart.component.css', "../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./post-chart.component.css', "../../dash-base/dash-base.component.css"]
 })
 
 export class PostChartComponent extends DashBaseComponent implements OnInit{
@@ -22,14 +23,13 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
   postType : string = "artikel";
 
   data : Promise<Post[]> | undefined;
-  max_performance: Promise<number> |undefined;
-  max_relevance: Promise<number> |undefined;
 
   timeSpanMap = new Map<string, number>([
     ["all_time", 365*2],
     ["half_year", 182],
     ["month", 31],
-    ["week", 7]
+    ["week", 7],
+    ["day", 1]
   ]);
 
 
@@ -44,6 +44,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       afterDatasetsDraw(chart: Chart, args: EmptyObject, options: 0, cancelable: false) {
         const { ctx, data, chartArea: {top, bottom, left, right, width, height}, scales: {r} } = chart;
         ctx.save();
+
         for (let i = 0; i < chart.getDatasetMeta(0).data.length; i++) {
           let x = chart.getDatasetMeta(0).data[i].x;
           let y = chart.getDatasetMeta(0).data[i].y;
@@ -107,6 +108,8 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       },
       options: {
         aspectRatio: 2.8,
+        maintainAspectRatio: false,
+        clip: false,
         layout: {
           padding: {
             bottom: -50
@@ -184,64 +187,61 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
     if (this.data == undefined){this.data = this.db.getUserPostsWithStats(SysVars.USER_ID)}
-    if (this.max_performance == undefined){this.max_performance = this.db.getMaxPerformance()}
-    if (this.max_relevance == undefined){this.max_relevance = this.db.getMaxRelevance()}
-    Promise.all([this.max_performance, this.max_relevance]).then((value) => {
-      // @ts-ignore
-      this.data.then((res : Post[]) => {
-        var postLabel : string[] = [];
-        var postData : number[] = [];
-        var postDataRelevance : number[] = [];
-        var postDataDate : string[] = [];
+    this.data.then((res : Post[]) => {
+      var postLabel : string[] = [];
+      var postData : number[] = [];
+      var postDataRelevance : number[] = [];
+      var postDataDate : string[] = [];
 
-        var postIds :number[] = [];
+      var postIds :number[] = [];
 
-        let time_filtered : Post[] = res.filter((post : Post) => {
-          var postDate = new Date(Date.parse(post.date));
-          var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
-          return postDate >= calcDate;
-        }).filter((post : Post) => {
-          return post.type == this.postType;
-        })
-        time_filtered.sort((a, b) => {
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
-        })
-        let fullLabels : string[] = [];
-        for (var post of time_filtered) {
-          let label = post.title;
-          fullLabels.push(post.title);
-          let space_index = label.indexOf(" ");
-          let sec_space_index = label.indexOf(" ", space_index+1);
-          if (label.length > 10){
-            if (sec_space_index < 10){
-              label = label.slice(0, sec_space_index);
-            }
-            if (space_index < 10 !&& sec_space_index < 10){
-              label = label.slice(0, space_index);
-            }
-            else {
-              label = label.slice(0, 10)
-            }
-            label += "...";
-          }
-          postLabel.push(label);
-          postData.push((post.performance / value[0])*100);
-          postDataRelevance.push((post.relevance / value[1])*100);
-          postDataDate.push(new Date(post.date).toLocaleDateString());
-          // @ts-ignore
-          postIds.push(post.id);
-        }
-        this.createChart(postLabel, fullLabels, postData, postDataRelevance, postDataDate, (index) => {
-          SysVars.SELECTED_POST_ID.emit(postIds[index]);
-        });
+      let time_filtered : Post[] = res.filter((post : Post) => {
+        var postDate = new Date(Date.parse(post.date));
+        var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
+        return postDate >= calcDate;
+      }).filter((post : Post) => {
+        return post.type == this.postType;
       })
-        .finally(() => {this.visibility = "visible"});
-    });
+      time_filtered.sort((a, b) => {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      })
+      let fullLabels : string[] = [];
+      for (var post of time_filtered) {
+        let label = post.title;
+        fullLabels.push(post.title);
+        let space_index = label.indexOf(" ");
+        let sec_space_index = label.indexOf(" ", space_index+1);
+        if (label.length > 10){
+          if (sec_space_index < 10){
+            label = label.slice(0, sec_space_index);
+          }
+          if (space_index < 10 !&& sec_space_index < 10){
+            label = label.slice(0, space_index);
+          }
+          else {
+            label = label.slice(0, 10)
+          }
+          label += "...";
+        }
+        postLabel.push(label);
+        postData.push(post.performance*100);
+        postDataRelevance.push(post.relevance*100);
+        let date = new Date(Date.parse(post.date));
+        let formattedDate = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
+        postDataDate.push(formattedDate);
+        // @ts-ignore
+        postIds.push(post.id);
+      }
+      this.createChart(postLabel, fullLabels, postData, postDataRelevance, postDataDate, (index) => {
+        SysVars.SELECTED_POST_ID.emit(postIds[index]);
+      });
+    }).finally(() => {this.visibility = "visible"});
   }
 
 
   ngOnInit(): void {
-    this.setToolTip("Diese Grafik zeigt die Performance / Relevanz all ihrer Beiträge, im angegebenen Zeitraum.")
+    this.setToolTip("Diese Grafik zeigt die Performance / Relevanz all ihrer Beiträge, im angegebenen Zeitraum. " +
+      "Sie können einen Post anwählen, um rechts weitere Details dazu zu erhalten.")
     this.getData();
   }
 

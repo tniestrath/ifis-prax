@@ -6,8 +6,12 @@ CREATE TABLE `user_stats` (
   `profile_view` bigint DEFAULT NULL,
   `post_freq` float DEFAULT NULL,
   `interaction_rate` float DEFAULT NULL,
+  `ref_rate` float DEFAULT NULL,
+  `refferings` bigint DEFAULT NULL,
+  `impressions` bigint DEFAULT NULL,
   PRIMARY KEY (`iduser_stats`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `tag_stat` (
   `id` int NOT NULL AUTO_INCREMENT,
   `tag_id` int NOT NULL,
@@ -28,9 +32,11 @@ CREATE TABLE `sys_var` (
   `lastline` varchar(500) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   `log_date` datetime DEFAULT NULL,
+  `flag_scan_last_14` tinyint DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-CREATE TABLE `PostStats` (
+
+CREATE TABLE `stats` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `art_id` bigint NOT NULL,
   `search_success_rate` float DEFAULT NULL,
@@ -41,9 +47,15 @@ CREATE TABLE `PostStats` (
   `performance` float DEFAULT NULL,
   `views_last_year` json DEFAULT NULL,
   `relevance` float DEFAULT NULL,
+  `views_per_hour` json DEFAULT NULL,
+  `year` int DEFAULT NULL,
+  `views_by_location` json DEFAULT NULL,
+  `lettercount` int DEFAULT NULL,
+  `wordcount` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `art_id_UNIQUE` (`art_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `search_stats` (
   `search_id` bigint NOT NULL AUTO_INCREMENT,
   `ip_hashed` varchar(250) DEFAULT NULL,
@@ -52,5 +64,28 @@ CREATE TABLE `search_stats` (
   `search_time` datetime DEFAULT NULL,
   `location` varchar(45) DEFAULT NULL,
   `clicked_post` varchar(100) DEFAULT NULL,
+  `search_success_time` datetime DEFAULT NULL,
+  `dwell_time` time DEFAULT NULL,
   PRIMARY KEY (`search_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `universal_stats` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `besucher_anzahl` bigint DEFAULT NULL,
+  `anbieter_profile_anzahl` bigint DEFAULT NULL,
+  `anzahl_artikel` bigint DEFAULT NULL,
+  `anzahl_news` bigint DEFAULT NULL,
+  `anzahl_blog` bigint DEFAULT NULL,
+  `datum` date DEFAULT NULL,
+  `anbieter_basic_anzahl` bigint DEFAULT NULL,
+  `anbieter_plus_anzahl` bigint DEFAULT NULL,
+  `anbieter_basicplus_anzahl` bigint DEFAULT NULL,
+  `anbieter_premium_anzahl` bigint DEFAULT NULL,
+  `umsatz` bigint DEFAULT NULL,
+  `anbieter_premium_sponsoren_anzahl` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+
+

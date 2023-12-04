@@ -1,44 +1,107 @@
 .origin-map-box{
+  margin-top: 10px;
   width: 100%;
+  height: calc(100% - 45px);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.origin-map-title{
+  display: flex;
+  width: calc(100% - 45px);
+  height: 30px;
+  position: relative;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid #A0A0A0;
+  left: 5px;
+  top: 5px;
+
+}
+.origin-map-title > p{
+  margin: 0;
+  padding: 5px 15px;
+  text-align: center;
+}
+.origin-map-title > input{
+  border: none;
+  border-right: 1px solid #A0A0A0;
+  border-radius: 5px;
+  margin-right: 15px;
+  font-family: 'Helvetica Neue', sans-serif;
+}
+input:disabled{
+  background-color: white;
+}
+.origin-map-title > label{
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-left: 1px solid #A0A0A0;
+  border-radius: 5px;
+}
+
+.origin-map-map-box{
   height: 100%;
+  width: 50%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 #Ebene_1{
-  max-height: 90%;
-  max-width: 90%;
-  margin: 5px;
   border-radius: 5px;
+  max-height: 90%;
 }
 path{
   animation: ease-in;
 }
 
 #tooltip {
-  position: fixed;
-  width: 130px;
+  width: 20%;
+  height: 100%;
+  border: 1px dashed black;
   border-radius: 5px;
-  background-color: #0009;
-  color: #fff;
-  display: none;
+  color: #000;
   padding: 5px;
   box-sizing: border-box;
 }
 
 #tooltip-header{
-  width: 100%;
-  font-size: 15px;
+  width: max-content;
+  font-size: calc((1.1vw + 1.1vh)/2);
   font-weight: bold;
 }
 
 #tooltip-cities{
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+  min-width: 100%;
 }
+#tooltip-charts{
+  height: 100%;
+  width: 30%;
+  padding: 5px;
+}
+
 .tooltip-city{
   width: 100%;
   height: 20px;
-  font-size: 10px;
+  font-size: 80%;
+}
+.origin-map-total{
+  margin-top: 5px;
+  height: 5%;
+  font-size: 1vw;
+}
+.origin-map-total > p{
+  margin: 0;
+  text-align: center;
+}
+
+.hidden{
+  display: none !important;
+}
+.width50{
+  width: 50% !important;
+  margin-right: 5px !important;
 }

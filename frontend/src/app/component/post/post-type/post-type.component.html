@@ -1,0 +1,67 @@
+<div class="component-box post-type-box">
+  <canvas id="post_type_chart">{{chart}}</canvas>
+  <div class="legend-box post-type-content-box">
+    <div id="post-type-item-head">
+      <p>Veröffentlicht: </p><div [ngStyle]="{display: 'flex', flexDirection: 'row',  width: '35%', justifyContent: 'space-between'}"><p>{{chart_total}}</p><p>{{prev_total_text}}</p></div>
+    </div>
+    <div id="legend-box">
+      <ul style="display: flex; flex-direction: column; margin: 0px; padding: 0px; height: 100%;">
+        <li style="display: flex; height: 2vh;; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+          <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.NEWS}">
+              </span>
+            <p style="margin: 0px;">News:</p>
+          </div>
+          <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+            <p style="margin: 0px;">{{chart?.data.datasets[0].data[0]}}</p>
+            <p style="margin: 0;">{{prev_data[0] >= 0 ? "+" + prev_data[0] : prev_data[0].toString()}}</p>
+          </div>
+        </li>
+        <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+          <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.BLOG}">
+              </span>
+            <p style="margin: 0px;">Blogs:</p>
+          </div>
+          <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+            <p style="margin: 0px;">{{chart?.data.datasets[0].data[1]}}</p>
+            <p style="margin: 0;">{{prev_data[1] >= 0 ? "+" + prev_data[1] : prev_data[1].toString()}}</p>
+          </div>
+        </li>
+        <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+          <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.ARTICLE}">
+              </span>
+            <p style="margin: 0px;">Artikel:</p>
+          </div>
+          <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+            <p style="margin: 0px;">{{chart?.data.datasets[0].data[2]}}</p>
+            <p style="margin: 0;">{{prev_data[2] >= 0 ? "+" + prev_data[2] : prev_data[2].toString()}}</p>
+          </div>
+        </li>
+        <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+          <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.WHITEPAPER}">
+              </span>
+            <p style="margin: 0px;">Whitepaper:</p>
+          </div>
+          <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+            <p style="margin: 0px;">{{chart?.data.datasets[0].data[3]}}</p>
+            <p style="margin: 0;">{{prev_data[3] >= 0 ? "+" + prev_data[3] : prev_data[3].toString()}}</p>
+          </div>
+        </li>
+        <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+          <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.PODCAST}">
+              </span>
+            <p style="margin: 0px;">Podcasts:</p>
+          </div>
+          <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+            <p style="margin: 0px;">{{chart?.data.datasets[0].data[4]}}</p>
+            <p style="margin: 0;">{{prev_data[4] >= 0 ? "+" + prev_data[4] : prev_data[4].toString()}}</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

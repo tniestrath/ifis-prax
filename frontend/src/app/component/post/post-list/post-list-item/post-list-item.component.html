@@ -1,0 +1,44 @@
+<div class="post-box">
+  <div class="post-details">
+    <div class="post-detail" [style]="{'borderColor': typeColor, 'border': '2px solid'}">
+      <div class="post-label" [style]="{'color': typeColor, 'background': bgColor, 'font-weight': 'bold'}">{{data.type.toUpperCase()}}</div>
+      <p>{{data.title}}</p>
+    </div>
+    <div class="post-detail-group-5">
+      <div class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Datum</div>
+        <p>{{formattedDate}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Clicks</div>
+        <p>{{data.clicks}}</p>
+      </div>
+      <div *ngIf="data.type.startsWith('podcast')" class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Dauer</div>
+        <p>{{data.duration}}</p>
+      </div>
+      <div *ngIf="!data.type.startsWith('podcast')" class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Zeichen</div>
+        <p>{{data.lettercount}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Perf</div>
+        <p>{{(data.performance * 100).toFixed()}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Rel</div>
+        <p>{{(data.relevance * 100).toFixed()}}</p>
+      </div>
+    </div>
+    <div class="post-detail-group-2">
+      <div class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Autoren</div>
+        <p>{{data.authors}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Themen</div>
+        <p>{{formattedTags}}</p>
+      </div>
+    </div>
+  </div>
+</div>

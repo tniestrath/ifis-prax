@@ -77,6 +77,12 @@ public class LogService {
     @Autowired
     private ClicksByBundeslandCitiesDLCRepository clicksByBundeslandCityRepo;
 
+    @Autowired
+    private PostTypeRepository postTypeRepo;
+
+    @Autowired
+    private PostController postController;
+
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
@@ -216,8 +222,6 @@ public class LogService {
     private universalStatsRepository uniRepo;
     @Autowired
     private UniversalStatsHourlyRepository uniHourlyRepo;
-    @Autowired
-    private PostController postController;
 
 
     @Autowired
@@ -340,6 +344,12 @@ public class LogService {
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();
         saveStatsToDatabase();
+
+        try {
+            updatePostTypes();
+        } catch (JSONException e) {
+            System.out.println("JSON EXCEPTION BEI UPDATEPOSTTYPES");
+        }
 
         if(LocalDateTime.now().getHour() == 5) {
             endDay();
@@ -2418,5 +2428,14 @@ public class LogService {
         iPsByUserRepository.deleteAll();
         iPsByPostRepository.deleteAll();
         uniqueUserRepo.deleteAll();
+    }
+
+    private void updatePostTypes() throws JSONException, ParseException {
+        for(Integer id : statsRepo.getIdsOfUntyped()) {
+            PostTypes type = new PostTypes();
+            type.setPost_id(Long.valueOf(id));
+            type.setType(postController.getType(id));
+            postTypeRepo.save(type);
+        }
     }
 }

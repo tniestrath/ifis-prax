@@ -176,6 +176,9 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("SELECT s.wordcount FROM PostStats s WHERE s.artId =:artId")
     public int getWordCount(int artId);
 
+    @Query("SELECT s.artId FROM PostStats s WHERE s.artId NOT IN (SELECT u.post_id FROM PostTypes u)")
+    List<Integer> getIdsOfUntyped();
+
     @Modifying
     @Transactional
     @Query("UPDATE PostStats s SET s.wordcount =:wordcount WHERE s.artId =:artId")

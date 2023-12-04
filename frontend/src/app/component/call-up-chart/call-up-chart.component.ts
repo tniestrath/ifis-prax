@@ -76,19 +76,19 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     if (event !== undefined) {
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
-    var system_time : number;
+    var system_time: number;
     this.db.getSystemTimeHour().then(res => system_time = res).then(() => {
-      this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365*2)).then((res : Callup[]) => {
+      this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365 * 2)).then((res: Callup[]) => {
         this.data = res;
 
         this.time_filtered = this.data;
 
 
-        if (this.timeSpan == "day"){
+        if (this.timeSpan == "day") {
           this.time_filtered.sort((a, b) => {
             return Number.parseInt(a.date) - Number.parseInt(b.date);
           });
-          let sublist  = this.time_filtered.splice(0, system_time +1);
+          let sublist = this.time_filtered.splice(0, system_time + 1);
           this.time_filtered.push(...sublist);
         } else {
           this.time_filtered.sort((a, b) => {
@@ -99,16 +99,29 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         this.createChart(this.time_filtered, this.timeSpan);
       });
     });
-    this.db.getCallupsByCategoriesNewest().then(res => {
-      this.categories = res.labels;
-      this.categoriesViews = res.clicks;
-      this.categoriesVisitors = res.besucher;
-      if (this.slidedOut){
-        this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Heute");
-      } else {
-        this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, "Heute");
-      }
-    })
+    if (this.timeSpan == "all_time") {
+      this.db.getCallpusByCategoriesAllTime().then(res => {
+        this.categories = res.labels;
+        this.categoriesViews = res.clicks;
+        this.categoriesVisitors = res.besucher;
+        if (this.slidedOut){
+          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Immer");
+        } else {
+          this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, "Immer");
+        }
+      });
+    } else {
+      this.db.getCallupsByCategoriesNewest().then(res => {
+        this.categories = res.labels;
+        this.categoriesViews = res.clicks;
+        this.categoriesVisitors = res.besucher;
+        if (this.slidedOut) {
+          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Heute");
+        } else {
+          this.createCategoriesChart(this.categories.slice(0, 7), this.categoriesViews, this.categoriesVisitors, "Heute");
+        }
+      });
+    }
   }
 
   addData(chart: any) {
@@ -390,6 +403,18 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
             this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, date + "Uhr");
           }
         });
+      });
+    }
+    else if (timespan == "all_time"){
+      this.db.getCallpusByCategoriesAllTime().then(res => {
+        this.categories = res.labels;
+        this.categoriesViews = res.clicks;
+        this.categoriesVisitors = res.besucher;
+        if (this.slidedOut){
+          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Immer");
+        } else {
+          this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, "Immer");
+        }
       });
     }
   }

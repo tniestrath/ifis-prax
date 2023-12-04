@@ -53,6 +53,7 @@ export enum dbUrl {
   GET_CALLUPS_BY_TIME = "/bericht/callups?days=DAYS",
   GET_CALLUP_CATEGORIES_BY_DATE = "/bericht/getCallupByCategoryDate?date=DATE",
   GET_CALLUP_CATEGORIES_BY_DATETIME = "/bericht/getCallupByCategoryDateAndHour?date=DATE&hour=HOUR",
+  GET_CALLUP_CATEGORIES_ALL_TIME = "/bericht/getCallupByCategoryAllTime",
 
 
   GET_NEWSLETTER_SUBS = "/newsletter/getStatusAll",
@@ -367,6 +368,10 @@ export class DbService {
   async getCallupsByCategoriesByDate(date : string) :Promise<CategoriesData>{
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", date), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getCallpusByCategoriesAllTime() : Promise<CategoriesData> {
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_CALLUP_CATEGORIES_ALL_TIME), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserAccountTypesYesterday() {

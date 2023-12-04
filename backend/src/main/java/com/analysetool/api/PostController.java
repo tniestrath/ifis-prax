@@ -817,7 +817,7 @@ public class PostController {
     /**
      *
      * @param sorter sorter "relevance" | "performance" | "clicks" - chooses what statistic you want to sort by.
-     * @param type "news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber"
+     * @param type "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber"
      * @return a JSON String of the Top Posts (as many as Limit) with post-type being type and sorted by sorter.
      */
     @GetMapping("/getTopWithType")
@@ -825,33 +825,44 @@ public class PostController {
         List<PostStats> top = null;
         String errorString = "";
 
-        if(sorter.equalsIgnoreCase("relevance")) {
-            top = statsRepo.findAllByOrderByRelevanceDesc();
-        }
-        if(sorter.equalsIgnoreCase("performance")) {
-            top = statsRepo.findAllByOrderByPerformanceDesc();
-        }
-        if(sorter.equalsIgnoreCase("clicks")) {
-            top = statsRepo.findAllByOrderByClicksDesc();
-        }
         String jsonString = null;
         JSONArray array = new JSONArray();
 
-        assert top != null;
-        top = top.stream().filter(postStats -> {
-            try {
-                return type.equalsIgnoreCase(getType(postStats.getArtId()));
-            } catch (JSONException | ParseException e) {
-                throw new RuntimeException(e);
+        switch(type) {
+            case "news", "artikel", "blog", "whitepaper" -> {
+                top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong(type));
             }
-        }).limit(limit).toList();
-
-
-        for (PostStats stats : top) {
-            JSONObject obj = new JSONObject(PostStatsByIdForFrontend(stats.getArtId()));
-            array.put(obj);
+            case "podcast", "ratgeber" -> {
+                if(type.equalsIgnoreCase("podcast")) {
+                    top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("podcast_first_series"));
+                } else {
+                    top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("cyber-risk-check"));
+                }
+            }
         }
-        jsonString = array.toString();
+
+        if(top != null) {
+            switch (sorter) {
+                case "relevance" -> {
+                    top.sort((o1, o2) -> (int) (o2.getRelevance() - o1.getRelevance()));
+                }
+                case "performance" -> {
+                    top.sort((o1, o2) -> (int) (o2.getPerformance() - o1.getPerformance()));
+                }
+                case "clicks" -> {
+                    top.sort((o1, o2) -> (int) (o2.getClicks() - o1.getClicks()));
+                }
+            }
+
+            top = top.stream().limit(limit).toList();
+
+            for (PostStats stats : top) {
+                JSONObject obj = new JSONObject(PostStatsByIdForFrontend(stats.getArtId()));
+                array.put(obj);
+            }
+
+            jsonString = array.toString();
+        }
         return jsonString != null? jsonString : errorString;
     }
 

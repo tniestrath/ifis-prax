@@ -13,7 +13,11 @@
         <div class="post-label" [style]="{'background': bgColor}">Clicks</div>
         <p>{{data.clicks}}</p>
       </div>
-      <div class="post-detail">
+      <div *ngIf="data.type.startsWith('podcast')" class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Dauer</div>
+        <p>{{data.duration}}</p>
+      </div>
+      <div *ngIf="!data.type.startsWith('podcast')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Zeichen</div>
         <p>{{data.lettercount}}</p>
       </div>

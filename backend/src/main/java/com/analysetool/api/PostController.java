@@ -3,6 +3,7 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.MathHelper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -1119,6 +1121,123 @@ public class PostController {
         return new JSONArray(stats).toString();
 
     }
+
+
+    public List<Post> getPostsByTermId(Long termId) {
+        List<Long> postIds = termRelRepo.findByTermTaxonomyId(termId)
+                .stream()
+                .map(wp_term_relationships::getObjectId)
+                .collect(Collectors.toList());
+
+        return postRepo.findAllById(postIds);
+    }
+
+    public List<PostStats> getPostStatsByTermId(Long termId){
+        List<Long> postIds = termRelRepo.findByTermTaxonomyId(termId)
+                .stream()
+                .map(wp_term_relationships::getObjectId)
+                .collect(Collectors.toList());
+
+        return statsRepo.findAllByArtIdIn(postIds);
+    }
+
+    /**
+     * Retrieves a list of {@code PostStats} objects that are considered outliers based on their views (clicks)
+     * for a given term ID. Outliers are determined using the {@code MathHelper.getOutliersLong} method.
+     *
+     * @param termId The term ID used to filter the post statistics. This is typically an identifier
+     *               for a specific category or tag in a blog or article system.
+     * @return A JSON string representing a list of {@code PostStats} objects that are outliers.
+     *         In case of an exception during JSON processing, a simple error message is returned.
+     *         If no outliers are found, an empty JSON array is returned.
+     * @implNote This method relies on {@code getPostStatsByTermId} to fetch the relevant post statistics
+     *           and {@code MathHelper.getOutliersLong} to determine outliers based on views.
+     *           It uses Jackson's {@code ObjectMapper} to convert the list of {@code PostStats} to JSON.
+     * @apiNote The term ID must be a valid identifier existing in the database. The method does not
+     *          handle cases where the term ID does not exist or is null.
+     * @exception Exception A generic exception is caught and a simple error message is returned.
+     *            This is a placeholder for more specific exception handling based on the application's requirements.
+     */
+    @GetMapping("/getOutliersByViewsAndTags")
+    public String getOutliersByViewsAndTags(@RequestParam Long termId)  {
+        List<PostStats> postStats = getPostStatsByTermId(termId);
+
+        List<Long> views = postStats.stream()
+                .map(PostStats::getClicks)
+                .collect(Collectors.toList());
+        List<Long> outliers = MathHelper.getOutliersLong(views);
+
+        List<PostStats> filteredPostStats = postStats.stream()
+                .filter(postStat -> outliers.contains(postStat.getClicks()))
+                .collect(Collectors.toList());
+
+        ObjectMapper mapper = new ObjectMapper();
+        try{
+        return mapper.writeValueAsString(filteredPostStats);}
+        catch (Exception e){return "Computer sagt nein";}
+    }
+
+    /**
+     * Retrieves outliers based on views or relevance for posts associated with a given term ID.
+     * This method filters posts statistics by views or relevance and identifies outliers in those metrics.
+     * It then fetches the corresponding post names based on the outliers and returns them along with the outlier values.
+     *
+     * @param termId The term ID used to find related post statistics. It refers to the ID of the term (e.g., a tag) in a blog or content system.
+     * @param type   The type of metric to consider for finding outliers. It can be either "views" or "relevance".
+     *               If "views" is specified, the method looks for outliers in post views (clicks).
+     *               If "relevance" is specified, the method looks for outliers in the relevance score of the posts.
+     * @return       A JSON string representing a list of maps, each map containing the post name (title) and its corresponding outlier value (either views or relevance).
+     *               Returns a simple error message if any exception occurs during JSON processing.
+     * @implNote This method uses {@link MathHelper#getOutliersLong(List)} or {@link MathHelper#getOutliersFloat(List)} (based on the 'type' parameter)
+     *           to determine outliers and then fetches the corresponding post names using the {@code PostRepository}.
+     *           It uses Jackson's {@code ObjectMapper} to convert the list of results to a JSON string.
+     */
+    @GetMapping("/getOutliersByViewsOrRelevanceAndTags")
+    public String getOutliersByViewsOrRelevanceAndTags(@RequestParam Long termId, @RequestParam String type) {
+        List<PostStats> postStats = getPostStatsByTermId(termId);
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        if ("views".equals(type)) {
+            List<Long> views = postStats.stream()
+                    .map(PostStats::getClicks)
+                    .collect(Collectors.toList());
+            List<Long> outliers = MathHelper.getOutliersLong(views);
+
+            result = postStats.stream()
+                    .filter(postStat -> outliers.contains(postStat.getClicks()))
+                    .map(postStat -> {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("postName", postRepository.findById(postStat.getArtId()).get().getTitle());
+                        map.put("views", postStat.getClicks());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+        } else if ("relevance".equals(type)) {
+            List<Float> relevances = postStats.stream()
+                    .map(PostStats::getRelevance)
+                    .collect(Collectors.toList());
+            List<Float> outliers = MathHelper.getOutliersFloat(relevances);
+
+            result = postStats.stream()
+                    .filter(postStat -> outliers.contains(postStat.getRelevance()))
+                    .map(postStat -> {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("postName", postRepository.findById(postStat.getArtId()).get().getTitle());
+                        map.put("relevanz", postStat.getRelevance());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(result);
+        } catch (Exception e) {
+            return "computadora dice que no";
+        }
+    }
+
+
 
 
 

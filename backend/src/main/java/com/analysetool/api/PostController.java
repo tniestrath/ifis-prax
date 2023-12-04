@@ -979,6 +979,14 @@ public class PostController {
             stats.add(json);
         }
 
+        stats.sort((o1, o2) -> {
+            try {
+                return o1.getInt("id") - o2.getInt("id");
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
         return new JSONArray(stats).toString();
     }
 

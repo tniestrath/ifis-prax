@@ -927,10 +927,10 @@ public class LogService {
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead))) {
                     if(isBlacklisted) {
-                        System.out.println("BANNED!!!!!!!!! : " + line);
+                        //System.out.println("BANNED!!!!!!!!! : " + line);
                     }
                     if(isSpam && !isInternal) {
-                        System.out.println("SPAM!!!: " + ip + " " + request + " " + userAgent);
+                        //System.out.println("SPAM!!!: " + ip + " " + request + " " + userAgent);
                     }
                     if(isServerError) {
                         serverErrors++;

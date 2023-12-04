@@ -10,6 +10,11 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -314,6 +319,8 @@ public class PostController {
         Date date = onlyDate.parse(post.getDate().toString());
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
+        String filepath = postMetaRepo.getFilePath(id);
+
         obj.put("id", post.getId());
         obj.put("title", post.getTitle());
         obj.put("date", formattedDate);
@@ -326,6 +333,11 @@ public class PostController {
             obj.put("relevance", ((float)PostStats.getRelevance()/maxRelevance));
             obj.put("clicks", PostStats.getClicks().toString());
             obj.put("lettercount", PostStats.getLettercount());
+            if(getType(id).contains("podcast")) {
+                try {
+                    obj.put("duration", getAudioDuration(filepath));
+                } catch (Exception ignored) {}
+            }
         }else {
             obj.put("performance",0);
             obj.put("relevance",0);
@@ -817,7 +829,7 @@ public class PostController {
     /**
      *
      * @param sorter sorter "relevance" | "performance" | "clicks" - chooses what statistic you want to sort by.
-     * @param type "news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber"
+     * @param type "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber"
      * @return a JSON String of the Top Posts (as many as Limit) with post-type being type and sorted by sorter.
      */
     @GetMapping("/getTopWithType")
@@ -825,33 +837,44 @@ public class PostController {
         List<PostStats> top = null;
         String errorString = "";
 
-        if(sorter.equalsIgnoreCase("relevance")) {
-            top = statsRepo.findAllByOrderByRelevanceDesc();
-        }
-        if(sorter.equalsIgnoreCase("performance")) {
-            top = statsRepo.findAllByOrderByPerformanceDesc();
-        }
-        if(sorter.equalsIgnoreCase("clicks")) {
-            top = statsRepo.findAllByOrderByClicksDesc();
-        }
         String jsonString = null;
         JSONArray array = new JSONArray();
 
-        assert top != null;
-        top = top.stream().filter(postStats -> {
-            try {
-                return type.equalsIgnoreCase(getType(postStats.getArtId()));
-            } catch (JSONException | ParseException e) {
-                throw new RuntimeException(e);
+        switch(type) {
+            case "news", "artikel", "blog", "whitepaper" -> {
+                top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong(type));
             }
-        }).limit(limit).toList();
-
-
-        for (PostStats stats : top) {
-            JSONObject obj = new JSONObject(PostStatsByIdForFrontend(stats.getArtId()));
-            array.put(obj);
+            case "podcast", "ratgeber" -> {
+                if(type.equalsIgnoreCase("podcast")) {
+                    top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("podcast_first_series"));
+                } else {
+                    top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("cyber-risk-check"));
+                }
+            }
         }
-        jsonString = array.toString();
+
+        if(top != null) {
+            switch (sorter) {
+                case "relevance" -> {
+                    top.sort((o1, o2) -> (int) (o2.getRelevance() - o1.getRelevance()));
+                }
+                case "performance" -> {
+                    top.sort((o1, o2) -> (int) (o2.getPerformance() - o1.getPerformance()));
+                }
+                case "clicks" -> {
+                    top.sort((o1, o2) -> (int) (o2.getClicks() - o1.getClicks()));
+                }
+            }
+
+            top = top.stream().limit(limit).toList();
+
+            for (PostStats stats : top) {
+                JSONObject obj = new JSONObject(PostStatsByIdForFrontend(stats.getArtId()));
+                array.put(obj);
+            }
+
+            jsonString = array.toString();
+        }
         return jsonString != null? jsonString : errorString;
     }
 
@@ -966,10 +989,6 @@ public class PostController {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
             stats.add(json);
         }
-        for(Integer postId : postTypeRepo.getPostsByType("news")) {
-            JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
-            stats.add(json);
-        }
         for(Integer postId : postTypeRepo.getPostsByType("artikel")) {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
             stats.add(json);
@@ -978,6 +997,14 @@ public class PostController {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
             stats.add(json);
         }
+
+        stats.sort((o1, o2) -> {
+            try {
+                return o2.getInt("id") - o1.getInt("id");
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         return new JSONArray(stats).toString();
     }
@@ -1485,6 +1512,19 @@ public class PostController {
         combinedResult.put("outliers", outliersArray);
 
         return combinedResult.toString();
+    }
+
+
+    public double getAudioDuration(String filePath) throws IOException, UnsupportedAudioFileException {
+        File audioFile = new File(filePath);
+
+        // Get the audio file format
+        AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audioFile);
+
+        // Get the audio file duration in seconds
+        long microsecondDuration = (Long) fileFormat.properties().get("duration");
+
+        return microsecondDuration / 1_000_000.0;
     }
 
 }

@@ -15,6 +15,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -1518,8 +1520,8 @@ public class PostController {
     }
 
 
-    public double getAudioDuration(String filePath) throws IOException, UnsupportedAudioFileException {
-        URL audioFile = new URL(filePath);
+    public double getAudioDuration(String filePath) throws IOException, UnsupportedAudioFileException, URISyntaxException {
+        URL audioFile = new URI(filePath).toURL();
 
         // Get the audio file format
         AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audioFile.openStream());

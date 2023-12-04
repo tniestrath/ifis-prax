@@ -966,10 +966,6 @@ public class PostController {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
             stats.add(json);
         }
-        for(Integer postId : postTypeRepo.getPostsByType("news")) {
-            JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
-            stats.add(json);
-        }
         for(Integer postId : postTypeRepo.getPostsByType("artikel")) {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
             stats.add(json);
@@ -981,7 +977,7 @@ public class PostController {
 
         stats.sort((o1, o2) -> {
             try {
-                return o1.getInt("id") - o2.getInt("id");
+                return o2.getInt("id") - o1.getInt("id");
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }

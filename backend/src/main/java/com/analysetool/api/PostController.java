@@ -15,9 +15,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -322,7 +319,7 @@ public class PostController {
         Date date = onlyDate.parse(post.getDate().toString());
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-        String filepath = postMetaRepo.getFilePath(id);
+        String filepath = postMetaRepo.getFilePath(id).replace("https://it-sicherheit.de/", "/var/www/wordpress/");
 
         obj.put("id", post.getId());
         obj.put("title", post.getTitle());
@@ -1520,11 +1517,12 @@ public class PostController {
     }
 
 
-    public double getAudioDuration(String filePath) throws IOException, UnsupportedAudioFileException, URISyntaxException {
-        URL audioFile = new URI(filePath).toURL();
+    public double getAudioDuration(String filePath) throws IOException, UnsupportedAudioFileException {
+
+        File audioFile = new File(filePath);
 
         // Get the audio file format
-        AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audioFile.openStream());
+        AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audioFile);
 
         // Get the audio file duration in seconds
         long microsecondDuration = (Long) fileFormat.properties().get("duration");

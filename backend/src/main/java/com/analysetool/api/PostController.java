@@ -141,7 +141,7 @@ public class PostController {
                         }
                     }
 
-                    type = getType(id);
+                    type = getType(id) == null ?"default" : getType(id);
 
                     JSONObject obj = new JSONObject();
                     Date date = onlyDate.parse(i.getDate().toString());

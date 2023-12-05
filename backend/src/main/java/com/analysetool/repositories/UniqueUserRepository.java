@@ -23,5 +23,5 @@ public interface UniqueUserRepository extends JpaRepository<UniqueUser, Long> {
 
     // Methode, um die durchschnittliche Verweildauer der Nutzer für einen Tag zurückzugeben
     @Query("SELECT AVG(u.time_spent) FROM UniqueUser u WHERE u.first_click >= :startOfDay AND u.first_click <= :endOfDay")
-    Double getTodayAverageTimeSpent(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
+    Double getAverageTimeSpentBetweenDates(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 }

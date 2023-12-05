@@ -2,10 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.repositories.UniqueUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -29,8 +26,16 @@ public class UniqueUserController {
     public String getTodayAverageTimeSpent() {
         LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
         LocalDateTime endOfDay = LocalDateTime.now().toLocalDate().atTime(23, 59, 59);
-        Double todayAverageTimeSpent = uniqueUserRepo.getTodayAverageTimeSpent(startOfDay, endOfDay);
+        Double todayAverageTimeSpent = uniqueUserRepo.getAverageTimeSpentBetweenDates(startOfDay, endOfDay);
         return todayAverageTimeSpent != null ? String.format("%.2f", todayAverageTimeSpent) : "Daten nicht verfügbar";
     }
 
+    @GetMapping("/average-time-spent-range")
+    public String getAverageTimeSpentInRange(@RequestParam int daysBackFrom, @RequestParam int daysBackTo) {
+        LocalDateTime endDate = LocalDateTime.now().minusDays(daysBackTo);
+        LocalDateTime startDate = LocalDateTime.now().minusDays(daysBackFrom);
+
+        Double averageTimeSpent = uniqueUserRepo.getAverageTimeSpentBetweenDates(startDate, endDate);
+        return averageTimeSpent != null ? String.format("%.2f", averageTimeSpent) : "Daten nicht verfügbar";
+    }
 }

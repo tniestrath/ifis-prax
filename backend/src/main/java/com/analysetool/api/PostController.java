@@ -333,13 +333,6 @@ public class PostController {
             obj.put("relevance", ((float)PostStats.getRelevance()/maxRelevance));
             obj.put("clicks", PostStats.getClicks().toString());
             obj.put("lettercount", PostStats.getLettercount());
-            if(type.contains("podcast")) {
-                try {
-                    obj.put("duration", getAudioDuration(filepath));
-                } catch (Exception ignored) {
-                    obj.put("duration", 0);
-                }
-            }
         }else {
             obj.put("performance",0);
             obj.put("relevance",0);

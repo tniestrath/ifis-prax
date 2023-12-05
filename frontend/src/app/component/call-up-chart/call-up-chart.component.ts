@@ -211,13 +211,13 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         plugins: {
           datalabels: {
             display: (ctx) => {
-              if ((clicksData[ctx.dataIndex] >= (c_max * 0.2) || visitorsData[ctx.dataIndex] >= (v_max * 0.2) )&& clicksData[ctx.dataIndex] > (visitorsData[ctx.dataIndex] * 1.2)){
+              if ((clicksData[ctx.dataIndex] >= (c_max * 0.2) || visitorsData[ctx.dataIndex] >= (v_max * 0.3) ) && clicksData[ctx.dataIndex] > (visitorsData[ctx.dataIndex] * 1.2)){
                 return true;
               }
               return false;
             },
             font: {
-              size: 8
+              size: 9
             },
             anchor: "end",
             align: "bottom",
@@ -376,7 +376,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
                   position: "center",
                   padding: 2,
                   font: {
-                    size: 10
+                    size: 14
                   }
                 }
               },
@@ -392,7 +392,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
                   position: "center",
                   padding: 2,
                   font: {
-                    size: 10
+                    size: 14
                   }
                 }
               }

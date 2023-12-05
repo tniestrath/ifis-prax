@@ -12,19 +12,21 @@ import {Top5PostsComponent} from "../top5-posts/top5-posts.component";
   styleUrls: ['./post-list.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class PostListComponent extends DashBaseComponent{
+  placeholder : string = "Post suchen";
+  input_search_cb : any;
+  input_all_cb : any;
+  input_article_cb : any;
+  input_blog_cb : any;
+  input_news_cb : any;
+  input_whitepaper_cb : any;
+
+
   selectorItems : SelectorItem[] = [];
   selectorItemsBackup = this.selectorItems;
   selectorItemsLoaded = new Subject<SelectorItem[]>();
-  search_input : any;
-  type_input_all : any;
-  type_input_article : any;
-  type_input_blog : any;
-  type_input_news : any;
-  type_input_whitepaper : any;
 
   ngOnInit(): void {
     this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen");
-    //@ts-ignore
     this.db.getPostsAll().then( (value : Post[]) => {
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
@@ -32,47 +34,40 @@ export class PostListComponent extends DashBaseComponent{
       this.selectorItemsLoaded.next(this.selectorItems);
     });
 
-    this.search_input = document.getElementById("post-search");
-    this.search_input.addEventListener("input", (event : any) => {
+    this.input_search_cb = (event: { target: { value: string; }; }) => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
         return (item.data as Post).title.toUpperCase().includes(event.target.value.toUpperCase());
       });
       this.selectorItemsLoaded.next(this.selectorItems);
-    });
-
-    this.type_input_all = document.getElementById("post-type-all");
-    this.type_input_all.addEventListener("change", () => {
+    };
+    this.input_all_cb = () => {
       this.selectorItems = this.selectorItemsBackup;
       this.selectorItemsLoaded.next(this.selectorItems);
-    });
-    this.type_input_article = document.getElementById("post-type-article");
-    this.type_input_article.addEventListener("change", () => {
+    };
+    this.input_article_cb = () => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
         return ( (item.data as Post).type == "artikel" );
       });
       this.selectorItemsLoaded.next(this.selectorItems);
-    });
-    this.type_input_blog = document.getElementById("post-type-blog");
-    this.type_input_blog.addEventListener("change", () => {
+    }
+    this.input_blog_cb = () => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
         return ( (item.data as Post).type == "blog" );
       });
       this.selectorItemsLoaded.next(this.selectorItems);
-    });
-    this.type_input_news = document.getElementById("post-type-news");
-    this.type_input_news.addEventListener("change", () => {
+    }
+    this.input_news_cb = () => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
         return ( (item.data as Post).type == "news" );
       });
       this.selectorItemsLoaded.next(this.selectorItems);
-    });
-    this.type_input_whitepaper = document.getElementById("post-type-whitepaper");
-    this.type_input_whitepaper.addEventListener("change", () => {
+    }
+    this.input_whitepaper_cb = () => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
         return ( (item.data as Post).type == "whitepaper" );
       });
       this.selectorItemsLoaded.next(this.selectorItems);
-    });
+    }
   }
 }
 
@@ -82,11 +77,10 @@ export class PostListComponent extends DashBaseComponent{
   styleUrls: ['./post-list.component.css', "../../dash-base/dash-base.component.css", "./podcast-list.component.css"]
 })
 export class PodcastListComponent extends PostListComponent{
+  override placeholder = "Podcast suchen";
 
   override ngOnInit() {
-    // @ts-ignore
-    (document.getElementById("post-search") as HTMLInputElement).placeholder = "Podcast suchen";
-
+    this.setToolTip("Auflistung aller Podcasts, sie können nach Datum oder Clicks sortieren oder nach Schlagwörtern in Titel oder Tags suchen");
     this.db.getPodcastsAll().then( (res: Post[])  => {
       for (const valueElement of res) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
@@ -95,25 +89,55 @@ export class PodcastListComponent extends PostListComponent{
       this.selectorItemsLoaded.next(this.selectorItems);
     });
 
-
-    this.search_input = document.getElementById("post-search");
-    this.search_input.addEventListener("input", (event : any) => {
+    this.input_search_cb = (event: { target: { value: string; }; }) => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
         return (item.data as Post).title.toUpperCase().includes(event.target.value.toUpperCase());
       });
       this.selectorItemsLoaded.next(this.selectorItems);
-    });
-
-    this.type_input_all = document.getElementById("post-type-all");
-    this.type_input_all.addEventListener("change", () => {
+    }
+    this.input_all_cb = () => {
       this.selectorItems = this.selectorItemsBackup.sort((a, b) => Number(b.data.id) - Number(a.data.id));
       this.selectorItemsLoaded.next(this.selectorItems);
-    });
-
-    this.type_input_whitepaper = document.getElementById("post-type-whitepaper");
-    this.type_input_whitepaper.addEventListener("change", () => {
+    }
+    this.input_whitepaper_cb = () => {
       this.selectorItems.sort((a, b) => Number((b.data as Post).clicks) - Number((a.data as Post).clicks));
       this.selectorItemsLoaded.next(this.selectorItems);
-    });
+    }
   }
+}
+
+@Component({
+  selector: 'dash-list-ratgeber',
+  templateUrl: './post-list.component.html',
+  styleUrls: ['./post-list.component.css', "../../dash-base/dash-base.component.css", "./ratgeber-list.component.css"]
+})
+export class RatgeberListComponent extends PostListComponent{
+  override placeholder = "Ratgeber suchen";
+
+  override ngOnInit() {
+    this.setToolTip("Auflistung aller Ratgeber-Inhalte, sie können nach Datum oder Clicks sortieren oder nach Schlagwörtern in Titel oder Tags suchen");
+    this.db.getRatgeberAll().then((res: Post[]) => {
+      for (const valueElement of res) {
+        this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        this.selectorItems.sort((a, b) => Number(b.data.id) - Number(a.data.id));
+      }
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+
+    this.input_search_cb = (event: { target: { value: string; }; }) => {
+      this.selectorItems = this.selectorItemsBackup.filter((item) => {
+        return (item.data as Post).title.toUpperCase().includes(event.target.value.toUpperCase());
+      });
+      this.selectorItemsLoaded.next(this.selectorItems);
+    }
+    this.input_all_cb = () => {
+      this.selectorItems = this.selectorItemsBackup.sort((a, b) => Number(b.data.id) - Number(a.data.id));
+      this.selectorItemsLoaded.next(this.selectorItems);
+    }
+    this.input_whitepaper_cb = () => {
+      this.selectorItems.sort((a, b) => Number((b.data as Post).clicks) - Number((a.data as Post).clicks));
+      this.selectorItemsLoaded.next(this.selectorItems);
+    }
+  }
+
 }

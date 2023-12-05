@@ -119,7 +119,7 @@ export class SystemloadComponent extends DashBaseComponent implements OnInit{
                   position: "center",
                   padding: 2,
                   font: {
-                    size: 10
+                    size: 12
                   }
                 }
               },
@@ -135,7 +135,7 @@ export class SystemloadComponent extends DashBaseComponent implements OnInit{
                   position: "center",
                   padding: 2,
                   font: {
-                    size: 10
+                    size: 12
                   }
                 }
               }

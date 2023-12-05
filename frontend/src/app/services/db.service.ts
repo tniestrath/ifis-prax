@@ -339,6 +339,11 @@ export class DbService {
     return await fetch((DbService.getUrl(dbUrl.GET_PODCAST_ALL)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
+  async getRatgeberAll() : Promise<Post[]> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_RATGEBER_ALL)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
   async getClicksByTime(id : number){
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});

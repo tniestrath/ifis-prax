@@ -1,11 +1,11 @@
 <div class="component-box post-list-box">
   <form class="post-type-form">
-    <input type="text" id="post-search" placeholder="Post suchen">
-    <input type="radio" id="post-type-all" name="type" value="O" checked>
-    <input type="radio" id="post-type-article" name="type" value="A">
-    <input type="radio" id="post-type-blog" name="type" value="B">
-    <input type="radio" id="post-type-news" name="type" value="N">
-    <input type="radio" id="post-type-whitepaper" name="type" value="W">
+    <input type="text" id="post-search" [placeholder]="placeholder" (input)="input_search_cb($event)">
+    <input type="radio" id="post-type-all" name="type" value="O" checked (change)="input_all_cb()">
+    <input type="radio" id="post-type-article" name="type" value="A" (change)="input_article_cb()">
+    <input type="radio" id="post-type-blog" name="type" value="B" (change)="input_blog_cb()">
+    <input type="radio" id="post-type-news" name="type" value="N" (change)="input_news_cb()">
+    <input type="radio" id="post-type-whitepaper" name="type" value="W" (change)="input_whitepaper_cb()">
   </form>
   <div class="post-list-selector-container">
     <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded"></dash-selector>

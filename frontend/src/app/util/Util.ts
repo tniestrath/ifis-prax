@@ -104,6 +104,7 @@ export enum DashColors {
   BLACK_50 = "rgba(0,0,0, .5)",
 
   GREY = "rgb(200,200,200)",
+  RATGEBER = "rgb(200,200,200)",
   PLAN_WITHOUT = "rgb(200,200,200)",
   BACKGROUND = "rgb(200,200,200)",
 

@@ -30,7 +30,7 @@
         <p>{{(data.relevance * 100).toFixed()}}</p>
       </div>
     </div>
-    <div class="post-detail-group-2">
+    <div *ngIf="!data.type.startsWith('ratgeber')" class="post-detail-group-2">
       <div class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Autoren</div>
         <p>{{data.authors}}</p>

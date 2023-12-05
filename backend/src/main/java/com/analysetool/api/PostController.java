@@ -853,7 +853,7 @@ public class PostController {
         if(top != null) {
             switch (sorter) {
                 case "relevance" -> {
-                    top.sort((o1, o2) -> ((int)(o2.getRelevance()) * 100 - (int)(o1.getRelevance() * 100)));
+                    top.sort((o1, o2) -> Float.compare(o2.getRelevance(), o1.getRelevance()));
                 }
                 case "performance" -> {
                     top.sort((o1, o2) -> Float.compare(o2.getPerformance(), o1.getPerformance()));

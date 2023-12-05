@@ -438,11 +438,15 @@ public class LogService {
                 boolean isServerError = Integer.parseInt(responseCode) >= 500;
                 //Filter for Spam
                 boolean isSpam = false;
+
                 if(!(last_ip == null || last_request == null)) {
                     if (request.equals(last_request) && ip.equals(last_ip)) {
                         isSpam = true;
                     }
                 }
+
+                boolean isGet = request.contains("GET") && !request.contains("HEAD") && !request.contains("POST");
+
 
                 //Schaue, ob der UserAgent auf der Blacklist steht.
                 boolean isBlacklisted = false;
@@ -455,7 +459,7 @@ public class LogService {
                 }
 
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam) {
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam && isGet) {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
                     erhoeheViewsPerHour2(viewsByHour, dateLog.toLocalTime());

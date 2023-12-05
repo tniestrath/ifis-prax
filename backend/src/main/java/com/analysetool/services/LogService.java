@@ -358,7 +358,7 @@ public class LogService {
     }
 
 
-    public void findAMatch(SysVar sysVar) throws IOException, ParseException {
+    public void findAMatch(SysVar sysVar) throws IOException, ParseException, JSONException {
         String line;
 
         int totalClicks = 0;
@@ -464,15 +464,7 @@ public class LogService {
                     totalClicks++;
                     if(isUnique) {
                         uniqueUsers++;
-                        user = new UniqueUser();
-                        user.setGlobal(1);
-                        user.setIp(ip);
-                        user.setCategory("global");
-                        uniqueUserRepo.save(user);
-                    } else {
-                        user = uniqueUserRepo.findByIP(ip);
-                        user.setGlobal(1);
-                        uniqueUserRepo.save(user);
+                        initUniqueUser(ip, dateLog);
                     }
 
                     //Does it match an article-type?
@@ -611,17 +603,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userArticle++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("article");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getArticle() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getArticle()).length() > 1) {
                                     userArticle++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setArticle(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "article", dateLog);
                         }
 
                         case "blogView", "blogSS" -> {
@@ -631,17 +618,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userBlog++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("blog");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getBlog() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getBlog()).length() > 1) {
                                     userBlog++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setBlog(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "blog", dateLog);
                         }
 
                         case "newsView", "newsSS" -> {
@@ -651,17 +633,13 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userNews++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("news");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getNews() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNews()).length() > 1) {
                                     userNews++;
                                 }
                                 user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setNews(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "news", dateLog);
                         }
 
                         case "wpView", "wpSS" -> {
@@ -671,17 +649,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userWhitepaper++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("whitepaper");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getWhitepaper() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getWhitepaper()).length() > 1) {
                                     userWhitepaper++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setWhitepaper(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "whitepaper", dateLog);
                         }
                         case "podView" -> {
                             //Erhöhe Clicks für Podcast um 1.
@@ -689,34 +662,24 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userPodcast++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("podcast");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getPodcast() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPodcast()).length() > 1) {
                                     userPodcast++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setPodcast(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "podcast", dateLog);
                         }
                         case "main" -> {
                             viewsMain++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userMain++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("main");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getMain() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getMain()).length() > 1) {
                                     userMain++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setMain(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "main", dateLog);
                         }
                         case "ueber" -> {
                             //Erhöhe Clicks für Ueber-Uns um 1.
@@ -724,17 +687,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userUeber++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("ueber");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getUeber() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getUeber()).length() > 1) {
                                     userUeber++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setUeber(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "ueber", dateLog);
                         }
                         case "impressum" -> {
                             //Erhöhe Clicks für Impressum um 1.
@@ -742,17 +700,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userImpressum++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("impressum");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getImpressum() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImpressum()).length() > 1) {
                                     userImpressum++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setImpressum(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "impressum", dateLog);
                         }
                         case "preisliste" -> {
                             //Erhöhe Clicks für Preisliste um 1.
@@ -760,17 +713,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userPreisliste++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("preisliste");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getPreisliste() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPreisliste()).length() > 1) {
                                     userPreisliste++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setPreisliste(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "preisliste", dateLog);
                         }
                         case "partner" -> {
                             //Erhöhe Clicks für Partner um 1.
@@ -778,17 +726,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userPartner++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("partner");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getPartner() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPartner()).length() > 1) {
                                     userPartner++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setPartner(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "partner", dateLog);
                         }
                         case "datenschutz" -> {
                             //Erhöhe Clicks für Datenschutzerkl. um 1.
@@ -796,17 +739,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userDatenschutz++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("datenschutz");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getDatenschutz() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getDatenschutz()).length() > 1) {
                                     userDatenschutz++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setDatenschutz(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "datenschutz", dateLog);
                         }
                         case "newsletter" -> {
                             //Erhöhe Clicks für Newsletter um 1.
@@ -814,17 +752,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userNewsletter++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("newsletter");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getNewsletter() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNewsletter()).length() > 1) {
                                     userNewsletter++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setNewsletter(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "newsletter", dateLog);
                         }
                         case "image" -> {
                             //Erhöhe Clicks für Image um 1.
@@ -832,17 +765,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userImage++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("image");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getImage() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImage()).length() > 1) {
                                     userImage++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setImage(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "image", dateLog);
                         }
                         case "agb" -> {
                             //Erhöhe Clicks für AGBS um 1.
@@ -850,17 +778,12 @@ public class LogService {
                             //Wenn der User Unique ist, erstelle eine Zeile in UniqueUser.
                             if (isUnique) {
                                 userAGBS++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("agbs");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getAgb() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getAgb()).length() > 1) {
                                     userAGBS++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setAgb(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "agb", dateLog);
                         }
                         case "userView" -> {
                             try {
@@ -875,17 +798,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userRatgeber++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("ratgeber");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() > 1) {
                                     userRatgeber++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setRatgeber(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "ratgeber", dateLog);
 
                             //Update stats for more concrete type of Ratgeber
                             if(whatMatched.equals("ratgeberPost")) {
@@ -893,7 +811,7 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberPost++;
                                 } else {
-                                    if (uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() > 1) {
                                         userRatgeberPost++;
                                     }
                                 }
@@ -902,7 +820,7 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberGlossar++;
                                 } else {
-                                    if (uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() > 1) {
                                         userRatgeberGlossar++;
                                     }
                                 }
@@ -911,7 +829,7 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberBuch++;
                                 } else {
-                                    if (uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() > 1) {
                                         userRatgeberBuch++;
                                     }
                                 }
@@ -2437,5 +2355,112 @@ public class LogService {
             type.setType(postController.getType(id));
             postTypeRepo.save(type);
         }
+    }
+
+    private void updateUniqueUser(String ip, String category, LocalDateTime clickTime) throws JSONException {
+        UniqueUser user = uniqueUserRepo.findByIP(ip);
+        //Check whether user has clicked within last hour, if not, permanentify the user and open a new User.
+        if(clickTime.isAfter(user.getFirst_click().plusHours(1))) {
+            permanentifyUser(ip);
+            uniqueUserRepo.delete(user);
+            initUniqueUser(ip, clickTime);
+            user = uniqueUserRepo.findByIP(ip);
+        }
+        //Get the highest Click in all Lists, then add 1 because we are currently processing a click
+        int clicks = user.getAmount_of_clicks() + 1;
+        user.setAmount_of_clicks(clicks);
+
+
+        //calculate the time that passed between the first and current click
+        user.setTime_spent((int) Duration.between(user.getFirst_click(), clickTime).toSeconds());
+
+        //Update the List of clicked categories
+        switch(category) {
+            case "article" -> {
+                user.setArticle(new JSONArray(user.getArticle()).put(clicks).toString());
+            }
+            case "blog" -> {
+                user.setBlog(new JSONArray(user.getBlog()).put(clicks).toString());
+            }
+            case "news" -> {
+                user.setNews(new JSONArray(user.getNews()).put(clicks).toString());
+            }
+            case "whitepaper" -> {
+                user.setWhitepaper(new JSONArray(user.getWhitepaper()).put(clicks).toString());
+            }
+            case "podcast" -> {
+                user.setPodcast(new JSONArray(user.getPodcast()).put(clicks).toString());
+            }
+            case "ratgeber" -> {
+                user.setRatgeber(new JSONArray(user.getRatgeber()).put(clicks).toString());
+            }
+            case "main" -> {
+                user.setMain(new JSONArray(user.getMain()).put(clicks).toString());
+            }
+            case "ueber" -> {
+                user.setUeber(new JSONArray(user.getUeber()).put(clicks).toString());
+            }
+            case "impressum" -> {
+                user.setImpressum(new JSONArray(user.getImpressum()).put(clicks).toString());
+            }
+            case "preisliste" -> {
+                user.setPreisliste(new JSONArray(user.getPreisliste()).put(clicks).toString());
+            }
+            case "partner" -> {
+                user.setPartner(new JSONArray(user.getPartner()).put(clicks).toString());
+            }
+            case "datenschutz" -> {
+                user.setDatenschutz(new JSONArray(user.getDatenschutz()).put(clicks).toString());
+            }
+            case "newsletter" -> {
+                user.setNewsletter(new JSONArray(user.getNewsletter()).put(clicks).toString());
+            }
+            case "image" -> {
+                user.setImage(new JSONArray(user.getImage()).put(clicks).toString());
+            }
+            case "agb" -> {
+                user.setAgb(new JSONArray(user.getAgb()).put(clicks).toString());
+            }
+        }
+
+        uniqueUserRepo.save(user);
+
+    }
+
+    private void initUniqueUser(String ip, LocalDateTime clickTime) {
+        UniqueUser user = new UniqueUser();
+        user.setIp(ip);
+        user.setArticle(new JSONArray().put(0).toString());
+        user.setBlog(new JSONArray().put(0).toString());
+        user.setNews(new JSONArray().put(0).toString());
+        user.setWhitepaper(new JSONArray().put(0).toString());
+        user.setPodcast(new JSONArray().put(0).toString());
+        user.setRatgeber(new JSONArray().put(0).toString());
+        user.setMain(new JSONArray().put(0).toString());
+        user.setUeber(new JSONArray().put(0).toString());
+        user.setImpressum(new JSONArray().put(0).toString());
+        user.setPreisliste(new JSONArray().put(0).toString());
+        user.setPartner(new JSONArray().put(0).toString());
+        user.setDatenschutz(new JSONArray().put(0).toString());
+        user.setNewsletter(new JSONArray().put(0).toString());
+        user.setImage(new JSONArray().put(0).toString());
+        user.setAgb(new JSONArray().put(0).toString());
+        user.setFirst_click(clickTime);
+        user.setTime_spent(0);
+        user.setAmount_of_clicks(0);
+
+        uniqueUserRepo.save(user);
+    }
+
+    private void permanentifyUser(String ip) {
+        //Update averageclicks for the deleted user
+
+        //Update time spent for the deleted user
+
+        uniqueUserRepo.delete(uniqueUserRepo.findByIP(ip));
+    }
+
+    private void permanentifyAllUsers() {
+        //Do it
     }
 }

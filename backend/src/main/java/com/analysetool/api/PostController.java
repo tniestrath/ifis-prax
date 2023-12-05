@@ -319,8 +319,6 @@ public class PostController {
         Date date = onlyDate.parse(post.getDate().toString());
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-        String filepath = postMetaRepo.getFilePath(id).replace("https://it-sicherheit.de/", "/var/www/wordpress/");
-
         obj.put("id", post.getId());
         obj.put("title", post.getTitle());
         obj.put("date", formattedDate);

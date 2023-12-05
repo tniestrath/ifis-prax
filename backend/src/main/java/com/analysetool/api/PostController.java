@@ -708,6 +708,10 @@ public class PostController {
             }
         }
 
+
+        if (type == null) {
+            System.out.println(id + "\n");
+        }
         return type;
     }
 

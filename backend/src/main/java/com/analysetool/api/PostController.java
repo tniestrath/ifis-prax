@@ -853,10 +853,10 @@ public class PostController {
         if(top != null) {
             switch (sorter) {
                 case "relevance" -> {
-                    top.sort((o1, o2) -> (int) (o2.getRelevance() - o1.getRelevance()));
+                    top.sort((o1, o2) -> ((int)(o2.getRelevance()) * 100 - (int)(o1.getRelevance() * 100)));
                 }
                 case "performance" -> {
-                    top.sort((o1, o2) -> (int) (o2.getPerformance() - o1.getPerformance()) * 100);
+                    top.sort((o1, o2) -> ((int)(o2.getPerformance()) * 100 - (int)(o1.getPerformance() * 100)));
                 }
                 case "clicks" -> {
                     top.sort((o1, o2) -> (int) (o2.getClicks() - o1.getClicks()));

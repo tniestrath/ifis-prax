@@ -856,7 +856,7 @@ public class PostController {
                     top.sort((o1, o2) -> ((int)(o2.getRelevance()) * 100 - (int)(o1.getRelevance() * 100)));
                 }
                 case "performance" -> {
-                    top.sort((o1, o2) -> ((int)(o2.getPerformance()) * 100 - (int)(o1.getPerformance() * 100)));
+                    top.sort((o1, o2) -> Float.compare(o2.getPerformance(), o1.getPerformance()));
                 }
                 case "clicks" -> {
                     top.sort((o1, o2) -> (int) (o2.getClicks() - o1.getClicks()));

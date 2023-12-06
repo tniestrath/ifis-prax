@@ -4,6 +4,7 @@ import {DbObject} from "../../services/DbObject";
 import {DbService} from "../../services/db.service";
 import {SafeUrl} from "@angular/platform-browser";
 import {SysVars} from "../../services/sys-vars-service";
+import {Observable, Subject} from "rxjs";
 
 
 @Component({
@@ -17,6 +18,7 @@ export class SearchbarComponent implements OnInit{
   @Output() currentSearch = new EventEmitter<string>();
   @Output() selected = new EventEmitter<DbObject>();
   @Output() filter = new EventEmitter<{ accType : string, sort : string }>();
+  @Input('reset') reset = new Subject<boolean>();
 
   page : string = "user";
 
@@ -37,6 +39,9 @@ export class SearchbarComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.reset.subscribe(value => {
+      this.onReset();
+    })
   }
 
   onKey(value : string) {
@@ -69,18 +74,20 @@ export class SearchbarComponent implements OnInit{
     this.shown = false;
   }
 
+  onReset(){
+    this.selectedSearch = new DbObject("0", "");
+    this.displaySearchBox = "50px";
+    this.onKey("");
+    this.onDbObjectSelected("0", "");
+  }
+
   onCancelClick(){
-    if (SysVars.ADMIN){
-      this.selectedSearch = new DbObject("0", "");
-      this.displaySearchBox = "50px";
-      this.onKey("");
-      this.onDbObjectSelected("0", "");
-      SysVars.CURRENT_PAGE = "Users";
-    } else {
-      this.cs.deleteAll("/");
-      SysVars.WELCOME = true;
-      location.reload();
-    }
+    this.selectedSearch = new DbObject("0", "");
+    this.displaySearchBox = "50px";
+    this.onKey("");
+    this.onDbObjectSelected("0", "");
+    SysVars.CURRENT_PAGE = "Anbieter";
+
   }
   onLogoutClick() {
     this.cs.deleteAll("/");
@@ -99,36 +106,34 @@ export class SearchbarComponent implements OnInit{
       if (!document.getElementById("filter_dropdown")) {
         this.filter_dropdown = document.createElement("div");
         this.filter_dropdown.id = "filter_dropdown";
-        this.filter_dropdown.style.width = "640px";
-        this.filter_dropdown.style.height = "100px";
-        this.filter_dropdown.style.position = "absolute";
-        this.filter_dropdown.style.top = "65px";
-        this.filter_dropdown.style.right = "0";
+        this.filter_dropdown.style.height = "50px";
+        this.filter_dropdown.style.width = "100%";
         this.filter_dropdown.style.boxSizing = "border-box";
         this.filter_dropdown.style.border = "2px solid #A0A0A0";
         this.filter_dropdown.style.boxShadow = "0 5px 5px rgba(0,0,0,.2)"
+        this.filter_dropdown.style.marginLeft = "5px;"
         this.filter_dropdown.style.borderRadius = "5px";
         this.filter_dropdown.style.backgroundColor = "white";
         this.filter_dropdown.style.padding = "5px";
         this.filter_dropdown.style.display = "flex";
         this.filter_dropdown.style.flexDirection = "row";
-        this.filter_dropdown.style.flexWrap = "wrap";
+        this.filter_dropdown.style.flexWrap = "none";
 
         let filter_styles = '' +
           'margin-right: 5px;' +
           'border: 1px solid #A0A0A0;' +
           'border-radius: 5px;' +
           'text-align: center;' +
-          'width: 82px;' +
-          'height: 20px;';
+          'width: 10%;' +
+          'height: 35px;';
 
         let sorter_styles= '' +
           'margin-right: 5px;' +
           'border: 1px solid #A0A0A0;' +
           'border-radius: 5px;' +
           'text-align: center;' +
-          'width: 126px;' +
-          'height: 20px;';
+          'width: 20%;' +
+          'height: 35px;';
 
         let selected_account_filter = "all";
         let selected_sort = "uid";
@@ -375,7 +380,8 @@ export class SearchbarComponent implements OnInit{
         filter_sort_uid.style.color = "#951D40";
         this.filter_dropdown.appendChild(filter_sort_uid);
 
-        this.element.nativeElement.appendChild(this.filter_dropdown);
+        // @ts-ignore
+        document.getElementById("searchbar-box").appendChild(this.filter_dropdown);
       }
       if (this.shown) {
         // @ts-ignore

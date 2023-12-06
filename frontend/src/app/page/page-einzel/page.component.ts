@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {SelectorItem} from "../selector/selector.component";
 import {DbService} from "../../services/db.service";
@@ -18,24 +18,15 @@ import {OriginMapComponent} from "../../component/origin-map/origin-map.componen
 import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
-import {
-  PodcastListComponent,
-  PostListComponent,
-  RatgeberListComponent
-} from "../../component/post/post-list/post-list.component";
+import {PodcastListComponent, PostListComponent, RatgeberListComponent} from "../../component/post/post-list/post-list.component";
 import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
 import {CallUpChartComponent} from "../../component/call-up-chart/call-up-chart.component";
-import {
-  Top5ArticleComponent,
-  Top5BlogComponent, Top5NewsComponent,
-  Top5PostsComponent, Top5WhitepaperComponent
-} from "../../component/post/top5-posts/top5-posts.component";
+import {Top5ArticleComponent, Top5BlogComponent, Top5NewsComponent, Top5WhitepaperComponent} from "../../component/post/top5-posts/top5-posts.component";
 import {NewsletterStatsComponent} from "../../component/newsletter-stats/newsletter-stats.component";
 import {SystemloadComponent} from "../../component/system/systemload/systemload.component";
 import {EventsStatsComponent} from "../../component/events-stats/events-stats.component";
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
-import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
-
+import {SearchbarComponent} from "../searchbar/searchbar.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -48,6 +39,7 @@ export class PageComponent implements OnInit {
   selectorItemsLoaded = new Subject<SelectorItem[]>();
   searchValue = "";
   filterValues : { accType : string, sort : string } = {accType: "all", sort : "uid"};
+  resetSearchbar : Subject<boolean> = new Subject<boolean>();
 
   @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
@@ -138,13 +130,10 @@ export class PageComponent implements OnInit {
       this.displayContent = "grid";
       switch (page) {
         case "Anbieter":{
-          if (SysVars.USER_ID != "0" && SysVars.ADMIN){
-            this.displayContent = "grid";
-            this.cardsLoaded.next(this.getUserPageCards());
-          } else {
-            this.displayContent = "none";
-            this.loadSelector(this.filterValues);
-          }
+          this.cardsLoaded.next(this.getUserPageCards());
+          this.displayContent = "none";
+          this.loadSelector(this.filterValues);
+          this.resetSearchbar.next(true);
           this.db.resetStatus();
           break;
         }

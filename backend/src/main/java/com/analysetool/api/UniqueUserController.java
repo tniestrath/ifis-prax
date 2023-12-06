@@ -61,7 +61,7 @@ public class UniqueUserController {
      *
      * @param limit The maximum number of user paths to return. If not specified, defaults to 10.
      *              This limits the number of users to be considered for generating click paths.
-     * @return A String containing the click paths of users, separated by commas.
+     * @return A String containing the click paths of users, separated by commas. -> "main,blog,news"
      *         Each click path is a sequence of category names representing the order of clicks.
      *         Returns an empty string if no valid paths are found or if an error occurs.
      */

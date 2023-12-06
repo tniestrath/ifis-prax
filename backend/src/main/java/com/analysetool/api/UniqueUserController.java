@@ -30,14 +30,17 @@ public class UniqueUserController {
         return todayAverageTimeSpent != null ? String.format("%.2f", todayAverageTimeSpent) : "Daten nicht verfügbar";
     }
 
-    /**
+/*
+    */
+/**
      * Berechnet die durchschnittliche Verweildauer der Nutzer für einen spezifizierten Zeitraum.
      * Der Zeitraum wird durch 'daysBackFrom' und 'daysBackTo' relativ zum aktuellen Datum definiert.
      *
      * @param daysBackFrom Start des Zeitraums in Tagen vor heute (z.B. 7 für 7 Tage vor heute).
      * @param daysBackTo   Ende des Zeitraums in Tagen vor heute (z.B. 3 für 3 Tage vor heute).
      * @return Durchschnittliche Verweildauer als String oder 'Daten nicht verfügbar' bei fehlenden Daten.
-     */
+     *//*
+
     @GetMapping("/average-time-spent-range")
     public String getAverageTimeSpentInRange(@RequestParam("daysBackFrom") int daysBackFrom, @RequestParam("daysBackTo") int daysBackTo) {
         LocalDateTime startDate = LocalDateTime.now().minusDays(daysBackFrom).toLocalDate().atStartOfDay();
@@ -46,5 +49,6 @@ public class UniqueUserController {
         Double averageTimeSpent = uniqueUserRepo.getAverageTimeSpentBetweenDates(startDate, endDate);
         return averageTimeSpent != null ? String.format("%.2f", averageTimeSpent) : "Daten nicht verfügbar";
     }
-    
+*/
+
 }

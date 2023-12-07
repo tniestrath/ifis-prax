@@ -2364,7 +2364,7 @@ public class LogService {
     private void updateUniqueUser(String ip, String category, LocalDateTime clickTime) throws JSONException {
         UniqueUser user = uniqueUserRepo.findByIP(ip);
         //Check whether user has clicked within last hour, if not, permanentify the user and open a new User.
-        if(clickTime.isAfter(user.getFirst_click().plusHours(1))) {
+        if(clickTime.isAfter(user.getFirst_click().plusHours(1).plusSeconds(user.getTime_spent()))) {
             permanentifyUser(ip);
             uniqueUserRepo.delete(user);
             initUniqueUser(ip, clickTime);

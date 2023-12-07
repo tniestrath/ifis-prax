@@ -75,6 +75,15 @@ public class UniqueUserController {
                 .collect(Collectors.joining(", "));
     }
 
+    @GetMapping("/all-paths")
+    public String getAllUserPaths() {
+        List<UniqueUser> users = uniqueUserRepo.findAllByMoreThanTwoClicks();
+
+        return users.stream()
+                .map(this::reconstructClickPath)
+                .collect(Collectors.joining(", "));
+    }
+
     private String reconstructClickPath(UniqueUser user) {
         Map<Integer, String> clickMap = new TreeMap<>();
         try{

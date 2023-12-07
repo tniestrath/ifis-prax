@@ -27,6 +27,10 @@ public interface UniqueUserRepository extends JpaRepository<UniqueUser, Long> {
     @Query("SELECT AVG(u.time_spent) FROM UniqueUser u WHERE u.first_click >= :startOfDay AND u.first_click <= :endOfDay")
     Double getAverageTimeSpentBetweenDates(@Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
 
-    @Query("SELECT u FROM UniqueUser u WHERE u.amount_of_clicks > 2")
+    @Query("SELECT u FROM UniqueUser u WHERE u.amount_of_clicks >= 2")
     List<UniqueUser> findTopByMoreThanTwoClicks(Pageable pageable);
+
+    @Query("SELECT u FROM UniqueUser u WHERE u.amount_of_clicks >= 2")
+    List<UniqueUser> findAllByMoreThanTwoClicks();
+
 }

@@ -45,17 +45,6 @@ public class UniqueUserController {
 
 
 
-/*
-    @GetMapping("/average-time-spent-range")
-    public String getAverageTimeSpentInRange(@RequestParam("daysBackFrom") int daysBackFrom, @RequestParam("daysBackTo") int daysBackTo) {
-        LocalDateTime startDate = LocalDateTime.now().minusDays(daysBackFrom).toLocalDate().atStartOfDay();
-        LocalDateTime endDate = LocalDateTime.now().minusDays(daysBackTo).toLocalDate().atTime(23, 59, 59);
-
-        Double averageTimeSpent = uniqueUserRepo.getAverageTimeSpentBetweenDates(startDate, endDate);
-        return averageTimeSpent != null ? String.format("%.2f", averageTimeSpent) : "Daten nicht verfügbar";
-    }
-*/
-
     /**
      * Retrieves the click paths of users who have more than two clicks.
      * This method returns the click paths as a single string, with each path separated by commas.
@@ -70,42 +59,16 @@ public class UniqueUserController {
      */
     @GetMapping("/paths")
     public String getUserPaths(@RequestParam(defaultValue = "10") int limit) {
-        Pageable topLimit = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
-        List<UniqueUser> users = uniqueUserRepo.findTopByMoreThanTwoClicks(topLimit);
-
-        return users.stream()
-                .map(user -> uniqueUserService.reconstructClickPath(user))
-                .collect(Collectors.joining(", "));
+        return uniqueUserService.getUserPaths(limit);
     }
 
     @GetMapping("/all-paths")
     public String getAllUserPaths() {
-        List<UniqueUser> users = uniqueUserRepo.findAllByMoreThanTwoClicks();
-
-        return users.stream()
-                .map(user -> uniqueUserService.reconstructClickPath(user))
-                .collect(Collectors.joining(", "));
+        return uniqueUserService.getAllUserPaths();
     }
 
 
-    /**
-     * Retrieves a list of users who are potentially bots based on their click patterns.
-     *
-     * This method scans through all users in the database and applies a filtering logic to identify
-     * potential bots. A user is considered a potential bot if their click behavior shows a pattern of
-     * repeatedly clicking on the same category in a short sequence, e.g., 'main, main, main...'.
-     * The method uses a threshold of three consecutive clicks on the same category as a criterion for
-     * suspicious behavior, which can be adjusted as per requirements.
-     *
-     * @return List<UniqueUser> containing users who are identified as potential bots based on the defined criteria.
-     */
-    @GetMapping("/possible-bots")
-    public List<UniqueUser> getPossibleBots() {
-        List<UniqueUser> users = uniqueUserRepo.findAll();
-        return users.stream()
-                .filter(uniqueUserService::isPotentialBot)
-                .collect(Collectors.toList());
-    }
+
 
 
 }

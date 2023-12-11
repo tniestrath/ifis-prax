@@ -791,7 +791,7 @@ public class LogService {
                         }
                         case "userView" -> {
                             try {
-                                updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
+                                updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId(),dateLog);
                             } catch (Exception e) {
                                 System.out.println(patternMatcher.group(1));
                             }
@@ -1277,7 +1277,7 @@ public class LogService {
                 try {
                     if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
                         Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
-                        updateUserStats(userId);
+                        updateUserStats(userId,dateLog);
                         updateIPsByUser(ip, userId);
                     }
                 } catch (Exception e) {
@@ -1635,11 +1635,15 @@ public class LogService {
    }
 
     @Transactional
-    public void updateUserStats(long id){
+    public void updateUserStats(long id,LocalDateTime dateLog){
         if(userStatsRepo.existsByUserId(id)) {
 
             UserStats Stats = userStatsRepo.findByUserId(id);
+            if(Stats.getViewsPerHour().isEmpty()||Stats.getViewsPerHour()==null){
+                Stats.setJson();
+            }
             long views = Stats.getProfileView() + 1 ;
+            Stats.setViewsPerHour(erhoeheViewsPerHour2(Stats.getViewsPerHour(),dateLog.toLocalTime()));
             Stats.setProfileView(views);
             userStatsRepo.save(Stats);
 

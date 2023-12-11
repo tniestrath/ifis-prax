@@ -1640,7 +1640,7 @@ public class LogService {
 
             UserStats Stats = userStatsRepo.findByUserId(id);
             if(Stats.getViewsPerHour().isEmpty()||Stats.getViewsPerHour()==null){
-                Stats.setJson();
+                Stats.setViewsPerHour(Stats.setJson());
             }
             long views = Stats.getProfileView() + 1 ;
             Stats.setViewsPerHour(erhoeheViewsPerHour2(Stats.getViewsPerHour(),dateLog.toLocalTime()));

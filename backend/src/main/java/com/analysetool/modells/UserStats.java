@@ -31,6 +31,7 @@ public class UserStats {
     public UserStats(long userId, long profileView) {
         this.userId = userId;
         this.profileView = profileView;
+        this.viewsPerHour=setJson();
     }
     public UserStats(){}
 

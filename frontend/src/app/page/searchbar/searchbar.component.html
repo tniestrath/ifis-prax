@@ -1,10 +1,10 @@
-<div *ngIf="logged_in" id="searchbar-box" class="searchbar-box" [ngSwitch]="selectedSearch.id" [ngStyle]="{'height': displaySearchBox}">
+<div id="searchbar-box" class="searchbar-box" [ngSwitch]="selectedSearch.id" [ngStyle]="{'height': displaySearchBox}">
 
   <div *ngSwitchCase="0" class="searchbar-switch searchbar-input-box">
     <div class="searchbar-filter" id="searchbar-filter-button">
       <img src="assets/filter_icon.png">
     </div>
-    <input #search class="searchbar" type="text" (keyup)="onKey(search.value)" placeholder="Suchen">
+    <input #search class="searchbar" type="text" (input)="onKey(search.value)" placeholder="Suchen">
   </div>
 
   <div *ngSwitchDefault class="searchbar-switch searchbar-selection-box" >
@@ -19,8 +19,8 @@
       <div id="searchbar-filter-accountType-without-plan">Ohne Abo</div>
       <div id="searchbar-filter-accountType-basic">Basis</div>
       <div id="searchbar-filter-accountType-basicPlus">Basis+</div>
-      <div id="searchbar-filter-accountType-Plus">Plus</div>
-      <div id="searchbar-filter-accountType-Premium">Premium</div>
+      <div id="searchbar-filter-accountType-plus">Plus</div>
+      <div id="searchbar-filter-accountType-premium">Premium</div>
       <div id="searchbar-filter-accountType-all">Alle</div>
     </div>
     <div id="searchbar-sorter">

@@ -27,6 +27,7 @@ import {SystemloadComponent} from "../../component/system/systemload/systemload.
 import {EventsStatsComponent} from "../../component/events-stats/events-stats.component";
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
 import {SearchbarComponent} from "../searchbar/searchbar.component";
+import {logger} from "html2canvas/dist/types/core/__mocks__/logger";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',

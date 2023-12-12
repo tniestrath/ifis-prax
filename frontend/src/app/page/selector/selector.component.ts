@@ -23,7 +23,7 @@ export class SelectorItem {
 })
 export class SelectorComponent implements OnInit{
   @Input() columnsForm = "repeat(3, 1fr)";
-  @Input() padding : string = "5px 5vw";
+  @Input() padding : string = "0 5vw";
   @Input() dataLoaded = new Observable<SelectorItem[]>();
   @Input() zebraColorMode: boolean = false;
 
@@ -57,6 +57,9 @@ export class SelectorComponent implements OnInit{
       if (index % 2 == 0 && this.zebraColorMode){
         componentRef.location.nativeElement.setAttribute("style", "background : #EFEFEF; border-radius : 5px");
         componentRef.instance.bgColor = "#EFEFEF";
+      }
+      if (this.columnsForm.includes("1fr 1fr") && index < 2){
+        componentRef.instance.bgColor = "60px";
       }
       index++;
     }

@@ -37,6 +37,15 @@ public class UniversalTimeSpentDLC {
     @Column(name="footer")
     private float footer;
 
+    @Column(name = "amount_users")
+    private int amount_users;
+
+    @Column(name = "amount_clicks")
+    private int amount_clicks;
+
+    @Column(name = "total_time")
+    private int total_time;
+
     public int getUni_stat_id() {
         return uni_stat_id;
     }
@@ -107,5 +116,29 @@ public class UniversalTimeSpentDLC {
 
     public void setFooter(float footer) {
         this.footer = footer;
+    }
+
+    public int getAmount_users() {
+        return amount_users;
+    }
+
+    public void setAmount_users(int amount_users) {
+        this.amount_users = amount_users;
+    }
+
+    public int getAmount_clicks() {
+        return amount_clicks;
+    }
+
+    public void setAmount_clicks(int amount_clicks) {
+        this.amount_clicks = amount_clicks;
+    }
+
+    public int getTotal_time() {
+        return total_time;
+    }
+
+    public void setTotal_time(int average_total) {
+        this.total_time = average_total;
     }
 }

@@ -19,9 +19,10 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
-
-import static com.analysetool.util.MapHelper.mergeTimeMaps;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -222,24 +223,6 @@ public class UserController {
         obj.put("viewsProfile", viewsProfile);
         return obj.toString();
 
-    }
-
-    @GetMapping("/getAllViewsPerHour")
-    public String getAllViewsPerHour() {
-        List<HashMap> posts = statRepository.getAllViewsPerHour();
-
-        HashMap map = new HashMap<>();
-        for(HashMap locMap : posts) {
-            if(locMap != null) {
-                mergeTimeMaps(map, locMap);
-            }
-
-        }
-        Long[] orderedViews = new Long[24];
-        for(int i=0; i<24; i++) {
-            orderedViews[i] = (Long) map.get("" + i);
-        }
-        return Arrays.toString(orderedViews);
     }
 
     @GetMapping("/getUserAveragesByType")

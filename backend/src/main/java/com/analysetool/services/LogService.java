@@ -230,6 +230,10 @@ public class LogService {
     @Autowired
     private UniversalStatsHourlyRepository uniHourlyRepo;
 
+    @Autowired
+    private UserViewsByHourDLCRepository userViewHourDLCRepo;
+
+    private Map<String, UserViewsByHourDLC> userViewsHourDLCMap = new HashMap<>();
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
@@ -883,6 +887,8 @@ public class LogService {
 
         }
         updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors, viewsByHour);
+        //move nach UserViewsByHourService weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
+        persistAllUserViewsHour();
     }
 
     private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors, Map<String, Long> viewsByHour) throws ParseException {
@@ -1168,6 +1174,7 @@ public class LogService {
                 universalCategoriesDLCRepo.save(uniCategories);
             }
         }
+
     }
 
     private UniversalStatsHourly setAccountTypeAllUniStats(UniversalStatsHourly uniHourly) {
@@ -1682,7 +1689,35 @@ public class LogService {
             userStatsRepo.save(new UserStats(id, 1));
 
         }
+        updateUserViewsByHourDLCList(id,dateLog);
     }
+
+    public void updateUserViewsByHourDLCList(long userId,LocalDateTime dateLog){
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String key = uniId + "_" + userId;
+
+        UserViewsByHourDLC userViews = userViewsHourDLCMap.get(key);
+
+        if (userViews != null) {
+
+            userViews.setViews(userViews.getViews() + 1);
+
+        } else {
+
+            UserViewsByHourDLC newUserViews = new UserViewsByHourDLC(uniId,userId,dateLog.getHour(),1L);
+
+            userViewsHourDLCMap.put(key, newUserViews);
+        }
+
+    }
+
+    @Transactional
+    public void persistAllUserViewsHour() {
+        if (!userViewsHourDLCMap.isEmpty()) {
+            userViewHourDLCRepo.saveAll(userViewsHourDLCMap.values());
+        }
+    }
+
 
     public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd.MM");

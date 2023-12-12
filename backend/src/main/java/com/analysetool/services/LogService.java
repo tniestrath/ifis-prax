@@ -1269,16 +1269,16 @@ public class LogService {
         }
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
 
-<<<<<<< HEAD
+
         //set userstats views per hour to map with only 0 values so its only the views in last 24h distributed by hours
         List<UserStats> userStats = userStatsRepo.findAll();
         for(UserStats u:userStats){
             u.setViewsPerHour(u.setJson());
         }
         userStatsRepo.saveAll(userStats);
-=======
+
         //Just in case permanentify failed
->>>>>>> 91c5d213cb4ca9e64f6457d4a727b273b82a5604
+
         deleteOldIPs();
     }
 

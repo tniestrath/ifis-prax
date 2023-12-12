@@ -2329,7 +2329,7 @@ public class LogService {
     }
 
     private void permanentifyUser(String ip) throws JSONException {
-        if(uniAverageClicksRepo.findById(uniRepo.getLatestUniStat().getId()).isPresent()) {
+        if(uniAverageClicksRepo.findById(uniRepo.getLatestUniStat().getId()).isEmpty()) {
             initUniAverages();
             initUniTime();
         }
@@ -2353,6 +2353,7 @@ public class LogService {
             //Update average-clicks for the deleted user, if user had clicks
             if(user.getAmount_of_clicks() > 0) {
                 UniversalAverageClicksDLC uniAvg = uniAverageClicksRepo.getLatest();
+
                 int oldClicks = uniAvg.getAmount_clicks();
                 uniAvg.setAmount_clicks(uniAvg.getAmount_clicks() + user.getAmount_of_clicks());
                 uniAvg.setAmount_users(uniAvg.getAmount_users() + 1);

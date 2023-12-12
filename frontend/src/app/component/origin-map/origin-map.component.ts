@@ -148,8 +148,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       this.isScaled = true;
       if (svgElement) {
         // @ts-ignore
-        if (SysVars.CURRENT_PAGE == "Users") {
-          this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID)).then(res => {
+        if (SysVars.CURRENT_PAGE == "Anbieter") {
+          this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID), this.startDate, this.endDate).then(res => {
             this.readData(res, svgElement);
             this.cdr.detectChanges();
           });

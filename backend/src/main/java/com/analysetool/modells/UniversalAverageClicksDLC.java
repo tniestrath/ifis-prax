@@ -37,6 +37,12 @@ public class UniversalAverageClicksDLC {
     @Column(name="footer")
     private float footer;
 
+    @Column(name="amount_clicks")
+    private int amount_clicks;
+
+    @Column(name="amount_users")
+    private int amount_users;
+
     public int getUni_stat_id() {
         return uni_stat_id;
     }
@@ -107,5 +113,21 @@ public class UniversalAverageClicksDLC {
 
     public void setFooter(float footer) {
         this.footer = footer;
+    }
+
+    public int getAmount_clicks() {
+        return amount_clicks;
+    }
+
+    public void setAmount_clicks(int amount_clicks) {
+        this.amount_clicks = amount_clicks;
+    }
+
+    public int getAmount_users() {
+        return amount_users;
+    }
+
+    public void setAmount_users(int amount_users) {
+        this.amount_users = amount_users;
     }
 }

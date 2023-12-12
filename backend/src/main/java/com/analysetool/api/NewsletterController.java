@@ -2,14 +2,12 @@ package com.analysetool.api;
 
 import com.analysetool.modells.Newsletter;
 import com.analysetool.repositories.NewsletterRepository;
-import com.analysetool.services.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,31 +19,6 @@ public class NewsletterController {
     @Autowired
     NewsletterRepository newsRepo;
 
-    String viewsPerHourString = "{\"0\":0,\"1\":0,\"2\":0,\"3\":0,\"4\":0,\"5\":0,\"6\":0,\"7\":0,\"8\":0,\"9\":0,\"10\":0,\"11\":0,\"12\":0,\"13\":0,\"14\":0,\"15\":0,\"16\":0,\"17\":0,\"18\":0,\"19\":0,\"20\":0,\"21\":0,\"22\":0,\"23\":0}";
-    public Map<String,Long> setJson(){
-        String temp ="";
-        //temp = viewsPerDay.substring(1, viewsPerDay.length() - 1);
-        temp = viewsPerHourString.substring(1, viewsPerHourString.length() - 1);
-        // Teile den String an den Kommas auf, um die einzelnen Schlüssel-Wert-Paare zu erhalten
-        String[] keyValuePairs = temp.split(",");
-
-        // Erstelle eine HashMap, um die Schlüssel-Wert-Paare zu speichern
-        HashMap<String, Long> map = new HashMap<>();
-
-        // Iteriere über die einzelnen Schlüssel-Wert-Paare und füge sie der HashMap hinzu
-        for (String pair : keyValuePairs) {
-            // Teile den Schlüssel-Wert-Paar-String an den Doppelpunkten auf
-            String[] entry = pair.split(":");
-
-            // Entferne führende und abschließende Anführungszeichen von Schlüssel und Wert
-            String key = entry[0].trim().replaceAll("\"", "");
-            long value = Long.parseLong(entry[1].trim());
-
-            // Füge das Schlüssel-Wert-Paar der HashMap hinzu
-            map.put(key, value);
-        }
-        return (Map) map;
-    }
     @GetMapping("/getStatusById")
     public char getStatusById(Long id) {
         return newsRepo.getStatusById(id);
@@ -69,54 +42,6 @@ public class NewsletterController {
     @GetMapping("/getAllMailsWithStatus")
     public Map<String, Character> getAllMailsWithStatus() {
         return newsRepo.getMailAndStatusAll();
-    }
-
-
-    /**
-     * Retrieves the distribution of subscriptions by hour within a specific date range.
-     *
-     * <p>This method fetches all subscribers from the Newsletter repository and filters them
-     * based on their creation dates. Subscribers whose creation date falls within the specified
-     * date range are then processed to count the number of subscriptions per hour.</p>
-     *
-     * <p>The date range is defined by two parameters that specify the number of days back from today:
-     * <ul>
-     *     <li><code>daysBackTo</code> sets the start of the date range, with a higher numerical value
-     *     indicating a date further in the past.</li>
-     *     <li><code>daysBackFrom</code> sets the end of the date range, with a lower numerical value
-     *     indicating a date closer to today.</li>
-     * </ul>
-     * Both boundary dates are inclusive.</p>
-     *
-     * @param daysBackTo The end of the date range, specified as the number of days back from today.
-     * @param daysBackFrom The start of the date range, specified as the number of days back from today.
-     * @return A string representation of the distribution of subscriptions by hour.
-     */
-    @GetMapping("/getTimesOfSubsByDateRange")
-    public String getTimesOfSubsByDateRange(@RequestParam int daysBackFrom, @RequestParam int daysBackTo) {
-        if (daysBackTo < daysBackFrom) {
-            throw new IllegalArgumentException("daysBackTo should be greater or equal to daysBackFrom");
-        }
-
-        Map<String, Long> subsPerHour = setJson();
-        List<Newsletter> allSubs = newsRepo.findAll();
-
-        LocalDate fromDate = LocalDate.now().minusDays(daysBackFrom); // Startdatum
-        LocalDate toDate = LocalDate.now().minusDays(daysBackTo); // Enddatum
-
-        for (Newsletter n : allSubs) {
-            if (n.getCreated() == null) {
-                continue;
-            }
-
-            LocalDate createdDate = n.getCreated().atZone(ZoneId.systemDefault()).toLocalDate();
-
-            if (!createdDate.isBefore(fromDate) && !createdDate.isAfter(toDate)) {
-                subsPerHour = LogService.erhoeheViewsPerHour2(subsPerHour, n.getCreated().atZone(ZoneId.systemDefault()).toLocalTime());
-            }
-        }
-
-        return subsPerHour.toString();
     }
 
     /**

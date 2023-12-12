@@ -26,7 +26,6 @@ export enum dbUrl {
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
   GET_USER_BY_LOGINNAME = "/users/getByLogin?u=",
   GET_USER_BY_ID = "/users/getById?id=",
-  GET_USER_ORIGIN_MAP = "/users/getViewsByLocation?id=",
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
   HAS_USER_POST = "/users/hasPost?id=",
 
@@ -69,6 +68,7 @@ export enum dbUrl {
   GET_GEO_GERMANY_ALL_TIME_BY_REGION = "/geo/getRegionGermanGeoAllTime?region=REGION",
   GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES = "/geo/getRegionGermanGeoByDate?region=REGION&start=START&end=END",
   GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES_LISTED = "/geo/getRegionGermanGeoByDateAsList?region=REGION&start=START&end=END",
+  GET_GEO_USER_BY_DATES = "/geo/getUserGeoByIdAndDay?id=USRID&start=START&end=END",
   GET_GEO_LAST_TIMESTAMP = "/geo/lastEntry",
   GET_GEO_FIRST_TIMESTAMP = "/geo/firstEntry",
   GET_GEO_TIMESPAN = "/geo/geoRange",
@@ -112,7 +112,7 @@ export class DbService {
     this.setStatus(1);
   }
   private setFinished(html_code : number, url : string){
-    console.log("STATUS: " + html_code + " @ " + url);
+    //console.log("STATUS: " + html_code + " @ " + url);
 
     if (html_code >= 200 && html_code < 400){
       this.requestCount--;
@@ -194,6 +194,7 @@ export class DbService {
       return;
     }
     await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL), {credentials: "include"}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then(res => {
+      DbService.Users = [];
       for (let user of res) {
         DbService.Users.push(user);
       }
@@ -295,9 +296,9 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_TYPE_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getOriginMapByUser(id : number){
+  async getOriginMapByUser(id : number, start : string, end : string){
     this.setLoading();
-    return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await  fetch(DbService.getUrl(dbUrl.GET_GEO_USER_BY_DATES).replace("USRID", String(id)).replace("START", start).replace("END", end), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getGeoAll() : Promise<Map<string,number>> {

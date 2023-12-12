@@ -1,20 +1,34 @@
-<div *ngIf="logged_in" id="searchbar-box" class="searchbar-box" [ngSwitch]="selectedSearch.id" [ngStyle]="{'height': displaySearchBox}">
+<div id="searchbar-box" class="searchbar-box" [ngSwitch]="selectedSearch.id" [ngStyle]="{'height': displaySearchBox}">
 
-  <div *ngSwitchCase="0" class="searchbar-input-box">
-    <div class="searchbar-filter" id="searchbar-filter-button" (click)="onFilterClick()">
+  <div *ngSwitchCase="0" class="searchbar-switch searchbar-input-box">
+    <div class="searchbar-filter" id="searchbar-filter-button">
       <img src="assets/filter_icon.png">
     </div>
-    <input #search class="searchbar" type="text" (keyup)="onKey(search.value)" placeholder="Filter">
+    <input #search class="searchbar" type="text" (input)="onKey(search.value)" placeholder="Suchen">
   </div>
-  <div *ngSwitchDefault class="selection-box" >
+
+  <div *ngSwitchDefault class="searchbar-switch searchbar-selection-box" >
     <img [src]="imgSrc" alt="" dashImgFallback>
     <p>{{selectedSearch.name}}</p>
-    <button *ngIf="UserService.ADMIN" class="selection-cancel-button" (click)="onCancelClick()">X</button>
+    <button class="selection-cancel-button" (click)="onCancelClick()">X</button>
   </div>
-  <div class="loggout-box" (click)="onLogoutClick()">
-    <img src="../../../assets/logout.png"/>
-  </div>
-  <div class="searchbar-filter-box">
 
+  <div id="searchbar-filter-box">
+    <div id="searchbar-filter">
+      <div id="searchbar-filter-accountType-label">Filtern:</div>
+      <div id="searchbar-filter-accountType-without-plan">Ohne Abo</div>
+      <div id="searchbar-filter-accountType-basic">Basis</div>
+      <div id="searchbar-filter-accountType-basicPlus">Basis+</div>
+      <div id="searchbar-filter-accountType-plus">Plus</div>
+      <div id="searchbar-filter-accountType-premium">Premium</div>
+      <div id="searchbar-filter-accountType-all">Alle</div>
+    </div>
+    <div id="searchbar-sorter">
+      <div id="searchbar-sorter-by-label">Sortieren nach:</div>
+      <div id="searchbar-sorter-views">Views</div>
+      <div id="searchbar-sorter-performance">Performance</div>
+      <div id="searchbar-sorter-uid">Erstellungsdatum</div>
+    </div>
   </div>
+
 </div>

@@ -1,4 +1,4 @@
-<div class="user-box" (click)="onClick()">
+<div class="user-box" (click)="onClick()" [style.margin-top]="bgColor">
   <img alt="" [src]="getUserImg()" dashImgFallback>
   <div class="user-name-box">
     <p>{{data.displayName}}</p>

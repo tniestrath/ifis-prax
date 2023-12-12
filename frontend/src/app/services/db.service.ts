@@ -112,7 +112,7 @@ export class DbService {
     this.setStatus(1);
   }
   private setFinished(html_code : number, url : string){
-    console.log("STATUS: " + html_code + " @ " + url);
+    //console.log("STATUS: " + html_code + " @ " + url);
 
     if (html_code >= 200 && html_code < 400){
       this.requestCount--;

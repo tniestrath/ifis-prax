@@ -145,7 +145,7 @@ public class GeoController {
      * @param end the ending date as a string in iso-format. (inclusive)
      * @return a List of Geolocation Data for the given user in a specific order.
      */
-    @GetMapping("/getUserGeoByIDAndDay")
+    @GetMapping("/getUserGeoByIdAndDay")
     public List<Integer> getUserGeoByIDAndDay(long id, String start, String end) {
         List<Integer> liste = new ArrayList<>();
         Date dateStart = Date.valueOf(start);

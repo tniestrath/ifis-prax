@@ -495,36 +495,36 @@ public class UserController {
 
     /**
      *
-     * @param userid  id des users.
+     * @param userId  id des users.
      * @return
      */
     @GetMapping("/getPotentialById")
-    public String getPotentialByID(int userid) throws JSONException {
+    public String getPotentialByID(int userId) throws JSONException {
 
-        String type = this.getType(userid);
+        String type = this.getType(userId);
         //Check whether these profile parts have been filled out.
-        boolean hasProfilePic = !wpUserMetaRepository.getProfilePath(((long) userid)).isEmpty() && !wpUserMetaRepository.getProfilePath((long)((long) userid)).equals("https://it-sicherheit.de/wp-content/uploads/2023/06/it-sicherheit-logo_icon_190x190.png");
-        boolean hasCover = !wpUserMetaRepository.getCoverPath((long) userid).isEmpty();
-        boolean hasDescription = !wpUserMetaRepository.getDescription((long) userid).isEmpty();
-        boolean hasSlogan = !type.equals("basis") && !wpUserMetaRepository.getSlogan((long) userid).isEmpty();
+        boolean hasProfilePic = !wpUserMetaRepository.getProfilePath(((long) userId)).isEmpty() && !wpUserMetaRepository.getProfilePath((long)((long) userId)).equals("https://it-sicherheit.de/wp-content/uploads/2023/06/it-sicherheit-logo_icon_190x190.png");
+        boolean hasCover = !wpUserMetaRepository.getCoverPath((long) userId).isEmpty();
+        boolean hasDescription = !wpUserMetaRepository.getDescription((long) userId).isEmpty();
+        boolean hasSlogan = !type.equals("basis") && !wpUserMetaRepository.getSlogan((long) userId).isEmpty();
 
         //Check how many internal contacts have been filled.
         int countAnsprechpartnerIntern = 0;
         int maxAnsprechpartnerIntern = 3;
-        if(!wpUserMetaRepository.getPersonIntern((long) userid).isEmpty()) countAnsprechpartnerIntern++;
-        if(!wpUserMetaRepository.getMailIntern((long) userid).isEmpty()) countAnsprechpartnerIntern++;
-        if(!wpUserMetaRepository.getTelIntern((long) userid).isEmpty()) countAnsprechpartnerIntern++;
+        if(!wpUserMetaRepository.getPersonIntern((long) userId).isEmpty()) countAnsprechpartnerIntern++;
+        if(!wpUserMetaRepository.getMailIntern((long) userId).isEmpty()) countAnsprechpartnerIntern++;
+        if(!wpUserMetaRepository.getTelIntern((long) userId).isEmpty()) countAnsprechpartnerIntern++;
 
         //Check how many external contacts have been filled.
         int countKontaktExtern = 0;
         int maxKontaktExtern = 7;
-        if(!wpUserMetaRepository.getNameExtern((long) userid).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getSecondaryMail((long) userid).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getTelExtern((long) userid).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getAdresseStreet((long) userid).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getAdressePLZ((long) userid).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getAdresseOrt((long) userid).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getURLExtern((long) userid).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getNameExtern((long) userId).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getSecondaryMail((long) userId).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getTelExtern((long) userId).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getAdresseStreet((long) userId).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getAdressePLZ((long) userId).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getAdresseOrt((long) userId).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getURLExtern((long) userId).isEmpty()) countKontaktExtern++;
 
         //Check how many tags are allowed, and how many are set.
         int allowedTags = 0;
@@ -552,7 +552,7 @@ public class UserController {
         }
 
         int countTags = 0;
-        Matcher matcher = Pattern.compile(";i:(\\d+);").matcher(wpUserMetaRepository.getTags((long) userid));
+        Matcher matcher = Pattern.compile(";i:(\\d+);").matcher(wpUserMetaRepository.getTags((long) userId));
         while(matcher.find()) {
             countTags++;
         }
@@ -562,40 +562,40 @@ public class UserController {
         for(int i = 0; i < allowedLosungen; i++) {
             switch(i) {
                 case(0) -> {
-                    if(wpUserMetaRepository.getSolutionHead1((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead1((long) userId).isPresent()) solutions ++;
                 }
                 case(1) -> {
-                    if(wpUserMetaRepository.getSolutionHead2((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead2((long) userId).isPresent()) solutions ++;
                 }
                 case(2) -> {
-                    if(wpUserMetaRepository.getSolutionHead3((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead3((long) userId).isPresent()) solutions ++;
                 }
                 case(3) -> {
-                    if(wpUserMetaRepository.getSolutionHead4((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead4((long) userId).isPresent()) solutions ++;
                 }
                 case(4) -> {
-                    if(wpUserMetaRepository.getSolutionHead5((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead5((long) userId).isPresent()) solutions ++;
                 }
                 case(5) -> {
-                    if(wpUserMetaRepository.getSolutionHead6((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead6((long) userId).isPresent()) solutions ++;
                 }
                 case(6) -> {
-                    if(wpUserMetaRepository.getSolutionHead7((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead7((long) userId).isPresent()) solutions ++;
                 }
                 case(7) -> {
-                    if(wpUserMetaRepository.getSolutionHead8((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead8((long) userId).isPresent()) solutions ++;
                 }
                 case(8) -> {
-                    if(wpUserMetaRepository.getSolutionHead9((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead9((long) userId).isPresent()) solutions ++;
                 }
                 case(9) -> {
-                    if(wpUserMetaRepository.getSolutionHead10((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead10((long) userId).isPresent()) solutions ++;
                 }
                 case(10) -> {
-                    if(wpUserMetaRepository.getSolutionHead11((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead11((long) userId).isPresent()) solutions ++;
                 }
                 case(11) -> {
-                    if(wpUserMetaRepository.getSolutionHead12((long) userid).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead12((long) userId).isPresent()) solutions ++;
                 }
             }
         }
@@ -603,10 +603,10 @@ public class UserController {
         //Check how many company datafields have been filled.
         int companyDetails = 0;
         int companyDetailsMax = 4;
-        if(!wpUserMetaRepository.getCompanyCategory((long) userid).isEmpty()) companyDetails++;
-        if(!wpUserMetaRepository.getManager((long) userid).isEmpty()) companyDetails++;
-        if(!wpUserMetaRepository.getCompanyEmployees((long) userid).isEmpty()) companyDetails++;
-        if(!wpUserMetaRepository.getService((long) userid).isEmpty()) companyDetails++;
+        if(!wpUserMetaRepository.getCompanyCategory((long) userId).isEmpty()) companyDetails++;
+        if(!wpUserMetaRepository.getManager((long) userId).isEmpty()) companyDetails++;
+        if(!wpUserMetaRepository.getCompanyEmployees((long) userId).isEmpty()) companyDetails++;
+        if(!wpUserMetaRepository.getService((long) userId).isEmpty()) companyDetails++;
 
 
         JSONObject json = new JSONObject();

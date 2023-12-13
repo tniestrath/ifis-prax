@@ -474,11 +474,6 @@ public class LogService {
                         isBlacklisted = isBlacklisted || ip.equals(blacklist2.get(i));
                     }
                 }
-
-                if(isBlacklisted) {
-                    System.out.println(request + userAgent + " : BANNED");
-                }
-
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam && isGet) {
 

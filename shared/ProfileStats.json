@@ -1,0 +1,14 @@
+{
+  "profilePicture" :  0,
+  "titlePicture" :  0,
+  "bio": 0,
+  "slogan": 0,
+  "tagsCount": 0,
+  "tagsMax": 0,
+  "contactPublic": 0,
+  "contactPublicMax" : 0,
+  "contactIntern": 0,
+  "companyDetails": 0,
+  "solutions":  0,
+  "solutionsMax": 0
+}

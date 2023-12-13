@@ -22,5 +22,8 @@ public interface WPMembershipRepository extends JpaRepository<WPMemberships, Lon
     @Query("SELECT u.user_id FROM WPMemberships u WHERE u.status='cancelled'")
     List<Long> getAllCancelledMemberIds();
 
+    @Query("SELECT u.membership_id FROM WPMemberships u WHERE u.status='active' AND u.user_id=:id")
+    Integer getUserMembership(int id);
+
 }
 

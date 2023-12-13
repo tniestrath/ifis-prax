@@ -8,6 +8,7 @@ import {Callup, CategoriesData} from "../component/call-up-chart/call-up-chart.c
 import {SystemUsage} from "../component/system/systemload/systemload.component";
 import Util from "../util/Util";
 import {Subject, Subscription} from "rxjs";
+import {ProfileState} from "../component/profile-completion/profile-completion.component";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -28,12 +29,14 @@ export enum dbUrl {
   GET_USER_BY_ID = "/users/getById?id=",
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
   HAS_USER_POST = "/users/hasPost?id=",
+  GET_USER_PROFILE_COMPLETION = "/users/getPotentialById?userId=USERID",
 
   GET_USERS_ALL = "/users/getAllNew",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/users/getAccountTypeAllYesterday",
   GET_USERS_ACCOUNTTYPES_ALL_NEW = "/users/getNewUsersAll",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
+
 
   GET_POST = "/posts/getPostStatsByIdWithAuthor?id=ID",
   GET_POST_BY_USERS_BEST = "/posts/bestPost?id=ID&type=TYPE",
@@ -252,6 +255,10 @@ export class DbService {
   async hasUserPost(id : number) {
     this.setLoading();
     return fetch(DbService.getUrl(dbUrl.HAS_USER_POST) + id).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserProfileCompletion(id : string): Promise<ProfileState> {
+    this.setLoading();
+    return fetch(DbService.getUrl(dbUrl.GET_USER_PROFILE_COMPLETION).replace("USERID", id)).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getMaxPerformance(){

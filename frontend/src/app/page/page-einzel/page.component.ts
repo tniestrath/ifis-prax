@@ -28,6 +28,7 @@ import {EventsStatsComponent} from "../../component/events-stats/events-stats.co
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
 import {SearchbarComponent} from "../searchbar/searchbar.component";
 import {logger} from "html2canvas/dist/types/core/__mocks__/logger";
+import {ProfileCompletionComponent} from "../../component/profile-completion/profile-completion.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -64,7 +65,7 @@ export class PageComponent implements OnInit {
       {type: RelevanceComponent, row: 3, col: 6, height: 1, width: 1},
       //@ts-ignore
       {type: PostComponent, row: 1, col: 6, height: 2, width: 1},
-      {type: ClicksByTimeComponent, row: 3, col: 2, height: 2, width: 2},
+      {type: ProfileCompletionComponent, row: 3, col: 2, height: 2, width: 2},
       {type: OriginMapComponent, row: 3, col: 4, height: 2, width: 2}
     ];
   }

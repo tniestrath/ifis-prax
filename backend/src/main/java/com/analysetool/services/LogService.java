@@ -1014,7 +1014,6 @@ public class LogService {
             if(universalCategoriesDLCRepo.getLastStunde() != curHour) {
                 //Create and identify a new row of UniversalCategoriesDLC
                 int viewsGlobal = totalClicks - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber - viewsMain - viewsUeber - viewsImpressum - viewsPreisliste - viewsPartner - viewsDatenschutz - viewsNewsletter - viewsImage - viewsAGBS;
-                int usersGlobal = uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS;
                 if(curHour == 4
                         && universalCategoriesDLCRepo.getByUniStatIdAndStunde(universalCategoriesDLCRepo.getLast().getUniStatId(), 1) == null
                         && universalCategoriesDLCRepo.getByUniStatIdAndStunde(universalCategoriesDLCRepo.getLast().getUniStatId(), 2) == null
@@ -1031,7 +1030,7 @@ public class LogService {
                         cat.setStunde(i);
                         i++;
                         //Create entries for users.
-                        cat.setBesucherGlobal(usersGlobal / 4);
+                        cat.setBesucherGlobal(uniqueUsers / 4);
                         cat.setBesucherArticle(userArticle / 4);
                         cat.setBesucherNews(userNews / 4);
                         cat.setBesucherBlog(userBlog / 4);
@@ -1077,7 +1076,7 @@ public class LogService {
                     uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                     uniCategories.setStunde(curHour);
                     //Create entries for users.
-                    uniCategories.setBesucherGlobal(usersGlobal);
+                    uniCategories.setBesucherGlobal(uniqueUsers);
                     uniCategories.setBesucherArticle(userArticle);
                     uniCategories.setBesucherNews(userNews);
                     uniCategories.setBesucherBlog(userBlog);

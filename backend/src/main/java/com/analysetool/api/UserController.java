@@ -3,6 +3,8 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,10 +21,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -58,6 +57,8 @@ public class UserController {
     private universalStatsRepository uniRepo;
     @Autowired
     private WPMembershipRepository wpMemberRepo;
+    @Autowired
+    private UserViewsByHourDLCRepository userViewsRepo;
 
     private final DashConfig config;
 
@@ -490,5 +491,31 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getUserViewsDistributedByHours")
+    public String getUserViewsDistributedByHours(@RequestParam int userId,@RequestParam int daysback) throws JsonProcessingException {
+        int latestUniId = uniRepo.getLatestUniStat().getId() - daysback;
+        int previousUniId = latestUniId - 1;
+
+        List<UserViewsByHourDLC> combinedViews = new ArrayList<>();
+        combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, previousUniId)); // Daten von gestern
+        combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, latestUniId));   // Daten von heute
+
+        Map<Integer, Long> hourlyViews = new LinkedHashMap<>();
+        LocalDateTime now = LocalDateTime.now();
+        int currentHour = now.getHour();
+
+        for (int i = 23; i >= 0; i--) {
+            int hour = (currentHour - i + 24) % 24;
+            Long viewCount = combinedViews.stream()
+                    .filter(view -> view.getHour() == hour)
+                    .map(UserViewsByHourDLC::getViews)
+                    .findFirst()
+                    .orElse(0L);
+            hourlyViews.put(hour, viewCount);
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(hourlyViews);
+    }
 
 }

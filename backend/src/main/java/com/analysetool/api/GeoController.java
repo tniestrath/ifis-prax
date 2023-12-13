@@ -171,7 +171,7 @@ public class GeoController {
             liste.add(geo.getNW());
             liste.add(geo.getAusland());
 
-            for (LocalDate date : dateStart.toLocalDate().plusDays(1).datesUntil(dateEnd.toLocalDate()).toList()) {
+            for (LocalDate date : dateStart.toLocalDate().plusDays(1).datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
                 boolean isGeo = false;
                 if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
                     geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId());

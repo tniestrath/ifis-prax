@@ -498,7 +498,7 @@ public class UserController {
      * @param userid  id des users.
      * @return
      */
-    @GetMapping("/getPotentialByIdAndType")
+    @GetMapping("/getPotentialById")
     public String getPotentialByID(int userid) throws JSONException {
 
         String type = this.getType(userid);

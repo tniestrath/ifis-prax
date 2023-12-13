@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { PolarChartComponent } from './component/polar-chart/polar-chart.component';
+import { ProfileCompletionComponent } from './component/profile-completion/profile-completion.component';
 import { HeaderComponent } from './page/header/header.component';
 import { CounterComponent } from './component/counter/counter.component';
 import { GaugeComponent } from './component/gauge/gauge.component';
@@ -55,7 +55,7 @@ import { PostTypeComponent } from './component/post/post-type/post-type.componen
 @NgModule({
   declarations: [
     AppComponent,
-    PolarChartComponent,
+    ProfileCompletionComponent,
     HeaderComponent,
     CounterComponent,
     GaugeComponent,

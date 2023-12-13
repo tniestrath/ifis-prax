@@ -1,0 +1,80 @@
+<div class="component-box profile-completion-box">
+  <div class="profile-completion-title">
+    <p>Anbieterprofilvervollständigungsanzeige</p>
+  </div>
+  <div class="profile-completion-content">
+    <div class="profile-completion-item">
+      <div [ngSwitch]="isComplete(status.profilePicture, 1)" class="profile-completion-item-title-box">
+        <img *ngSwitchCase="1" src="assets/check-circle.png" alt="complete">
+        <img *ngSwitchCase="0" src="assets/alert-circle.png" alt="incomplete">
+        <p>Profilbild: </p>
+      </div>
+      <p [style.color]="getColor(status.profilePicture, 1)">{{status.profilePicture}}/1</p>
+    </div>
+    <div class="profile-completion-item" >
+      <div [ngSwitch]="isComplete(status.titlePicture, 1)" class="profile-completion-item-title-box">
+        <img *ngSwitchCase="1" src="assets/check-circle.png" alt="complete">
+        <img *ngSwitchCase="0" src="assets/alert-circle.png" alt="incomplete">
+        <p>Titelbild: </p>
+      </div>
+      <p [style.color]="getColor(status.titlePicture, 1)">{{status.titlePicture}}/1</p>
+    </div>
+    <div class="profile-completion-item">
+      <div [ngSwitch]="isComplete(status.bio, 1)" class="profile-completion-item-title-box">
+        <img *ngSwitchCase="1" src="assets/check-circle.png" alt="complete">
+        <img *ngSwitchCase="0" src="assets/alert-circle.png" alt="incomplete">
+        <p>Beschreibung: </p>
+      </div>
+      <p [style.color]="getColor(status.bio, 1)">{{status.bio}}/1</p>
+    </div>
+    <div class="profile-completion-item">
+      <div [ngSwitch]="isComplete(status.slogan, 1)" class="profile-completion-item-title-box">
+        <img *ngSwitchCase="1" src="assets/check-circle.png" alt="complete">
+        <img *ngSwitchCase="0" src="assets/alert-circle.png" alt="incomplete">
+        <p>Slogan: </p>
+      </div>
+      <p [style.color]="getColor(status.slogan, 1)">{{status.slogan}}/1</p>
+    </div>
+    <div class="profile-completion-item">
+      <div [ngSwitch]="isComplete(status.tagsCount, status.tagsMax)" class="profile-completion-item-title-box">
+        <img *ngSwitchCase="1" src="assets/check-circle.png" alt="complete">
+        <img *ngSwitchCase="0" src="assets/alert-circle.png" alt="incomplete">
+        <p>Themenfelder: </p>
+      </div>
+      <p [style.color]="getColor(status.tagsCount, status.tagsMax)">{{status.tagsCount}}/{{status.tagsMax}}</p>
+    </div>
+    <div class="profile-completion-item">
+      <div [ngSwitch]="isComplete(status.contactPublic, status.contactPublicMax)" class="profile-completion-item-title-box">
+        <img *ngSwitchCase="1" src="assets/check-circle.png" alt="complete">
+        <img *ngSwitchCase="0" src="assets/alert-circle.png" alt="incomplete">
+        <p>Kontakt (öffentlich): </p>
+      </div>
+      <p [style.color]="getColor(status.contactPublic, status.contactPublicMax)">{{status.contactPublic}}/{{status.contactPublicMax}}</p>
+    </div>
+    <div class="profile-completion-item">
+      <div [ngSwitch]="isComplete(status.contactIntern, 3)" class="profile-completion-item-title-box">
+        <img *ngSwitchCase="1" src="assets/check-circle.png" alt="complete">
+        <img *ngSwitchCase="0" src="assets/alert-circle.png" alt="incomplete">
+        <p>Kontakt (intern): </p>
+      </div>
+      <p [style.color]="getColor(status.contactIntern, 3)">{{status.contactIntern}}/3</p>
+    </div>
+    <div class="profile-completion-item">
+      <div [ngSwitch]="isComplete(status.solutions, status.solutionsMax)" class="profile-completion-item-title-box">
+        <img *ngSwitchCase="1" src="assets/check-circle.png" alt="complete">
+        <img *ngSwitchCase="0" src="assets/alert-circle.png" alt="incomplete">
+        <p>Lösungen: </p>
+      </div>
+      <p [style.color]="getColor(status.solutions, status.solutionsMax)">{{status.solutions}}/{{status.solutionsMax}}</p>
+    </div>
+    <div class="profile-completion-item">
+      <div [ngSwitch]="isComplete(status.companyDetails, 4)" class="profile-completion-item-title-box">
+        <img *ngSwitchCase="1" src="assets/check-circle.png" alt="complete">
+        <img *ngSwitchCase="0" src="assets/alert-circle.png" alt="incomplete">
+        <p>Angaben zum Unternehmen: </p>
+      </div>
+      <p [style.color]="getColor(status.companyDetails, 4)">{{status.companyDetails}}/4</p>
+    </div>
+  </div>
+</div>
+

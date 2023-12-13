@@ -553,8 +553,11 @@ public class UserController {
         }
 
         int countTags = 0;
-        Matcher matcher = Pattern.compile(";i:(\\d+);").matcher(wpUserMetaRepository.getTags((long) userId));
-        while(matcher.find()) {
+        Matcher matcher = null;
+        try {
+            matcher = Pattern.compile(";i:(\\d+);").matcher(wpUserMetaRepository.getTags((long) userId));
+        } catch (Exception ignored) {}
+        while(matcher != null && matcher.find()) {
             countTags++;
         }
 

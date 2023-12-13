@@ -605,6 +605,7 @@ public class UserController {
         }
 
         //Check how many company datafields have been filled.
+        //ToDo: Check whether row contains empty String or wordpress' has empty head
         int companyDetails = 0;
         int companyDetailsMax = 4;
         if(!wpUserMetaRepository.getCompanyCategory((long) userId).isEmpty()) companyDetails++;

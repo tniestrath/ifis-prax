@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -138,7 +140,6 @@ public class UserController {
             }else {
                 obj.put( "accountType" ,"undefined");
             }
-            obj.put("usedPotential", getPotentialByID(Math.toIntExact(i.getId()), (String) obj.get("accountType")));
             response.put(obj);
         }
         return response.toString();
@@ -414,6 +415,36 @@ public class UserController {
         }
     }
 
+    private String getType(int id) {
+
+        switch(wpMemberRepo.getUserMembership(id)) {
+            case(1) -> {
+                return "basis";
+            }
+            case(3) -> {
+                return "plus";
+            }
+            case(5) -> {
+                return "premium";
+            }
+            case(6) -> {
+                return "sponsor";
+            }
+            case(7) -> {
+                return "basis-plus";
+            }
+            default -> {
+                if (wpUserMetaRepository.existsByUserId((long) id)) {
+                    String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
+                    if (wpUserMeta.contains("administrator")) {
+                        return "admin";
+                    }
+                }
+            }
+        }
+        return "none";
+    }
+
     public List<String> getNewUsersByTypeToday(String type) {
         List<String> list = new ArrayList<>();
         for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
@@ -464,30 +495,138 @@ public class UserController {
 
     /**
      *
-     * @param id  id des users.
-     * @param accType  der account typ des users ("admin" | "plus" | "premium" | "sponsor")
+     * @param userid  id des users.
      * @return
      */
     @GetMapping("/getPotentialByIDandType")
-    public double getPotentialByID(int id, String accType) {
+    public String getPotentialByID(int userid) throws JSONException {
 
-        //ToDo check when user potential posts are reset - and adjust following logic.
-        switch (accType) {
-            case "admin" -> {
-                return 1;
+        String type = this.getType(userid);
+        //Check whether these profile parts have been filled out.
+        boolean hasProfilePic = !wpUserMetaRepository.getProfilePath(((long) userid)).isEmpty() && !wpUserMetaRepository.getProfilePath((long)((long) userid)).equals("https://it-sicherheit.de/wp-content/uploads/2023/06/it-sicherheit-logo_icon_190x190.png");
+        boolean hasCover = !wpUserMetaRepository.getCoverPath((long) userid).isEmpty();
+        boolean hasDescription = !wpUserMetaRepository.getDescription((long) userid).isEmpty();
+        boolean hasSlogan = !type.equals("basis") && !wpUserMetaRepository.getSlogan((long) userid).isEmpty();
+
+        //Check how many internal contacts have been filled.
+        int countAnsprechpartnerIntern = 0;
+        int maxAnsprechpartnerIntern = 3;
+        if(!wpUserMetaRepository.getPersonIntern((long) userid).isEmpty()) countAnsprechpartnerIntern++;
+        if(!wpUserMetaRepository.getMailIntern((long) userid).isEmpty()) countAnsprechpartnerIntern++;
+        if(!wpUserMetaRepository.getTelIntern((long) userid).isEmpty()) countAnsprechpartnerIntern++;
+
+        //Check how many external contacts have been filled.
+        int countKontaktExtern = 0;
+        int maxKontaktExtern = 7;
+        if(!wpUserMetaRepository.getNameExtern((long) userid).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getSecondaryMail((long) userid).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getTelExtern((long) userid).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getAdresseStreet((long) userid).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getAdressePLZ((long) userid).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getAdresseOrt((long) userid).isEmpty()) countKontaktExtern++;
+        if(!wpUserMetaRepository.getURLExtern((long) userid).isEmpty()) countKontaktExtern++;
+
+        //Check how many tags are allowed, and how many are set.
+        int allowedTags = 0;
+        int allowedLosungen = 0;
+        switch (type) {
+            case "basis" -> {
+                allowedTags = 1;
+                maxKontaktExtern = 6;
+            }
+            case "basis-plus" -> {
+                allowedTags = 3;
             }
             case "plus" -> {
-                return (double) (postRepository.findByAuthor(id).size()) / maxPostsPlus;
+                allowedTags = 5;
+                allowedLosungen = 3;
             }
             case "premium" -> {
-                return (double) (postRepository.findByAuthor(id).size()) / maxPostsPremium;
+                allowedTags = 8;
+                allowedLosungen = 5;
             }
             case "sponsor" -> {
-                return (double) (postRepository.findByAuthor(id).size()) / maxPostsSponsor;
-            } default -> {
-                return 0;
+                allowedTags = 12;
+                allowedLosungen = 12;
             }
         }
+
+        int countTags = 0;
+        Matcher matcher = Pattern.compile(";i:(\\d+);").matcher(wpUserMetaRepository.getTags((long) userid));
+        while(matcher.find()) {
+            countTags++;
+        }
+
+        //Check how many solutions are allowed, and how many are set.
+        int solutions = 0;
+        for(int i = 0; i < allowedLosungen; i++) {
+            switch(i) {
+                case(0) -> {
+                    if(wpUserMetaRepository.getSolutionHead1((long) userid).isPresent()) solutions ++;
+                }
+                case(1) -> {
+                    if(wpUserMetaRepository.getSolutionHead2((long) userid).isPresent()) solutions ++;
+                }
+                case(2) -> {
+                    if(wpUserMetaRepository.getSolutionHead3((long) userid).isPresent()) solutions ++;
+                }
+                case(3) -> {
+                    if(wpUserMetaRepository.getSolutionHead4((long) userid).isPresent()) solutions ++;
+                }
+                case(4) -> {
+                    if(wpUserMetaRepository.getSolutionHead5((long) userid).isPresent()) solutions ++;
+                }
+                case(5) -> {
+                    if(wpUserMetaRepository.getSolutionHead6((long) userid).isPresent()) solutions ++;
+                }
+                case(6) -> {
+                    if(wpUserMetaRepository.getSolutionHead7((long) userid).isPresent()) solutions ++;
+                }
+                case(7) -> {
+                    if(wpUserMetaRepository.getSolutionHead8((long) userid).isPresent()) solutions ++;
+                }
+                case(8) -> {
+                    if(wpUserMetaRepository.getSolutionHead9((long) userid).isPresent()) solutions ++;
+                }
+                case(9) -> {
+                    if(wpUserMetaRepository.getSolutionHead10((long) userid).isPresent()) solutions ++;
+                }
+                case(10) -> {
+                    if(wpUserMetaRepository.getSolutionHead11((long) userid).isPresent()) solutions ++;
+                }
+                case(11) -> {
+                    if(wpUserMetaRepository.getSolutionHead12((long) userid).isPresent()) solutions ++;
+                }
+            }
+        }
+
+        //Check how many company datafields have been filled.
+        int companyDetails = 0;
+        int companyDetailsMax = 4;
+        if(!wpUserMetaRepository.getCompanyCategory((long) userid).isEmpty()) companyDetails++;
+        if(!wpUserMetaRepository.getManager((long) userid).isEmpty()) companyDetails++;
+        if(!wpUserMetaRepository.getCompanyEmployees((long) userid).isEmpty()) companyDetails++;
+        if(!wpUserMetaRepository.getService((long) userid).isEmpty()) companyDetails++;
+
+
+        JSONObject json = new JSONObject();
+        json.put("profilePicture", hasProfilePic ? 1 : 0);
+        json.put("titlePicture", hasCover ? 1 : 0);
+        json.put("bio", hasDescription ? 1 : 0);
+        json.put("slogan", hasSlogan ? 1 : 0);
+        json.put("tagsCount", countTags);
+        json.put("tagsMax", allowedTags);
+        json.put("bio", hasDescription ? 1 : 0);
+        json.put("contactPublic", countKontaktExtern);
+        json.put("contactPublicMax", maxKontaktExtern);
+        json.put("contactIntern", countAnsprechpartnerIntern);
+        json.put("contactInternMax", maxAnsprechpartnerIntern);
+        json.put("companyDetails", companyDetails);
+        json.put("companyDetailsMax", companyDetailsMax);
+        json.put("solutions", solutions);
+        json.put("solutionsMax", allowedLosungen);
+
+        return json.toString();
     }
 
 

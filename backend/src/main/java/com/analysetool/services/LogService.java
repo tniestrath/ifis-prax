@@ -1522,6 +1522,7 @@ public class LogService {
         }
         }
     }
+
     @Transactional
     public void erhoeheWertFuerLogDatum(long id, LocalDate logDatum, LocalTime logUhrzeit) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");

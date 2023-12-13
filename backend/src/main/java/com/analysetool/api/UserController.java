@@ -416,28 +416,29 @@ public class UserController {
     }
 
     private String getType(int id) {
-
-        switch(wpMemberRepo.getUserMembership(id)) {
-            case(1) -> {
-                return "basis";
-            }
-            case(3) -> {
-                return "plus";
-            }
-            case(5) -> {
-                return "premium";
-            }
-            case(6) -> {
-                return "sponsor";
-            }
-            case(7) -> {
-                return "basis-plus";
-            }
-            default -> {
-                if (wpUserMetaRepository.existsByUserId((long) id)) {
-                    String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
-                    if (wpUserMeta.contains("administrator")) {
-                        return "admin";
+        if(wpMemberRepo.getUserMembership(id) != null) {
+            switch (wpMemberRepo.getUserMembership(id)) {
+                case (1) -> {
+                    return "basis";
+                }
+                case (3) -> {
+                    return "plus";
+                }
+                case (5) -> {
+                    return "premium";
+                }
+                case (6) -> {
+                    return "sponsor";
+                }
+                case (7) -> {
+                    return "basis-plus";
+                }
+                default -> {
+                    if (wpUserMetaRepository.existsByUserId((long) id)) {
+                        String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
+                        if (wpUserMeta.contains("administrator")) {
+                            return "admin";
+                        }
                     }
                 }
             }

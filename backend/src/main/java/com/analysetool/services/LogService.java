@@ -423,7 +423,7 @@ public class LogService {
         String last_request = null;
         JSONArray blacklist2 = null;
         try {
-            blacklist2 = new JSONArray(getClass().getResource("blacklist.json").getFile());
+            blacklist2 = new JSONArray(new String(Files.readAllBytes(Path.of(getClass().getResource("blacklist.json").toURI()))));
         } catch (Exception ignored){}
 
         while ((line = br.readLine()) != null ) {

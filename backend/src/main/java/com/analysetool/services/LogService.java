@@ -419,8 +419,6 @@ public class LogService {
 
         int serverErrors = 0;
 
-        Map<String,Long> viewsByHour = new HashMap<>();
-
         String last_ip = null;
         String last_request = null;
         JSONArray blacklist2 = null;
@@ -485,7 +483,6 @@ public class LogService {
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam && isGet) {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
-                    erhoeheViewsPerHour2(viewsByHour, dateLog.toLocalTime());
 
                     //erhöhe Clicks und Besucher, falls anwendbar
                     totalClicks++;
@@ -664,7 +661,6 @@ public class LogService {
                                 if (new JSONArray(uniqueUserRepo.findByIP(ip).getNews()).length() > 1) {
                                     userNews++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
                             updateUniqueUser(ip, "news", dateLog);
                         }
@@ -868,7 +864,6 @@ public class LogService {
                     }
 
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
-                    //A bunch of variables necessary to update UniStats
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead))) {
                     if(isBlacklisted) {
@@ -889,12 +884,12 @@ public class LogService {
             }
 
         }
-        updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors, viewsByHour);
+        updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
         //UserViewsByHourService weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
     }
 
-    private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors, Map<String, Long> viewsByHour) throws ParseException {
+    private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
         dateStirng += Calendar.getInstance().get(Calendar.MONTH) + 1  < 10 ? "0" + Calendar.getInstance().get(Calendar.MONTH) + 1 : Calendar.getInstance().get(Calendar.MONTH) + 1;
@@ -1280,15 +1275,10 @@ public class LogService {
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
 
 
-        //set userstats views per hour to map with only 0 values so its only the views in last 24h distributed by hours
         List<UserStats> userStats = userStatsRepo.findAll();
-        for(UserStats u:userStats){
-            u.setViewsPerHour(u.setJson());
-        }
         userStatsRepo.saveAll(userStats);
 
         //Just in case permanentify failed
-
         deleteOldIPs();
     }
 
@@ -1679,18 +1669,11 @@ public class LogService {
         if(userStatsRepo.existsByUserId(id)) {
 
             UserStats Stats = userStatsRepo.findByUserId(id);
-            if(Stats.getViewsPerHour().isEmpty()||Stats.getViewsPerHour()==null){
-                Stats.setViewsPerHour(Stats.setJson());
-            }
             long views = Stats.getProfileView() + 1 ;
-            Stats.setViewsPerHour(erhoeheViewsPerHour2(Stats.getViewsPerHour(),dateLog.toLocalTime()));
             Stats.setProfileView(views);
             userStatsRepo.save(Stats);
-
         }else {
-
             userStatsRepo.save(new UserStats(id, 1));
-
         }
         updateUserViewsByHourDLCList(id,dateLog);
     }

@@ -22,6 +22,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -633,6 +635,19 @@ public class UserController {
         return json.toString();
     }
 
+    /**
+     * Gibt die verteilten Ansichten (Views) eines Benutzers über die letzten 24 Stunden als JSON-String zurück.
+     * Die Methode berechnet die Ansichten basierend auf den Daten der letzten zwei Tage (basierend auf uniId)
+     * für den angegebenen Benutzer (userId). Für jede Stunde der letzten 24 Stunden werden die Ansichten ermittelt.
+     * Falls für eine bestimmte Stunde keine Daten vorhanden sind, wird der Wert 0 angenommen.
+     *
+     * @param userId   Die ID des Benutzers, für den die Ansichten abgerufen werden sollen.
+     * @param daysback Gibt an, wie viele Tage zurückliegend die Daten berücksichtigt werden sollen.
+     *                 Ein Wert von 0 bedeutet, dass die Daten für heute und gestern berücksichtigt werden.
+     * @return Ein JSON-String, der eine Map darstellt, wobei jeder Schlüssel eine Stunde (0-23) und jeder Wert
+     *         die Anzahl der Ansichten (Views) für diese Stunde ist. Das Format ist {"Stunde": Ansichten, ...}.
+     * @throws JsonProcessingException Wenn beim Verarbeiten der Daten zu einem JSON-String ein Fehler auftritt.
+     */
     @GetMapping("/getUserViewsDistributedByHours")
     public String getUserViewsDistributedByHours(@RequestParam int userId,@RequestParam int daysback) throws JsonProcessingException {
         int latestUniId = uniRepo.getLatestUniStat().getId() - daysback;

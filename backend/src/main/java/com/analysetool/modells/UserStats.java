@@ -43,7 +43,5 @@ public class UserStats {
     public void setProfileView(long profileView) {
         this.profileView = profileView;
     }
-
-    // Constructors, getters, and setters
 }
 

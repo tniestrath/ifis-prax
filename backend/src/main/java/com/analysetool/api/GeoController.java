@@ -170,33 +170,34 @@ public class GeoController {
             liste.add(geo.getBW());
             liste.add(geo.getNW());
             liste.add(geo.getAusland());
-        }
-        for (LocalDate date : dateStart.toLocalDate().plusDays(1).datesUntil(dateEnd.toLocalDate()).toList()) {
-            boolean isGeo = false;
-            if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
-                geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId());
-                isGeo = true;
-            }
-            if (geo != null && isGeo) {
-                liste.set(0, geo.getHh() + liste.get(0));
-                liste.set(1, geo.getHb() + liste.get(1));
-                liste.set(2, geo.getBe() + liste.get(2));
-                liste.set(3, geo.getMv() + liste.get(3));
-                liste.set(4, geo.getBb() + liste.get(4));
-                liste.set(5, geo.getSn() + liste.get(5));
-                liste.set(6, geo.getSt() + liste.get(6));
-                liste.set(7, geo.getBye() + liste.get(7));
-                liste.set(8, geo.getSl() + liste.get(8));
-                liste.set(9, geo.getRp() + liste.get(9));
-                liste.set(10, geo.getSh() + liste.get(10));
-                liste.set(11, geo.getTh() + liste.get(11));
-                liste.set(12, geo.getNb() + liste.get(12));
-                liste.set(13, geo.getHe() + liste.get(13));
-                liste.set(14, geo.getBW() + liste.get(14));
-                liste.set(15, geo.getNW() + liste.get(15));
-                liste.set(16, geo.getAusland() + liste.get(16));
-            }
 
+            for (LocalDate date : dateStart.toLocalDate().plusDays(1).datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
+                boolean isGeo = false;
+                if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                    geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId());
+                    isGeo = true;
+                }
+                if (geo != null && isGeo) {
+                    liste.set(0, geo.getHh() + liste.get(0));
+                    liste.set(1, geo.getHb() + liste.get(1));
+                    liste.set(2, geo.getBe() + liste.get(2));
+                    liste.set(3, geo.getMv() + liste.get(3));
+                    liste.set(4, geo.getBb() + liste.get(4));
+                    liste.set(5, geo.getSn() + liste.get(5));
+                    liste.set(6, geo.getSt() + liste.get(6));
+                    liste.set(7, geo.getBye() + liste.get(7));
+                    liste.set(8, geo.getSl() + liste.get(8));
+                    liste.set(9, geo.getRp() + liste.get(9));
+                    liste.set(10, geo.getSh() + liste.get(10));
+                    liste.set(11, geo.getTh() + liste.get(11));
+                    liste.set(12, geo.getNb() + liste.get(12));
+                    liste.set(13, geo.getHe() + liste.get(13));
+                    liste.set(14, geo.getBW() + liste.get(14));
+                    liste.set(15, geo.getNW() + liste.get(15));
+                    liste.set(16, geo.getAusland() + liste.get(16));
+                }
+
+            }
         }
         return liste;
     }

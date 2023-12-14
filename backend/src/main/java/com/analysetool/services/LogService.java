@@ -619,7 +619,7 @@ public class LogService {
                             if (isUnique) {
                                 userArticle++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getArticle()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getArticle()).length() < 2) {
                                     userArticle++;
                                 }
                             }
@@ -634,7 +634,7 @@ public class LogService {
                             if (isUnique) {
                                 userBlog++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getBlog()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getBlog()).length() < 2) {
                                     userBlog++;
                                 }
                             }
@@ -649,7 +649,7 @@ public class LogService {
                             if (isUnique) {
                                 userNews++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNews()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNews()).length() < 2) {
                                     userNews++;
                                 }
                             }
@@ -664,7 +664,7 @@ public class LogService {
                             if (isUnique) {
                                 userWhitepaper++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getWhitepaper()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getWhitepaper()).length() < 2) {
                                     userWhitepaper++;
                                 }
                             }
@@ -677,7 +677,7 @@ public class LogService {
                             if (isUnique) {
                                 userPodcast++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPodcast()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPodcast()).length() < 2) {
                                     userPodcast++;
                                 }
                             }
@@ -689,7 +689,7 @@ public class LogService {
                             if (isUnique) {
                                 userMain++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getMain()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getMain()).length() < 2) {
                                     userMain++;
                                 }
                             }
@@ -702,7 +702,7 @@ public class LogService {
                             if (isUnique) {
                                 userUeber++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getUeber()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getUeber()).length() < 2) {
                                     userUeber++;
                                 }
                             }
@@ -715,7 +715,7 @@ public class LogService {
                             if (isUnique) {
                                 userImpressum++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImpressum()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImpressum()).length() < 2) {
                                     userImpressum++;
                                 }
                             }
@@ -728,7 +728,7 @@ public class LogService {
                             if (isUnique) {
                                 userPreisliste++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPreisliste()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPreisliste()).length() < 2) {
                                     userPreisliste++;
                                 }
                             }
@@ -741,7 +741,7 @@ public class LogService {
                             if (isUnique) {
                                 userPartner++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPartner()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPartner()).length() < 2) {
                                     userPartner++;
                                 }
                             }
@@ -754,7 +754,7 @@ public class LogService {
                             if (isUnique) {
                                 userDatenschutz++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getDatenschutz()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getDatenschutz()).length() < 2) {
                                     userDatenschutz++;
                                 }
                             }
@@ -767,7 +767,7 @@ public class LogService {
                             if (isUnique) {
                                 userNewsletter++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNewsletter()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNewsletter()).length() < 2) {
                                     userNewsletter++;
                                 }
                             }
@@ -780,7 +780,7 @@ public class LogService {
                             if (isUnique) {
                                 userImage++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImage()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImage()).length() < 2) {
                                     userImage++;
                                 }
                             }
@@ -793,7 +793,7 @@ public class LogService {
                             if (isUnique) {
                                 userAGBS++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getAgb()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getAgb()).length() < 2) {
                                     userAGBS++;
                                 }
                             }
@@ -813,7 +813,7 @@ public class LogService {
                             if (isUnique) {
                                 userRatgeber++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                     userRatgeber++;
                                 }
                             }
@@ -825,7 +825,7 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberPost++;
                                 } else {
-                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 1) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                         userRatgeberPost++;
                                     }
                                 }
@@ -834,7 +834,7 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberGlossar++;
                                 } else {
-                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 1) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                         userRatgeberGlossar++;
                                     }
                                 }
@@ -843,7 +843,7 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberBuch++;
                                 } else {
-                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 1) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                         userRatgeberBuch++;
                                     }
                                 }

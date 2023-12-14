@@ -416,6 +416,7 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getTypeById")
     private String getType(int id) {
         if(wpMemberRepo.getUserMembership(id) != null) {
             switch (wpMemberRepo.getUserMembership(id)) {

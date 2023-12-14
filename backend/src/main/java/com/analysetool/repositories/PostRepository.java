@@ -43,7 +43,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p.date FROM Post p WHERE p.status = 'publish' AND p.type = 'post'")
    Map<Integer, LocalDateTime> getAllDates();
 
-   List<Long> findByOrderByDateDesc();
+   @Query("SELECT e FROM Post e WHERE e.status = 'publish' AND e.type = 'post' ORDER BY e.date DESC")
+   List<Long> findByTypeOrderByDateDesc();
 
 
 }

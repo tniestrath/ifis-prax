@@ -481,10 +481,6 @@ public class LogService {
 
                     //erhöhe Clicks und Besucher, falls anwendbar
                     totalClicks++;
-                    if(isUnique) {
-                        uniqueUsers++;
-                        initUniqueUser(ip, dateLog);
-                    }
 
                     //Does it match an article-type?
                     Matcher matched_articleView = articleViewPattern.matcher(request);
@@ -858,6 +854,11 @@ public class LogService {
                         default -> System.out.println(line);
                     }
 
+                    //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
+                    if(isUnique && !whatMatched.equals("")) {
+                        uniqueUsers++;
+                        initUniqueUser(ip, dateLog);
+                    }
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead))) {

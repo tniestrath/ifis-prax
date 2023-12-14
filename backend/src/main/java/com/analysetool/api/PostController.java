@@ -971,7 +971,7 @@ public class PostController {
 
     @GetMapping("/page")
     public String testPage(int page, int size, String sortBy) {
-        List<Post> list = postRepo.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , "sortBy"))).get().toList();
+        List<Post> list = postRepo.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , "date"))).get().toList();
         JSONArray json = new JSONArray();
         for(Post post : list) {
             json.put(post.getDate());

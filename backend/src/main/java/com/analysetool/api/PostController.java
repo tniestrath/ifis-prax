@@ -970,13 +970,16 @@ public class PostController {
 
 
     @GetMapping("/page")
-    public String testPage(int page, int size, String sortBy) {
-        List<Post> list = postRepo.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , "date"))).get().toList();
-        JSONArray json = new JSONArray();
-        for(Post post : list) {
-            json.put(post.getDate());
+    public String testPage(int page, int size, String sortBy) throws JSONException, ParseException {
+        List<Long> list = postRepo.findByTypeOrderByDateDesc(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        List<JSONObject> stats = new ArrayList<>();
+        for(Long id : list) {
+
+            if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper")) {
+                stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+            }
         }
-        return json.toString();
+        return new JSONArray(stats).toString();
     }
 
     /**

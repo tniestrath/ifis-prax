@@ -416,6 +416,7 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getTypeById")
     private String getType(int id) {
         if(wpMemberRepo.getUserMembership(id) != null) {
             switch (wpMemberRepo.getUserMembership(id)) {
@@ -434,16 +435,19 @@ public class UserController {
                 case (7) -> {
                     return "basis-plus";
                 }
-                default -> {
-                    if (wpUserMetaRepository.existsByUserId((long) id)) {
-                        String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
-                        if (wpUserMeta.contains("administrator")) {
-                            return "admin";
-                        }
-                    }
-                }
             }
         }
+
+        if (wpUserMetaRepository.existsByUserId((long) id)){
+            String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
+            if (wpUserMeta.contains("customer")) return "none";
+            if (wpUserMeta.contains("administrator")) return "admin";
+            if (wpUserMeta.contains("plus-anbieter")) return "plus";
+            if (wpUserMeta.contains("premium-anbieter")) return "premium";
+            if (wpUserMeta.contains("anbieter")) return "basis";
+        }
+
+
         return "none";
     }
 
@@ -540,14 +544,10 @@ public class UserController {
                 allowedTags = 3;
             }
             case "plus" -> {
-                allowedTags = 5;
-                allowedLosungen = 3;
-            }
-            case "premium" -> {
                 allowedTags = 8;
                 allowedLosungen = 5;
             }
-            case "sponsor" -> {
+            case "premium" -> {
                 allowedTags = 12;
                 allowedLosungen = 12;
             }

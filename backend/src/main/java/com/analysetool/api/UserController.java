@@ -3,6 +3,8 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,10 +21,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,6 +59,8 @@ public class UserController {
     private universalStatsRepository uniRepo;
     @Autowired
     private WPMembershipRepository wpMemberRepo;
+    @Autowired
+    private UserViewsByHourDLCRepository userViewsRepo;
 
     private final DashConfig config;
 
@@ -640,5 +641,44 @@ public class UserController {
         return json.toString();
     }
 
+    /**
+     * Gibt die verteilten Ansichten (Views) eines Benutzers über die letzten 24 Stunden als JSON-String zurück.
+     * Die Methode berechnet die Ansichten basierend auf den Daten der letzten zwei Tage (basierend auf uniId)
+     * für den angegebenen Benutzer (userId). Für jede Stunde der letzten 24 Stunden werden die Ansichten ermittelt.
+     * Falls für eine bestimmte Stunde keine Daten vorhanden sind, wird der Wert 0 angenommen.
+     *
+     * @param userId   Die ID des Benutzers, für den die Ansichten abgerufen werden sollen.
+     * @param daysback Gibt an, wie viele Tage zurückliegend die Daten berücksichtigt werden sollen.
+     *                 Ein Wert von 0 bedeutet, dass die Daten für heute und gestern berücksichtigt werden.
+     * @return Ein JSON-String, der eine Map darstellt, wobei jeder Schlüssel eine Stunde (0-23) und jeder Wert
+     *         die Anzahl der Ansichten (Views) für diese Stunde ist. Das Format ist {"Stunde": Ansichten, ...}.
+     * @throws JsonProcessingException Wenn beim Verarbeiten der Daten zu einem JSON-String ein Fehler auftritt.
+     */
+    @GetMapping("/getUserViewsDistributedByHours")
+    public String getUserViewsDistributedByHours(@RequestParam int userId,@RequestParam int daysback) throws JsonProcessingException {
+        int latestUniId = uniRepo.getLatestUniStat().getId() - daysback;
+        int previousUniId = latestUniId - 1;
+
+        List<UserViewsByHourDLC> combinedViews = new ArrayList<>();
+        combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, previousUniId)); // Daten von gestern
+        combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, latestUniId));   // Daten von heute
+
+        Map<Integer, Long> hourlyViews = new LinkedHashMap<>();
+        LocalDateTime now = LocalDateTime.now();
+        int currentHour = now.getHour();
+
+        for (int i = 23; i >= 0; i--) {
+            int hour = (currentHour - i + 24) % 24;
+            Long viewCount = combinedViews.stream()
+                    .filter(view -> view.getHour() == hour)
+                    .map(UserViewsByHourDLC::getViews)
+                    .findFirst()
+                    .orElse(0L);
+            hourlyViews.put(hour, viewCount);
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(hourlyViews);
+    }
 
 }

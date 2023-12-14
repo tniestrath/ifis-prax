@@ -435,16 +435,19 @@ public class UserController {
                 case (7) -> {
                     return "basis-plus";
                 }
-                default -> {
-                    if (wpUserMetaRepository.existsByUserId((long) id)) {
-                        String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
-                        if (wpUserMeta.contains("administrator")) {
-                            return "admin";
-                        }
-                    }
-                }
             }
         }
+
+        if (wpUserMetaRepository.existsByUserId((long) id)){
+            String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
+            if (wpUserMeta.contains("customer")) return "none";
+            if (wpUserMeta.contains("administrator")) return "admin";
+            if (wpUserMeta.contains("anbieter")) return "basis";
+            if (wpUserMeta.contains("plus-anbieter")) return "plus";
+            if (wpUserMeta.contains("premium-anbieter")) return "premium";
+        }
+
+
         return "none";
     }
 

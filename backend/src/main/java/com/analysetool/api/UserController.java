@@ -541,14 +541,10 @@ public class UserController {
                 allowedTags = 3;
             }
             case "plus" -> {
-                allowedTags = 5;
-                allowedLosungen = 3;
-            }
-            case "premium" -> {
                 allowedTags = 8;
                 allowedLosungen = 5;
             }
-            case "sponsor" -> {
+            case "premium" -> {
                 allowedTags = 12;
                 allowedLosungen = 12;
             }

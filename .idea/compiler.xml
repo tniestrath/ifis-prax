@@ -12,7 +12,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-configuration-processor/3.1.0-SNAPSHOT/spring-boot-configuration-processor-3.1.0-SNAPSHOT.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-configuration-processor/3.2.0/spring-boot-configuration-processor-3.2.0.jar" />
         </processorPath>
         <module name="dash" />
       </profile>

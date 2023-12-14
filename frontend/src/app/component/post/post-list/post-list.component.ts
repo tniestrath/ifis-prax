@@ -5,6 +5,8 @@ import {Subject} from "rxjs";
 import {PostListItemComponent} from "./post-list-item/post-list-item.component";
 import {Post} from "../Post";
 import {Top5PostsComponent} from "../top5-posts/top5-posts.component";
+import _default from "chart.js/dist/core/core.interaction";
+import index = _default.modes.index;
 
 @Component({
   selector: 'dash-post-list',
@@ -20,6 +22,10 @@ export class PostListComponent extends DashBaseComponent{
   input_news_cb : any;
   input_whitepaper_cb : any;
 
+  lastScroll = 0;
+  pageIndex = 0;
+  pageSize = 20;
+  pagesComplete = false;
 
   selectorItems : SelectorItem[] = [];
   selectorItemsBackup = this.selectorItems;
@@ -27,13 +33,19 @@ export class PostListComponent extends DashBaseComponent{
 
   ngOnInit(): void {
     this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen");
-    this.db.getPostsAll().then( (value : Post[]) => {
+    /*this.db.getPostsAll().then( (value : Post[]) => {
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
       }
       this.selectorItemsLoaded.next(this.selectorItems);
+    });*/
+    this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date").then((value : Post[]) => {
+      for (const valueElement of value) {
+        this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+      }
+      this.pageIndex++;
+      this.selectorItemsLoaded.next(this.selectorItems);
     });
-
     this.input_search_cb = (event: { target: { value: string; }; }) => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
         return (item.data as Post).title.toUpperCase().includes(event.target.value.toUpperCase());
@@ -69,6 +81,29 @@ export class PostListComponent extends DashBaseComponent{
       this.selectorItemsLoaded.next(this.selectorItems);
     }
   }
+
+  onScrollEnd(fn? : Promise<any>) {
+    if (!fn) fn = this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date");
+    if (!this.pagesComplete){
+      let scroll = Date.now();
+      if (scroll >= (this.lastScroll + 100)){
+        console.log(this.pageIndex)
+        fn.then((value : Post[]) => {
+          for (const valueElement of value) {
+            this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+          }
+          if (value.length < this.pageSize){
+            this.pagesComplete = true;
+          }
+          this.selectorItemsLoaded.next(this.selectorItems);
+        });
+        this.pageIndex++;
+      }
+      else {}
+      this.lastScroll = scroll;
+    }
+  }
+
 }
 
 @Component({

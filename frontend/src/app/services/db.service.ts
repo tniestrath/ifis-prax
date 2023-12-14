@@ -45,6 +45,7 @@ export enum dbUrl {
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
 
   GET_POSTS_ALL = "/posts/getAllPostsWithStats",
+  GET_POSTS_ALL_PAGED = "/posts/page?page=PAGE&size=SIZE&sortBy=SORTER",
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_PER_TYPE = "/bericht/getPostsByType",
@@ -287,6 +288,10 @@ export class DbService {
   async getPostsAll(){
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getPostsAllPaged(page : number, size : number, sorter : string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL_PAGED).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getPostById(id: number) : Promise<Post> {

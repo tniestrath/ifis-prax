@@ -1,3 +1,3 @@
-<div class="selector-box" [ngStyle]="{ 'grid-template-columns': columnsForm, 'padding': padding}">
+<div class="selector-box" [ngStyle]="{ 'grid-template-columns': columnsForm, 'padding': padding}" (scroll)="onScroll($event)">
   <ng-template dashSelectable></ng-template>
 </div>

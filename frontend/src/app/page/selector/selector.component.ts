@@ -1,5 +1,5 @@
 import {
-  Component,
+  Component, ElementRef,
   EventEmitter,
   Input,
   OnInit, Output,
@@ -28,12 +28,15 @@ export class SelectorComponent implements OnInit{
   @Input() zebraColorMode: boolean = false;
 
   @Output() itemClick = new EventEmitter<DbObject>();
+  @Output() scrollEnd = new EventEmitter<void>();
 
   @ViewChild(SelectableDirective, {static: true}) dashSelectable!: SelectableDirective;
+  @ViewChild(SelectorComponent, {static: true}) scrollable!: SelectorComponent;
 
   private sub = new Subscription();
 
-
+  constructor(protected element : ElementRef) {
+  }
 
   ngOnInit(): void {
     console.log("Selector Component loaded");
@@ -62,6 +65,18 @@ export class SelectorComponent implements OnInit{
         componentRef.instance.bgColor = "60px";
       }
       index++;
+    }
+  }
+
+  onScroll($event: Event) {
+    console.log("keep on scrollin bebe");
+    let container = $event.target as HTMLDivElement;
+    let scrollPos = container.scrollTop;
+    let maxScroll = container.scrollHeight - container.clientHeight;
+    let scrollPercentage = (scrollPos / maxScroll)* 100;
+
+    if (scrollPercentage > 80){
+      this.scrollEnd.emit();
     }
   }
 }

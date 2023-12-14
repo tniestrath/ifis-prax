@@ -1,6 +1,7 @@
 package com.analysetool.repositories;
 
 import com.analysetool.modells.Post;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -43,8 +44,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p.date FROM Post p WHERE p.status = 'publish' AND p.type = 'post'")
    Map<Integer, LocalDateTime> getAllDates();
 
-   @Query("SELECT e FROM Post e WHERE e.status = 'publish' AND e.type = 'post' ORDER BY e.date DESC")
-   List<Long> findByTypeOrderByDateDesc();
+   @Query("SELECT e.id FROM Post e WHERE e.status = 'publish' AND e.type = 'post' ORDER BY e.date DESC")
+   List<Long> findByTypeOrderByDateDesc(Pageable pageable);
 
 
 }

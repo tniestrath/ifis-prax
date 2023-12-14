@@ -3,6 +3,8 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,10 +21,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,6 +59,8 @@ public class UserController {
     private universalStatsRepository uniRepo;
     @Autowired
     private WPMembershipRepository wpMemberRepo;
+    @Autowired
+    private UserViewsByHourDLCRepository userViewsRepo;
 
     private final DashConfig config;
 
@@ -416,28 +417,29 @@ public class UserController {
     }
 
     private String getType(int id) {
-
-        switch(wpMemberRepo.getUserMembership(id)) {
-            case(1) -> {
-                return "basis";
-            }
-            case(3) -> {
-                return "plus";
-            }
-            case(5) -> {
-                return "premium";
-            }
-            case(6) -> {
-                return "sponsor";
-            }
-            case(7) -> {
-                return "basis-plus";
-            }
-            default -> {
-                if (wpUserMetaRepository.existsByUserId((long) id)) {
-                    String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
-                    if (wpUserMeta.contains("administrator")) {
-                        return "admin";
+        if(wpMemberRepo.getUserMembership(id) != null) {
+            switch (wpMemberRepo.getUserMembership(id)) {
+                case (1) -> {
+                    return "basis";
+                }
+                case (3) -> {
+                    return "plus";
+                }
+                case (5) -> {
+                    return "premium";
+                }
+                case (6) -> {
+                    return "sponsor";
+                }
+                case (7) -> {
+                    return "basis-plus";
+                }
+                default -> {
+                    if (wpUserMetaRepository.existsByUserId((long) id)) {
+                        String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
+                        if (wpUserMeta.contains("administrator")) {
+                            return "admin";
+                        }
                     }
                 }
             }
@@ -503,28 +505,28 @@ public class UserController {
 
         String type = this.getType(userId);
         //Check whether these profile parts have been filled out.
-        boolean hasProfilePic = !wpUserMetaRepository.getProfilePath(((long) userId)).isEmpty() && !wpUserMetaRepository.getProfilePath((long)((long) userId)).equals("https://it-sicherheit.de/wp-content/uploads/2023/06/it-sicherheit-logo_icon_190x190.png");
-        boolean hasCover = !wpUserMetaRepository.getCoverPath((long) userId).isEmpty();
-        boolean hasDescription = !wpUserMetaRepository.getDescription((long) userId).isEmpty();
-        boolean hasSlogan = !type.equals("basis") && !wpUserMetaRepository.getSlogan((long) userId).isEmpty();
+        boolean hasProfilePic = wpUserMetaRepository.getProfilePath(((long) userId)).isPresent() && !wpUserMetaRepository.getProfilePath((long)((long) userId)).equals("https://it-sicherheit.de/wp-content/uploads/2023/06/it-sicherheit-logo_icon_190x190.png");
+        boolean hasCover = wpUserMetaRepository.getCoverPath((long) userId).isPresent();
+        boolean hasDescription = wpUserMetaRepository.getDescription((long) userId).isPresent();
+        boolean hasSlogan = !type.equals("basis") && wpUserMetaRepository.getSlogan((long) userId).isPresent();
 
         //Check how many internal contacts have been filled.
         int countAnsprechpartnerIntern = 0;
         int maxAnsprechpartnerIntern = 3;
-        if(!wpUserMetaRepository.getPersonIntern((long) userId).isEmpty()) countAnsprechpartnerIntern++;
-        if(!wpUserMetaRepository.getMailIntern((long) userId).isEmpty()) countAnsprechpartnerIntern++;
-        if(!wpUserMetaRepository.getTelIntern((long) userId).isEmpty()) countAnsprechpartnerIntern++;
+        if(wpUserMetaRepository.getPersonIntern((long) userId).isPresent() && !wpUserMetaRepository.getPersonIntern((long) userId).get().isEmpty()) countAnsprechpartnerIntern++;
+        if(wpUserMetaRepository.getMailIntern((long) userId).isPresent() && !wpUserMetaRepository.getMailIntern((long) userId).get().isEmpty()) countAnsprechpartnerIntern++;
+        if(wpUserMetaRepository.getTelIntern((long) userId).isPresent() && !wpUserMetaRepository.getTelIntern((long) userId).get().isEmpty()) countAnsprechpartnerIntern++;
 
         //Check how many external contacts have been filled.
         int countKontaktExtern = 0;
         int maxKontaktExtern = 7;
-        if(!wpUserMetaRepository.getNameExtern((long) userId).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getSecondaryMail((long) userId).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getTelExtern((long) userId).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getAdresseStreet((long) userId).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getAdressePLZ((long) userId).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getAdresseOrt((long) userId).isEmpty()) countKontaktExtern++;
-        if(!wpUserMetaRepository.getURLExtern((long) userId).isEmpty()) countKontaktExtern++;
+        if(wpUserMetaRepository.getNameExtern((long) userId).isPresent()  && !wpUserMetaRepository.getNameExtern((long) userId).get().isEmpty()) countKontaktExtern++;
+        if(wpUserMetaRepository.getSecondaryMail((long) userId).isPresent() && !wpUserMetaRepository.getSecondaryMail((long) userId).get().isEmpty()) countKontaktExtern++;
+        if(wpUserMetaRepository.getTelExtern((long) userId).isPresent() && !wpUserMetaRepository.getTelExtern((long) userId).get().isEmpty()) countKontaktExtern++;
+        if(wpUserMetaRepository.getAdresseStreet((long) userId).isPresent() && !wpUserMetaRepository.getAdresseStreet((long) userId).get().isEmpty()) countKontaktExtern++;
+        if(wpUserMetaRepository.getAdressePLZ((long) userId).isPresent() && !wpUserMetaRepository.getAdressePLZ((long) userId).get().isEmpty()) countKontaktExtern++;
+        if(wpUserMetaRepository.getAdresseOrt((long) userId).isPresent() && !wpUserMetaRepository.getAdresseOrt((long) userId).get().isEmpty()) countKontaktExtern++;
+        if(wpUserMetaRepository.getURLExtern((long) userId).isPresent() && !wpUserMetaRepository.getURLExtern((long) userId).get().isEmpty()) countKontaktExtern++;
 
         //Check how many tags are allowed, and how many are set.
         int allowedTags = 0;
@@ -549,11 +551,21 @@ public class UserController {
                 allowedTags = 12;
                 allowedLosungen = 12;
             }
+            case "admin" -> {
+                allowedTags = 100;
+                allowedLosungen = 100;
+            }
         }
 
+
         int countTags = 0;
-        Matcher matcher = Pattern.compile(";i:(\\d+);").matcher(wpUserMetaRepository.getTags((long) userId));
-        while(matcher.find()) {
+        Matcher matcher = null;
+        try {
+            if(wpUserMetaRepository.getTags((long) userId).isPresent()) {
+                matcher = Pattern.compile(";i:(\\d+);").matcher(wpUserMetaRepository.getTags((long) userId).get());
+            }
+        } catch (Exception ignored) {}
+        while(matcher != null && matcher.find()) {
             countTags++;
         }
 
@@ -562,40 +574,40 @@ public class UserController {
         for(int i = 0; i < allowedLosungen; i++) {
             switch(i) {
                 case(0) -> {
-                    if(wpUserMetaRepository.getSolutionHead1((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead1((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead1((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(1) -> {
-                    if(wpUserMetaRepository.getSolutionHead2((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead2((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead2((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(2) -> {
-                    if(wpUserMetaRepository.getSolutionHead3((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead3((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead3((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(3) -> {
-                    if(wpUserMetaRepository.getSolutionHead4((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead4((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead4((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(4) -> {
-                    if(wpUserMetaRepository.getSolutionHead5((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead5((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead5((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(5) -> {
-                    if(wpUserMetaRepository.getSolutionHead6((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead6((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead6((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(6) -> {
-                    if(wpUserMetaRepository.getSolutionHead7((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead7((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead7((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(7) -> {
-                    if(wpUserMetaRepository.getSolutionHead8((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead8((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead8((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(8) -> {
-                    if(wpUserMetaRepository.getSolutionHead9((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead9((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead9((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(9) -> {
-                    if(wpUserMetaRepository.getSolutionHead10((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead10((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead10((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(10) -> {
-                    if(wpUserMetaRepository.getSolutionHead11((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead11((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead11((long) userId).get().isEmpty()) solutions ++;
                 }
                 case(11) -> {
-                    if(wpUserMetaRepository.getSolutionHead12((long) userId).isPresent()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead12((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead12((long) userId).get().isEmpty()) solutions ++;
                 }
             }
         }
@@ -603,10 +615,10 @@ public class UserController {
         //Check how many company datafields have been filled.
         int companyDetails = 0;
         int companyDetailsMax = 4;
-        if(!wpUserMetaRepository.getCompanyCategory((long) userId).isEmpty()) companyDetails++;
-        if(!wpUserMetaRepository.getManager((long) userId).isEmpty()) companyDetails++;
-        if(!wpUserMetaRepository.getCompanyEmployees((long) userId).isEmpty()) companyDetails++;
-        if(!wpUserMetaRepository.getService((long) userId).isEmpty()) companyDetails++;
+        if(wpUserMetaRepository.getCompanyCategory((long) userId).isPresent() && !wpUserMetaRepository.getCompanyCategory((long) userId).get().isEmpty()) companyDetails++;
+        if(wpUserMetaRepository.getManager((long) userId).isPresent() && !wpUserMetaRepository.getManager((long) userId).get().isEmpty()) companyDetails++;
+        if(wpUserMetaRepository.getCompanyEmployees((long) userId).isPresent() && !wpUserMetaRepository.getCompanyEmployees((long) userId).get().isEmpty()) companyDetails++;
+        if(wpUserMetaRepository.getService((long) userId).isPresent() && !wpUserMetaRepository.getService((long) userId).get().isEmpty()) companyDetails++;
 
 
         JSONObject json = new JSONObject();
@@ -629,5 +641,44 @@ public class UserController {
         return json.toString();
     }
 
+    /**
+     * Gibt die verteilten Ansichten (Views) eines Benutzers über die letzten 24 Stunden als JSON-String zurück.
+     * Die Methode berechnet die Ansichten basierend auf den Daten der letzten zwei Tage (basierend auf uniId)
+     * für den angegebenen Benutzer (userId). Für jede Stunde der letzten 24 Stunden werden die Ansichten ermittelt.
+     * Falls für eine bestimmte Stunde keine Daten vorhanden sind, wird der Wert 0 angenommen.
+     *
+     * @param userId   Die ID des Benutzers, für den die Ansichten abgerufen werden sollen.
+     * @param daysback Gibt an, wie viele Tage zurückliegend die Daten berücksichtigt werden sollen.
+     *                 Ein Wert von 0 bedeutet, dass die Daten für heute und gestern berücksichtigt werden.
+     * @return Ein JSON-String, der eine Map darstellt, wobei jeder Schlüssel eine Stunde (0-23) und jeder Wert
+     *         die Anzahl der Ansichten (Views) für diese Stunde ist. Das Format ist {"Stunde": Ansichten, ...}.
+     * @throws JsonProcessingException Wenn beim Verarbeiten der Daten zu einem JSON-String ein Fehler auftritt.
+     */
+    @GetMapping("/getUserViewsDistributedByHours")
+    public String getUserViewsDistributedByHours(@RequestParam int userId,@RequestParam int daysback) throws JsonProcessingException {
+        int latestUniId = uniRepo.getLatestUniStat().getId() - daysback;
+        int previousUniId = latestUniId - 1;
+
+        List<UserViewsByHourDLC> combinedViews = new ArrayList<>();
+        combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, previousUniId)); // Daten von gestern
+        combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, latestUniId));   // Daten von heute
+
+        Map<Integer, Long> hourlyViews = new LinkedHashMap<>();
+        LocalDateTime now = LocalDateTime.now();
+        int currentHour = now.getHour();
+
+        for (int i = 23; i >= 0; i--) {
+            int hour = (currentHour - i + 24) % 24;
+            Long viewCount = combinedViews.stream()
+                    .filter(view -> view.getHour() == hour)
+                    .map(UserViewsByHourDLC::getViews)
+                    .findFirst()
+                    .orElse(0L);
+            hourlyViews.put(hour, viewCount);
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(hourlyViews);
+    }
 
 }

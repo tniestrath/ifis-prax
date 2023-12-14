@@ -4,7 +4,6 @@ import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Post} from "../Post";
 import {SysVars} from "../../../services/sys-vars-service";
 import {EmptyObject} from "chart.js/dist/types/basic";
-import {DashColors} from "../../../util/Util";
 
 
 @Component({

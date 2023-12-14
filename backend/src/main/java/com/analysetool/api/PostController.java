@@ -974,7 +974,7 @@ public class PostController {
         List<Post> list = postRepo.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy))).get().toList();
         JSONArray json = new JSONArray();
         for(Post post : list) {
-            json.put(post.getDate());
+            json.put(post.getId());
         }
         return json.toString();
     }

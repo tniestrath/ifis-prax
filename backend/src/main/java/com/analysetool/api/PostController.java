@@ -8,6 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -964,6 +966,17 @@ public class PostController {
         }
 
         return new JSONObject(answer).toString();
+    }
+
+
+    @GetMapping("/page")
+    public String testPage(int page, int size, String sortBy) {
+        List<Post> list = postRepo.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , "date"))).get().toList();
+        JSONArray json = new JSONArray();
+        for(Post post : list) {
+            json.put(post.getDate());
+        }
+        return json.toString();
     }
 
     /**

@@ -22,49 +22,49 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     List<String> getWpCapabilities();
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='profile_photo' AND p.userId=:user_id")
-    String getProfilePath(Long user_id);
+    Optional<String> getProfilePath(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='cover_photo' AND p.userId=:user_id")
-    String getCoverPath(Long user_id);
+    Optional<String> getCoverPath(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='description' AND p.userId=:user_id")
-    String getDescription(Long user_id);
+    Optional<String> getDescription(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='company_slogan' AND p.userId=:user_id")
-    String getSlogan(Long user_id);
+    Optional<String> getSlogan(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='name_ansprechperson' AND p.userId=:user_id")
-    String getPersonIntern(Long user_id);
+    Optional<String> getPersonIntern(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='email_ansprechperson' AND p.userId=:user_id")
-    String getMailIntern(Long user_id);
+    Optional<String> getMailIntern(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='telefon_ansprechperson' AND p.userId=:user_id")
-    String getTelIntern(Long user_id);
+    Optional<String> getTelIntern(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='user_url' AND p.userId=:user_id")
-    String getURLExtern(Long user_id);
+    Optional<String> getURLExtern(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='name_oeffentlich_person' AND p.userId=:user_id")
-    String getNameExtern(Long user_id);
+    Optional<String> getNameExtern(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='secondary_user_email' AND p.userId=:user_id")
-    String getSecondaryMail(Long user_id);
+    Optional<String> getSecondaryMail(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='telefon_unternehmen' AND p.userId=:user_id")
-    String getTelExtern(Long user_id);
+    Optional<String> getTelExtern(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='adresse_strasse' AND p.userId=:user_id")
-    String getAdresseStreet(Long user_id);
+    Optional<String> getAdresseStreet(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='adresse_plz' AND p.userId=:user_id")
-    String getAdressePLZ(Long user_id);
+    Optional<String> getAdressePLZ(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='adresse_ort' AND p.userId=:user_id")
-    String getAdresseOrt(Long user_id);
+    Optional<String> getAdresseOrt(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='profile_tags' AND p.userId=:user_id")
-    String getTags(Long user_id);
+    Optional<String> getTags(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='solution_head_1' AND p.userId=:user_id")
     Optional<String> getSolutionHead1(Long user_id);
@@ -103,16 +103,16 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     Optional<String> getSolutionHead12(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='company_employees' AND p.userId=:user_id")
-    String getCompanyEmployees(Long user_id);
+    Optional<String> getCompanyEmployees(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='company_category' AND p.userId=:user_id")
-    String getCompanyCategory(Long user_id);
+    Optional<String> getCompanyCategory(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='company_manager' AND p.userId=:user_id")
-    String getManager(Long user_id);
+    Optional<String> getManager(Long user_id);
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='service_company' AND p.userId=:user_id")
-    String getService(Long user_id);
+    Optional<String> getService(Long user_id);
 
 }
 

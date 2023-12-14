@@ -120,7 +120,7 @@ public class LogService {
 
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
 
-    //private final String WhitepaperDownload ="^.*GET /wp-content/uploads//[\d]{4})/[\d]{2})/(\S+).pdf";
+    //private final String WhitepaperDownload ="^.*GET /wp-content/uploads/[\d]{4})/[\d]{2})/(\S+).pdf";
 
     private final String PodcastViewPattern = "^.*GET /podcast/(\\S+)/";
 

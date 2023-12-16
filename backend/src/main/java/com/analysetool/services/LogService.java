@@ -613,6 +613,12 @@ public class LogService {
                         patternMatcher = matched_ratgeber_buch;
                     }
 
+                    //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
+                    if(isUnique && !whatMatched.equals("")) {
+                        uniqueUsers++;
+                        initUniqueUser(ip, dateLog);
+                    }
+
                     switch (whatMatched) {
                         case "articleView", "articleSS" -> {
                             //Erhöhe Clicks für Artikel um 1.
@@ -856,11 +862,7 @@ public class LogService {
                         default -> System.out.println(line);
                     }
 
-                    //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
-                    if(isUnique && !whatMatched.equals("")) {
-                        uniqueUsers++;
-                        initUniqueUser(ip, dateLog);
-                    }
+
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead))) {

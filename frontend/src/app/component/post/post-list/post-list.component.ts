@@ -26,6 +26,7 @@ export class PostListComponent extends DashBaseComponent{
   pageIndex = 0;
   pageSize = 20;
   pagesComplete = false;
+  fetch_fn: any;
 
   selectorItems : SelectorItem[] = [];
   selectorItemsBackup = this.selectorItems;
@@ -33,13 +34,8 @@ export class PostListComponent extends DashBaseComponent{
 
   ngOnInit(): void {
     this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen");
-    /*this.db.getPostsAll().then( (value : Post[]) => {
-      for (const valueElement of value) {
-        this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
-      }
-      this.selectorItemsLoaded.next(this.selectorItems);
-    });*/
-    this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date").then((value : Post[]) => {
+    this.fetch_fn = this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date");
+    this.fetch_fn.then((value : Post[]) => {
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
       }
@@ -82,17 +78,17 @@ export class PostListComponent extends DashBaseComponent{
     }
   }
 
-  onScrollEnd(fn? : Promise<any>) {
-    if (!fn) fn = this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date");
+  onScrollEnd() {
+    if (!this.fetch_fn) return;
     if (!this.pagesComplete){
       let scroll = Date.now();
       if (scroll >= (this.lastScroll + 100)){
         console.log(this.pageIndex)
-        fn.then((value : Post[]) => {
-          for (const valueElement of value) {
+        this.fetch_fn.then((value : {posts:  Post[], count : number}) => {
+          for (const valueElement of value.posts) {
             this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
           }
-          if (value.length < this.pageSize){
+          if (value.count <= 0){
             this.pagesComplete = true;
           }
           this.selectorItemsLoaded.next(this.selectorItems);

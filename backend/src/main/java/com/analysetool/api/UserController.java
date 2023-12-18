@@ -766,6 +766,17 @@ public class UserController {
         return objectMapper.writeValueAsString(dailyViews);
     }
 
+    /**
+     * Berechnet den Durchschnitt der Benutzeransichten pro Tag über einen bestimmten Zeitraum.
+     * Diese Methode aggregiert die täglichen Ansichten eines Benutzers und berechnet den Durchschnittswert
+     * für den definierten Zeitraum. Der Zeitraum wird in Tagen rückwärts vom aktuellen Datum definiert.
+     *
+     * @param userId        Die ID des Benutzers, dessen durchschnittliche Ansichten berechnet werden sollen.
+     * @param daysBackFrom  Die Anzahl der Tage rückwärts vom aktuellen Datum, ab der die Ansichten aggregiert werden sollen.
+     * @param daysBackTo    Die Anzahl der Tage rückwärts vom aktuellen Datum, bis zu der die Ansichten aggregiert werden sollen.
+     * @return              Ein String, der den Durchschnitt der Benutzeransichten über den angegebenen Zeitraum darstellt.
+     *                      Gibt "no data" zurück, wenn keine Daten verfügbar sind oder ein Fehler auftritt.
+     */
     @GetMapping("/getAverageUserViewsByDaysInRange")
     public String getAverageUserViewsByDaysInRange(@RequestParam int userId, @RequestParam int daysBackFrom, @RequestParam int daysBackTo){
         ObjectMapper objectMapper = new ObjectMapper();
@@ -781,6 +792,17 @@ public class UserController {
 
     }
 
+    /**
+     * Berechnet die Gesamtsumme der Benutzeransichten pro Tag über einen bestimmten Zeitraum.
+     * Diese Methode summiert die täglichen Ansichten eines Benutzers für den definierten Zeitraum.
+     * Der Zeitraum wird in Tagen rückwärts vom aktuellen Datum definiert.
+     *
+     * @param userId        Die ID des Benutzers, dessen Gesamtansichten berechnet werden sollen.
+     * @param daysBackFrom  Die Anzahl der Tage rückwärts vom aktuellen Datum, ab der die Ansichten summiert werden sollen.
+     * @param daysBackTo    Die Anzahl der Tage rückwärts vom aktuellen Datum, bis zu der die Ansichten summiert werden sollen.
+     * @return              Ein String, der die Gesamtsumme der Benutzeransichten über den angegebenen Zeitraum darstellt.
+     *                      Gibt "no data" zurück, wenn keine Daten verfügbar sind oder ein Fehler auftritt.
+     */
     @GetMapping("/getSummedUserViewsByDaysInRange")
     public String getSummedUserViewsByDaysInRange(@RequestParam int userId, @RequestParam int daysBackFrom, @RequestParam int daysBackTo){
         ObjectMapper objectMapper = new ObjectMapper();

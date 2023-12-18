@@ -36,7 +36,7 @@ export class PostListComponent extends DashBaseComponent{
   ngOnInit(): void {
     this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen");
     this.fetch_fn = this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.search_text);
-    this.fetch_fn.then((value : {posts: Post[], count : number}) => {
+    this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.search_text).then((value : {posts: Post[], count : number}) => {
       for (const valueElement of value.posts) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
       }
@@ -46,15 +46,15 @@ export class PostListComponent extends DashBaseComponent{
     this.input_search_cb = (event: { target: { value: string; }; }) => {
       this.pageIndex = 0;
       this.search_text = event.target.value;
+      this.selectorItems = [];
 
-      this.fetch_fn.then((value : {posts: Post[], count : number}) => {
+      this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.search_text).then((value : {posts: Post[], count : number}) => {
         for (const valueElement of value.posts) {
           this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
         }
         this.pageIndex++;
         this.selectorItemsLoaded.next(this.selectorItems);
       });
-      this.selectorItemsLoaded.next(this.selectorItems);
     };
     this.input_all_cb = () => {
       this.selectorItems = this.selectorItemsBackup;
@@ -87,12 +87,11 @@ export class PostListComponent extends DashBaseComponent{
   }
 
   onScrollEnd() {
-    if (!this.fetch_fn) return;
     if (!this.pagesComplete){
       let scroll = Date.now();
       if (scroll >= (this.lastScroll + 100)){
         console.log(this.pageIndex)
-        this.fetch_fn.then((value : {posts:  Post[], count : number}) => {
+        this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.search_text).then((value : {posts:  Post[], count : number}) => {
           for (const valueElement of value.posts) {
             this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
           }

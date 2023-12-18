@@ -1,4 +1,4 @@
 <dash-grid [dataLoaded]="cardsLoaded.asObservable()" [style]="{'display': displayContent}"></dash-grid>
 <dash-searchbar #searchbar page="user" (selected)="onSelected($event.id, $event.name)" (currentSearch)="onSearchInput($event)" (filter)="onFilterChange($event)" [reset]="resetSearchbar"></dash-searchbar>
-<dash-selector [dataLoaded]="selectorItemsLoaded.asObservable()" columnsForm="1fr 1fr" (itemClick)="searchbar.onDbObjectSelected($event.id, $event.name)"></dash-selector>
+<dash-selector [dataLoaded]="selectorItemsLoaded.asObservable()" columnsForm="1fr 1fr" (itemClick)="searchbar.onDbObjectSelected($event.id, $event.name)" (scrollEnd)="onScroll()"></dash-selector>
 

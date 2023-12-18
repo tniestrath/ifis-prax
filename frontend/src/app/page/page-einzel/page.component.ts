@@ -46,6 +46,8 @@ export class PageComponent implements OnInit {
   @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
 
+  userFetchPage: number = 0;
+
   constructor(private cookieService : CookieService, private db : DbService) {
   }
 
@@ -134,6 +136,7 @@ export class PageComponent implements OnInit {
         case "Anbieter":{
           this.cardsLoaded.next(this.getUserPageCards());
           this.displayContent = "none";
+          this.userFetchPage = 0;
           this.loadSelector(this.filterValues);
           this.resetSearchbar.next(true);
           this.db.resetStatus();
@@ -173,7 +176,7 @@ export class PageComponent implements OnInit {
   }
 
   loadSelector(filter: {accType : string, sort : string}){
-      this.db.loadAllUsers().then(() => {
+      this.db.loadAllUsers(this.userFetchPage, 30, this.searchValue).then(() => {
         this.selectorItems = [];
         for (let u of DbService.Users) {
           this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, u.performance, u.accountType, u.potential, u.img)));
@@ -204,4 +207,8 @@ export class PageComponent implements OnInit {
       }).finally(() =>
         this.selectorItemsLoaded.next(this.selectorItems));
     }
+
+  onScroll() {
+    this.loadSelector(this.filterValues)
+  }
 }

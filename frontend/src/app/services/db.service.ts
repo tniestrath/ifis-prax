@@ -31,7 +31,7 @@ export enum dbUrl {
   HAS_USER_POST = "/users/hasPost?id=",
   GET_USER_PROFILE_COMPLETION = "/users/getPotentialById?userId=USERID",
 
-  GET_USERS_ALL = "/users/getAllNew",
+  GET_USERS_ALL = "/users/getAll?page=PAGE&size=SIZE&search=SEARCH",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/users/getAccountTypeAllYesterday",
   GET_USERS_ACCOUNTTYPES_ALL_NEW = "/users/getNewUsersAll",
@@ -45,7 +45,7 @@ export enum dbUrl {
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
 
   GET_POSTS_ALL = "/posts/getAllPostsWithStats",
-  GET_POSTS_ALL_PAGED = "/posts/page?page=PAGE&size=SIZE&sortBy=SORTER&search=SEARCH",
+  GET_POSTS_ALL_PAGED = "/posts/pageByTitle?page=PAGE&size=SIZE&sortBy=SORTER&search=SEARCH",
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_PER_TYPE = "/bericht/getPostsByType",
@@ -116,7 +116,7 @@ export class DbService {
     this.setStatus(1);
   }
   private setFinished(html_code : number, url : string){
-    //console.log("STATUS: " + html_code + " @ " + url);
+    console.log("STATUS: " + html_code + " @ " + url);
 
     if (html_code >= 200 && html_code < 400){
       this.requestCount--;
@@ -192,12 +192,9 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_TAG_RANKING), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async loadAllUsers() {
+  async loadAllUsers(page : number, size : number, search : string) {
     this.setLoading();
-    if (DbService.Users.length > 0){
-      return;
-    }
-    await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL), {credentials: "include"}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then(res => {
+    await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", search), {credentials: "include"}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then(res => {
       DbService.Users = [];
       for (let user of res) {
         DbService.Users.push(user);

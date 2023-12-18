@@ -993,6 +993,11 @@ public class PostController {
         return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
 
+    @GetMapping("/likeTest")
+    public String likeTest(String search) {
+        return postRepo.findByTitle(search).toString();
+    }
+
     /**
      * Endpoint for retrieval of ALL Posts that are not Original Content (User Posts (Blog, Article, Whitepaper), News)
      * @return a JSON String containing all stats, identifiers, type and more for all posts.

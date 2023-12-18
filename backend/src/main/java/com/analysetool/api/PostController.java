@@ -970,20 +970,8 @@ public class PostController {
 
 
     @GetMapping("/page")
-    public String testPage(int page, int size, String sortBy) throws JSONException, ParseException {
+    public String testPage(Integer page, Integer size, String sortBy) throws JSONException, ParseException {
         List<Long> list = postRepo.findByTypeOrderByDateDesc(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
-        List<JSONObject> stats = new ArrayList<>();
-        for(Long id : list) {
-            if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper")) {
-                stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
-            }
-        }
-        return new JSONObject().put("posts", new JSONArray(stats).toString()).put("count", list.size()).toString();
-    }
-
-    @GetMapping("/pageByTitle")
-    public String pageTitleFinder(int page, int size, String sortBy, String search) throws JSONException, ParseException {
-        List<Long> list = postRepo.findByTitle(search, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
         List<JSONObject> stats = new ArrayList<>();
         for(Long id : list) {
             if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper")) {
@@ -992,6 +980,20 @@ public class PostController {
         }
         return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
+
+    @GetMapping("/pageByTitle")
+    public String pageTitleFinder(Integer page, Integer size, String sortBy, String search) throws JSONException, ParseException {
+        List<Post> list = postRepo.findByTitleContainingAndStatusIsAndTypeIs(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        List<JSONObject> stats = new ArrayList<>();
+        for(Post post : list) {
+            long id = post.getId();
+            if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper")) {
+                stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+            }
+        }
+        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
+    }
+
 
     /**
      * Endpoint for retrieval of ALL Posts that are not Original Content (User Posts (Blog, Article, Whitepaper), News)

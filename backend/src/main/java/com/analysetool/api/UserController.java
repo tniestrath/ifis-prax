@@ -416,8 +416,13 @@ public class UserController {
         }
     }
 
+    /**
+     *
+     * @param id user id to fetch account type for.
+     * @return "basis" "plus" "premium" "sponsor" "basis-plus" "admin"
+     */
     @GetMapping("/getTypeById")
-    private String getType(int id) {
+    public String getType(int id) {
         if(wpMemberRepo.getUserMembership(id) != null) {
             switch (wpMemberRepo.getUserMembership(id)) {
                 case (1) -> {

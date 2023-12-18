@@ -1,6 +1,7 @@
 package com.analysetool.services;
 
 import com.analysetool.api.PostController;
+import com.analysetool.api.UserController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
@@ -83,6 +84,9 @@ public class LogService {
 
     @Autowired
     private PostController postController;
+
+    @Autowired
+    private UserController userController;
 
     @Autowired
     private UniversalAverageClicksDLCRepository uniAverageClicksRepo;
@@ -1935,21 +1939,29 @@ public class LogService {
     public UniversalStats setAccountTypeAllUniStats(UniversalStats uniStats){
         HashMap<String, Integer> counts = new HashMap<>();
 
-        wpUserMetaRepository.getWpCapabilities().forEach(s -> {
+        for(WPUser user : wpUserRepo.findAll()) {
+            switch(userController.getType(Math.toIntExact(user.getId()))) {
+                case "basis" -> {
+                    counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
+                }
+                case "basis-plus" -> {
+                    counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
+                }
+                case "plus" -> {
+                    counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
+                }
+                case "premium" -> {
+                    counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
+                }
+                case "sponsor" -> {
+                    counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
+                }
+                case "none" -> {
+                    counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
+                }
+            }
+        }
 
-            if (s.contains("um_anbieter"))
-                counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
-            if (s.contains("um_basis-anbieter")  && !s.contains("plus"))
-                counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-            if (s.contains("um_plus-anbieter"))
-                counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
-            if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
-                counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
-            if (s.contains("um_premium-anbieter-sponsoren"))
-                counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
-            if (s.contains("um_basis-anbieter-plus"))
-                counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
-        });
         uniStats.setAnbieter_abolos_anzahl(counts.getOrDefault("Anbieter", 0));
         uniStats.setAnbieterBasicAnzahl(counts.getOrDefault("Basic",0));
         uniStats.setAnbieterBasicPlusAnzahl(counts.getOrDefault("Basic-Plus",0));

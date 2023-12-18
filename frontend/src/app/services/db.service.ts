@@ -194,12 +194,13 @@ export class DbService {
 
   async loadAllUsers(page : number, size : number, search : string) {
     this.setLoading();
-    await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", search), {credentials: "include"}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then(res => {
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", search), {credentials: "include"}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then((res : {users: any[], count : number}) => {
       DbService.Users = [];
-      for (let user of res) {
+      for (let user of res.users) {
         DbService.Users.push(user);
       }
-    });
+      return res;
+    })
   }
 
   async getUserPostsDay(id : string){

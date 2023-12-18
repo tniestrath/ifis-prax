@@ -47,6 +47,7 @@ export class PageComponent implements OnInit {
   cardsLoaded = new Subject<GridCard[]>();
 
   userFetchPage: number = 0;
+  userFetchPagesComplete: boolean = false;
 
   constructor(private cookieService : CookieService, private db : DbService) {
   }
@@ -176,10 +177,13 @@ export class PageComponent implements OnInit {
   }
 
   loadSelector(filter: {accType : string, sort : string}){
-      this.db.loadAllUsers(this.userFetchPage, 30, this.searchValue).then(() => {
+      this.db.loadAllUsers(this.userFetchPage, 30, this.searchValue).then((res) => {
         this.selectorItems = [];
-        for (let u of DbService.Users) {
+        for (let u of res.users) {
           this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, u.performance, u.accountType, u.potential, u.img)));
+        }
+        if (res.count <= 0){
+          this.userFetchPagesComplete = true;
         }
       }).then(() => {
         this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||

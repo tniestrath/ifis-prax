@@ -983,9 +983,10 @@ public class PostController {
 
     @GetMapping("/pageByTitle")
     public String pageTitleFinder(Integer page, Integer size, String sortBy, String search) throws JSONException, ParseException {
-        List<Long> list = postRepo.findByTitle(search, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        List<Post> list = postRepo.findByTitleContainingAndStatusIsAndTypeIs(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
         List<JSONObject> stats = new ArrayList<>();
-        for(Long id : list) {
+        for(Post post : list) {
+            long id = post.getId();
             if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper")) {
                 stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
             }
@@ -993,10 +994,6 @@ public class PostController {
         return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
 
-    @GetMapping("/likeTest")
-    public String likeTest(String search) {
-        return postRepo.findByTitle(search).toString();
-    }
 
     /**
      * Endpoint for retrieval of ALL Posts that are not Original Content (User Posts (Blog, Article, Whitepaper), News)

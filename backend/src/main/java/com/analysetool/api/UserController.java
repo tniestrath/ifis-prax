@@ -9,6 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -106,6 +108,7 @@ public class UserController {
         return obj.toString();
     }
 
+    @Deprecated
     @GetMapping("/getAllNew")
     public String getAllNew() throws JSONException {
         List<WPUser> list = userRepository.findAll();
@@ -141,6 +144,34 @@ public class UserController {
             }else {
                 obj.put( "accountType" ,"undefined");
             }
+            response.put(obj);
+        }
+        return response.toString();
+    }
+
+    @GetMapping("/getAll")
+    public String getAll(Integer page, Integer size,String sortBy, String search) throws JSONException {
+        List<WPUser> list = userRepository.getAllByNicenameLike(search, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        JSONArray response = new JSONArray();
+
+        for(WPUser user : list) {
+            JSONObject obj = new JSONObject();
+            obj.put("id",user.getId());
+            obj.put("email",user.getEmail());
+            obj.put("displayName",user.getNicename());
+            if(userStatsRepository.existsByUserId(user.getId())){
+                UserStats statsUser = userStatsRepository.findByUserId(user.getId());
+                obj.put("profileViews", statsUser.getProfileView());
+                obj.put("postViews", postController.getViewsOfUserById(user.getId()));
+                obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
+
+            } else {
+                obj.put("profileViews", 0);
+                obj.put("postViews",0);
+                obj.put("postCount",0);
+                obj.put ("performance",0);
+            }
+            obj.put("accountType", getType(Math.toIntExact(user.getId())));
             response.put(obj);
         }
         return response.toString();

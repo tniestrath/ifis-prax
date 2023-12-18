@@ -27,6 +27,7 @@ export class PostListComponent extends DashBaseComponent{
   pageSize = 20;
   pagesComplete = false;
   fetch_fn: any;
+  search_text: string = "";
 
   selectorItems : SelectorItem[] = [];
   selectorItemsBackup = this.selectorItems;
@@ -34,17 +35,24 @@ export class PostListComponent extends DashBaseComponent{
 
   ngOnInit(): void {
     this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen");
-    this.fetch_fn = this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date");
-    this.fetch_fn.then((value : Post[]) => {
-      for (const valueElement of value) {
+    this.fetch_fn = this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.search_text);
+    this.fetch_fn.then((value : {posts: Post[], count : number}) => {
+      for (const valueElement of value.posts) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
       }
       this.pageIndex++;
       this.selectorItemsLoaded.next(this.selectorItems);
     });
     this.input_search_cb = (event: { target: { value: string; }; }) => {
-      this.selectorItems = this.selectorItemsBackup.filter((item) => {
-        return (item.data as Post).title.toUpperCase().includes(event.target.value.toUpperCase());
+      this.pageIndex = 0;
+      this.search_text = event.target.value;
+
+      this.fetch_fn.then((value : {posts: Post[], count : number}) => {
+        for (const valueElement of value.posts) {
+          this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        }
+        this.pageIndex++;
+        this.selectorItemsLoaded.next(this.selectorItems);
       });
       this.selectorItemsLoaded.next(this.selectorItems);
     };

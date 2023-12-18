@@ -51,6 +51,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT e.id FROM Post e WHERE e.status = 'publish' AND e.type = 'post' ORDER BY e.date DESC")
    List<Long> findByTypeOrderByDateDesc(Pageable pageable);
 
+   @Query("SELECT e.id FROM Post e WHERE e.status = 'publish' AND e.type = 'post' AND e.title LIKE '%'+:title+'%' ORDER BY e.date DESC")
+   List<Long> findByTitle(String title, Pageable pageable);
 
 }
 

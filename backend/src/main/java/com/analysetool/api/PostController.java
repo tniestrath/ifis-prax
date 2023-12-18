@@ -981,6 +981,18 @@ public class PostController {
         return new JSONObject().put("posts", new JSONArray(stats).toString()).put("count", list.size()).toString();
     }
 
+    @GetMapping("/pageByTitle")
+    public String pageTitleFinder(int page, int size, String search) throws JSONException, ParseException {
+        List<Long> list = postRepo.findByTitle(search, PageRequest.of(page, size));
+        List<JSONObject> stats = new ArrayList<>();
+        for(Long id : list) {
+            if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper")) {
+                stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+            }
+        }
+        return new JSONObject().put("posts", new JSONArray(stats).toString()).put("count", list.size()).toString();
+    }
+
     /**
      * Endpoint for retrieval of ALL Posts that are not Original Content (User Posts (Blog, Article, Whitepaper), News)
      * @return a JSON String containing all stats, identifiers, type and more for all posts.

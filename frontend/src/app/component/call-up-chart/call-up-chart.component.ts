@@ -2,9 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
-import _default from "chart.js/dist/plugins/plugin.legend";
-import labels = _default.defaults.labels;
-import {SysVars} from "../../services/sys-vars-service";
 
 export class Callup {
   clicks : number = 0;

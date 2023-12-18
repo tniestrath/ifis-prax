@@ -990,7 +990,7 @@ public class PostController {
                 stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
             }
         }
-        return new JSONObject().put("posts", new JSONArray(stats).toString()).put("count", list.size()).toString();
+        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
 
     /**

@@ -781,4 +781,18 @@ public class UserController {
 
     }
 
+    @GetMapping("/getSummedUserViewsByDaysInRange")
+    public String getSummedUserViewsByDaysInRange(@RequestParam int userId, @RequestParam int daysBackFrom, @RequestParam int daysBackTo){
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<LocalDate, Long> map;
+        try {
+            // Konvertieren des JSON-Strings in eine Map
+            map = objectMapper.readValue(getUserViewsDistributedByDays(userId,daysBackFrom,daysBackTo), new TypeReference<Map<LocalDate, Long>>(){});
+        } catch (Exception e) {
+            return "no data";
+        }
+
+        return  String.valueOf(map.values().stream().mapToLong(Long::longValue).sum());
+
+    }
 }

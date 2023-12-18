@@ -13,4 +13,7 @@ public interface UserViewsByHourDLCRepository extends JpaRepository<UserViewsByH
 
 
     List<UserViewsByHourDLC> findByUserIdAndUniId(long userId, int uniId);
+
+    List<UserViewsByHourDLC> findByUserIdAndUniIdRange(int userId, int fromUniId, int toUniId);
+
 }

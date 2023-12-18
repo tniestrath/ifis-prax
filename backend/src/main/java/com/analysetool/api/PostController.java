@@ -974,12 +974,11 @@ public class PostController {
         List<Long> list = postRepo.findByTypeOrderByDateDesc(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
         List<JSONObject> stats = new ArrayList<>();
         for(Long id : list) {
-
             if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper")) {
                 stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
             }
         }
-        return new JSONArray(stats).toString();
+        return new JSONObject().put("posts", new JSONArray(stats).toString()).put("count", list.size()).toString();
     }
 
     /**

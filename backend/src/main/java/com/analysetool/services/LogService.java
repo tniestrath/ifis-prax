@@ -1,6 +1,7 @@
 package com.analysetool.services;
 
 import com.analysetool.api.PostController;
+import com.analysetool.api.UserController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
@@ -85,6 +86,9 @@ public class LogService {
     private PostController postController;
 
     @Autowired
+    private UserController userController;
+
+    @Autowired
     private UniversalAverageClicksDLCRepository uniAverageClicksRepo;
 
     @Autowired
@@ -119,6 +123,8 @@ public class LogService {
     private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
 
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
+
+    //private final String WhitepaperDownload ="^.*GET /wp-content/uploads/[\d]{4})/[\d]{2})/(\S+).pdf";
 
     private final String PodcastViewPattern = "^.*GET /podcast/(\\S+)/";
 
@@ -611,6 +617,12 @@ public class LogService {
                         patternMatcher = matched_ratgeber_buch;
                     }
 
+                    //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
+                    if(isUnique && !whatMatched.equals("")) {
+                        uniqueUsers++;
+                        initUniqueUser(ip, dateLog);
+                    }
+
                     switch (whatMatched) {
                         case "articleView", "articleSS" -> {
                             //Erhöhe Clicks für Artikel um 1.
@@ -619,7 +631,7 @@ public class LogService {
                             if (isUnique) {
                                 userArticle++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getArticle()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getArticle()).length() < 2) {
                                     userArticle++;
                                 }
                             }
@@ -634,7 +646,7 @@ public class LogService {
                             if (isUnique) {
                                 userBlog++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getBlog()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getBlog()).length() < 2) {
                                     userBlog++;
                                 }
                             }
@@ -649,7 +661,7 @@ public class LogService {
                             if (isUnique) {
                                 userNews++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNews()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNews()).length() < 2) {
                                     userNews++;
                                 }
                             }
@@ -664,7 +676,7 @@ public class LogService {
                             if (isUnique) {
                                 userWhitepaper++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getWhitepaper()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getWhitepaper()).length() < 2) {
                                     userWhitepaper++;
                                 }
                             }
@@ -677,7 +689,7 @@ public class LogService {
                             if (isUnique) {
                                 userPodcast++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPodcast()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPodcast()).length() < 2) {
                                     userPodcast++;
                                 }
                             }
@@ -689,7 +701,7 @@ public class LogService {
                             if (isUnique) {
                                 userMain++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getMain()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getMain()).length() < 2) {
                                     userMain++;
                                 }
                             }
@@ -702,7 +714,7 @@ public class LogService {
                             if (isUnique) {
                                 userUeber++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getUeber()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getUeber()).length() < 2) {
                                     userUeber++;
                                 }
                             }
@@ -715,7 +727,7 @@ public class LogService {
                             if (isUnique) {
                                 userImpressum++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImpressum()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImpressum()).length() < 2) {
                                     userImpressum++;
                                 }
                             }
@@ -728,7 +740,7 @@ public class LogService {
                             if (isUnique) {
                                 userPreisliste++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPreisliste()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPreisliste()).length() < 2) {
                                     userPreisliste++;
                                 }
                             }
@@ -741,7 +753,7 @@ public class LogService {
                             if (isUnique) {
                                 userPartner++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPartner()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPartner()).length() < 2) {
                                     userPartner++;
                                 }
                             }
@@ -754,7 +766,7 @@ public class LogService {
                             if (isUnique) {
                                 userDatenschutz++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getDatenschutz()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getDatenschutz()).length() < 2) {
                                     userDatenschutz++;
                                 }
                             }
@@ -767,7 +779,7 @@ public class LogService {
                             if (isUnique) {
                                 userNewsletter++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNewsletter()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNewsletter()).length() < 2) {
                                     userNewsletter++;
                                 }
                             }
@@ -780,7 +792,7 @@ public class LogService {
                             if (isUnique) {
                                 userImage++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImage()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImage()).length() < 2) {
                                     userImage++;
                                 }
                             }
@@ -793,7 +805,7 @@ public class LogService {
                             if (isUnique) {
                                 userAGBS++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getAgb()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getAgb()).length() < 2) {
                                     userAGBS++;
                                 }
                             }
@@ -813,7 +825,7 @@ public class LogService {
                             if (isUnique) {
                                 userRatgeber++;
                             } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 1) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                     userRatgeber++;
                                 }
                             }
@@ -825,7 +837,7 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberPost++;
                                 } else {
-                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 1) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                         userRatgeberPost++;
                                     }
                                 }
@@ -834,7 +846,7 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberGlossar++;
                                 } else {
-                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 1) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                         userRatgeberGlossar++;
                                     }
                                 }
@@ -843,7 +855,7 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberBuch++;
                                 } else {
-                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 1) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                         userRatgeberBuch++;
                                     }
                                 }
@@ -854,11 +866,7 @@ public class LogService {
                         default -> System.out.println(line);
                     }
 
-                    //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
-                    if(isUnique && !whatMatched.equals("")) {
-                        uniqueUsers++;
-                        initUniqueUser(ip, dateLog);
-                    }
+
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead))) {
@@ -1931,21 +1939,29 @@ public class LogService {
     public UniversalStats setAccountTypeAllUniStats(UniversalStats uniStats){
         HashMap<String, Integer> counts = new HashMap<>();
 
-        wpUserMetaRepository.getWpCapabilities().forEach(s -> {
+        for(WPUser user : wpUserRepo.findAll()) {
+            switch(userController.getType(Math.toIntExact(user.getId()))) {
+                case "basis" -> {
+                    counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
+                }
+                case "basis-plus" -> {
+                    counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
+                }
+                case "plus" -> {
+                    counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
+                }
+                case "premium" -> {
+                    counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
+                }
+                case "sponsor" -> {
+                    counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
+                }
+                case "none" -> {
+                    counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
+                }
+            }
+        }
 
-            if (s.contains("um_anbieter"))
-                counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
-            if (s.contains("um_basis-anbieter")  && !s.contains("plus"))
-                counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-            if (s.contains("um_plus-anbieter"))
-                counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
-            if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
-                counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
-            if (s.contains("um_premium-anbieter-sponsoren"))
-                counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
-            if (s.contains("um_basis-anbieter-plus"))
-                counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
-        });
         uniStats.setAnbieter_abolos_anzahl(counts.getOrDefault("Anbieter", 0));
         uniStats.setAnbieterBasicAnzahl(counts.getOrDefault("Basic",0));
         uniStats.setAnbieterBasicPlusAnzahl(counts.getOrDefault("Basic-Plus",0));

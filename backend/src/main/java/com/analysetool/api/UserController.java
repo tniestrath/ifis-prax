@@ -149,31 +149,33 @@ public class UserController {
     }
 
     @GetMapping("/getAll")
-    public String getAll(Integer page, Integer size, String search) throws JSONException {
+    public String getAll(Integer page, Integer size, String search, String filter) throws JSONException {
         List<WPUser> list = userRepository.getAllByNicenameLike(search, PageRequest.of(page, size));
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-            JSONObject obj = new JSONObject();
-            obj.put("id",user.getId());
-            obj.put("email",user.getEmail());
-            obj.put("displayName",user.getNicename());
-            if(userStatsRepository.existsByUserId(user.getId())){
-                UserStats statsUser = userStatsRepository.findByUserId(user.getId());
-                obj.put("profileViews", statsUser.getProfileView());
-                obj.put("postViews", postController.getViewsOfUserById(user.getId()));
-                obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
+            if(getType(Math.toIntExact(user.getId())).equals(filter)) {
+                JSONObject obj = new JSONObject();
+                obj.put("id", user.getId());
+                obj.put("email", user.getEmail());
+                obj.put("displayName", user.getNicename());
+                if (userStatsRepository.existsByUserId(user.getId())) {
+                    UserStats statsUser = userStatsRepository.findByUserId(user.getId());
+                    obj.put("profileViews", statsUser.getProfileView());
+                    obj.put("postViews", postController.getViewsOfUserById(user.getId()));
+                    obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
 
-            } else {
-                obj.put("profileViews", 0);
-                obj.put("postViews",0);
-                obj.put("postCount",0);
-                obj.put ("performance",0);
+                } else {
+                    obj.put("profileViews", 0);
+                    obj.put("postViews", 0);
+                    obj.put("postCount", 0);
+                    obj.put("performance", 0);
+                }
+                obj.put("accountType", getType(Math.toIntExact(user.getId())));
+                response.put(obj);
             }
-            obj.put("accountType", getType(Math.toIntExact(user.getId())));
-            response.put(obj);
         }
-        return response.toString();
+        return new JSONObject().put("users", response).put("count", list.size()).toString();
     }
 
     @GetMapping("/profilePic")

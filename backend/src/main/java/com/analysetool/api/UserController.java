@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -150,8 +149,8 @@ public class UserController {
     }
 
     @GetMapping("/getAll")
-    public String getAll(Integer page, Integer size,String sortBy, String search) throws JSONException {
-        List<WPUser> list = userRepository.getAllByNicenameLike(search, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+    public String getAll(Integer page, Integer size, String search) throws JSONException {
+        List<WPUser> list = userRepository.getAllByNicenameLike(search, PageRequest.of(page, size));
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {

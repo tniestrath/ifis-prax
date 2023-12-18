@@ -732,6 +732,7 @@ public class UserController {
      * @param userId        Die ID des Benutzers, dessen Ansichten abgerufen werden sollen.
      * @param daysBackFrom  Die Anzahl der Tage rückwärts vom aktuellen Datum, ab der die Ansichten aggregiert werden sollen.
      * @param daysBackTo    Die Anzahl der Tage rückwärts vom aktuellen Datum, bis zu der die Ansichten aggregiert werden sollen.
+     *                      ->für heutigen tag range daysBackFrom 0 und daysBackTo 0
      * @return              Ein JSON-String, der eine Map repräsentiert. Jeder Schlüssel in der Map ist ein Datum
      *                      im definierten Zeitraum und jeder Wert ist die Gesamtanzahl der Ansichten des Benutzers an diesem Tag.
      * @throws JsonProcessingException Wenn beim Verarbeiten der Daten zu einem JSON-String ein Fehler auftritt.
@@ -774,6 +775,7 @@ public class UserController {
      * @param userId        Die ID des Benutzers, dessen durchschnittliche Ansichten berechnet werden sollen.
      * @param daysBackFrom  Die Anzahl der Tage rückwärts vom aktuellen Datum, ab der die Ansichten aggregiert werden sollen.
      * @param daysBackTo    Die Anzahl der Tage rückwärts vom aktuellen Datum, bis zu der die Ansichten aggregiert werden sollen.
+     *                      ->für heutigen tag range daysBackFrom 0 und daysBackTo 0
      * @return              Ein String, der den Durchschnitt der Benutzeransichten über den angegebenen Zeitraum darstellt.
      *                      Gibt "no data" zurück, wenn keine Daten verfügbar sind oder ein Fehler auftritt.
      */
@@ -800,6 +802,7 @@ public class UserController {
      * @param userId        Die ID des Benutzers, dessen Gesamtansichten berechnet werden sollen.
      * @param daysBackFrom  Die Anzahl der Tage rückwärts vom aktuellen Datum, ab der die Ansichten summiert werden sollen.
      * @param daysBackTo    Die Anzahl der Tage rückwärts vom aktuellen Datum, bis zu der die Ansichten summiert werden sollen.
+     *                      ->für heutigen tag range daysBackFrom 0 und daysBackTo 0
      * @return              Ein String, der die Gesamtsumme der Benutzeransichten über den angegebenen Zeitraum darstellt.
      *                      Gibt "no data" zurück, wenn keine Daten verfügbar sind oder ein Fehler auftritt.
      */

@@ -164,7 +164,10 @@ public class UserController {
                     obj.put("profileViews", statsUser.getProfileView());
                     obj.put("postViews", postController.getViewsOfUserById(user.getId()));
                     obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
-
+                    //idk welche range also einfach mal in den letzten 7 tagen
+                    try{
+                        obj.put("profileViewsPerDay",getUserViewsDistributedByDays(user.getId().intValue(),7,0));}
+                    catch(Exception e){ System.out.println("Fehler bei profileViewsPerDay");}
                 } else {
                     obj.put("profileViews", 0);
                     obj.put("postViews", 0);
@@ -743,13 +746,14 @@ public class UserController {
         for (int uniIdForDate = uniIdFrom; uniIdForDate <= uniIdTo; uniIdForDate++) {
             int daysDifference = uniIdTo - uniIdForDate;
             LocalDate date = LocalDate.now().minusDays(daysDifference);
+            final int finalUniIdForDate = uniIdForDate;
 
             long totalViewsForDay = combinedViews.stream()
-                    .filter(dlc -> dlc.getUniId() == uniIdForDate)
+                    .filter(dlc -> dlc.getUniId() == finalUniIdForDate)
                     .mapToLong(UserViewsByHourDLC::getViews)
                     .sum();
 
-            if (totalViewsForDay == 0 && combinedViews.stream().noneMatch(dlc -> dlc.getUniId() == uniIdForDate)) {
+            if (totalViewsForDay == 0 && combinedViews.stream().noneMatch(dlc -> dlc.getUniId() == finalUniIdForDate)) {
                 dailyViews.put(date, 0L);
             } else {
                 dailyViews.put(date, totalViewsForDay);

@@ -970,7 +970,7 @@ public class PostController {
 
 
     @GetMapping("/page")
-    public String testPage(int page, int size, String sortBy) throws JSONException, ParseException {
+    public String testPage(Integer page, Integer size, String sortBy) throws JSONException, ParseException {
         List<Long> list = postRepo.findByTypeOrderByDateDesc(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
         List<JSONObject> stats = new ArrayList<>();
         for(Long id : list) {
@@ -982,7 +982,7 @@ public class PostController {
     }
 
     @GetMapping("/pageByTitle")
-    public String pageTitleFinder(int page, int size, String sortBy, String search) throws JSONException, ParseException {
+    public String pageTitleFinder(Integer page, Integer size, String sortBy, String search) throws JSONException, ParseException {
         List<Long> list = postRepo.findByTitle(search, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
         List<JSONObject> stats = new ArrayList<>();
         for(Long id : list) {

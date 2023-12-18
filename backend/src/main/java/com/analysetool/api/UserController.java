@@ -150,11 +150,11 @@ public class UserController {
 
     @GetMapping("/getAll")
     public String getAll(Integer page, Integer size, String search, String filter) throws JSONException {
-        List<WPUser> list = userRepository.getAllByNicenameLike(search, PageRequest.of(page, size));
+        List<WPUser> list = userRepository.getAllByNicenameContaining(search, PageRequest.of(page, size));
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-            if(getType(Math.toIntExact(user.getId())).equals(filter)) {
+            if(getType(Math.toIntExact(user.getId())).equals(filter) || filter == null) {
                 JSONObject obj = new JSONObject();
                 obj.put("id", user.getId());
                 obj.put("email", user.getEmail());

@@ -20,7 +20,7 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
 
     boolean existsByActivationKey(String ActivationKey);
 
-    List<WPUser> getAllByNicenameLike(String nicename, Pageable pageable);
+    List<WPUser> getAllByNicenameContaining(String nicename, Pageable pageable);
 
     // benutzerdefinierte Methoden, falls benötigt
 

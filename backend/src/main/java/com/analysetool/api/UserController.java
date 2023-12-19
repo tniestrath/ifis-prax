@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -30,13 +28,6 @@ import java.util.regex.Pattern;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
-    private final int maxPostsPlus = 2;
-    private final int maxPostsPremium = 3 + 2 + 3 + 3;
-
-    private final int maxPostsSponsor= 3 + 3 + 6 + 6;
-
-
 
     @Autowired
     private WPUserRepository userRepository;
@@ -150,11 +141,11 @@ public class UserController {
 
     @GetMapping("/getAll")
     public String getAll(Integer page, Integer size, String search, String filter) throws JSONException {
-        List<WPUser> list = userRepository.getAllByNicenameLike(search, PageRequest.of(page, size));
+        List<WPUser> list = userRepository.getAllByNicenameContaining(search, PageRequest.of(page, size));
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-            if(getType(Math.toIntExact(user.getId())).equals(filter)) {
+            if(getType(Math.toIntExact(user.getId())).equals(filter) || filter == null) {
                 JSONObject obj = new JSONObject();
                 obj.put("id", user.getId());
                 obj.put("email", user.getEmail());
@@ -164,12 +155,18 @@ public class UserController {
                     obj.put("profileViews", statsUser.getProfileView());
                     obj.put("postViews", postController.getViewsOfUserById(user.getId()));
                     obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
-
                 } else {
                     obj.put("profileViews", 0);
                     obj.put("postViews", 0);
                     obj.put("postCount", 0);
                     obj.put("performance", 0);
+                }
+                if(userViewsRepo.existsByUserId(user.getId())) {
+                    obj.put("viewsPerDay", getUserClicksPerDay(user.getId()));
+                    obj.put("tendency", tendencyUp(user.getId()));
+                } else {
+                    obj.put("viewsPerDay", 0);
+                    obj.put("tendency", 0);
                 }
                 obj.put("accountType", getType(Math.toIntExact(user.getId())));
                 response.put(obj);
@@ -179,7 +176,7 @@ public class UserController {
     }
 
     @GetMapping("/profilePic")
-    public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException, URISyntaxException {
+    public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) {
 
         try {
             String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + id + "/profile_photo.png"));
@@ -230,7 +227,6 @@ public class UserController {
         long viewsPresse = 0;
         List<Post> posts = postRepository.findByAuthor(id.intValue());
 
-        List<Long> postTags = new ArrayList<>();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 PostStats Stat = statRepository.getStatByArtID(post.getId());
@@ -259,6 +255,107 @@ public class UserController {
 
     }
 
+    /**
+     * This accounts for users with and without posts, but does count post-views towards their averages. Hence, users with posts will seem better here.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
+    @GetMapping("/getUserAveragesWithPostClicks")
+    public String getUserAveragesWithPostClicks() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+        counts.put("sponsor", 0);
+
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
+
+        for(WPUser u : userRepository.findAll()) {
+            boolean stats = userStatsRepository.existsByUserId(u.getId());
+            addCountAndProfileViewsByType(counts, clicks, u, stats, hasPost(Math.toIntExact(u.getId())));
+        }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        return averages.toString();
+    }
+
+    /**
+     * This accounts for ONLY users that have posts, counting ONLY their profile views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
+    @GetMapping("/getUserAveragesWithPostsWithoutPostClicks")
+    public String getUserAveragesWithPostsWithoutPostClicks() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+        counts.put("sponsor", 0);
+
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
+        for(WPUser u : userRepository.findAll()) {
+            boolean stats = userStatsRepository.existsByUserId(u.getId());
+            if(hasPost(Math.toIntExact(u.getId()))) {
+                addCountAndProfileViewsByType(counts, clicks, u, stats);
+            }
+        }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        return averages.toString();
+    }
+
+    /**
+     * This accounts for ONLY users that do not have posts, counting ONLY their profile views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
+    @GetMapping("/getUserAveragesWithoutPosts")
+    public String getUserAveragesWithoutPosts() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+        counts.put("sponsor", 0);
+
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
+
+        for(WPUser u : userRepository.findAll()) {
+            boolean stats = userStatsRepository.existsByUserId(u.getId());
+            if(!hasPost(Math.toIntExact(u.getId()))) {
+                addCountAndProfileViewsByType(counts, clicks, u, stats);
+            }
+        }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        return averages.toString();
+    }
+
+    /**
+     * This accounts for all users, whether they have posts or not and ONLY counts profile views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
     @GetMapping("/getUserAveragesByType")
     public String getUserAveragesByType() throws JSONException {
         JSONObject counts = new JSONObject();
@@ -269,37 +366,24 @@ public class UserController {
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
+        counts.put("sponsor", 0);
 
         clicks.put("basis", 0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
         clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
 
-
-        for(WPUser user : userRepository.findAll()) {
-            String userMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.getId());
-            if(userMeta.contains("basis-anbieter")) {
-                counts.put("basis", counts.getInt("basis") + 1);
-                try {
-                    clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(user.getId()).getProfileView());
-                } catch (Exception ignored) {}
-            } else if(userMeta.contains("basis-anbieter-plus")) {
-                counts.put("basis-plus", counts.getInt("basis-plus") + 1);
-                try {
-                    clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
-                } catch (Exception ignored) {}
-            } else if(userMeta.contains("plus-anbieter")) {
-                counts.put("plus", counts.getInt("plus") + 1);
-                try {
-                    clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(user.getId()).getProfileView());
-                } catch (Exception ignored) {}
-            } else if(userMeta.contains("premium-anbieter")) {
-                counts.put("premium", counts.getInt("premium") + 1);
-                try {
-                    clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(user.getId()).getProfileView());
-                } catch (Exception ignored) {}
-            }
+        for(WPUser u : userRepository.findAll()) {
+            boolean stats = userStatsRepository.existsByUserId(u.getId());
+            addCountAndProfileViewsByType(counts, clicks, u, stats);
         }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+
+        return averages.toString();
+    }
+
+    private void buildAveragesFromCountsAndClicks(JSONObject counts, JSONObject clicks, JSONObject averages) throws JSONException {
         if(counts.getInt("basis") != 0) {
             averages.put("basis", clicks.getInt("basis") / counts.getInt("basis"));
         }
@@ -312,9 +396,94 @@ public class UserController {
         if(counts.getInt("premium") != 0) {
             averages.put("premium", clicks.getInt("premium") / counts.getInt("premium"));
         }
+        if(counts.getInt("sponsor") != 0) {
+            averages.put("sponsor", clicks.getInt("sponsor") / counts.getInt("sponsor"));
+        }
+    }
 
-        return averages.toString();
+    private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean stats) throws JSONException {
+        switch(getType(Math.toIntExact((u.getId())))) {
+            case "basis" -> {
+                if(stats) {
+                    clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("basis", counts.getInt("basis") + 1);
+            }
+            case "basis-plus" -> {
+                if(stats) {
+                    clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("basis-plus", counts.getInt("basis-plus") + 1);
+            }
+            case "plus" -> {
+                if(stats) {
+                    clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("plus", counts.getInt("plus") + 1);
+            }
+            case "premium" -> {
+                if(stats) {
+                    clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("premium", counts.getInt("premium") + 1);
+            }
+            case "sponsor" -> {
+                if(stats) {
+                    clicks.put("sponsor", clicks.getInt("sponsor") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("sponsor", counts.getInt("sponsor") + 1);
+            }
+        }
+    }
 
+    private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean stats, boolean post) throws JSONException {
+        switch(getType(Math.toIntExact((u.getId())))) {
+            case "basis" -> {
+                if(stats) {
+                    clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(post) {
+                    clicks.put("basis", clicks.getInt("basis") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("basis", counts.getInt("basis") + 1);
+            }
+            case "basis-plus" -> {
+                if(stats) {
+                    clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(post) {
+                    clicks.put("basis-plus", clicks.getInt("basis-plus") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("basis-plus", counts.getInt("basis-plus") + 1);
+            }
+            case "plus" -> {
+                if(stats) {
+                    clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(post) {
+                    clicks.put("plus", clicks.getInt("plus") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("plus", counts.getInt("plus") + 1);
+            }
+            case "premium" -> {
+                if(stats) {
+                    clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(post) {
+                    clicks.put("premium", clicks.getInt("premium") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("premium", counts.getInt("premium") + 1);
+            }
+            case "sponsor" -> {
+                if(stats) {
+                    clicks.put("sponsor", clicks.getInt("sponsor") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(post) {
+                    clicks.put("sponsor", clicks.getInt("sponsor") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("sponsor", counts.getInt("sponsor") + 1);
+            }
+        }
     }
 
     @GetMapping("/getClickTotalOnPostsOfUser")
@@ -416,14 +585,6 @@ public class UserController {
         return listResponse;
     }
 
-    public List<String> getNewUsersByType(String type) {
-        List<String> list = new ArrayList<>();
-        for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
-            listAddByType(type, list, member);
-        }
-        return list;
-    }
-
     private void listAddByType(String type, List<String> list, WPMemberships member) {
         if(type.equals("basis-plus") &&  member.getMembership_id() == 7) {
             listAdd(list, member);
@@ -455,6 +616,9 @@ public class UserController {
      */
     @GetMapping("/getTypeById")
     public String getType(int id) {
+        /*
+            This code is currently out of order, since booked packages do not align with user roles
+
         if(wpMemberRepo.getUserMembership(id) != null) {
             switch (wpMemberRepo.getUserMembership(id)) {
                 case (1) -> {
@@ -466,7 +630,7 @@ public class UserController {
                 case (5) -> {
                     return "premium";
                 }
-                case (6) -> {
+                case (6), (9) -> {
                     return "sponsor";
                 }
                 case (7) -> {
@@ -474,14 +638,17 @@ public class UserController {
                 }
             }
         }
-
+        */
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "none";
             if (wpUserMeta.contains("administrator")) return "admin";
             if (wpUserMeta.contains("plus-anbieter")) return "plus";
+            if (wpUserMeta.contains("um_basis-anbieter-plus")) return "basis-plus";
+            if(wpUserMeta.contains("um_premium-anbieter-sponsoren")) return "sponsor";
             if (wpUserMeta.contains("premium-anbieter")) return "premium";
-            if (wpUserMeta.contains("anbieter")) return "basis";
+            if(wpUserMeta.contains("um_basis-anbieter")) return "basis";
+            if (wpUserMeta.contains("anbieter")) return "none";
         }
 
 
@@ -539,14 +706,14 @@ public class UserController {
     /**
      *
      * @param userId  id des users.
-     * @return
+     * @return a collection of maximum and actual values for a users completion status of their profile.
      */
     @GetMapping("/getPotentialById")
     public String getPotentialByID(int userId) throws JSONException {
 
         String type = this.getType(userId);
         //Check whether these profile parts have been filled out.
-        boolean hasProfilePic = wpUserMetaRepository.getProfilePath(((long) userId)).isPresent() && !wpUserMetaRepository.getProfilePath((long)((long) userId)).equals("https://it-sicherheit.de/wp-content/uploads/2023/06/it-sicherheit-logo_icon_190x190.png");
+        boolean hasProfilePic = wpUserMetaRepository.getProfilePath(((long) userId)).isPresent() && !wpUserMetaRepository.getProfilePath(((long) userId)).get().equals("https://it-sicherheit.de/wp-content/uploads/2023/06/it-sicherheit-logo_icon_190x190.png");
         boolean hasCover = wpUserMetaRepository.getCoverPath((long) userId).isPresent();
         boolean hasDescription = wpUserMetaRepository.getDescription((long) userId).isPresent();
         boolean hasSlogan = !type.equals("basis") && wpUserMetaRepository.getSlogan((long) userId).isPresent();
@@ -577,9 +744,7 @@ public class UserController {
                 allowedTags = 1;
                 maxKontaktExtern = 6;
             }
-            case "basis-plus" -> {
-                allowedTags = 3;
-            }
+            case "basis-plus" -> allowedTags = 3;
             case "plus" -> {
                 allowedTags = 8;
                 allowedLosungen = 5;
@@ -677,6 +842,52 @@ public class UserController {
 
         return json.toString();
     }
+
+    /**
+     *
+     * @param userId the user you want to fetch data for.
+     * @return a double representing the amount of clicks a user had for each day of tracking (arithmetic average) or 0, if user has not been tracked.
+     */
+    @GetMapping("/getUserClicksPerDay")
+    public double getUserClicksPerDay(long userId) {
+        int countDays = getDaysSinceTracking(userId);
+        long totalClicks = 0;
+        int lastUniId = 0;
+        for(UserViewsByHourDLC u : userViewsRepo.findByUserId(userId)) {
+            if(lastUniId != u.getUniId()) {
+                lastUniId = u.getUniId();
+            }
+            totalClicks+= u.getViews();
+        }
+        if(countDays > 0) {
+            return (double) totalClicks / countDays;
+        } else {
+            return 0;
+        }
+    }
+
+    @GetMapping("/tendencyUp")
+    public boolean tendencyUp(long userId) {
+        int count = 7;
+        int clicks = 0;
+        if(getDaysSinceTracking(userId) > 7) {
+            for(Integer uni : userViewsRepo.getLast7Uni()) {
+                for(UserViewsByHourDLC u : userViewsRepo.findByUserIdAndUniId(userId, uni)) {
+                    clicks += u.getViews();
+                }
+            }
+        }
+        return ((double) clicks / count) > getUserClicksPerDay(userId);
+    }
+
+    private int getDaysSinceTracking(long userId) {
+        if(userViewsRepo.existsByUserId(userId)) {
+            return (int) (userViewsRepo.getLastUniId() - userViewsRepo.getFirstUniIdByUserid(userId));
+        } else {
+            return 0;
+        }
+    }
+
 
     /**
      * Gibt die verteilten Ansichten (Views) eines Benutzers über die letzten 24 Stunden als JSON-String zurück.

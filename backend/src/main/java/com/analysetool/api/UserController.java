@@ -852,13 +852,12 @@ public class UserController {
      */
     @GetMapping("/getUserClicksPerDay")
     public double getUserClicksPerDay(long userId) {
-        int countDays = 0;
+        int countDays = getDaysSinceTracking(userId);
         long totalClicks = 0;
         int lastUniId = 0;
         for(UserViewsByHourDLC u : userViewsRepo.findByUserId(userId)) {
             if(lastUniId != u.getUniId()) {
                 lastUniId = u.getUniId();
-                countDays++;
             }
             totalClicks+= u.getViews();
         }
@@ -869,8 +868,26 @@ public class UserController {
         }
     }
 
+    @GetMapping("/tendencyUp")
     public boolean tendencyUp(long userId) {
-        return userViewsRepo.getAverageViewsDailyLast7(userId) >= getUserClicksPerDay(userId);
+        int count = 7;
+        int clicks = 0;
+        if(getDaysSinceTracking(userId) > 7) {
+            for(Integer uni : userViewsRepo.getLast7Uni()) {
+                for(UserViewsByHourDLC u : userViewsRepo.findByUserIdAndUniId(userId, uni)) {
+                    clicks += u.getViews();
+                }
+            }
+        }
+        return ((double) clicks / count) > getUserClicksPerDay(userId);
+    }
+
+    private int getDaysSinceTracking(long userId) {
+        if(userViewsRepo.existsByUserId(userId)) {
+            return (int) (userViewsRepo.getLastUniId() - userViewsRepo.getFirstUniIdByUserid(userId));
+        } else {
+            return 0;
+        }
     }
 
 

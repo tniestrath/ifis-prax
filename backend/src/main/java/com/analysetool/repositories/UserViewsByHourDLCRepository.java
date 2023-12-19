@@ -21,7 +21,13 @@ public interface UserViewsByHourDLCRepository extends JpaRepository<UserViewsByH
 
     boolean existsByUserId(long userId);
 
-    @Query("SELECT SUM(u.views) / 7 FROM UserViewsByHourDLC u WHERE u.userId=:userId ORDER BY u.uniId DESC LIMIT 7")
-    double getAverageViewsDailyLast7(long userId);
+    @Query("SELECT u.uniId FROM UserViewsByHourDLC u WHERE u.userId=:userId ORDER BY u.uniId ASC LIMIT 1")
+    long getFirstUniIdByUserid(long userId);
+
+    @Query("SELECT u.uniId FROM UserViewsByHourDLC u ORDER BY u.uniId DESC LIMIT 1")
+    long getLastUniId();
+
+    @Query("SELECT u.uniId FROM UserViewsByHourDLC u ORDER BY u.uniId DESC LIMIT 7")
+    List<Integer> getLast7Uni();
 
 }

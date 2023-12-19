@@ -869,6 +869,10 @@ public class UserController {
         }
     }
 
+    public boolean tendencyUp(long userId) {
+        return userViewsRepo.getAverageViewsDailyLast7(userId) >= getUserClicksPerDay(userId);
+    }
+
 
     /**
      * Gibt die verteilten Ansichten (Views) eines Benutzers über die letzten 24 Stunden als JSON-String zurück.

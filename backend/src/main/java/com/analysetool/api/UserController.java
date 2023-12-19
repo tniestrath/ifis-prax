@@ -616,6 +616,9 @@ public class UserController {
      */
     @GetMapping("/getTypeById")
     public String getType(int id) {
+        /*
+            This code is currently out of order, since booked packages do not align with user roles
+
         if(wpMemberRepo.getUserMembership(id) != null) {
             switch (wpMemberRepo.getUserMembership(id)) {
                 case (1) -> {
@@ -635,7 +638,7 @@ public class UserController {
                 }
             }
         }
-
+        */
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "none";

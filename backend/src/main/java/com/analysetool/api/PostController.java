@@ -169,6 +169,16 @@ public class PostController {
         return list.toString();
     }
 
+    @GetMapping("/getPostsByAuthor")
+    public String postsByAuthorPageable(long authorId, int page, int size) throws JSONException, ParseException {
+        List<JSONObject> stats = new ArrayList<>();
+        List<Post> list = postRepo.findByAuthorIdAndStatusAndType(authorId, "publish", "post", PageRequest.of(page, size));
+        for(Post post : list) {
+            stats.add(new JSONObject(PostStatsByIdForFrontend(post.getId())));
+        }
+        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
+    }
+
     @GetMapping("/getNewestPostWithStatsByAuthor")
     public String getNewestPostWithStatsByAuthor(@RequestParam Long id) throws JSONException, ParseException {
         List<Post> posts = postRepository.findByAuthor(id.intValue());

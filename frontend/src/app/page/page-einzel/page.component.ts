@@ -182,7 +182,7 @@ export class PageComponent implements OnInit {
   }
 
   loadSelector(filter: {accType : string, sort : string}){
-      this.db.loadAllUsers(this.userFetchPage, 30, this.searchValue).then((res) => {
+      this.db.getAllUsers(this.userFetchPage, 30, this.searchValue, new AbortSignal()).then((res) => {
         this.selectorItems = [];
         for (let u of res.users) {
           this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, u.performance, u.accountType, u.potential, u.img)));

@@ -27,8 +27,7 @@ export class UserComparatorComponent extends DashBaseComponent implements OnInit
 
 
   onCompareClick() {
-    this.isComparing = !this.isComparing;
-    if (!this.isComparing){
+    if (this.isComparing){
       // @ts-ignore
       document.getElementById("user-list").classList.add("user-list-extended");
       // @ts-ignore
@@ -43,6 +42,7 @@ export class UserComparatorComponent extends DashBaseComponent implements OnInit
       // @ts-ignore
       document.getElementById("searchbar2").classList.remove("hidden");
     }
+    this.isComparing = !this.isComparing;
   }
   onCancelCompareClick() {
     this.isComparing = false;

@@ -1,10 +1,12 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {DbObject} from "../../services/DbObject";
 import {DbService} from "../../services/db.service";
 import {SafeUrl} from "@angular/platform-browser";
 import {SysVars} from "../../services/sys-vars-service";
 import {Subject} from "rxjs";
+import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
+import {PdfService} from "../../services/pdf.service";
 
 
 @Component({
@@ -12,12 +14,13 @@ import {Subject} from "rxjs";
   templateUrl: './searchbar.component.html',
   styleUrls: ['./searchbar.component.css']
 })
-export class SearchbarComponent implements OnInit{
+export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
   @Output() searchInput :string = "";
   @Output() currentSearch = new EventEmitter<string>();
   @Output() selected = new EventEmitter<DbObject>();
   @Output() filter = new EventEmitter<{ accType : string, sort : string }>();
+  @Output() compare = new EventEmitter<void>();
   @Input('reset') reset = new Subject<boolean>();
 
   page : string = "user";
@@ -27,15 +30,6 @@ export class SearchbarComponent implements OnInit{
   imgSrc: SafeUrl = "";
 
   shown = false;
-  logged_in = false;
-  loggedUser :string[]  = ["0", ""];
-  constructor(protected element : ElementRef, private cs : CookieService, private db : DbService) {
-    SysVars.login.subscribe(user => {
-      this.loggedUser = [user.id, user.displayName];
-      this.logged_in = true;
-      SysVars.WELCOME = true;
-    })
-  }
 
   ngOnInit(): void {
     this.setupFilter();
@@ -222,4 +216,8 @@ export class SearchbarComponent implements OnInit{
   }
 
   protected readonly UserService = SysVars;
+
+  onCompareClick() {
+    this.compare.emit();
+  }
 }

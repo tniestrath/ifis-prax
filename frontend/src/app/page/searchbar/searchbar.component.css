@@ -2,11 +2,11 @@
   position: absolute;
   display: grid;
   grid-template-columns: auto 1fr;
-  margin: 5px;
+  margin: 0;
   z-index: 11;
   height: 50px;
   left: 0;
-  right: 17px;
+  right: 0;
   border-radius: 5px;
 }
 .searchbar-switch{

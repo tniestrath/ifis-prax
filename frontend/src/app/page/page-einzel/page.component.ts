@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {SelectorItem} from "../selector/selector.component";
 import {DbService} from "../../services/db.service";
@@ -15,7 +15,6 @@ import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
 import {User} from "./user/user";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
-import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
 import {PodcastListComponent, PostListComponent, RatgeberListComponent} from "../../component/post/post-list/post-list.component";
@@ -27,8 +26,9 @@ import {SystemloadComponent} from "../../component/system/systemload/systemload.
 import {EventsStatsComponent} from "../../component/events-stats/events-stats.component";
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
 import {SearchbarComponent} from "../searchbar/searchbar.component";
-import {logger} from "html2canvas/dist/types/core/__mocks__/logger";
 import {ProfileCompletionComponent} from "../../component/profile-completion/profile-completion.component";
+import {UserListComponent} from "./user/user-list/user-list.component";
+import {UserComparatorComponent} from "./user/user-comparator/user-comparator.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -59,6 +59,13 @@ export class PageComponent implements OnInit {
   }
 
   getUserPageCards() {
+    return [
+      {type: UserComparatorComponent, row: 1, col: 1, height: 4, width: 6},
+
+    ];
+  }
+
+  getUserDetailPageCards() {
     return [
       {type: ClicksComponent, row: 1, col: 1, height: 4, width: 1},
       //@ts-ignore
@@ -136,8 +143,6 @@ export class PageComponent implements OnInit {
       switch (page) {
         case "Anbieter":{
           this.cardsLoaded.next(this.getUserPageCards());
-          this.displayContent = "none";
-          this.userFetchPage = 0;
           this.loadSelector(this.filterValues);
           this.resetSearchbar.next(true);
           this.db.resetStatus();

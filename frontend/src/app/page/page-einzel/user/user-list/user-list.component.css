@@ -1,0 +1,32 @@
+.user-list-box{
+  height: 100%;
+}
+
+.user-list-selector-container{
+  padding-top: 5px;
+  width: calc(100% - 8px);
+  height: calc(100% - 17px);
+  overflow: clip;
+}
+#shadow {
+  position: relative;
+  left: 5px;
+  width: calc(100% - 10px);
+  height: 10px;
+  box-shadow: inset 0 -10px 10px -10px #EEE;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar{
+  width: 8px;
+}
+::-webkit-scrollbar-thumb{
+  background-color: #EFEFEF;
+  border-radius: 5px;
+}
+.selector{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}

@@ -1,7 +1,7 @@
 <div id="searchbar-box" class="searchbar-box" [ngSwitch]="selectedSearch.id" [ngStyle]="{'height': displaySearchBox}">
 
   <div *ngSwitchCase="0" class="searchbar-switch searchbar-input-box">
-    <div class="searchbar-filter" id="searchbar-filter-button">
+    <div class="searchbar-filter" id="searchbar-compare-button" (click)="onCompareClick()">
       <img src="assets/filter_icon.png">
     </div>
     <input #search class="searchbar" type="text" (input)="onKey(search.value)" placeholder="Suchen">

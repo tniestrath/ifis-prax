@@ -51,6 +51,8 @@ import { NewsletterStatsComponent } from './component/newsletter-stats/newslette
 import { EventsStatsComponent } from './component/events-stats/events-stats.component';
 import { SystemloadComponent } from './component/system/systemload/systemload.component';
 import { PostTypeComponent } from './component/post/post-type/post-type.component';
+import { UserListComponent } from './page/page-einzel/user/user-list/user-list.component';
+import { UserComparatorComponent } from './page/page-einzel/user/user-comparator/user-comparator.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +98,9 @@ import { PostTypeComponent } from './component/post/post-type/post-type.componen
     NewsletterStatsComponent,
     EventsStatsComponent,
     SystemloadComponent,
-    PostTypeComponent
+    PostTypeComponent,
+    UserListComponent,
+    UserComparatorComponent
   ],
     imports: [
         BrowserModule,

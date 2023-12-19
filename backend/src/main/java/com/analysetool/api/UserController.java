@@ -631,7 +631,7 @@ public class UserController {
             if (wpUserMeta.contains("administrator")) return "admin";
             if (wpUserMeta.contains("plus-anbieter")) return "plus";
             if (wpUserMeta.contains("premium-anbieter")) return "premium";
-            if (wpUserMeta.contains("anbieter")) return "basis";
+            if (wpUserMeta.contains("anbieter")) return "none";
         }
 
 

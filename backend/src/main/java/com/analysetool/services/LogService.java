@@ -1181,21 +1181,29 @@ public class LogService {
     private UniversalStatsHourly setAccountTypeAllUniStats(UniversalStatsHourly uniHourly) {
         HashMap<String, Integer> counts = new HashMap<>();
 
-        wpUserMetaRepository.getWpCapabilities().forEach(s -> {
+        for(WPUser user : wpUserRepo.findAll()) {
+            switch(userController.getType(Math.toIntExact(user.getId()))) {
+                case "basis" -> {
+                    counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
+                }
+                case "basis-plus" -> {
+                    counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
+                }
+                case "plus" -> {
+                    counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
+                }
+                case "premium" -> {
+                    counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
+                }
+                case "sponsor" -> {
+                    counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
+                }
+                case "none" -> {
+                    counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
+                }
+            }
+        }
 
-            if (s.contains("um_anbieter"))
-                counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
-            if (s.contains("um_basis-anbieter")  && !s.contains("plus"))
-                counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-            if (s.contains("um_plus-anbieter"))
-                counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
-            if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
-                counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
-            if (s.contains("um_premium-anbieter-sponsoren"))
-                counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
-            if (s.contains("um_basis-anbieter-plus"))
-                counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
-        });
         uniHourly.setAnbieter_abolos_anzahl(counts.getOrDefault("Anbieter", 0));
         uniHourly.setAnbieterBasicAnzahl(counts.getOrDefault("Basic",0));
         uniHourly.setAnbieterBasicPlusAnzahl(counts.getOrDefault("Basic-Plus",0));
@@ -1203,13 +1211,7 @@ public class LogService {
         uniHourly.setAnbieterPremiumAnzahl(counts.getOrDefault("Premium",0));
         uniHourly.setAnbieterPremiumSponsorenAnzahl(counts.getOrDefault("Sponsor",0));
 
-        long umsatzBasicPlus =uniHourly.getAnbieterBasicPlusAnzahl()*200;
-        long umsatzPlus =uniHourly.getAnbieterPlusAnzahl()*1000;
-        long umsatzPremium =uniHourly.getAnbieterPremiumAnzahl()*1500;
-        long umsatzSponsor = uniHourly.getAnbieterPremiumSponsorenAnzahl()*3000;
-
         return uniHourly;
-
     }
 
     private UniversalStatsHourly setNewsArticelBlogCountForUniversalStats(UniversalStatsHourly uniHourly) {

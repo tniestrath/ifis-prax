@@ -270,11 +270,13 @@ public class UserController {
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
+        counts.put("sponsor", 0);
 
         clicks.put("basis", 0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
         clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
 
         for(WPUser u : userRepository.findAll()) {
             boolean stats = userStatsRepository.existsByUserId(u.getId());
@@ -299,11 +301,13 @@ public class UserController {
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
+        counts.put("sponsor", 0);
 
         clicks.put("basis", 0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
         clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
         for(WPUser u : userRepository.findAll()) {
             boolean stats = userStatsRepository.existsByUserId(u.getId());
             if(hasPost(Math.toIntExact(u.getId()))) {
@@ -329,11 +333,13 @@ public class UserController {
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
+        counts.put("sponsor", 0);
 
         clicks.put("basis", 0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
         clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
 
         for(WPUser u : userRepository.findAll()) {
             boolean stats = userStatsRepository.existsByUserId(u.getId());
@@ -360,11 +366,13 @@ public class UserController {
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
+        counts.put("sponsor", 0);
 
         clicks.put("basis", 0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
         clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
 
         for(WPUser u : userRepository.findAll()) {
             boolean stats = userStatsRepository.existsByUserId(u.getId());
@@ -387,6 +395,9 @@ public class UserController {
         }
         if(counts.getInt("premium") != 0) {
             averages.put("premium", clicks.getInt("premium") / counts.getInt("premium"));
+        }
+        if(counts.getInt("sponsor") != 0) {
+            averages.put("sponsor", clicks.getInt("sponsor") / counts.getInt("sponsor"));
         }
     }
 

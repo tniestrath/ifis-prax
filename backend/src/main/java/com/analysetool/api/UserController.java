@@ -3,9 +3,7 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
-import com.analysetool.util.MathHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -914,103 +912,4 @@ public class UserController {
         return objectMapper.writeValueAsString(hourlyViews);
     }
 
-    /**
-     * Ermittelt die Gesamtanzahl der Benutzeransichten verteilt über mehrere Tage.
-     * Diese Methode berechnet die Gesamtansichten eines Benutzers, indem sie stündliche Ansichten (UserViewsByHourDLC)
-     * innerhalb eines angegebenen Zeitraums aggregiert. Der Zeitraum wird in Tagen rückwärts ab dem aktuellen Datum
-     * definiert. Falls für einen Tag keine Daten vorhanden sind, wird der Wert 0 für diesen Tag zurückgegeben.
-     *
-     * @param userId        Die ID des Benutzers, dessen Ansichten abgerufen werden sollen.
-     * @param daysBackFrom  Die Anzahl der Tage rückwärts vom aktuellen Datum, ab der die Ansichten aggregiert werden sollen.
-     * @param daysBackTo    Die Anzahl der Tage rückwärts vom aktuellen Datum, bis zu der die Ansichten aggregiert werden sollen.
-     *                      ->für heutigen tag range daysBackFrom 0 und daysBackTo 0
-     * @return              Ein JSON-String, der eine Map repräsentiert. Jeder Schlüssel in der Map ist ein Datum
-     *                      im definierten Zeitraum und jeder Wert ist die Gesamtanzahl der Ansichten des Benutzers an diesem Tag.
-     * @throws JsonProcessingException Wenn beim Verarbeiten der Daten zu einem JSON-String ein Fehler auftritt.
-     */
-    @GetMapping("/getUserViewsDistributedByDays")
-    public String getUserViewsDistributedByDays(@RequestParam int userId, @RequestParam int daysBackFrom, @RequestParam int daysBackTo) throws JsonProcessingException {
-        int latestUniId = uniRepo.getLatestUniStat().getId();
-        int uniIdFrom = latestUniId - daysBackFrom;
-        int uniIdTo = latestUniId - daysBackTo;
-
-        List<UserViewsByHourDLC> combinedViews = userViewsRepo.findByUserIdAndUniIdRange(userId, uniIdFrom, uniIdTo);
-        Map<LocalDate, Long> dailyViews = new LinkedHashMap<>();
-
-        for (int uniIdForDate = uniIdFrom; uniIdForDate <= uniIdTo; uniIdForDate++) {
-            int daysDifference = uniIdTo - uniIdForDate;
-            LocalDate date = LocalDate.now().minusDays(daysDifference);
-            final int finalUniIdForDate = uniIdForDate;
-
-            long totalViewsForDay = combinedViews.stream()
-                    .filter(dlc -> dlc.getUniId() == finalUniIdForDate)
-                    .mapToLong(UserViewsByHourDLC::getViews)
-                    .sum();
-
-            if (totalViewsForDay == 0 && combinedViews.stream().noneMatch(dlc -> dlc.getUniId() == finalUniIdForDate)) {
-                dailyViews.put(date, 0L);
-            } else {
-                dailyViews.put(date, totalViewsForDay);
-            }
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(dailyViews);
-    }
-
-    /**
-     * Berechnet den Durchschnitt der Benutzeransichten pro Tag über einen bestimmten Zeitraum.
-     * Diese Methode aggregiert die täglichen Ansichten eines Benutzers und berechnet den Durchschnittswert
-     * für den definierten Zeitraum. Der Zeitraum wird in Tagen rückwärts vom aktuellen Datum definiert.
-     *
-     * @param userId        Die ID des Benutzers, dessen durchschnittliche Ansichten berechnet werden sollen.
-     * @param daysBackFrom  Die Anzahl der Tage rückwärts vom aktuellen Datum, ab der die Ansichten aggregiert werden sollen.
-     * @param daysBackTo    Die Anzahl der Tage rückwärts vom aktuellen Datum, bis zu der die Ansichten aggregiert werden sollen.
-     *                      ->für heutigen tag range daysBackFrom 0 und daysBackTo 0
-     * @return              Ein String, der den Durchschnitt der Benutzeransichten über den angegebenen Zeitraum darstellt.
-     *                      Gibt "no data" zurück, wenn keine Daten verfügbar sind oder ein Fehler auftritt.
-     */
-    @GetMapping("/getAverageUserViewsByDaysInRange")
-    public String getAverageUserViewsByDaysInRange(@RequestParam int userId, @RequestParam int daysBackFrom, @RequestParam int daysBackTo){
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<LocalDate, Long> map;
-        try {
-            // Konvertieren des JSON-Strings in eine Map
-            map = objectMapper.readValue(getUserViewsDistributedByDays(userId,daysBackFrom,daysBackTo), new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            return "no data";
-        }
-
-        return  String.valueOf(MathHelper.getMeanLong(new ArrayList<>(map.values())));
-
-    }
-
-    /**
-     * Berechnet die Gesamtsumme der Benutzeransichten pro Tag über einen bestimmten Zeitraum.
-     * Diese Methode summiert die täglichen Ansichten eines Benutzers für den definierten Zeitraum.
-     * Der Zeitraum wird in Tagen rückwärts vom aktuellen Datum definiert.
-     *
-     * @param userId        Die ID des Benutzers, dessen Gesamtansichten berechnet werden sollen.
-     * @param daysBackFrom  Die Anzahl der Tage rückwärts vom aktuellen Datum, ab der die Ansichten summiert werden sollen.
-     * @param daysBackTo    Die Anzahl der Tage rückwärts vom aktuellen Datum, bis zu der die Ansichten summiert werden sollen.
-     *                      ->für heutigen tag range daysBackFrom 0 und daysBackTo 0
-     * @return              Ein String, der die Gesamtsumme der Benutzeransichten über den angegebenen Zeitraum darstellt.
-     *                      Gibt "no data" zurück, wenn keine Daten verfügbar sind oder ein Fehler auftritt.
-     */
-    @GetMapping("/getSummedUserViewsByDaysInRange")
-    public String getSummedUserViewsByDaysInRange(@RequestParam int userId, @RequestParam int daysBackFrom, @RequestParam int daysBackTo){
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<LocalDate, Long> map;
-        try {
-            // Konvertieren des JSON-Strings in eine Map
-            map = objectMapper.readValue(getUserViewsDistributedByDays(userId,daysBackFrom,daysBackTo), new TypeReference<>() {
-            });
-        } catch (Exception e) {
-            return "no data";
-        }
-
-        return  String.valueOf(map.values().stream().mapToLong(Long::longValue).sum());
-
-    }
 }

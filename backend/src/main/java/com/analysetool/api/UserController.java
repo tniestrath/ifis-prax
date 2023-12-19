@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -32,13 +30,6 @@ import java.util.regex.Pattern;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
-    private final int maxPostsPlus = 2;
-    private final int maxPostsPremium = 3 + 2 + 3 + 3;
-
-    private final int maxPostsSponsor= 3 + 3 + 6 + 6;
-
-
 
     @Autowired
     private WPUserRepository userRepository;
@@ -184,7 +175,7 @@ public class UserController {
     }
 
     @GetMapping("/profilePic")
-    public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) throws IOException, URISyntaxException {
+    public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) {
 
         try {
             String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + id + "/profile_photo.png"));
@@ -235,7 +226,6 @@ public class UserController {
         long viewsPresse = 0;
         List<Post> posts = postRepository.findByAuthor(id.intValue());
 
-        List<Long> postTags = new ArrayList<>();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 PostStats Stat = statRepository.getStatByArtID(post.getId());
@@ -583,14 +573,6 @@ public class UserController {
         return listResponse;
     }
 
-    public List<String> getNewUsersByType(String type) {
-        List<String> list = new ArrayList<>();
-        for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
-            listAddByType(type, list, member);
-        }
-        return list;
-    }
-
     private void listAddByType(String type, List<String> list, WPMemberships member) {
         if(type.equals("basis-plus") &&  member.getMembership_id() == 7) {
             listAdd(list, member);
@@ -706,14 +688,14 @@ public class UserController {
     /**
      *
      * @param userId  id des users.
-     * @return
+     * @return a collection of maximum and actual values for a users completion status of their profile.
      */
     @GetMapping("/getPotentialById")
     public String getPotentialByID(int userId) throws JSONException {
 
         String type = this.getType(userId);
         //Check whether these profile parts have been filled out.
-        boolean hasProfilePic = wpUserMetaRepository.getProfilePath(((long) userId)).isPresent() && !wpUserMetaRepository.getProfilePath((long)((long) userId)).equals("https://it-sicherheit.de/wp-content/uploads/2023/06/it-sicherheit-logo_icon_190x190.png");
+        boolean hasProfilePic = wpUserMetaRepository.getProfilePath(((long) userId)).isPresent() && !wpUserMetaRepository.getProfilePath(((long) userId)).get().equals("https://it-sicherheit.de/wp-content/uploads/2023/06/it-sicherheit-logo_icon_190x190.png");
         boolean hasCover = wpUserMetaRepository.getCoverPath((long) userId).isPresent();
         boolean hasDescription = wpUserMetaRepository.getDescription((long) userId).isPresent();
         boolean hasSlogan = !type.equals("basis") && wpUserMetaRepository.getSlogan((long) userId).isPresent();
@@ -744,9 +726,7 @@ public class UserController {
                 allowedTags = 1;
                 maxKontaktExtern = 6;
             }
-            case "basis-plus" -> {
-                allowedTags = 3;
-            }
+            case "basis-plus" -> allowedTags = 3;
             case "plus" -> {
                 allowedTags = 8;
                 allowedLosungen = 5;
@@ -993,7 +973,8 @@ public class UserController {
         Map<LocalDate, Long> map;
         try {
             // Konvertieren des JSON-Strings in eine Map
-            map = objectMapper.readValue(getUserViewsDistributedByDays(userId,daysBackFrom,daysBackTo), new TypeReference<Map<LocalDate, Long>>(){});
+            map = objectMapper.readValue(getUserViewsDistributedByDays(userId,daysBackFrom,daysBackTo), new TypeReference<>() {
+            });
         } catch (Exception e) {
             return "no data";
         }
@@ -1020,7 +1001,8 @@ public class UserController {
         Map<LocalDate, Long> map;
         try {
             // Konvertieren des JSON-Strings in eine Map
-            map = objectMapper.readValue(getUserViewsDistributedByDays(userId,daysBackFrom,daysBackTo), new TypeReference<Map<LocalDate, Long>>(){});
+            map = objectMapper.readValue(getUserViewsDistributedByDays(userId,daysBackFrom,daysBackTo), new TypeReference<>() {
+            });
         } catch (Exception e) {
             return "no data";
         }

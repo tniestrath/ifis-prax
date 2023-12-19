@@ -157,15 +157,18 @@ public class UserController {
                     obj.put("profileViews", statsUser.getProfileView());
                     obj.put("postViews", postController.getViewsOfUserById(user.getId()));
                     obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
-                    //idk welche range also einfach mal in den letzten 7 tagen
-                    try{
-                        obj.put("profileViewsPerDay",getUserViewsDistributedByDays(user.getId().intValue(),7,0));}
-                    catch(Exception e){ System.out.println("Fehler bei profileViewsPerDay");}
                 } else {
                     obj.put("profileViews", 0);
                     obj.put("postViews", 0);
                     obj.put("postCount", 0);
                     obj.put("performance", 0);
+                }
+                if(userViewsRepo.existsByUserId(user.getId())) {
+                    obj.put("viewsPerDay", getUserClicksPerDay(user.getId()));
+                    obj.put("tendency", tendencyUp(user.getId()));
+                } else {
+                    obj.put("viewsPerDay", 0);
+                    obj.put("tendency", 0);
                 }
                 obj.put("accountType", getType(Math.toIntExact(user.getId())));
                 response.put(obj);

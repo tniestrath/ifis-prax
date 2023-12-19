@@ -616,7 +616,7 @@ public class UserController {
                 case (5) -> {
                     return "premium";
                 }
-                case (6) -> {
+                case (6), (9) -> {
                     return "sponsor";
                 }
                 case (7) -> {

@@ -95,8 +95,4 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
       this.selectorItemsLoaded.next(this.listItems);
     }).finally(() => this.isSearching = false);
   }
-
-  onItemClick($event: DbObject) {
-    console.log($event);
-  }
 }

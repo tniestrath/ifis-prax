@@ -27,7 +27,6 @@ export class SelectorComponent implements OnInit{
   @Input() dataLoaded = new Observable<SelectorItem[]>();
   @Input() zebraColorMode: boolean = false;
 
-  @Output() itemClick = new EventEmitter<DbObject>();
   @Output() scrollEnd = new EventEmitter<void>();
 
   @ViewChild(SelectableDirective, {static: true}) dashSelectable!: SelectableDirective;
@@ -56,7 +55,6 @@ export class SelectorComponent implements OnInit{
     for (let item of s) {
       const componentRef = viewContainerRef.createComponent<SelectableComponent>(item.component);
       componentRef.instance.data = item.data;
-      componentRef.setInput("clicked", this.itemClick);
       if (index % 2 == 0 && this.zebraColorMode){
         componentRef.location.nativeElement.setAttribute("style", "background : #EFEFEF; border-radius : 5px");
         componentRef.instance.bgColor = "#EFEFEF";

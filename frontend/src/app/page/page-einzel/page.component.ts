@@ -148,6 +148,11 @@ export class PageComponent implements OnInit {
           break;
         }
       }
+    });
+    SysVars.SELECTED_USER_ID.subscribe(id => {
+      SysVars.USER_ID = String(id);
+      this.cardsLoaded.next(this.getUserDetailPageCards());
+      this.db.resetStatus();
     })
 
   }

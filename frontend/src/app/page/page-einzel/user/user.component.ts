@@ -4,6 +4,7 @@ import {SafeUrl} from "@angular/platform-browser";
 import {DbService} from "../../../services/db.service";
 import {User} from "./user";
 import Util from "../../../util/Util";
+import {SysVars} from "../../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-user',
@@ -13,8 +14,6 @@ import Util from "../../../util/Util";
 export class UserComponent implements SelectableComponent, OnInit {
   @Input() data: User = new User("", "", "", 0, 0, 0, 50, "", 0, "");
 
-  @Input() clicked: EventEmitter<User> = new EventEmitter<User>();
-
   user_img: SafeUrl = "";
   bgColor: string = "0";
   performance_image_id: string = "33";
@@ -23,7 +22,7 @@ export class UserComponent implements SelectableComponent, OnInit {
   }
 
   onClick(): void {
-    this.clicked?.emit(this.data);
+    SysVars.SELECTED_USER_ID.emit(Number(this.data.id));
   }
 
   ngOnInit(): void {

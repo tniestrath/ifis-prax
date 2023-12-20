@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -140,12 +141,25 @@ public class UserController {
     }
 
     @GetMapping("/getAll")
-    public String getAll(Integer page, Integer size, String search, String filter) throws JSONException {
-        List<WPUser> list = userRepository.getAllByNicenameContaining(search, PageRequest.of(page, size));
+    public String getAll(Integer page, Integer size, String search, String filter, String sorter) throws JSONException {
+        List<WPUser> list;
+        switch(sorter) {
+            case "profileViews" -> {
+
+                list = userRepository.getAllNameLikeAndProfileViews(search, PageRequest.of(page, size));
+            }
+            case "contentViews" -> {
+                list = userRepository.getAllNameLikeAndContentViews(search, PageRequest.of(page, size));
+            }
+            default -> {
+                list = userRepository.getAllByNicenameContaining(search, PageRequest.of(page, size, Sort.by("id").descending()));
+            }
+        }
+
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-            if(getType(Math.toIntExact(user.getId())).equals(filter) || filter == null) {
+            if(getType(Math.toIntExact(user.getId())).equals(filter) || filter == null || filter.isBlank()) {
                 JSONObject obj = new JSONObject();
                 obj.put("id", user.getId());
                 obj.put("email", user.getEmail());
@@ -612,7 +626,7 @@ public class UserController {
     /**
      *
      * @param id user id to fetch account type for.
-     * @return "basis" "plus" "premium" "sponsor" "basis-plus" "admin"
+     * @return "basis" "plus" "premium" "sponsor" "basis-plus" "admin" "none"
      */
     @GetMapping("/getTypeById")
     public String getType(int id) {

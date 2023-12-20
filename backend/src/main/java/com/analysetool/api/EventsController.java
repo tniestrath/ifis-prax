@@ -185,4 +185,9 @@ public class EventsController {
     private boolean isActive(Events e) {
         return e.getEventStatus() == 1;
     }
+
+    public String getUserEvents(long userId) {
+        return "";
+    }
+
 }

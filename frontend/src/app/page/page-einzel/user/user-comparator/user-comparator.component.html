@@ -1,6 +1,6 @@
 <div class="user-comparator-box component-box">
   <dash-searchbar id="searchbar" (compare)="onCompareClick()" (currentSearch)="parentList.onSearchInput($event)" (filter)="parentList.onFilterClick($event)"></dash-searchbar>
-  <dash-searchbar id="searchbar2" class="hidden" (compare)="onCancelCompareClick()" (currentSearch)="childList.onSearchInput($event)"></dash-searchbar>
+  <dash-searchbar id="searchbar2" class="hidden" (compare)="onCancelCompareClick()" (currentSearch)="childList.onSearchInput($event)" (filter)="childList.onFilterClick($event)"></dash-searchbar>
   <dash-user-list #parentList id="user-list"></dash-user-list>
   <dash-user-list #childList id="user-list2" class="hidden" [parentListItems]="parentList.listItems" [parentPageIndex]="parentList.pageIndex"></dash-user-list>
 </div>

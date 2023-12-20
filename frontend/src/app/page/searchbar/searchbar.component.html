@@ -7,12 +7,6 @@
     <input #search class="searchbar" type="text" (input)="onKey(search.value)" placeholder="Suchen">
   </div>
 
-  <div *ngSwitchDefault class="searchbar-switch searchbar-selection-box" >
-    <img [src]="imgSrc" alt="" dashImgFallback>
-    <p>{{selectedSearch.name}}</p>
-    <button class="selection-cancel-button" (click)="onCancelClick()">X</button>
-  </div>
-
   <div id="searchbar-filter-box">
     <div id="searchbar-filter">
       <div id="searchbar-filter-accountType-label">Filtern:</div>

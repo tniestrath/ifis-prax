@@ -93,6 +93,10 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
       this.pageIndex++;
       this.listItems = res.users.map(value => new SelectorItem(UserComponent, value));
       this.selectorItemsLoaded.next(this.listItems);
+      if (res.count <= 0){
+        this.pagesComplete = true;
+      }
     }).finally(() => this.isSearching = false);
   }
+
 }

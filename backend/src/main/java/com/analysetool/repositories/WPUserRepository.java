@@ -3,6 +3,7 @@ package com.analysetool.repositories;
 import com.analysetool.modells.WPUser;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,9 +21,13 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
 
     boolean existsByActivationKey(String ActivationKey);
 
+    @Query("SELECT u FROM WPUser u JOIN UserStats s WHERE u.nicename LIKE %:nicename%")
     List<WPUser> getAllByNicenameContaining(String nicename, Pageable pageable);
 
     // benutzerdefinierte Methoden, falls benötigt
+
+    @Query("SELECT u FROM WPUser u JOIN UserStats s ORDER BY s.profileView")
+    List<WPUser> getAllByNameAndSorter();
 
 }
 

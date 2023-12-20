@@ -140,6 +140,17 @@ public class UserController {
         return response.toString();
     }
 
+
+    /**
+     *
+     * @param page which page of results of the given size you want to fetch.
+     * @param size the amount of results you want per page.
+     * @param search the search-term you want results for, give empty string for none.
+     * @param filter "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
+     * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
+     * @return
+     * @throws JSONException
+     */
     @GetMapping("/getAll")
     public String getAll(Integer page, Integer size, String search, String filter, String sorter) throws JSONException {
         List<WPUser> list;
@@ -183,7 +194,9 @@ public class UserController {
                 }
                 if(userViewsRepo.existsByUserId(user.getId())) {
                     obj.put("viewsPerDay", getUserClicksPerDay(user.getId()));
-                    obj.put("tendency", tendencyUp(user.getId()));
+                    if(tendencyUp(user.getId()) != null) {
+                        obj.put("tendency", tendencyUp(user.getId()));
+                    }
                 } else {
                     obj.put("viewsPerDay", 0);
                     obj.put("tendency", 0);
@@ -887,7 +900,7 @@ public class UserController {
     }
 
     @GetMapping("/tendencyUp")
-    public boolean tendencyUp(long userId) {
+    public Boolean tendencyUp(long userId) {
         int count = 7;
         int clicks = 0;
         if(getDaysSinceTracking(userId) > 7) {
@@ -896,8 +909,13 @@ public class UserController {
                     clicks += u.getViews();
                 }
             }
+        } else {
+            return null;
         }
-        return ((double) clicks / count) > getUserClicksPerDay(userId);
+        Double avg = ((double) clicks / count);
+        if(avg > getUserClicksPerDay(userId)) return true;
+        if(avg.equals(getUserClicksPerDay(userId))) return null;
+        return false;
     }
 
     private int getDaysSinceTracking(long userId) {

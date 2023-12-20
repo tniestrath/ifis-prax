@@ -8,6 +8,8 @@ export class User extends DbObject {
               public profileViews: number,
               public postViews: number,
               public postCount: number,
+              public tendency: boolean | null,
+              public viewsPerDay: number,
               public performance: number,
               public accountType: string, // basic plus premium admin ?customer?
               public potential: number,

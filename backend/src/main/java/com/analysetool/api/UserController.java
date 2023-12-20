@@ -144,11 +144,11 @@ public class UserController {
     public String getAll(Integer page, Integer size, String search, String filter, String sorter) throws JSONException {
         List<WPUser> list;
         switch(sorter) {
-            case "profileViews" -> {
+            case "profileView" -> {
 
                 list = userRepository.getAllNameLikeAndProfileViews(search, PageRequest.of(page, size));
             }
-            case "contentViews" -> {
+            case "contentView" -> {
                 list = userRepository.getAllNameLikeAndContentViews(search, PageRequest.of(page, size));
             }
             default -> {

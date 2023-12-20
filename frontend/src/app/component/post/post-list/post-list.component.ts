@@ -142,6 +142,9 @@ export class PodcastListComponent extends PostListComponent{
       this.selectorItemsLoaded.next(this.selectorItems);
     }
   }
+  override onScrollEnd() {
+  }
+
 }
 
 @Component({
@@ -176,6 +179,9 @@ export class RatgeberListComponent extends PostListComponent{
       this.selectorItems.sort((a, b) => Number((b.data as Post).clicks) - Number((a.data as Post).clicks));
       this.selectorItemsLoaded.next(this.selectorItems);
     }
+  }
+
+  override onScrollEnd() {
   }
 
 }

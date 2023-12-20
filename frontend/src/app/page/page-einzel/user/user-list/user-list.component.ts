@@ -22,7 +22,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
   private pageSize: number = 30;
 
   private searchText: string = "";
-  private selectedFilter = {accType : " ", sort : "userId"};
+  private selectedFilter = {accType : "", sort : "userId"};
   private isSearching: boolean = false;
   private abortController: AbortController[] = [];
 

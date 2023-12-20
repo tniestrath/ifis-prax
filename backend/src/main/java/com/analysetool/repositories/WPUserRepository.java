@@ -35,7 +35,7 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
     List<WPUser> getAllNameLikeAndProfileViewsByTime(String nicename, String type, Pageable pageable);
 
 
-    @Query("SELECT u FROM WPUser u LEFT JOIN WPUserMeta um ON u.id = um.userId WHERE u.nicename LIKE %:nicename% ORDER BY u.id DESC")
+    @Query("SELECT u FROM WPUser u WHERE u.nicename LIKE %:nicename% ORDER BY u.id DESC")
     List<WPUser> getAllByNicenameContainingAll(String nicename, Pageable pageable);
 
     @Query("SELECT u FROM WPUser u LEFT JOIN UserStats s ON u.id = s.userId WHERE u.nicename LIKE %:nicename% ORDER BY s.profileView DESC")

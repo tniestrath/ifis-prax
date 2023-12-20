@@ -155,7 +155,7 @@ public class UserController {
     public String getAll(Integer page, Integer size, String search, String filter, String sorter) throws JSONException {
         List<WPUser> list;
 
-        if(sorter != null) {
+        if(sorter != null && !filter.isBlank()) {
             switch (sorter) {
                 case "profileView" -> {
                     list = userRepository.getAllNameLikeAndProfileViews(search, filter, PageRequest.of(page, size));
@@ -170,8 +170,25 @@ public class UserController {
                     list = userRepository.getAllByNicenameContaining(search, filter, PageRequest.of(page, size, Sort.by("id").descending()));
                 }
             }
-        } else {
+        } else if(sorter == null && !filter.isBlank()){
             list = userRepository.getAllByNicenameContaining(search, filter, PageRequest.of(page, size, Sort.by("id").descending()));
+        } else if(sorter != null  && filter.isBlank()){
+            switch (sorter) {
+                case "profileView" -> {
+                    list = userRepository.getAllNameLikeAndProfileViewsAll(search, PageRequest.of(page, size));
+                }
+                case "contentView" -> {
+                    list = userRepository.getAllNameLikeAndContentViewsAll(search, PageRequest.of(page, size));
+                }
+                case "viewsByTime" -> {
+                    list = userRepository.getAllNameLikeAndProfileViewsByTimeAll(search, PageRequest.of(page, size));
+                }
+                default -> {
+                    list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                }
+            }
+        } else {
+            list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size, Sort.by("id").descending()));
         }
 
         JSONArray response = new JSONArray();

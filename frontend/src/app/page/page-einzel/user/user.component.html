@@ -17,10 +17,17 @@
   <div class="user-email-box">
     <p>{{data.email}}</p>
   </div>
-  <div class="user-post-count-box">
-    <p>Views: {{Util.formatNumbers(data.profileViews + data.postViews)}}</p>
+  <div class="user-profile-views-box">
+    <p>Profil Aufrufe: {{Util.formatNumbers(data.profileViews)}}</p>
   </div>
-  <div class="user-performance-box">
-    <img [src]="'assets/performance_icon_' + performance_image_id + '.png'" alt="performance indicator">
+  <div class="user-post-views-box">
+    <p>Inhalts Aufrufe: {{Util.formatNumbers(data.postViews)}}</p>
   </div>
+  <div class="user-views-daily-box">
+    <p>Tägl. Aufrufe: {{+parseFloat(data.viewsPerDay.toFixed(2))}}</p>
+  </div>
+  <div class="user-tendency-box">
+    <p>Tendenz: {{this.tendency}}</p>
+  </div>
+
 </div>

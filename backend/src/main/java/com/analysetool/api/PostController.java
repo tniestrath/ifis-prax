@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.services.ContentDownloadsHourlyService;
 import com.analysetool.util.MathHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -50,6 +51,8 @@ public class PostController {
     private WPUserRepository userRepo;
     @Autowired
     private PostTypeRepository postTypeRepo;
+    @Autowired
+    private ContentDownloadsHourlyService contentDownloadsService;
 
     PostRepository postRepository;
     PostStatsRepository statsRepo;

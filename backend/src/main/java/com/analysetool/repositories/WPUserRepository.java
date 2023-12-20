@@ -25,11 +25,14 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
 
     // benutzerdefinierte Methoden, falls benötigt
 
-    @Query("SELECT u FROM WPUser u JOIN UserStats s WHERE u.nicename LIKE %:nicename% ORDER BY s.profileView")
+    @Query("SELECT u FROM WPUser u LEFT JOIN UserStats s ON u.id = s.userId WHERE u.nicename LIKE %:nicename% ORDER BY s.profileView")
     List<WPUser> getAllNameLikeAndProfileViews(String nicename, Pageable pageable);
 
     @Query("SELECT u, SUM(ps.clicks) AS totalViews FROM WPUser u LEFT JOIN Post p ON u.id = p.authorId LEFT JOIN PostStats ps ON p.id = ps.artId WHERE u.nicename LIKE %:nicename% GROUP BY u.id ORDER BY totalViews DESC")
     List<WPUser> getAllNameLikeAndContentViews(String nicename, Pageable pageable);
+
+    @Query("SELECT u, (SUM(us.views) / (((SELECT MAX(uniId) FROM UserViewsByHourDLC)) - (MIN(us.uniId) + 1))) FROM WPUser u LEFT JOIN UserViewsByHourDLC us ON u.id = us.userId WHERE u.nicename LIKE %:nicename% GROUP BY u.id ORDER BY 2 DESC")
+    List<WPUser> getAllNameLikeAndProfileViewsByTime(String nicename, Pageable pageable);
 
 }
 

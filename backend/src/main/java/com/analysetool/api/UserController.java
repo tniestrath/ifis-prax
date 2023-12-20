@@ -143,17 +143,21 @@ public class UserController {
     @GetMapping("/getAll")
     public String getAll(Integer page, Integer size, String search, String filter, String sorter) throws JSONException {
         List<WPUser> list;
-        switch(sorter) {
-            case "profileView" -> {
+        if(sorter != null) {
+            switch (sorter) {
+                case "profileView" -> {
 
-                list = userRepository.getAllNameLikeAndProfileViews(search, PageRequest.of(page, size));
+                    list = userRepository.getAllNameLikeAndProfileViews(search, PageRequest.of(page, size));
+                }
+                case "contentView" -> {
+                    list = userRepository.getAllNameLikeAndContentViews(search, PageRequest.of(page, size));
+                }
+                default -> {
+                    list = userRepository.getAllByNicenameContaining(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                }
             }
-            case "contentView" -> {
-                list = userRepository.getAllNameLikeAndContentViews(search, PageRequest.of(page, size));
-            }
-            default -> {
-                list = userRepository.getAllByNicenameContaining(search, PageRequest.of(page, size, Sort.by("id").descending()));
-            }
+        } else {
+            list = userRepository.getAllByNicenameContaining(search, PageRequest.of(page, size, Sort.by("id").descending()));
         }
 
         JSONArray response = new JSONArray();

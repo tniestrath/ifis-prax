@@ -184,11 +184,11 @@ public class UserController {
                     list = userRepository.getAllNameLikeAndProfileViewsByTimeAll(search, PageRequest.of(page, size));
                 }
                 default -> {
-                    list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                    list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size));
                 }
             }
         } else {
-            list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size, Sort.by("id").descending()));
+            list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size));
         }
 
         JSONArray response = new JSONArray();

@@ -140,6 +140,17 @@ public class UserController {
         return response.toString();
     }
 
+
+    /**
+     *
+     * @param page which page of results of the given size you want to fetch.
+     * @param size the amount of results you want per page.
+     * @param search the search-term you want results for, give empty string for none.
+     * @param filter "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
+     * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
+     * @return
+     * @throws JSONException
+     */
     @GetMapping("/getAll")
     public String getAll(Integer page, Integer size, String search, String filter, String sorter) throws JSONException {
         List<WPUser> list;

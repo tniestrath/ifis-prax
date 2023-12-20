@@ -99,7 +99,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
     let filter_accountTypeAll = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-all") as HTMLDivElement;
 
     let filter_sort_views = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-views") as HTMLDivElement;
-    let filter_sort_performance = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-performance") as HTMLDivElement;
+    let filter_sort_contentViews = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-content-views") as HTMLDivElement;
     let filter_sort_uid = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-uid") as HTMLDivElement;
 
     filter_accountTypeWithoutPlan.addEventListener("click", () => {
@@ -188,25 +188,25 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
     filter_sort_views.addEventListener("click", () => {
       filter_sort_views.style.color = "#951D40";
-      filter_sort_performance.style.color = "black";
+      filter_sort_contentViews.style.color = "black";
       filter_sort_uid.style.color = "black";
       selected_sort = "profileView";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
 
-    filter_sort_performance.addEventListener("click", () => {
+    filter_sort_contentViews.addEventListener("click", () => {
       filter_sort_views.style.color = "black";
-      filter_sort_performance.style.color = "#951D40";
+      filter_sort_contentViews.style.color = "#951D40";
       filter_sort_uid.style.color = "black";
-      selected_sort = "performance";
+      selected_sort = "contentView";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
 
     filter_sort_uid.addEventListener("click", () => {
       filter_sort_views.style.color = "black";
-      filter_sort_performance.style.color = "black";
+      filter_sort_contentViews.style.color = "black";
       filter_sort_uid.style.color = "#951D40";
       selected_sort = "userId";
 

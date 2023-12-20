@@ -100,16 +100,23 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
     let filter_sort_views = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-views") as HTMLDivElement;
     let filter_sort_contentViews = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-content-views") as HTMLDivElement;
+    let filter_sort_viewsByTime = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-views-by-time") as HTMLDivElement;
     let filter_sort_uid = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-uid") as HTMLDivElement;
 
     filter_accountTypeWithoutPlan.addEventListener("click", () => {
       filter_accountTypeWithoutPlan.style.color = "#951D40";
+      filter_accountTypeWithoutPlan.style.fontWeight = "bold";
 
       filter_accountTypeBasic.style.color = "black";
+      filter_accountTypeBasic.style.fontWeight = "normal";
       filter_accountTypeBasicPlus.style.color = "black";
+      filter_accountTypeBasicPlus.style.fontWeight = "normal";
       filter_accountTypePlus.style.color = "black";
+      filter_accountTypePlus.style.fontWeight = "normal";
       filter_accountTypePremium.style.color = "black";
+      filter_accountTypePremium.style.fontWeight = "normal";
       filter_accountTypeAll.style.color = "black";
+      filter_accountTypeAll.style.fontWeight = "normal";
       selected_account_filter = "none";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
@@ -118,11 +125,16 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
     filter_accountTypeBasic.addEventListener("click", () => {
       filter_accountTypeWithoutPlan.style.color = "black";
       filter_accountTypeBasic.style.color = "#951D40";
+      filter_accountTypeBasic.style.fontWeight = "bold";
 
       filter_accountTypeBasicPlus.style.color = "black";
+      filter_accountTypeBasicPlus.style.fontWeight = "normal";
       filter_accountTypePlus.style.color = "black";
+      filter_accountTypePlus.style.fontWeight = "normal";
       filter_accountTypePremium.style.color = "black";
+      filter_accountTypePremium.style.fontWeight = "normal";
       filter_accountTypeAll.style.color = "black";
+      filter_accountTypeAll.style.fontWeight = "normal";
       selected_account_filter = "basis";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
@@ -130,13 +142,19 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
     filter_accountTypeBasicPlus.addEventListener("click", () => {
       filter_accountTypeWithoutPlan.style.color = "black";
+      filter_accountTypeWithoutPlan.style.fontWeight = "normal";
       filter_accountTypeBasic.style.color = "black";
+      filter_accountTypeBasic.style.fontWeight = "normal";
 
       filter_accountTypeBasicPlus.style.color = "#951D40";
+      filter_accountTypeBasicPlus.style.fontWeight = "bold";
 
       filter_accountTypePlus.style.color = "black";
+      filter_accountTypePlus.style.fontWeight = "normal";
       filter_accountTypePremium.style.color = "black";
+      filter_accountTypePremium.style.fontWeight = "normal";
       filter_accountTypeAll.style.color = "black";
+      filter_accountTypeAll.style.fontWeight = "normal";
       selected_account_filter = "basis-plus";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
@@ -144,13 +162,19 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
     filter_accountTypePlus.addEventListener("click", () => {
       filter_accountTypeWithoutPlan.style.color = "black";
+      filter_accountTypeWithoutPlan.style.fontWeight = "normal";
       filter_accountTypeBasic.style.color = "black";
+      filter_accountTypeBasic.style.fontWeight = "normal";
       filter_accountTypeBasicPlus.style.color = "black";
+      filter_accountTypeBasicPlus.style.fontWeight = "normal";
 
       filter_accountTypePlus.style.color = "#951D40";
+      filter_accountTypePlus.style.fontWeight = "bold";
 
       filter_accountTypePremium.style.color = "black";
+      filter_accountTypePremium.style.fontWeight = "normal";
       filter_accountTypeAll.style.color = "black";
+      filter_accountTypeAll.style.fontWeight = "normal";
       selected_account_filter = "plus";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
@@ -158,11 +182,16 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
     filter_accountTypePremium.addEventListener("click", () => {
       filter_accountTypeWithoutPlan.style.color = "black";
+      filter_accountTypeWithoutPlan.style.fontWeight = "normal";
       filter_accountTypeBasic.style.color = "black";
+      filter_accountTypeBasic.style.fontWeight = "normal";
       filter_accountTypeBasicPlus.style.color = "black";
+      filter_accountTypeBasicPlus.style.fontWeight = "normal";
       filter_accountTypePlus.style.color = "black";
+      filter_accountTypePlus.style.fontWeight = "normal";
 
       filter_accountTypePremium.style.color = "#951D40";
+      filter_accountTypePremium.style.fontWeight = "bold";
 
       filter_accountTypeAll.style.color = "black";
       selected_account_filter = "premium";
@@ -173,23 +202,36 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
     filter_accountTypeAll.addEventListener("click", () => {
       filter_accountTypeWithoutPlan.style.color = "black";
+      filter_accountTypeWithoutPlan.style.fontWeight = "normal";
       filter_accountTypeBasic.style.color = "black";
+      filter_accountTypeBasic.style.fontWeight = "normal";
       filter_accountTypeBasicPlus.style.color = "black";
+      filter_accountTypeBasicPlus.style.fontWeight = "normal";
       filter_accountTypePlus.style.color = "black";
+      filter_accountTypePlus.style.fontWeight = "normal";
       filter_accountTypePremium.style.color = "black";
+      filter_accountTypePremium.style.fontWeight = "normal";
 
       filter_accountTypeAll.style.color = "#951D40";
+      filter_accountTypeAll.style.fontWeight = "bold";
       selected_account_filter = " ";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
     filter_accountTypeAll.style.color = "#951D40";
+    filter_accountTypeAll.style.fontWeight = "bold";
 
 
     filter_sort_views.addEventListener("click", () => {
       filter_sort_views.style.color = "#951D40";
+      filter_sort_views.style.fontWeight = "bold";
+
       filter_sort_contentViews.style.color = "black";
+      filter_sort_contentViews.style.fontWeight = "normal";
+      filter_sort_viewsByTime.style.color = "black";
+      filter_sort_viewsByTime.style.fontWeight = "normal";
       filter_sort_uid.style.color = "black";
+      filter_sort_uid.style.fontWeight = "normal";
       selected_sort = "profileView";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
@@ -197,22 +239,52 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
     filter_sort_contentViews.addEventListener("click", () => {
       filter_sort_views.style.color = "black";
+      filter_sort_views.style.fontWeight = "normal";
+
       filter_sort_contentViews.style.color = "#951D40";
+      filter_sort_contentViews.style.fontWeight = "bold";
+
+      filter_sort_viewsByTime.style.color = "black";
+      filter_sort_viewsByTime.style.fontWeight = "normal";
       filter_sort_uid.style.color = "black";
+      filter_sort_uid.style.fontWeight = "normal";
       selected_sort = "contentView";
+
+      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
+    })
+
+    filter_sort_viewsByTime.addEventListener("click", () => {
+      filter_sort_views.style.color = "black";
+      filter_sort_views.style.fontWeight = "normal";
+      filter_sort_contentViews.style.color = "black";
+      filter_sort_contentViews.style.fontWeight = "normal";
+
+      filter_sort_viewsByTime.style.color = "#951D40";
+      filter_sort_viewsByTime.style.fontWeight = "bold";
+
+      filter_sort_uid.style.color = "black";
+      filter_sort_uid.style.fontWeight = "normal";
+      selected_sort = "viewsByTime";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
 
     filter_sort_uid.addEventListener("click", () => {
       filter_sort_views.style.color = "black";
+      filter_sort_views.style.fontWeight = "normal";
       filter_sort_contentViews.style.color = "black";
+      filter_sort_contentViews.style.fontWeight = "normal";
+      filter_sort_viewsByTime.style.color = "black";
+      filter_sort_viewsByTime.style.fontWeight = "normal";
+
       filter_sort_uid.style.color = "#951D40";
+      filter_sort_uid.style.fontWeight = "bold";
       selected_sort = "userId";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
     filter_sort_uid.style.color = "#951D40";
+    filter_sort_uid.style.fontWeight = "bold";
   }
 
   protected readonly UserService = SysVars;

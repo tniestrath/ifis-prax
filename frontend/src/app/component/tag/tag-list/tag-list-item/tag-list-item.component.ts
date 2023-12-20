@@ -13,8 +13,6 @@ export class TagListItemComponent {
   data : TagRanking = new TagRanking("", "", "", "", "");
   protected readonly parseFloat = parseFloat;
 
-  @Input() clicked: EventEmitter<DbObject> = new EventEmitter<DbObject>();
-
   onClick(){
     SysVars.SELECTED_TAG.emit(Number(this.data?.id));
   }

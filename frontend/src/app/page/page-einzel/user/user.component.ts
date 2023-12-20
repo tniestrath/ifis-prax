@@ -16,7 +16,8 @@ export class UserComponent implements SelectableComponent, OnInit {
 
   user_img: SafeUrl = "";
   bgColor: string = "0";
-  performance_image_id: string = "33";
+
+  tendency: string = "stagniert";
 
   constructor(private db: DbService) {
   }
@@ -26,9 +27,9 @@ export class UserComponent implements SelectableComponent, OnInit {
   }
 
   ngOnInit(): void {
-    if (this.data.performance <= 33) this.performance_image_id = "33";
-    else if (this.data.performance > 33 && this.data.performance <= 66) this.performance_image_id = "66";
-    else if (this.data.performance > 66) this.performance_image_id = "100";
+    if (this.data.tendency == null) this.tendency = "stagniert"
+    else if (!this.data.tendency) this.tendency = "fallend"
+    else if (this.data.tendency) this.tendency = "steigend";
 
     this.db.getUserImgSrc(this.data.id).then(dataUrl => {
       this.user_img = dataUrl;

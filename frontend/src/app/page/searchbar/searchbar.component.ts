@@ -117,7 +117,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_accountTypePremium.style.fontWeight = "normal";
       filter_accountTypeAll.style.color = "black";
       filter_accountTypeAll.style.fontWeight = "normal";
-      selected_account_filter = "um_anbieter";
+      selected_account_filter = "\"um_anbieter\"";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
@@ -135,7 +135,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_accountTypePremium.style.fontWeight = "normal";
       filter_accountTypeAll.style.color = "black";
       filter_accountTypeAll.style.fontWeight = "normal";
-      selected_account_filter = "um_basis-anbieter";
+      selected_account_filter = "\"um_basis-anbieter\"";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
@@ -155,7 +155,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_accountTypePremium.style.fontWeight = "normal";
       filter_accountTypeAll.style.color = "black";
       filter_accountTypeAll.style.fontWeight = "normal";
-      selected_account_filter = "um_basis-anbieter-plus";
+      selected_account_filter = "\"um_basis-anbieter-plus\"";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
@@ -175,7 +175,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_accountTypePremium.style.fontWeight = "normal";
       filter_accountTypeAll.style.color = "black";
       filter_accountTypeAll.style.fontWeight = "normal";
-      selected_account_filter = "um_plus-anbieter";
+      selected_account_filter = "\"um_plus-anbieter\"";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
@@ -194,7 +194,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_accountTypePremium.style.fontWeight = "bold";
 
       filter_accountTypeAll.style.color = "black";
-      selected_account_filter = "um_premium-anbieter";
+      selected_account_filter = "\"um_premium-anbieter";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {DbObject} from "../../services/DbObject";
 import {DbService} from "../../services/db.service";
@@ -88,19 +88,19 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
   }
 
   setupFilter() {
-    let selected_account_filter = "all";
-    let selected_sort = "uid";
+    let selected_account_filter = " ";
+    let selected_sort = "userId";
 
-    let filter_accountTypeWithoutPlan = document.getElementById("searchbar-filter-accountType-without-plan") as HTMLDivElement;
-    let filter_accountTypeBasic = document.getElementById("searchbar-filter-accountType-basic") as HTMLDivElement;
-    let filter_accountTypeBasicPlus = document.getElementById("searchbar-filter-accountType-basicPlus") as HTMLDivElement;
-    let filter_accountTypePlus = document.getElementById("searchbar-filter-accountType-plus") as HTMLDivElement;
-    let filter_accountTypePremium = document.getElementById("searchbar-filter-accountType-premium") as HTMLDivElement;
-    let filter_accountTypeAll = document.getElementById("searchbar-filter-accountType-all") as HTMLDivElement;
+    let filter_accountTypeWithoutPlan = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-without-plan") as HTMLDivElement;
+    let filter_accountTypeBasic = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-basic") as HTMLDivElement;
+    let filter_accountTypeBasicPlus = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-basicPlus") as HTMLDivElement;
+    let filter_accountTypePlus = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-plus") as HTMLDivElement;
+    let filter_accountTypePremium = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-premium") as HTMLDivElement;
+    let filter_accountTypeAll = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-all") as HTMLDivElement;
 
-    let filter_sort_views = document.getElementById("searchbar-sorter-views") as HTMLDivElement;
-    let filter_sort_performance = document.getElementById("searchbar-sorter-performance") as HTMLDivElement;
-    let filter_sort_uid = document.getElementById("searchbar-sorter-uid") as HTMLDivElement;
+    let filter_sort_views = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-views") as HTMLDivElement;
+    let filter_sort_performance = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-performance") as HTMLDivElement;
+    let filter_sort_uid = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-uid") as HTMLDivElement;
 
     filter_accountTypeWithoutPlan.addEventListener("click", () => {
       filter_accountTypeWithoutPlan.style.color = "#951D40";
@@ -110,7 +110,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_accountTypePlus.style.color = "black";
       filter_accountTypePremium.style.color = "black";
       filter_accountTypeAll.style.color = "black";
-      selected_account_filter = "ohne abo";
+      selected_account_filter = "none";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
@@ -179,7 +179,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_accountTypePremium.style.color = "black";
 
       filter_accountTypeAll.style.color = "#951D40";
-      selected_account_filter = "all";
+      selected_account_filter = " ";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
@@ -190,7 +190,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_sort_views.style.color = "#951D40";
       filter_sort_performance.style.color = "black";
       filter_sort_uid.style.color = "black";
-      selected_sort = "views";
+      selected_sort = "profileView";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })
@@ -208,7 +208,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_sort_views.style.color = "black";
       filter_sort_performance.style.color = "black";
       filter_sort_uid.style.color = "#951D40";
-      selected_sort = "uid";
+      selected_sort = "userId";
 
       this.filter.emit({accType: selected_account_filter, sort: selected_sort});
     })

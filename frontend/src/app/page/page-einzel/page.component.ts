@@ -37,17 +37,10 @@ import {UserComparatorComponent} from "./user/user-comparator/user-comparator.co
 export class PageComponent implements OnInit {
   displayContent: string = "none";
 
-  selectorItems : SelectorItem[] = [];
-  selectorItemsLoaded = new Subject<SelectorItem[]>();
-  searchValue = "";
-  filterValues : { accType : string, sort : string } = {accType: "all", sort : "uid"};
   resetSearchbar : Subject<boolean> = new Subject<boolean>();
 
   @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
-
-  userFetchPage: number = 0;
-  userFetchPagesComplete: boolean = false;
 
   constructor(private cookieService : CookieService, private db : DbService) {
   }
@@ -115,27 +108,6 @@ export class PageComponent implements OnInit {
     ];
   }
 
-  onSelected(id: string, name: string) {
-    if (id != "0") {
-      this.displayContent = "grid";
-      this.cardsLoaded.next(this.getUserPageCards());
-      SysVars.CURRENT_PAGE = "Anbieter";
-    } else {
-      this.displayContent = "none";
-    }
-    SysVars.USER_ID = id;
-  }
-
-  onSearchInput(value : string){
-    this.searchValue = value;
-    this.loadSelector(this.filterValues);
-  }
-
-  onFilterChange(filter: { accType: string; sort: string }){
-    this.filterValues = {accType : filter.accType, sort : filter.sort};
-    this.loadSelector(this.filterValues)
-  }
-
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
@@ -143,7 +115,6 @@ export class PageComponent implements OnInit {
       switch (page) {
         case "Anbieter":{
           this.cardsLoaded.next(this.getUserPageCards());
-          this.loadSelector(this.filterValues);
           this.resetSearchbar.next(true);
           this.db.resetStatus();
           break;
@@ -179,45 +150,5 @@ export class PageComponent implements OnInit {
       }
     })
 
-  }
-
-  loadSelector(filter: {accType : string, sort : string}){
-      this.db.getAllUsers(this.userFetchPage, 30, this.searchValue, new AbortSignal()).then((res) => {
-        this.selectorItems = [];
-        for (let u of res.users) {
-          this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, u.performance, u.accountType, u.potential, u.img)));
-        }
-        if (res.count <= 0){
-          this.userFetchPagesComplete = true;
-        }
-      }).then(() => {
-        this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||
-          (item.data as User).email.toUpperCase().includes(this.searchValue.toUpperCase()))
-      }).then(() => {
-        // @ts-ignore
-        if (filter.accType != "all"){
-          this.selectorItems = this.selectorItems.filter((item ) => (item.data as User).accountType == filter.accType);
-        }
-        switch (filter.sort) {
-          case "uid": {
-            this.selectorItems = this.selectorItems.sort((a, b) => (Number(a.data.id) - Number(b.data.id)));
-            break;
-          }
-          case "views": {
-            this.selectorItems = this.selectorItems.sort((a, b) => ( (b.data as User).profileViews + (b.data as User).postViews ) - ( (a.data as User).profileViews + (a.data as User).postViews ) );
-            break;
-          }
-          case "performance": {
-            this.selectorItems = this.selectorItems.sort((a, b) => (b.data as User).performance - (a.data as User).performance);
-            break;
-          }
-          default: break;
-        }
-      }).finally(() =>
-        this.selectorItemsLoaded.next(this.selectorItems));
-    }
-
-  onScroll() {
-    this.loadSelector(this.filterValues)
   }
 }

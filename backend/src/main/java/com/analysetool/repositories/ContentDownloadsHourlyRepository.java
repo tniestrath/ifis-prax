@@ -21,4 +21,7 @@ public interface ContentDownloadsHourlyRepository extends JpaRepository<ContentD
     @Query("SELECT c.uniId FROM ContentDownloadsHourly c ORDER BY c.uniId DESC LIMIT 7")
     List<Integer> getLast7Uni();
 
+    List<ContentDownloadsHourly> findAllByPostIdIn(List<Long> postIds);
+
+    List<ContentDownloadsHourly> findAllByPostIdInAndUniId(List<Long> postIds, Integer uniId);
 }

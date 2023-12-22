@@ -2,10 +2,12 @@ package com.analysetool.services;
 import com.analysetool.modells.ContentDownloadsHourly;
 import com.analysetool.modells.UserViewsByHourDLC;
 import com.analysetool.repositories.ContentDownloadsHourlyRepository;
+import com.analysetool.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +16,8 @@ public class ContentDownloadsHourlyService {
 
     @Autowired
     private ContentDownloadsHourlyRepository contentDownloadsHourlyRepo;
+    @Autowired
+    private PostRepository postRepo;
 
     @Transactional
     public void persistAllContentDownloadsHourly(Map<String, ContentDownloadsHourly> contentDownloadsMap) {
@@ -39,6 +43,21 @@ public class ContentDownloadsHourlyService {
 
     public Long getAllContentDownloadsByPostIdAndUniId(Long postId, Integer uniId){
         List<ContentDownloadsHourly> downloadsList = contentDownloadsHourlyRepo.findAllByPostIdAndUniId(postId, uniId);
+        long totalDownloads = downloadsList.stream()
+                .mapToLong(ContentDownloadsHourly::getDownloads)
+                .sum();
+        return totalDownloads;
+    }
+    public Long getAllContentDownloadsByPostIds(List<Long> postIds){
+        List<ContentDownloadsHourly> downloadsList = contentDownloadsHourlyRepo.findAllByPostIdIn(postIds);
+        long totalDownloads = downloadsList.stream()
+                .mapToLong(ContentDownloadsHourly::getDownloads)
+                .sum();
+        return totalDownloads;
+    }
+
+    public Long getAllContentDownloadsByPostIdsAndUniId(List<Long> postIds, Integer uniId){
+        List<ContentDownloadsHourly> downloadsList = contentDownloadsHourlyRepo.findAllByPostIdInAndUniId(postIds, uniId);
         long totalDownloads = downloadsList.stream()
                 .mapToLong(ContentDownloadsHourly::getDownloads)
                 .sum();
@@ -77,6 +96,21 @@ public class ContentDownloadsHourlyService {
         if(avg > getDownloadsPerDay(postId)) return true;
         if(avg.equals(getDownloadsPerDay(postId))) return null;
         return false;
+    }
+    public Long getAllDownloadsOfUserContentByUserId(Long userId){
+        List<Long> postIdsOfUser = postRepo.findPostIdsByUserId(userId);
+        return getAllContentDownloadsByPostIds(postIdsOfUser);
+    }
+    public String getAllDownloadsOfUserContentBrokenDownByUserId(Long userId){
+        Long downloadCount=0L;
+        //postId:DownloadCount
+        Map<Long,Long> downloadsOfPost= new HashMap<>();
+        for(Long postId:postRepo.findPostIdsByUserId(userId)){
+            downloadCount=getAllContentDownloadsByPostId(postId);
+            if(downloadCount>0){
+            downloadsOfPost.put(postId,downloadCount);}
+        }
+        return downloadsOfPost.toString();
     }
 
 

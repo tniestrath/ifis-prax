@@ -33,6 +33,12 @@ public class ContentDownloadsHourlyService {
         }
     }
 
+    /**
+     * Calculates the total number of downloads for a specific post.
+     *
+     * @param postId The ID of the post.
+     * @return Total number of downloads for the post.
+     */
     public Long getAllContentDownloadsByPostId(Long postId){
         List<ContentDownloadsHourly> downloadsList = contentDownloadsHourlyRepo.findAllByPostId(postId);
         long totalDownloads = downloadsList.stream()
@@ -41,6 +47,13 @@ public class ContentDownloadsHourlyService {
         return totalDownloads;
     }
 
+    /**
+     * Computes the total downloads for a given post filtered by a specific uniId.
+     *
+     * @param postId The ID of the post.
+     * @param uniId The uniId for filtering downloads.
+     * @return Total downloads for the post from the specified uniId.
+     */
     public Long getAllContentDownloadsByPostIdAndUniId(Long postId, Integer uniId){
         List<ContentDownloadsHourly> downloadsList = contentDownloadsHourlyRepo.findAllByPostIdAndUniId(postId, uniId);
         long totalDownloads = downloadsList.stream()
@@ -48,6 +61,13 @@ public class ContentDownloadsHourlyService {
                 .sum();
         return totalDownloads;
     }
+
+    /**
+     * Aggregates the total downloads for a list of posts.
+     *
+     * @param postIds A list of post IDs.
+     * @return Combined total downloads for all specified posts.
+     */
     public Long getAllContentDownloadsByPostIds(List<Long> postIds){
         List<ContentDownloadsHourly> downloadsList = contentDownloadsHourlyRepo.findAllByPostIdIn(postIds);
         long totalDownloads = downloadsList.stream()
@@ -56,6 +76,13 @@ public class ContentDownloadsHourlyService {
         return totalDownloads;
     }
 
+    /**
+     * Computes the total number of downloads for a list of posts, filtered by a specific university ID.
+     *
+     * @param postIds A list of post IDs to calculate downloads for.
+     * @param uniId The uniId to filter the downloads.
+     * @return The sum of downloads for all specified posts from the given uniId.
+     */
     public Long getAllContentDownloadsByPostIdsAndUniId(List<Long> postIds, Integer uniId){
         List<ContentDownloadsHourly> downloadsList = contentDownloadsHourlyRepo.findAllByPostIdInAndUniId(postIds, uniId);
         long totalDownloads = downloadsList.stream()
@@ -97,11 +124,24 @@ public class ContentDownloadsHourlyService {
         if(avg.equals(getDownloadsPerDay(postId))) return null;
         return false;
     }
+
+    /**
+     * Calculates the total downloads for all posts made by a specific user.
+     *
+     * @param userId The user's ID.
+     * @return Total downloads across all posts by the user.
+     */
     public Long getAllDownloadsOfUserContentByUserId(Long userId){
         List<Long> postIdsOfUser = postRepo.findPostIdsByUserId(userId);
         return getAllContentDownloadsByPostIds(postIdsOfUser);
     }
 
+    /**
+     * Generates a string map of download counts for each post by a given user.
+     *
+     * @param userId The ID of the user.
+     * @return map with postId as key and download count as value.
+     */
     public Map<Long, Long> getAllDownloadsOfUserContentBrokenDownByUserIdAsMap(Long userId){
         Long downloadCount=0L;
         //postId:DownloadCount
@@ -114,7 +154,12 @@ public class ContentDownloadsHourlyService {
         return downloadsOfPost;
     }
 
-
+    /**
+     * Generates a string map of download counts for each post by a given user.
+     *
+     * @param userId The ID of the user.
+     * @return String representation of a map with postId as key and download count as value.
+     */
     public String getAllDownloadsOfUserContentBrokenDownByUserIdAsString(Long userId){
         Long downloadCount=0L;
         //postId:DownloadCount

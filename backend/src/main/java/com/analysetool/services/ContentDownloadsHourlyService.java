@@ -101,15 +101,29 @@ public class ContentDownloadsHourlyService {
         List<Long> postIdsOfUser = postRepo.findPostIdsByUserId(userId);
         return getAllContentDownloadsByPostIds(postIdsOfUser);
     }
-    public String getAllDownloadsOfUserContentBrokenDownByUserId(Long userId){
+
+    public Map<Long, Long> getAllDownloadsOfUserContentBrokenDownByUserIdAsMap(Long userId){
         Long downloadCount=0L;
         //postId:DownloadCount
         Map<Long,Long> downloadsOfPost= new HashMap<>();
         for(Long postId:postRepo.findPostIdsByUserId(userId)){
             downloadCount=getAllContentDownloadsByPostId(postId);
             if(downloadCount>0){
-            downloadsOfPost.put(postId,downloadCount);}
+                downloadsOfPost.put(postId,downloadCount);}
         }
+        return downloadsOfPost;
+    }
+
+
+    public String getAllDownloadsOfUserContentBrokenDownByUserIdAsString(Long userId){
+        Long downloadCount=0L;
+        //postId:DownloadCount
+        Map<Long,Long> downloadsOfPost= new HashMap<>();
+        for(Long postId:postRepo.findPostIdsByUserId(userId)){
+            downloadCount=getAllContentDownloadsByPostId(postId);
+            if(downloadCount>0){
+                downloadsOfPost.put(postId,downloadCount);}
+            }
         return downloadsOfPost.toString();
     }
 

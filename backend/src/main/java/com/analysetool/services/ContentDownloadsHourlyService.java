@@ -50,11 +50,7 @@ public class ContentDownloadsHourlyService {
      * @return Total number of downloads for the post.
      */
     public Long getAllContentDownloadsByPostId(Long postId){
-        List<ContentDownloadsHourly> downloadsList = contentDownloadsHourlyRepo.findAllByPostId(postId);
-        long totalDownloads = downloadsList.stream()
-                .mapToLong(ContentDownloadsHourly::getDownloads)
-                .sum();
-        return totalDownloads;
+        return contentDownloadsHourlyRepo.getAllDownloadsOfPostIdSummed(postId);
     }
 
     /**
@@ -79,11 +75,7 @@ public class ContentDownloadsHourlyService {
      * @return Combined total downloads for all specified posts.
      */
     public Long getAllContentDownloadsByPostIds(List<Long> postIds){
-        List<ContentDownloadsHourly> downloadsList = contentDownloadsHourlyRepo.findAllByPostIdIn(postIds);
-        long totalDownloads = downloadsList.stream()
-                .mapToLong(ContentDownloadsHourly::getDownloads)
-                .sum();
-        return totalDownloads;
+        return  contentDownloadsHourlyRepo.findSumOfDownloadsForPostIds(postIds);
     }
 
     /**

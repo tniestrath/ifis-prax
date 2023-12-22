@@ -34,6 +34,16 @@ public class ContentDownloadsHourlyService {
     }
 
     /**
+     * Computes the aggregate of all download counts across the site.
+     *
+     * @return The sum of downloads for all content on the site.
+     */
+    public Long getTotalDownloadsOfSite(){
+        return contentDownloadsHourlyRepo.getAllDownloadsSummed();
+    }
+
+
+    /**
      * Calculates the total number of downloads for a specific post.
      *
      * @param postId The ID of the post.
@@ -172,5 +182,18 @@ public class ContentDownloadsHourlyService {
         return downloadsOfPost.toString();
     }
 
+    /**
+     * Retrieves a map of total downloads for each post on the site.
+     *
+     * @return A map where each key is a post ID and the corresponding value is the sum of downloads for that post.
+     */
+    public Map<Long, Long> getTotalDownloadsOfSiteBrokenDownAsMap(){
+        List<Object[]> results = contentDownloadsHourlyRepo.getPostIdAndDownloadsSum();
+        Map<Long, Long> downloadsMap = new HashMap<>();
+        for (Object[] result : results) {
+            downloadsMap.put((Long) result[0], (Long) result[1]);
+        }
+        return downloadsMap;
+    }
 
 }

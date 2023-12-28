@@ -109,7 +109,7 @@ public class LogService {
     private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
     private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
-    private final String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
+    private final String RedirectUserPattern ="/.*GET .*goto=.*\"https?:/.*/user/(\\S*)/";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
@@ -543,6 +543,9 @@ public class LogService {
                     //Does it match user-view?
                     Matcher matched_userViews = userViewPattern.matcher(request);
 
+                    //Does it match user-redirect?
+                    Matcher matched_userRedirect = userRedirectPattern.matcher(request);
+
                     //Does it match a ratgeber-subpost-view
                     Matcher matched_ratgeber_post = ratgeberPostViewPattern.matcher(request);
 
@@ -630,6 +633,9 @@ public class LogService {
                     } else if(matched_content_download.find()){
                         whatMatched = "contentDownload";
                         patternMatcher = matched_content_download;
+                    } else if(matched_userRedirect.find()){
+                        whatMatched = "userRedirect";
+                        patternMatcher = matched_userRedirect;
                     }
 
                     //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
@@ -1349,6 +1355,9 @@ public class LogService {
                     System.out.println("CONTENT DOWNLOAD EXCEPTION BEI: "+ line);
                 }
             break;
+            case "userRedirect":
+                //muss noch
+                break;
             case "ratgeberGlossar":
                 break;
             case "ratgeberBuch":

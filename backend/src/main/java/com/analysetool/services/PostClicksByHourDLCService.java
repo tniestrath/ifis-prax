@@ -51,7 +51,7 @@ public class PostClicksByHourDLCService {
                     .orElse(0L);
             hourlyClicks.put(hour, viewCount);
         }
-        
+
         return hourlyClicks;
     }
 

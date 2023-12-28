@@ -27,12 +27,14 @@ public class UniqueUserController {
     @Autowired
     UniqueUserService uniqueUserService;
 
+
     // Endpoint, um die durchschnittliche Verweildauer aller Nutzer als String zurückzugeben
     @GetMapping("/average-time-spent")
     public String getAverageTimeSpent() {
         Double averageTimeSpent = uniqueUserRepo.getAverageTimeSpent();
         return averageTimeSpent != null ? String.format("%.2f", averageTimeSpent) : "Daten nicht verfügbar";
     }
+
 
     // Endpoint, um die durchschnittliche Verweildauer der Nutzer für den heutigen Tag als String zurückzugeben
     @GetMapping("/average-time-spent-today")

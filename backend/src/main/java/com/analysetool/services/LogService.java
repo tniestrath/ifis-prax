@@ -94,6 +94,9 @@ public class LogService {
     @Autowired
     private UniversalTimeSpentDLCRepository uniTimeSpentRepo;
 
+    @Autowired
+    private PostClicksByHourDLCService postClicksByHourDLCService;
+
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
@@ -247,6 +250,8 @@ public class LogService {
 
     private Map<String, UserViewsByHourDLC> userViewsHourDLCMap = new HashMap<>();
     private Map<String, ContentDownloadsHourly> contentDownloadsMap = new HashMap<>();
+
+    private Map<String,PostClicksByHourDLC> postClicksMap = new HashMap<>();
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
@@ -902,6 +907,7 @@ public class LogService {
         //UserViewsByHourService weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
         contentDownloadsHourlyService.persistAllContentDownloadsHourly(contentDownloadsMap);
+        postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
     }
 
     private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
@@ -1307,6 +1313,7 @@ public class LogService {
                 try {
                     UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                     updateIPsByPost(ip, postRepository.getIdByName(patternMatcher.group(1)));
+                    updatePostClicksMap(postRepository.getIdByName(patternMatcher.group(1)),dateLog);
                 } catch (Exception e) {
                     System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
                 }
@@ -1739,6 +1746,24 @@ public class LogService {
             ContentDownloadsHourly newContentDownload = new ContentDownloadsHourly(uniId,postId,dateLog.getHour(),1L);
 
             contentDownloadsMap.put(key, newContentDownload);
+        }
+
+    }
+
+    public void updatePostClicksMap(Long postId,LocalDateTime dateLog){
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String key = uniId + "_" + postId;
+
+        PostClicksByHourDLC postClicks = postClicksMap.get(key);
+        if (postClicks != null) {
+
+            postClicks.setClicks(postClicks.getClicks() + 1);
+
+        } else {
+
+            PostClicksByHourDLC newPostClicks = new PostClicksByHourDLC(uniId,postId,dateLog.getHour(),1L);
+
+            postClicksMap.put(key, newPostClicks);
         }
 
     }

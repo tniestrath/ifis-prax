@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -20,6 +21,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    @Query("SELECT p FROM Post p where p.authorId = :id AND p.status='publish' AND p.type='post'")
    List<Post> findByAuthor(int id);
+
+   @Query("SELECT p.id FROM Post p where p.authorId = :id AND p.status='publish' AND p.type='post'")
+   List<Long> findPostIdsByUserId(Long id);
 
    @Query("SELECT p.id FROM Post p WHERE p.authorId = :userId AND p.status = 'publish' AND p.type = 'post'")
    List<Long> findPostIdsByAuthor(int userId, Pageable pageable);
@@ -60,5 +64,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    List<Post> findByTitleContainingAndStatusIsAndTypeIs(String title, String status, String type, Pageable pageable);
 
+   @Query("SELECT p.id FROM Post p WHERE p.title LIKE CONCAT(:title, '%')")
+   Optional<Long> findByTitleLike(String title);
 }
 

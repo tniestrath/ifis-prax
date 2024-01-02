@@ -841,40 +841,40 @@ public class UserController {
         for(int i = 0; i < allowedLosungen; i++) {
             switch(i) {
                 case(0) -> {
-                    if(wpUserMetaRepository.getSolutionHead1((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead1((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead1((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead1((long) userId).get().isBlank()) solutions ++;
                 }
                 case(1) -> {
-                    if(wpUserMetaRepository.getSolutionHead2((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead2((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead2((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead2((long) userId).get().isBlank()) solutions ++;
                 }
                 case(2) -> {
-                    if(wpUserMetaRepository.getSolutionHead3((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead3((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead3((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead3((long) userId).get().isBlank()) solutions ++;
                 }
                 case(3) -> {
-                    if(wpUserMetaRepository.getSolutionHead4((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead4((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead4((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead4((long) userId).get().isBlank()) solutions ++;
                 }
                 case(4) -> {
-                    if(wpUserMetaRepository.getSolutionHead5((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead5((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead5((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead5((long) userId).get().isBlank()) solutions ++;
                 }
                 case(5) -> {
-                    if(wpUserMetaRepository.getSolutionHead6((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead6((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead6((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead6((long) userId).get().isBlank()) solutions ++;
                 }
                 case(6) -> {
-                    if(wpUserMetaRepository.getSolutionHead7((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead7((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead7((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead7((long) userId).get().isBlank()) solutions ++;
                 }
                 case(7) -> {
-                    if(wpUserMetaRepository.getSolutionHead8((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead8((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead8((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead8((long) userId).get().isBlank()) solutions ++;
                 }
                 case(8) -> {
-                    if(wpUserMetaRepository.getSolutionHead9((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead9((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead9((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead9((long) userId).get().isBlank()) solutions ++;
                 }
                 case(9) -> {
-                    if(wpUserMetaRepository.getSolutionHead10((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead10((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead10((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead10((long) userId).get().isBlank()) solutions ++;
                 }
                 case(10) -> {
-                    if(wpUserMetaRepository.getSolutionHead11((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead11((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead11((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead11((long) userId).get().isBlank()) solutions ++;
                 }
                 case(11) -> {
-                    if(wpUserMetaRepository.getSolutionHead12((long) userId).isPresent() && wpUserMetaRepository.getSolutionHead12((long) userId).get().isEmpty()) solutions ++;
+                    if(wpUserMetaRepository.getSolutionHead12((long) userId).isPresent() && !wpUserMetaRepository.getSolutionHead12((long) userId).get().isBlank()) solutions ++;
                 }
             }
         }

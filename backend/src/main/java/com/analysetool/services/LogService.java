@@ -94,6 +94,9 @@ public class LogService {
     @Autowired
     private UniversalTimeSpentDLCRepository uniTimeSpentRepo;
 
+    @Autowired
+    private PostClicksByHourDLCService postClicksByHourDLCService;
+
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
@@ -106,7 +109,7 @@ public class LogService {
     private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
     private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
-    private final String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
+    private final String RedirectUserPattern ="/.*GET .*goto=.*\"https?:/.*/user/(\\S*)/";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
@@ -124,7 +127,8 @@ public class LogService {
 
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
 
-    //private final String WhitepaperDownload ="^.*GET /wp-content/uploads/[\d]{4})/[\d]{2})/(\S+).pdf";
+    private final String contentDownload ="^.*GET /wp-content/uploads/[\\d]{4}/[\\d]{2}/(\\S+).pdf";
+    //private final String ContentDownload = "^.*GET /wp-content/uploads/[\\d]{4}/[\\d]{2}/(\\S+?)(-\\d{3})?.pdf";
 
     private final String PodcastViewPattern = "^.*GET /podcast/(\\S+)/";
 
@@ -181,9 +185,8 @@ public class LogService {
     Pattern ratgeberPostViewPattern = Pattern.compile(ratgeberView);
     Pattern ratgeberGlossarViewPattern = Pattern.compile(ratgeberGlossarView);
     Pattern ratgeberBuchViewPattern = Pattern.compile(ratgeberBuchView);
-
     Pattern podcastViewPattern = Pattern.compile(PodcastViewPattern);
-
+    Pattern contentDownloadPattern= Pattern.compile(contentDownload);
 
     private String lastLine = "";
     private int lineCounter = 0;
@@ -242,7 +245,13 @@ public class LogService {
     @Autowired
     private UserViewsByHourDLCService userViewsByHourDLCService;
 
+    @Autowired
+    private ContentDownloadsHourlyService contentDownloadsHourlyService;
+
     private Map<String, UserViewsByHourDLC> userViewsHourDLCMap = new HashMap<>();
+    private Map<String, ContentDownloadsHourly> contentDownloadsMap = new HashMap<>();
+
+    private Map<String,PostClicksByHourDLC> postClicksMap = new HashMap<>();
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
@@ -534,6 +543,9 @@ public class LogService {
                     //Does it match user-view?
                     Matcher matched_userViews = userViewPattern.matcher(request);
 
+                    //Does it match user-redirect?
+                    Matcher matched_userRedirect = userRedirectPattern.matcher(request);
+
                     //Does it match a ratgeber-subpost-view
                     Matcher matched_ratgeber_post = ratgeberPostViewPattern.matcher(request);
 
@@ -545,6 +557,9 @@ public class LogService {
 
                     //Does it match a podcast-view
                     Matcher matched_podcast_view = podcastViewPattern.matcher(request);
+
+                    //Does it match a content-download
+                    Matcher matched_content_download= contentDownloadPattern.matcher(request);
 
                     //Find out which pattern matched
                     String whatMatched = "";
@@ -615,6 +630,12 @@ public class LogService {
                     } else if(matched_ratgeber_buch.find()) {
                         whatMatched = "ratgeberBuch";
                         patternMatcher = matched_ratgeber_buch;
+                    } else if(matched_content_download.find()){
+                        whatMatched = "contentDownload";
+                        patternMatcher = matched_content_download;
+                    } else if(matched_userRedirect.find()){
+                        whatMatched = "userRedirect";
+                        patternMatcher = matched_userRedirect;
                     }
 
                     //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
@@ -891,6 +912,8 @@ public class LogService {
         updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
         //UserViewsByHourService weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
+        contentDownloadsHourlyService.persistAllContentDownloadsHourly(contentDownloadsMap);
+        postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
     }
 
     private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
@@ -1296,6 +1319,7 @@ public class LogService {
                 try {
                     UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                     updateIPsByPost(ip, postRepository.getIdByName(patternMatcher.group(1)));
+                    updatePostClicksMap(postRepository.getIdByName(patternMatcher.group(1)),dateLog);
                 } catch (Exception e) {
                     System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
                 }
@@ -1319,6 +1343,20 @@ public class LogService {
                     System.out.println("USERVIEW EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
+                break;
+            case "contentDownload":
+                try {
+                    if(postRepository.findByTitleLike(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long postId = postRepository.findByTitleLike(patternMatcher.group(1).replace("+", "-")).get();
+                        updateContentDownloadMap(postId,dateLog);
+                    }
+                }
+                catch (Exception e){
+                    System.out.println("CONTENT DOWNLOAD EXCEPTION BEI: "+ line);
+                }
+            break;
+            case "userRedirect":
+                //muss noch
                 break;
             case "ratgeberGlossar":
                 break;
@@ -1699,6 +1737,42 @@ public class LogService {
             UserViewsByHourDLC newUserViews = new UserViewsByHourDLC(uniId,userId,dateLog.getHour(),1L);
 
             userViewsHourDLCMap.put(key, newUserViews);
+        }
+
+    }
+
+    public void updateContentDownloadMap(Long postId,LocalDateTime dateLog){
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String key = uniId + "_" + postId;
+
+        ContentDownloadsHourly contentDownloads = contentDownloadsMap.get(key);
+        if (contentDownloads != null) {
+
+            contentDownloads.setDownloads(contentDownloads.getDownloads() + 1);
+
+        } else {
+
+            ContentDownloadsHourly newContentDownload = new ContentDownloadsHourly(uniId,postId,dateLog.getHour(),1L);
+
+            contentDownloadsMap.put(key, newContentDownload);
+        }
+
+    }
+
+    public void updatePostClicksMap(Long postId,LocalDateTime dateLog){
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String key = uniId + "_" + postId;
+
+        PostClicksByHourDLC postClicks = postClicksMap.get(key);
+        if (postClicks != null) {
+
+            postClicks.setClicks(postClicks.getClicks() + 1);
+
+        } else {
+
+            PostClicksByHourDLC newPostClicks = new PostClicksByHourDLC(uniId,postId,dateLog.getHour(),1L);
+
+            postClicksMap.put(key, newPostClicks);
         }
 
     }

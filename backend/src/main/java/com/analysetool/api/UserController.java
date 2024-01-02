@@ -220,19 +220,15 @@ public class UserController {
             }
             obj.put("accountType", getType(Math.toIntExact(user.getId())));
 
-            try {
-                String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.png"));
-                String path2 = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.jpg"));
+            String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.png"));
+            String path2 = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.jpg"));
 
-                String srcUrl = "https://it-sicherheit.de/wp-content/uploads/ultimatemember/" + user.getId() + "/profile_photo";
+            String srcUrl = "https://it-sicherheit.de/wp-content/uploads/ultimatemember/" + user.getId() + "/profile_photo";
 
-                if (new File(path).exists()) {
-                    obj.put("img", srcUrl + ".png");
-                } else if (new File(path2).exists()) {
-                    obj.put("img", srcUrl + ".jpg");
-                }
-            } catch (Exception e) {
-                obj.put("img", "ERROR");
+            if (new File(path).exists()) {
+                obj.put("img", srcUrl + ".png");
+            } else if (new File(path2).exists()) {
+                obj.put("img", srcUrl + ".jpg");
             }
 
             response.put(obj);

@@ -194,32 +194,48 @@ public class UserController {
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-                JSONObject obj = new JSONObject();
-                obj.put("id", user.getId());
-                obj.put("email", user.getEmail());
-                obj.put("displayName", user.getNicename());
-                if (userStatsRepository.existsByUserId(user.getId())) {
-                    UserStats statsUser = userStatsRepository.findByUserId(user.getId());
-                    obj.put("profileViews", statsUser.getProfileView());
-                    obj.put("postViews", postController.getViewsOfUserById(user.getId()));
-                    obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
-                } else {
-                    obj.put("profileViews", 0);
-                    obj.put("postViews", 0);
-                    obj.put("postCount", 0);
-                    obj.put("performance", 0);
+            JSONObject obj = new JSONObject();
+            obj.put("id", user.getId());
+            obj.put("email", user.getEmail());
+            obj.put("displayName", user.getNicename());
+            if (userStatsRepository.existsByUserId(user.getId())) {
+                UserStats statsUser = userStatsRepository.findByUserId(user.getId());
+                obj.put("profileViews", statsUser.getProfileView());
+                obj.put("postViews", postController.getViewsOfUserById(user.getId()));
+                obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
+            } else {
+                obj.put("profileViews", 0);
+                obj.put("postViews", 0);
+                obj.put("postCount", 0);
+                obj.put("performance", 0);
+            }
+            if (userViewsRepo.existsByUserId(user.getId())) {
+                obj.put("viewsPerDay", getUserClicksPerDay(user.getId()));
+                if (tendencyUp(user.getId()) != null) {
+                    obj.put("tendency", tendencyUp(user.getId()));
                 }
-                if(userViewsRepo.existsByUserId(user.getId())) {
-                    obj.put("viewsPerDay", getUserClicksPerDay(user.getId()));
-                    if(tendencyUp(user.getId()) != null) {
-                        obj.put("tendency", tendencyUp(user.getId()));
-                    }
-                } else {
-                    obj.put("viewsPerDay", 0);
-                    obj.put("tendency", 0);
+            } else {
+                obj.put("viewsPerDay", 0);
+                obj.put("tendency", 0);
+            }
+            obj.put("accountType", getType(Math.toIntExact(user.getId())));
+
+            try {
+                String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.png"));
+                String path2 = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.jpg"));
+
+                String srcUrl = "https://it-sicherheit.de/wp-content/uploads/ultimatemember/" + user.getId() + "/profile_photo";
+
+                if (new File(path).exists()) {
+                    obj.put("img", srcUrl + ".png");
+                } else if (new File(path2).exists()) {
+                    obj.put("img", srcUrl + ".jpg");
                 }
-                obj.put("accountType", getType(Math.toIntExact(user.getId())));
-                response.put(obj);
+            } catch (Exception e) {
+                obj.put("img", "ERROR");
+            }
+
+            response.put(obj);
         }
         return new JSONObject().put("users", response).put("count", list.size()).toString();
     }

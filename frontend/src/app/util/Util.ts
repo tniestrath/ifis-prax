@@ -43,8 +43,16 @@ export default class Util {
 
   static getFormattedNow(offset_day?: number){
     let now = new Date(Date.now());
+    let month = "";
+    let day = "";
     if (offset_day) now.setDate(now.getDate() + offset_day);
-    let formatteddate = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+    if (now.getMonth() + 1 < 10){
+      month = "" + now.getMonth() + 1; // Hä
+    }
+    if (now.getDate() < 10){
+      day = "0" + now.getDay();
+    }
+    let formatteddate = now.getFullYear() + "-" + month + "-" + day;
     return formatteddate;
   }
 

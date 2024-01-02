@@ -14,7 +14,6 @@ import {SysVars} from "../../../services/sys-vars-service";
 export class UserComponent implements SelectableComponent, OnInit {
   @Input() data: User = new User("", "", "", 0, 0, 0, null, 0, 50, "", 0, "");
 
-  user_img: SafeUrl = "";
   bgColor: string = "0";
 
   tendency: string = "stagniert";
@@ -30,14 +29,6 @@ export class UserComponent implements SelectableComponent, OnInit {
     if (this.data.tendency == null) this.tendency = "stagniert"
     else if (!this.data.tendency) this.tendency = "fallend"
     else if (this.data.tendency) this.tendency = "steigend";
-
-    this.db.getUserImgSrc(this.data.id).then(dataUrl => {
-      this.user_img = dataUrl;
-    });
-  }
-
-  getUserImg() {
-    return this.user_img;
   }
 
   protected readonly Util = Util;

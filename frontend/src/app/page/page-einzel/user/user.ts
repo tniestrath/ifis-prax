@@ -14,7 +14,7 @@ export class User extends DbObject {
               public accountType: string, // basic plus premium admin ?customer?
               public potential: number,
 
-              public img: SafeUrl) {
+              public img: string) {
     super(id, displayName);
   }
 }

@@ -218,6 +218,63 @@ public class UserController {
                 obj.put("viewsPerDay", 0);
                 obj.put("tendency", 0);
             }
+
+            //Does User have a made in EU badge
+            if(wpUserMetaRepository.getTeleEU(user.getId()).isEmpty()) {
+                obj.put("TeleEU", false);
+            } else {
+                obj.put("TeleEU", wpUserMetaRepository.getTeleEU(user.getId()).get().contains("a:1:{"));
+            }
+            if(wpUserMetaRepository.getTeleDE(user.getId()).isEmpty()) {
+                obj.put("TeleDE", false);
+            } else {
+                obj.put("TeleDE", wpUserMetaRepository.getTeleDE(user.getId()).get().contains("a:1:{"));
+            }
+
+            //Does User have a made in DE badge
+            if(wpUserMetaRepository.getCompanyCategory(user.getId()).isEmpty()) {
+                obj.put("category", "none");
+            } else {
+                obj.put("category", getCompanyCategoryFromString(wpUserMetaRepository.getCompanyCategory(user.getId()).get()));
+            }
+
+            //checks how many employees a company has.
+            if(wpUserMetaRepository.getCompanyEmployees(user.getId()).isEmpty()) {
+                obj.put("employees", "none");
+            } else {
+                obj.put("employees", getCompanyCategoryFromString(wpUserMetaRepository.getCompanyEmployees(user.getId()).get()));
+            }
+
+            Pattern pattern = Pattern.compile("\"([^\"]+)\"");
+
+            if(wpUserMetaRepository.getService(user.getId()).isEmpty()) {
+                obj.put("service", "none");
+            } else {
+                JSONArray json = new JSONArray();
+                Matcher matcher = pattern.matcher(wpUserMetaRepository.getService(user.getId()).get());
+                if(matcher.find()) {
+                    for(int i = 0; i < matcher.groupCount(); i++) {
+                        json.put(matcher.group(i));
+                    }
+                }
+                obj.put("service", json.toString());
+            }
+
+
+            if(wpUserMetaRepository.getTags(user.getId()).isEmpty()) {
+                obj.put("tags", "none");
+            } else {
+                JSONArray json = new JSONArray();
+                Matcher matcher = pattern.matcher(wpUserMetaRepository.getTags(user.getId()).get());
+                if(matcher.find()) {
+                    for(int i = 0; i < matcher.groupCount(); i++) {
+                        json.put(matcher.group(i));
+                    }
+                }
+                obj.put("tags", json.toString());
+            }
+
+
             obj.put("accountType", getType(Math.toIntExact(user.getId())));
 
             String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.png"));
@@ -234,6 +291,17 @@ public class UserController {
             response.put(obj);
         }
         return new JSONObject().put("users", response).put("count", list.size()).toString();
+    }
+
+    private String getCompanyCategoryFromString(String categoryString) {
+        if(categoryString.contains("Startup")) return "startup";
+        if(categoryString.contains("Hochschule")) return "hochschule";
+        if(categoryString.contains("Mittelstand")) return "mittelstand";
+        if(categoryString.contains("Verband")) return "verband";
+        if(categoryString.contains("Keine Angabe")) return "keine angabe";
+        if(categoryString.contains("Dienstleister")) return "Dienstleister";
+        if(categoryString.contains("Großkonzern")) return "Großkonzern";
+        return "none";
     }
 
     @GetMapping("/profilePic")

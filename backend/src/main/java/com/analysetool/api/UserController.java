@@ -240,7 +240,7 @@ public class UserController {
 
             //checks how many employees a company has.
             if(wpUserMetaRepository.getCompanyEmployees(user.getId()).isEmpty()) {
-                obj.put("employees", "none");
+                obj.put("employees", "");
             } else {
                 obj.put("employees", wpUserMetaRepository.getCompanyEmployees(user.getId()).get());
             }

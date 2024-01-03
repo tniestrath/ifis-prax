@@ -7,8 +7,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class UserRedirectsHourlyService {
@@ -63,6 +63,40 @@ public class UserRedirectsHourlyService {
         return avg > getRedirectsPerDay(userId);
     }
 
+    // Hour:Redirects
+    public Map<Integer, Long> getUserRedirectsOfLast24HourByUserIdAndDaysBackDistributedByHour(Long userId, Integer daysBack) {
+        int latestUniId = uniRepo.getLatestUniStat().getId() - daysBack;
+        int previousUniId = latestUniId - 1;
+
+        List<UserRedirectsHourly> combinedRedirects = new ArrayList<>();
+        combinedRedirects.addAll(userRedirectRepo.findAllByUserIdAndUniId(userId, previousUniId)); // Data from yesterday
+        combinedRedirects.addAll(userRedirectRepo.findAllByUserIdAndUniId(userId, latestUniId));   // Data from today
+
+        Map<Integer, Long> hourlyRedirects = new LinkedHashMap<>();
+        LocalDateTime now = LocalDateTime.now();
+        int currentHour = now.getHour();
+
+        for (int i = 23; i >= 0; i--) {
+            int hour = (currentHour - i + 24) % 24;
+            Long redirectCount = combinedRedirects.stream()
+                    .filter(redirect -> redirect.getHour() == hour)
+                    .map(UserRedirectsHourly::getRedirects)
+                    .findFirst()
+                    .orElse(0L);
+            hourlyRedirects.put(hour, redirectCount);
+        }
+
+        return hourlyRedirects;
+    }
+
+    public Map<Long, Long> getTotalRedirectsOfSiteBrokenDownAsMap(){
+        List<Object[]> results = userRedirectRepo.getUserIdAndRedirectsSum();
+        Map<Long, Long> redirectsMap = new HashMap<>();
+        for (Object[] result : results) {
+            redirectsMap.put((Long) result[0], (Long) result[1]);
+        }
+        return redirectsMap;
+    }
 
 
 

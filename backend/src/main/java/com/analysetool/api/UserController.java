@@ -639,13 +639,13 @@ public class UserController {
                     counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
                 if ((s.contains("um_basis-anbieter") ) && !s.contains("plus"))
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-                if (s.contains("um_plus-anbieter") || s.contains("um_basis-plus"))
+                if (s.contains("um_plus-anbieter"))
                     counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
                 if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
                     counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
                 if (s.contains("um_premium-anbieter-sponsoren"))
                     counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
-                if (s.contains("um_basis-anbieter-plus"))
+                if (s.contains("um_basis-anbieter-plus")  || s.contains("um_basis-plus"))
                     counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
     });
         return new JSONObject(counts).toString();

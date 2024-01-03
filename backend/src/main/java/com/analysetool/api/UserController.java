@@ -242,7 +242,7 @@ public class UserController {
             if(wpUserMetaRepository.getCompanyEmployees(user.getId()).isEmpty()) {
                 obj.put("employees", "none");
             } else {
-                obj.put("employees", getCompanyCategoryFromString(wpUserMetaRepository.getCompanyEmployees(user.getId()).get()));
+                obj.put("employees", wpUserMetaRepository.getCompanyEmployees(user.getId()).get());
             }
 
             Pattern pattern = Pattern.compile("\"([^\"]+)\"");
@@ -299,8 +299,8 @@ public class UserController {
         if(categoryString.contains("Mittelstand")) return "mittelstand";
         if(categoryString.contains("Verband")) return "verband";
         if(categoryString.contains("Keine Angabe")) return "keine angabe";
-        if(categoryString.contains("Dienstleister")) return "Dienstleister";
-        if(categoryString.contains("Großkonzern")) return "Großkonzern";
+        if(categoryString.contains("Dienstleister")) return "dienstleister";
+        if(categoryString.contains("Großkonzern")) return "großkonzern";
         return "none";
     }
 

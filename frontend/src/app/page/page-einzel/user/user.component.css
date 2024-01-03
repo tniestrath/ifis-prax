@@ -41,6 +41,17 @@
   grid-row: 2;
   grid-column: 2;
   font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+.user-acc-type-box{
+  grid-row: 2;
+  grid-column: 3;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: end;
 }
 .user-badges-box{
   grid-row: 2;
@@ -110,6 +121,7 @@
 }
 p{
   margin: 0;
+  height: fit-content;
 }
 img {
   max-height: 90%;

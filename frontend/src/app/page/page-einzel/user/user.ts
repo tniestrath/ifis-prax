@@ -13,8 +13,10 @@ export class User extends DbObject {
               public performance: number = 0,
               public accountType: string = "", // basic plus premium admin ?customer?
               public potential: number = 0,
-              public teleDE: boolean = false,
-              public teleEU: boolean = false,
+              public TeleDE: boolean = false,
+              public TeleEU: boolean = false,
+              public category: string = "none",
+              public employees: string = "",
               public img: string = "") {
     super(id, displayName);
   }

@@ -924,6 +924,9 @@ public class LogService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(dateStirng);
+        System.out.println("Date Stirng" + dateStirng);
+        System.out.println("uniLastDateString" + uniLastDateString);
+        System.out.println(dateStirng.equalsIgnoreCase(uniLastDateString));
         final int curHour = LocalDateTime.now().getHour();
 
         //Updating UniversalStats

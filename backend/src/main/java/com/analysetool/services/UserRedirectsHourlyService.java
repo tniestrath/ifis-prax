@@ -25,6 +25,13 @@ public class UserRedirectsHourlyService {
         }
     }
 
+    /**
+     * Calculates the number of days since user redirects started being tracked.
+     *
+     * @param userId The ID of the user.
+     * @return The number of days since tracking began for the specified user.
+     */
+
     private int getDaysSinceTracking(long userId) {
         if (userRedirectRepo.existsByUserId(userId)) {
             return (int) (userRedirectRepo.getLastUniId() - userRedirectRepo.getFirstUniIdByUserId(userId));
@@ -33,19 +40,46 @@ public class UserRedirectsHourlyService {
         }
     }
 
+    /**
+     * Retrieves the total number of redirects across the entire site.
+     *
+     * @return Total count of redirects for the site.
+     */
+
     public Long getTotalRedirectsOfSite() {
         return userRedirectRepo.getAllRedirectsSummed();
     }
 
+    /**
+     * Gets the total number of redirects performed by a specific user.
+     *
+     * @param userId The ID of the user.
+     * @return Total number of redirects for the specified user.
+     */
+
     public Long getAllRedirectsByUserId(Long userId) {
         return userRedirectRepo.getAllRedirectsOfUserIdSummed(userId);
     }
+
+    /**
+     * Calculates the average number of redirects per day for a specific user.
+     *
+     * @param userId The ID of the user.
+     * @return Average redirects per day for the user.
+     */
 
     public double getRedirectsPerDay(long userId) {
         int countDays = getDaysSinceTracking(userId);
         long totalRedirects = userRedirectRepo.getAllRedirectsOfUserIdSummed(userId);
         return countDays > 0 ? (double) totalRedirects / countDays : 0;
     }
+
+    /**
+     * Determines if there is an upward trend in the number of redirects for a user over the last 7 days.
+     *
+     * @param userId The ID of the user.
+     * @return True if there is an upward trend, false if not, and null if insufficient data.
+     */
 
     public Boolean tendencyUp(long userId) {
         int count = 7;
@@ -63,7 +97,13 @@ public class UserRedirectsHourlyService {
         return avg > getRedirectsPerDay(userId);
     }
 
-    // Hour:Redirects
+    /**
+     * Retrieves a map of hourly redirects for a specific user over the last 24 hours, adjusted for a given number of days back.
+     *
+     * @param userId The ID of the user.
+     * @param daysBack The number of days to look back from the current date.
+     * @return A map with the hour as the key and the number of redirects as the value.
+     */
     public Map<Integer, Long> getUserRedirectsOfLast24HourByUserIdAndDaysBackDistributedByHour(Long userId, Integer daysBack) {
         int latestUniId = uniRepo.getLatestUniStat().getId() - daysBack;
         int previousUniId = latestUniId - 1;
@@ -89,6 +129,11 @@ public class UserRedirectsHourlyService {
         return hourlyRedirects;
     }
 
+    /**
+     * Generates a map of total redirects for each user across the site.
+     *
+     * @return A map where each key is a user ID and the corresponding value is the sum of redirects for that user.
+     */
     public Map<Long, Long> getTotalRedirectsOfSiteBrokenDownAsMap(){
         List<Object[]> results = userRedirectRepo.getUserIdAndRedirectsSum();
         Map<Long, Long> redirectsMap = new HashMap<>();

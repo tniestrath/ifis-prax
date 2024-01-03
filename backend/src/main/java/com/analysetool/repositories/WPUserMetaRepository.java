@@ -114,5 +114,11 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='service_company' AND p.userId=:user_id")
     Optional<String> getService(Long user_id);
 
+    @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'security_logo_eu' AND u.userId=:userId")
+    Optional<String> getTeleEU(long userId);
+
+    @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'security_logo' AND u.userId=:userId")
+    Optional<String> getTeleDE(long userId);
+
 }
 

@@ -919,7 +919,7 @@ public class LogService {
     private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
-        dateStirng += Calendar.getInstance().get(Calendar.MONTH) + 1  < 10 ? "0" + Calendar.getInstance().get(Calendar.MONTH) + 1 : Calendar.getInstance().get(Calendar.MONTH) + 1;
+        dateStirng += Calendar.getInstance().get(Calendar.MONTH) + 1  < 10 ? "0" + (Calendar.getInstance().get(Calendar.MONTH) + 1) : Calendar.getInstance().get(Calendar.MONTH) + 1;
         dateStirng += "-" + (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) < 10 ? "0" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) : Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());

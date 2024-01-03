@@ -4,11 +4,19 @@
     <p>{{data.displayName}}</p>
   </div>
   <div class="user-type-box">
+    <div [style]="{display: 'flex', alignItems: 'center'}" [ngSwitch]="data.category">
+      <img *ngSwitchCase="'startup' || 'mittelstand' || 'großkonzern'" src="assets/company.png">
+      <img *ngSwitchCase="'hochschule'" src="assets/uni_hat.png">
+      <img *ngSwitchCase="'verband'" src="assets/verband.png">
+      <p [style.margin]="0">{{data.employees}}</p>
+    </div>
+  </div>
+  <div class="user-acc-type-box">
     <p>{{data.accountType}}</p>
   </div>
-  <div class="user-badgs-box">
-    <img *ngIf="data.teleDE" alt="SecureITy made in DE" src="assets/IT_de.png">
-    <img *ngIf="data.teleEU" alt="SecureITy made in EU" src="assets/IT_eu.png">
+  <div class="user-badges-box">
+    <img *ngIf="data.TeleDE" alt="SecureITy made in DE" src="assets/IT_de.png">
+    <img *ngIf="data.TeleEU" alt="SecureITy made in EU" src="assets/IT_eu.png">
   </div>
   <div class="user-potential-box">
     <div class="potential-background">
@@ -34,7 +42,7 @@
   </div>
   <div class="user-tendency-box">
     <img *ngIf="this.data.tendency" alt="Tendenz steigend" src="assets/trend_up.png">
-    <img *ngIf="!this.data.tendency" alt="Tendenz fallend" src="assets/trend_down.png">
+    <img *ngIf="!this.data.tendency && !(this.data.tendency == null)" alt="Tendenz fallend" src="assets/trend_down.png">
     <img *ngIf="this.data.tendency == null" alt="Tendenz stagnierend" src="assets/trend_flat.png">
   </div>
 

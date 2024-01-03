@@ -567,11 +567,11 @@ public class UserController {
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {
                 if (s.contains("um_anbieter")) // hoffe "leere" Accounts sind "um_anbieter" und nicht "anbieter" oder was auch immer
                     counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
-                if (s.contains("administrator"))
+                if (s.contains("administrator") || s.contains("organizer"))
                     counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
                 if ((s.contains("um_basis-anbieter") ) && !s.contains("plus"))
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-                if (s.contains("um_plus-anbieter"))
+                if (s.contains("um_plus-anbieter") || s.contains("um_basis-plus"))
                     counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
                 if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
                     counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);

@@ -240,7 +240,7 @@ public class UserController {
 
             //checks how many employees a company has.
             if(wpUserMetaRepository.getCompanyEmployees(user.getId()).isEmpty()) {
-                obj.put("employees", "none");
+                obj.put("employees", "");
             } else {
                 obj.put("employees", wpUserMetaRepository.getCompanyEmployees(user.getId()).get());
             }
@@ -273,6 +273,10 @@ public class UserController {
                 }
                 obj.put("tags", json.toString());
             }
+            obj.put("potential", 0);
+            try {
+                obj.put("potential", getPotentialPercent(Math.toIntExact(user.getId())));
+            } catch(Exception ignored) {}
 
 
             obj.put("accountType", getType(Math.toIntExact(user.getId())));
@@ -959,7 +963,6 @@ public class UserController {
         json.put("slogan", hasSlogan ? 1 : 0);
         json.put("tagsCount", countTags);
         json.put("tagsMax", allowedTags);
-        json.put("bio", hasDescription ? 1 : 0);
         json.put("contactPublic", countKontaktExtern);
         json.put("contactPublicMax", maxKontaktExtern);
         json.put("contactIntern", countAnsprechpartnerIntern);
@@ -970,6 +973,19 @@ public class UserController {
         json.put("solutionsMax", allowedLosungen);
 
         return json.toString();
+    }
+
+    private double getPotentialPercent(int userId) throws JSONException {
+        JSONObject json = new JSONObject(getPotentialByID(userId));
+
+        int countFulfilled = 0; int countPossible = 0;
+        countPossible+= 1 + 1 + 1 + 1 + json.getInt("tagsMax") + 1 + json.getInt("contactPublicMax") + json.getInt("contactInternMax") + json.getInt("companyDetailsMax") + json.getInt("solutionsMax");
+        countFulfilled += json.getInt("profilePicture")
+                + json.getInt("titlePicture") + json.getInt("bio") + json.getInt("slogan")
+                + json.getInt("tagsCount") + json.getInt("contactPublic")
+                + json.getInt("contactIntern") + json.getInt("companyDetails") + json.getInt("solutions");
+
+        return (double) countFulfilled / countPossible;
     }
 
     /**

@@ -24,7 +24,6 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
 
   onSubmit(username: string, userpass: string) {
     // @ts-ignore
-    SysVars.login.next(new User());
     this.db.login(username, userpass).then(res => {
       res.text().then(ans => {
         console.log(ans);

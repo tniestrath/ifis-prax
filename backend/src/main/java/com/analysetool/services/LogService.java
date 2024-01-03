@@ -6,6 +6,7 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.DashConfig;
 import com.analysetool.util.IPHelper;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
@@ -248,10 +249,14 @@ public class LogService {
     @Autowired
     private ContentDownloadsHourlyService contentDownloadsHourlyService;
 
+    @Autowired
+    private UserRedirectsHourlyService userRedirectService;
+
     private Map<String, UserViewsByHourDLC> userViewsHourDLCMap = new HashMap<>();
     private Map<String, ContentDownloadsHourly> contentDownloadsMap = new HashMap<>();
 
     private Map<String,PostClicksByHourDLC> postClicksMap = new HashMap<>();
+    private Map<String,UserRedirectsHourly> userRedirectsMap = new HashMap<>();
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
@@ -910,10 +915,11 @@ public class LogService {
 
         }
         updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
-        //UserViewsByHourService weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
+        //Service weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
         contentDownloadsHourlyService.persistAllContentDownloadsHourly(contentDownloadsMap);
         postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
+        userRedirectService.persistAllUserRedirectsHourly(userRedirectsMap);
     }
 
     private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
@@ -1359,7 +1365,16 @@ public class LogService {
                 }
             break;
             case "userRedirect":
-                //muss noch
+                try {
+                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
+                        updateUserRedirectsMap(userId,dateLog);
+                    }
+                }
+                catch (Exception e) {
+                    System.out.println("USERREDIRECT EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
                 break;
             case "ratgeberGlossar":
                 break;
@@ -1778,6 +1793,19 @@ public class LogService {
             postClicksMap.put(key, newPostClicks);
         }
 
+    }
+
+    public void updateUserRedirectsMap(Long userId, LocalDateTime dateLog) {
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String key = uniId + "_" + userId;
+
+        UserRedirectsHourly userRedirects = userRedirectsMap.get(key);
+        if (userRedirects != null) {
+            userRedirects.setRedirects(userRedirects.getRedirects() + 1);
+        } else {
+            UserRedirectsHourly newUserRedirects = new UserRedirectsHourly(uniId, userId, dateLog.getHour(), 1L);
+            userRedirectsMap.put(key, newUserRedirects);
+        }
     }
 
 

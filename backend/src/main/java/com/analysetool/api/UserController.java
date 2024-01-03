@@ -703,9 +703,9 @@ public class UserController {
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "none";
-            if (wpUserMeta.contains("administrator")) return "admin";
+            if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "admin";
             if (wpUserMeta.contains("plus-anbieter")) return "plus";
-            if (wpUserMeta.contains("um_basis-anbieter-plus")) return "basis-plus";
+            if (wpUserMeta.contains("um_basis-anbieter-plus")  || wpUserMeta.contains("um_basis-plus")) return "basis-plus";
             if(wpUserMeta.contains("um_premium-anbieter-sponsoren")) return "sponsor";
             if (wpUserMeta.contains("premium-anbieter")) return "premium";
             if(wpUserMeta.contains("um_basis-anbieter")) return "basis";

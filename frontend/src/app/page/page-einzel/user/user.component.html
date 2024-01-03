@@ -6,8 +6,9 @@
   <div class="user-type-box">
     <p>{{data.accountType}}</p>
   </div>
-  <div class="user-id-box">
-    <p>{{data.id}}</p>
+  <div class="user-badgs-box">
+    <img *ngIf="data.teleDE" alt="SecureITy made in DE" src="assets/IT_de.png">
+    <img *ngIf="data.teleEU" alt="SecureITy made in EU" src="assets/IT_eu.png">
   </div>
   <div class="user-potential-box">
     <div class="potential-background">
@@ -16,6 +17,9 @@
   </div>
   <div class="user-email-box">
     <p>{{data.email}}</p>
+  </div>
+  <div class="user-id-box">
+    <p>{{data.id}}</p>
   </div>
   <div class="user-profile-views-box">
     <img alt="Profil Aufrufe" src="assets/profile_views.png">
@@ -29,8 +33,9 @@
     <p>TA: {{+parseFloat(data.viewsPerDay.toFixed(2))}}</p>
   </div>
   <div class="user-tendency-box">
-    <img *ngIf="this.tendency == 'steigend'" alt="Tendenz steigend" src="assets/trend_up.png">
-    <img *ngIf="this.tendency == 'fallend'" alt="Tendenz fallend" src="assets/trend_down.png">
+    <img *ngIf="this.data.tendency" alt="Tendenz steigend" src="assets/trend_up.png">
+    <img *ngIf="!this.data.tendency" alt="Tendenz fallend" src="assets/trend_down.png">
+    <img *ngIf="this.data.tendency == null" alt="Tendenz stagnierend" src="assets/trend_flat.png">
   </div>
 
 </div>

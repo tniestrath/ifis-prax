@@ -27,6 +27,7 @@
   width: 100px ;
   border-radius: 5px ;
   border: 1px solid #EFEFEF ;
+  margin: 0;
 }
 
 .user-name-box{
@@ -41,8 +42,15 @@
   grid-column: 2;
   font-style: italic;
 }
-.user-id-box{
+.user-badges-box{
   grid-row: 2;
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+.user-id-box{
+  grid-row: 4;
   grid-column: 3;
   font-style: italic;
   font-weight: lighter;
@@ -106,4 +114,5 @@ p{
 img {
   max-height: 90%;
   aspect-ratio: auto 1/1;
+  margin-right: 2px;
 }

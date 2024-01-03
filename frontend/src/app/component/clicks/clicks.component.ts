@@ -141,7 +141,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
 
       const p = document.createElement("P");
       p.classList.add("clicks-item-text");
-      p.innerText = text + ": " + chart.data.datasets[0].data[datasetIndex];
+      p.innerText = text + ": " + Util.formatNumbers(Number(chart.data.datasets[0].data[datasetIndex]));
 
       ul.appendChild(li);
       li.appendChild(spanBox);
@@ -238,4 +238,5 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
   }
 
 
+  protected readonly Util = Util;
 }

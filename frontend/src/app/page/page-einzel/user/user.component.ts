@@ -12,7 +12,7 @@ import {SysVars} from "../../../services/sys-vars-service";
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements SelectableComponent, OnInit {
-  @Input() data: User = new User("", "", "", 0, 0, 0, null, 0, 50, "", 0, "");
+  @Input() data: User = new User();
 
   bgColor: string = "0";
 
@@ -26,9 +26,7 @@ export class UserComponent implements SelectableComponent, OnInit {
   }
 
   ngOnInit(): void {
-    if (this.data.tendency == null) this.tendency = "stagniert"
-    else if (!this.data.tendency) this.tendency = "fallend"
-    else if (this.data.tendency) this.tendency = "steigend";
+
   }
 
   protected readonly Util = Util;

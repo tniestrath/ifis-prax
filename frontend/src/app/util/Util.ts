@@ -47,7 +47,7 @@ export default class Util {
     let day = "";
     if (offset_day) now.setDate(now.getDate() + offset_day);
     if (now.getMonth() + 1 < 10){
-      month = "" + now.getMonth() + 1; // Hä
+      month = "0" + (now.getMonth() + 1); // Hä
     }
     if (now.getDate() < 10){
       day = "0" + now.getDay();

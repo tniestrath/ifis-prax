@@ -40,7 +40,12 @@ export class SystemloadComponent extends DashBaseComponent implements OnInit{
     chart?.data.datasets[0].data.shift();
     chart?.data.datasets[0].data.push(Number(newData));
     this.updateMaxAvg(chart);
-    chart.update("none");
+    try {
+      chart.update("none");
+    } catch (e) {
+
+    }
+
   }
 
   updateMaxAvg(chart: any) {

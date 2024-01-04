@@ -194,7 +194,7 @@ export class DbService {
 
   async getAllUsers(page: number, size: number, search: string, filter: { sort: string, accType: string, usrType: string }, signal: AbortSignal) {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", search).replace("ACCFILTER", filter.accType).replace("USRFITLER", filter.usrType).replace("SORTER", filter.sort), {credentials: "include", signal: signal}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then((res : {users: any[], count : number}) => {
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", search).replace("ACCFILTER", filter.accType).replace("USRFILTER", filter.usrType).replace("SORTER", filter.sort), {credentials: "include", signal: signal}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then((res : {users: any[], count : number}) => {
       DbService.Users = res.users;
       return res;
     })

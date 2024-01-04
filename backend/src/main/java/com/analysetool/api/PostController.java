@@ -690,7 +690,6 @@ public class PostController {
         }
 
         Post post = postRepository.findById(id).get();
-        List<String> tags = new ArrayList<>();
         String type = "default";
         List<Long> tagIDs = null;
         if(termRelationRepo.existsByObjectId(post.getId())){
@@ -714,8 +713,6 @@ public class PostController {
                         if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
                             type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
                         }
-                    } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
-                        tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
                     }
                 }
             }
@@ -983,7 +980,7 @@ public class PostController {
 
 
     @GetMapping("/page")
-    public String testPage(Integer page, Integer size, String sortBy) throws JSONException, ParseException {
+    public String getPostsPageable(Integer page, Integer size, String sortBy) throws JSONException, ParseException {
         List<Long> list = postRepo.findByTypeOrderByDateDesc(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
         List<JSONObject> stats = new ArrayList<>();
         for(Long id : list) {

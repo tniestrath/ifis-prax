@@ -33,7 +33,7 @@ public interface UserViewsByHourDLCRepository extends JpaRepository<UserViewsByH
     List<Integer> getLast7Uni();
 
 
-    @Query("SELECT u.uniId FROM UserViewsByHourDLC u WHERE u.id IN :Ids ORDER BY u.uniId DESC")
+    @Query("SELECT DISTINCT u.uniId FROM UserViewsByHourDLC u WHERE u.id IN :Ids ORDER BY u.uniId DESC")
     List<Integer> getAvailableUniIdIn(@Param("Ids") List<Integer> Ids);
 
 }

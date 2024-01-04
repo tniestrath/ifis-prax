@@ -17,7 +17,7 @@ public interface PostClicksByHourDLCRepository extends JpaRepository<PostClicksB
     @Query("SELECT SUM(p.clicks) FROM PostClicksByHourDLC p WHERE p.postId IN :userId AND p.uniId IN :uniIds")
     Long sumClicksByPostIdInAndUniIdIn(@Param("postId") List<Long> postId, @Param("uniIds") List<Integer> uniIds);
 
-    @Query("SELECT p.uniId FROM PostClicksByHourDLC p WHERE p.id IN :Ids ORDER BY p.uniId DESC")
+    @Query("SELECT DISTINCT p.uniId FROM PostClicksByHourDLC p WHERE p.id IN :Ids ORDER BY p.uniId DESC")
     List<Integer> getAvailableUniIdIn(@Param("Ids") List<Integer> Ids);
 }
 

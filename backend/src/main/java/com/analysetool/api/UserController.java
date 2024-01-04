@@ -146,49 +146,96 @@ public class UserController {
      * @param page which page of results of the given size you want to fetch.
      * @param size the amount of results you want per page.
      * @param search the search-term you want results for, give empty string for none.
-     * @param filter "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
+     * @param filterAbo "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
      * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
      * @return
      * @throws JSONException
      */
     @GetMapping("/getAll")
-    public String getAll(Integer page, Integer size, String search, String filter, String sorter) throws JSONException {
+    public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
         List<WPUser> list;
 
-        if(sorter != null && !filter.isBlank()) {
-            switch (sorter) {
-                case "profileView" -> {
-                    list = userRepository.getAllNameLikeAndProfileViews(search, filter, PageRequest.of(page, size));
+
+        if(sorter != null) {
+            //Both filters unused, sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsAll(search, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepository.getAllNameLikeAndContentViewsAll(search, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAll(search, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
                 }
-                case "contentView" -> {
-                    list = userRepository.getAllNameLikeAndContentViews(search, filter, PageRequest.of(page, size));
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsAbo(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepository.getAllNameLikeAndContentViewsAbo(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAbo(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepository.getAllByNicenameContainingAbo(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
                 }
-                case "viewsByTime" -> {
-                    list = userRepository.getAllNameLikeAndProfileViewsByTime(search, filter, PageRequest.of(page, size));
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Type Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsCompany(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepository.getAllNameLikeAndContentViewsCompany(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeCompany(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepository.getAllByNicenameContainingCompany(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
                 }
-                default -> {
-                    list = userRepository.getAllByNicenameContaining(search, filter, PageRequest.of(page, size, Sort.by("id").descending()));
-                }
-            }
-        } else if(sorter == null && !filter.isBlank()){
-            list = userRepository.getAllByNicenameContaining(search, filter, PageRequest.of(page, size, Sort.by("id").descending()));
-        } else if(sorter != null  && filter.isBlank()){
-            switch (sorter) {
-                case "profileView" -> {
-                    list = userRepository.getAllNameLikeAndProfileViewsAll(search, PageRequest.of(page, size));
-                }
-                case "contentView" -> {
-                    list = userRepository.getAllNameLikeAndContentViewsAll(search, PageRequest.of(page, size));
-                }
-                case "viewsByTime" -> {
-                    list = userRepository.getAllNameLikeAndProfileViewsByTimeAll(search, PageRequest.of(page, size));
-                }
-                default -> {
-                    list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size));
+            } else {
+                //Abo, Company type and sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepository.getAllNameLikeAndContentViewsAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepository.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
                 }
             }
         } else {
-            list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size));
+            //Neither filters nor sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used.
+                list = userRepository.getAllByNicenameContainingAbo(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Filter used.
+                list = userRepository.getAllByNicenameContainingCompany(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else {
+                //Both filters used, no sorter used.
+                list = userRepository.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+            }
         }
 
         JSONArray response = new JSONArray();
@@ -349,15 +396,19 @@ public class UserController {
         long viewsBlog = 0;
         long viewsArtikel = 0;
         long viewsProfile = 0;
+        long viewsNews = 0;
+        long viewsWP = 0;
+        long viewsPodcast = 0;
         try {
             viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
         } catch (NullPointerException ignored) {
         }
         int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+        int tagIdNews = termRepo.findBySlug("news").getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug("whitepaper").getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug("podcast").getId().intValue();
 
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
-        long viewsPresse = 0;
         List<Post> posts = postRepository.findByAuthor(id.intValue());
 
         for (Post post : posts) {
@@ -367,22 +418,25 @@ public class UserController {
                     for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
                         if (termTax.getTermId() == tagIdBlog) {
                             viewsBlog = viewsBlog + Stat.getClicks();
-                        }
-                        if (termTax.getTermId() == tagIdArtikel) {
+                        } else if (termTax.getTermId() == tagIdArtikel) {
                             viewsArtikel = viewsArtikel + Stat.getClicks();
+                        } else if (termTax.getTermId() == tagIdNews) {
+                            viewsNews = viewsNews + Stat.getClicks();
+                        } else if(termTax.getTermId() == tagIdWhitepaper) {
+                            viewsWP += Stat.getClicks();
+                        } else if(termTax.getTermId() == tagIdPodcast) {
+                            viewsPodcast += Stat.getClicks();
                         }
-                        if (termTax.getTermId() == tagIdPresse) {
-                            viewsPresse = viewsPresse + Stat.getClicks();
-                        }}
-
-
+                    }
                 }
             }
         }
         JSONObject obj = new JSONObject();
         obj.put("viewsBlog", viewsBlog);
         obj.put("viewsArtikel", viewsArtikel);
-        obj.put("viewsPresse", viewsPresse);
+        obj.put("viewsNews", viewsNews);
+        obj.put("viewsWhitepaper", viewsWP);
+        obj.put("viewsPodcast", viewsPodcast);
         obj.put("viewsProfile", viewsProfile);
         return obj.toString();
 

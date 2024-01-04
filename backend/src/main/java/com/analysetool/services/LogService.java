@@ -110,7 +110,7 @@ public class LogService {
     private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
     private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
-    private final String RedirectUserPattern ="/.*GET .*goto=.*\"https?:/.*/user/(\\S*)/";
+    private final String RedirectUserPattern ="/.*GET .*goto/.*\"https?:/.*/user/(\\S*)/";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
 
     //Blog view +1 bei match

@@ -48,6 +48,7 @@ export enum dbUrl {
   GET_POSTS_ALL_PAGED = "/posts/pageByTitle?page=PAGE&size=SIZE&sortBy=SORTER&search=SEARCH",
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
+  GET_POSTS_BY_AUTHOR = "/posts/getPostsByAuthor?authorId=ID&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH",
   GET_POSTS_PER_TYPE = "/bericht/getPostsByType",
   GET_POSTS_PER_TYPE_YESTERDAY = "/bericht/getPostsByTypeYesterday",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
@@ -209,6 +210,10 @@ export class DbService {
   async getUserPostsWithStats(id : string){
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_WITH_STATS) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserPostsPaged(id : string, page : number, size : number, filter : string, search : string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_BY_AUTHOR).replace("ID", id).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserImgSrc(id : string){

@@ -38,7 +38,8 @@ import { ImgFallbackDirective } from './img-fallback.directive';
 import {
   PostListComponent,
   PodcastListComponent,
-  RatgeberListComponent
+  RatgeberListComponent,
+  UserPostListComponent
 } from './component/post/post-list/post-list.component';
 import {
   PostListItemComponent
@@ -86,6 +87,7 @@ import { UserComparatorComponent } from './page/page-einzel/user/user-comparator
     PostListComponent,
     PodcastListComponent,
     RatgeberListComponent,
+    UserPostListComponent,
     PostListItemComponent,
     TagChartComponent,
     CallUpChartComponent,

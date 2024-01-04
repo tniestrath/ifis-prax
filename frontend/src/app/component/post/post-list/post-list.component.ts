@@ -7,6 +7,7 @@ import {Post} from "../Post";
 import {Top5PostsComponent} from "../top5-posts/top5-posts.component";
 import _default from "chart.js/dist/core/core.interaction";
 import index = _default.modes.index;
+import {SysVars} from "../../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-post-list',
@@ -26,8 +27,8 @@ export class PostListComponent extends DashBaseComponent{
   pageIndex = 0;
   pageSize = 20;
   pagesComplete = false;
-  fetch_fn: any;
   search_text: string = "";
+  filter: string = " ";
 
   selectorItems : SelectorItem[] = [];
   selectorItemsBackup = this.selectorItems;
@@ -35,7 +36,6 @@ export class PostListComponent extends DashBaseComponent{
 
   ngOnInit(): void {
     this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen");
-    this.fetch_fn = this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.search_text);
     this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.search_text).then((value : {posts: Post[], count : number}) => {
       for (const valueElement of value.posts) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
@@ -182,6 +182,85 @@ export class RatgeberListComponent extends PostListComponent{
   }
 
   override onScrollEnd() {
+  }
+
+}
+
+@Component({
+  selector: 'dash-list-user-post',
+  templateUrl: './post-list.component.html',
+  styleUrls: ['./post-list.component.css', "../../dash-base/dash-base.component.css"]
+})
+export class UserPostListComponent extends PostListComponent{
+
+  override ngOnInit() {
+    this.setToolTip("Auflistung aller Inhalte dieses Nutzers, sie können nach Datum oder Clicks sortieren oder nach Schlagwörtern in Titel oder Tags suchen");
+    this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, " ", "").then((res: Post[]) => {
+      this.selectorItems = [];
+      for (const valueElement of res) {
+        this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        this.selectorItems.sort((a, b) => Number(b.data.id) - Number(a.data.id));
+      }
+      this.pageIndex++;
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+
+    this.input_search_cb = (event: { target: { value: string; }; }) => {
+      this.search_text = event.target.value;
+      this.loadItems();
+    }
+    this.input_all_cb = () => {
+      this.filter = " ";
+      this.loadItems();
+    }
+    this.input_whitepaper_cb = () => {
+      this.filter = "whitepaper";
+      this.loadItems();
+    }
+    this.input_news_cb = () => {
+      this.filter = "news";
+      this.loadItems()
+    }
+    this.input_blog_cb = () => {
+      this.filter = "blog";
+      this.loadItems();
+    }
+    this.input_article_cb = () => {
+      this.filter = "artikel";
+      this.loadItems();
+    }
+  }
+
+  loadItems(){
+    this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.filter, this.search_text).then((res: Post[]) => {
+      this.selectorItems = [];
+      for (const valueElement of res) {
+        this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+      }
+      this.pageIndex++;
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+  }
+
+  override onScrollEnd() {
+    if (!this.pagesComplete){
+      let scroll = Date.now();
+      if (scroll >= (this.lastScroll + 100)){
+        console.log(this.pageIndex)
+        this.db.getUserPostsPaged(SysVars.USER_ID, this.pageIndex, this.pageSize, "date", this.search_text).then((value : {posts:  Post[], count : number}) => {
+          for (const valueElement of value.posts) {
+            this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+          }
+          if (value.count <= 0){
+            this.pagesComplete = true;
+          }
+          this.selectorItemsLoaded.next(this.selectorItems);
+        });
+        this.pageIndex++;
+      }
+      else {}
+      this.lastScroll = scroll;
+    }
   }
 
 }

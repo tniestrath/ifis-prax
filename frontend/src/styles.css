@@ -15,11 +15,10 @@ h1{
 .page-content{
   padding: 5px;
   display: grid;
-  grid-template-rows:    calc(calc(100vh - 85px) / 4)
-                         calc(calc(100vh - 85px) / 4)
-                         calc(calc(100vh - 85px) / 4)
-                         calc(calc(100vh - 85px) / 4);
-  grid-template-columns: calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6) calc(calc(100vw - 35px) / 6);
+  height: calc(100% - 10px);
+  box-sizing: border-box;
+  grid-template-rows: repeat(6, calc(calc(100% - 10px) / 4));
+  grid-template-columns: repeat(6, 1fr);
   grid-gap: 5px;
 }
 .grid-1-1-2-5{

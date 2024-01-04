@@ -200,14 +200,14 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
     this.c_chart_total = 0;
     this.p_chart_total = 0;
 
-    this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsPresse: number} | string) => {
+    this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsNews: number} | string) => {
       if (typeof res !== "string"){
         this.isError = false;
-        this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News"], [res.viewsArtikel,res.viewsBlog, res.viewsPresse], undefined);
-        this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsPresse)], undefined);
+        this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News"], [res.viewsArtikel,res.viewsBlog, res.viewsNews], undefined);
+        this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsNews)], undefined);
         this.createLegend("clicks-content-box", this.c_chart);
         this.createLegend("clicks-profile-box", this.p_chart);
-        this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsPresse;
+        this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsNews;
         this.p_chart_total = res.viewsProfile + this.c_chart_total;
         this.cdr.detectChanges();
       }

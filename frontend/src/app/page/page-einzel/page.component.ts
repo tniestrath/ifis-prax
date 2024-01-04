@@ -17,7 +17,12 @@ import {User} from "./user/user";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
-import {PodcastListComponent, PostListComponent, RatgeberListComponent} from "../../component/post/post-list/post-list.component";
+import {
+  PodcastListComponent,
+  PostListComponent,
+  RatgeberListComponent,
+  UserPostListComponent
+} from "../../component/post/post-list/post-list.component";
 import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
 import {CallUpChartComponent} from "../../component/call-up-chart/call-up-chart.component";
 import {Top5ArticleComponent, Top5BlogComponent, Top5NewsComponent, Top5WhitepaperComponent} from "../../component/post/top5-posts/top5-posts.component";
@@ -35,7 +40,6 @@ import {UserComparatorComponent} from "./user/user-comparator/user-comparator.co
   styleUrls: ['./page.component.css']
 })
 export class PageComponent implements OnInit {
-  displayContent: string = "none";
 
   resetSearchbar : Subject<boolean> = new Subject<boolean>();
 
@@ -62,14 +66,14 @@ export class PageComponent implements OnInit {
     return [
       {type: ClicksComponent, row: 1, col: 1, height: 4, width: 1},
       //@ts-ignore
-      {type: PostChartComponent, row: 1, col: 2, height: 2, width: 4},
+      {type: PostChartComponent, row: 1, col: 2, height: 2, width: 3},
       //@ts-ignore
-      {type: GaugeComponent, row: 4, col: 6, height: 1, width: 1},
-      {type: RelevanceComponent, row: 3, col: 6, height: 1, width: 1},
+      {type: GaugeComponent, row: 5, col: 1, height: 1, width: 1},
+      {type: RelevanceComponent, row: 6, col: 1, height: 1, width: 1},
       //@ts-ignore
-      {type: PostComponent, row: 1, col: 6, height: 2, width: 1},
       {type: ProfileCompletionComponent, row: 3, col: 2, height: 2, width: 2},
-      {type: OriginMapComponent, row: 3, col: 4, height: 2, width: 2}
+      {type: OriginMapComponent, row: 5, col: 2, height: 2, width: 2},
+      {type: UserPostListComponent, row: 1, col: 5, height: 4, width: 2}
     ];
   }
   getTagsPageCards() {
@@ -111,7 +115,6 @@ export class PageComponent implements OnInit {
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
-      this.displayContent = "grid";
       switch (page) {
         case "Anbieter":{
           this.cardsLoaded.next(this.getUserPageCards());

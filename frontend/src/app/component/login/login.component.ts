@@ -26,7 +26,6 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
     // @ts-ignore
     this.db.login(username, userpass).then(res => {
       res.text().then(ans => {
-        console.log(ans);
         ans = decodeURIComponent(ans);
         this.cs.deleteAll();
         this.styleLogin(Reason.CORRECT);

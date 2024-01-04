@@ -31,4 +31,5 @@ export class UserComponent implements SelectableComponent, OnInit {
 
   protected readonly Util = Util;
   protected readonly parseFloat = parseFloat;
+  protected readonly Math = Math;
 }

@@ -5,9 +5,9 @@
   </div>
   <div class="user-type-box">
     <div [style]="{display: 'flex', alignItems: 'center'}" [ngSwitch]="data.category">
-      <img *ngSwitchCase="'startup' || 'mittelstand' || 'großkonzern'" src="assets/company.png">
-      <img *ngSwitchCase="'hochschule'" src="assets/uni_hat.png">
-      <img *ngSwitchCase="'verband'" src="assets/verband.png">
+      <img *ngSwitchCase="'startup' || 'mittelstand' || 'großkonzern'" alt="unternehmen" src="assets/company.png">
+      <img *ngSwitchCase="'hochschule'" src="assets/uni_hat.png" alt="hochschule">
+      <img *ngSwitchCase="'verband'" src="assets/verband.png" alt="verband">
       <p [style.margin]="0">{{data.employees}}</p>
     </div>
   </div>
@@ -20,7 +20,7 @@
   </div>
   <div class="user-potential-box">
     <div class="potential-background">
-      <div class="potential-value" [style.width]="(data.potential * 100)+'%'"></div>
+      <div class="potential-value" [style.width]="Math.min((data.potential * 100), 100)+'%'"></div>
     </div>
   </div>
   <div class="user-email-box">

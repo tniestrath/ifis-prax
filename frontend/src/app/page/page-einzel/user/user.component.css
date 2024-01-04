@@ -74,16 +74,17 @@
   grid-column-start: 2;
   grid-column-end: 6;
   display: flex;
+  align-items: center;
 }
 .potential-background{
-  height: 10px;
+  height: 6px;
   width: 100%;
-  background-color: #5A7995;
+  background-color: #951D40;
   border-radius: 5px 0 0 5px;
 }
 .potential-value{
-  background-color: #951D40;
-  height: 10px;
+  background-color: #5A7995;
+  height: 6px;
 }
 .user-email-box{
   grid-row: 5;

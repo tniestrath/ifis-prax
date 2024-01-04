@@ -172,10 +172,27 @@ public class PostController {
         return list.toString();
     }
 
+    /**
+     *
+     * @param authorId the user_id of the author you want posts from.
+     * @param page the page of results you want to receive.
+     * @param size the amount of results you want to receive at most.
+     * @param filter the EXACT slug of a term the post is supposed to have.
+     * @param search a String you want to search the db for, searches content AND title of posts.
+     * @return a JSONObject containing a JSONArray of JSONObjects that contain PostStats, and the count of Posts originally found.
+     * @throws JSONException
+     * @throws ParseException
+     */
     @GetMapping("/getPostsByAuthor")
-    public String postsByAuthorPageable(long authorId, int page, int size) throws JSONException, ParseException {
+    public String postsByAuthorPageable(long authorId, int page, int size, String filter, String search) throws JSONException, ParseException {
         List<JSONObject> stats = new ArrayList<>();
-        List<Post> list = postRepo.findByAuthorIdAndStatusAndType(authorId, "publish", "post", PageRequest.of(page, size));
+        List<Post> list = null;
+        if(filter.isBlank()) {
+            list = postRepo.findByAuthorPageable(authorId, search, PageRequest.of(page, size));
+        } else {
+            list = postRepo.findByAuthorPageable(authorId, search, filter, PageRequest.of(page, size));
+        }
+
         for(Post post : list) {
             stats.add(new JSONObject(PostStatsByIdForFrontend(post.getId())));
         }

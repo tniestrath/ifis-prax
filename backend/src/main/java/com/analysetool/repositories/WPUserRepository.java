@@ -54,31 +54,31 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
 
 
 
-    @Query("SELECT u FROM WPUser u LEFT JOIN WPUserMeta um ON u.id = um.userId WHERE u.nicename LIKE %:nicename% AND um.key='wp_capabilities' AND um.value LIKE %:typeAbo% " +
-            "AND (um.key ='company_category' AND um.value LIKE %:typeCompany%) " +
+    @Query("SELECT u FROM WPUser u LEFT JOIN WPUserMeta um ON u.id = um.userId LEFT JOIN WPUserMeta wum ON u.id = wum.userId WHERE u.nicename LIKE %:nicename% AND um.key='wp_capabilities' AND um.value LIKE %:typeAbo% " +
+            "AND (wum.key ='company_category' AND wum.value LIKE %:typeCompany%) " +
             "ORDER BY u.id DESC")
     List<WPUser> getAllByNicenameContainingAboAndCompany(String nicename, String typeAbo, String typeCompany, Pageable pageable);
 
     @Query("SELECT u FROM WPUser u " +
-            "LEFT JOIN UserStats s ON u.id = s.userId LEFT JOIN WPUserMeta um ON u.id = um.userId " +
+            "LEFT JOIN UserStats s ON u.id = s.userId LEFT JOIN WPUserMeta um ON u.id = um.userId LEFT JOIN WPUserMeta wum ON u.id = wum.userId " +
             "WHERE u.nicename LIKE %:nicename% AND um.key='wp_capabilities' AND um.value LIKE %:typeAbo% " +
-            "AND (um.key ='company_category' AND um.value LIKE %:typeCompany%) " +
+            "AND (wum.key ='company_category' AND wum.value LIKE %:typeCompany%) " +
             "ORDER BY s.profileView DESC")
     List<WPUser> getAllNameLikeAndProfileViewsAboAndCompany(String nicename, String typeAbo, String typeCompany, Pageable pageable);
 
     @Query("SELECT u, SUM(ps.clicks) AS totalViews " +
             "FROM WPUser u " +
-            "LEFT JOIN Post p ON u.id = p.authorId LEFT JOIN PostStats ps ON p.id = ps.artId LEFT JOIN WPUserMeta um ON u.id = um.userId " +
+            "LEFT JOIN Post p ON u.id = p.authorId LEFT JOIN PostStats ps ON p.id = ps.artId LEFT JOIN WPUserMeta um ON u.id = um.userId LEFT JOIN WPUserMeta wum ON u.id = wum.userId " +
             "WHERE u.nicename LIKE %:nicename% AND um.key='wp_capabilities' AND um.value LIKE %:typeAbo% " +
-            "AND (um.key ='company_category' AND um.value LIKE %:typeCompany%) " +
+            "AND (wum.key ='company_category' AND wum.value LIKE %:typeCompany%) " +
             "GROUP BY u.id ORDER BY totalViews DESC")
     List<WPUser> getAllNameLikeAndContentViewsAboAndCompany(String nicename, String typeAbo, String typeCompany, Pageable pageable);
 
     @Query("SELECT u, (SUM(us.views) / (((SELECT MAX(uv.uniId) " +
             "FROM UserViewsByHourDLC uv)) - (MIN(us.uniId) + 1))) " +
-            "FROM WPUser u LEFT JOIN UserViewsByHourDLC us ON u.id = us.userId LEFT JOIN WPUserMeta um ON u.id = um.userId " +
+            "FROM WPUser u LEFT JOIN UserViewsByHourDLC us ON u.id = us.userId LEFT JOIN WPUserMeta um ON u.id = um.userId LEFT JOIN WPUserMeta wum ON u.id = wum.userId " +
             "WHERE u.nicename LIKE %:nicename% AND um.key='wp_capabilities' AND um.value LIKE %:typeAbo% " +
-            "AND (um.key ='company_category' AND um.value LIKE %:typeCompany%) " +
+            "AND (wum.key ='company_category' AND wum.value LIKE %:typeCompany%) " +
             "GROUP BY u.id ORDER BY 2 DESC")
     List<WPUser> getAllNameLikeAndProfileViewsByTimeAboAndCompany(String nicename, String typeAbo, String typeCompany, Pageable pageable);
 

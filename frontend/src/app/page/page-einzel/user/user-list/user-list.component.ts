@@ -4,6 +4,7 @@ import {Subject} from "rxjs";
 import {SelectorItem} from "../../../selector/selector.component";
 import {UserComponent} from "../user.component";
 import {DbObject} from "../../../../services/DbObject";
+import {SysVars} from "../../../../services/sys-vars-service";
 
 
 @Component({
@@ -19,7 +20,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
   pageIndex: number = 0;
   private pagesComplete: boolean = false;
   private lastScroll: number = 0;
-  private pageSize: number = 30;
+  private pageSize: number = 20;
 
   private searchText: string = "";
   private selectedFilter = {accType : "", usrType : " ", sort : "userId"};
@@ -43,7 +44,9 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
       let scroll = Date.now();
       if (scroll >= (this.lastScroll + 100)){
         console.log(this.pageIndex)
-        this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, new AbortController().signal).then((res : {users:  any[], count : number}) => {
+        let abort = new AbortController();
+        this.abortController.push(abort)
+        this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then((res : {users:  any[], count : number}) => {
           this.listItems.push(...res.users.map(value => new SelectorItem(UserComponent, value)));
           this.selectorItemsLoaded.next(this.listItems);
           if (res.count <= 0){
@@ -62,31 +65,9 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
     this.searchText = $event;
     this.pageIndex = 0;
     this.pagesComplete = false;
-    if (this.isSearching) {
-      for (let controller of this.abortController) {
-        controller.abort("newer request ahead");
-      }
+    for (let controller of this.abortController) {
+      controller.abort("newer request ahead");
     }
-    this.isSearching = true;
-    let abort = new AbortController();
-    this.abortController.push(abort);
-    this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then(res => {
-      this.pageIndex++;
-      this.listItems = res.users.map(value => new SelectorItem(UserComponent, value));
-      this.selectorItemsLoaded.next(this.listItems);
-    }).finally(() => this.isSearching = false);
-  }
-
-  onFilterClick($event: { accType: string; usrType: string; sort: string }) {
-    this.selectedFilter = $event;
-    this.pageIndex = 0;
-    this.pagesComplete = false;
-    if (this.isSearching) {
-      for (let controller of this.abortController) {
-        controller.abort("newer request ahead");
-      }
-    }
-    this.isSearching = true;
     let abort = new AbortController();
     this.abortController.push(abort);
     this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then(res => {
@@ -96,7 +77,26 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
       if (res.count <= 0){
         this.pagesComplete = true;
       }
-    }).finally(() => this.isSearching = false);
+    });
+  }
+
+  onFilterClick($event: { accType: string; usrType: string; sort: string }) {
+    this.selectedFilter = $event;
+    this.pageIndex = 0;
+    this.pagesComplete = false;
+    for (let controller of this.abortController) {
+      controller.abort("newer request ahead");
+    }
+    let abort = new AbortController();
+    this.abortController.push(abort);
+    this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then(res => {
+      this.pageIndex++;
+      this.listItems = res.users.map(value => new SelectorItem(UserComponent, value));
+      this.selectorItemsLoaded.next(this.listItems);
+      if (res.count <= 0){
+        this.pagesComplete = true;
+      }
+    });
   }
 
 }

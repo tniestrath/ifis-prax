@@ -197,7 +197,9 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", search).replace("ACCFILTER", filter.accType).replace("USRFILTER", filter.usrType).replace("SORTER", filter.sort), {credentials: "include", signal: signal}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then((res : {users: any[], count : number}) => {
       DbService.Users = res.users;
       return res;
-    })
+    }, reason => {
+      console.log(reason);
+      return {users: [], count: 0}});
   }
 
   async getUserPostsDay(id : string){

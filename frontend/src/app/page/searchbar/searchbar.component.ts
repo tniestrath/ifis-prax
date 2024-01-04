@@ -7,6 +7,7 @@ import {SysVars} from "../../services/sys-vars-service";
 import {Subject} from "rxjs";
 import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
 import {PdfService} from "../../services/pdf.service";
+import {DashColors} from "../../util/Util";
 
 
 @Component({
@@ -19,7 +20,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
   @Output() searchInput :string = "";
   @Output() currentSearch = new EventEmitter<string>();
   @Output() selected = new EventEmitter<DbObject>();
-  @Output() filter = new EventEmitter<{ accType : string, sort : string }>();
+  @Output() filter = new EventEmitter<{ accType : string, usrType : string, sort : string }>();
   @Output() compare = new EventEmitter<void>();
   @Input('reset') reset = new Subject<boolean>();
 
@@ -30,6 +31,9 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
   imgSrc: SafeUrl = "";
 
   shown = false;
+
+  selectedAccFilterString : string = "Alle";
+  selectedUsrFilterString : string = "Alle";
 
   ngOnInit(): void {
     this.setupFilter();
@@ -89,138 +93,121 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
   setupFilter() {
     let selected_account_filter = " ";
+    let selected_user_filter = " ";
+
     let selected_sort = "userId";
 
-    let filter_accountTypeWithoutPlan = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-without-plan") as HTMLDivElement;
-    let filter_accountTypeBasic = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-basic") as HTMLDivElement;
-    let filter_accountTypeBasicPlus = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-basicPlus") as HTMLDivElement;
-    let filter_accountTypePlus = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-plus") as HTMLDivElement;
-    let filter_accountTypePremium = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-premium") as HTMLDivElement;
-    let filter_accountTypeAll = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-filter-accountType-all") as HTMLDivElement;
+    let filterBoxes = (this.element.nativeElement as HTMLElement).querySelectorAll(".searchbar-filter-type") as NodeListOf<HTMLDivElement>;
+    let accFilters = (this.element.nativeElement as HTMLElement).querySelectorAll(".searchbar-filter-acc-type") as NodeListOf<HTMLDivElement>;
+    let usrFilters = (this.element.nativeElement as HTMLElement).querySelectorAll(".searchbar-filter-usr-type") as NodeListOf<HTMLDivElement>;
 
     let filter_sort_views = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-views") as HTMLDivElement;
     let filter_sort_contentViews = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-content-views") as HTMLDivElement;
     let filter_sort_viewsByTime = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-views-by-time") as HTMLDivElement;
     let filter_sort_uid = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-uid") as HTMLDivElement;
 
-    filter_accountTypeWithoutPlan.addEventListener("click", () => {
-      filter_accountTypeWithoutPlan.style.color = "#951D40";
-      filter_accountTypeWithoutPlan.style.fontWeight = "bold";
+    filterBoxes.forEach(item => {
+      item.addEventListener("mouseenter", ev => {
+        item.childNodes.forEach(item => {
+          if (item.nodeType == 1){
+            (item as HTMLDivElement).style.display = "block";
+          }
+        });
+      });
+      item.addEventListener("mouseleave", ev => {
+        item.childNodes.forEach(item => {
+          if (item.nodeType == 1){
+            (item as HTMLDivElement).style.display = "none";
+          }
+        });
+      });
+    });
 
-      filter_accountTypeBasic.style.color = "black";
-      filter_accountTypeBasic.style.fontWeight = "normal";
-      filter_accountTypeBasicPlus.style.color = "black";
-      filter_accountTypeBasicPlus.style.fontWeight = "normal";
-      filter_accountTypePlus.style.color = "black";
-      filter_accountTypePlus.style.fontWeight = "normal";
-      filter_accountTypePremium.style.color = "black";
-      filter_accountTypePremium.style.fontWeight = "normal";
-      filter_accountTypeAll.style.color = "black";
-      filter_accountTypeAll.style.fontWeight = "normal";
-      selected_account_filter = "\"um_anbieter\"";
+    accFilters.forEach(filter => {
+      filter.addEventListener("click", () => {
+        accFilters.forEach(otherFilter => {
+          otherFilter.style.color = "black";
+          otherFilter.style.fontWeight = "normal";
+        });
+        filter.style.color = DashColors.RED;
+        filter.style.fontWeight = "bold";
+        switch (filter.id) {
+          case "searchbar-filter-accountType-without-plan":
+            selected_account_filter = "\"um_anbieter\"";
+            this.selectedAccFilterString = "Ohne Abo";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+          case "searchbar-filter-accountType-basic":
+            selected_account_filter = "\"um_basis-anbieter\"";
+            this.selectedAccFilterString = "Basis";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+          case "searchbar-filter-accountType-basicPlus":
+            selected_account_filter = "\"um_basis-anbieter-plus\"";
+            this.selectedAccFilterString = "Basis+";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+          case "searchbar-filter-accountType-plus":
+            selected_account_filter = "\"um_plus-anbieter\"";
+            this.selectedAccFilterString = "Plus";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+          case "searchbar-filter-accountType-premium":
+            selected_account_filter = "\"um_premium-anbieter";
+            this.selectedAccFilterString = "Premium";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+          case "searchbar-filter-accountType-all":
+            selected_account_filter = " ";
+            this.selectedAccFilterString = "Alle";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+        }
+      });
+    });
 
-      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
-    })
-
-    filter_accountTypeBasic.addEventListener("click", () => {
-      filter_accountTypeWithoutPlan.style.color = "black";
-      filter_accountTypeBasic.style.color = "#951D40";
-      filter_accountTypeBasic.style.fontWeight = "bold";
-
-      filter_accountTypeBasicPlus.style.color = "black";
-      filter_accountTypeBasicPlus.style.fontWeight = "normal";
-      filter_accountTypePlus.style.color = "black";
-      filter_accountTypePlus.style.fontWeight = "normal";
-      filter_accountTypePremium.style.color = "black";
-      filter_accountTypePremium.style.fontWeight = "normal";
-      filter_accountTypeAll.style.color = "black";
-      filter_accountTypeAll.style.fontWeight = "normal";
-      selected_account_filter = "\"um_basis-anbieter\"";
-
-      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
-    })
-
-    filter_accountTypeBasicPlus.addEventListener("click", () => {
-      filter_accountTypeWithoutPlan.style.color = "black";
-      filter_accountTypeWithoutPlan.style.fontWeight = "normal";
-      filter_accountTypeBasic.style.color = "black";
-      filter_accountTypeBasic.style.fontWeight = "normal";
-
-      filter_accountTypeBasicPlus.style.color = "#951D40";
-      filter_accountTypeBasicPlus.style.fontWeight = "bold";
-
-      filter_accountTypePlus.style.color = "black";
-      filter_accountTypePlus.style.fontWeight = "normal";
-      filter_accountTypePremium.style.color = "black";
-      filter_accountTypePremium.style.fontWeight = "normal";
-      filter_accountTypeAll.style.color = "black";
-      filter_accountTypeAll.style.fontWeight = "normal";
-      selected_account_filter = "\"um_basis-anbieter-plus\"";
-
-      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
-    })
-
-    filter_accountTypePlus.addEventListener("click", () => {
-      filter_accountTypeWithoutPlan.style.color = "black";
-      filter_accountTypeWithoutPlan.style.fontWeight = "normal";
-      filter_accountTypeBasic.style.color = "black";
-      filter_accountTypeBasic.style.fontWeight = "normal";
-      filter_accountTypeBasicPlus.style.color = "black";
-      filter_accountTypeBasicPlus.style.fontWeight = "normal";
-
-      filter_accountTypePlus.style.color = "#951D40";
-      filter_accountTypePlus.style.fontWeight = "bold";
-
-      filter_accountTypePremium.style.color = "black";
-      filter_accountTypePremium.style.fontWeight = "normal";
-      filter_accountTypeAll.style.color = "black";
-      filter_accountTypeAll.style.fontWeight = "normal";
-      selected_account_filter = "\"um_plus-anbieter\"";
-
-      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
-    })
-
-    filter_accountTypePremium.addEventListener("click", () => {
-      filter_accountTypeWithoutPlan.style.color = "black";
-      filter_accountTypeWithoutPlan.style.fontWeight = "normal";
-      filter_accountTypeBasic.style.color = "black";
-      filter_accountTypeBasic.style.fontWeight = "normal";
-      filter_accountTypeBasicPlus.style.color = "black";
-      filter_accountTypeBasicPlus.style.fontWeight = "normal";
-      filter_accountTypePlus.style.color = "black";
-      filter_accountTypePlus.style.fontWeight = "normal";
-
-      filter_accountTypePremium.style.color = "#951D40";
-      filter_accountTypePremium.style.fontWeight = "bold";
-
-      filter_accountTypeAll.style.color = "black";
-      selected_account_filter = "\"um_premium-anbieter";
-
-      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
-    })
-
-
-    filter_accountTypeAll.addEventListener("click", () => {
-      filter_accountTypeWithoutPlan.style.color = "black";
-      filter_accountTypeWithoutPlan.style.fontWeight = "normal";
-      filter_accountTypeBasic.style.color = "black";
-      filter_accountTypeBasic.style.fontWeight = "normal";
-      filter_accountTypeBasicPlus.style.color = "black";
-      filter_accountTypeBasicPlus.style.fontWeight = "normal";
-      filter_accountTypePlus.style.color = "black";
-      filter_accountTypePlus.style.fontWeight = "normal";
-      filter_accountTypePremium.style.color = "black";
-      filter_accountTypePremium.style.fontWeight = "normal";
-
-      filter_accountTypeAll.style.color = "#951D40";
-      filter_accountTypeAll.style.fontWeight = "bold";
-      selected_account_filter = " ";
-
-      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
-    })
-    filter_accountTypeAll.style.color = "#951D40";
-    filter_accountTypeAll.style.fontWeight = "bold";
-
+    usrFilters.forEach(filter => {
+      filter.addEventListener("click", () => {
+        usrFilters.forEach(otherFilter => {
+          otherFilter.style.color = "black";
+          otherFilter.style.fontWeight = "normal";
+        });
+        filter.style.color = DashColors.RED;
+        filter.style.fontWeight = "bold";
+        switch (filter.id) {
+          case "searchbar-filter-userType-startup":
+            selected_user_filter = "Startup";
+            this.selectedUsrFilterString = "Startup";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+          case "searchbar-filter-userType-middle":
+            selected_user_filter = "Mittelstand";
+            this.selectedUsrFilterString = "Mittelstand";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+          case "searchbar-filter-userType-corporate":
+            selected_user_filter = "Großkonzern";
+            this.selectedUsrFilterString = "Großkonzern";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+          case "searchbar-filter-userType-uni":
+            selected_user_filter = "Hochschule";
+            this.selectedUsrFilterString = "Hochschule";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+          case "searchbar-filter-userType-collective":
+            selected_user_filter = "Verband";
+            this.selectedUsrFilterString = "Verband";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+          case "searchbar-filter-userType-all":
+            selected_user_filter = " ";
+            this.selectedUsrFilterString = "Alle";
+            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            break;
+        }
+      });
+    });
 
     filter_sort_views.addEventListener("click", () => {
       filter_sort_views.style.color = "#951D40";
@@ -234,7 +221,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_sort_uid.style.fontWeight = "normal";
       selected_sort = "profileView";
 
-      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
+      this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
     })
 
     filter_sort_contentViews.addEventListener("click", () => {
@@ -250,7 +237,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_sort_uid.style.fontWeight = "normal";
       selected_sort = "contentView";
 
-      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
+      this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
     })
 
     filter_sort_viewsByTime.addEventListener("click", () => {
@@ -266,7 +253,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_sort_uid.style.fontWeight = "normal";
       selected_sort = "viewsByTime";
 
-      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
+      this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
     })
 
     filter_sort_uid.addEventListener("click", () => {
@@ -281,7 +268,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_sort_uid.style.fontWeight = "bold";
       selected_sort = "userId";
 
-      this.filter.emit({accType: selected_account_filter, sort: selected_sort});
+      this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
     })
     filter_sort_uid.style.color = "#951D40";
     filter_sort_uid.style.fontWeight = "bold";

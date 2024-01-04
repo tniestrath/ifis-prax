@@ -22,7 +22,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
   private pageSize: number = 30;
 
   private searchText: string = "";
-  private selectedFilter = {accType : "", sort : "userId"};
+  private selectedFilter = {accType : "", usrType : " ", sort : "userId"};
   private isSearching: boolean = false;
   private abortController: AbortController[] = [];
 
@@ -77,7 +77,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
     }).finally(() => this.isSearching = false);
   }
 
-  onFilterClick($event: { accType: string; sort: string }) {
+  onFilterClick($event: { accType: string; usrType: string; sort: string }) {
     this.selectedFilter = $event;
     this.pageIndex = 0;
     this.pagesComplete = false;

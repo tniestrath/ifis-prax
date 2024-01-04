@@ -31,7 +31,7 @@ export enum dbUrl {
   HAS_USER_POST = "/users/hasPost?id=",
   GET_USER_PROFILE_COMPLETION = "/users/getPotentialById?userId=USERID",
 
-  GET_USERS_ALL = "/users/getAll?page=PAGE&size=SIZE&search=SEARCH&filter=FILTER&sorter=SORTER",
+  GET_USERS_ALL = "/users/getAll?page=PAGE&size=SIZE&search=SEARCH&filterAbo=ACCFILTER&filterTyp=USRFILTER&sorter=SORTER",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/users/getAccountTypeAllYesterday",
   GET_USERS_ACCOUNTTYPES_ALL_NEW = "/users/getNewUsersAll",
@@ -192,9 +192,9 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_TAG_RANKING), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getAllUsers(page: number, size: number, search: string, filter: { sort: string, accType: string }, signal: AbortSignal) {
+  async getAllUsers(page: number, size: number, search: string, filter: { sort: string, accType: string, usrType: string }, signal: AbortSignal) {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", search).replace("FILTER", filter.accType).replace("SORTER", filter.sort), {credentials: "include", signal: signal}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then((res : {users: any[], count : number}) => {
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", search).replace("ACCFILTER", filter.accType).replace("USRFITLER", filter.usrType).replace("SORTER", filter.sort), {credentials: "include", signal: signal}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then((res : {users: any[], count : number}) => {
       DbService.Users = res.users;
       return res;
     })

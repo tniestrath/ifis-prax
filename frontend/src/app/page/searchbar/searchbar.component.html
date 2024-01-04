@@ -10,12 +10,22 @@
   <div id="searchbar-filter-box">
     <div id="searchbar-filter">
       <div id="searchbar-filter-accountType-label">Filtern:</div>
-      <div id="searchbar-filter-accountType-without-plan">Ohne Abo</div>
-      <div id="searchbar-filter-accountType-basic">Basis</div>
-      <div id="searchbar-filter-accountType-basicPlus">Basis+</div>
-      <div id="searchbar-filter-accountType-plus">Plus</div>
-      <div id="searchbar-filter-accountType-premium">Premium</div>
-      <div id="searchbar-filter-accountType-all">Alle</div>
+      <div id="searchbar-filter-accountType" class="searchbar-filter-type">Abo: {{selectedAccFilterString}}
+        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-without-plan">Ohne Abo</div>
+        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-basic">Basis</div>
+        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-basicPlus">Basis+</div>
+        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-plus">Plus</div>
+        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-premium">Premium</div>
+        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-all">Alle</div>
+      </div>
+      <div id="searchbar-filter-userType" class="searchbar-filter-type">Typ: {{selectedUsrFilterString}}
+        <div class="searchbar-filter-usr-type" id="searchbar-filter-userType-startup">Startup</div>
+        <div class="searchbar-filter-usr-type" id="searchbar-filter-userType-middle">Mittelstand</div>
+        <div class="searchbar-filter-usr-type" id="searchbar-filter-userType-corporate">Großkonzern</div>
+        <div class="searchbar-filter-usr-type" id="searchbar-filter-userType-uni">Hochschule</div>
+        <div class="searchbar-filter-usr-type" id="searchbar-filter-userType-collective">Verband</div>
+        <div class="searchbar-filter-usr-type" id="searchbar-filter-userType-all">Alle</div>
+      </div>
     </div>
     <div id="searchbar-sorter">
       <div id="searchbar-sorter-by-label">Sortieren:</div>

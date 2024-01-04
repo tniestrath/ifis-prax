@@ -5,6 +5,9 @@ import com.analysetool.modells.UserViewsByHourDLC;
 import com.analysetool.repositories.PostClicksByHourDLCRepository;
 import com.analysetool.repositories.universalStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +31,8 @@ public class PostClicksByHourDLCService {
             clicksRepo.saveAll(postClicksMap.values());
         }
     }
+
+
 
     //Hour:Clicks
     public Map<Integer,Long> getPostClicksOfLast24HourByPostIdAndDaysBackDistributedByHour(Long postId, Integer daysback){
@@ -53,6 +58,20 @@ public class PostClicksByHourDLCService {
         }
 
         return hourlyClicks;
+    }
+
+    //Index 0 = Summe , Index 1 = Anzahl der tatsächlichen Tage
+    public Long[] getSumByDaysbackWithActualDaysBack(List<Long> postIds,int daysBack){
+        Pageable pageable = PageRequest.of(0, daysBack);
+        Page<Integer> page = uniRepo.getLastIdsByPageable(pageable);
+
+        List<Integer> uniIds = new ArrayList<>(page.getContent());
+        List<Integer> availableUniIds = new ArrayList<>(clicksRepo.getAvailableUniIdIn(uniIds));
+        Long actualDaysBack= (long)availableUniIds.size();
+
+        Long[] Ergebnis = new Long[]{clicksRepo.sumClicksByPostIdInAndUniIdIn(postIds,availableUniIds),actualDaysBack};
+
+        return Ergebnis;
     }
 
 }

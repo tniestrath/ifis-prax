@@ -30,6 +30,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    List<Post> findByAuthorIdAndStatusAndType(long userId, String status, String type, Pageable pageable);
 
+   @Query("SELECT p FROM Post p LEFT JOIN wp_term_relationships wtr ON wtr.objectId = p.id LEFT JOIN WpTermTaxonomy wtt ON wtr.termTaxonomyId = wtt.termTaxonomyId LEFT JOIN WPTerm wpt ON wpt.id = wtt.termId WHERE p.status= 'publish' AND p.type='post' AND p.authorId=:userId AND (p.title LIKE %:search% OR p.content LIKE %:search%) AND wpt.slug =:filter")
+   List<Post> findByAuthorPageable(long userId, String search, String filter, Pageable pageable);
+
+   @Query("SELECT p FROM Post p WHERE p.status= 'publish' AND p.type='post' AND p.authorId=:userId AND (p.title LIKE %:search% OR p.content LIKE %:search%)")
+   List<Post> findByAuthorPageable(long userId, String search, Pageable pageable);
+
    @Query("SELECT p.id from Post p where p.title =:title")
    List<Long> getIdByTitle(String title);
 

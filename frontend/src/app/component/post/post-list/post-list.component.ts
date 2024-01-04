@@ -195,9 +195,9 @@ export class UserPostListComponent extends PostListComponent{
 
   override ngOnInit() {
     this.setToolTip("Auflistung aller Inhalte dieses Nutzers, sie können nach Datum oder Clicks sortieren oder nach Schlagwörtern in Titel oder Tags suchen");
-    this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, " ", "").then((res: Post[]) => {
+    this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, " ", "").then((value : {posts:  Post[], count : number}) => {
       this.selectorItems = [];
-      for (const valueElement of res) {
+      for (const valueElement of value.posts) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
         this.selectorItems.sort((a, b) => Number(b.data.id) - Number(a.data.id));
       }
@@ -232,9 +232,9 @@ export class UserPostListComponent extends PostListComponent{
   }
 
   loadItems(){
-    this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.filter, this.search_text).then((res: Post[]) => {
+    this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.filter, this.search_text).then((value : {posts:  Post[], count : number}) => {
       this.selectorItems = [];
-      for (const valueElement of res) {
+      for (const valueElement of value.posts) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
       }
       this.pageIndex++;

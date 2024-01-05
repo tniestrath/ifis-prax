@@ -5,6 +5,7 @@ import com.analysetool.repositories.*;
 import com.analysetool.services.PostClicksByHourDLCService;
 import com.analysetool.services.UserViewsByHourDLCService;
 import com.analysetool.util.DashConfig;
+import com.analysetool.util.MathHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -1183,5 +1184,65 @@ public class UserController {
 
         return sortedScores.toString();
     }
+
+    @GetMapping("/getAllOutliersByProfilePerformances")
+    public String getAllOutliersByProfilePerformances(@RequestParam int daysback) {
+        String allProfilesPerformance = getProfilePerformanceOfAllProfiles(daysback);
+        if (allProfilesPerformance.equals("Späteren Zeitpunkt wählen")) {
+            return "Späteren Zeitpunkt wählen";
+        }
+        Map<Long, Double> performanceScores = processAndConvertToDouble(allProfilesPerformance);
+
+        List<Double> scores = new ArrayList<>(performanceScores.values());
+        List<Double> lowerOutliersValues = MathHelper.getLowerBoundOutliersDouble(scores);
+        List<Double> upperOutliersValues = MathHelper.getUpperBoundOutliersDouble(scores);
+
+        JSONArray jsonArray = new JSONArray();
+        JSONArray badOutliersArray = new JSONArray();
+        JSONArray goodOutliersArray = new JSONArray();
+
+        performanceScores.forEach((id, score) -> {
+            try{
+            if (lowerOutliersValues.contains(score)) {
+                JSONObject outlier = new JSONObject();
+                outlier.put("id", id);
+                outlier.put("score", score);
+                badOutliersArray.put(outlier);
+            }
+            if (upperOutliersValues.contains(score)) {
+                JSONObject outlier = new JSONObject();
+                outlier.put("id", id);
+                outlier.put("score", score);
+                goodOutliersArray.put(outlier);
+            }}catch(JSONException e){}
+        });
+
+        jsonArray.put(badOutliersArray);
+        jsonArray.put(goodOutliersArray);
+
+        return jsonArray.toString();
+    }
+
+    private Map<Long, Double> processAndConvertToDouble(String performanceData) {
+        Map<Long, Double> performanceScores = new HashMap<>();
+        // Entfernen der Anfangs- und Endklammern und Aufteilen der Einträge
+        String[] entries = performanceData.substring(1, performanceData.length() - 1).split(", ");
+
+        for (String entry : entries) {
+            String[] parts = entry.split("=");
+            if (parts.length == 2) {
+                try {
+                    Long id = Long.parseLong(parts[0].trim());
+                    Double score = Double.parseDouble(parts[1].trim());
+                    performanceScores.put(id, score);
+                } catch (NumberFormatException e) {
+
+                }
+            }
+        }
+
+        return performanceScores;
+    }
+
 
 }

@@ -1185,6 +1185,16 @@ public class UserController {
         return sortedScores.toString();
     }
 
+    /**
+     * Ermittelt die Ausreißer in den Profilleistungen für einen gegebenen Zeitraum.
+     * Die Methode identifiziert gute (hohe) und schlechte (niedrige) Ausreißer basierend auf den Performance-Daten.
+     * Gute Ausreißer sind jene mit ungewöhnlich hohen Leistungswerten, während schlechte Ausreißer ungewöhnlich niedrige Werte aufweisen.
+     *
+     * @param daysback Die Anzahl der Tage in der Vergangenheit, für die die Leistung analysiert werden soll.
+     * @return Ein JSON-String, der zwei Arrays enthält: das erste Array beinhaltet die schlechten Ausreißer, das zweite die guten Ausreißer.
+     *         Jedes Array besteht aus JSON-Objekten mit den Schlüsseln 'id' (Benutzer-ID) und 'score' (Leistungswert).
+     *         Gibt "Späteren Zeitpunkt wählen" zurück, falls die Leistungsdaten für den gewählten Zeitraum nicht verfügbar sind.
+     */
     @GetMapping("/getAllOutliersByProfilePerformances")
     public String getAllOutliersByProfilePerformances(@RequestParam int daysback) {
         String allProfilesPerformance = getProfilePerformanceOfAllProfiles(daysback);

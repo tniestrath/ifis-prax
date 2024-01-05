@@ -2,6 +2,8 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.services.PostClicksByHourDLCService;
+import com.analysetool.services.UserViewsByHourDLCService;
 import com.analysetool.util.DashConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +26,7 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -54,6 +57,10 @@ public class UserController {
     private WPMembershipRepository wpMemberRepo;
     @Autowired
     private UserViewsByHourDLCRepository userViewsRepo;
+    @Autowired
+    private UserViewsByHourDLCService userViewsHourService;
+    @Autowired
+    private PostClicksByHourDLCService postHourlyService;
 
     private final DashConfig config;
 
@@ -1107,7 +1114,7 @@ public class UserController {
      * @throws JsonProcessingException Wenn beim Verarbeiten der Daten zu einem JSON-String ein Fehler auftritt.
      */
     @GetMapping("/getUserViewsDistributedByHours")
-    public String getUserViewsDistributedByHours(@RequestParam int userId,@RequestParam int daysback) throws JsonProcessingException {
+    public String getUserViewsDistributedByHours(@RequestParam Long userId,@RequestParam int daysback) throws JsonProcessingException {
         int latestUniId = uniRepo.getLatestUniStat().getId() - daysback;
         int previousUniId = latestUniId - 1;
 
@@ -1133,6 +1140,48 @@ public class UserController {
         return objectMapper.writeValueAsString(hourlyViews);
     }
 
+    @GetMapping("/getProfilePerformance")
+    public String getProfilePerformance(@RequestParam Long userId, @RequestParam int daysback){
+        List<Long> postIdsOfUser = postRepository.findPostIdsByUserId(userId);
+        Long[] postClicksSum = postHourlyService.getSumByDaysbackWithActualDaysBack(postIdsOfUser,daysback);
+        Long[] userViewsSum = userViewsHourService.getSumByDaysbackWithActualDaysBack(userId,daysback);
 
+        Double Score = 0.0;
+        String Response="";
+
+        if(postClicksSum[1].equals(userViewsSum[1])){
+            Score= (postClicksSum[0] + userViewsSum[0])/(double)postClicksSum[1];
+            Response=Score.toString();
+        }else {Response="Späteren Zeitpunkt wählen";}
+
+        return Response;
+    }
+
+    @GetMapping("/getProfilePerformanceOfAllProfiles")
+    public String getProfilePerformanceOfAllProfiles(@RequestParam int daysback) {
+        List<Long> allUserIds = userRepository.findAllUserIds();
+        Map<Long, String> unsortedScores = new HashMap<>();
+
+        for (Long id : allUserIds) {
+            String score = getProfilePerformance(id, daysback);
+            if (score.equals("Späteren Zeitpunkt wählen")) {
+                return "Späteren Zeitpunkt wählen";
+            }
+            unsortedScores.put(id, score);
+        }
+
+        // Sortieren der Map-Einträge nach Werten (Scores)
+        List<Map.Entry<Long, String>> sortedEntries = unsortedScores.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toList());
+
+        // Erstellen einer LinkedHashMap, um die sortierte Reihenfolge zu bewahren
+        Map<Long, String> sortedScores = new LinkedHashMap<>();
+        for (Map.Entry<Long, String> entry : sortedEntries) {
+            sortedScores.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedScores.toString();
+    }
 
 }

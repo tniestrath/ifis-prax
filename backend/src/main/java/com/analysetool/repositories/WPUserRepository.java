@@ -21,7 +21,8 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
 
     boolean existsByActivationKey(String ActivationKey);
 
-    // benutzerdefinierte Methoden, falls benötigt
+    @Query("SELECT u.id FROM WPUser u")
+    List<Long> findAllUserIds();
 
 
     //Set: typeAbo and Name.

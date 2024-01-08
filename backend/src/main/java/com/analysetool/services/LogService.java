@@ -1374,7 +1374,7 @@ public class LogService {
             case "userRedirect":
                 try {
                     if(wpUserMetaRepository.getUserByURL(patternMatcher.group(0)) != null) {
-                        UserRedirectsHourly redirects = null;
+                        UserRedirectsHourly redirects;
                         if(userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(0))).isPresent()) {
                            redirects = userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(0))).get();
                        } else {

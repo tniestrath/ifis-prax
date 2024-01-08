@@ -34,6 +34,10 @@ import {SearchbarComponent} from "../searchbar/searchbar.component";
 import {ProfileCompletionComponent} from "../../component/profile-completion/profile-completion.component";
 import {UserListComponent} from "./user/user-list/user-list.component";
 import {UserComparatorComponent} from "./user/user-comparator/user-comparator.component";
+import {
+  UserStatsByPlanComponent,
+  UserStatsByPlanViewTypeCompareComponent
+} from "./user/user-stats-by-plan/user-stats-by-plan.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -58,7 +62,8 @@ export class PageComponent implements OnInit {
   getUserPageCards() {
     return [
       {type: UserComparatorComponent, row: 1, col: 1, height: 4, width: 6},
-
+      {type: UserStatsByPlanComponent, row: 1, col: 4, height: 1, width: 3},
+      {type: UserStatsByPlanViewTypeCompareComponent, row: 2, col: 4, height: 1, width: 3}
     ];
   }
 

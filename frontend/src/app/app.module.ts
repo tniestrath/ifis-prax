@@ -54,6 +54,10 @@ import { SystemloadComponent } from './component/system/systemload/systemload.co
 import { PostTypeComponent } from './component/post/post-type/post-type.component';
 import { UserListComponent } from './page/page-einzel/user/user-list/user-list.component';
 import { UserComparatorComponent } from './page/page-einzel/user/user-comparator/user-comparator.component';
+import {
+  UserStatsByPlanComponent,
+  UserStatsByPlanViewTypeCompareComponent
+} from './page/page-einzel/user/user-stats-by-plan/user-stats-by-plan.component';
 
 @NgModule({
   declarations: [
@@ -102,7 +106,9 @@ import { UserComparatorComponent } from './page/page-einzel/user/user-comparator
     SystemloadComponent,
     PostTypeComponent,
     UserListComponent,
-    UserComparatorComponent
+    UserComparatorComponent,
+    UserStatsByPlanComponent,
+    UserStatsByPlanViewTypeCompareComponent
   ],
     imports: [
         BrowserModule,

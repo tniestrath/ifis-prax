@@ -36,8 +36,8 @@ export enum dbUrl {
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/users/getAccountTypeAllYesterday",
   GET_USERS_ACCOUNTTYPES_ALL_NEW = "/users/getNewUsersAll",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
-  GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING = "/users/getUsersProfileViewsAveragesByTypeAndPosts",
   GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE = "/users/getUserProfileAndPostViewsAveragesByType",
+  GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING = "/users/getUserProfileViewsAveragesByTypeAndPosts",
 
 
   GET_POST = "/posts/getPostStatsByIdWithAuthor?id=ID",
@@ -469,6 +469,6 @@ export class DbService {
 
   async getUserClicksAverageByViewType() {
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 }

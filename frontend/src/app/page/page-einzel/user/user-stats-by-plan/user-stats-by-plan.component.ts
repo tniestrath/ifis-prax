@@ -9,7 +9,7 @@ import {DashColors} from "../../../../util/Util";
   styleUrls: ['./user-stats-by-plan.component.css', "../../../../component/dash-base/dash-base.component.css"]
 })
 export class UserStatsByPlanComponent extends DashBaseComponent implements OnInit{
-  protected title : string = "Durchschnittliche Profilaufrufe nach Abomodell und Postbesitz";
+  protected title : string = "Durchschnittliche Profilaufrufe nach Abomodell und Beitragsbesitz";
   protected datasetLabels : string[] = ["Profile ohne Beiträge", "Alle Profile", "Profile mit Beiträge"]
 
   ngOnInit(): void {

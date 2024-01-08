@@ -2,6 +2,8 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.services.PostClicksByHourDLCService;
+import com.analysetool.services.UserViewsByHourDLCService;
 import com.analysetool.util.DashConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,6 +56,10 @@ public class UserController {
     private WPMembershipRepository wpMemberRepo;
     @Autowired
     private UserViewsByHourDLCRepository userViewsRepo;
+    @Autowired
+    private UserViewsByHourDLCService userViewsHourService;
+    @Autowired
+    private PostClicksByHourDLCService postHourlyService;
 
     private final DashConfig config;
 
@@ -442,6 +448,24 @@ public class UserController {
 
     }
 
+    @GetMapping("/getUserProfileViewsAveragesByTypeAndPosts")
+    public String getUserProfileViewsAveragesByTypeAndPosts() throws JSONException {
+        JSONArray array = new JSONArray();
+        array.put(new JSONObject(getUserAveragesWithoutPosts()));
+        array.put(new JSONObject(getUserAveragesByType()));
+        array.put(new JSONObject(getUserAveragesWithPostsWithoutPostClicks()));
+        return array.toString();
+    }
+
+    @GetMapping("/getUserProfileAndPostViewsAveragesByType")
+    public String getUserProfileAndPostViewsAveragesByType() throws JSONException {
+        JSONArray array = new JSONArray();
+        array.put(new JSONObject(getUserAveragesWithPostsWithoutPostClicks()));
+        array.put(new JSONObject(getUserAveragesWithPostsOnlyPostClicks()));
+        return array.toString();
+    }
+
+
     /**
      * This accounts for users with and without posts, but does count post-views towards their averages. Hence, users with posts will seem better here.
      * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
@@ -499,6 +523,37 @@ public class UserController {
             boolean stats = userStatsRepository.existsByUserId(u.getId());
             if(hasPost(Math.toIntExact(u.getId()))) {
                 addCountAndProfileViewsByType(counts, clicks, u, stats);
+            }
+        }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        return averages.toString();
+    }
+
+    /**
+     * This accounts for ONLY users that have posts, counting ONLY their post views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
+    @GetMapping("/getUserAveragesWithPostsOnlyPostClicks")
+    public String getUserAveragesWithPostsOnlyPostClicks() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+        counts.put("sponsor", 0);
+
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
+        for(WPUser u : userRepository.findAll()) {
+            if(hasPost(Math.toIntExact(u.getId()))) {
+                addCountAndProfileViewsByType(counts, clicks, u, false, true);
             }
         }
         buildAveragesFromCountsAndClicks(counts, clicks, averages);
@@ -588,34 +643,34 @@ public class UserController {
         }
     }
 
-    private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean stats) throws JSONException {
+    private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews) throws JSONException {
         switch(getType(Math.toIntExact((u.getId())))) {
             case "basis" -> {
-                if(stats) {
+                if(profileViews) {
                     clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(u.getId()).getProfileView());
                 }
                 counts.put("basis", counts.getInt("basis") + 1);
             }
             case "basis-plus" -> {
-                if(stats) {
+                if(profileViews) {
                     clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
                 }
                 counts.put("basis-plus", counts.getInt("basis-plus") + 1);
             }
             case "plus" -> {
-                if(stats) {
+                if(profileViews) {
                     clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
                 }
                 counts.put("plus", counts.getInt("plus") + 1);
             }
             case "premium" -> {
-                if(stats) {
+                if(profileViews) {
                     clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(u.getId()).getProfileView());
                 }
                 counts.put("premium", counts.getInt("premium") + 1);
             }
             case "sponsor" -> {
-                if(stats) {
+                if(profileViews) {
                     clicks.put("sponsor", clicks.getInt("sponsor") + userStatsRepository.findByUserId(u.getId()).getProfileView());
                 }
                 counts.put("sponsor", counts.getInt("sponsor") + 1);
@@ -623,49 +678,49 @@ public class UserController {
         }
     }
 
-    private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean stats, boolean post) throws JSONException {
+    private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews, boolean postViews) throws JSONException {
         switch(getType(Math.toIntExact((u.getId())))) {
             case "basis" -> {
-                if(stats) {
+                if(profileViews) {
                     clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(u.getId()).getProfileView());
                 }
-                if(post) {
+                if(postViews) {
                     clicks.put("basis", clicks.getInt("basis") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
                 }
                 counts.put("basis", counts.getInt("basis") + 1);
             }
             case "basis-plus" -> {
-                if(stats) {
+                if(profileViews) {
                     clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
                 }
-                if(post) {
+                if(postViews) {
                     clicks.put("basis-plus", clicks.getInt("basis-plus") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
                 }
                 counts.put("basis-plus", counts.getInt("basis-plus") + 1);
             }
             case "plus" -> {
-                if(stats) {
+                if(profileViews) {
                     clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
                 }
-                if(post) {
+                if(postViews) {
                     clicks.put("plus", clicks.getInt("plus") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
                 }
                 counts.put("plus", counts.getInt("plus") + 1);
             }
             case "premium" -> {
-                if(stats) {
+                if(profileViews) {
                     clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(u.getId()).getProfileView());
                 }
-                if(post) {
+                if(postViews) {
                     clicks.put("premium", clicks.getInt("premium") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
                 }
                 counts.put("premium", counts.getInt("premium") + 1);
             }
             case "sponsor" -> {
-                if(stats) {
+                if(profileViews) {
                     clicks.put("sponsor", clicks.getInt("sponsor") + userStatsRepository.findByUserId(u.getId()).getProfileView());
                 }
-                if(post) {
+                if(postViews) {
                     clicks.put("sponsor", clicks.getInt("sponsor") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
                 }
                 counts.put("sponsor", counts.getInt("sponsor") + 1);
@@ -1107,7 +1162,7 @@ public class UserController {
      * @throws JsonProcessingException Wenn beim Verarbeiten der Daten zu einem JSON-String ein Fehler auftritt.
      */
     @GetMapping("/getUserViewsDistributedByHours")
-    public String getUserViewsDistributedByHours(@RequestParam int userId,@RequestParam int daysback) throws JsonProcessingException {
+    public String getUserViewsDistributedByHours(@RequestParam Long userId,@RequestParam int daysback) throws JsonProcessingException {
         int latestUniId = uniRepo.getLatestUniStat().getId() - daysback;
         int previousUniId = latestUniId - 1;
 
@@ -1132,5 +1187,122 @@ public class UserController {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(hourlyViews);
     }
+
+    /*
+        Unusable Query made method unusable which makes this one not find it. Blocked and reported
+    @GetMapping("/getProfilePerformance")
+    public String getProfilePerformance(@RequestParam Long userId, @RequestParam int daysback){
+        List<Long> postIdsOfUser = postRepository.findPostIdsByUserId(userId);
+        Long[] postClicksSum = postHourlyService.getSumByDaysbackWithActualDaysBack(postIdsOfUser,daysback);
+        Long[] userViewsSum = userViewsHourService.getSumByDaysbackWithActualDaysBack(userId,daysback);
+
+        Double Score = 0.0;
+        String Response="";
+
+        if(postClicksSum[1].equals(userViewsSum[1])){
+            Score= (postClicksSum[0] + userViewsSum[0])/(double)postClicksSum[1];
+            Response=Score.toString();
+        }else {Response="Späteren Zeitpunkt wählen";}
+
+        return Response;
+    }
+
+
+    @GetMapping("/getProfilePerformanceOfAllProfiles")
+    public String getProfilePerformanceOfAllProfiles(@RequestParam int daysback) {
+        List<Long> allUserIds = userRepository.findAllUserIds();
+        Map<Long, String> unsortedScores = new HashMap<>();
+
+        for (Long id : allUserIds) {
+            String score = getProfilePerformance(id, daysback);
+            if (score.equals("Späteren Zeitpunkt wählen")) {
+                return "Späteren Zeitpunkt wählen";
+            }
+            unsortedScores.put(id, score);
+        }
+
+        // Sortieren der Map-Einträge nach Werten (Scores)
+        List<Map.Entry<Long, String>> sortedEntries = unsortedScores.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toList());
+
+        // Erstellen einer LinkedHashMap, um die sortierte Reihenfolge zu bewahren
+        Map<Long, String> sortedScores = new LinkedHashMap<>();
+        for (Map.Entry<Long, String> entry : sortedEntries) {
+            sortedScores.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedScores.toString();
+    }
+    /**
+     * Ermittelt die Ausreißer in den Profilleistungen für einen gegebenen Zeitraum.
+     * Die Methode identifiziert gute (hohe) und schlechte (niedrige) Ausreißer basierend auf den Performance-Daten.
+     * Gute Ausreißer sind jene mit ungewöhnlich hohen Leistungswerten, während schlechte Ausreißer ungewöhnlich niedrige Werte aufweisen.
+     *
+     * @param daysback Die Anzahl der Tage in der Vergangenheit, für die die Leistung analysiert werden soll.
+     * @return Ein JSON-String, der zwei Arrays enthält: das erste Array beinhaltet die schlechten Ausreißer, das zweite die guten Ausreißer.
+     *         Jedes Array besteht aus JSON-Objekten mit den Schlüsseln 'id' (Benutzer-ID) und 'score' (Leistungswert).
+     *         Gibt "Späteren Zeitpunkt wählen" zurück, falls die Leistungsdaten für den gewählten Zeitraum nicht verfügbar sind.
+     */
+    /*
+    @GetMapping("/getAllOutliersByProfilePerformances")
+    public String getAllOutliersByProfilePerformances(@RequestParam int daysback) {
+        String allProfilesPerformance = getProfilePerformanceOfAllProfiles(daysback);
+        if (allProfilesPerformance.equals("Späteren Zeitpunkt wählen")) {
+            return "Späteren Zeitpunkt wählen";
+        }
+        Map<Long, Double> performanceScores = processAndConvertToDouble(allProfilesPerformance);
+
+        List<Double> scores = new ArrayList<>(performanceScores.values());
+        List<Double> lowerOutliersValues = MathHelper.getLowerBoundOutliersDouble(scores);
+        List<Double> upperOutliersValues = MathHelper.getUpperBoundOutliersDouble(scores);
+
+        JSONArray jsonArray = new JSONArray();
+        JSONArray badOutliersArray = new JSONArray();
+        JSONArray goodOutliersArray = new JSONArray();
+
+        performanceScores.forEach((id, score) -> {
+            try{
+            if (lowerOutliersValues.contains(score)) {
+                JSONObject outlier = new JSONObject();
+                outlier.put("id", id);
+                outlier.put("score", score);
+                badOutliersArray.put(outlier);
+            }
+            if (upperOutliersValues.contains(score)) {
+                JSONObject outlier = new JSONObject();
+                outlier.put("id", id);
+                outlier.put("score", score);
+                goodOutliersArray.put(outlier);
+            }}catch(JSONException e){}
+        });
+
+        jsonArray.put(badOutliersArray);
+        jsonArray.put(goodOutliersArray);
+
+        return jsonArray.toString();
+    }
+    */
+    private Map<Long, Double> processAndConvertToDouble(String performanceData) {
+        Map<Long, Double> performanceScores = new HashMap<>();
+        // Entfernen der Anfangs- und Endklammern und Aufteilen der Einträge
+        String[] entries = performanceData.substring(1, performanceData.length() - 1).split(", ");
+
+        for (String entry : entries) {
+            String[] parts = entry.split("=");
+            if (parts.length == 2) {
+                try {
+                    Long id = Long.parseLong(parts[0].trim());
+                    Double score = Double.parseDouble(parts[1].trim());
+                    performanceScores.put(id, score);
+                } catch (NumberFormatException e) {
+
+                }
+            }
+        }
+
+        return performanceScores;
+    }
+
 
 }

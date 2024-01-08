@@ -1,7 +1,6 @@
 package com.analysetool.services;
 
 import com.analysetool.modells.PostClicksByHourDLC;
-import com.analysetool.modells.UserViewsByHourDLC;
 import com.analysetool.repositories.PostClicksByHourDLCRepository;
 import com.analysetool.repositories.universalStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,8 @@ public class PostClicksByHourDLCService {
         }
     }
 
+
+
     //Hour:Clicks
     public Map<Integer,Long> getPostClicksOfLast24HourByPostIdAndDaysBackDistributedByHour(Long postId, Integer daysback){
         int latestUniId = uniRepo.getLatestUniStat().getId() - daysback;
@@ -54,5 +55,24 @@ public class PostClicksByHourDLCService {
 
         return hourlyClicks;
     }
+
+    //Index 0 = Summe , Index 1 = Anzahl der tatsächlichen Tage
+
+    /*
+    * Query used for this method throws an error and makes code entirely unusable.
+    public Long[] getSumByDaysbackWithActualDaysBack(List<Long> postIds,int daysBack){
+        Pageable pageable = PageRequest.of(0, daysBack);
+        Page<Integer> page = uniRepo.getLastIdsByPageable(pageable);
+
+        List<Integer> uniIds = new ArrayList<>(page.getContent());
+        List<Integer> availableUniIds = new ArrayList<>(clicksRepo.getAvailableUniIdIn(uniIds));
+        Long actualDaysBack= (long)availableUniIds.size();
+
+        Long[] Ergebnis = new Long[]{clicksRepo.sumClicksByPostIdInAndUniIdIn(postIds,availableUniIds),actualDaysBack};
+
+        return Ergebnis;
+    }
+    */
+
 
 }

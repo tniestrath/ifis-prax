@@ -110,7 +110,7 @@ public class LogService {
     private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
     private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
-    private final String RedirectUserPattern ="/.*GET .*goto=.*\"https?:/.*/user/(\\S*)/";
+    private final String RedirectUserPattern ="/.*GET .*goto/.*\"https?:/.*/user/(\\S*)/";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
@@ -920,6 +920,8 @@ public class LogService {
         contentDownloadsHourlyService.persistAllContentDownloadsHourly(contentDownloadsMap);
         postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
         userRedirectService.persistAllUserRedirectsHourly(userRedirectsMap);
+        //maps clearen nur um sicher zu gehen
+        cleanMaps();
     }
 
     private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
@@ -1808,6 +1810,12 @@ public class LogService {
         }
     }
 
+    public void cleanMaps(){
+        userRedirectsMap.clear();
+        postClicksMap.clear();
+        contentDownloadsMap.clear();
+        userViewsHourDLCMap.clear();
+    }
 
 
 

@@ -69,21 +69,25 @@ public class UserController {
 
     @GetMapping("/getById")
     public String getUserById(@RequestParam String id) throws JSONException {
-        JSONObject obj = new JSONObject();
-        var user = userRepository.findById(Long.valueOf(id));
-        if (user.isPresent()){
-            obj.put("id", user.get().getId());
-            obj.put("displayName",user.get().getDisplayName());
-            if (wpUserMetaRepository.existsByUserId(user.get().getId())){
-                String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.get().getId());
-                if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
-                if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
-                if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
-                if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
+        try {
+            JSONObject obj = new JSONObject();
+            var user = userRepository.findById(Long.valueOf(id));
+            if (user.isPresent()) {
+                obj.put("id", user.get().getId());
+                obj.put("displayName", user.get().getDisplayName());
+                if (wpUserMetaRepository.existsByUserId(user.get().getId())) {
+                    String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.get().getId());
+                    if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
+                    if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
+                    if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
+                    if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
+                    if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
+                }
             }
+            return obj.toString();
+        } catch (Exception e) {
+            return "";
         }
-        return obj.toString();
     }
 
     @GetMapping("/getByLogin")

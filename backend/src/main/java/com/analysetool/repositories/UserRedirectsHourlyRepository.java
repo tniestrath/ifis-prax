@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRedirectsHourlyRepository extends JpaRepository<UserRedirectsHourly, Integer> {
@@ -31,6 +32,6 @@ public interface UserRedirectsHourlyRepository extends JpaRepository<UserRedirec
     @Query("SELECT SUM(u.redirects) FROM UserRedirectsHourly u")
     Long getAllRedirectsSummed();
 
-
+    Optional<UserRedirectsHourly> getByUniIdAndHourAndUserId(int uniId, int hour, long userId);
 
 }

@@ -110,7 +110,6 @@ public class LogService {
     private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
     private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
-    private final String RedirectUserPattern ="/.*GET .*goto/.*\"https?:/.*/user/(\\S*)/";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
@@ -158,6 +157,8 @@ public class LogService {
     private final String newsletter = "^.*GET /newsletter/";
 
     private final String image = "^.*GET /ziel-des-marktplatz-it-sicherheit/";
+
+    private final String RedirectUserPattern =".*GET .*goto/(.*)\"";
 
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -251,6 +252,9 @@ public class LogService {
 
     @Autowired
     private UserRedirectsHourlyService userRedirectService;
+
+    @Autowired
+    private UserRedirectsHourlyRepository userRedirectRepo;
 
     private Map<String, UserViewsByHourDLC> userViewsHourDLCMap = new HashMap<>();
     private Map<String, ContentDownloadsHourly> contentDownloadsMap = new HashMap<>();
@@ -888,6 +892,7 @@ public class LogService {
                             }
 
 
+                        } case "userRedirect" -> {
                         }
                         default -> System.out.println(line);
                     }
@@ -1368,9 +1373,19 @@ public class LogService {
             break;
             case "userRedirect":
                 try {
-                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
-                        updateUserRedirectsMap(userId,dateLog);
+                    if(wpUserMetaRepository.getUserByURL(patternMatcher.group(0)) != null) {
+                        UserRedirectsHourly redirects = null;
+                        if(userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(0))).isPresent()) {
+                           redirects = userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(0))).get();
+                       } else {
+                           redirects = new UserRedirectsHourly();
+                           redirects.setHour(dateLog.getHour());
+                           redirects.setUniId(uniRepo.getLatestUniStat().getId());
+                           redirects.setUserId(wpUserMetaRepository.getUserByURL(patternMatcher.group(0)));
+                           redirects.setRedirects(0L);
+                       }
+                        redirects.setRedirects(redirects.getRedirects() + 1);
+                        userRedirectRepo.save(redirects);
                     }
                 }
                 catch (Exception e) {

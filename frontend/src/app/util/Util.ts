@@ -76,6 +76,22 @@ export default class Util {
       default : return "ERR";
     }
   }
+
+  static getColor(accountType : string){
+    switch (accountType) {
+      case "basis":
+        return DashColors.PLAN_BASIC;
+      case "basis-plus":
+        return DashColors.PLAN_BASIC_PLUS;
+      case "plus":
+        return DashColors.PLAN_PLUS;
+      case "premium":
+      case "sponsor":
+        return DashColors.PLAN_PREMIUM;
+      default:
+        return DashColors.PLAN_WITHOUT;
+    }
+  }
 }
 export enum DashColors {
   GREEN = "rgb(134,218,118)",
@@ -116,5 +132,5 @@ export enum DashColors {
   PLAN_WITHOUT = "rgb(200,200,200)",
   BACKGROUND = "rgb(200,200,200)",
 
-  GREY_50 = "rgba(200,200,200, .5)"
+  GREY_50 = "rgba(200,200,200, .5)",
 }

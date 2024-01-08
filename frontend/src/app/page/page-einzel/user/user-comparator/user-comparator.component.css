@@ -5,6 +5,7 @@
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 50px 50px calc(100% - 110px);
   grid-gap: 5px;
+  z-index: 5 !important;
 }
 
 #searchbar{

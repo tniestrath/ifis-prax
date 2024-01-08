@@ -17,11 +17,13 @@ export class UserComparatorComponent extends DashBaseComponent implements OnInit
       document.getElementById("user-list2").classList.add("hidden");
       // @ts-ignore
       document.getElementById("searchbar2").classList.add("hidden");
+      document.getElementsByClassName("user-stats-by-plan-box")[0].classList.remove("hidden");
     } else {
       // @ts-ignore
       document.getElementById("user-list2").classList.remove("hidden");
       // @ts-ignore
       document.getElementById("searchbar2").classList.remove("hidden");
+      document.getElementsByClassName("user-stats-by-plan-box")[0].classList.add("hidden");
     }
   }
 
@@ -34,6 +36,7 @@ export class UserComparatorComponent extends DashBaseComponent implements OnInit
       document.getElementById("user-list2").classList.add("hidden");
       // @ts-ignore
       document.getElementById("searchbar2").classList.add("hidden");
+      document.getElementsByClassName("user-stats-by-plan-box")[0].classList.remove("hidden");
     } else {
       // @ts-ignore
       document.getElementById("user-list").classList.remove("user-list-extended");
@@ -41,6 +44,7 @@ export class UserComparatorComponent extends DashBaseComponent implements OnInit
       document.getElementById("user-list2").classList.remove("hidden");
       // @ts-ignore
       document.getElementById("searchbar2").classList.remove("hidden");
+      document.getElementsByClassName("user-stats-by-plan-box")[0].classList.add("hidden");
     }
     this.isComparing = !this.isComparing;
   }

@@ -568,7 +568,7 @@ public class UserController {
 
     /**
      * This accounts for ONLY users that have posts, counting ONLY their post views.
-     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type. With a debug-label.
      * @throws JSONException .
      */
     @GetMapping("/getUserAveragesWithPostsOnlyPostClicks")

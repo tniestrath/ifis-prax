@@ -503,11 +503,43 @@ public class UserController {
 
     /**
      * This accounts for ONLY users that have posts, counting ONLY their profile views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type. With a debug-label.
+     * @throws JSONException .
+     */
+    @GetMapping("/getUserAveragesWithPostsWithoutPostClicks")
+    public String getUserAveragesWithPostsWithoutPostClicksDebug() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+        counts.put("sponsor", 0);
+
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
+        for(WPUser u : userRepository.findAll()) {
+            boolean stats = userStatsRepository.existsByUserId(u.getId());
+            if(hasPost(Math.toIntExact(u.getId()))) {
+                addCountAndProfileViewsByType(counts, clicks, u, stats);
+            }
+        }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        return averages + " ProfileViews";
+    }
+
+    /**
+     * This accounts for ONLY users that have posts, counting ONLY their profile views.
      * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
      * @throws JSONException .
      */
     @GetMapping("/getUserAveragesWithPostsWithoutPostClicks")
-    public String getUserAveragesWithPostsWithoutPostClicks() throws JSONException {
+    private String getUserAveragesWithPostsWithoutPostClicks() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();
         JSONObject averages = new JSONObject();
@@ -533,13 +565,44 @@ public class UserController {
         return averages.toString();
     }
 
+
     /**
      * This accounts for ONLY users that have posts, counting ONLY their post views.
      * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
      * @throws JSONException .
      */
     @GetMapping("/getUserAveragesWithPostsOnlyPostClicks")
-    public String getUserAveragesWithPostsOnlyPostClicks() throws JSONException {
+    public String getUserAveragesWithPostsOnlyPostClicksDebug() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+        counts.put("sponsor", 0);
+
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
+        for(WPUser u : userRepository.findAll()) {
+            if(hasPost(Math.toIntExact(u.getId()))) {
+                addCountAndProfileViewsByType(counts, clicks, u, false, true);
+            }
+        }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        return averages + " -PostClicks";
+    }
+
+    /**
+     * This accounts for ONLY users that have posts, counting ONLY their post views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
+    private String getUserAveragesWithPostsOnlyPostClicks() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();
         JSONObject averages = new JSONObject();

@@ -5,7 +5,6 @@ import com.analysetool.repositories.*;
 import com.analysetool.services.PostClicksByHourDLCService;
 import com.analysetool.services.UserViewsByHourDLCService;
 import com.analysetool.util.DashConfig;
-import com.analysetool.util.MathHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -27,7 +26,6 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -1141,6 +1139,8 @@ public class UserController {
         return objectMapper.writeValueAsString(hourlyViews);
     }
 
+    /*
+        Unusable Query made method unusable which makes this one not find it. Blocked and reported
     @GetMapping("/getProfilePerformance")
     public String getProfilePerformance(@RequestParam Long userId, @RequestParam int daysback){
         List<Long> postIdsOfUser = postRepository.findPostIdsByUserId(userId);
@@ -1157,6 +1157,7 @@ public class UserController {
 
         return Response;
     }
+
 
     @GetMapping("/getProfilePerformanceOfAllProfiles")
     public String getProfilePerformanceOfAllProfiles(@RequestParam int daysback) {
@@ -1184,7 +1185,6 @@ public class UserController {
 
         return sortedScores.toString();
     }
-
     /**
      * Ermittelt die Ausreißer in den Profilleistungen für einen gegebenen Zeitraum.
      * Die Methode identifiziert gute (hohe) und schlechte (niedrige) Ausreißer basierend auf den Performance-Daten.
@@ -1195,6 +1195,7 @@ public class UserController {
      *         Jedes Array besteht aus JSON-Objekten mit den Schlüsseln 'id' (Benutzer-ID) und 'score' (Leistungswert).
      *         Gibt "Späteren Zeitpunkt wählen" zurück, falls die Leistungsdaten für den gewählten Zeitraum nicht verfügbar sind.
      */
+    /*
     @GetMapping("/getAllOutliersByProfilePerformances")
     public String getAllOutliersByProfilePerformances(@RequestParam int daysback) {
         String allProfilesPerformance = getProfilePerformanceOfAllProfiles(daysback);
@@ -1232,7 +1233,7 @@ public class UserController {
 
         return jsonArray.toString();
     }
-
+    */
     private Map<Long, Double> processAndConvertToDouble(String performanceData) {
         Map<Long, Double> performanceScores = new HashMap<>();
         // Entfernen der Anfangs- und Endklammern und Aufteilen der Einträge

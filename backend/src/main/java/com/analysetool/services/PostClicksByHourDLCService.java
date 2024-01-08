@@ -1,13 +1,9 @@
 package com.analysetool.services;
 
 import com.analysetool.modells.PostClicksByHourDLC;
-import com.analysetool.modells.UserViewsByHourDLC;
 import com.analysetool.repositories.PostClicksByHourDLCRepository;
 import com.analysetool.repositories.universalStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +57,9 @@ public class PostClicksByHourDLCService {
     }
 
     //Index 0 = Summe , Index 1 = Anzahl der tatsächlichen Tage
+
+    /*
+    * Query used for this method throws an error and makes code entirely unusable.
     public Long[] getSumByDaysbackWithActualDaysBack(List<Long> postIds,int daysBack){
         Pageable pageable = PageRequest.of(0, daysBack);
         Page<Integer> page = uniRepo.getLastIdsByPageable(pageable);
@@ -73,5 +72,7 @@ public class PostClicksByHourDLCService {
 
         return Ergebnis;
     }
+    */
+
 
 }

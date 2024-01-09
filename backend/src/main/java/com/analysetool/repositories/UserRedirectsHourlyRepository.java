@@ -21,7 +21,7 @@ public interface UserRedirectsHourlyRepository extends JpaRepository<UserRedirec
     @Query("SELECT u.uniId FROM UserRedirectsHourly u ORDER BY u.uniId DESC LIMIT 1")
     long getLastUniId();
     @Query("SELECT u.uniId FROM UserRedirectsHourly u WHERE u.userId=:userId ORDER BY u.uniId ASC LIMIT 1")
-    long getFirstUniIdByUserId(long userId);
+    long getFirstUniIdByUserId(Long userId);
     @Query("SELECT u.userId, SUM(u.redirects) FROM UserRedirectsHourly u GROUP BY u.userId")
     List<Object[]> getUserIdAndRedirectsSum();
     @Query("SELECT SUM(u.redirects) FROM UserRedirectsHourly u WHERE u.userId=:userId")

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ContentDownloadsHourlyRepository extends JpaRepository<ContentDownloadsHourly, Integer> {
@@ -29,4 +30,7 @@ public interface ContentDownloadsHourlyRepository extends JpaRepository<ContentD
     @Query("SELECT c.uniId FROM ContentDownloadsHourly c ORDER BY c.uniId DESC LIMIT 7")
     List<Integer> getLast7Uni();
     List<ContentDownloadsHourly> findAllByPostIdInAndUniId(List<Long> postIds, Integer uniId);
+
+    @Query("SELECT c FROM ContentDownloadsHourly c WHERE c.postId=:postId AND c.uniId=:uniId AND c.hour=:hour")
+    Optional<ContentDownloadsHourly> getByPostIdUniIdHour(long postId, long uniId, int hour);
 }

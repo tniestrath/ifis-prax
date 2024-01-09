@@ -98,6 +98,9 @@ public class LogService {
     @Autowired
     private PostClicksByHourDLCService postClicksByHourDLCService;
 
+    @Autowired
+    private ContentDownloadsHourlyRepository contentDownloadsHourlyRepo;
+
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
@@ -1364,6 +1367,19 @@ public class LogService {
                 try {
                     if(postRepository.findByTitleLike(patternMatcher.group(1).replace("+","-")).isPresent()) {
                         Long postId = postRepository.findByTitleLike(patternMatcher.group(1).replace("+", "-")).get();
+
+                        ContentDownloadsHourly contentDownload = new ContentDownloadsHourly();
+                        if(contentDownloadsHourlyRepo.getByPostIdUniIdHour(postId, uniRepo.getLatestUniStat().getId(), dateLog.getHour()).isPresent()) {
+                            contentDownload = contentDownloadsHourlyRepo.getByPostIdUniIdHour(postId, uniRepo.getLatestUniStat().getId(), dateLog.getHour()).get();
+                            contentDownload.setDownloads(contentDownload.getDownloads() + 1);
+                        } else {
+                            contentDownload.setDownloads(1L);
+                            contentDownload.setPostId(postId);
+                            contentDownload.setHour(dateLog.getHour());
+                            contentDownload.setUniId(uniRepo.getLatestUniStat().getId());
+                        }
+                        contentDownloadsHourlyRepo.save(contentDownload);
+
                         updateContentDownloadMap(postId,dateLog);
                     }
                 }

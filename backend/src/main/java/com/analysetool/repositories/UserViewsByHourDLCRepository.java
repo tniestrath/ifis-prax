@@ -19,7 +19,14 @@ public interface UserViewsByHourDLCRepository extends JpaRepository<UserViewsByH
     @Query("SELECT SUM(u.views) FROM UserViewsByHourDLC u WHERE u.userId = :userId AND u.uniId IN :uniIds")
     Long sumViewsByUserIdAndUniIdIn(@Param("userId") long userId, @Param("uniIds") List<Integer> uniIds);
 
+    @Query("SELECT u FROM UserViewsByHourDLC u WHERE u.userId=:userId ORDER BY u.uniId, u.hour ASC")
     List<UserViewsByHourDLC> findByUserId(long userId);
+
+    @Query("SELECT SUM(u.views) FROM UserViewsByHourDLC u WHERE u.uniId=:uniId AND u.userId=:userId")
+    List<Integer> getSumByUniIdAndUserId(long uniId, long userId);
+
+    @Query("SELECT DISTINCT u.uniId FROM UserViewsByHourDLC u WHERE u.userId=:userId")
+    List<Integer> getUniIdsForUser(long userId);
 
     boolean existsByUserId(long userId);
 

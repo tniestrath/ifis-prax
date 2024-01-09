@@ -82,36 +82,6 @@ public class PostController {
     @GetMapping("/publishedPosts")
     public List<Post> getPublishedPosts(){return postRepository.findPublishedPosts();}
 
-    //ToDo Rename
-    @GetMapping("/getPostsByAuthorLine")
-    public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
-
-        JSONArray list = new JSONArray();
-        List<Post> posts = postRepository.findByAuthor(id);
-        DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
-
-        if (!posts.isEmpty()) {
-            for (Post i : posts) {
-                JSONObject obj = new JSONObject();
-                Date date = onlyDate.parse(i.getDate().toString());
-                String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-                obj.put("title", i.getTitle());
-                obj.put("date", formattedDate);
-                obj.put("count",1);
-
-                if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
-                    String currentId = list.getJSONObject(list.length() - 1).getString("title");
-                    int currentCount = list.getJSONObject(list.length() - 1).getInt("count");
-                    list.getJSONObject(list.length() - 1).put("title", currentId + "," + i.getTitle());
-                    list.getJSONObject(list.length() - 1).put("count", currentCount + 1);
-                } else {
-                    list.put(obj);
-                }
-            }
-        }
-        return list.toString();
-    }
 
     //ToDo Rename
     @GetMapping("/getPostsByAuthorLine2")

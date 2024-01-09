@@ -354,6 +354,115 @@ public class UserController {
         return new JSONObject().put("users", response).put("count", list.size()).toString();
     }
 
+    @GetMapping("/getAllSingleUser")
+    public String getAllSingleUser(long id) throws JSONException {
+        JSONObject obj = new JSONObject();
+        WPUser user = userRepository.findById(id).isPresent() ? userRepository.findById(id).get() : null;
+        if(user != null) {
+            obj.put("id", user.getId());
+            obj.put("email", user.getEmail());
+            obj.put("displayName", user.getNicename());
+            if (userStatsRepository.existsByUserId(user.getId())) {
+                UserStats statsUser = userStatsRepository.findByUserId(user.getId());
+                obj.put("profileViews", statsUser.getProfileView());
+                obj.put("postViews", postController.getViewsOfUserById(user.getId()));
+                obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
+            } else {
+                obj.put("profileViews", 0);
+                obj.put("postViews", 0);
+                obj.put("postCount", 0);
+                obj.put("performance", 0);
+            }
+            if (userViewsRepo.existsByUserId(user.getId())) {
+                obj.put("viewsPerDay", getUserClicksPerDay(user.getId()));
+                if (tendencyUp(user.getId()) != null) {
+                    obj.put("tendency", tendencyUp(user.getId()));
+                }
+            } else {
+                obj.put("viewsPerDay", 0);
+                obj.put("tendency", 0);
+            }
+
+            //Does User have a made in EU badge
+            if (wpUserMetaRepository.getTeleEU(user.getId()).isEmpty()) {
+                obj.put("TeleEU", false);
+            } else {
+                obj.put("TeleEU", wpUserMetaRepository.getTeleEU(user.getId()).get().contains("a:1:{"));
+            }
+            if (wpUserMetaRepository.getTeleDE(user.getId()).isEmpty()) {
+                obj.put("TeleDE", false);
+            } else {
+                obj.put("TeleDE", wpUserMetaRepository.getTeleDE(user.getId()).get().contains("a:1:{"));
+            }
+
+            //Does User have a made in DE badge
+            if (wpUserMetaRepository.getCompanyCategory(user.getId()).isEmpty()) {
+                obj.put("category", "none");
+            } else {
+                obj.put("category", getCompanyCategoryFromString(wpUserMetaRepository.getCompanyCategory(user.getId()).get()));
+            }
+
+            //checks how many employees a company has.
+            if (wpUserMetaRepository.getCompanyEmployees(user.getId()).isEmpty()) {
+                obj.put("employees", "");
+            } else {
+                obj.put("employees", wpUserMetaRepository.getCompanyEmployees(user.getId()).get());
+            }
+
+            Pattern pattern = Pattern.compile("\"([^\"]+)\"");
+
+            if (wpUserMetaRepository.getService(user.getId()).isEmpty()) {
+                obj.put("service", "none");
+            } else {
+                JSONArray json = new JSONArray();
+                Matcher matcher = pattern.matcher(wpUserMetaRepository.getService(user.getId()).get());
+                if (matcher.find()) {
+                    for (int i = 0; i < matcher.groupCount(); i++) {
+                        json.put(matcher.group(i));
+                    }
+                }
+                obj.put("service", json.toString());
+            }
+
+
+            if (wpUserMetaRepository.getTags(user.getId()).isEmpty()) {
+                obj.put("tags", "none");
+            } else {
+                JSONArray json = new JSONArray();
+                Matcher matcher = pattern.matcher(wpUserMetaRepository.getTags(user.getId()).get());
+                if (matcher.find()) {
+                    for (int i = 0; i < matcher.groupCount(); i++) {
+                        json.put(matcher.group(i));
+                    }
+                }
+                obj.put("tags", json.toString());
+            }
+            obj.put("potential", 0);
+            try {
+                obj.put("potential", getPotentialPercent(Math.toIntExact(user.getId())));
+            } catch (Exception ignored) {
+            }
+
+
+            obj.put("accountType", getType(Math.toIntExact(user.getId())));
+
+            String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.png"));
+            String path2 = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.jpg"));
+
+            String srcUrl = "https://it-sicherheit.de/wp-content/uploads/ultimatemember/" + user.getId() + "/profile_photo";
+
+            if (new File(path).exists()) {
+                obj.put("img", srcUrl + ".png");
+            } else if (new File(path2).exists()) {
+                obj.put("img", srcUrl + ".jpg");
+            }
+
+            return obj.toString();
+        } else {
+            return "User not found";
+        }
+    }
+
     private String getCompanyCategoryFromString(String categoryString) {
         if(categoryString.contains("Startup")) return "startup";
         if(categoryString.contains("Hochschule")) return "hochschule";
@@ -469,6 +578,32 @@ public class UserController {
         return array.toString();
     }
 
+    /**
+     * Method finds all dates user had views in, and adds the date and the views on that day into one list each.
+     * @param userId the id of the user you are fetching for.
+     * @return a JSON-String of a JSON-Object containing JSON-Array-Strings under the labels "dates" and "views".
+     * @throws JSONException .
+     */
+    @GetMapping("/getProfileViewsByTime")
+    public String getProfileViewsByTime(long userId) throws JSONException {
+        JSONArray dates = new JSONArray();
+        JSONArray views = new JSONArray();
+
+        if(userViewsRepo.existsByUserId(userId)) {
+            List<Integer> userViewDays = userViewsRepo.getUniIdsForUser(userId);
+            for(Integer uniId : userViewDays) {
+                if(uniRepo.findById(uniId).isPresent()) {
+                    dates.put(uniRepo.findById(uniId).get().getDatum());
+                    views.put(userViewsRepo.getSumByUniIdAndUserId(uniId, userId));
+                }
+            }
+
+        } else {
+            return "No Views found for user.";
+        }
+
+        return new JSONObject().put("dates", dates.toString()).put("views", views.toString()).toString();
+    }
 
     /**
      * This accounts for users with and without posts, but does count post-views towards their averages. Hence, users with posts will seem better here.

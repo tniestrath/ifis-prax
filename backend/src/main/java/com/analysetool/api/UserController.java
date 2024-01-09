@@ -578,6 +578,32 @@ public class UserController {
         return array.toString();
     }
 
+    /**
+     * Method finds all dates user had views in, and adds the date and the views on that day into one list each.
+     * @param userId the id of the user you are fetching for.
+     * @return a JSON-String of a JSON-Object containing JSON-Array-Strings under the labels "dates" and "views".
+     * @throws JSONException .
+     */
+    @GetMapping("/getProfileViewsByTime")
+    public String getProfileViewsByTime(long userId) throws JSONException {
+        JSONArray dates = new JSONArray();
+        JSONArray views = new JSONArray();
+
+        if(userViewsRepo.existsByUserId(userId)) {
+            List<Integer> userViewDays = userViewsRepo.getUniIdsForUser(userId);
+            for(Integer uniId : userViewDays) {
+                if(uniRepo.findById(uniId).isPresent()) {
+                    dates.put(uniRepo.findById(uniId).get().getDatum());
+                    views.put(userViewsRepo.getSumByUniIdAndUserId(uniId, userId));
+                }
+            }
+
+        } else {
+            return "No Views found for user.";
+        }
+
+        return new JSONObject().put("dates", dates.toString()).put("views", views.toString()).toString();
+    }
 
     /**
      * This accounts for users with and without posts, but does count post-views towards their averages. Hence, users with posts will seem better here.

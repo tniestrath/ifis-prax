@@ -585,7 +585,7 @@ public class UserController {
      * @throws JSONException .
      */
     @GetMapping("/getProfileViewsByTime")
-    public String getProfileViewsByTime(long userId) throws JSONException {
+    public String getProfileViewsByTime(Long userId) throws JSONException {
         JSONArray dates = new JSONArray();
         JSONArray views = new JSONArray();
 

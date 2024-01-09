@@ -158,7 +158,7 @@ public class LogService {
 
     private final String image = "^.*GET /ziel-des-marktplatz-it-sicherheit/";
 
-    private final String RedirectUserPattern =".*GET .*goto/(.*)\"";
+    private final String RedirectUserPattern =".*GET .*goto/(.*) HTTP/";
 
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);

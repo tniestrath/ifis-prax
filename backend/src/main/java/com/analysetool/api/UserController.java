@@ -538,7 +538,6 @@ public class UserController {
      * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
      * @throws JSONException .
      */
-    @GetMapping("/getUserAveragesWithPostsWithoutPostClicks")
     private String getUserAveragesWithPostsWithoutPostClicks() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();

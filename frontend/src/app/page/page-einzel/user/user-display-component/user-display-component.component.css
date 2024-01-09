@@ -58,11 +58,14 @@
 .user-id-box{
   grid-row: 3;
   grid-column: 4;
+  display: flex;
   font-style: italic;
   font-weight: lighter;
   color: #A0A0A0;
   text-align: end;
   font-size: 1vw;
+  align-items: center;
+  justify-content: end;
 }
 .user-email-box{
   grid-row: 4;

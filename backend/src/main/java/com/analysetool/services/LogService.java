@@ -1373,15 +1373,15 @@ public class LogService {
             break;
             case "userRedirect":
                 try {
-                    if(wpUserMetaRepository.getUserByURL(patternMatcher.group(0)) != null) {
+                    if(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)) != null) {
                         UserRedirectsHourly redirects;
-                        if(userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(0))).isPresent()) {
-                           redirects = userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(0))).get();
+                        if(userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).isPresent()) {
+                           redirects = userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).get();
                        } else {
                            redirects = new UserRedirectsHourly();
                            redirects.setHour(dateLog.getHour());
                            redirects.setUniId(uniRepo.getLatestUniStat().getId());
-                           redirects.setUserId(wpUserMetaRepository.getUserByURL(patternMatcher.group(0)));
+                           redirects.setUserId(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)));
                            redirects.setRedirects(0L);
                        }
                         redirects.setRedirects(redirects.getRedirects() + 1);

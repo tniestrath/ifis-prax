@@ -9,8 +9,8 @@
 }
 input[type="text"]{
   box-sizing: border-box;
-  min-width: 45%;
-  max-width: 75%;
+  min-width: 35%;
+  max-width: 65%;
   border-radius: 5px 0 0 5px;
   border: 1px solid #A0A0A0;
 }
@@ -67,6 +67,13 @@ input[type="radio"]::after{
 }
 #post-type-news::after{
   content: "News";
+  color: #951D40;
+}
+#post-type-podcast::before{
+  content: "Podcast";
+}
+#post-type-podcast::after{
+  content: "Podcast";
   color: #951D40;
 }
 #post-type-whitepaper::before{

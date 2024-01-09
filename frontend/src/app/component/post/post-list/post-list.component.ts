@@ -21,6 +21,7 @@ export class PostListComponent extends DashBaseComponent{
   input_article_cb : any;
   input_blog_cb : any;
   input_news_cb : any;
+  input_podcast_cb : any;
   input_whitepaper_cb : any;
 
   lastScroll = 0;
@@ -78,6 +79,12 @@ export class PostListComponent extends DashBaseComponent{
       });
       this.selectorItemsLoaded.next(this.selectorItems);
     }
+    this.input_podcast_cb = () => {
+      this.selectorItems = this.selectorItemsBackup.filter((item) => {
+        return ( (item.data as Post).type.includes("podcast") );
+      });
+      this.selectorItemsLoaded.next(this.selectorItems);
+    }
     this.input_whitepaper_cb = () => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
         return ( (item.data as Post).type == "whitepaper" );
@@ -106,6 +113,7 @@ export class PostListComponent extends DashBaseComponent{
       this.lastScroll = scroll;
     }
   }
+
 
 }
 
@@ -247,7 +255,7 @@ export class UserPostListComponent extends PostListComponent{
       let scroll = Date.now();
       if (scroll >= (this.lastScroll + 100)){
         console.log(this.pageIndex)
-        this.db.getUserPostsPaged(SysVars.USER_ID, this.pageIndex, this.pageSize, "date", this.search_text).then((value : {posts:  Post[], count : number}) => {
+        this.db.getUserPostsPaged(SysVars.USER_ID, this.pageIndex, this.pageSize, this.filter, this.search_text).then((value : {posts:  Post[], count : number}) => {
           for (const valueElement of value.posts) {
             this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
           }

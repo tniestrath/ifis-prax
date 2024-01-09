@@ -5,6 +5,7 @@ import {DbService} from "../../../services/db.service";
 import {User} from "./user";
 import Util from "../../../util/Util";
 import {SysVars} from "../../../services/sys-vars-service";
+import {DashBaseComponent} from "../../../component/dash-base/dash-base.component";
 
 @Component({
   selector: 'dash-user',

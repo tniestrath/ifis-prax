@@ -1,0 +1,50 @@
+<div class="user-box">
+  <img class="user-profile-img" alt="" [src]="user.img" dashImgFallback
+       [style.border-color]="Util.getColor(user.accountType)">
+  <div class="user-name-box">
+    <p>{{user.displayName}}</p>
+  </div>
+  <div class="user-type-box">
+    <div [style]="{display: 'flex', alignItems: 'center'}" [ngSwitch]="user.category">
+      <img *ngSwitchCase="'startup' || 'mittelstand' || 'großkonzern'" alt="unternehmen" src="assets/company.png">
+      <img *ngSwitchCase="'hochschule'" src="assets/uni_hat.png" alt="hochschule">
+      <img *ngSwitchCase="'verband'" src="assets/verband.png" alt="verband">
+      <p [style.margin]="0">{{user.employees}}</p>
+    </div>
+  </div>
+  <div class="user-acc-type-box">
+    <p [style.color]="Util.getColor(user.accountType)">{{user.accountType}}</p>
+  </div>
+  <div class="user-badges-box">
+    <img *ngIf="user.TeleDE" alt="SecureITy made in DE" src="assets/IT_de.png">
+    <img *ngIf="user.TeleEU" alt="SecureITy made in EU" src="assets/IT_eu.png">
+  </div>
+  <div class="user-potential-box">
+    <div class="potential-background">
+      <div class="potential-value" [style.width]="Math.min((user.potential * 100), 100)+'%'"></div>
+    </div>
+  </div>
+  <div class="user-email-box">
+    <p>{{user.email}}</p>
+  </div>
+  <div class="user-id-box">
+    <p>{{user.id}}</p>
+  </div>
+  <div class="user-profile-views-box">
+    <img alt="Profil Aufrufe" src="assets/profile_views.png">
+    <p>{{Util.formatNumbers(user.profileViews)}}</p>
+  </div>
+  <div class="user-post-views-box">
+    <img alt="Inhalts Aufrufe" src="assets/pencil-solid.png">
+    <p>{{Util.formatNumbers(user.postViews)}}</p>
+  </div>
+  <div class="user-views-daily-box">
+    <p>TA: {{+parseFloat(user.viewsPerDay.toFixed(2))}}</p>
+  </div>
+  <div class="user-tendency-box">
+    <img *ngIf="this.user.tendency" alt="Tendenz steigend" src="assets/trend_up.png">
+    <img *ngIf="!this.user.tendency && !(this.user.tendency == null)" alt="Tendenz fallend" src="assets/trend_down.png">
+    <img *ngIf="this.user.tendency == null" alt="Tendenz stagnierend" src="assets/trend_flat.png">
+  </div>
+
+</div>

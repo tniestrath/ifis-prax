@@ -27,6 +27,7 @@ export enum dbUrl {
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
   GET_USER_BY_LOGINNAME = "/users/getByLogin?u=",
   GET_USER_BY_ID = "/users/getById?id=",
+  GET_USER_ALL_STATS_BY_ID = "/user/getAllSingleUser?id=",
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
   HAS_USER_POST = "/users/hasPost?id=",
   GET_USER_PROFILE_COMPLETION = "/users/getPotentialById?userId=USERID",
@@ -153,6 +154,10 @@ export class DbService {
   async getUserById(id : string) : Promise<User>{
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_ID) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserAllStatsById(id : string) : Promise<User>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_ALL_STATS_BY_ID) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async validate() : Promise<{"user_id":string}>{

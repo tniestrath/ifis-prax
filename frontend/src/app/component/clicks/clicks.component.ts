@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
@@ -12,7 +12,7 @@ import Util, {DashColors} from "../../util/Util";
 })
 export class ClicksComponent extends DashBaseComponent implements OnInit, AfterViewInit{
 
-  colors : string[] = [DashColors.ARTICLE, DashColors.BLOG, DashColors.NEWS];
+  colors : string[] = [DashColors.ARTICLE, DashColors.BLOG, DashColors.NEWS, DashColors.PODCAST, DashColors.WHITEPAPER];
   c_chart: any;
   p_chart: any;
 
@@ -200,14 +200,14 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
     this.c_chart_total = 0;
     this.p_chart_total = 0;
 
-    this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsNews: number} | string) => {
+    this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsNews: number, viewsPodcast: number, viewsWhitepaper: number} | string) => {
       if (typeof res !== "string"){
         this.isError = false;
-        this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News"], [res.viewsArtikel,res.viewsBlog, res.viewsNews], undefined);
+        this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News", "Podcast", "Whitepaper"], [res.viewsArtikel,res.viewsBlog, res.viewsNews, res.viewsPodcast, res.viewsWhitepaper], undefined);
         this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsNews)], undefined);
         this.createLegend("clicks-content-box", this.c_chart);
         this.createLegend("clicks-profile-box", this.p_chart);
-        this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsNews;
+        this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsNews + res.viewsPodcast + res.viewsWhitepaper;
         this.p_chart_total = res.viewsProfile + this.c_chart_total;
         this.cdr.detectChanges();
       }

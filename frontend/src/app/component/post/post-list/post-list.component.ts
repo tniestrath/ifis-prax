@@ -237,6 +237,10 @@ export class UserPostListComponent extends PostListComponent{
       this.filter = "artikel";
       this.loadItems();
     }
+    this.input_podcast_cb = () => {
+      this.filter = "podcast";
+      this.loadItems();
+    }
   }
 
   loadItems(){

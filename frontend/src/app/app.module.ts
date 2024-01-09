@@ -17,7 +17,7 @@ import { PageComponent } from './page/page-einzel/page.component';
 import {CookieService} from "ngx-cookie-service";
 import { SelectorComponent } from './page/selector/selector.component';
 import { SelectableDirective } from './page/selector/selectable.directive';
-import { UserComponent } from './page/page-einzel/user/user.component';
+import {UserComponent} from './page/page-einzel/user/user.component';
 import {NgOptimizedImage} from "@angular/common";
 import { DashBaseComponent } from './component/dash-base/dash-base.component';
 import { ClicksComponent } from './component/clicks/clicks.component';
@@ -58,6 +58,7 @@ import {
   UserStatsByPlanComponent,
   UserStatsByPlanViewTypeCompareComponent
 } from './page/page-einzel/user/user-stats-by-plan/user-stats-by-plan.component';
+import { UserDisplayComponentComponent } from './page/page-einzel/user/user-display-component/user-display-component.component';
 
 @NgModule({
   declarations: [
@@ -108,7 +109,8 @@ import {
     UserListComponent,
     UserComparatorComponent,
     UserStatsByPlanComponent,
-    UserStatsByPlanViewTypeCompareComponent
+    UserStatsByPlanViewTypeCompareComponent,
+    UserDisplayComponentComponent
   ],
     imports: [
         BrowserModule,

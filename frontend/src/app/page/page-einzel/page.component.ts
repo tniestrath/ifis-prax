@@ -1,19 +1,15 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
-import {SelectorItem} from "../selector/selector.component";
 import {DbService} from "../../services/db.service";
-import {UserComponent} from "./user/user.component";
 import {Observable, Subject} from "rxjs";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
 import {PostChartComponent} from "../../component/post/post-chart/post-chart.component";
 import {GaugeComponent} from "../../component/gauge/gauge.component";
 import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
-import {PostComponent} from "../../component/post/post.component";
 import {SysVars} from "../../services/sys-vars-service";
 import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
-import {User} from "./user/user";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
@@ -30,14 +26,13 @@ import {NewsletterStatsComponent} from "../../component/newsletter-stats/newslet
 import {SystemloadComponent} from "../../component/system/systemload/systemload.component";
 import {EventsStatsComponent} from "../../component/events-stats/events-stats.component";
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
-import {SearchbarComponent} from "../searchbar/searchbar.component";
 import {ProfileCompletionComponent} from "../../component/profile-completion/profile-completion.component";
-import {UserListComponent} from "./user/user-list/user-list.component";
 import {UserComparatorComponent} from "./user/user-comparator/user-comparator.component";
 import {
   UserStatsByPlanComponent,
   UserStatsByPlanViewTypeCompareComponent
 } from "./user/user-stats-by-plan/user-stats-by-plan.component";
+import {UserDisplayComponentComponent} from "./user/user-display-component/user-display-component.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -73,12 +68,13 @@ export class PageComponent implements OnInit {
       //@ts-ignore
       {type: PostChartComponent, row: 1, col: 2, height: 2, width: 3},
       //@ts-ignore
-      {type: GaugeComponent, row: 5, col: 1, height: 1, width: 1},
-      {type: RelevanceComponent, row: 6, col: 1, height: 1, width: 1},
+      {type: GaugeComponent, row: 3, col: 4, height: 1, width: 1},
+      {type: RelevanceComponent, row: 4, col: 4, height: 1, width: 1},
       //@ts-ignore
       {type: ProfileCompletionComponent, row: 3, col: 2, height: 2, width: 2},
       {type: OriginMapComponent, row: 5, col: 2, height: 2, width: 2},
-      {type: UserPostListComponent, row: 1, col: 5, height: 4, width: 2}
+      {type: UserDisplayComponentComponent, row: 1, col: 5, height: 1, width: 2},
+      {type: UserPostListComponent, row: 2, col: 5, height: 3, width: 2}
     ];
   }
   getTagsPageCards() {

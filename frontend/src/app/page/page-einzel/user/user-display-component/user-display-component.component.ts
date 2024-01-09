@@ -13,6 +13,7 @@ export class UserDisplayComponentComponent extends DashBaseComponent implements 
   user : User = new User();
 
   ngOnInit(): void {
+    this.setToolTip("",false);
     this.db.getUserAllStatsById(SysVars.USER_ID).then(res => {
       this.user = res;
     })

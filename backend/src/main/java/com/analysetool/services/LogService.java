@@ -1365,9 +1365,11 @@ public class LogService {
                 break;
             case "contentDownload":
                 try {
+                    System.out.println("FOUND CONTENT DOWNLOAD \n\n");
                     if(postRepository.findByTitleLike(patternMatcher.group(1).replace("+","-")).isPresent()) {
                         Long postId = postRepository.findByTitleLike(patternMatcher.group(1).replace("+", "-")).get();
 
+                        System.out.println("TITLE HAS BEEN FOUND FOR CONTENT DOWNLOAD");
                         ContentDownloadsHourly contentDownload = new ContentDownloadsHourly();
                         if(contentDownloadsHourlyRepo.getByPostIdUniIdHour(postId, uniRepo.getLatestUniStat().getId(), dateLog.getHour()).isPresent()) {
                             contentDownload = contentDownloadsHourlyRepo.getByPostIdUniIdHour(postId, uniRepo.getLatestUniStat().getId(), dateLog.getHour()).get();

@@ -593,7 +593,7 @@ public class UserController {
             List<Integer> userViewDays = userViewsRepo.getUniIdsForUser(userId);
             for(Integer uniId : userViewDays) {
                 if(uniRepo.findById(uniId).isPresent()) {
-                    dates.put(uniRepo.findById(uniId).get().getDatum());
+                    dates.put(uniRepo.findById(uniId).get().getDatum().toString().substring(0, 9));
                     views.put(userViewsRepo.getSumByUniIdAndUserId(uniId, userId));
                 }
             }

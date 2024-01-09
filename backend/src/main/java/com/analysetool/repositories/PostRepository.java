@@ -70,7 +70,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    List<Post> findByTitleContainingAndStatusIsAndTypeIs(String title, String status, String type, Pageable pageable);
 
-   @Query("SELECT p.id FROM Post p WHERE p.title LIKE CONCAT(:title, '%')")
+   @Query("SELECT p.id FROM Post p WHERE p.title LIKE %:title%")
    Optional<Long> findByTitleLike(String title);
 }
 

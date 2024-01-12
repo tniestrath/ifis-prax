@@ -59,6 +59,7 @@ import {
   UserStatsByPlanViewTypeCompareComponent
 } from './page/page-einzel/user/user-stats-by-plan/user-stats-by-plan.component';
 import { UserDisplayComponentComponent } from './page/page-einzel/user/user-display-component/user-display-component.component';
+import { UserClicksChartComponent } from './page/page-einzel/user/user-clicks-chart/user-clicks-chart.component';
 
 @NgModule({
   declarations: [
@@ -110,7 +111,8 @@ import { UserDisplayComponentComponent } from './page/page-einzel/user/user-disp
     UserComparatorComponent,
     UserStatsByPlanComponent,
     UserStatsByPlanViewTypeCompareComponent,
-    UserDisplayComponentComponent
+    UserDisplayComponentComponent,
+    UserClicksChartComponent
   ],
     imports: [
         BrowserModule,

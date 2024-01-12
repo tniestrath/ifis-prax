@@ -1,11 +1,7 @@
-<div class="component-box chart-box">
+<div class="component-box user-clicks-chart-box">
   <form class="post-chart-form">
-    <select id="post-type-select" name="post_type" (change)="getData($event)">
-      <option value="artikel">Artikel</option>
-      <option value="blog">Blog</option>
-      <option value="news">News</option>
-      <option value="podcast">Podcast</option>
-      <option value="whitepaper">Whitepaper</option>
+    <select id="post-type-select" name="post_type">
+      <option value="artikel">Profilaufrufe</option>
     </select>
     <input type="radio" name="time_range" value="all_time" checked (change)="getData($event)">
     <input type="radio" name="time_range" value="half_year" id="post-range-halfyear" (change)="getData($event)">
@@ -13,6 +9,6 @@
     <input type="radio" name="time_range" value="week" id="post-range-week" (change)="getData($event)">
   </form>
   <div class="chart-canvas-box">
-    <canvas [attr.id]="canvas_id" [ngStyle]="{'visibility': visibility}">{{chart}}</canvas>
+    <canvas id="user-clicks-chart">{{chart}}</canvas>
   </div>
 </div>

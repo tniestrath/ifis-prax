@@ -31,7 +31,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
     ["day", 1]
   ]);
 
-
+  //ToDo: REQUEST SOMETHING LIKE hasPostByType TO CHECK IF CHART NEEDS TO PROVIDE AN OPTION FOR THEM.
 
   createChart(labels: string[], fullLabels : string[], data: number[], data2: number[], data3: string[], onClick: (index : number) => void){
     if (this.chart){
@@ -199,7 +199,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
         var calcDate = new Date(Date.now() - (this.timeSpanMap.get(this.timeSpan) ?? 365*2) * 24 * 60 * 60 * 1000);
         return postDate >= calcDate;
       }).filter((post : Post) => {
-        return post.type == this.postType;
+        return post.type.includes(this.postType);
       })
       time_filtered.sort((a, b) => {
         return new Date(a.date).getTime() - new Date(b.date).getTime();

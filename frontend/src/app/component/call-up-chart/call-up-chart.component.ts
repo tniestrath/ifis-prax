@@ -62,7 +62,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       "Partner",
       "DSV",
       "Newsletter",
-      "Image-Film",
+      "Ziel",
       "AGBs"];
 
   categoriesViews : number[] = [];

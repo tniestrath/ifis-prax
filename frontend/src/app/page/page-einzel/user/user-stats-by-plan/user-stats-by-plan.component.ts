@@ -10,7 +10,7 @@ import {DashColors} from "../../../../util/Util";
 })
 export class UserStatsByPlanComponent extends DashBaseComponent implements OnInit{
   protected title : string = "Durchschnittliche Profilaufrufe nach Abomodell und Beitragsbesitz";
-  protected datasetLabels : string[] = ["Profile ohne Beiträge", "Alle Profile", "Profile mit Beiträge"]
+  protected datasetLabels : string[] = ["Profile ohne Beiträge", "Alle Profile", "Profile mit Beiträgen"]
 
   ngOnInit(): void {
     this.setToolTip("", false);
@@ -58,7 +58,7 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
         datasets: datasets
       },
       options: {
-        aspectRatio: 4,
+        aspectRatio: 5,
         maintainAspectRatio: false,
         clip: false,
         layout: {

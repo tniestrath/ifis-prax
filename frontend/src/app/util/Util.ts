@@ -81,20 +81,43 @@ export default class Util {
     }
   }
 
-  static getColor(accountType : string){
-    switch (accountType) {
-      case "basis":
-        return DashColors.PLAN_BASIC;
-      case "basis-plus":
-        return DashColors.PLAN_BASIC_PLUS;
-      case "plus":
-        return DashColors.PLAN_PLUS;
-      case "premium":
-      case "sponsor":
-        return DashColors.PLAN_PREMIUM;
+  static getColor(option: string, type : string){
+    switch (option) {
+      case "plan":
+        switch (type) {
+          case "basis":
+            return DashColors.PLAN_BASIC;
+          case "basis-plus":
+            return DashColors.PLAN_BASIC_PLUS;
+          case "plus":
+            return DashColors.PLAN_PLUS;
+          case "premium":
+          case "sponsor":
+            return DashColors.PLAN_PREMIUM;
+          default:
+            return DashColors.PLAN_WITHOUT;
+        }
+      case "post":
+        switch (type) {
+          case "article":
+            return DashColors.ARTICLE;
+          case "blog":
+            return DashColors.BLOG;
+          case  "news":
+            return DashColors.NEWS;
+          case "whitepaper":
+            return DashColors.WHITEPAPER;
+          case "podcast":
+            return DashColors.PODCAST;
+          case "ratgeber":
+            return DashColors.RATGEBER;
+          default:
+            return DashColors.GREY;
+        }
       default:
-        return DashColors.PLAN_WITHOUT;
+        return DashColors.GREY;
     }
+
   }
 }
 export enum DashColors {
@@ -131,8 +154,9 @@ export enum DashColors {
 
   BLACK_50 = "rgba(0,0,0, .5)",
 
+  RATGEBER = "rgb(130,106,34)",
+
   GREY = "rgb(200,200,200)",
-  RATGEBER = "rgb(200,200,200)",
   PLAN_WITHOUT = "rgb(200,200,200)",
   BACKGROUND = "rgb(200,200,200)",
 

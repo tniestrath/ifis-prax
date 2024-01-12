@@ -123,29 +123,31 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
       const datasetIndex = dataset.index;
       const bgColor = dataset.fillStyle;
 
-      const li = document.createElement("LI");
-      li.classList.add("clicks-item-li");
-      li.style.display = "flex";
-      li.style.alignItems = "center";
-      li.style.flexDirection = "row";
-      li.style.height = "20px";
-      li.style.margin = "5px";
-      const spanBox = document.createElement("SPAN");
-      spanBox.classList.add("clicks-item-span");
-      spanBox.style.display = "inline-block";
-      spanBox.style.height = "100%";
-      spanBox.style.width = "20px";
-      spanBox.style.marginRight = "5px";
-      spanBox.style.borderRadius = "5px";
-      spanBox.style.backgroundColor = bgColor;
+      if (Number(chart.data.datasets[0].data[datasetIndex]) > 0){
+        const li = document.createElement("LI");
+        li.classList.add("clicks-item-li");
+        li.style.display = "flex";
+        li.style.alignItems = "center";
+        li.style.flexDirection = "row";
+        li.style.height = "20px";
+        li.style.margin = "5px";
+        const spanBox = document.createElement("SPAN");
+        spanBox.classList.add("clicks-item-span");
+        spanBox.style.display = "inline-block";
+        spanBox.style.height = "100%";
+        spanBox.style.width = "20px";
+        spanBox.style.marginRight = "5px";
+        spanBox.style.borderRadius = "5px";
+        spanBox.style.backgroundColor = bgColor;
 
-      const p = document.createElement("P");
-      p.classList.add("clicks-item-text");
-      p.innerText = text + ": " + Util.formatNumbers(Number(chart.data.datasets[0].data[datasetIndex]));
+        const p = document.createElement("P");
+        p.classList.add("clicks-item-text");
+        p.innerText = text + ": " + Util.formatNumbers(Number(chart.data.datasets[0].data[datasetIndex]));
 
-      ul.appendChild(li);
-      li.appendChild(spanBox);
-      li.appendChild(p);
+        ul.appendChild(li);
+        li.appendChild(spanBox);
+        li.appendChild(p);
+      }
     });
 
     const media_ratio = window.matchMedia("(min-aspect-ratio: 5/4)");

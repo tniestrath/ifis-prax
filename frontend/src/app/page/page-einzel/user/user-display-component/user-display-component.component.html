@@ -1,6 +1,6 @@
 <div class="user-box component-box">
   <img class="user-profile-img" alt="" [src]="user.img" dashImgFallback
-       [style.border-color]="Util.getColor(user.accountType)">
+       [style.border-color]="Util.getColor('plan', user.accountType)">
   <div class="user-name-box">
     <p>{{user.displayName}}</p>
   </div>
@@ -13,7 +13,7 @@
     </div>
   </div>
   <div class="user-acc-type-box">
-    <p [style.color]="Util.getColor(user.accountType)">{{user.accountType}}</p>
+    <p [style.color]="Util.getColor('plan', user.accountType)">{{user.accountType}}</p>
   </div>
   <div class="user-badges-box">
     <img *ngIf="user.TeleDE" alt="SecureITy made in DE" src="assets/IT_de.png">

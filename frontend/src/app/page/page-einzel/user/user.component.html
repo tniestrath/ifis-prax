@@ -1,6 +1,6 @@
 <div class="user-box" (click)="onClick()" [style.margin-top]="bgColor">
   <img class="user-profile-img" alt="" [src]="data.img" dashImgFallback
-       [style.border-color]="Util.getColor(data.accountType)">
+       [style.border-color]="Util.getColor('plan', data.accountType)">
   <div class="user-name-box">
     <p>{{data.displayName}}</p>
   </div>
@@ -13,7 +13,7 @@
     </div>
   </div>
   <div class="user-acc-type-box">
-    <p [style.color]="Util.getColor(data.accountType)">{{data.accountType}}</p>
+    <p [style.color]="Util.getColor('plan', data.accountType)">{{data.accountType}}</p>
   </div>
   <div class="user-badges-box">
     <img *ngIf="data.TeleDE" alt="SecureITy made in DE" src="assets/IT_de.png">

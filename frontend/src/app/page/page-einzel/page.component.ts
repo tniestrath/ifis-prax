@@ -33,6 +33,7 @@ import {
   UserStatsByPlanViewTypeCompareComponent
 } from "./user/user-stats-by-plan/user-stats-by-plan.component";
 import {UserDisplayComponentComponent} from "./user/user-display-component/user-display-component.component";
+import {UserClicksChartComponent} from "./user/user-clicks-chart/user-clicks-chart.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',

@@ -1,8 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 
 import {User} from "../page/page-einzel/user/user";
-import {TagRanking} from "../component/tag/Tag";
-import {PAGE_DOWN} from "@angular/cdk/keycodes";
 
 export class PAGE {
   id: number = 0;

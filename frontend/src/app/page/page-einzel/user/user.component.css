@@ -120,6 +120,13 @@
   align-items: center;
   justify-content: start;
 }
+.user-redirects-box{
+  grid-row: 5;
+  grid-column: 5;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
 p{
   margin: 0;
   height: fit-content;

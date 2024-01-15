@@ -206,6 +206,7 @@ export class UserPostListComponent extends PostListComponent{
 
     SysVars.SELECTED_POST_IDS.subscribe(list => {
       this.db.getPostsByIDs(list).then((res : Post[]) => {
+        this.selectorItems = [];
         for (const valueElement of res) {
           this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
         }

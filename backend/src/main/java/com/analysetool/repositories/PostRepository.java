@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -74,8 +74,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p.id FROM Post p WHERE p.title LIKE %:title% AND p.status='publish' AND p.type='post'")
    Optional<Long> findByTitleLike(String title);
 
-   @Query("SELECT p FROM Post p WHERE p.authorId=:authorId AND (trunc(p.date)= (trunc(:date)))")
-   List<Post> getPostsByAuthorAndDate(long authorId, Date date);
+   @Query("SELECT p FROM Post p WHERE p.authorId=:authorId AND (trunc(p.date) = (trunc(:date)))")
+   List<Post> getPostsByAuthorAndDate(long authorId, LocalDate date);
 
 }
 

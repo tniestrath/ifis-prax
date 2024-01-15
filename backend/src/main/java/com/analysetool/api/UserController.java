@@ -539,7 +539,7 @@ public class UserController {
                 day.put("date", uniRepo.findById(uniId).get().getDatum().toString());
                 day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id));
 
-                for(Post post : postRepository.getPostsByAuthorAndDate(id, Date.valueOf(date))) {
+                for(Post post : postRepository.getPostsByAuthorAndDate(id, date)) {
                     //Add data for all posts
                     JSONObject postToday = new JSONObject();
                     postToday.put("id", post.getId());

@@ -720,6 +720,17 @@ public class PostController {
         return type;
     }
 
+
+    @GetMapping("/getPostStatsForList")
+    public String getStatsForPostsArray(String list) throws JSONException, ParseException {
+        String[] postIds = list.split("-");
+        JSONArray json = new JSONArray();
+        for(String id : postIds) {
+            json.put(PostStatsByIdForFrontend(Integer.parseInt(id)));
+        }
+        return json.toString();
+    }
+
     /**
      * Endpoint for retrieval for the amount of total posts on the website.
      * @return count of all user posts.

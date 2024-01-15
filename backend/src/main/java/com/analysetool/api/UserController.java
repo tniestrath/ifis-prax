@@ -536,7 +536,7 @@ public class UserController {
                 //Since we have data, add date and profileViews
                 JSONObject day = new JSONObject();
                 JSONArray dailyPosts = new JSONArray();
-                day.put("date", uniRepo.findById(uniId).get().getDatum().toString());
+                day.put("date", uniRepo.findById(uniId).get().getDatum());
                 if(userViewsRepo.existsByUserId(id)) {
                     day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id));
                 } else {
@@ -550,11 +550,11 @@ public class UserController {
                     postToday.put("title", post.getTitle());
                     postToday.put("type", getType(Math.toIntExact(post.getId())));
                     postToday.put("clicks", statRepository.getClicksByArtId(post.getId()) != null ? statRepository.getClicksByArtId(post.getId()) : 0);
-                    dailyPosts.put(postToday.toString());
+                    dailyPosts.put(postToday);
                 }
                 day.put("posts", dailyPosts);
 
-                json.put(day.toString());
+                json.put(day);
             }
 
         }

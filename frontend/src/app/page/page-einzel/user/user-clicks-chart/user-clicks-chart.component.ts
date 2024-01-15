@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../../../component/dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import Util, {DashColors} from "../../../../util/Util";
+import {SysVars} from "../../../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-user-clicks-chart',
@@ -10,69 +11,64 @@ import Util, {DashColors} from "../../../../util/Util";
 })
 export class UserClicksChartComponent extends DashBaseComponent implements OnInit{
 
-  dates : string[] = ["01.01.2024", "02.01.2024" , "04.01.2024", "07.01.2024"];
-  postNames : string[] = ["Beitrag 1" , "Beitrag 2" , "Beitrag 3"];
-  profileData = [  { date : "01.01.2024" , clicks : 10 } , { date : "02.01.2024" , clicks : 15 } , { date : "03.01.2024" , clicks : 17 } , { date : "04.01.2024" , clicks : 20 } , { date : "05.01.2024" , clicks : 18 } , { date : "06.01.2024" , clicks : 25 } , { date : "07.01.2024" , clicks : 30 } , { date : "08.01.2024" , clicks : 32 } , { date : "09.01.2024" , clicks : 33 } , { date : "10.01.2024" , clicks : 15 } , { date : "11.01.2024" , clicks : 17 }
-    , { date : "12.01.2024" , clicks : 18 } , { date : "13.01.2024" , clicks : 22 } , { date : "14.01.2024" , clicks : 23 } , { date : "15.01.2024" , clicks : 27 } , { date : "16.01.2024" , clicks : 25 } , { date : "17.01.2024" , clicks : 21 } , { date : "18.01.2024" , clicks : 19 } , { date : "19.01.2024" , clicks : 13 } , { date : "20.01.2024" , clicks : 11 } , { date : "21.01.2024" , clicks : 15 } , { date : "22.01.2024" , clicks : 22 }
-    , { date : "12.01.2024" , clicks : 18 } , { date : "13.01.2024" , clicks : 22 } , { date : "14.01.2024" , clicks : 23 } , { date : "15.01.2024" , clicks : 27 } , { date : "16.01.2024" , clicks : 26 } , { date : "17.01.2024" , clicks : 24 } , { date : "18.01.2024" , clicks : 19 } , { date : "19.01.2024" , clicks : 13 } , { date : "20.01.2024" , clicks : 11 } , { date : "21.01.2024" , clicks : 15 } , { date : "22.01.2024" , clicks : 22 }
-    , { date : "12.01.2024" , clicks : 18 } , { date : "13.01.2024" , clicks : 22 } , { date : "14.01.2024" , clicks : 23 } , { date : "15.01.2024" , clicks : 29 } , { date : "16.01.2024" , clicks : 25 } , { date : "17.01.2024" , clicks : 23 } , { date : "18.01.2024" , clicks : 19 } , { date : "19.01.2024" , clicks : 13 } , { date : "20.01.2024" , clicks : 11 } , { date : "21.01.2024" , clicks : 15 } , { date : "22.01.2024" , clicks : 22 }
-    , { date : "12.01.2024" , clicks : 18 } , { date : "13.01.2024" , clicks : 22 } , { date : "14.01.2024" , clicks : 23 } , { date : "15.01.2024" , clicks : 25 } , { date : "16.01.2024" , clicks : 23 } , { date : "17.01.2024" , clicks : 21 } , { date : "18.01.2024" , clicks : 19 } , { date : "19.01.2024" , clicks : 13 } , { date : "20.01.2024" , clicks : 11 } , { date : "21.01.2024" , clicks : 15 } , { date : "22.01.2024" , clicks : 22 }
-    , { date : "12.01.2024" , clicks : 18 } , { date : "13.01.2024" , clicks : 22 } , { date : "14.01.2024" , clicks : 23 } , { date : "15.01.2024" , clicks : 23 } , { date : "16.01.2024" , clicks : 22 } , { date : "17.01.2024" , clicks : 20 } , { date : "18.01.2024" , clicks : 19 } , { date : "19.01.2024" , clicks : 13 } , { date : "20.01.2024" , clicks : 11 } , { date : "21.01.2024" , clicks : 15 } , { date : "22.01.2024" , clicks : 22 }];
-  postClicksData : number[] = [5, 7, 3];
-  postData  = [{date : "01.01.2024" , name : "Beitrag 1", type : "blog", clicks : 50 }, {date : "02.01.2024", name : "Beitrag 2", type: "news", clicks: 7 } , {date : "04.01.2024", name : "Beitrag 3", type: "article", clicks : 13} ,
-                                         {date : "07.01.2024" , name : "Beitrag 4", type : "podcast", clicks : 25 }, {date : "14.01.2024", name : "Beitrag 5", type: "whitepaper", clicks: 17 } , {date : "20.01.2024", name : "Beitrag 6", type: "ratgeber", clicks : 30}];
+  timeSpanMap = new Map<string, number>([
+    ["all_time", 365*2],
+    ["half_year", 182],
+    ["month", 31],
+    ["week", 7],
+    ["day", 1]
+  ]);
 
-  dataset : {date: string, postName: string, postClicks: number, profileClicks: number}[] = [];
+  selectedTimeSpan = 31;
 
   ngOnInit(): void {
-    let data = this.collectData(this.profileData, this.postData);
-    this.createChart(data.dates, data.postNames, data.profileClicks, data.postClicks, data.postTypes, () => {});
+    this.getData();
   }
 
-  getData($event: Event) {
-    let data = this.collectData(this.profileData, this.postData);
-    this.createChart(data.dates, data.postNames, data.profileClicks, data.postClicks, data.postTypes, () => {});
+  getData($event?: Event) {
+    if ((event?.target as HTMLInputElement).type == "radio") { // @ts-ignore
+      this.selectedTimeSpan = this.timeSpanMap.get((event?.target as HTMLInputElement).value);
+    }
+    let start = Util.getFormattedNow(-this.selectedTimeSpan);
+    let end = Util.getFormattedNow();
+
+
+    this.db.getUserClicksChartData(SysVars.USER_ID, start, end).then(res => {
+      let data = this.collectData(res);
+      this.createChart(data.dates, data.profileClicks, data.biggestPost, data.posts, (posts) => {
+        let list  = posts.map(value => value.id).reduce((previousValue, currentValue) => previousValue + "-" + currentValue);
+        SysVars.SELECTED_POST_IDS.next(list);
+      });
+    });
   }
 
-  collectData(profileData: {date : string, clicks : number | null}[], postData: {date: string, name: string, type: string, clicks: number | null}[]){
+  collectData(data: {date : string, profileViews : number, biggestPost: {id: number, title: string, type: string, clicks: number}, posts: {id: number, title: string, type: string, clicks: number}[]}[]){
     let dates = [];
     let profileClicks = [];
-    let postClicks = [];
-    let postNames = [];
-    let postTypes = [];
+    let posts = [];
+    let biggestPost = [];
 
-    for (var profile of profileData) {
-      dates.push(profile.date);
-      if (profile.clicks == null) profileClicks.push(0);
-      else profileClicks.push(profile.clicks);
-      let postFilter = postData.filter( post => {
-        if (post.date == profile.date){
-          postClicks.push(post.clicks);
-          postNames.push(post.name);
-          postTypes.push(post.type);
-          return false;
-        }
-        return true;
-      });
-      if (postFilter.length >= postData.length) {
-        postClicks.push(null);
-        postNames.push(null);
-        postTypes.push(null);
-      }
-      postData = postFilter;
+    for (var day of data) {
+      dates.push(day.date.substring(0, 10));
+      profileClicks.push(day.profileViews);
+      posts.push(day.posts);
+      biggestPost.push(day.biggestPost);
     }
 
-    return { dates, profileClicks, postClicks, postNames, postTypes };
+    return { dates, profileClicks, biggestPost, posts};
   }
 
-
-  createChart(dates: string[], postNames : any[], profileClicksData: any[], postClicksData: any[], postTypes : any[], onClick: (index : number) => void){
+  createChart(dates: string[], profileClicksData: number[], biggestPost: {id: number, title: string, clicks: number, type: string}[], posts : {id: number, title: string, clicks: number, type: string}[][], onClick: (posts: any[]) => void){
     if (this.chart) {
       this.chart.destroy();
     }
 
-    var postClicksMax = Math.max(...postClicksData);
-    console.log(postClicksData)
+    var postMax = biggestPost.map(post => post.clicks);
+    var postMaxType = biggestPost.map(post => post.type);
+    var postMaxTitle = biggestPost.map(post => post.title);
+
+    // @ts-ignore
+    var postClicksMax = Math.max(...postMax);
 
     // @ts-ignore
     this.chart = new Chart(this.element.nativeElement.querySelector("#user-clicks-chart"), {
@@ -89,14 +85,18 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
           borderWidth: 2,
           pointBorderWidth: 0,
           pointRadius: (ctx, options) : number => {
-            if(postClicksData.at(ctx.dataIndex) != null){
-              return Math.max(12 * (postClicksData.at(ctx.dataIndex) / postClicksMax), 5);
+            // @ts-ignore
+            if(posts.at(ctx.dataIndex) != null){
+              // @ts-ignore
+              return Math.max(12 * (postMax.at(ctx.dataIndex) / postClicksMax), 5);
             }
             return 2.5;
           },
           pointBackgroundColor: (ctx, options): string => {
-            if(postTypes.at(ctx.dataIndex) != null){
-              return Util.getColor("post", postTypes.at(ctx.dataIndex));
+            // @ts-ignore
+            if(posts.at(ctx.dataIndex) != null){
+              // @ts-ignore
+              return Util.getColor("post", postMaxType.at(ctx.dataIndex));
             }
             return DashColors.GREY;
           }
@@ -107,7 +107,7 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
         clip: false,
         layout: {
           padding: {
-            bottom: -50
+            bottom: 0
           }
         },
         scales: {
@@ -148,24 +148,24 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
               //@ts-ignore
               title(tooltipItems): string {
                 // @ts-ignore
-                if (postNames[tooltipItems.at(0).dataIndex] == null){
+                if (posts[tooltipItems.at(0).dataIndex].at(0) == null){
                   // @ts-ignore
                   return dates[tooltipItems.at(0).dataIndex];
                 }
                 // @ts-ignore
-                let postType : string = postTypes[tooltipItems.at(0).dataIndex];
+                let postType : string = postMaxType.at(tooltipItems.at(0).dataIndex);
                 postType = postType.at(0)?.toUpperCase() + postType.substring(1);
                 // @ts-ignore
-                return postType + ": " + postNames[tooltipItems.at(0).dataIndex];
+                return postType + ": " + postMaxTitle.at(tooltipItems.at(0).dataIndex);
 
               },
               //@ts-ignore
               label: ((tooltipItem) => {
-                console.log(tooltipItem.dataIndex + " : " + postNames[tooltipItem.dataIndex] + " : " + postClicksData[tooltipItem.dataIndex] + " : " + postTypes[tooltipItem.dataIndex]);
-                if (postNames[tooltipItem.dataIndex] == null) {
+                if (posts[tooltipItem.dataIndex].at(0) == null) {
                   return profileClicksData[tooltipItem.dataIndex].toFixed();
                 } else {
-                  return ["Profilaufrufe: " + profileClicksData[tooltipItem.dataIndex].toFixed(), "Beitragsaufrufe: " + postClicksData[tooltipItem.dataIndex].toFixed()];
+                  // @ts-ignore
+                  return ["Profilaufrufe: " + profileClicksData[tooltipItem.dataIndex].toFixed(), "Beitragsaufrufe: " + postMax.at(tooltipItem.dataIndex).toFixed()];
                 }
               })
             }
@@ -176,7 +176,8 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
           intersect: true
         },
         onClick(event: ChartEvent, elements: ActiveElement[]) {
-          onClick(elements[0].index);
+          // @ts-ignore
+          onClick(posts.at(elements.at(0).index));
         },
       }
     })

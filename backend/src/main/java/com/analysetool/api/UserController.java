@@ -516,7 +516,15 @@ public class UserController {
         Date startDate = Date.valueOf(start);
         Date endDate  = Date.valueOf(end);
 
+        //If the beginning is after the end (good manhwa), swap them.
+        if(startDate.after(endDate)) {
+            Date puffer = startDate;
+            startDate = endDate;
+            endDate = puffer;
+        }
+
         JSONArray json = new JSONArray();
+        //For all dates selected, add data
         for(LocalDate date : startDate.toLocalDate().datesUntil(endDate.toLocalDate().plusDays(1)).toList()) {
             int uniId = 0;
             //Check if we have stats for the day
@@ -525,20 +533,22 @@ public class UserController {
             }
 
             if(uniId != 0 && uniRepo.findById(uniId).isPresent()) {
+                //Since we have data, add date and profileViews
                 JSONObject day = new JSONObject();
                 JSONArray dailyPosts = new JSONArray();
                 day.put("date", uniRepo.findById(uniId).get().getDatum().toString());
                 day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id));
 
                 for(Post post : postRepository.getPostsByAuthorAndDate(id, Date.valueOf(date))) {
+                    //Add data for all posts
                     JSONObject postToday = new JSONObject();
                     postToday.put("id", post.getId());
                     postToday.put("title", post.getTitle());
                     postToday.put("type", getType(Math.toIntExact(post.getId())));
-                    postToday.put("clicks", statRepository.getClicksByArtId(post.getId()));
+                    postToday.put("clicks", statRepository.getClicksByArtId(post.getId()) != null ? statRepository.getClicksByArtId(post.getId()) : 0);
                     dailyPosts.put(postToday.toString());
                 }
-                day.put("post", dailyPosts);
+                day.put("posts", dailyPosts);
 
                 json.put(day.toString());
             }

@@ -655,7 +655,7 @@ public class LogService {
                         whatMatched = "userRedirect";
                         patternMatcher = matched_userRedirect;
                     } else if(matched_event_view.find()){
-                        whatMatched = "eventViews";
+                        whatMatched = "eventView";
                         patternMatcher = matched_event_view;
                     }
 

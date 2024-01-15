@@ -60,6 +60,8 @@ public class UserController {
     private UserViewsByHourDLCService userViewsHourService;
     @Autowired
     private PostClicksByHourDLCService postHourlyService;
+    @Autowired
+    private UserRedirectsHourlyRepository userRedirectsRepo;
 
     private final DashConfig config;
 
@@ -302,6 +304,13 @@ public class UserController {
                 obj.put("employees", wpUserMetaRepository.getCompanyEmployees(user.getId()).get());
             }
 
+            //Checks how many times website has redirected to a users homepage
+            if(userRedirectsRepo.existsByUserId(user.getId())) {
+                obj.put("redirects", userRedirectsRepo.getAllRedirectsOfUserIdSummed(user.getId()));
+            } else {
+                obj.put("redirects", 0);
+            }
+
             Pattern pattern = Pattern.compile("\"([^\"]+)\"");
 
             if(wpUserMetaRepository.getService(user.getId()).isEmpty()) {
@@ -407,6 +416,13 @@ public class UserController {
                 obj.put("employees", "");
             } else {
                 obj.put("employees", wpUserMetaRepository.getCompanyEmployees(user.getId()).get());
+            }
+
+            //Checks how many times website has redirected to a users homepage
+            if(userRedirectsRepo.existsByUserId(user.getId())) {
+                obj.put("redirects", userRedirectsRepo.getAllRedirectsOfUserIdSummed(user.getId()));
+            } else {
+                obj.put("redirects", 0);
             }
 
             Pattern pattern = Pattern.compile("\"([^\"]+)\"");

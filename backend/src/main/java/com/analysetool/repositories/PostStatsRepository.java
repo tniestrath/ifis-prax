@@ -51,6 +51,9 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
     List<PostStats> findByArtId(Long artId);
 
+    @Query("SELECT SUM(p.clicks) FROM PostStats p WHERE p.artId=:artId")
+    Integer getSumClicks(long artId);
+
     // Zähle die Anzahl der Stats-Objekte anhand der artId
     Long countByArtId(Long artId);
 

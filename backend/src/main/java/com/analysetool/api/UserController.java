@@ -537,6 +537,8 @@ public class UserController {
                 //Since we have data, add date and profileViews
                 JSONObject day = new JSONObject();
                 JSONArray dailyPosts = new JSONArray();
+                JSONObject biggestPost = new JSONObject();
+
                 day.put("date", uniRepo.findById(uniId).get().getDatum());
                 if(userViewsRepo.existsByUserId(id)) {
                     day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id) != null ? userViewsRepo.getSumByUniIdAndUserId(uniId, id) : 0);
@@ -544,9 +546,17 @@ public class UserController {
                     day.put("profileViews", 0);
                 }
 
+                Post biggestPostbuffer = null;
                 for(Post post : postRepository.getPostsByAuthorAndDate(id, date)) {
                     //Add data for all posts
                     JSONObject postToday = new JSONObject();
+                    if(biggestPostbuffer == null) {
+                        biggestPostbuffer = post;
+                    } else {
+                        if(statRepository.getSumClicks(post.getId()) > statRepository.getSumClicks(biggestPostbuffer.getId())) {
+                            biggestPostbuffer = post;
+                        }
+                    }
                     postToday.put("id", post.getId());
                     postToday.put("title", post.getTitle());
                     postToday.put("type", postController.getType(Math.toIntExact(post.getId())));
@@ -554,6 +564,18 @@ public class UserController {
                     dailyPosts.put(postToday);
                 }
                 day.put("posts", dailyPosts);
+                if(biggestPostbuffer != null) {
+                    biggestPost.put("id", biggestPostbuffer.getId());
+                    biggestPost.put("title", biggestPostbuffer.getTitle());
+                    biggestPost.put("type", postController.getType(Math.toIntExact(biggestPostbuffer.getId())));
+                    biggestPost.put("clicks", statRepository.getClicksByArtId(biggestPostbuffer.getId()) != null ? statRepository.getClicksByArtId(biggestPostbuffer.getId()) : 0);
+                } else {
+                    biggestPost.put("id", 0);
+                    biggestPost.put("title", 0);
+                    biggestPost.put("type", 0);
+                    biggestPost.put("clicks", 0);
+                }
+                day.put("biggestPost", biggestPost);
 
                 json.put(day);
             }

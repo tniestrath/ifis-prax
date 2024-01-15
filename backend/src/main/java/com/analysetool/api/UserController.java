@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -509,7 +511,46 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getUserClicksChartData")
+    public String getUserClicksChartData(long userId, String startDate, String endDate) throws JSONException {
+        Date start = Date.valueOf(startDate);
+        Date end  = Date.valueOf(endDate);
+
+        JSONArray json = new JSONArray();
+        for(LocalDate date : start.toLocalDate().datesUntil(end.toLocalDate().plusDays(1)).toList()) {
+            int uniId = 0;
+            //Check if we have stats for the day
+            if (uniRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                uniId = uniRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+            }
+
+            if(uniId != 0 && uniRepo.findById(uniId).isPresent()) {
+                JSONObject day = new JSONObject();
+                JSONArray dailyPosts = new JSONArray();
+                day.put("date", uniRepo.findById(uniId).get().getDatum().toString());
+                day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, userId));
+
+                for(Post post : postRepository.getPostsByAuthorAndDate(userId, Date.valueOf(date))) {
+                    JSONObject postToday = new JSONObject();
+                    postToday.put("id", post.getId());
+                    postToday.put("title", post.getTitle());
+                    postToday.put("type", getType(Math.toIntExact(post.getId())));
+                    postToday.put("clicks", statRepository.getClicksByArtId(post.getId()));
+                    dailyPosts.put(postToday.toString());
+                }
+                day.put("post", dailyPosts);
+
+                json.put(day.toString());
+            }
+
+        }
+        return  json.toString();
+    }
+
+
+
     //STATS
+
 
 
     //ToDo Clean

@@ -676,6 +676,14 @@ public class PostController {
             }
         }
 
+        if(postTypeRepo.getType((int) id) != null) {
+            if(!postTypeRepo.getType((int) id).contains("podcast")) {
+                return postTypeRepo.getType((int) id);
+            } else {
+                return "podcast";
+            }
+        }
+
         Post post = postRepository.findById(id).get();
         String type = "default";
         List<Long> tagIDs = null;

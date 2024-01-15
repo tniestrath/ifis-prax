@@ -537,7 +537,11 @@ public class UserController {
                 JSONObject day = new JSONObject();
                 JSONArray dailyPosts = new JSONArray();
                 day.put("date", uniRepo.findById(uniId).get().getDatum().toString());
-                day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id));
+                if(userViewsRepo.existsByUserId(id)) {
+                    day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id));
+                } else {
+                    day.put("profileViews", 0);
+                }
 
                 for(Post post : postRepository.getPostsByAuthorAndDate(id, date)) {
                     //Add data for all posts

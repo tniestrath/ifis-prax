@@ -539,7 +539,7 @@ public class UserController {
                 JSONArray dailyPosts = new JSONArray();
                 day.put("date", uniRepo.findById(uniId).get().getDatum());
                 if(userViewsRepo.existsByUserId(id)) {
-                    day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id));
+                    day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id) != null ? userViewsRepo.getSumByUniIdAndUserId(uniId, id) : 0);
                 } else {
                     day.put("profileViews", 0);
                 }

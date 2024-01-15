@@ -75,4 +75,15 @@ public class UserViewsByHourDLC implements Serializable {
     public void setViews(Long views) {
         this.views = views;
     }
+
+    @Override
+    public String toString() {
+        return "UserViewsByHourDLC{" +
+                "id=" + id +
+                ", uniId=" + uniId +
+                ", userId=" + userId +
+                ", hour=" + hour +
+                ", views=" + views +
+                '}';
+    }
 }

@@ -100,6 +100,8 @@ public class LogService {
 
     @Autowired
     private ContentDownloadsHourlyRepository contentDownloadsHourlyRepo;
+    @Autowired
+    private EventsRepository eventRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -163,6 +165,7 @@ public class LogService {
 
     private final String RedirectUserPattern =".*GET .*goto/(.*) HTTP/";
 
+    private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
     Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
@@ -192,7 +195,7 @@ public class LogService {
     Pattern ratgeberBuchViewPattern = Pattern.compile(ratgeberBuchView);
     Pattern podcastViewPattern = Pattern.compile(PodcastViewPattern);
     Pattern contentDownloadPattern= Pattern.compile(contentDownload);
-
+    Pattern eventViewPattern = Pattern.compile(eventView);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -573,6 +576,9 @@ public class LogService {
                     //Does it match a content-download
                     Matcher matched_content_download= contentDownloadPattern.matcher(request);
 
+                    //Does it match an event-View?
+                    Matcher matched_event_view= eventViewPattern.matcher(request);
+
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
@@ -648,6 +654,9 @@ public class LogService {
                     } else if(matched_userRedirect.find()){
                         whatMatched = "userRedirect";
                         patternMatcher = matched_userRedirect;
+                    } else if(matched_event_view.find()){
+                        whatMatched = "eventViews";
+                        patternMatcher = matched_event_view;
                     }
 
                     //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
@@ -896,6 +905,7 @@ public class LogService {
 
 
                         } case "userRedirect" -> {
+                        } case "eventView" -> {
                         }
                         default -> System.out.println(line);
                     }
@@ -1408,6 +1418,19 @@ public class LogService {
                 }
                 catch (Exception e) {
                     System.out.println("USERREDIRECT EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+            case "eventView":
+                try {
+                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
+                        Long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
+                        UpdatePerformanceAndViews(dateLog, postId);
+                        updateIPsByPost(ip, postId);
+                        updatePostClicksMap(postId,dateLog);
+                    }
+                }
+                catch (Exception e) {
+                    System.out.println("EVENTVIEW EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
                 break;

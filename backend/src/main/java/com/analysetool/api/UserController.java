@@ -1462,11 +1462,11 @@ public class UserController {
     public String getUserViewsDistributedByHours(@RequestParam Long userId,@RequestParam int daysback) throws JsonProcessingException {
         int latestUniId = uniRepo.getLatestUniStat().getId() - daysback;
         int previousUniId = latestUniId - 1;
-
+        System.out.println("latestUniId: "+latestUniId+'\n'+"previousUniId: " + previousUniId);
         List<UserViewsByHourDLC> combinedViews = new ArrayList<>();
         combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, previousUniId)); // Daten von gestern
         combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, latestUniId));   // Daten von heute
-
+        System.out.println("combined views: "+combinedViews.toString());
         Map<Integer, Long> hourlyViews = new LinkedHashMap<>();
         LocalDateTime now = LocalDateTime.now();
         int currentHour = now.getHour();

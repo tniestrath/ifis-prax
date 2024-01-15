@@ -726,7 +726,7 @@ public class PostController {
         String[] postIds = list.split("-");
         JSONArray json = new JSONArray();
         for(String id : postIds) {
-            json.put(PostStatsByIdForFrontend(Integer.parseInt(id)));
+            json.put(new JSONObject(PostStatsByIdForFrontend(Integer.parseInt(id))));
         }
         return json.toString();
     }

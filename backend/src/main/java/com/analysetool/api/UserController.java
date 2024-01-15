@@ -21,6 +21,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Date;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -512,7 +513,7 @@ public class UserController {
     }
 
     @GetMapping("/getUserClicksChartData")
-    public String getUserClicksChartData(long id, String start, String end) throws JSONException {
+    public String getUserClicksChartData(long id, String start, String end) throws JSONException, ParseException {
         Date startDate = Date.valueOf(start);
         Date endDate  = Date.valueOf(end);
 
@@ -548,7 +549,7 @@ public class UserController {
                     JSONObject postToday = new JSONObject();
                     postToday.put("id", post.getId());
                     postToday.put("title", post.getTitle());
-                    postToday.put("type", getType(Math.toIntExact(post.getId())));
+                    postToday.put("type", postController.getType(Math.toIntExact(post.getId())));
                     postToday.put("clicks", statRepository.getClicksByArtId(post.getId()) != null ? statRepository.getClicksByArtId(post.getId()) : 0);
                     dailyPosts.put(postToday);
                 }

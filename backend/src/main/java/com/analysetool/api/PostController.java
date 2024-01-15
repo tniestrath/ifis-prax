@@ -676,6 +676,14 @@ public class PostController {
             }
         }
 
+        if(postTypeRepo.getType((int) id) != null) {
+            if(!postTypeRepo.getType((int) id).contains("podcast")) {
+                return postTypeRepo.getType((int) id);
+            } else {
+                return "podcast";
+            }
+        }
+
         Post post = postRepository.findById(id).get();
         String type = "default";
         List<Long> tagIDs = null;
@@ -710,6 +718,17 @@ public class PostController {
             System.out.println(id + "\n");
         }
         return type;
+    }
+
+
+    @GetMapping("/getPostStatsForList")
+    public String getStatsForPostsArray(String list) throws JSONException, ParseException {
+        String[] postIds = list.split("-");
+        JSONArray json = new JSONArray();
+        for(String id : postIds) {
+            json.put(new JSONObject(PostStatsByIdForFrontend(Integer.parseInt(id))));
+        }
+        return json.toString();
     }
 
     /**

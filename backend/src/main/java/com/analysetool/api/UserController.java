@@ -20,9 +20,12 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Date;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -509,7 +512,84 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getUserClicksChartData")
+    public String getUserClicksChartData(long id, String start, String end) throws JSONException, ParseException {
+        Date startDate = Date.valueOf(start);
+        Date endDate  = Date.valueOf(end);
+
+        //If the beginning is after the end (good manhwa), swap them.
+        if(startDate.after(endDate)) {
+            Date puffer = startDate;
+            startDate = endDate;
+            endDate = puffer;
+        }
+
+        JSONArray json = new JSONArray();
+        //For all dates selected, add data
+        for(LocalDate date : startDate.toLocalDate().datesUntil(endDate.toLocalDate().plusDays(1)).toList()) {
+            int uniId = 0;
+            //Check if we have stats for the day
+            if (uniRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                uniId = uniRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+            }
+
+            if(uniId != 0 && uniRepo.findById(uniId).isPresent()) {
+                //Since we have data, add date and profileViews
+                JSONObject day = new JSONObject();
+                JSONArray dailyPosts = new JSONArray();
+                JSONObject biggestPost = new JSONObject();
+
+                day.put("date", uniRepo.findById(uniId).get().getDatum());
+                if(userViewsRepo.existsByUserId(id)) {
+                    day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id) != null ? userViewsRepo.getSumByUniIdAndUserId(uniId, id) : 0);
+                } else {
+                    day.put("profileViews", 0);
+                }
+
+                Post biggestPostbuffer = null;
+                for(Post post : postRepository.getPostsByAuthorAndDate(id, date)) {
+                    //Add data for all posts
+                    JSONObject postToday = new JSONObject();
+                    if(biggestPostbuffer == null) {
+                        biggestPostbuffer = post;
+                    } else {
+                        if(statRepository.getSumClicks(post.getId()) != null) {
+                            if(statRepository.getSumClicks(post.getId()) > statRepository.getSumClicks(biggestPostbuffer.getId())) {
+                                biggestPostbuffer = post;
+                            }
+                        }
+                    }
+                    postToday.put("id", post.getId());
+                    postToday.put("title", post.getTitle());
+                    postToday.put("type", postController.getType(Math.toIntExact(post.getId())));
+                    postToday.put("clicks", statRepository.getClicksByArtId(post.getId()) != null ? statRepository.getClicksByArtId(post.getId()) : 0);
+                    dailyPosts.put(postToday);
+                }
+                day.put("posts", dailyPosts);
+                if(biggestPostbuffer != null) {
+                    biggestPost.put("id", biggestPostbuffer.getId());
+                    biggestPost.put("title", biggestPostbuffer.getTitle());
+                    biggestPost.put("type", postController.getType(Math.toIntExact(biggestPostbuffer.getId())));
+                    biggestPost.put("clicks", statRepository.getClicksByArtId(biggestPostbuffer.getId()) != null ? statRepository.getClicksByArtId(biggestPostbuffer.getId()) : 0);
+                } else {
+                    biggestPost.put("id", 0);
+                    biggestPost.put("title", 0);
+                    biggestPost.put("type", 0);
+                    biggestPost.put("clicks", 0);
+                }
+                day.put("biggestPost", biggestPost);
+
+                json.put(day);
+            }
+
+        }
+        return  json.toString();
+    }
+
+
+
     //STATS
+
 
 
     //ToDo Clean

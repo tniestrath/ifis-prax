@@ -512,12 +512,12 @@ public class UserController {
     }
 
     @GetMapping("/getUserClicksChartData")
-    public String getUserClicksChartData(long userId, String startDate, String endDate) throws JSONException {
-        Date start = Date.valueOf(startDate);
-        Date end  = Date.valueOf(endDate);
+    public String getUserClicksChartData(long id, String start, String end) throws JSONException {
+        Date startDate = Date.valueOf(start);
+        Date endDate  = Date.valueOf(end);
 
         JSONArray json = new JSONArray();
-        for(LocalDate date : start.toLocalDate().datesUntil(end.toLocalDate().plusDays(1)).toList()) {
+        for(LocalDate date : startDate.toLocalDate().datesUntil(endDate.toLocalDate().plusDays(1)).toList()) {
             int uniId = 0;
             //Check if we have stats for the day
             if (uniRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
@@ -528,9 +528,9 @@ public class UserController {
                 JSONObject day = new JSONObject();
                 JSONArray dailyPosts = new JSONArray();
                 day.put("date", uniRepo.findById(uniId).get().getDatum().toString());
-                day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, userId));
+                day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id));
 
-                for(Post post : postRepository.getPostsByAuthorAndDate(userId, Date.valueOf(date))) {
+                for(Post post : postRepository.getPostsByAuthorAndDate(id, Date.valueOf(date))) {
                     JSONObject postToday = new JSONObject();
                     postToday.put("id", post.getId());
                     postToday.put("title", post.getTitle());

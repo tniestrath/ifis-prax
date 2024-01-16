@@ -1703,4 +1703,49 @@ public class UserController {
         return getUserCountForAllTagsInPercentage().toString();
     }
 
+    public double getUserCountAsPercentageForSingleTag(String tag) {
+        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+        int countForTag = wpUserMetaRepository.countUsersByTag(tag);
+
+        if (totalUsersWithTag == 0) {
+            return 0; // Vermeidung der Division durch Null
+        }
+
+        return (double) countForTag / totalUsersWithTag * 100;
+    }
+
+    public Map<String, Double> getPercentageForMultipleTags(List<String> tags) {
+        Map<String, Double> tagPercentages = new HashMap<>();
+
+        for (String tag : tags) {
+            double percentage = getUserCountAsPercentageForSingleTag(tag);
+            tagPercentages.put(tag, percentage);
+        }
+
+        return tagPercentages;
+    }
+
+    public Map<String, Double> getPercentageForTagsByUserId(Long userId) {
+        Map<String, Double> tagPercentages = new HashMap<>();
+        Optional<String> tagData = wpUserMetaRepository.getTags(userId);
+
+        if (tagData.isPresent()) {
+            List<String> rawTags = Arrays.asList(tagData.get().split(";"));
+            List<String> decryptedTags = decryptTags(rawTags);
+            List<String> cleanedTags = cleanTags(decryptedTags);
+
+            for (String tag : cleanedTags) {
+                double percentage = getUserCountAsPercentageForSingleTag(tag);
+                tagPercentages.put(tag, percentage);
+            }
+        }
+        return tagPercentages;
+    }
+
+
+
+    @GetMapping("/getPercentageForTagsByUserId")
+    public String getPercentageForTagsByUserIdString(Long userId) {
+        return getPercentageForTagsByUserId(userId).toString();
+    }
 }

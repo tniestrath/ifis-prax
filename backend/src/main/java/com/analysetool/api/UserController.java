@@ -330,7 +330,7 @@ public class UserController {
                         json.put(matcher.group(i));
                     }
                 }
-                obj.put("service", json.toString());
+                obj.put("service", json);
             }
 
 
@@ -344,7 +344,7 @@ public class UserController {
                         json.put(matcher.group(i));
                     }
                 }
-                obj.put("tags", json.toString());
+                obj.put("tags", json);
             }
             obj.put("potential", 0);
             try {
@@ -450,7 +450,7 @@ public class UserController {
                         json.put(matcher.group(i));
                     }
                 }
-                obj.put("service", json.toString());
+                obj.put("service", json);
             }
 
 
@@ -464,7 +464,7 @@ public class UserController {
                         json.put(matcher.group(i));
                     }
                 }
-                obj.put("tags", json.toString());
+                obj.put("tags", json);
             }
             obj.put("potential", 0);
             try {

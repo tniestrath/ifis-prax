@@ -139,7 +139,7 @@ public class EventsController {
     /**
      *
      * @param e the event you want the type for.
-     * @return a char, representing its type 's' (sonstige),'k' (kongresse), 'm' (messe), 's'(schulungen), 'w' (workshop)
+     * @return a char, representing its type 'o' (sonstige),'k' (kongresse), 'm' (messe), 's'(schulungen), 'w' (workshop)
      */
     public String getEventType(Events e) {
         List<Long> termIds = relRepo.existsByObjectId(e.getPostID()) ? relRepo.getTaxIdByObject(e.getPostID()) : null;

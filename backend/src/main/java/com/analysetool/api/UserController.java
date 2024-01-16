@@ -1626,6 +1626,21 @@ public class UserController {
 
 
 
+    public List<String> cleanTags(List<String> encryptedTags) {
+        List<String> cleanedTags = new ArrayList<>();
+
+        for (String tag : encryptedTags) {
+            String cleanedTag = tag;
+            if (cleanedTag.startsWith("\"") && cleanedTag.endsWith("\"")) {
+                cleanedTag = cleanedTag.substring(1, cleanedTag.length() - 1);
+            }
+            cleanedTags.add(cleanedTag);
+        }
+        return cleanedTags;
+    }
+
+
+
     @GetMapping("/userCountForAllTags")
     public Map<String, Integer> getUserCountForAllTags() {
         List<String> allTags = wpUserMetaRepository.getAllTags();
@@ -1641,9 +1656,10 @@ public class UserController {
                 }
             }
         }
+        List<String> cleanedTags= cleanTags(decryptedTags);
 
 
-        for (String tag : decryptedTags) {
+        for (String tag : cleanedTags) {
             int count = wpUserMetaRepository.countUsersByTag(tag);
             companiesPerTag.put(tag, count);
         }

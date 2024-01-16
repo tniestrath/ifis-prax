@@ -727,7 +727,7 @@ public class PostController {
         } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("event")){
             String type = "Event: ";
             switch(eventsController.getEventType(eventsRepo.findByPostID(id).get())) {
-                case "o" ->  type += "Sonstige";
+                case "o", "r" ->  type += "Sonstige";
                 case "k" -> type += "Kongress";
                 case "m" -> type += "Messe";
                 case "s" -> type += "Schulung/Seminar";

@@ -62,6 +62,7 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
     if (this.chart) {
       this.chart.destroy();
     }
+
     // @ts-ignore
     this.chart = new Chart(this.element.nativeElement.querySelector("#user-clicks-chart"), {
       type: "line",
@@ -153,14 +154,23 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
 
               },
               label(tooltipItem) {
-                if (posts[tooltipItem.dataIndex].at(0) == null) {
+                if (biggestPost[tooltipItem.dataIndex].id == 0) {
                   // @ts-ignore
                   return "Profilaufrufe: " + profileClicksData[tooltipItem.dataIndex].toFixed();
                 }
-                else return "Beiträge...";
+                else {
+                  let labels = [];
+                  // @ts-ignore
+                  for (var post of posts.at(tooltipItem.dataIndex)) {
+                    let postType : string = post.type;
+                    postType = postType.at(0)?.toUpperCase() + postType.substring(1);
+                    labels.push(postType + ": " + post.title.substring(0,15) + "... : " + post.clicks);
+                  }
+                  return labels;
+                }
               },
               beforeFooter(tooltipItems): string | string[] | void {
-
+                  return "\n";
               },
               //@ts-ignore
               footer: ((tooltipItem) => {

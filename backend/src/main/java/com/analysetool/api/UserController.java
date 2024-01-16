@@ -1653,8 +1653,6 @@ public class UserController {
     }
 
 
-
-    @GetMapping("/userCountForAllTags")
     public Map<String, Integer> getUserCountForAllTags() {
         List<String> allTags = wpUserMetaRepository.getAllTags();
         List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
@@ -1668,5 +1666,9 @@ public class UserController {
         return companiesPerTag;
     }
 
+    @GetMapping("/userCountForAllTags")
+    public String getUserCountForAllTagsString() {
+        return getUserCountForAllTags().toString();
+    }
 
 }

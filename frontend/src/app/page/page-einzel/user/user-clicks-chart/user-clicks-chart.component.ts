@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../../../component/dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent, PointStyle, TooltipItem, TooltipLabelStyle} from "chart.js/auto";
 import Util, {DashColors} from "../../../../util/Util";
 import {SysVars} from "../../../../services/sys-vars-service";
 
@@ -62,14 +62,6 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
     if (this.chart) {
       this.chart.destroy();
     }
-
-    var postMax = biggestPost.map(post => post.clicks);
-    var postMaxType = biggestPost.map(post => post.type);
-    var postMaxTitle = biggestPost.map(post => post.title);
-
-    // @ts-ignore
-    var postClicksMax = Math.max(...postMax);
-
     // @ts-ignore
     this.chart = new Chart(this.element.nativeElement.querySelector("#user-clicks-chart"), {
       type: "line",
@@ -86,17 +78,17 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
           pointBorderWidth: 0,
           pointRadius: (ctx, options) : number => {
             // @ts-ignore
-            if(posts.at(ctx.dataIndex) != null){
+            if(biggestPost.at(ctx.dataIndex).id != 0){
               // @ts-ignore
-              return Math.max(12 * (postMax.at(ctx.dataIndex) / postClicksMax), 5);
+              return Math.max(12 * (biggestPost.at(ctx.dataIndex).clicks / Math.max(...biggestPost.map(post => post.clicks))), 5);
             }
             return 2.5;
           },
           pointBackgroundColor: (ctx, options): string => {
             // @ts-ignore
-            if(posts.at(ctx.dataIndex) != null){
+            if(biggestPost.at(ctx.dataIndex).id != 0){
               // @ts-ignore
-              return Util.getColor("post", postMaxType.at(ctx.dataIndex));
+              return Util.getColor("post", biggestPost.at(ctx.dataIndex).type);
             }
             return DashColors.GREY;
           }
@@ -144,30 +136,46 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
             bodyFont: {
               size: 15
             },
+            usePointStyle: true,
             callbacks: {
               //@ts-ignore
               title(tooltipItems): string {
                 // @ts-ignore
-                if (posts[tooltipItems.at(0).dataIndex].at(0) == null){
+                if (biggestPost[tooltipItems.at(0).dataIndex].id == 0){
                   // @ts-ignore
                   return dates[tooltipItems.at(0).dataIndex];
                 }
                 // @ts-ignore
-                let postType : string = postMaxType.at(tooltipItems.at(0).dataIndex);
+                let postType : string = biggestPost.at(tooltipItems.at(0).dataIndex).type;
                 postType = postType.at(0)?.toUpperCase() + postType.substring(1);
                 // @ts-ignore
-                return postType + ": " + postMaxTitle.at(tooltipItems.at(0).dataIndex);
+                return postType + ": " + biggestPost.at(tooltipItems.at(0).dataIndex).title.substring(0,15) + "...";
+
+              },
+              label(tooltipItem) {
+                if (posts[tooltipItem.dataIndex].at(0) == null) {
+                  // @ts-ignore
+                  return "Profilaufrufe: " + profileClicksData[tooltipItem.dataIndex].toFixed();
+                }
+                else return "Beiträge...";
+              },
+              beforeFooter(tooltipItems): string | string[] | void {
 
               },
               //@ts-ignore
-              label: ((tooltipItem) => {
-                if (posts[tooltipItem.dataIndex].at(0) == null) {
-                  return profileClicksData[tooltipItem.dataIndex].toFixed();
+              footer: ((tooltipItem) => {
+                // @ts-ignore
+                if (posts[tooltipItem.at(0).dataIndex].at(0) == null) {
+                  // @ts-ignore
+                  return "";
                 } else {
                   // @ts-ignore
-                  return ["Profilaufrufe: " + profileClicksData[tooltipItem.dataIndex].toFixed(), "Beitragsaufrufe: " + postMax.at(tooltipItem.dataIndex).toFixed()];
+                  return ["Profilaufrufe: " + profileClicksData[tooltipItem.at(0).dataIndex].toFixed(), "Beitragsaufrufe: " + biggestPost.at(tooltipItem.at(0).dataIndex).clicks.toFixed()];
                 }
-              })
+              }),
+              labelPointStyle(tooltipItem): { pointStyle: PointStyle; rotation: number } | void {
+                return {pointStyle: "rectRounded", rotation: 0}
+              }
             }
           }
         },

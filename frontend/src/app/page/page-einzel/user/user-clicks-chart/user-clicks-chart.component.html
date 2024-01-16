@@ -3,9 +3,9 @@
     <select id="post-type-select" name="post_type">
       <option value="artikel">Profilaufrufe</option>
     </select>
-    <input type="radio" name="time_range" value="all_time" checked (change)="getData($event)">
+    <input type="radio" name="time_range" value="all_time" (change)="getData($event)">
     <input type="radio" name="time_range" value="half_year" id="post-range-halfyear" (change)="getData($event)">
-    <input type="radio" name="time_range" value="month" id="post-range-month" (change)="getData($event)">
+    <input type="radio" name="time_range" value="month" id="post-range-month" checked (change)="getData($event)">
     <input type="radio" name="time_range" value="week" id="post-range-week" (change)="getData($event)">
   </form>
   <div class="chart-canvas-box">

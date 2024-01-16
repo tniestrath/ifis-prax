@@ -17,6 +17,7 @@ export class User extends DbObject {
               public TeleEU: boolean = false,
               public category: string = "none",
               public employees: string = "",
+              public redirects: number = 0,
               public img: string = "") {
     super(id, displayName);
   }

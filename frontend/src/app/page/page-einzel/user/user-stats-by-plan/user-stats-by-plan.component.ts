@@ -58,7 +58,6 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
         datasets: datasets
       },
       options: {
-        aspectRatio: 5,
         maintainAspectRatio: false,
         clip: false,
         layout: {
@@ -71,7 +70,10 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
             display: false
           },
           x: {
-            display: true
+            display: true,
+            grid: {
+              display: false
+            }
           }
         },
         plugins: {

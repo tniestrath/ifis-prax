@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventsRepository extends JpaRepository<Events, Long> {
@@ -18,6 +19,9 @@ public interface EventsRepository extends JpaRepository<Events, Long> {
 
     @Query("SELECT e FROM Events e")
     public List<Events> getAll();
+
+    @Query("SELECT e FROM Events e WHERE e.postSlug =:slug AND e.eventStatus=1")
+    Optional<Events> getActiveEventBySlug(String slug);
 
     List<Events> getAllByOwnerID(long ownerId);
 }

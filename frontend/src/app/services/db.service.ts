@@ -31,6 +31,7 @@ export enum dbUrl {
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
   HAS_USER_POST = "/users/hasPost?id=",
   GET_USER_PROFILE_COMPLETION = "/users/getPotentialById?userId=USERID",
+  GET_USER_PROFILE_AND_POSTS_BY_DATE = "/users/getUserClicksChartData?id=ID&start=START&end=END",
 
   GET_USERS_ALL = "/users/getAll?page=PAGE&size=SIZE&search=SEARCH&filterAbo=ACCFILTER&filterTyp=USRFILTER&sorter=SORTER",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
@@ -52,6 +53,7 @@ export enum dbUrl {
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_BY_AUTHOR = "/posts/getPostsByAuthor?authorId=ID&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH",
+  GET_POSTS_BY_IDS = "/posts/getPostStatsForList?list=LIST",
   GET_POSTS_PER_TYPE = "/bericht/getPostsByType",
   GET_POSTS_PER_TYPE_YESTERDAY = "/bericht/getPostsByTypeYesterday",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
@@ -222,6 +224,10 @@ export class DbService {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_POSTS_BY_AUTHOR).replace("ID", id).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
+  async getPostsByIDs(list : string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_BY_IDS).replace("LIST", list), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
 
   async getUserImgSrc(id : string){
     this.setLoading();
@@ -269,6 +275,11 @@ export class DbService {
   async getUserProfileCompletion(id : string): Promise<ProfileState> {
     this.setLoading();
     return fetch(DbService.getUrl(dbUrl.GET_USER_PROFILE_COMPLETION).replace("USERID", id)).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getUserClicksChartData(id : string, start : string, end : string): Promise<{date: string, profileViews: number, biggestPost: {id: number, title: string, type: string, clicks: number}, posts: {id: number, title: string, type: string, clicks: number}[]}[]> {
+    this.setLoading();
+    return fetch(DbService.getUrl(dbUrl.GET_USER_PROFILE_AND_POSTS_BY_DATE).replace("ID", id).replace("START", start).replace("END", end)).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getMaxPerformance(){

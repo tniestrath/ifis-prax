@@ -1,8 +1,6 @@
 import {EventEmitter, Injectable} from '@angular/core';
 
 import {User} from "../page/page-einzel/user/user";
-import {TagRanking} from "../component/tag/Tag";
-import {PAGE_DOWN} from "@angular/cdk/keycodes";
 
 export class PAGE {
   id: number = 0;
@@ -28,6 +26,7 @@ export class SysVars {
   public static CURRENT_PAGE : string = "landing";
   public static SELECTED_TAG : EventEmitter<number> = new EventEmitter<number>();
   public static SELECTED_USER_ID : EventEmitter<number> = new EventEmitter<number>();
+  public static SELECTED_POST_IDS : EventEmitter<string> = new EventEmitter<string>();
   public static WELCOME : boolean = true;
 
   public static PAGES = [

@@ -41,5 +41,9 @@
     <img *ngIf="!this.user.tendency && !(this.user.tendency == null)" alt="Tendenz fallend" src="assets/trend_down.png">
     <img *ngIf="this.user.tendency == null" alt="Tendenz stagnierend" src="assets/trend_flat.png">
   </div>
+  <div class="user-redirects-box">
+    <img alt="target" src="assets/target.png" width="25" height="25">
+    <p>{{user.redirects}}</p>
+  </div>
 
 </div>

@@ -100,6 +100,7 @@ export default class Util {
       case "post":
         switch (type) {
           case "article":
+          case "artikel":
             return DashColors.ARTICLE;
           case "blog":
             return DashColors.BLOG;

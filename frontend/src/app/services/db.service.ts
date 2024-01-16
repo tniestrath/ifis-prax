@@ -35,6 +35,7 @@ export enum dbUrl {
   GET_USER_POSTCOUNT_BY_TYPE = "/users/getPostCountByType?id=ID",
   GET_USER_EVENTCOUNT = "/users/getAmountOfEvents?id=ID",
   GET_USER_EVENTCOUNT_CREATED_YESTERDAY = "/users/getAmountOfEventsCreatedYesterday?id=ID",
+  GET_USER_EVENTS_LIKE_POSTS = "/users/getEventsWithStatsAndId?&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH&id=ID",
 
   GET_USERS_ALL = "/users/getAll?page=PAGE&size=SIZE&search=SEARCH&filterAbo=ACCFILTER&filterTyp=USRFILTER&sorter=SORTER",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
@@ -75,7 +76,7 @@ export enum dbUrl {
 
   GET_EVENTS = "/events/getAmountOfEvents",
   GET_EVENTS_YESTERDAY = "/events/getAmountOfEventsCreatedYesterday",
-  GET_EVENTS_LIKE_POSTS = "/events/getEventsWithStats?&page=PAGE&size=SIZE&filter=FILTER&sortBy=SORTER&search=SEARCH",
+  GET_EVENTS_LIKE_POSTS = "/posts/getEventsWithStats?&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH",
 
   GET_GEO_GERMANY_ALL_TIME = "/geo/getTotalGermanGeoAllTime",
   GET_GEO_GERMANY_BY_DATES = "/geo/getTotalGermanGeoByDay?start=START&end=END",
@@ -493,9 +494,13 @@ export class DbService {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_EVENTS_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async getEventsLikePostsPaged(page : number, size : number,filter : string, sorter : string, search: string){
+  async getEventsLikePostsPaged(page : number, size : number,filter : string, search: string){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_EVENTS_LIKE_POSTS).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SORTER", sorter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_EVENTS_LIKE_POSTS).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserEventsLikePostsPaged(id : string, page : number, size : number,filter : string, search: string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_EVENTS_LIKE_POSTS).replace("ID", id).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserProfileViewsAverageByType() {

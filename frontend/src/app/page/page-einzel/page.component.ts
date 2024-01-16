@@ -14,9 +14,10 @@ import {OriginMapComponent} from "../../component/origin-map/origin-map.componen
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
 import {
+  EventListComponent,
   PodcastListComponent,
   PostListComponent,
-  RatgeberListComponent,
+  RatgeberListComponent, UserEventListComponent,
   UserPostListComponent
 } from "../../component/post/post-list/post-list.component";
 import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
@@ -24,7 +25,7 @@ import {CallUpChartComponent} from "../../component/call-up-chart/call-up-chart.
 import {Top5ArticleComponent, Top5BlogComponent, Top5NewsComponent, Top5WhitepaperComponent} from "../../component/post/top5-posts/top5-posts.component";
 import {NewsletterStatsComponent} from "../../component/newsletter-stats/newsletter-stats.component";
 import {SystemloadComponent} from "../../component/system/systemload/systemload.component";
-import {EventsStatsComponent} from "../../component/events-stats/events-stats.component";
+import {EventsStatsComponent, UserEventsStatsComponent} from "../../component/events-stats/events-stats.component";
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
 import {ProfileCompletionComponent} from "../../component/profile-completion/profile-completion.component";
 import {UserComparatorComponent} from "./user/user-comparator/user-comparator.component";
@@ -66,16 +67,15 @@ export class PageComponent implements OnInit {
   getUserDetailPageCards() {
     return [
       {type: ClicksComponent, row: 1, col: 1, height: 4, width: 1},
-      //@ts-ignore
       {type: UserClicksChartComponent, row: 1, col: 2, height: 2, width: 3},
-      //@ts-ignore
-      {type: GaugeComponent, row: 3, col: 4, height: 1, width: 1},
-      {type: RelevanceComponent, row: 4, col: 4, height: 1, width: 1},
-      //@ts-ignore
       {type: ProfileCompletionComponent, row: 3, col: 2, height: 2, width: 2},
+      {type: UserEventsStatsComponent, row: 3, col: 4, height: 2, width: 1},
       {type: OriginMapComponent, row: 5, col: 2, height: 2, width: 2},
       {type: UserDisplayComponentComponent, row: 1, col: 5, height: 1, width: 2},
-      {type: UserPostListComponent, row: 2, col: 5, height: 3, width: 2}
+      {type: UserPostListComponent, row: 2, col: 5, height: 3, width: 2},
+      {type: UserEventListComponent, row: 5, col: 5, height: 2, width: 2},
+      {type: GaugeComponent, row: 5, col: 1, height: 1, width: 1},
+      {type: RelevanceComponent, row: 6, col: 1, height: 1, width: 1}
     ];
   }
   getTagsPageCards() {
@@ -110,6 +110,7 @@ export class PageComponent implements OnInit {
   getContentPageCards() {
     return [
       {type: PodcastListComponent,  row: 1, col: 1, height: 4, width: 2},
+      {type: EventListComponent,  row: 1, col: 3, height: 4, width: 2},
       {type: RatgeberListComponent,  row: 1, col: 5, height: 4, width: 2}
     ];
   }

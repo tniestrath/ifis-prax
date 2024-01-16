@@ -499,12 +499,12 @@ public class UserController {
      * and a count of all events by this user that are active (countTotal).
      */
     @GetMapping("/getAmountOfEvents")
-    public String getCountEvents(long userId) throws JSONException {
+    public String getCountEvents(long id) throws JSONException {
 
         JSONObject json = new JSONObject();
 
         List<String> events = new ArrayList<>();
-        List<Events> allEvents = eventsRepo.getAllByOwnerID(userId);
+        List<Events> allEvents = eventsRepo.getAllByOwnerID(id);
         int countOld = 0;
 
         for (Events e : allEvents) {
@@ -527,8 +527,8 @@ public class UserController {
     }
 
     @GetMapping("/getPostCountByType")
-    public String getPostCountByType(long userId) throws JSONException, ParseException {
-        List<Post> posts = postRepository.findByAuthor((int) userId);
+    public String getPostCountByType(long id) throws JSONException, ParseException {
+        List<Post> posts = postRepository.findByAuthorPageable(id, "", PageRequest.of(0, postController.getCountTotalPosts()));
 
         int countArtikel = 0;
         int countBlogs = 0;
@@ -538,7 +538,7 @@ public class UserController {
 
         for(Post post : posts) {
             switch(postController.getType(post.getId())) {
-                case "article" -> {
+                case "artikel" -> {
                     countArtikel++;
                 }
                 case "blog" -> {
@@ -547,7 +547,7 @@ public class UserController {
                 case "news" -> {
                     countNews++;
                 }
-                case "podcast" -> {
+                case "podcast", "podcast_first_series" -> {
                     countPodcasts++;
                 }
                 case "whitepaper" -> {
@@ -571,9 +571,9 @@ public class UserController {
      * @return a List of Strings, each starting with c| (current) or u| (upcoming) and then the name of the event for all events created within the last day, by the given User.
      */
     @GetMapping("/getAmountOfEventsCreatedYesterday")
-    public List<String> getAmountOfEventsCreatedYesterday(long userId) {
+    public List<String> getAmountOfEventsCreatedYesterday(long id) {
         List<String> events = new ArrayList<>();
-        List<Events> allEvents = eventsRepo.getAllByOwnerID(userId);
+        List<Events> allEvents = eventsRepo.getAllByOwnerID(id);
         LocalDate today = LocalDate.now();
 
         for (Events e : allEvents) {

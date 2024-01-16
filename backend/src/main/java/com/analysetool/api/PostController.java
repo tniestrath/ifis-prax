@@ -665,7 +665,7 @@ public class PostController {
     /**
      *
      * @param id the id of the post you want the type of.
-     * @return the type of Post "news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber"
+     * @return the type of Post "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber"
      * @throws JSONException .
      * @throws ParseException .
      */
@@ -720,8 +720,10 @@ public class PostController {
 
         if (type == null) {
             System.out.println(id + "\n");
+            return postRepo.findById(id).isPresent() ? postRepo.findById(id).get().getType() : "none";
+        } else {
+            return postRepo.findById(id).isPresent() && type.equalsIgnoreCase("default") ? postRepo.findById(id).get().getType() : type;
         }
-        return type;
     }
 
 
@@ -1015,7 +1017,7 @@ public class PostController {
     }
 
     @GetMapping("/getEventsWithStats")
-    public String getEventsWithStats(Integer page, Integer size, String sortBy, String search, String filter) throws JSONException, ParseException {
+    public String getEventsWithStats(Integer page, Integer size,  String filter, String sortBy, String search) throws JSONException, ParseException {
         List<Post> list;
         if(search.isBlank()) {
             list = postRepo.findByStatusIsAndTypeIs("publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));

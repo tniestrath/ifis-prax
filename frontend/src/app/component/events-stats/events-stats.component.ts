@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import Util, {DashColors} from "../../util/Util";
+import {SysVars} from "../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-newsletter-stats',
@@ -90,5 +91,39 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
               "Workshops: " + this.c_workshops + "\n" +
               "Sonstige: " + this.c_rest + "\n";
     }
+  }
+}
+@Component({
+  selector: 'dash-newsletter-stats',
+  templateUrl: './events-stats.component.html',
+  styleUrls: ['./events-stats.component.css', "../dash-base/dash-base.component.css"]
+})
+export class UserEventsStatsComponent extends EventsStatsComponent{
+
+  override ngOnInit(): void {
+    this.db.getUserEventCount(SysVars.USER_ID).then(res => {
+      for (let event of res) {
+        let eventSplits = event.split("|");
+        if (eventSplits[0].startsWith("u")) {
+          this.upcoming++;
+          this.createEventTooltip(eventSplits[1], "u");
+        }
+        if (eventSplits[0].startsWith("c")) {
+          this.current++;
+          this.createEventTooltip(eventSplits[1], "c");
+        }
+      }
+    }).then( () =>
+      this.db.getUserEventCountYesterday(SysVars.USER_ID).then(res => {
+        for (let event of res) {
+          if (event.startsWith("u")) this.upcoming_yesterday++;
+          if (event.startsWith("c")) this.current_yesterday++;
+        }
+      })).then(() => {
+      this.upcoming_today = this.upcoming - this.upcoming_yesterday;
+      this.current_today = this.current - this.current_yesterday;
+    });
+
+    this.setToolTip("Hier sind die aktuellen Veranstaltungen angezeigt. Mit Hover über die Zahlen werden genauere Daten angezeigt.");
   }
 }

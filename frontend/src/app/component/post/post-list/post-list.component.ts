@@ -288,3 +288,121 @@ export class UserPostListComponent extends PostListComponent{
   }
 
 }
+
+@Component({
+  selector: 'dash-list-user-post',
+  templateUrl: './post-list.component.html',
+  styleUrls: ['./post-list.component.css', "../../dash-base/dash-base.component.css"]
+})
+export class EventListComponent extends PostListComponent{
+  override placeholder = "Event suchen";
+
+  override ngOnInit() {
+    this.setToolTip("Auflistung aller Events, sie können nach Datum oder Clicks sortieren oder nach Schlagwörtern in Titel oder Tags suchen");
+    this.db.getEventsLikePostsPaged( 0, 20, " ", "").then((value : {posts:  Post[], count : number}) => {
+      this.selectorItems = [];
+      for (const valueElement of value.posts) {
+        this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        this.selectorItems.sort((a, b) => Number(b.data.id) - Number(a.data.id));
+      }
+      this.pageIndex++;
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+
+    this.input_search_cb = (event: { target: { value: string; }; }) => {
+      this.selectorItems = this.selectorItemsBackup.filter((item) => {
+        return (item.data as Post).title.toUpperCase().includes(event.target.value.toUpperCase());
+      });
+      this.selectorItemsLoaded.next(this.selectorItems);
+    }
+    this.input_all_cb = () => {
+      this.selectorItems = this.selectorItemsBackup.sort((a, b) => Number(b.data.id) - Number(a.data.id));
+      this.selectorItemsLoaded.next(this.selectorItems);
+    }
+    this.input_whitepaper_cb = () => {
+      this.selectorItems.sort((a, b) => Number((b.data as Post).clicks) - Number((a.data as Post).clicks));
+      this.selectorItemsLoaded.next(this.selectorItems);
+    }
+  }
+
+  override onScrollEnd() {
+    if (!this.pagesComplete){
+      let scroll = Date.now();
+      if (scroll >= (this.lastScroll + 100)){
+        console.log(this.pageIndex)
+        this.db.getEventsLikePostsPaged(this.pageIndex, this.pageSize, this.filter, this.search_text).then((value : {posts:  Post[], count : number}) => {
+          for (const valueElement of value.posts) {
+            this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+          }
+          if (value.count <= 0){
+            this.pagesComplete = true;
+          }
+          this.selectorItemsLoaded.next(this.selectorItems);
+        });
+        this.pageIndex++;
+      }
+      else {}
+      this.lastScroll = scroll;
+    }
+  }
+
+}
+
+@Component({
+  selector: 'dash-list-user-post',
+  templateUrl: './post-list.component.html',
+  styleUrls: ['./post-list.component.css', "../../dash-base/dash-base.component.css"]
+})
+export class UserEventListComponent extends PostListComponent{
+  override placeholder = "Event suchen";
+
+  override ngOnInit() {
+    this.setToolTip("Auflistung aller Events, sie können nach Datum oder Clicks sortieren oder nach Schlagwörtern in Titel oder Tags suchen");
+    this.db.getUserEventsLikePostsPaged(SysVars.USER_ID, 0, 20, " ", "").then((value : {posts:  Post[], count : number}) => {
+      this.selectorItems = [];
+      for (const valueElement of value.posts) {
+        this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        this.selectorItems.sort((a, b) => Number(b.data.id) - Number(a.data.id));
+      }
+      this.pageIndex++;
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+
+    this.input_search_cb = (event: { target: { value: string; }; }) => {
+      this.selectorItems = this.selectorItemsBackup.filter((item) => {
+        return (item.data as Post).title.toUpperCase().includes(event.target.value.toUpperCase());
+      });
+      this.selectorItemsLoaded.next(this.selectorItems);
+    }
+    this.input_all_cb = () => {
+      this.selectorItems = this.selectorItemsBackup.sort((a, b) => Number(b.data.id) - Number(a.data.id));
+      this.selectorItemsLoaded.next(this.selectorItems);
+    }
+    this.input_whitepaper_cb = () => {
+      this.selectorItems.sort((a, b) => Number((b.data as Post).clicks) - Number((a.data as Post).clicks));
+      this.selectorItemsLoaded.next(this.selectorItems);
+    }
+  }
+
+  override onScrollEnd() {
+    if (!this.pagesComplete){
+      let scroll = Date.now();
+      if (scroll >= (this.lastScroll + 100)){
+        console.log(this.pageIndex)
+        this.db.getUserEventsLikePostsPaged(SysVars.USER_ID, this.pageIndex, this.pageSize, this.filter, this.search_text).then((value : {posts:  Post[], count : number}) => {
+          for (const valueElement of value.posts) {
+            this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+          }
+          if (value.count <= 0){
+            this.pagesComplete = true;
+          }
+          this.selectorItemsLoaded.next(this.selectorItems);
+        });
+        this.pageIndex++;
+      }
+      else {}
+      this.lastScroll = scroll;
+    }
+  }
+
+}

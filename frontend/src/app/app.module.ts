@@ -39,7 +39,8 @@ import {
   PostListComponent,
   PodcastListComponent,
   RatgeberListComponent,
-  UserPostListComponent
+  UserPostListComponent,
+  EventListComponent, UserEventListComponent
 } from './component/post/post-list/post-list.component';
 import {
   PostListItemComponent
@@ -49,7 +50,7 @@ import { CallUpChartComponent } from './component/call-up-chart/call-up-chart.co
 import { OriginByTimeChartComponent } from './component/origin-by-time-chart/origin-by-time-chart.component';
 import { Top5PostsComponent, Top5ArticleComponent, Top5BlogComponent, Top5NewsComponent, Top5WhitepaperComponent } from './component/post/top5-posts/top5-posts.component';
 import { NewsletterStatsComponent } from './component/newsletter-stats/newsletter-stats.component';
-import { EventsStatsComponent } from './component/events-stats/events-stats.component';
+import {EventsStatsComponent, UserEventsStatsComponent} from './component/events-stats/events-stats.component';
 import { SystemloadComponent } from './component/system/systemload/systemload.component';
 import { PostTypeComponent } from './component/post/post-type/post-type.component';
 import { UserListComponent } from './page/page-einzel/user/user-list/user-list.component';
@@ -94,6 +95,8 @@ import { UserClicksChartComponent } from './page/page-einzel/user/user-clicks-ch
     PodcastListComponent,
     RatgeberListComponent,
     UserPostListComponent,
+    EventListComponent,
+    UserEventListComponent,
     PostListItemComponent,
     TagChartComponent,
     CallUpChartComponent,
@@ -105,6 +108,7 @@ import { UserClicksChartComponent } from './page/page-einzel/user/user-clicks-ch
     Top5WhitepaperComponent,
     NewsletterStatsComponent,
     EventsStatsComponent,
+    UserEventsStatsComponent,
     SystemloadComponent,
     PostTypeComponent,
     UserListComponent,

@@ -670,60 +670,74 @@ public class PostController {
      * @throws ParseException .
      */
     public String getType(@RequestParam long id) throws JSONException, ParseException {
-        if(!postRepository.findById(id).isPresent()) {return null;}
+        if(postRepository.findById(id).isEmpty()) {return null;}
 
-        if(postTypeRepo.getType((int) id) != null) {
-            if(!postTypeRepo.getType((int) id).contains("cyber-risk")) {
-                return postTypeRepo.getType((int) id);
-            } else {
-                return "ratgeber";
-            }
-        }
 
-        if(postTypeRepo.getType((int) id) != null) {
-            if(!postTypeRepo.getType((int) id).contains("podcast")) {
-                return postTypeRepo.getType((int) id);
-            } else {
-                return "podcast";
-            }
-        }
+        if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("post")) {
 
-        Post post = postRepository.findById(id).get();
-        String type = "default";
-        List<Long> tagIDs = null;
-        if(termRelationRepo.existsByObjectId(post.getId())){
-            tagIDs = termRelationRepo.getTaxIdByObject(post.getId());
-        }
-        List<WPTerm> terms = new ArrayList<>();
-        if (tagIDs != null) {
-            for (long l : tagIDs) {
-                if (wpTermRepo.existsById(l)) {
-                    if (wpTermRepo.findById(l).isPresent()) {
-                        terms.add(wpTermRepo.findById(l).get());
-                    }
+            if (postTypeRepo.getType((int) id) != null) {
+                if (!postTypeRepo.getType((int) id).contains("cyber-risk")) {
+                    return postTypeRepo.getType((int) id);
+                } else {
+                    return "ratgeber";
                 }
             }
-        }
-        for (WPTerm t: terms) {
-            if (wpTermTaxonomyRepo.existsById(t.getId())){
-                if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
-                    WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
-                    if (Objects.equals(tt.getTaxonomy(), "category")){
-                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
-                            type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
+
+            if (postTypeRepo.getType((int) id) != null) {
+                if (!postTypeRepo.getType((int) id).contains("podcast")) {
+                    return postTypeRepo.getType((int) id);
+                } else {
+                    return "podcast";
+                }
+            }
+
+            Post post = postRepository.findById(id).get();
+            String type = "default";
+            List<Long> tagIDs = null;
+            if (termRelationRepo.existsByObjectId(post.getId())) {
+                tagIDs = termRelationRepo.getTaxIdByObject(post.getId());
+            }
+            List<WPTerm> terms = new ArrayList<>();
+            if (tagIDs != null) {
+                for (long l : tagIDs) {
+                    if (wpTermRepo.existsById(l)) {
+                        if (wpTermRepo.findById(l).isPresent()) {
+                            terms.add(wpTermRepo.findById(l).get());
                         }
                     }
                 }
             }
+            for (WPTerm t : terms) {
+                if (wpTermTaxonomyRepo.existsById(t.getId())) {
+                    if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()) {
+                        WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
+                        if (Objects.equals(tt.getTaxonomy(), "category")) {
+                            if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
+                                type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if (type == null) {
+                System.out.println(id + "\n");
+            }
+        } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("event")){
+            String type = "Event: ";
+            switch(eventsController.getEventType(eventsRepo.findByPostID(id).get())) {
+                case "o" ->  type += "Sonstige";
+                case "k" -> type += "Kongress";
+                case "m" -> type += "Messe";
+                case "s" -> type += "Schulung/Seminar";
+                case "w" -> type += "Workshop";
+            }
+            return type;
         }
 
 
-        if (type == null) {
-            System.out.println(id + "\n");
-            return postRepo.findById(id).isPresent() ? postRepo.findById(id).get().getType() : "none";
-        } else {
-            return postRepo.findById(id).isPresent() && type.equalsIgnoreCase("default") ? postRepo.findById(id).get().getType() : type;
-        }
+        return "error";
     }
 
 

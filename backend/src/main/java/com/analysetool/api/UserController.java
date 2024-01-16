@@ -1624,33 +1624,41 @@ public class UserController {
         return performanceScores;
     }
 
-    public List<String> decryptTags(List<String> cryptedTags){
-        List<String> decryptedTags= new ArrayList<>();
-
+    public String decryptTag(String cryptedTag) {
         Pattern pattern = Pattern.compile("\"([^\"]+)\"");
-        for(String tags:cryptedTags) {
-            Matcher matcher = pattern.matcher(tags);
-            while (matcher.find()) {
-                for (int i = 0; i < matcher.groupCount(); i++) {
-                    decryptedTags.add(matcher.group(i));
-                }
+        Matcher matcher = pattern.matcher(cryptedTag);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    public List<String> decryptTags(List<String> cryptedTags) {
+        List<String> decryptedTags = new ArrayList<>();
+        for (String tag : cryptedTags) {
+            String decryptedTag = decryptTag(tag);
+            if (decryptedTag != null) {
+                decryptedTags.add(decryptedTag);
             }
         }
         return decryptedTags;
     }
 
+    public String cleanTag(String encryptedTag) {
+        if (encryptedTag.startsWith("\"") && encryptedTag.endsWith("\"")) {
+            return encryptedTag.substring(1, encryptedTag.length() - 1);
+        }
+        return encryptedTag;
+    }
+
     public List<String> cleanTags(List<String> encryptedTags) {
         List<String> cleanedTags = new ArrayList<>();
-
         for (String tag : encryptedTags) {
-            String cleanedTag = tag;
-            if (cleanedTag.startsWith("\"") && cleanedTag.endsWith("\"")) {
-                cleanedTag = cleanedTag.substring(1, cleanedTag.length() - 1);
-            }
-            cleanedTags.add(cleanedTag);
+            cleanedTags.add(cleanTag(tag));
         }
         return cleanedTags;
     }
+
 
 
     public Map<String, Integer> getUserCountForAllTags() {

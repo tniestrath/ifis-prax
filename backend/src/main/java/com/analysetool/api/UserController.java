@@ -351,6 +351,12 @@ public class UserController {
                 obj.put("potential", getPotentialPercent(Math.toIntExact(user.getId())));
             } catch(Exception ignored) {}
 
+            if(wpUserMetaRepository.getSlogan(user.getId()).isPresent()) {
+                obj.put("slogan", wpUserMetaRepository.getSlogan(user.getId()).get());
+            } else {
+                obj.put("slogan", "none");
+            }
+
 
             obj.put("accountType", getType(Math.toIntExact(user.getId())));
 
@@ -464,6 +470,12 @@ public class UserController {
             try {
                 obj.put("potential", getPotentialPercent(Math.toIntExact(user.getId())));
             } catch (Exception ignored) {
+            }
+
+            if(wpUserMetaRepository.getSlogan(user.getId()).isPresent()) {
+                obj.put("slogan", wpUserMetaRepository.getSlogan(user.getId()).get());
+            } else {
+                obj.put("slogan", "none");
             }
 
 

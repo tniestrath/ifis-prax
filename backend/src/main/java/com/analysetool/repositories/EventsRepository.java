@@ -1,7 +1,6 @@
 package com.analysetool.repositories;
 
 import com.analysetool.modells.Events;
-import com.analysetool.modells.Newsletter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,4 +18,6 @@ public interface EventsRepository extends JpaRepository<Events, Long> {
 
     @Query("SELECT e FROM Events e")
     public List<Events> getAll();
+
+    List<Events> getAllByOwnerID(long ownerId);
 }

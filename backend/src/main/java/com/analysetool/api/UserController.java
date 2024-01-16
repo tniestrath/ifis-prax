@@ -65,6 +65,10 @@ public class UserController {
     private PostClicksByHourDLCService postHourlyService;
     @Autowired
     private UserRedirectsHourlyRepository userRedirectsRepo;
+    @Autowired
+    private EventsController eventsController;
+    @Autowired
+    private EventsRepository eventsRepo;
 
     private final DashConfig config;
 
@@ -586,11 +590,68 @@ public class UserController {
         return  json.toString();
     }
 
+    /**
+     *
+     * @return a JSON-String containing a list of Events (newEvents) starting with u| for upcoming, c| for current and their type,
+     * the count of events in the past for this user (countOldEvents)
+     * and a count of all events by this user that are active (countTotal).
+     */
+    @GetMapping("/getAmountOfEvents")
+    public String getCountEvents(long userId) throws JSONException {
+
+        JSONObject json = new JSONObject();
+
+        List<String> events = new ArrayList<>();
+        List<Events> allEvents = eventsRepo.getAllByOwnerID(userId);
+        int countOld = 0;
+
+        for (Events e : allEvents) {
+            if(eventsController.isActive(e)) {
+                if (eventsController.isCurrent(e)) {
+                    events.add("c|" + eventsController.getEventType(e));
+                } else if (eventsController.isUpcoming(e)) {
+                    events.add("u|" + eventsController.getEventType(e));
+                } else {
+                    countOld++;
+                }
+            }
+
+        }
+        json.put("newEvents", new JSONArray(events));
+        json.put("countOldEvents", countOld);
+        json.put("countTotal", countOld + events.size());
+
+        return json.toString();
+    }
+
+
+    /**
+     *
+     * @return a List of Strings, each starting with c| (current) or u| (upcoming) and then the name of the event for all events created within the last day, by the given User.
+     */
+    @GetMapping("/getAmountOfEventsCreatedYesterday")
+    public List<String> getAmountOfEventsCreatedYesterday(long userId) {
+        List<String> events = new ArrayList<>();
+        List<Events> allEvents = eventsRepo.getAllByOwnerID(userId);
+        LocalDate today = LocalDate.now();
+
+        for (Events e : allEvents) {
+            LocalDate createdDate = e.getEventDateCreated().toLocalDate();
+
+            if (createdDate.isBefore(today) && eventsController.isActive(e)) {
+                if(eventsController.isCurrent(e)) {
+                    events.add("c|" + eventsController.getEventType(e));
+                } else if(eventsController.isUpcoming(e)) {
+                    events.add("u|" + eventsController.getEventType(e));
+                }
+
+            }
+        }
+        return events;
+    }
 
 
     //STATS
-
-
 
     //ToDo Clean
     @GetMapping("/{userId}")

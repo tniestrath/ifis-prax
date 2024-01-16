@@ -20,7 +20,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
   p_chart_total : number  = 0;
   isError: boolean = false;
 
-  createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){
+  createChart(canvas_id : string, labels : string[], realData : number[], realData2?: number[], onClick? : EventEmitter<number> | undefined){
 
     const donughtInner  = {
       id: "donughtInner",
@@ -55,21 +55,29 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
         ctx.fillText(totalText, x, y+2);
       }
     }
-
-
+    var datasets = [{
+      label: "",
+      data: realData,
+      backgroundColor: this.colors,
+      borderRadius: 5,
+      borderWidth: 5
+    }];
+    if (realData2){
+      datasets.push({
+          label: "",
+          data: realData2,
+          backgroundColor: this.colors,
+          borderRadius: 5,
+          borderWidth: 5
+        });
+    };
 
     // @ts-ignore
     return new Chart(canvas_id, {
       type: "doughnut",
       data: {
         labels: labels,
-        datasets: [{
-          label: "",
-          data: realData,
-          backgroundColor: this.colors,
-          borderRadius: 5,
-          borderWidth: 5
-        }]
+        datasets: datasets
       },
       options: {
         aspectRatio: 1,
@@ -201,25 +209,29 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
     }
     this.c_chart_total = 0;
     this.p_chart_total = 0;
+    this.db.getUserPostCountByType(SysVars.USER_ID).then((res : {Whitepaper: number, Blogs: number, Artikel: number, News: number, Podcasts: number}) => {
+      var realData2 = res;
+      this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsNews: number, viewsPodcast: number, viewsWhitepaper: number} | string) => {
+        if (typeof res !== "string"){
+          this.isError = false;
+          this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News", "Podcast", "Whitepaper"], [res.viewsArtikel,res.viewsBlog, res.viewsNews, res.viewsPodcast, res.viewsWhitepaper],
+                                [realData2.Artikel,realData2.Blogs,realData2.News,realData2.Podcasts,realData2.Whitepaper]);
+          this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsNews)]);
+          this.createLegend("clicks-content-box", this.c_chart);
+          this.createLegend("clicks-profile-box", this.p_chart);
+          this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsNews + res.viewsPodcast + res.viewsWhitepaper;
+          this.p_chart_total = res.viewsProfile + this.c_chart_total;
+          this.cdr.detectChanges();
+        }
+        else {
+          this.isError = true;
+          this.cdr.detectChanges();
+        }
 
-    this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsNews: number, viewsPodcast: number, viewsWhitepaper: number} | string) => {
-      if (typeof res !== "string"){
-        this.isError = false;
-        this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News", "Podcast", "Whitepaper"], [res.viewsArtikel,res.viewsBlog, res.viewsNews, res.viewsPodcast, res.viewsWhitepaper], undefined);
-        this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsNews)], undefined);
-        this.createLegend("clicks-content-box", this.c_chart);
-        this.createLegend("clicks-profile-box", this.p_chart);
-        this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsNews + res.viewsPodcast + res.viewsWhitepaper;
-        this.p_chart_total = res.viewsProfile + this.c_chart_total;
-        this.cdr.detectChanges();
-      }
-      else {
-        this.isError = true;
-        this.cdr.detectChanges();
-      }
+        //this.pdf.exportAsPDF(this.p_chart);
+      });
+    });
 
-      //this.pdf.exportAsPDF(this.p_chart);
-    })
     this.cdr.detectChanges();
   }
 

@@ -594,6 +594,7 @@ public class UserController {
     @GetMapping("/getEventsWithStatsAndId")
     public String getEventsWithStats(Integer page, Integer size,  String filter, String sortBy, String search, long id) throws JSONException, ParseException {
         List<Post> list;
+        sortBy = sortBy.isBlank() ? "id" : sortBy;
         if(search.isBlank()) {
             list = postRepository.findByAuthorIdAndStatusIsAndTypeIs(id, "publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));
         } else {

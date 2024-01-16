@@ -528,7 +528,7 @@ public class UserController {
 
     @GetMapping("/getPostCountByType")
     public String getPostCountByType(long userId) throws JSONException, ParseException {
-        List<Post> posts = postRepository.findByAuthor((int) userId);
+        List<Post> posts = postRepository.findByAuthorPageable(userId, "", PageRequest.of(0, postController.getCountTotalPosts()));
 
         int countArtikel = 0;
         int countBlogs = 0;
@@ -537,6 +537,7 @@ public class UserController {
         int countPodcasts = 0;
 
         for(Post post : posts) {
+            System.out.println(postController.getType(post.getId()));
             switch(postController.getType(post.getId())) {
                 case "article" -> {
                     countArtikel++;

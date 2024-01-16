@@ -1672,6 +1672,12 @@ public class UserController {
         return companiesPerTag;
     }
 
+    /**
+     * Ermittelt die Anzahl der Anbieter für alle Tags.
+     *
+     * @return Eine Map von Tags zu ihrer jeweiligen Benutzeranzahl.
+     */
+
     @GetMapping("/userCountForAllTags")
     public String getUserCountForAllTagsString() {
         return getUserCountForAllTags().toString();
@@ -1697,6 +1703,12 @@ public class UserController {
 
         return tagPercentages;
     }
+
+    /**
+     * Berechnet den prozentualen Anteil der Anbieter für alle Tags.
+     *
+     * @return Eine Map von Tags zu ihrem jeweiligen prozentualen Anteil an der Gesamtzahl der Benutzer.
+     */
 
     @GetMapping("/userCountForAllTagsInPercentage")
     public String getUserCountForAllTagsInPercentageString() {
@@ -1743,9 +1755,16 @@ public class UserController {
     }
 
 
+    /**
+     * Berechnet den prozentualen Anteil der Anbieter für die Tags eines spezifischen Benutzers.
+     *
+     * @param userId Die ID des Benutzers, dessen Tag-Prozentsätze abgerufen werden sollen.
+     * @return Eine Map von Tags zu ihrem jeweiligen prozentualen Anteil an der Gesamtzahl der Benutzer.
+     */
 
     @GetMapping("/getPercentageForTagsByUserId")
     public String getPercentageForTagsByUserIdString(Long userId) {
         return getPercentageForTagsByUserId(userId).toString();
     }
+    
 }

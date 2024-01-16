@@ -101,8 +101,8 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
 export class UserEventsStatsComponent extends EventsStatsComponent{
 
   override ngOnInit(): void {
-    this.db.getUserEventCount(SysVars.USER_ID).then(res => {
-      for (let event of res) {
+    this.db.getUserEventCount(SysVars.USER_ID).then((res : {newEvents: string[], countTotal: number, countOld: number}) => {
+      for (let event of res.newEvents) {
         let eventSplits = event.split("|");
         if (eventSplits[0].startsWith("u")) {
           this.upcoming++;

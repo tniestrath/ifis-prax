@@ -1624,7 +1624,20 @@ public class UserController {
         return performanceScores;
     }
 
+    public List<String> decryptTags(List<String> cryptedTags){
+        List<String> decryptedTags= new ArrayList<>();
 
+        Pattern pattern = Pattern.compile("\"([^\"]+)\"");
+        for(String tags:cryptedTags) {
+            Matcher matcher = pattern.matcher(tags);
+            while (matcher.find()) {
+                for (int i = 0; i < matcher.groupCount(); i++) {
+                    decryptedTags.add(matcher.group(i));
+                }
+            }
+        }
+        return decryptedTags;
+    }
 
     public List<String> cleanTags(List<String> encryptedTags) {
         List<String> cleanedTags = new ArrayList<>();
@@ -1644,22 +1657,11 @@ public class UserController {
     @GetMapping("/userCountForAllTags")
     public Map<String, Integer> getUserCountForAllTags() {
         List<String> allTags = wpUserMetaRepository.getAllTags();
-        List<String> decryptedTags= new ArrayList<>();
+        List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
+
         Map<String, Integer> companiesPerTag = new HashMap<>();
 
-        Pattern pattern = Pattern.compile("\"([^\"]+)\"");
-        for(String tags:allTags) {
-            Matcher matcher = pattern.matcher(tags);
-            while (matcher.find()) {
-                for (int i = 0; i < matcher.groupCount(); i++) {
-                    decryptedTags.add(matcher.group(i));
-                }
-            }
-        }
-        List<String> cleanedTags= cleanTags(decryptedTags);
-
-
-        for (String tag : cleanedTags) {
+        for (String tag : decryptedAndCleanedTags) {
             int count = wpUserMetaRepository.countUsersByTag(tag);
             companiesPerTag.put(tag, count);
         }

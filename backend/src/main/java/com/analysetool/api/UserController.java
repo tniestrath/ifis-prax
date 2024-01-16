@@ -537,7 +537,6 @@ public class UserController {
         int countPodcasts = 0;
 
         for(Post post : posts) {
-            System.out.println(postController.getType(post.getId()));
             switch(postController.getType(post.getId())) {
                 case "artikel" -> {
                     countArtikel++;

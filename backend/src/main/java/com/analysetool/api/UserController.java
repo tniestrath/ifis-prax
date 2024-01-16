@@ -1625,4 +1625,30 @@ public class UserController {
     }
 
 
+
+    @GetMapping("/userCountForAllTags")
+    public Map<String, Integer> getUserCountForAllTags() {
+        List<String> allTags = wpUserMetaRepository.getAllTags();
+        List<String> decryptedTags= new ArrayList<>();
+        Map<String, Integer> companiesPerTag = new HashMap<>();
+
+        Pattern pattern = Pattern.compile("\"([^\"]+)\"");
+        for(String tags:allTags) {
+            Matcher matcher = pattern.matcher(tags);
+            while (matcher.find()) {
+                for (int i = 0; i < matcher.groupCount(); i++) {
+                    decryptedTags.add(matcher.group(i));
+                }
+            }
+        }
+
+
+        for (String tag : decryptedTags) {
+            int count = wpUserMetaRepository.countUsersByTag(tag);
+            companiesPerTag.put(tag, count);
+        }
+        return companiesPerTag;
+    }
+
+
 }

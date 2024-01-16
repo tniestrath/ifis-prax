@@ -665,7 +665,7 @@ public class PostController {
     /**
      *
      * @param id the id of the post you want the type of.
-     * @return the type of Post "news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber"
+     * @return the type of Post "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber"
      * @throws JSONException .
      * @throws ParseException .
      */

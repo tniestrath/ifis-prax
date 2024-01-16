@@ -539,7 +539,7 @@ public class UserController {
         for(Post post : posts) {
             System.out.println(postController.getType(post.getId()));
             switch(postController.getType(post.getId())) {
-                case "article" -> {
+                case "artikel" -> {
                     countArtikel++;
                 }
                 case "blog" -> {
@@ -548,7 +548,7 @@ public class UserController {
                 case "news" -> {
                     countNews++;
                 }
-                case "podcast" -> {
+                case "podcast", "podcast_first_series" -> {
                     countPodcasts++;
                 }
                 case "whitepaper" -> {

@@ -24,4 +24,6 @@ public interface EventsRepository extends JpaRepository<Events, Long> {
     Optional<Events> getActiveEventBySlug(String slug);
 
     List<Events> getAllByOwnerID(long ownerId);
+
+    Optional<Events> findByPostID(long postId);
 }

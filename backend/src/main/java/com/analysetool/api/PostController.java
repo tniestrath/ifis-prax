@@ -53,6 +53,10 @@ public class PostController {
     private PostTypeRepository postTypeRepo;
     @Autowired
     private ContentDownloadsHourlyService contentDownloadsService;
+    @Autowired
+    private EventsController eventsController;
+    @Autowired
+    private EventsRepository eventsRepo;
 
     PostRepository postRepository;
     PostStatsRepository statsRepo;
@@ -1011,14 +1015,24 @@ public class PostController {
     }
 
     @GetMapping("/getEventsWithStats")
-    public String getEventsWithStats(Integer page, Integer size, String sortBy, String search) throws JSONException, ParseException {
-        List<Post> list = postRepo.findByTitleContainingAndStatusIsAndTypeIs(search, "publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+    public String getEventsWithStats(Integer page, Integer size, String sortBy, String search, String filter) throws JSONException, ParseException {
+        List<Post> list;
+        if(search.isBlank()) {
+            list = postRepo.findByStatusIsAndTypeIs("publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));
+        } else {
+            list = postRepo.findByTitleContainingAndStatusIsAndTypeIs(search, "publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));
+        }
         List<JSONObject> stats = new ArrayList<>();
 
         for(Post post : list) {
             long id = post.getId();
-            stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+            if((eventsRepo.findByPostID(post.getId()).isPresent())) {
+                if(filter.isBlank() || eventsController.getEventType(eventsRepo.findByPostID(post.getId()).get()).equalsIgnoreCase(filter)) {
+                    stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+                }
+            }
         }
+
         return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
 

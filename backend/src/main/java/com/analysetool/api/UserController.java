@@ -624,6 +624,45 @@ public class UserController {
         return json.toString();
     }
 
+    @GetMapping("/getPostCountByType")
+    public String getPostCountByType(long userId) throws JSONException, ParseException {
+        List<Post> posts = postRepository.findByAuthor((int) userId);
+
+        int countArtikel = 0;
+        int countBlogs = 0;
+        int countNews = 0;
+        int countWhitepaper = 0;
+        int countPodcasts = 0;
+
+        for(Post post : posts) {
+            switch(postController.getType(post.getId())) {
+                case "article" -> {
+                    countArtikel++;
+                }
+                case "blog" -> {
+                    countBlogs++;
+                }
+                case "news" -> {
+                    countNews++;
+                }
+                case "podcast" -> {
+                    countPodcasts++;
+                }
+                case "whitepaper" -> {
+                    countWhitepaper++;
+                }
+            }
+        }
+
+        JSONObject json = new JSONObject();
+        json.put("Whitepaper", countWhitepaper);
+        json.put("Blogs", countBlogs);
+        json.put("News", countNews);
+        json.put("Podcasts", countPodcasts);
+        json.put("Artikel", countArtikel);
+
+        return json.toString();
+    }
 
     /**
      *

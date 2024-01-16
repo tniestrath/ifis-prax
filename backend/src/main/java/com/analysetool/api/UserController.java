@@ -1659,8 +1659,6 @@ public class UserController {
         return cleanedTags;
     }
 
-
-
     public Map<String, Integer> getUserCountForAllTags() {
         List<String> allTags = wpUserMetaRepository.getAllTags();
         List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
@@ -1677,6 +1675,32 @@ public class UserController {
     @GetMapping("/userCountForAllTags")
     public String getUserCountForAllTagsString() {
         return getUserCountForAllTags().toString();
+    }
+
+    public Map<String, Double> getUserCountForAllTagsInPercentage() {
+        // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
+        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+
+        // Tags und ihre Anzahl holen
+        Map<String, Integer> companiesPerTag = getUserCountForAllTags();
+
+        // Map für prozentualen Anteil erstellen
+        Map<String, Double> tagPercentages = new HashMap<>();
+
+        // Prozentualen Anteil für jeden Tag berechnen
+        for (Map.Entry<String, Integer> entry : companiesPerTag.entrySet()) {
+            String tag = entry.getKey();
+            int count = entry.getValue();
+            double percentage = (double) count / totalUsersWithTag * 100;
+            tagPercentages.put(tag, percentage);
+        }
+
+        return tagPercentages;
+    }
+
+    @GetMapping("/userCountForAllTagsInPercentage")
+    public String getUserCountForAllTagsInPercentageString() {
+        return getUserCountForAllTagsInPercentage().toString();
     }
 
 }

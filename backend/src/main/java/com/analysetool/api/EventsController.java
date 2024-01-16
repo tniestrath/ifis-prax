@@ -126,12 +126,12 @@ public class EventsController {
         return events;
     }
 
-    private boolean isCurrent(Events e) {
+    public boolean isCurrent(Events e) {
         LocalDateTime now = LocalDateTime.now();
         return e.getEventStart().isBefore(now) && e.getEventEnd().isAfter(now);
     }
 
-    private boolean isUpcoming(Events e) {
+    public boolean isUpcoming(Events e) {
         LocalDateTime now = LocalDateTime.now();
         return e.getEventStart().isAfter(now);
     }
@@ -141,7 +141,7 @@ public class EventsController {
      * @param e the event you want the type for.
      * @return a char, representing its type 's' (sonstige),'k' (kongresse), 'm' (messe), 's'(schulungen), 'w' (workshop)
      */
-    private String getEventType(Events e) {
+    public String getEventType(Events e) {
         List<Long> termIds = relRepo.existsByObjectId(e.getPostID()) ? relRepo.getTaxIdByObject(e.getPostID()) : null;
         if(termIds != null && isActive(e)) {
             //sonstige
@@ -182,12 +182,9 @@ public class EventsController {
         return new JSONArray(listNewEvents).toString();
     }
 
-    private boolean isActive(Events e) {
+    public boolean isActive(Events e) {
         return e.getEventStatus() == 1;
     }
 
-    public String getUserEvents(long userId) {
-        return "";
-    }
 
 }

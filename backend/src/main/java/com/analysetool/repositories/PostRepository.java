@@ -71,6 +71,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    List<Post> findByTitleContainingAndStatusIsAndTypeIs(String title, String status, String type, Pageable pageable);
 
+   List<Post> findByStatusIsAndTypeIs(String status, String type, Pageable pageable);
+
    @Query("SELECT p.id FROM Post p WHERE p.title LIKE %:title% AND p.status='publish' AND p.type='post'")
    Optional<Long> findByTitleLike(String title);
 

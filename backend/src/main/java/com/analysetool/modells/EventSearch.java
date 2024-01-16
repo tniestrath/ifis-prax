@@ -3,6 +3,7 @@ package com.analysetool.modells;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "event_search")
@@ -130,4 +131,34 @@ public class EventSearch {
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EventSearch that)) return false;
+        return getUmkreis() == that.getUmkreis() && getResultCount() == that.getResultCount() && Objects.equals(getId(), that.getId()) && Objects.equals(getVeranstaltungName(), that.getVeranstaltungName()) && Objects.equals(getVeranstaltungStartDatum(), that.getVeranstaltungStartDatum()) && Objects.equals(getVeranstaltungEndDatum(), that.getVeranstaltungEndDatum()) && Objects.equals(getKategorien(), that.getKategorien()) && Objects.equals(getVeranstaltungPlz(), that.getVeranstaltungPlz()) && Objects.equals(getVeranstaltungOrt(), that.getVeranstaltungOrt()) && Objects.equals(getBundesland(), that.getBundesland()) && Objects.equals(getCreatedAt(), that.getCreatedAt());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getVeranstaltungName(), getVeranstaltungStartDatum(), getVeranstaltungEndDatum(), getKategorien(), getVeranstaltungPlz(), getVeranstaltungOrt(), getUmkreis(), getBundesland(), getResultCount(), getCreatedAt());
+    }
+
+    @Override
+    public String toString() {
+        return "EventSearch{" +
+                "id=" + id +
+                ", veranstaltungName='" + veranstaltungName + '\'' +
+                ", veranstaltungStartDatum=" + veranstaltungStartDatum +
+                ", veranstaltungEndDatum=" + veranstaltungEndDatum +
+                ", kategorien='" + kategorien + '\'' +
+                ", veranstaltungPlz='" + veranstaltungPlz + '\'' +
+                ", veranstaltungOrt='" + veranstaltungOrt + '\'' +
+                ", umkreis=" + umkreis +
+                ", bundesland='" + bundesland + '\'' +
+                ", resultCount=" + resultCount +
+                ", createdAt=" + createdAt +
+                '}';
+    }
+
 }

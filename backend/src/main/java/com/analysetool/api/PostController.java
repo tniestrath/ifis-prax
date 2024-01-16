@@ -1010,6 +1010,20 @@ public class PostController {
         return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
 
+    @GetMapping("/getEventsWithStats")
+    public String getEventsWithStats(Integer page, Integer size, String sortBy, String search) throws JSONException, ParseException {
+        List<Post> list = postRepo.findByTitleContainingAndStatusIsAndTypeIs(search, "publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        List<JSONObject> stats = new ArrayList<>();
+
+        for(Post post : list) {
+            long id = post.getId();
+            stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+        }
+        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
+    }
+
+
+
 
     /**
      * Endpoint for retrieval of ALL Posts that are not Original Content (User Posts (Blog, Article, Whitepaper), News)

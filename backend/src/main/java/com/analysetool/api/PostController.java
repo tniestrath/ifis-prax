@@ -1033,6 +1033,7 @@ public class PostController {
     @GetMapping("/getEventsWithStats")
     public String getEventsWithStats(Integer page, Integer size,  String filter, String sortBy, String search) throws JSONException, ParseException {
         List<Post> list;
+        sortBy = sortBy.isBlank() ? "id" : sortBy;
         if(search.isBlank()) {
             list = postRepo.findByStatusIsAndTypeIs("publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));
         } else {

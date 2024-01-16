@@ -69,13 +69,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT e.id FROM Post e WHERE e.status = 'publish' AND e.type = 'post' AND e.title LIKE '%'+:title+'%' ORDER BY e.date DESC")
    List<Long> findByTitle(String title);
 
-   List<Post> findByTitleContainingAndStatusIsAndTypeIs(String title, String status, String type, Pageable pageable);
+   List<Post> findByTitleContainingAndStatusIsAndTypeIsOrderByModifiedDesc(String title, String status, String type, Pageable pageable);
 
-   List<Post> findByStatusIsAndTypeIs(String status, String type, Pageable pageable);
+   List<Post> findByStatusIsAndTypeIsOrderByModifiedDesc(String status, String type, Pageable pageable);
 
-   List<Post> findByAuthorIdAndStatusIsAndTypeIs(long authorId, String status, String type, Pageable pageable);
+   List<Post> findByAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(long authorId, String status, String type, Pageable pageable);
 
-   List<Post> findByTitleContainingAndAuthorIdAndStatusIsAndTypeIs(String title, long authorId, String status, String type, Pageable pageable);
+   List<Post> findByTitleContainingAndAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(String title, long authorId, String status, String type, Pageable pageable);
 
    @Query("SELECT p.id FROM Post p WHERE p.title LIKE %:title% AND p.status='publish' AND p.type='post'")
    Optional<Long> findByTitleLike(String title);

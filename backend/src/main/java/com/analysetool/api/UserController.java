@@ -592,13 +592,12 @@ public class UserController {
     }
 
     @GetMapping("/getEventsWithStatsAndId")
-    public String getEventsWithStats(Integer page, Integer size,  String filter, String sortBy, String search, long id) throws JSONException, ParseException {
+    public String getEventsWithStats(Integer page, Integer size,  String filter, String search, long id) throws JSONException, ParseException {
         List<Post> list;
-        sortBy = sortBy.isBlank() ? "id" : sortBy;
         if(search.isBlank()) {
-            list = postRepository.findByAuthorIdAndStatusIsAndTypeIs(id, "publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));
+            list = postRepository.findByAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(id, "publish", "event", PageRequest.of(page, size));
         } else {
-            list = postRepository.findByTitleContainingAndAuthorIdAndStatusIsAndTypeIs(search, id, "publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));
+            list = postRepository.findByTitleContainingAndAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(search, id, "publish", "event", PageRequest.of(page, size));
         }
         List<JSONObject> stats = new ArrayList<>();
 

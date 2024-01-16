@@ -1019,7 +1019,7 @@ public class PostController {
 
     @GetMapping("/pageByTitle")
     public String pageTitleFinder(Integer page, Integer size, String sortBy, String search) throws JSONException, ParseException {
-        List<Post> list = postRepo.findByTitleContainingAndStatusIsAndTypeIs(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        List<Post> list = postRepo.findByTitleContainingAndStatusIsAndTypeIsOrderByModifiedDesc(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
         List<JSONObject> stats = new ArrayList<>();
         for(Post post : list) {
             long id = post.getId();
@@ -1031,13 +1031,12 @@ public class PostController {
     }
 
     @GetMapping("/getEventsWithStats")
-    public String getEventsWithStats(Integer page, Integer size,  String filter, String sortBy, String search) throws JSONException, ParseException {
+    public String getEventsWithStats(Integer page, Integer size,  String filter, String search) throws JSONException, ParseException {
         List<Post> list;
-        sortBy = sortBy.isBlank() ? "id" : sortBy;
         if(search.isBlank()) {
-            list = postRepo.findByStatusIsAndTypeIs("publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));
+            list = postRepo.findByStatusIsAndTypeIsOrderByModifiedDesc("publish", "event", PageRequest.of(page, size));
         } else {
-            list = postRepo.findByTitleContainingAndStatusIsAndTypeIs(search, "publish", "event", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));
+            list = postRepo.findByTitleContainingAndStatusIsAndTypeIsOrderByModifiedDesc(search, "publish", "event", PageRequest.of(page, size));
         }
         List<JSONObject> stats = new ArrayList<>();
 

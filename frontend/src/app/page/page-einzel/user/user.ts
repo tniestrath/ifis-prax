@@ -18,6 +18,10 @@ export class User extends DbObject {
               public category: string = "none",
               public employees: string = "",
               public redirects: number = 0,
+              public rankingContent : number = -1,
+              public rankingContentByGroup : number = -1,
+              public rankingProfile : number = -1,
+              public rankingProfileByGroup : number = -1,
               public img: string = "") {
     super(id, displayName);
   }

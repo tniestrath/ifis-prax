@@ -3,7 +3,7 @@
   padding: 5px;
   display: grid;
   grid-template-columns: 100px auto auto auto auto;
-  grid-template-rows: repeat(4, .25fr) 1fr;
+  grid-template-rows: repeat(4, .25fr) 1fr 1fr;
   grid-column-gap: 10px;
 
   background-color: white;
@@ -104,6 +104,21 @@
   align-items: center;
   justify-content: start;
 }
+.user-ranking-content-box{
+  grid-row: 6;
+  grid-column: 1 / span 3;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+.user-ranking-profile-box{
+  grid-row: 6;
+  grid-column: 3 / span 3;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
 p{
   margin: 0;
   height: fit-content;

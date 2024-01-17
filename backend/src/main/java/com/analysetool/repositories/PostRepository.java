@@ -77,7 +77,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    List<Post> findByTitleContainingAndAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(String title, long authorId, String status, String type, Pageable pageable);
 
-   @Query("SELECT p.id FROM Post p WHERE p.title LIKE %:title% AND p.status='publish' AND p.type='post'")
+   @Query("SELECT p.id FROM Post p WHERE p.title LIKE %:title% AND p.status='inherit' AND p.type='attachment'")
    Optional<Long> findByTitleLike(String title);
 
    @Query("SELECT p FROM Post p WHERE p.authorId=:authorId AND DATE(p.date) = DATE(:date) AND p.status='publish' AND p.type='post'")

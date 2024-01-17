@@ -3,6 +3,7 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.ContentDownloadsHourlyService;
+import com.analysetool.services.PostClicksByHourDLCService;
 import com.analysetool.util.MathHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -37,6 +38,8 @@ public class PostController {
     private PostStatsRepository statRepository;
     @Autowired
     private PostRepository postRepo;
+    @Autowired
+    private PostClicksByHourDLCService postClicksService;
     @Autowired
     private UserStatsRepository userStatsRepo;
     @Autowired
@@ -199,6 +202,11 @@ public class PostController {
 
         }
         return leViews;
+    }
+
+    @GetMapping("/postClicksDistributedByHours")
+    public String getPostClicksOfLast24HourByPostIdAndDaysBackDistributedByHour(Long postId, Integer daysback){
+       return postClicksService.getPostClicksOfLast24HourByPostIdAndDaysBackDistributedByHour(postId,daysback).toString();//banger Name
     }
 
     //ToDo Rename

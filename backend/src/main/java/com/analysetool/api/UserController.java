@@ -260,7 +260,7 @@ public class UserController {
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId(), true));
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId(), Optional.of(true)));
             response.put(obj);
         }
         return new JSONObject().put("users", response).put("count", list.size()).toString();
@@ -357,7 +357,7 @@ public class UserController {
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId(), Optional.of(true)));
             response.put(obj);
         }
         return new JSONObject().put("users", response).put("count", list.size()).toString();
@@ -365,7 +365,7 @@ public class UserController {
 
 
     @GetMapping("/getAllSingleUser")
-    public String getAllSingleUser(long id, boolean wasGroupCall) throws JSONException {
+    public String getAllSingleUser(long id, Optional<Boolean> wasGroupCall) throws JSONException {
         JSONObject obj = new JSONObject();
         WPUser user = userRepository.findById(id).isPresent() ? userRepository.findById(id).get() : null;
         if(user != null) {
@@ -466,7 +466,7 @@ public class UserController {
                 obj.put("slogan", "none");
             }
 
-            if(!wasGroupCall) {
+            if(wasGroupCall.isEmpty() || !wasGroupCall.get()) {
                 obj.put("rankingContent", getRankingTotalContentViews(id));
                 obj.put("rankinContentByGroup", getRankingInTypeContentViews(id));
                 obj.put("rankingProfile", getRankingTotalProfileViews(id));

@@ -260,7 +260,7 @@ public class UserController {
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId(), Optional.of(true)));
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
             response.put(obj);
         }
         return new JSONObject().put("users", response).put("count", list.size()).toString();
@@ -357,7 +357,7 @@ public class UserController {
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId(), Optional.of(true)));
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
             response.put(obj);
         }
         return new JSONObject().put("users", response).put("count", list.size()).toString();
@@ -365,13 +365,14 @@ public class UserController {
 
 
     @GetMapping("/getAllSingleUser")
-    public String getAllSingleUser(long id, Optional<Boolean> wasGroupCall) throws JSONException {
+    public String getAllSingleUser(long id) throws JSONException {
         JSONObject obj = new JSONObject();
         WPUser user = userRepository.findById(id).isPresent() ? userRepository.findById(id).get() : null;
         if(user != null) {
             obj.put("id", user.getId());
             obj.put("email", user.getEmail());
-            obj.put("displayName", user.getNicename());
+            obj.put("displayName", user.getDisplayName());
+            obj.put("niceName", user.getNicename());
             if (userStatsRepository.existsByUserId(user.getId())) {
                 UserStats statsUser = userStatsRepository.findByUserId(user.getId());
                 obj.put("profileViews", statsUser.getProfileView());
@@ -464,13 +465,6 @@ public class UserController {
                 obj.put("slogan", wpUserMetaRepository.getSlogan(user.getId()).get());
             } else {
                 obj.put("slogan", " - ");
-            }
-
-            if(wasGroupCall.isEmpty() || !wasGroupCall.get()) {
-                obj.put("rankingContent", userRepository.getContentViewRankTotal(id));
-                obj.put("rankingContentByGroup", userRepository.getContentViewRankByType(id, getType((int) id)));
-                obj.put("rankingProfile", userRepository.getProfileViewRankTotal(id));
-                obj.put("rankingProfileByGroup", userRepository.getProfileViewRankByType(id, getType((int) id)));
             }
 
             obj.put("accountType", getType(Math.toIntExact(user.getId())));
@@ -1629,7 +1623,15 @@ public class UserController {
         }
     }
 
-
+    @GetMapping("/getRankings")
+    public String getRankings(long id) throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("rankingContent", getRankingTotalContentViews(id));
+        obj.put("rankingContentByGroup", getRankingInTypeContentViews(id));
+        obj.put("rankingProfile", getRankingTotalProfileViews(id));
+        obj.put("rankingProfileByGroup", getRankingTotalProfileViews(id));
+        return obj.toString();
+    }
 
     /**
      * Gibt die verteilten Ansichten (Views) eines Benutzers über die letzten 24 Stunden als JSON-String zurück.

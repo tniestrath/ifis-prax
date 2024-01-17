@@ -463,14 +463,14 @@ public class UserController {
             if(wpUserMetaRepository.getSlogan(user.getId()).isPresent()) {
                 obj.put("slogan", wpUserMetaRepository.getSlogan(user.getId()).get());
             } else {
-                obj.put("slogan", "none");
+                obj.put("slogan", " - ");
             }
 
             if(wasGroupCall.isEmpty() || !wasGroupCall.get()) {
-                obj.put("rankingContent", getRankingTotalContentViews(id));
-                obj.put("rankingContentByGroup", getRankingInTypeContentViews(id));
-                obj.put("rankingProfile", getRankingTotalProfileViews(id));
-                obj.put("rankingProfileByGroup", getRankingInTypeProfileViews(id));
+                obj.put("rankingContent", userRepository.getContentViewRankTotal(id));
+                obj.put("rankingContentByGroup", userRepository.getContentViewRankByType(id, getType((int) id)));
+                obj.put("rankingProfile", userRepository.getProfileViewRankTotal(id));
+                obj.put("rankingProfileByGroup", userRepository.getProfileViewRankByType(id, getType((int) id)));
             }
 
             obj.put("accountType", getType(Math.toIntExact(user.getId())));

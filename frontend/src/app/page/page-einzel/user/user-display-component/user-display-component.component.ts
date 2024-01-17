@@ -16,7 +16,14 @@ export class UserDisplayComponentComponent extends DashBaseComponent implements 
     this.setToolTip("",false);
     this.db.getUserAllStatsById(SysVars.USER_ID).then(res => {
       this.user = res;
-    })
+    });
+    this.db.getUserRankings(SysVars.USER_ID).then(res => {
+      this.user.rankingContent = res.rankingContent;
+      this.user.rankingContentByGroup = res.rankingContentByGroup;
+      this.user.rankingProfile = res.rankingProfile;
+      this.user.rankingProfileByGroup = res.rankingProfileByGroup;
+      this.cdr.detectChanges();
+    });
   }
 
   protected readonly Util = Util;

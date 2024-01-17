@@ -2,7 +2,7 @@
   <img class="user-profile-img" alt="" [src]="data.img" dashImgFallback
        [style.border-color]="Util.getColor('plan', data.accountType)">
   <div class="user-name-box">
-    <p>{{data.displayName}}</p>
+    <p>{{data.niceName}}</p>
   </div>
   <div class="user-type-box">
     <div [style]="{display: 'flex', alignItems: 'center'}" [ngSwitch]="data.category">

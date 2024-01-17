@@ -4,8 +4,8 @@ import {SafeUrl} from "@angular/platform-browser";
 export class User extends DbObject {
   constructor(public override id: string = "",
               public email : string = "undefined",
-              public displayName : string = "",
-              public niceName : string = "",
+              public displayName : string = "undefined",
+              public niceName : string = "undefined",
               public profileViews : number = 0,
               public postViews : number = 0,
               public postCount : number = 0,

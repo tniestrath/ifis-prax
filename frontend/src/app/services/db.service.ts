@@ -29,6 +29,7 @@ export enum dbUrl {
   GET_USER_BY_ID = "/users/getById?id=",
   GET_USER_ALL_STATS_BY_ID = "/users/getAllSingleUser?id=",
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
+  GET_USER_RANKINGS = "/users/getRankings?id=ID",
   HAS_USER_POST = "/users/hasPost?id=",
   GET_USER_PROFILE_COMPLETION = "/users/getPotentialById?userId=USERID",
   GET_USER_PROFILE_AND_POSTS_BY_DATE = "/users/getUserClicksChartData?id=ID&start=START&end=END",
@@ -397,6 +398,15 @@ export class DbService {
   async getClicksByTime(id : number){
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserRankings(id: string) : Promise<{
+    rankingContent: number;
+    rankingContentByGroup: number;
+    rankingProfile: number;
+    rankingProfileByGroup: number
+  }>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_RANKINGS).replace("ID", id), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getClicksByTimeAll() : Promise<number[]>{
     this.setLoading();

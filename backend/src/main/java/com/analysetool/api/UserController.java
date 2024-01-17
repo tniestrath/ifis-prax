@@ -1647,5 +1647,147 @@ public class UserController {
         return performanceScores;
     }
 
+    public String decryptTag(String cryptedTag) {
+        Pattern pattern = Pattern.compile("\"([^\"]+)\"");
+        Matcher matcher = pattern.matcher(cryptedTag);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
 
+    public List<String> decryptTags(List<String> cryptedTags) {
+        List<String> decryptedTags = new ArrayList<>();
+        for (String tag : cryptedTags) {
+            String decryptedTag = decryptTag(tag);
+            if (decryptedTag != null) {
+                decryptedTags.add(decryptedTag);
+            }
+        }
+        return decryptedTags;
+    }
+
+    public String cleanTag(String encryptedTag) {
+        if (encryptedTag.startsWith("\"") && encryptedTag.endsWith("\"")) {
+            return encryptedTag.substring(1, encryptedTag.length() - 1);
+        }
+        return encryptedTag;
+    }
+
+    public List<String> cleanTags(List<String> encryptedTags) {
+        List<String> cleanedTags = new ArrayList<>();
+        for (String tag : encryptedTags) {
+            cleanedTags.add(cleanTag(tag));
+        }
+        return cleanedTags;
+    }
+
+    public Map<String, Integer> getUserCountForAllTags() {
+        List<String> allTags = wpUserMetaRepository.getAllTags();
+        List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
+
+        Map<String, Integer> companiesPerTag = new HashMap<>();
+
+        for (String tag : decryptedAndCleanedTags) {
+            int count = wpUserMetaRepository.countUsersByTag(tag);
+            companiesPerTag.put(tag, count);
+        }
+        return companiesPerTag;
+    }
+
+    /**
+     * Ermittelt die Anzahl der Anbieter für alle Tags.
+     *
+     * @return Eine Map von Tags zu ihrer jeweiligen Benutzeranzahl.
+     */
+
+    @GetMapping("/userCountForAllTags")
+    public String getUserCountForAllTagsString() {
+        return getUserCountForAllTags().toString();
+    }
+
+    public Map<String, Double> getUserCountForAllTagsInPercentage() {
+        // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
+        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+
+        // Tags und ihre Anzahl holen
+        Map<String, Integer> companiesPerTag = getUserCountForAllTags();
+
+        // Map für prozentualen Anteil erstellen
+        Map<String, Double> tagPercentages = new HashMap<>();
+
+        // Prozentualen Anteil für jeden Tag berechnen
+        for (Map.Entry<String, Integer> entry : companiesPerTag.entrySet()) {
+            String tag = entry.getKey();
+            int count = entry.getValue();
+            double percentage = (double) count / totalUsersWithTag * 100;
+            tagPercentages.put(tag, percentage);
+        }
+
+        return tagPercentages;
+    }
+
+    /**
+     * Berechnet den prozentualen Anteil der Anbieter für alle Tags.
+     *
+     * @return Eine Map von Tags zu ihrem jeweiligen prozentualen Anteil an der Gesamtzahl der Benutzer.
+     */
+
+    @GetMapping("/userCountForAllTagsInPercentage")
+    public String getUserCountForAllTagsInPercentageString() {
+        return getUserCountForAllTagsInPercentage().toString();
+    }
+
+    public double getUserCountAsPercentageForSingleTag(String tag) {
+        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+        int countForTag = wpUserMetaRepository.countUsersByTag(tag);
+
+        if (totalUsersWithTag == 0) {
+            return 0; // Vermeidung der Division durch Null
+        }
+
+        return (double) countForTag / totalUsersWithTag * 100;
+    }
+
+    public Map<String, Double> getPercentageForMultipleTags(List<String> tags) {
+        Map<String, Double> tagPercentages = new HashMap<>();
+
+        for (String tag : tags) {
+            double percentage = getUserCountAsPercentageForSingleTag(tag);
+            tagPercentages.put(tag, percentage);
+        }
+
+        return tagPercentages;
+    }
+
+    public Map<String, Double> getPercentageForTagsByUserId(Long userId) {
+        Map<String, Double> tagPercentages = new HashMap<>();
+        Optional<String> tagData = wpUserMetaRepository.getTags(userId);
+
+        if (tagData.isPresent()) {
+            List<String> rawTags = Arrays.asList(tagData.get().split(";"));
+            List<String> decryptedTags = decryptTags(rawTags);
+            List<String> cleanedTags = cleanTags(decryptedTags);
+
+            for (String tag : cleanedTags) {
+                double percentage = getUserCountAsPercentageForSingleTag(tag);
+                tagPercentages.put(tag, percentage);
+            }
+        }
+        return tagPercentages;
+    }
+
+
+    /**
+     * Berechnet den prozentualen Anteil der Anbieter für die Tags eines spezifischen Benutzers.
+     *
+     * @param userId Die ID des Benutzers, dessen Tag-Prozentsätze abgerufen werden sollen.
+     * @return Eine Map von Tags zu ihrem jeweiligen prozentualen Anteil an der Gesamtzahl der Benutzer.
+     */
+
+    @GetMapping("/getPercentageForTagsByUserId")
+    public String getPercentageForTagsByUserIdString(Long userId) {
+        return getPercentageForTagsByUserId(userId).toString();
+    }
+    
 }

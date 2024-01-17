@@ -1935,6 +1935,13 @@ public class UserController {
         return getPercentageForTagsByUserId(userId).toString();
     }
 
+    /**
+     * Ruft eine Zuordnung von Tags zu konkurrierenden Benutzern basierend auf den Tags eines gegebenen Benutzers ab.
+     * Diese Methode findet konkurrierende Benutzer für jeden Tag. Konkurrierende Benutzer werden anhand ihrer Anzeigenamen identifiziert.
+     *
+     * @param userId Die ID des Benutzers, dessen Tags verwendet werden, um Konkurrenz zu finden.
+     * @return Eine Map, bei der Schlüssel Tags und Werte Zeichenketten sind, die Listen von Anzeigenamen konkurrierender Benutzer darstellen.
+     */
     public Map<String,String> getCompetitionByTags(Long userId){
         Map<String, String> tagsWithCompetingUsers = new HashMap<>();
         Optional<String> tagData = wpUserMetaRepository.getTags(userId);
@@ -1954,6 +1961,13 @@ public class UserController {
         return tagsWithCompetingUsers;
     }
 
+    /**
+     * Endpunkt, um eine String-Darstellung der Konkurrenz für Tags zu erhalten, die einem bestimmten Benutzer zugeordnet sind.
+     * Diese Methode ruft getCompetitionByTags auf, um die Zuordnung zu erhalten, und konvertiert sie dann in eine Zeichenkette.
+     *
+     * @param userId Die ID des Benutzers, für den die Konkurrenz nach Themenfelder angefordert werden.
+     * @return Eine Zeichenketten-Darstellung der Map, die von getCompetitionByTags zurückgegeben wird.
+     */
     @GetMapping("/getCompetitionForTagsByUserId")
     public String getCompetitionForTagsByUserIdString(Long userId) {
         return getCompetitionByTags(userId).toString();

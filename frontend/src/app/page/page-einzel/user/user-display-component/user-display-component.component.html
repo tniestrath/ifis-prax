@@ -45,5 +45,12 @@
     <img alt="target" src="assets/target.png" width="25" height="25">
     <p>{{user.redirects}}</p>
   </div>
+  <div class="user-ranking-content-box">
+    <p>#{{user.rankingContent}} (<b [style.color]="Util.getColor('plan', user.accountType)">#{{user.rankingContentByGroup}}</b>) in Inhaltsaufrufen</p>
+  </div>
+  <div class="user-ranking-profile-box">
+    <p>#{{user.rankingProfile}} (<b [style.color]="Util.getColor('plan', user.accountType)">#{{user.rankingProfileByGroup}}</b>) in Profilaufrufen</p>
+  </div>
+
 
 </div>

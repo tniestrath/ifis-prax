@@ -98,6 +98,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     });
     if (this.timeSpan == "all_time") {
       this.db.getCallpusByCategoriesAllTime().then(res => {
+        this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
         if (this.slidedOut){

@@ -1494,7 +1494,6 @@ public class UserController {
     @GetMapping("/getRankingTotal")
     public String getRankingTotal(long id) throws JSONException {
         if(userRepository.findById(id).isPresent()) {
-            String type = getType((int) id);
             JSONObject json = new JSONObject();
 
             List<WPUser> users = userRepository.findAll();

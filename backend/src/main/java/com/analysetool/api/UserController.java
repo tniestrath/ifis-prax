@@ -266,6 +266,104 @@ public class UserController {
         return new JSONObject().put("users", response).put("count", list.size()).toString();
     }
 
+
+    @GetMapping("/getAllWithTagsTest")
+    public String getAllWithTagsTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
+        List<WPUser> list;
+
+
+        if(sorter != null) {
+            //Both filters unused, sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsAllWithTags(search, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepository.getAllNameLikeAndContentViewsAllWithTags(search, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAllWithTags(search, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepository.getAllByNicenameContainingAllWithTags(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsAboWithTags(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepository.getAllNameLikeAndContentViewsAboWithTags(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboWithTags(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Type Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsCompanyWithTags(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepository.getAllNameLikeAndContentViewsCompanyWithTags(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeCompanyWithTags(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else {
+                //Abo, Company type and sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepository.getAllNameLikeAndContentViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            }
+        } else {
+            //Neither filters nor sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                list = userRepository.getAllByNicenameContainingAllWithTags(search, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used.
+                list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Filter used.
+                list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else {
+                //Both filters used, no sorter used.
+                list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+            }
+        }
+
+        JSONArray response = new JSONArray();
+
+        for(WPUser user : list) {
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
+            response.put(obj);
+        }
+        return new JSONObject().put("users", response).put("count", list.size()).toString();
+    }
+
+
     @GetMapping("/getAllSingleUser")
     public String getAllSingleUser(long id) throws JSONException {
         JSONObject obj = new JSONObject();
@@ -1467,6 +1565,53 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getRankingInType")
+    public String getRankingInType(long id) throws JSONException {
+        if(userRepository.findById(id).isPresent()) {
+            String type = getType((int) id);
+            JSONObject json = new JSONObject();
+
+            List<WPUser> users = userRepository.getByAboType(type);
+
+            users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
+
+            json.put("profileViews", users.indexOf(userRepository.findById(id).get()));
+
+            users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o1.getId()) - postController.getViewsOfUserById(o2.getId())));
+
+            json.put("inhaltsViews", users.indexOf(userRepository.findById(id).get()));
+
+            return json.toString();
+
+
+        } else {
+            return "user not found";
+        }
+    }
+
+    @GetMapping("/getRankingTotal")
+    public String getRankingTotal(long id) throws JSONException {
+        if(userRepository.findById(id).isPresent()) {
+            JSONObject json = new JSONObject();
+
+            List<WPUser> users = userRepository.findAll();
+
+            users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
+
+            json.put("profileViews", users.indexOf(userRepository.findById(id).get()));
+
+            users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o1.getId()) - postController.getViewsOfUserById(o2.getId())));
+
+            json.put("inhaltsViews", users.indexOf(userRepository.findById(id).get()));
+
+            return json.toString();
+
+        } else {
+            return "user not found";
+        }
+    }
+
+
 
     /**
      * Gibt die verteilten Ansichten (Views) eines Benutzers über die letzten 24 Stunden als JSON-String zurück.
@@ -1624,5 +1769,147 @@ public class UserController {
         return performanceScores;
     }
 
+    public String decryptTag(String cryptedTag) {
+        Pattern pattern = Pattern.compile("\"([^\"]+)\"");
+        Matcher matcher = pattern.matcher(cryptedTag);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
 
+    public List<String> decryptTags(List<String> cryptedTags) {
+        List<String> decryptedTags = new ArrayList<>();
+        for (String tag : cryptedTags) {
+            String decryptedTag = decryptTag(tag);
+            if (decryptedTag != null) {
+                decryptedTags.add(decryptedTag);
+            }
+        }
+        return decryptedTags;
+    }
+
+    public String cleanTag(String encryptedTag) {
+        if (encryptedTag.startsWith("\"") && encryptedTag.endsWith("\"")) {
+            return encryptedTag.substring(1, encryptedTag.length() - 1);
+        }
+        return encryptedTag;
+    }
+
+    public List<String> cleanTags(List<String> encryptedTags) {
+        List<String> cleanedTags = new ArrayList<>();
+        for (String tag : encryptedTags) {
+            cleanedTags.add(cleanTag(tag));
+        }
+        return cleanedTags;
+    }
+
+    public Map<String, Integer> getUserCountForAllTags() {
+        List<String> allTags = wpUserMetaRepository.getAllTags();
+        List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
+
+        Map<String, Integer> companiesPerTag = new HashMap<>();
+
+        for (String tag : decryptedAndCleanedTags) {
+            int count = wpUserMetaRepository.countUsersByTag(tag);
+            companiesPerTag.put(tag, count);
+        }
+        return companiesPerTag;
+    }
+
+    /**
+     * Ermittelt die Anzahl der Anbieter für alle Tags.
+     *
+     * @return Eine Map von Tags zu ihrer jeweiligen Benutzeranzahl.
+     */
+
+    @GetMapping("/userCountForAllTags")
+    public String getUserCountForAllTagsString() {
+        return getUserCountForAllTags().toString();
+    }
+
+    public Map<String, Double> getUserCountForAllTagsInPercentage() {
+        // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
+        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+
+        // Tags und ihre Anzahl holen
+        Map<String, Integer> companiesPerTag = getUserCountForAllTags();
+
+        // Map für prozentualen Anteil erstellen
+        Map<String, Double> tagPercentages = new HashMap<>();
+
+        // Prozentualen Anteil für jeden Tag berechnen
+        for (Map.Entry<String, Integer> entry : companiesPerTag.entrySet()) {
+            String tag = entry.getKey();
+            int count = entry.getValue();
+            double percentage = (double) count / totalUsersWithTag * 100;
+            tagPercentages.put(tag, percentage);
+        }
+
+        return tagPercentages;
+    }
+
+    /**
+     * Berechnet den prozentualen Anteil der Anbieter für alle Tags.
+     *
+     * @return Eine Map von Tags zu ihrem jeweiligen prozentualen Anteil an der Gesamtzahl der Benutzer.
+     */
+
+    @GetMapping("/userCountForAllTagsInPercentage")
+    public String getUserCountForAllTagsInPercentageString() {
+        return getUserCountForAllTagsInPercentage().toString();
+    }
+
+    public double getUserCountAsPercentageForSingleTag(String tag) {
+        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+        int countForTag = wpUserMetaRepository.countUsersByTag(tag);
+
+        if (totalUsersWithTag == 0) {
+            return 0; // Vermeidung der Division durch Null
+        }
+
+        return (double) countForTag / totalUsersWithTag * 100;
+    }
+
+    public Map<String, Double> getPercentageForMultipleTags(List<String> tags) {
+        Map<String, Double> tagPercentages = new HashMap<>();
+
+        for (String tag : tags) {
+            double percentage = getUserCountAsPercentageForSingleTag(tag);
+            tagPercentages.put(tag, percentage);
+        }
+
+        return tagPercentages;
+    }
+
+    public Map<String, Double> getPercentageForTagsByUserId(Long userId) {
+        Map<String, Double> tagPercentages = new HashMap<>();
+        Optional<String> tagData = wpUserMetaRepository.getTags(userId);
+
+        if (tagData.isPresent()) {
+            List<String> rawTags = Arrays.asList(tagData.get().split(";"));
+            List<String> decryptedTags = decryptTags(rawTags);
+            List<String> cleanedTags = cleanTags(decryptedTags);
+
+            for (String tag : cleanedTags) {
+                double percentage = getUserCountAsPercentageForSingleTag(tag);
+                tagPercentages.put(tag, percentage);
+            }
+        }
+        return tagPercentages;
+    }
+
+
+    /**
+     * Berechnet den prozentualen Anteil der Anbieter für die Tags eines spezifischen Benutzers.
+     *
+     * @param userId Die ID des Benutzers, dessen Tag-Prozentsätze abgerufen werden sollen.
+     * @return Eine Map von Tags zu ihrem jeweiligen prozentualen Anteil an der Gesamtzahl der Benutzer.
+     */
+
+    @GetMapping("/getPercentageForTagsByUserId")
+    public String getPercentageForTagsByUserIdString(Long userId) {
+        return getPercentageForTagsByUserId(userId).toString();
+    }
+    
 }

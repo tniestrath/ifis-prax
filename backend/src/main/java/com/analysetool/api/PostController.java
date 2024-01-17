@@ -456,7 +456,8 @@ public class PostController {
         long views = 0 ;
         int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-
+        int tagIdPodcast = termRepo.findBySlug("podcast_first_series").getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug("whitepaper").getId().intValue();
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
@@ -727,7 +728,7 @@ public class PostController {
         } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("event")){
             String type = "Event: ";
             switch(eventsController.getEventType(eventsRepo.findByPostID(id).get())) {
-                case "o" ->  type += "Sonstige";
+                case "o", "r" ->  type += "Sonstige";
                 case "k" -> type += "Kongress";
                 case "m" -> type += "Messe";
                 case "s" -> type += "Schulung/Seminar";

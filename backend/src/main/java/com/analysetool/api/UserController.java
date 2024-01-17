@@ -468,7 +468,7 @@ public class UserController {
 
             if(wasGroupCall.isEmpty() || !wasGroupCall.get()) {
                 obj.put("rankingContent", getRankingTotalContentViews(id));
-                obj.put("rankinContentByGroup", getRankingInTypeContentViews(id));
+                obj.put("rankingContentByGroup", getRankingInTypeContentViews(id));
                 obj.put("rankingProfile", getRankingTotalProfileViews(id));
                 obj.put("rankingProfileByGroup", getRankingInTypeProfileViews(id));
             }

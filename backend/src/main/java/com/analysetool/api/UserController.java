@@ -260,7 +260,7 @@ public class UserController {
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId(), Optional.of(true)));
             response.put(obj);
         }
         return new JSONObject().put("users", response).put("count", list.size()).toString();
@@ -357,7 +357,7 @@ public class UserController {
         JSONArray response = new JSONArray();
 
         for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId(), Optional.of(true)));
             response.put(obj);
         }
         return new JSONObject().put("users", response).put("count", list.size()).toString();
@@ -365,7 +365,7 @@ public class UserController {
 
 
     @GetMapping("/getAllSingleUser")
-    public String getAllSingleUser(long id) throws JSONException {
+    public String getAllSingleUser(long id, Optional<Boolean> wasGroupCall) throws JSONException {
         JSONObject obj = new JSONObject();
         WPUser user = userRepository.findById(id).isPresent() ? userRepository.findById(id).get() : null;
         if(user != null) {
@@ -463,9 +463,15 @@ public class UserController {
             if(wpUserMetaRepository.getSlogan(user.getId()).isPresent()) {
                 obj.put("slogan", wpUserMetaRepository.getSlogan(user.getId()).get());
             } else {
-                obj.put("slogan", "none");
+                obj.put("slogan", " - ");
             }
 
+            if(wasGroupCall.isEmpty() || !wasGroupCall.get()) {
+                obj.put("rankingContent", userRepository.getContentViewRankTotal(id));
+                obj.put("rankingContentByGroup", userRepository.getContentViewRankByType(id, getType((int) id)));
+                obj.put("rankingProfile", userRepository.getProfileViewRankTotal(id));
+                obj.put("rankingProfileByGroup", userRepository.getProfileViewRankByType(id, getType((int) id)));
+            }
 
             obj.put("accountType", getType(Math.toIntExact(user.getId())));
 
@@ -1565,49 +1571,61 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getRankingInType")
-    public String getRankingInType(long id) throws JSONException {
+    public int getRankingInTypeProfileViews(long id) throws JSONException {
         if(userRepository.findById(id).isPresent()) {
             String type = getType((int) id);
-            JSONObject json = new JSONObject();
 
             List<WPUser> users = userRepository.getByAboType(type);
 
             users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
 
-            json.put("profileViews", users.indexOf(userRepository.findById(id).get()));
-
-            users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o1.getId()) - postController.getViewsOfUserById(o2.getId())));
-
-            json.put("inhaltsViews", users.indexOf(userRepository.findById(id).get()));
-
-            return json.toString();
+            return users.indexOf(userRepository.findById(id).get());
 
 
         } else {
-            return "user not found";
+            return -1;
         }
     }
 
-    @GetMapping("/getRankingTotal")
-    public String getRankingTotal(long id) throws JSONException {
+    public int getRankingInTypeContentViews(long id) throws JSONException {
         if(userRepository.findById(id).isPresent()) {
-            JSONObject json = new JSONObject();
+            String type = getType((int) id);
+
+            List<WPUser> users = userRepository.getByAboType(type);
+
+            users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o1.getId()) - postController.getViewsOfUserById(o2.getId())));
+
+            return users.indexOf(userRepository.findById(id).get());
+
+
+        } else {
+            return -1;
+        }
+    }
+
+    public int getRankingTotalProfileViews(long id) throws JSONException {
+        if(userRepository.findById(id).isPresent()) {
 
             List<WPUser> users = userRepository.findAll();
 
             users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
 
-            json.put("profileViews", users.indexOf(userRepository.findById(id).get()));
-
-            users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o1.getId()) - postController.getViewsOfUserById(o2.getId())));
-
-            json.put("inhaltsViews", users.indexOf(userRepository.findById(id).get()));
-
-            return json.toString();
+            return users.indexOf(userRepository.findById(id).get());
 
         } else {
-            return "user not found";
+            return -1;
+        }
+    }
+
+    public int getRankingTotalContentViews(long id) throws JSONException {
+        if(userRepository.findById(id).isPresent()) {
+
+            List<WPUser> users = userRepository.findAll();
+
+            return users.indexOf(userRepository.findById(id).get());
+
+        } else {
+            return -1;
         }
     }
 

@@ -225,5 +225,17 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
     @Query("SELECT u FROM WPUser u LEFT JOIN WPUserMeta um ON u.id=um.userId WHERE um.key='wp_capabilities' AND um.value LIKE %:typeAbo%")
     List<WPUser> getByAboType(String typeAbo);
 
+
+    @Query("SELECT COUNT(u) FROM WPUser u JOIN UserStats uv ON u.id = uv.userId WHERE u.id <> :userId GROUP BY u.id HAVING uv.profileView > (SELECT profileView FROM UserStats WHERE userId = :userId)")
+    int getProfileViewRankTotal(long userId);
+
+    @Query("SELECT COUNT(u) FROM WPUser u JOIN UserStats uv ON u.id = uv.userId LEFT JOIN WPUserMeta um WHERE u.id <> :userId AND (um.key='wp_capabilities' AND um.value LIKE %:typeAbo%) GROUP BY u.id HAVING uv.profileView > (SELECT profileView FROM UserStats WHERE userId = :userId)")
+    int getProfileViewRankByType(long userId, String typeAbo);
+
+    @Query("SELECT COUNT(u) FROM WPUser u JOIN Post p ON p.authorId=u.id JOIN PostStats ps ON p.id=ps.artId LEFT JOIN WPUserMeta um WHERE u.id <> :userId GROUP BY u.id HAVING SUM(ps.clicks) > (SELECT SUM(pss.clicks) FROM PostStats pss JOIN Post p ON p.id = pss.artId WHERE p.authorId=:userId)")
+    int getContentViewRankTotal(long userId);
+
+    @Query("SELECT COUNT(u) FROM WPUser u JOIN Post p ON p.authorId=u.id JOIN PostStats ps ON p.id=ps.artId LEFT JOIN WPUserMeta um WHERE u.id <> :userId AND (um.key='wp_capabilities' AND um.value LIKE %:typeAbo%) GROUP BY u.id HAVING SUM(ps.clicks) > (SELECT SUM(pss.clicks) FROM PostStats pss JOIN Post p ON p.id = pss.artId WHERE p.authorId=:userId)")
+    int getContentViewRankByType(long userId, String typeAbo);
 }
 

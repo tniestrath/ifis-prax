@@ -456,7 +456,8 @@ public class PostController {
         long views = 0 ;
         int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-
+        int tagIdPodcast = termRepo.findBySlug("podcast_first_series").getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug("whitepaper").getId().intValue();
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {

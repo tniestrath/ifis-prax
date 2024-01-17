@@ -96,5 +96,8 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
     @Query("SELECT u, (SUM(us.views) / (((SELECT MAX(uv.uniId) FROM UserViewsByHourDLC uv)) - (MIN(us.uniId) + 1))) FROM WPUser u LEFT JOIN UserViewsByHourDLC us ON u.id = us.userId WHERE u.nicename LIKE %:nicename% GROUP BY u.id ORDER BY 2 DESC")
     List<WPUser> getAllNameLikeAndProfileViewsByTimeAll(String nicename, Pageable pageable);
 
+    @Query("SELECT u FROM WPUser u LEFT JOIN WPUserMeta um ON u.id=um.userId WHERE um.key='wp_capabilities' AND um.value LIKE %:typeAbo%")
+    List<WPUser> getByAboType(String typeAbo);
+
 }
 

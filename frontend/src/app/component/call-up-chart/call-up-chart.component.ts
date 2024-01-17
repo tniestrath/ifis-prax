@@ -109,6 +109,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       });
     } else {
       this.db.getCallupsByCategoriesNewest().then(res => {
+        this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
         if (this.slidedOut) {
@@ -201,7 +202,10 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
             stacked: false,
           },
           x: {
-            stacked: true
+            stacked: true,
+            ticks: {
+              autoSkip: false
+            }
           }
         },
         plugins: {

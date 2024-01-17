@@ -24,6 +24,9 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
     @Query("SELECT u.id FROM WPUser u")
     List<Long> findAllUserIds();
 
+    List<WPUser>findAllByIdIn(List<Long> Ids);
+    @Query("SELECT u.displayName from WPUser u WHERE u.id IN :Ids")
+    List<String> findAllDisplayNameByIdIn(List<Long> Ids);
 
     //Set: typeAbo and Name.
     @Query("SELECT u FROM WPUser u LEFT JOIN WPUserMeta um ON u.id = um.userId WHERE u.nicename LIKE %:nicename% AND um.key='wp_capabilities' AND um.value LIKE %:typeAbo% ORDER BY u.id DESC")

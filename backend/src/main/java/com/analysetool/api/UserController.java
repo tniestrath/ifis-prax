@@ -1934,5 +1934,28 @@ public class UserController {
     public String getPercentageForTagsByUserIdString(Long userId) {
         return getPercentageForTagsByUserId(userId).toString();
     }
-    
+
+    public Map<String,String> getCompetitionByTags(Long userId){
+        Map<String, String> tagsWithCompetingUsers = new HashMap<>();
+        Optional<String> tagData = wpUserMetaRepository.getTags(userId);
+
+        if (tagData.isPresent()) {
+            List<String> rawTags = Arrays.asList(tagData.get().split(";"));
+            List<String> decryptedTags = decryptTags(rawTags);
+            List<String> cleanedTags = cleanTags(decryptedTags);
+
+            for(String tag:cleanedTags){
+                List<Long> competingUserIdsWithTag = wpUserMetaRepository.getUserIdsByTag(tag);
+                List<String> competingUsersWithTag= userRepository.findAllDisplayNameByIdIn(competingUserIdsWithTag);
+                tagsWithCompetingUsers.put(tag,competingUsersWithTag.toString());
+            }
+        }
+
+        return tagsWithCompetingUsers;
+    }
+
+    @GetMapping("/getCompetitionForTagsByUserId")
+    public String getCompetitionForTagsByUserIdString(Long userId) {
+        return getCompetitionByTags(userId).toString();
+    }
 }

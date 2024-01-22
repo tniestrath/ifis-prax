@@ -28,5 +28,5 @@ public class TemporarySearchStatService {
         repository.deleteAll(searchStat);
     }
 
-  
+
 }

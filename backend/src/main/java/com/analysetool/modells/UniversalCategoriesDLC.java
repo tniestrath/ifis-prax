@@ -46,6 +46,9 @@ public class UniversalCategoriesDLC {
     @Column(name="besucher_ratgeber_buch")
     private int besucherRatgeberBuch;
 
+    @Column(name = "besucher_ratgeber_self")
+    private int besucherRatgeberSelf;
+
     @Column(name="besucher_main")
     private int besucherMain;
 
@@ -102,6 +105,9 @@ public class UniversalCategoriesDLC {
 
     @Column(name="views_ratgeber_buch")
     private int viewsRatgeberBuch;
+
+    @Column(name = "views_ratgeber_self")
+    private int viewsRatgeberSelf;
 
     @Column(name="views_main")
     private int viewsMain;
@@ -456,6 +462,22 @@ public class UniversalCategoriesDLC {
 
     public void setViewsRatgeberBuch(int viewsRatgeberBuch) {
         this.viewsRatgeberBuch = viewsRatgeberBuch;
+    }
+
+    public int getBesucherRatgeberSelf() {
+        return besucherRatgeberSelf;
+    }
+
+    public void setBesucherRatgeberSelf(int besucherRatgeberSelf) {
+        this.besucherRatgeberSelf = besucherRatgeberSelf;
+    }
+
+    public int getViewsRatgeberSelf() {
+        return viewsRatgeberSelf;
+    }
+
+    public void setViewsRatgeberSelf(int viewsRatgeberSelf) {
+        this.viewsRatgeberSelf = viewsRatgeberSelf;
     }
 }
 

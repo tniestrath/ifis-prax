@@ -472,7 +472,7 @@ public class PostController {
                 PostStats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
-                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse) {
+                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse || termTax.getTermId() == tagIdPodcast || termTax.getTermId() == tagIdWhitepaper) {
                             views = views + Stat.getClicks();
                         }
                     }

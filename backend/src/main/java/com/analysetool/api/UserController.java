@@ -1572,7 +1572,7 @@ public class UserController {
 
                 List<WPUser> users = userRepository.getByAboType(type);
 
-                users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
+                users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
 
                 return users.indexOf(userRepository.findById(id).get());
             }
@@ -1591,7 +1591,7 @@ public class UserController {
 
                 List<WPUser> users = userRepository.getByAboType(type);
 
-                users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o1.getId()) - postController.getViewsOfUserById(o2.getId())));
+                users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o2.getId()) - postController.getViewsOfUserById(o1.getId())));
 
                 return users.indexOf(userRepository.findById(id).get());
         } else {
@@ -1604,7 +1604,7 @@ public class UserController {
             if(userViewsRepo.existsByUserId(id)) {
                 List<WPUser> users = userRepository.findAll();
 
-                users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
+                users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
 
                 return users.indexOf(userRepository.findById(id).get());
             }
@@ -1629,10 +1629,10 @@ public class UserController {
     @GetMapping("/getRankings")
     public String getRankings(long id) throws JSONException {
         JSONObject obj = new JSONObject();
-        obj.put("rankingContent", getRankingTotalContentViews(id));
-        obj.put("rankingContentByGroup", getRankingInTypeContentViews(id));
-        obj.put("rankingProfile", getRankingTotalProfileViews(id));
-        obj.put("rankingProfileByGroup", getRankingTotalProfileViews(id));
+        obj.put("rankingContent", getRankingTotalContentViews(id) + 1);
+        obj.put("rankingContentByGroup", getRankingInTypeContentViews(id) + 1);
+        obj.put("rankingProfile", getRankingTotalProfileViews(id) + 1);
+        obj.put("rankingProfileByGroup", getRankingInTypeProfileViews(id) + 1);
         return obj.toString();
     }
 

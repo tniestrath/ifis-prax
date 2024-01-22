@@ -24,8 +24,8 @@ public class TemporarySearchStatService {
         repository.delete(searchStat);
     }
 
-    public void deleteAllSearchStatIn(List<TemporarySearchStat searchStat>) {
-        repository.deleteAll(searchStat);
+    public void deleteAllSearchStatIn(List<TemporarySearchStat> searchStats) {
+        repository.deleteAll(searchStats);
     }
 
 

@@ -1851,7 +1851,7 @@ public class UserController {
         return getUserCountForAllTags().toString();
     }
 
-    public Map<String, Double> getUserCountForAllTagsInPercentage() {
+    public JSONObject getUserCountForAllTagsInPercentage() throws JSONException {
         // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
         int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
 
@@ -1859,7 +1859,7 @@ public class UserController {
         Map<String, Integer> companiesPerTag = getUserCountForAllTags();
 
         // Map für prozentualen Anteil erstellen
-        Map<String, Double> tagPercentages = new HashMap<>();
+        JSONObject tagPercentages = new JSONObject();
 
         // Prozentualen Anteil für jeden Tag berechnen
         for (Map.Entry<String, Integer> entry : companiesPerTag.entrySet()) {
@@ -1879,7 +1879,7 @@ public class UserController {
      */
 
     @GetMapping("/userCountForAllTagsInPercentage")
-    public String getUserCountForAllTagsInPercentageString() {
+    public String getUserCountForAllTagsInPercentageString() throws JSONException {
         return getUserCountForAllTagsInPercentage().toString();
     }
 

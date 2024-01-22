@@ -35,6 +35,7 @@ import {
 } from "./user/user-stats-by-plan/user-stats-by-plan.component";
 import {UserDisplayComponentComponent} from "./user/user-display-component/user-display-component.component";
 import {UserClicksChartComponent} from "./user/user-clicks-chart/user-clicks-chart.component";
+import {UserTagsDistComponent} from "./user/user-tags-dist/user-tags-dist.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -60,7 +61,8 @@ export class PageComponent implements OnInit {
     return [
       {type: UserComparatorComponent, row: 1, col: 1, height: 4, width: 6},
       {type: UserStatsByPlanComponent, row: 1, col: 4, height: 1, width: 3},
-      {type: UserStatsByPlanViewTypeCompareComponent, row: 2, col: 4, height: 1, width: 3}
+      {type: UserStatsByPlanViewTypeCompareComponent, row: 2, col: 4, height: 1, width: 3},
+      {type: UserTagsDistComponent, row: 3, col: 4, height: 2, width: 2}
     ];
   }
 

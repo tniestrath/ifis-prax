@@ -1851,7 +1851,7 @@ public class UserController {
         return getUserCountForAllTags().toString();
     }
 
-    public List<JSONObject> getUserCountForAllTagsInPercentage() throws JSONException {
+    public JSONObject getUserCountForAllTagsInPercentage() throws JSONException {
         // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
         int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
 
@@ -1862,7 +1862,8 @@ public class UserController {
         List<JSONObject> array = new ArrayList<>();
 
         // Map für prozentualen Anteil erstellen
-        JSONObject tagPercentages = new JSONObject();
+        List<String> tagLabel = new ArrayList<>();
+        List<Double> tagPercentages = new ArrayList<>();
 
         // Prozentualen Anteil für jeden Tag berechnen
         for (Map.Entry<String, Integer> entry : companiesPerTag.entrySet()) {
@@ -1881,7 +1882,12 @@ public class UserController {
             }
         });
 
-        return array;
+        for (JSONObject jsonObject : array) {
+            tagLabel.add(jsonObject.keys().next().toString());
+            tagPercentages.add(jsonObject.getDouble(jsonObject.keys().next().toString()));
+        }
+
+        return new JSONObject().put("tagLabel", tagLabel).put("tagPercentages", tagPercentages);
     }
 
     /**

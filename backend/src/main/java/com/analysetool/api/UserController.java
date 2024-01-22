@@ -1851,12 +1851,15 @@ public class UserController {
         return getUserCountForAllTags().toString();
     }
 
-    public JSONObject getUserCountForAllTagsInPercentage() throws JSONException {
+    public List<JSONObject> getUserCountForAllTagsInPercentage() throws JSONException {
         // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
         int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
 
         // Tags und ihre Anzahl holen
         Map<String, Integer> companiesPerTag = getUserCountForAllTags();
+
+        //Array als Container erstellen
+        List<JSONObject> array = new ArrayList<>();
 
         // Map für prozentualen Anteil erstellen
         JSONObject tagPercentages = new JSONObject();
@@ -1866,10 +1869,19 @@ public class UserController {
             String tag = entry.getKey();
             int count = entry.getValue();
             double percentage = (double) count / totalUsersWithTag * 100;
-            tagPercentages.put(tag, percentage);
+            array.add(new JSONObject().put(tag, percentage));
         }
 
-        return tagPercentages;
+        array.sort((o1, o2) -> {
+            try {
+                double v = o2.getDouble(o2.keys().next().toString()) - o1.getDouble(o1.keys().next().toString());
+                return (int) v;
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return array;
     }
 
     /**

@@ -733,6 +733,9 @@ public class PostController {
             if (type == null) {
                 System.out.println(id + "\n");
             }
+
+            return type;
+
         } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("event")){
             String type = "Event: ";
             switch(eventsController.getEventType(eventsRepo.findByPostID(id).get())) {

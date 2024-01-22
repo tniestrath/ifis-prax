@@ -329,7 +329,7 @@ export class DbService {
   }
   async getPostsAllPaged(page : number, size : number, sorter : string, filter : string, search : string){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL_PAGED).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("FITLER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL_PAGED).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getPostById(id: number) : Promise<Post> {

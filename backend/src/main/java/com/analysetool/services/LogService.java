@@ -126,6 +126,9 @@ public class LogService {
     private final String ratgeberGlossarView = "^.*GET /ratgeber/glossar-cyber-sicherheit/";
 
     private final String ratgeberBuchView = "^.*GET /ratgeber/cyber-sicherheit/";
+
+    private final String ratgeberSelfView = "^.*GET /ratgeber/selbstlernangebot-it-sicherheit/";
+
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
     private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
@@ -193,6 +196,7 @@ public class LogService {
     Pattern ratgeberPostViewPattern = Pattern.compile(ratgeberView);
     Pattern ratgeberGlossarViewPattern = Pattern.compile(ratgeberGlossarView);
     Pattern ratgeberBuchViewPattern = Pattern.compile(ratgeberBuchView);
+    Pattern ratgeberSelfViewPattern = Pattern.compile(ratgeberSelfView);
     Pattern podcastViewPattern = Pattern.compile(PodcastViewPattern);
     Pattern contentDownloadPattern= Pattern.compile(contentDownload);
     Pattern eventViewPattern = Pattern.compile(eventView);
@@ -416,6 +420,7 @@ public class LogService {
         int viewsRatgeberPost = 0;
         int viewsRatgeberGlossar = 0;
         int viewsRatgeberBuch = 0;
+        int viewsRatgeberSelf = 0;
         int viewsMain = 0;
         int viewsUeber = 0;
         int viewsAGBS = 0;
@@ -437,6 +442,7 @@ public class LogService {
         int userRatgeberPost = 0;
         int userRatgeberGlossar = 0;
         int userRatgeberBuch = 0;
+        int userRatgeberSelf = 0;
         int userMain = 0;
         int userUeber = 0;
         int userAGBS = 0;
@@ -570,6 +576,9 @@ public class LogService {
                     //Does it match a ratgeber-buch view
                     Matcher matched_ratgeber_buch = ratgeberBuchViewPattern.matcher(request);
 
+                    //Does it match a ratgeber-self-help view
+                    Matcher matched_ratgeber_self = ratgeberSelfViewPattern.matcher(request);
+
                     //Does it match a podcast-view
                     Matcher matched_podcast_view = podcastViewPattern.matcher(request);
 
@@ -648,6 +657,9 @@ public class LogService {
                     } else if(matched_ratgeber_buch.find()) {
                         whatMatched = "ratgeberBuch";
                         patternMatcher = matched_ratgeber_buch;
+                    }else if(matched_ratgeber_self.find()){
+                        whatMatched = "ratgeberSelf";
+                        patternMatcher = matched_ratgeber_self;
                     } else if(matched_content_download.find()){
                         whatMatched = "contentDownload";
                         patternMatcher = matched_content_download;
@@ -860,7 +872,7 @@ public class LogService {
                                 System.out.println(patternMatcher.group(1));
                             }
                         }
-                        case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch" -> {
+                        case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch", "ratgeberSelf" -> {
                             //Erhöhe Clicks für RatgeberViews um 1.
                             viewsRatgeber++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -892,13 +904,22 @@ public class LogService {
                                         userRatgeberGlossar++;
                                     }
                                 }
-                            } else {
+                            } else if(whatMatched.equals("ratgeberBuch")){
                                 viewsRatgeberBuch++;
                                 if (isUnique) {
                                     userRatgeberBuch++;
                                 } else {
                                     if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                         userRatgeberBuch++;
+                                    }
+                                }
+                            } else if(whatMatched.equals("ratgeberSelf")){
+                                viewsRatgeberSelf++;
+                                if (isUnique) {
+                                    userRatgeberSelf++;
+                                } else {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                        userRatgeberSelf++;
                                     }
                                 }
                             }
@@ -932,7 +953,7 @@ public class LogService {
             }
 
         }
-        updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
+        updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsRatgeberSelf, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userRatgeberSelf, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
         //Service weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
         contentDownloadsHourlyService.persistAllContentDownloadsHourly(contentDownloadsMap);
@@ -942,7 +963,7 @@ public class LogService {
         cleanMaps();
     }
 
-    private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
+    private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
         dateStirng += Calendar.getInstance().get(Calendar.MONTH) + 1  < 10 ? "0" + (Calendar.getInstance().get(Calendar.MONTH) + 1) : Calendar.getInstance().get(Calendar.MONTH) + 1;
@@ -1101,6 +1122,7 @@ public class LogService {
                         cat.setBesucherRatgeber(userRatgeberPost / 4);
                         cat.setBesucherRatgeber(userRatgeberGlossar / 4);
                         cat.setBesucherRatgeber(userRatgeberBuch / 4);
+                        cat.setBesucherRatgeberSelf(userRatgeberSelf / 4);
                         cat.setBesucherMain(userMain / 4);
                         cat.setBesucherUeber(userUeber / 4);
                         cat.setBesucherImpressum(userImpressum / 4);
@@ -1121,6 +1143,7 @@ public class LogService {
                         cat.setViewsRatgeber(viewsRatgeberPost / 4);
                         cat.setViewsRatgeber(viewsRatgeberGlossar / 4);
                         cat.setViewsRatgeber(viewsRatgeberBuch / 4);
+                        cat.setViewsRatgeberSelf(viewsRatgeberSelf / 4);
                         cat.setViewsMain(viewsMain / 4);
                         cat.setViewsUeber(viewsUeber / 4);
                         cat.setViewsImpressum(viewsImpressum / 4);
@@ -1147,6 +1170,7 @@ public class LogService {
                     uniCategories.setBesucherRatgeberPost(userRatgeberPost);
                     uniCategories.setBesucherRatgeberGlossar(userRatgeberGlossar);
                     uniCategories.setBesucherRatgeberBuch(userRatgeberBuch);
+                    uniCategories.setBesucherRatgeberSelf(userRatgeberSelf);
                     uniCategories.setBesucherMain(userMain);
                     uniCategories.setBesucherUeber(userUeber);
                     uniCategories.setBesucherImpressum(userImpressum);
@@ -1167,6 +1191,7 @@ public class LogService {
                     uniCategories.setViewsRatgeberPost(viewsRatgeberPost);
                     uniCategories.setViewsRatgeberGlossar(viewsRatgeberGlossar);
                     uniCategories.setViewsRatgeberBuch(viewsRatgeberBuch);
+                    uniCategories.setViewsRatgeberSelf(viewsRatgeberSelf);
                     uniCategories.setViewsMain(viewsMain);
                     uniCategories.setViewsUeber(viewsUeber);
                     uniCategories.setViewsImpressum(viewsImpressum);
@@ -1194,6 +1219,7 @@ public class LogService {
                 uniCategories.setBesucherRatgeberPost(uniCategories.getBesucherRatgeberPost() + userRatgeberPost);
                 uniCategories.setBesucherRatgeberGlossar(uniCategories.getBesucherRatgeberGlossar() + userRatgeberGlossar);
                 uniCategories.setBesucherRatgeberBuch(uniCategories.getBesucherRatgeberBuch() + userRatgeberBuch);
+                uniCategories.setBesucherRatgeberSelf(uniCategories.getBesucherRatgeberSelf() + userRatgeberSelf);
                 uniCategories.setBesucherMain(userMain + uniCategories.getBesucherMain());
                 uniCategories.setBesucherUeber(userUeber + uniCategories.getBesucherUeber());
                 uniCategories.setBesucherImpressum(userImpressum + uniCategories.getBesucherImpressum());
@@ -1214,6 +1240,7 @@ public class LogService {
                 uniCategories.setViewsRatgeberPost(viewsRatgeberPost + uniCategories.getViewsRatgeberPost());
                 uniCategories.setViewsRatgeberGlossar(viewsRatgeberGlossar + uniCategories.getViewsRatgeberGlossar());
                 uniCategories.setViewsRatgeberBuch(viewsRatgeberBuch + uniCategories.getViewsRatgeberBuch());
+                uniCategories.setViewsRatgeberSelf(viewsRatgeberSelf + uniCategories.getViewsRatgeberSelf());
                 uniCategories.setViewsMain(viewsMain + uniCategories.getViewsMain());
                 uniCategories.setViewsUeber(viewsUeber + uniCategories.getViewsUeber());
                 uniCategories.setViewsImpressum(viewsImpressum + uniCategories.getViewsImpressum());

@@ -101,22 +101,14 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
-        if (this.slidedOut){
-          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Immer");
-        } else {
-          this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, "Immer");
-        }
+        this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Immer");
       });
     } else {
       this.db.getCallupsByCategoriesNewest().then(res => {
         this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
-        if (this.slidedOut) {
-          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Heute");
-        } else {
-          this.createCategoriesChart(this.categories.slice(0, 7), this.categoriesViews, this.categoriesVisitors, "Heute");
-        }
+        this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Heute");
       });
     }
   }
@@ -194,14 +186,15 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         clip: false,
         aspectRatio: .5,
         maintainAspectRatio: false,
+        indexAxis: "y",
         layout: {
         },
         scales: {
-          y: {
+          x: {
             min: 0,
             stacked: false,
           },
-          x: {
+          y: {
             stacked: true,
             ticks: {
               autoSkip: false
@@ -250,7 +243,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           },
         },
         interaction: {
-          mode: "x",
+          mode: "y",
           intersect: true
         },
         onClick(event: ChartEvent, elements: ActiveElement[]) {

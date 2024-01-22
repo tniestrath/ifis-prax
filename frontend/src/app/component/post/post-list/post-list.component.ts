@@ -37,7 +37,7 @@ export class PostListComponent extends DashBaseComponent{
 
   ngOnInit(): void {
     this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen");
-    this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.search_text).then((value : {posts: Post[], count : number}) => {
+    this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.filter, this.search_text).then((value : {posts: Post[], count : number}) => {
       for (const valueElement of value.posts) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
       }
@@ -49,7 +49,7 @@ export class PostListComponent extends DashBaseComponent{
       this.search_text = event.target.value;
       this.selectorItems = [];
 
-      this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.search_text).then((value : {posts: Post[], count : number}) => {
+      this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.filter, this.search_text).then((value : {posts: Post[], count : number}) => {
         for (const valueElement of value.posts) {
           this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
         }
@@ -58,38 +58,76 @@ export class PostListComponent extends DashBaseComponent{
       });
     };
     this.input_all_cb = () => {
-      this.selectorItems = this.selectorItemsBackup;
-      this.selectorItemsLoaded.next(this.selectorItems);
+      this.selectorItems = [];
+      this.pageIndex = 0;
+      this.filter = " ";
+      this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.filter, this.search_text).then((value : {posts: Post[], count : number}) => {
+        for (const valueElement of value.posts) {
+          this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        }
+        this.pageIndex++;
+        this.selectorItemsLoaded.next(this.selectorItems);
+      });
     };
     this.input_article_cb = () => {
-      this.selectorItems = this.selectorItemsBackup.filter((item) => {
-        return ( (item.data as Post).type == "artikel" );
+      this.selectorItems = [];
+      this.pageIndex = 0;
+      this.filter = "artikel";
+      this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.filter, this.search_text).then((value : {posts: Post[], count : number}) => {
+        for (const valueElement of value.posts) {
+          this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        }
+        this.pageIndex++;
+        this.selectorItemsLoaded.next(this.selectorItems);
       });
-      this.selectorItemsLoaded.next(this.selectorItems);
-    }
+    };
     this.input_blog_cb = () => {
-      this.selectorItems = this.selectorItemsBackup.filter((item) => {
-        return ( (item.data as Post).type == "blog" );
+      this.selectorItems = [];
+      this.pageIndex = 0;
+      this.filter = "blog";
+      this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.filter, this.search_text).then((value : {posts: Post[], count : number}) => {
+        for (const valueElement of value.posts) {
+          this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        }
+        this.pageIndex++;
+        this.selectorItemsLoaded.next(this.selectorItems);
       });
-      this.selectorItemsLoaded.next(this.selectorItems);
     }
     this.input_news_cb = () => {
-      this.selectorItems = this.selectorItemsBackup.filter((item) => {
-        return ( (item.data as Post).type == "news" );
+      this.selectorItems = [];
+      this.pageIndex = 0;
+      this.filter = "news";
+      this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.filter, this.search_text).then((value : {posts: Post[], count : number}) => {
+        for (const valueElement of value.posts) {
+          this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        }
+        this.pageIndex++;
+        this.selectorItemsLoaded.next(this.selectorItems);
       });
-      this.selectorItemsLoaded.next(this.selectorItems);
     }
     this.input_podcast_cb = () => {
-      this.selectorItems = this.selectorItemsBackup.filter((item) => {
-        return ( (item.data as Post).type.includes("podcast") );
+      this.selectorItems = [];
+      this.pageIndex = 0;
+      this.filter = "podcast";
+      this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.filter, this.search_text).then((value : {posts: Post[], count : number}) => {
+        for (const valueElement of value.posts) {
+          this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        }
+        this.pageIndex++;
+        this.selectorItemsLoaded.next(this.selectorItems);
       });
-      this.selectorItemsLoaded.next(this.selectorItems);
     }
     this.input_whitepaper_cb = () => {
-      this.selectorItems = this.selectorItemsBackup.filter((item) => {
-        return ( (item.data as Post).type == "whitepaper" );
+      this.selectorItems = [];
+      this.pageIndex = 0;
+      this.filter = "whitepaper";
+      this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.filter, this.search_text).then((value : {posts: Post[], count : number}) => {
+        for (const valueElement of value.posts) {
+          this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
+        }
+        this.pageIndex++;
+        this.selectorItemsLoaded.next(this.selectorItems);
       });
-      this.selectorItemsLoaded.next(this.selectorItems);
     }
   }
 
@@ -98,7 +136,7 @@ export class PostListComponent extends DashBaseComponent{
       let scroll = Date.now();
       if (scroll >= (this.lastScroll + 100)){
         console.log(this.pageIndex)
-        this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.search_text).then((value : {posts:  Post[], count : number}) => {
+        this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.filter, this.search_text).then((value : {posts:  Post[], count : number}) => {
           for (const valueElement of value.posts) {
             this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
           }

@@ -13,8 +13,8 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit(): void {
     this.setToolTip("", false);
-    this.db.getUserTagsDistributionPercentage().then((res : Map<string, number>) => {
-      this.createChart([...res.keys()], [...res.values()])
+    this.db.getUserTagsDistributionPercentage().then((res : {tagLabel : string[], tagPercentages : number[]})  => {
+      this.createChart(res.tagLabel, res.tagPercentages);
     })
   }
 
@@ -29,7 +29,7 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
       data: {
         labels: labels,
         datasets: [{
-          label: "Themen",
+          label: "% der Profile",
           data: data,
           backgroundColor: [DashColors.BLUE, DashColors.DARK_BLUE, DashColors.RED, DashColors.DARK_RED, DashColors.BLACK],
           borderWidth: 0

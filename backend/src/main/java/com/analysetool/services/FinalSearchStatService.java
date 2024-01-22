@@ -16,5 +16,13 @@ public class FinalSearchStatService {
         repository.saveAll(stats);
     }
 
+    public Boolean saveAllBoolean(List<FinalSearchStat> stats) {
+        try{
+            repository.saveAll(stats);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
     // Weitere Geschäftslogik
 }

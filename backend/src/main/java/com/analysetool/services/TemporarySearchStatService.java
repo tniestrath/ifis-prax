@@ -28,5 +28,13 @@ public class TemporarySearchStatService {
         repository.deleteAll(searchStats);
     }
 
+    public Boolean deleteAllSearchStatBooleanIn(List<TemporarySearchStat> searchStats) {
+       try{ repository.deleteAll(searchStats);
+            return true;
+       }catch (Exception e){
+           return false;
+       }
+    }
+
 
 }

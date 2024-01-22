@@ -2724,8 +2724,15 @@ public class LogService {
            zuSpeicherndeFinalSearches.add(new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount()));
         }
 
-        finalSearchService.saveAll(zuSpeicherndeFinalSearches);
-        temporarySearchService.deleteAllSearchStatIn(alleTempSearches);
+        Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);
+        if(saveSuccess){
+            Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
+            if(!deleteSuccess){
+                System.out.println("Löschen von TemporarySearch mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
+            }
+        }else{
+            System.out.println("Erstellen/Speichern von FinalSearch der TemporarySearches mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
+        }
     }
 
 }

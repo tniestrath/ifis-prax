@@ -49,6 +49,9 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.viewsRatgeberBuch) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumViewsRatgeberBuchByUniStatId(int uniID);
 
+     @Query("SELECT SUM(u.viewsRatgeberSelf) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsRatgeberSelfByUniStatId(int uniID);
+
      @Query("SELECT SUM(u.viewsMain) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumViewsMainByUniStatId(int uniID);
 
@@ -105,6 +108,9 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      @Query("SELECT SUM(u.besucherRatgeberBuch) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserRatgeberBuchByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherRatgeberSelf) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserRatgeberSelfByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherMain) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserMainByUniStatId(int uniID);
@@ -167,6 +173,9 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.viewsRatgeberBuch) FROM UniversalCategoriesDLC u")
      public int getSumViewsRatgeberBuchAllTime();
 
+     @Query("SELECT SUM(u.viewsRatgeberSelf) FROM UniversalCategoriesDLC u")
+     public int getSumViewsRatgeberSelfAllTime();
+
      @Query("SELECT SUM(u.viewsMain) FROM UniversalCategoriesDLC u")
      public int getSumViewsMainAllTime();
 
@@ -225,6 +234,9 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      @Query("SELECT SUM(u.besucherRatgeberBuch) FROM UniversalCategoriesDLC u")
      public int getSumUserRatgeberBuchAllTime();
+
+     @Query("SELECT SUM(u.besucherRatgeberSelf) FROM UniversalCategoriesDLC u")
+     public int getSumUserRatgeberSelfAllTime();
 
      @Query("SELECT SUM(u.besucherMain) FROM UniversalCategoriesDLC u")
      public int getSumUserMainAllTime();

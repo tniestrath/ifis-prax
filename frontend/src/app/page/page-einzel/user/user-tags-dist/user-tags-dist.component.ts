@@ -14,7 +14,9 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.setToolTip("", false);
     this.db.getUserTagsDistributionPercentage().then((res : {tagLabel : string[], tagPercentages : number[]})  => {
-      this.createChart(res.tagLabel, res.tagPercentages);
+      let data = res.tagPercentages.map(value => parseFloat(value.toFixed(2)));
+      console.log(data.reduce((previousValue, currentValue) => previousValue + currentValue))
+      this.createChart(res.tagLabel, data);
     })
   }
 

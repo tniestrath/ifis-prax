@@ -46,7 +46,7 @@ public class UniversalCategoriesDLC {
     @Column(name="besucher_ratgeber_buch")
     private int besucherRatgeberBuch;
 
-    @Column("besucher_ratgeber_self")
+    @Column(name = "besucher_ratgeber_self")
     private int besucherRatgeberSelf;
 
     @Column(name="besucher_main")
@@ -106,7 +106,7 @@ public class UniversalCategoriesDLC {
     @Column(name="views_ratgeber_buch")
     private int viewsRatgeberBuch;
 
-    @Column("views_ratgeber_self")
+    @Column(name = "views_ratgeber_self")
     private int viewsRatgeberSelf;
 
     @Column(name="views_main")

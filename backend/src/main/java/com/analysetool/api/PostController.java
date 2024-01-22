@@ -1032,7 +1032,7 @@ public class PostController {
         List<JSONObject> stats = new ArrayList<>();
         for(Post post : list) {
             long id = post.getId();
-            if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper")) {
+            if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper") || getType(id).equals("podcast")) {
                 stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
             }
         }

@@ -54,7 +54,7 @@ export enum dbUrl {
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
 
   GET_POSTS_ALL = "/posts/getAllPostsWithStats",
-  GET_POSTS_ALL_PAGED = "/posts/pageByTitle?page=PAGE&size=SIZE&sortBy=SORTER&search=SEARCH",
+  GET_POSTS_ALL_PAGED = "/posts/pageByTitle?page=PAGE&size=SIZE&sortBy=SORTER&filter=FILTER&search=SEARCH",
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_BY_AUTHOR = "/posts/getPostsByAuthor?authorId=ID&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH",
@@ -327,9 +327,9 @@ export class DbService {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async getPostsAllPaged(page : number, size : number, sorter : string, search: string){
+  async getPostsAllPaged(page : number, size : number, sorter : string, filter : string, search : string){
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL_PAGED).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL_PAGED).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getPostById(id: number) : Promise<Post> {

@@ -1042,7 +1042,12 @@ public class PostController {
 
     @GetMapping("/pageByTitleWithFilter")
     public String pageTitleFinder(Integer page, Integer size, String sortBy, String filter, String search) throws JSONException, ParseException {
-        List<Post> list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        List<Post> list;
+        if(!filter.isBlank()) {
+             list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));
+        } else {
+            list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        }
         List<JSONObject> stats = new ArrayList<>();
         for(Post post : list) {
             long id = post.getId();

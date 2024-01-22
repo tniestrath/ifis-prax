@@ -188,6 +188,7 @@ public class uniStatController {
         labelsForCategory.add("Ratgeber-Post");
         labelsForCategory.add("Ratgeber-Buch");
         labelsForCategory.add("Ratgeber-Glossar");
+        labelsForCategory.add("Ratgeber-Selbstlernangebot");
         labelsForCategory.add("Ueber");
         labelsForCategory.add("Impressum");
         labelsForCategory.add("Preisliste");
@@ -211,6 +212,7 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberPost());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberBuch());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberGlossar());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberSelf());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsUeber());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsImpressum());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPreisliste());
@@ -232,6 +234,7 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberPost());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberBuch());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberGlossar());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberSelf());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherUeber());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherImpressum());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPreisliste());
@@ -267,6 +270,7 @@ public class uniStatController {
         labelsForCategory.add("Ratgeber-Post");
         labelsForCategory.add("Ratgeber-Buch");
         labelsForCategory.add("Ratgeber-Glossar");
+        labelsForCategory.add("Ratgeber-Self");
         labelsForCategory.add("Ueber");
         labelsForCategory.add("Impressum");
         labelsForCategory.add("Preisliste");
@@ -293,6 +297,7 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberPostByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberBuchByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberGlossarByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberSelfByUniStatId(id));
         //Footer
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsUeberByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImpressumByUniStatId(id));
@@ -318,6 +323,7 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberPostByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberBuchByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberGlossarByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberSelfByUniStatId(id));
         //Footer
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserUeberByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImpressumByUniStatId(id));
@@ -350,6 +356,7 @@ public class uniStatController {
         labelsForCategory.add("Ratgeber-Post");
         labelsForCategory.add("Ratgeber-Buch");
         labelsForCategory.add("Ratgeber-Glossar");
+        labelsForCategory.add("Ratgeber-Self");
         labelsForCategory.add("Ueber");
         labelsForCategory.add("Impressum");
         labelsForCategory.add("Preisliste");
@@ -375,6 +382,7 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberPostAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberBuchAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberGlossarAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberSelfAllTime());
         //Footer
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsUeberAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImpressumAllTime());
@@ -400,6 +408,7 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberPostAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberBuchAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberGlossarAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberSelfAllTime());
         //Footer
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserUeberAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImpressumAllTime());

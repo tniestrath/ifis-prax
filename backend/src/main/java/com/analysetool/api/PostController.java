@@ -1029,18 +1029,8 @@ public class PostController {
         return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
 
-    @GetMapping("/pageByTitle")
-    public String pageTitleFinder(Integer page, Integer size, String sortBy, String search) throws JSONException, ParseException {
-        List<Post> list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
-        List<JSONObject> stats = new ArrayList<>();
-        for(Post post : list) {
-            long id = post.getId();
-            stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
-        }
-        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
-    }
 
-    @GetMapping("/pageByTitleWithFilter")
+    @GetMapping("/pageByTitle")
     public String pageTitleFinder(Integer page, Integer size, String sortBy, String filter, String search) throws JSONException, ParseException {
         List<Post> list;
         if(!filter.isBlank()) {

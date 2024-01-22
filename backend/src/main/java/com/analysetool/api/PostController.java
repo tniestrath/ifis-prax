@@ -1040,6 +1040,18 @@ public class PostController {
         return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
 
+    @GetMapping("/pageByTitleWithFilter")
+    public String pageTitleFinder(Integer page, Integer size, String sortBy, String filter, String search) throws JSONException, ParseException {
+        List<Post> list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        List<JSONObject> stats = new ArrayList<>();
+        for(Post post : list) {
+            long id = post.getId();
+            stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+        }
+        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
+    }
+
+
     @GetMapping("/getEventsWithStats")
     public String getEventsWithStats(Integer page, Integer size,  String filter, String search) throws JSONException, ParseException {
         List<Post> list;

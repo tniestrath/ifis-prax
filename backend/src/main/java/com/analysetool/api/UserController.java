@@ -1851,6 +1851,8 @@ public class UserController {
         return getUserCountForAllTags().toString();
     }
 
+
+
     public JSONObject getUserCountForAllTagsInPercentage() throws JSONException {
         // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
         int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
@@ -1887,7 +1889,59 @@ public class UserController {
             tagPercentages.add(jsonObject.getDouble(jsonObject.keys().next().toString()));
         }
 
-        return new JSONObject().put("tagLabel", tagLabel).put("tagPercentages", tagPercentages);
+        return new JSONObject().put("tagLabel", new JSONArray(tagLabel.toArray())).put("tagPercentages", new JSONArray(tagPercentages.toArray()));
+    }
+
+    public JSONObject getTagPercentageOfAllSetTags() throws JSONException {
+        // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
+        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+
+        int countTagsTotal = 0;
+
+        // Tags und ihre Anzahl holen
+        Map<String, Integer> companiesPerTag = getUserCountForAllTags();
+
+        //Array als Container erstellen
+        List<JSONObject> array = new ArrayList<>();
+
+        // Map für prozentualen Anteil erstellen
+        List<String> tagLabel = new ArrayList<>();
+        List<Double> tagPercentages = new ArrayList<>();
+
+        //Gesamtanzahl der gesetzten Tags ausrechnen
+        for (Map.Entry<String, Integer> entry : companiesPerTag.entrySet()) {
+            countTagsTotal += entry.getValue();
+        }
+
+        // Prozentualen Anteil für jeden Tag berechnen
+        for (Map.Entry<String, Integer> entry : companiesPerTag.entrySet()) {
+            String tag = entry.getKey();
+            int count = entry.getValue();
+            double percentage = (double) count / countTagsTotal * 100;
+            array.add(new JSONObject().put(tag, percentage));
+        }
+
+        array.sort((o1, o2) -> {
+            try {
+                double v = o2.getDouble(o2.keys().next().toString()) - o1.getDouble(o1.keys().next().toString());
+                return (int) v;
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        for (JSONObject jsonObject : array) {
+            tagLabel.add(jsonObject.keys().next().toString());
+            tagPercentages.add(jsonObject.getDouble(jsonObject.keys().next().toString()));
+        }
+
+        return new JSONObject().put("tagLabel", new JSONArray(tagLabel.toArray())).put("tagPercentages", new JSONArray(tagPercentages.toArray()));
+    }
+
+
+    @GetMapping("/getTagPercentageOfAllSetTags")
+    public String getTagPercentageOfAllSetTagsString() throws JSONException {
+        return getTagPercentageOfAllSetTags().toString();
     }
 
     /**

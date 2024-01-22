@@ -2,6 +2,7 @@ package com.analysetool.services;
 
 import com.analysetool.modells.FinalSearchStat;
 import com.analysetool.repositories.FinalSearchStatRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -16,6 +17,7 @@ public class FinalSearchStatService {
         repository.saveAll(stats);
     }
 
+    @Transactional
     public Boolean saveAllBoolean(List<FinalSearchStat> stats) {
         try{
             repository.saveAll(stats);

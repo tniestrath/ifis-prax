@@ -2,6 +2,7 @@ package com.analysetool.services;
 
 import com.analysetool.modells.TemporarySearchStat;
 import com.analysetool.repositories.TemporarySearchStatRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ public class TemporarySearchStatService {
         repository.deleteAll(searchStats);
     }
 
+    @Transactional
     public Boolean deleteAllSearchStatBooleanIn(List<TemporarySearchStat> searchStats) {
        try{ repository.deleteAll(searchStats);
             return true;

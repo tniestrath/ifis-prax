@@ -50,9 +50,12 @@ public class FinalSearchStat {
     @Column(name = "found_events_count", nullable = false)
     private int foundEventsCount;
 
+    @Column(name = "search_query", nullable = false)
+    private String searchQuery;
+
     public FinalSearchStat() {}
 
-    public FinalSearchStat(int uniId, int hour, String country, String state, String city, int foundArtikelCount, int foundBlogCount, int foundNewsCount, int foundWhitepaperCount, int foundRatgeberCount, int foundPodcastCount, int foundAnbieterCount, int foundEventsCount) {
+    public FinalSearchStat(int uniId, int hour, String country, String state, String city, int foundArtikelCount, int foundBlogCount, int foundNewsCount, int foundWhitepaperCount, int foundRatgeberCount, int foundPodcastCount, int foundAnbieterCount, int foundEventsCount, String searchQuery) {
         this.uniId = uniId;
         this.hour = hour;
         this.country = country;
@@ -66,6 +69,7 @@ public class FinalSearchStat {
         this.foundPodcastCount = foundPodcastCount;
         this.foundAnbieterCount = foundAnbieterCount;
         this.foundEventsCount = foundEventsCount;
+        this.searchQuery=searchQuery;
     }
 
     public Long getId() {
@@ -180,4 +184,11 @@ public class FinalSearchStat {
         this.foundEventsCount = foundEventsCount;
     }
 
+    public String getSearchQuery() {
+        return searchQuery;
+    }
+
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
+    }
 }

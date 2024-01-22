@@ -1887,7 +1887,7 @@ public class UserController {
             tagPercentages.add(jsonObject.getDouble(jsonObject.keys().next().toString()));
         }
 
-        return new JSONObject().put("tagLabel", tagLabel.toArray()).put("tagPercentages", tagPercentages.toArray());
+        return new JSONObject().put("tagLabel", new JSONArray(tagLabel.toArray())).put("tagPercentages", new JSONArray(tagPercentages.toArray()));
     }
 
     /**

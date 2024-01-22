@@ -1028,13 +1028,11 @@ public class PostController {
 
     @GetMapping("/pageByTitle")
     public String pageTitleFinder(Integer page, Integer size, String sortBy, String search) throws JSONException, ParseException {
-        List<Post> list = postRepo.findByTitleContainingAndStatusIsAndTypeIsOrderByModifiedDesc(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        List<Post> list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
         List<JSONObject> stats = new ArrayList<>();
         for(Post post : list) {
             long id = post.getId();
-            if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper") || getType(id).equals("podcast")) {
-                stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
-            }
+            stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
         }
         return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }

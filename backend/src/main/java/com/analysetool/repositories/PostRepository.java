@@ -86,5 +86,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p WHERE p.authorId=:authorId AND DATE(p.date) = DATE(:date) AND p.status='publish' AND p.type='post'")
    List<Post> getPostsByAuthorAndDate(long authorId, LocalDate date);
 
+   @Query("SELECT p.id FROM Post p WHERE p.id NOT IN (SELECT u.post_id FROM PostTypes u) AND p.status='publish' AND p.type='post'")
+   List<Integer> getIdsOfUntyped();
+
 }
 

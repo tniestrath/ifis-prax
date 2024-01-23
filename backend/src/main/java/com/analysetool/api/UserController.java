@@ -2125,11 +2125,17 @@ public class UserController {
             allCompaniesList.add(companyName);
         }
         try {
-            allCompaniesList.sort((o1, o2) -> Math.toIntExact((int) (userRepository.findByDisplayName(o2).isPresent() ?
-                    userViewsRepo.getSumForUser(userRepository.findByDisplayName(o2).get().getId()) : 0)
-                    - (userRepository.findByDisplayName(o1).isPresent() ?
-                    userViewsRepo.getSumForUser(userRepository.findByDisplayName(o1).get().getId()) : 0)));
-
+            allCompaniesList.sort((o1, o2) -> {
+                    int value1 = 0;
+                    int value2 = 0;
+                    if(userRepository.findByDisplayName(o2).isPresent()) {
+                        value2 = userViewsRepo.getSumForUser(userRepository.findByDisplayName(o2).get().getId()) != null ? Math.toIntExact(userViewsRepo.getSumForUser(userRepository.findByDisplayName(o2).get().getId())) : 0;
+                    }
+                    if(userRepository.findByDisplayName(o1).isPresent()) {
+                        value1 = userViewsRepo.getSumForUser(userRepository.findByDisplayName(o1).get().getId()) != null ? Math.toIntExact(userViewsRepo.getSumForUser(userRepository.findByDisplayName(o1).get().getId())) : 0;
+                    }
+                    return value2 - value1;
+            });
             return allCompaniesList.indexOf(companyName) + 1;
         } catch (Exception e) {
             e.printStackTrace();

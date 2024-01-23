@@ -19,9 +19,9 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit(): void {
     this.setToolTip("", false);
-    this.db.getUserTagsDistributionPercentage().then((res : {tagLabel : string[], tagPercentages : number[]})  => {
+    this.db.getUserTagsDistributionPercentage().then((res : {tagLabel : string[], tagPercentages : number[], tagCounts : number[]})  => {
       for (let i = 0; i < res.tagLabel.length; i++) {
-        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(String(res.tagLabel.at(i)), String(res.tagLabel.at(i)), String(res.tagPercentages.at(i)), "0", "0")));
+        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(String(res.tagLabel.at(i)), String(res.tagLabel.at(i)), String(res.tagPercentages.at(i)), String(res.tagCounts.at(i)), "")));
       }
       this.selectorItemsLoaded.next(this.selectorItems);
     })

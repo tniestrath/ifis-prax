@@ -186,7 +186,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           title: {
             display: true,
             text: timestamp,
-            position: "top",
+            position: "bottom",
             fullSize: true,
             font: {
               size: 14,

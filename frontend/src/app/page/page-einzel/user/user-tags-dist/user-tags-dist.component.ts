@@ -2,6 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../../../component/dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import Util, {DashColors} from "../../../../util/Util";
+import {SelectorItem} from "../../../selector/selector.component";
+import {Subject} from "rxjs";
+import {TagListItemComponent} from "../../../../component/tag/tag-list/tag-list-item/tag-list-item.component";
+import {TagRanking} from "../../../../component/tag/Tag";
 
 @Component({
   selector: 'dash-user-tags-dist',
@@ -9,89 +13,17 @@ import Util, {DashColors} from "../../../../util/Util";
   styleUrls: ['./user-tags-dist.component.css', "./../../../../component/dash-base/dash-base.component.css"]
 })
 export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
-
+  selectorItems : SelectorItem[] = [];
+  selectorItemsBackup = this.selectorItems;
+  selectorItemsLoaded = new Subject<SelectorItem[]>();
 
   ngOnInit(): void {
     this.setToolTip("", false);
     this.db.getUserTagsDistributionPercentage().then((res : {tagLabel : string[], tagPercentages : number[]})  => {
-      let data = res.tagPercentages.map(value => parseFloat(value.toFixed(2)));
-      console.log(data.reduce((previousValue, currentValue) => previousValue + currentValue))
-      this.createChart(res.tagLabel, data);
-    })
-  }
-
-  createChart(labels: string[], data: number[], onClick?: (posts: any[]) => void){
-    if (this.chart) {
-      this.chart.destroy();
-    }
-
-    // @ts-ignore
-    this.chart = new Chart(this.element.nativeElement.querySelector("#user-tags-dist-chart"), {
-      type: "pie",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: "% der Profile",
-          data: data,
-          backgroundColor: [DashColors.BLUE, DashColors.DARK_BLUE, DashColors.RED, DashColors.DARK_RED, DashColors.BLACK],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        maintainAspectRatio: false,
-        clip: false,
-        layout: {
-          padding: {
-            top: 5
-          }
-        },
-        scales: {
-          y: {
-            display: false
-          },
-          x: {
-            display: false
-          }
-        },
-        plugins: {
-          datalabels: {
-            display: true
-          },
-          title: {
-            display: false,
-            text: "",
-            position: "bottom",
-            fullSize: true,
-            font: {
-              size: 18,
-              weight: "bold",
-              family: 'Times New Roman'
-            }
-          },
-          legend: {
-            display: false,
-            position: "bottom"
-          },
-          tooltip: {
-            titleFont: {
-              size: 20
-            },
-            bodyFont: {
-              size: 15
-            },
-            callbacks: {
-              }
-            }
-          },
-        interaction: {
-          mode: "nearest",
-          intersect: true
-        },
-        onClick(event: ChartEvent, elements: ActiveElement[]) {
-          // @ts-ignore
-          onClick(posts.at(elements.at(0).index));
-        },
+      for (let i = 0; i < res.tagLabel.length; i++) {
+        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(String(res.tagLabel.at(i)), String(res.tagLabel.at(i)), String(res.tagPercentages.at(i)), "0", "0")));
       }
+      this.selectorItemsLoaded.next(this.selectorItems);
     })
   }
 

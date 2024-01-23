@@ -35,7 +35,7 @@ import {
 } from "./user/user-stats-by-plan/user-stats-by-plan.component";
 import {UserDisplayComponentComponent} from "./user/user-display-component/user-display-component.component";
 import {UserClicksChartComponent} from "./user/user-clicks-chart/user-clicks-chart.component";
-import {UserTagsDistComponent} from "./user/user-tags-dist/user-tags-dist.component";
+import {SingleUserTagsDistComponent, UserTagsDistComponent} from "./user/user-tags-dist/user-tags-dist.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -74,7 +74,8 @@ export class PageComponent implements OnInit {
       {type: UserEventsStatsComponent, row: 3, col: 4, height: 2, width: 1},
       {type: OriginMapComponent, row: 5, col: 2, height: 2, width: 2},
       {type: UserDisplayComponentComponent, row: 1, col: 5, height: 1, width: 2},
-      {type: UserPostListComponent, row: 2, col: 5, height: 3, width: 2},
+      {type: SingleUserTagsDistComponent, row: 2, col: 5, height: 1, width: 2},
+      {type: UserPostListComponent, row: 3, col: 5, height: 2, width: 2},
       {type: UserEventListComponent, row: 5, col: 5, height: 2, width: 2},
       {type: GaugeComponent, row: 5, col: 1, height: 1, width: 1},
       {type: RelevanceComponent, row: 6, col: 1, height: 1, width: 1}

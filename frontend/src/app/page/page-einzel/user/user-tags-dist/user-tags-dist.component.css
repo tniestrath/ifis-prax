@@ -6,6 +6,10 @@
   width: 100%;
   height: calc(100% - 55px) !important;
 }
+.no-margin-top{
+  margin-top: 0;
+  height: 100% !important;
+}
 .user-tags-dist-title{
   display: flex;
   width: calc(100% - 10px);

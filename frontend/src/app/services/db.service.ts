@@ -9,6 +9,7 @@ import {SystemUsage} from "../component/system/systemload/systemload.component";
 import Util from "../util/Util";
 import {Subject, Subscription} from "rxjs";
 import {ProfileState} from "../component/profile-completion/profile-completion.component";
+import {SysVars} from "./sys-vars-service";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -37,6 +38,7 @@ export enum dbUrl {
   GET_USER_EVENTCOUNT = "/users/getAmountOfEvents?id=ID",
   GET_USER_EVENTCOUNT_CREATED_YESTERDAY = "/users/getAmountOfEventsCreatedYesterday?id=ID",
   GET_USER_EVENTS_LIKE_POSTS = "/users/getEventsWithStatsAndId?&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH&id=ID",
+  GET_USER_TAG_DISTRIBUTION_PRECENTAGE = "/users/getSingleUserTagsData?id=ID&sorter=SORTER",
 
   GET_USERS_ALL = "/users/getAll?page=PAGE&size=SIZE&search=SEARCH&filterAbo=ACCFILTER&filterTyp=USRFILTER&sorter=SORTER",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
@@ -522,6 +524,10 @@ export class DbService {
   async getUserTagsDistributionPercentage() {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USERS_TAG_DISTRIBUTION_PRECENTAGE), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserTagsRanking(id : string, sorter: string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_TAG_DISTRIBUTION_PRECENTAGE).replace("ID", id).replace("SORTER", sorter), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserClicksAverageByViewType() {

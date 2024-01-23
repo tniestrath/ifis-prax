@@ -61,7 +61,10 @@ import {
 } from './page/page-einzel/user/user-stats-by-plan/user-stats-by-plan.component';
 import { UserDisplayComponentComponent } from './page/page-einzel/user/user-display-component/user-display-component.component';
 import { UserClicksChartComponent } from './page/page-einzel/user/user-clicks-chart/user-clicks-chart.component';
-import { UserTagsDistComponent } from './page/page-einzel/user/user-tags-dist/user-tags-dist.component';
+import {
+  SingleUserTagsDistComponent,
+  UserTagsDistComponent
+} from './page/page-einzel/user/user-tags-dist/user-tags-dist.component';
 
 @NgModule({
   declarations: [
@@ -118,7 +121,8 @@ import { UserTagsDistComponent } from './page/page-einzel/user/user-tags-dist/us
     UserStatsByPlanViewTypeCompareComponent,
     UserDisplayComponentComponent,
     UserClicksChartComponent,
-    UserTagsDistComponent
+    UserTagsDistComponent,
+    SingleUserTagsDistComponent
   ],
     imports: [
         BrowserModule,

@@ -71,6 +71,12 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     @Query("SELECT DISTINCT p.userId FROM WPUserMeta p WHERE p.key='profile_tags' AND p.value LIKE %:tag%")
     List<Long> getUserIdsByTag(String tag);
 
+    @Query("SELECT DISTINCT(u.userId) FROM WPUserMeta u WHERE u.key = 'profile_tags'")
+    List<Integer> getAllUserIdsWithTags();
+
+    @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'profile_tags' AND u.userId IN :list")
+    List<String> getAllUserTagRowsInList(List<Integer> list);
+
     @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags' AND p.value <> 'a:0:{}'")
     Integer getTotalCountOfUsersWithTag();
 

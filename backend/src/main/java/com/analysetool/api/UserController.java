@@ -1840,6 +1840,24 @@ public class UserController {
         return companiesPerTag;
     }
 
+    public JSONArray getUserCountForAllTagsSorted() {
+        List<String> allTags = wpUserMetaRepository.getAllTags();
+        List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
+
+        List<Integer> counts = new ArrayList<>();
+
+        for (String tag : decryptedAndCleanedTags) {
+            int count = wpUserMetaRepository.countUsersByTag(tag);
+            counts.add(count);
+        }
+        counts.sort((o1, o2) -> o2 - o1);
+
+        return new JSONArray(counts);
+    }
+
+
+
+
     /**
      * Ermittelt die Anzahl der Anbieter für alle Tags.
      *
@@ -2043,6 +2061,16 @@ public class UserController {
     @GetMapping("/getCompetitionForTagsByUserId")
     public String getCompetitionForTagsByUserIdString(Long userId) {
         return getCompetitionByTags(userId).toString();
+    }
+
+    /**
+     * Aggregates tagLabels, tagPercentages and tagCounts from different sources and puts them in one JSONObject. Order of entries is important.
+     * @return a JSON-String containing sorted lists of tagLabels, tagCounts and tagPercentages. Largest entry is always first.
+     * @throws JSONException .
+     */
+    @GetMapping("/getAllUserTagsData")
+    public String getAllUserTagsDataFusion() throws JSONException {
+        return getUserCountForAllTagsInPercentage().put("tagCounts", getUserCountForAllTagsSorted()).toString();
     }
 
     @GetMapping("/getRankingInTag")

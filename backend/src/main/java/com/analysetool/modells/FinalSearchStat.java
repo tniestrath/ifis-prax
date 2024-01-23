@@ -203,4 +203,27 @@ public class FinalSearchStat {
     public void setTempId(Long tempId) {
         this.tempId = tempId;
     }
+
+    @Override
+    public String toString() {
+        return "FinalSearchStat{" +
+                "id=" + id +
+                ", uniId=" + uniId +
+                ", hour=" + hour +
+                ", country='" + country + '\'' +
+                ", state='" + state + '\'' +
+                ", city='" + city + '\'' +
+                ", foundArtikelCount=" + foundArtikelCount +
+                ", foundBlogCount=" + foundBlogCount +
+                ", foundNewsCount=" + foundNewsCount +
+                ", foundWhitepaperCount=" + foundWhitepaperCount +
+                ", foundRatgeberCount=" + foundRatgeberCount +
+                ", foundPodcastCount=" + foundPodcastCount +
+                ", foundAnbieterCount=" + foundAnbieterCount +
+                ", foundEventsCount=" + foundEventsCount +
+                ", searchQuery='" + searchQuery + '\'' +
+                ", tempId=" + tempId +
+                '}';
+    }
+
 }

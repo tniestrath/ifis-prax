@@ -115,6 +115,8 @@ public class LogService {
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
     private final String BlogSSPattern = "^.*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
     private final String ArtikelSSPattern = "^.*GET /artikel/(\\S+)/.*s=(\\S+)\".*";//search +1, view +1,(bei match) vor artikel view pattern
+    //private final String ArtikelSSPattern = "^.*GET /artikel/([^ ]+)/.*[?&]s=([^&\"]+).*";
+
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
     private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
     private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
@@ -173,6 +175,8 @@ public class LogService {
     private final String RedirectUserPattern =".*GET .*goto/(.*) HTTP/";
 
     private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
+
+    private final String eventSSView="^.*GET /veranstaltungen/(\\S+)/.*s=(\\S+)\".*";
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
     Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
@@ -275,6 +279,8 @@ public class LogService {
 
     private Map<String,PostClicksByHourDLC> postClicksMap = new HashMap<>();
     private Map<String,UserRedirectsHourly> userRedirectsMap = new HashMap<>();
+
+    private Map<String,FinalSearchStatDLC> searchDLCMap = new HashMap<>();
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
@@ -1389,6 +1395,7 @@ public class LogService {
                 try {
                     updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                     updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
+                    //updateSearchDLCMap(ip,patternMatcher.group(2),postRepository.getIdByName(patternMatcher.group(1)),dateLog);
                 } catch(Exception e) {
                     System.out.println("SS PROCESS LINE EXCEPTION " +line);
                 }
@@ -2706,6 +2713,43 @@ public class LogService {
         uniTimeSpentRepo.save(uniTime);
     }
 
+    public void updateSearchDLCMap(String ip,String SearchQuery,Long postId,LocalDateTime dateLog){
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String time = String.valueOf(dateLog.getMinute());
+        String key = ip + "_" + SearchQuery  ;
+
+        FinalSearchStatDLC searchDLC = searchDLCMap.get(key);
+        if (searchDLC == null) {
+
+           searchDLCMap.put(key,new FinalSearchStatDLC(uniId,dateLog.getHour(),postId));
+
+        }else if(!postId.equals(searchDLC.getPostId())){
+            searchDLCMap.put(key,new FinalSearchStatDLC(uniId,dateLog.getHour(),postId));
+        }
+
+    }
+    public void linkSearchSuccessesWithSearches(List<TemporarySearchStat> tempSearches, List<FinalSearchStat> finalSearches) {
+        // Erstelle zuerst eine Map für die Zuordnung von TempID zu FinalSearchStat
+        Map<Long, FinalSearchStat> tempIdToFinalSearchMap = new HashMap<>();
+        for (FinalSearchStat finalSearch : finalSearches) {
+            tempIdToFinalSearchMap.put(finalSearch.getTempId(), finalSearch);
+        }
+
+        // Durchlaufen aller DLC-Objekte und aktualisieren mit den entsprechenden FinalSearchStat-IDs
+        for (TemporarySearchStat tempSearch : tempSearches) {
+            String key = tempSearch.getSearchIp() + "_" + tempSearch.getSearchQuery() ;
+            FinalSearchStatDLC searchDLC = searchDLCMap.get(key);
+
+            if (searchDLC != null) {
+                FinalSearchStat matchingFinalSearch = tempIdToFinalSearchMap.get(tempSearch.getId());
+                if (matchingFinalSearch != null) {
+                    searchDLC.setFinalSearchId(matchingFinalSearch.getId());
+                }
+            }
+        }
+    }
+
+
     private void updateFinalSearchStatsAndTemporarySearchStats(){
         List<TemporarySearchStat> alleTempSearches= temporarySearchService.getAllSearchStat();
         List<FinalSearchStat> zuSpeicherndeFinalSearches = new ArrayList<>();
@@ -2723,13 +2767,15 @@ public class LogService {
 
            zuSpeicherndeFinalSearches.add(new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),stat.getSearchQuery(), stat.getId()));
         }
-
+        System.out.println(zuSpeicherndeFinalSearches);
         Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);
         if(saveSuccess){
-            Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
+            linkSearchSuccessesWithSearches(alleTempSearches,zuSpeicherndeFinalSearches);
+            /*Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
             if(!deleteSuccess){
                 System.out.println("Löschen von TemporarySearch mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
-            }
+            }*/
+            System.out.println("OK");
         }else{
             System.out.println("Erstellen/Speichern von FinalSearch der TemporarySearches mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
         }

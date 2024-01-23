@@ -13,7 +13,7 @@ public class TemporarySearchStat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "search_query", nullable = false)
+    @Column(name = "search_query")
     private String searchQuery;
 
     @Column(name = "date", nullable = false)

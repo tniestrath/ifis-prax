@@ -26,36 +26,39 @@ public class FinalSearchStat {
     @Column(name = "city")
     private String city;
 
-    @Column(name = "found_artikel_count", nullable = false)
+    @Column(name = "found_artikel_count")
     private int foundArtikelCount;
 
-    @Column(name = "found_blog_count", nullable = false)
+    @Column(name = "found_blog_count")
     private int foundBlogCount;
 
-    @Column(name = "found_news_count", nullable = false)
+    @Column(name = "found_news_count")
     private int foundNewsCount;
 
-    @Column(name = "found_whitepaper_count", nullable = false)
+    @Column(name = "found_whitepaper_count")
     private int foundWhitepaperCount;
 
-    @Column(name = "found_ratgeber_count", nullable = false)
+    @Column(name = "found_ratgeber_count")
     private int foundRatgeberCount;
 
-    @Column(name = "found_podcast_count", nullable = false)
+    @Column(name = "found_podcast_count")
     private int foundPodcastCount;
 
-    @Column(name = "found_anbieter_count", nullable = false)
+    @Column(name = "found_anbieter_count")
     private int foundAnbieterCount;
 
-    @Column(name = "found_events_count", nullable = false)
+    @Column(name = "found_events_count")
     private int foundEventsCount;
 
-    @Column(name = "search_query", nullable = false)
+    @Column(name = "search_query")
     private String searchQuery;
+
+    @Column(name = "temp_id")
+    private Long tempId;
 
     public FinalSearchStat() {}
 
-    public FinalSearchStat(int uniId, int hour, String country, String state, String city, int foundArtikelCount, int foundBlogCount, int foundNewsCount, int foundWhitepaperCount, int foundRatgeberCount, int foundPodcastCount, int foundAnbieterCount, int foundEventsCount, String searchQuery) {
+    public FinalSearchStat(int uniId, int hour, String country, String state, String city, int foundArtikelCount, int foundBlogCount, int foundNewsCount, int foundWhitepaperCount, int foundRatgeberCount, int foundPodcastCount, int foundAnbieterCount, int foundEventsCount, String searchQuery, Long tempId) {
         this.uniId = uniId;
         this.hour = hour;
         this.country = country;
@@ -70,6 +73,7 @@ public class FinalSearchStat {
         this.foundAnbieterCount = foundAnbieterCount;
         this.foundEventsCount = foundEventsCount;
         this.searchQuery=searchQuery;
+        this.tempId = tempId;
     }
 
     public Long getId() {
@@ -190,5 +194,13 @@ public class FinalSearchStat {
 
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
+    }
+
+    public Long getTempId() {
+        return tempId;
+    }
+
+    public void setTempId(Long tempId) {
+        this.tempId = tempId;
     }
 }

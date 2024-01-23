@@ -23,28 +23,28 @@ public class TemporarySearchStat {
     @Column(name = "search_ip", nullable = false)
     private String searchIp;
 
-    @Column(name = "found_artikel_count", nullable = false)
+    @Column(name = "found_artikel_count")
     private int foundArtikelCount;
 
-    @Column(name = "found_blog_count", nullable = false)
+    @Column(name = "found_blog_count")
     private int foundBlogCount;
 
-    @Column(name = "found_news_count", nullable = false)
+    @Column(name = "found_news_count")
     private int foundNewsCount;
 
-    @Column(name = "found_whitepaper_count", nullable = false)
+    @Column(name = "found_whitepaper_count")
     private int foundWhitepaperCount;
 
-    @Column(name = "found_ratgeber_count", nullable = false)
+    @Column(name = "found_ratgeber_count")
     private int foundRatgeberCount;
 
-    @Column(name = "found_podcast_count", nullable = false)
+    @Column(name = "found_podcast_count")
     private int foundPodcastCount;
 
-    @Column(name = "found_anbieter_count", nullable = false)
+    @Column(name = "found_anbieter_count")
     private int foundAnbieterCount;
 
-    @Column(name = "found_events_count", nullable = false)
+    @Column(name = "found_events_count")
     private int foundEventsCount;
 
     public Long getId() {

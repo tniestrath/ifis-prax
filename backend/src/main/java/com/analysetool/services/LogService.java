@@ -102,6 +102,10 @@ public class LogService {
     private ContentDownloadsHourlyRepository contentDownloadsHourlyRepo;
     @Autowired
     private EventsRepository eventRepo;
+    @Autowired
+    private FinalSearchStatService finalSearchService;
+    @Autowired
+    private TemporarySearchStatService temporarySearchService;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -961,6 +965,7 @@ public class LogService {
         userRedirectService.persistAllUserRedirectsHourly(userRedirectsMap);
         //maps clearen nur um sicher zu gehen
         cleanMaps();
+        updateFinalSearchStatsAndTemporarySearchStats();
     }
 
     private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
@@ -2700,4 +2705,34 @@ public class LogService {
         uniTime.setUni_stat_id(uniRepo.getLatestUniStat().getId());
         uniTimeSpentRepo.save(uniTime);
     }
+
+    private void updateFinalSearchStatsAndTemporarySearchStats(){
+        List<TemporarySearchStat> alleTempSearches= temporarySearchService.getAllSearchStat();
+        List<FinalSearchStat> zuSpeicherndeFinalSearches = new ArrayList<>();
+
+        Calendar calendar = Calendar.getInstance();
+        Integer hour = 0;
+        Integer uniId = uniRepo.getLatestUniStat().getId();
+
+        for(TemporarySearchStat stat: alleTempSearches){
+           String country = IPHelper.getCountryISO(stat.getSearchIp());
+           String state = IPHelper.getSubISO(stat.getSearchIp());
+           String city = IPHelper.getCityName(stat.getSearchIp());
+           calendar.setTime(stat.getDate());
+           hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+           zuSpeicherndeFinalSearches.add(new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),stat.getSearchQuery()));
+        }
+
+        Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);
+        if(saveSuccess){
+            Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
+            if(!deleteSuccess){
+                System.out.println("Löschen von TemporarySearch mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
+            }
+        }else{
+            System.out.println("Erstellen/Speichern von FinalSearch der TemporarySearches mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
+        }
+    }
+
 }

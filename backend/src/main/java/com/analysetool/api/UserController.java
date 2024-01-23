@@ -2088,6 +2088,11 @@ public class UserController {
         return getUserCountForAllTagsInPercentage().put("tagCounts", getUserCountForAllTagsSorted()).toString();
     }
 
+    @GetMapping("/getSingleUserTagsData")
+    public String getSingleUserTagsData(long id, String sorter) throws JSONException {
+        return new JSONObject().put("ranking", new JSONObject(getRankingsInTagsForUserByProfileViews(id, sorter))).put("percentage", getPercentageForTagsByUserIdString(id)).toString();
+    }
+
     @GetMapping("/getRankingInTag")
     public String getRankingsInTagsForUserByProfileViews(long id, String sorter) throws JSONException {
         Map<String, String> competition = getCompetitionByTags(id);

@@ -45,7 +45,7 @@ export enum dbUrl {
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
   GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE = "/users/getUserProfileAndPostViewsAveragesByType",
   GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING = "/users/getUserProfileViewsAveragesByTypeAndPosts",
-  GET_USERS_TAG_DISTRIBUTION_PRECENTAGE = "/users/userCountForAllTagsInPercentage",
+  GET_USERS_TAG_DISTRIBUTION_PRECENTAGE = "/users/getAllUserTagsData",
 
 
   GET_POST = "/posts/getPostStatsByIdWithAuthor?id=ID",

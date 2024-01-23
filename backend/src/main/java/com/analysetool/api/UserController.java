@@ -2134,16 +2134,17 @@ public class UserController {
     }
 
     private int getRankingInListByContentView(String companyName, List<String> otherCompanies) {
-        if(!otherCompanies.contains(companyName)) {
-            otherCompanies.add(companyName);
+        List<String> allCompaniesList = new ArrayList<>(otherCompanies);
+        if(!allCompaniesList.contains(companyName)) {
+            allCompaniesList.add(companyName);
         }
         try {
-        otherCompanies.sort((o1, o2) -> Math.toIntExact((int)(userRepository.findByDisplayName(o2).isPresent() ?
+        allCompaniesList.sort((o1, o2) -> Math.toIntExact((int)(userRepository.findByDisplayName(o2).isPresent() ?
                 postController.getViewsOfUserById(userRepository.findByDisplayName(o2).get().getId()) : 0)
                 - (userRepository.findByDisplayName(o1).isPresent() ?
                 postController.getViewsOfUserById(userRepository.findByDisplayName(o1).get().getId()) : 0)));
 
-        return otherCompanies.indexOf(companyName) + 1;
+        return allCompaniesList.indexOf(companyName) + 1;
         } catch (Exception e) {
         return -1;
         }

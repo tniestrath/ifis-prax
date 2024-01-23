@@ -1574,7 +1574,7 @@ public class UserController {
 
                 users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
 
-                return users.indexOf(userRepository.findById(id).get());
+                return users.indexOf(userRepository.findById(id).get()) + 1;
             }
 
 
@@ -1593,7 +1593,7 @@ public class UserController {
 
                 users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o2.getId()) - postController.getViewsOfUserById(o1.getId())));
 
-                return users.indexOf(userRepository.findById(id).get());
+                return users.indexOf(userRepository.findById(id).get()) + 1;
         } else {
             return -1;
         }
@@ -1606,7 +1606,7 @@ public class UserController {
 
                 users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
 
-                return users.indexOf(userRepository.findById(id).get());
+                return users.indexOf(userRepository.findById(id).get()) + 1;
             }
         } else {
             return -1;
@@ -1619,7 +1619,7 @@ public class UserController {
 
             List<WPUser> users = userRepository.findAll();
 
-            return users.indexOf(userRepository.findById(id).get());
+            return users.indexOf(userRepository.findById(id).get()) + 1;
 
         } else {
             return -1;
@@ -1629,10 +1629,10 @@ public class UserController {
     @GetMapping("/getRankings")
     public String getRankings(long id) throws JSONException {
         JSONObject obj = new JSONObject();
-        obj.put("rankingContent", getRankingTotalContentViews(id) + 1);
-        obj.put("rankingContentByGroup", getRankingInTypeContentViews(id) + 1);
-        obj.put("rankingProfile", getRankingTotalProfileViews(id) + 1);
-        obj.put("rankingProfileByGroup", getRankingInTypeProfileViews(id) + 1);
+        obj.put("rankingContent", getRankingTotalContentViews(id));
+        obj.put("rankingContentByGroup", getRankingInTypeContentViews(id));
+        obj.put("rankingProfile", getRankingTotalProfileViews(id));
+        obj.put("rankingProfileByGroup", getRankingInTypeProfileViews(id));
         return obj.toString();
     }
 
@@ -1839,6 +1839,24 @@ public class UserController {
         }
         return companiesPerTag;
     }
+
+    public JSONArray getUserCountForAllTagsSorted() {
+        List<String> allTags = wpUserMetaRepository.getAllTags();
+        List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
+
+        List<Integer> counts = new ArrayList<>();
+
+        for (String tag : decryptedAndCleanedTags) {
+            int count = wpUserMetaRepository.countUsersByTag(tag);
+            counts.add(count);
+        }
+        counts.sort((o1, o2) -> o2 - o1);
+
+        return new JSONArray(counts);
+    }
+
+
+
 
     @GetMapping("/getTagRankingsByUsageCount")
     public JSONArray lemmeCook() throws JSONException {
@@ -2059,4 +2077,77 @@ public class UserController {
     public String getCompetitionForTagsByUserIdString(Long userId) {
         return getCompetitionByTags(userId).toString();
     }
+
+    /**
+     * Aggregates tagLabels, tagPercentages and tagCounts from different sources and puts them in one JSONObject. Order of entries is important.
+     * @return a JSON-String containing sorted lists of tagLabels, tagCounts and tagPercentages. Largest entry is always first.
+     * @throws JSONException .
+     */
+    @GetMapping("/getAllUserTagsData")
+    public String getAllUserTagsDataFusion() throws JSONException {
+        return getUserCountForAllTagsInPercentage().put("tagCounts", getUserCountForAllTagsSorted()).toString();
+    }
+
+    @GetMapping("/getRankingInTag")
+    public String getRankingsInTagsForUserByProfileViews(long id, String sorter) throws JSONException {
+        Map<String, String> competition = getCompetitionByTags(id);
+        String thisCompanyName = userRepository.getDisplayNameById(id);
+
+        JSONObject json = new JSONObject();
+
+        for(String key : competition.keySet()) {
+            if(competition.get(key).equalsIgnoreCase(thisCompanyName)) {
+                json.put(key, 1);
+            } else {
+                List<String> companyNames = Arrays.stream(competition.get(key).split(",")).toList();
+                if(sorter.equalsIgnoreCase("content")) {
+                    json.put(key, getRankingInListByContentView(thisCompanyName, companyNames));
+                } else if(sorter.equalsIgnoreCase("profile")){
+                    json.put(key, getRankingInListByProfileView(thisCompanyName, companyNames));
+                } else {
+                    json.put(key, getRankingInListByProfileView(thisCompanyName, companyNames));
+                }
+
+            }
+        }
+        return json.toString();
+
+    }
+
+
+    private int getRankingInListByProfileView(String companyName, List<String> otherCompanies) {
+        if(!otherCompanies.contains(companyName)) {
+            otherCompanies.add(companyName);
+        }
+        try {
+            otherCompanies.sort((o1, o2) -> Math.toIntExact((int) (userRepository.findByDisplayName(o2).isPresent() ?
+                    userViewsRepo.getSumForUser(userRepository.findByDisplayName(o2).get().getId()) : 0)
+                    - (userRepository.findByDisplayName(o1).isPresent() ?
+                    userViewsRepo.getSumForUser(userRepository.findByDisplayName(o1).get().getId()) : 0)));
+
+            return otherCompanies.indexOf(companyName) + 1;
+        } catch (Exception e) {
+            return -1;
+        }
+
+    }
+
+    private int getRankingInListByContentView(String companyName, List<String> otherCompanies) {
+        if(!otherCompanies.contains(companyName)) {
+            otherCompanies.add(companyName);
+        }
+        try {
+        otherCompanies.sort((o1, o2) -> Math.toIntExact((int)(userRepository.findByDisplayName(o2).isPresent() ?
+                postController.getViewsOfUserById(userRepository.findByDisplayName(o2).get().getId()) : 0)
+                - (userRepository.findByDisplayName(o1).isPresent() ?
+                postController.getViewsOfUserById(userRepository.findByDisplayName(o1).get().getId()) : 0)));
+
+        return otherCompanies.indexOf(companyName) + 1;
+        } catch (Exception e) {
+        return -1;
+        }
+    }
+
+
+
 }

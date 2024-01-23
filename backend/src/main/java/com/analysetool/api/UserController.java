@@ -268,7 +268,7 @@ public class UserController {
 
 
     @GetMapping("/getAllWithTagsTest")
-    public String getAllWithTagsTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
+    public String getAllWithTagsTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String tag, String sorter) throws JSONException {
         List<WPUser> list;
 
 
@@ -277,80 +277,80 @@ public class UserController {
             if(filterAbo.isBlank() && filterTyp.isBlank()) {
                 switch (sorter) {
                     case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAllWithTags(search, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsAllWithTags(search, tag, PageRequest.of(page, size));
                     }
                     case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAllWithTags(search, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndContentViewsAllWithTags(search, tag, PageRequest.of(page, size));
                     }
                     case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAllWithTags(search, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAllWithTags(search, tag, PageRequest.of(page, size));
                     }
                     default -> {
-                        list = userRepository.getAllByNicenameContainingAllWithTags(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                        list = userRepository.getAllByNicenameContainingAllWithTags(search, tag, PageRequest.of(page, size, Sort.by("id").descending()));
                     }
                 }
             } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
                 //Abo-Filter used, sorter used.
                 switch (sorter) {
                     case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAboWithTags(search, filterAbo, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
                     }
                     case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAboWithTags(search, filterAbo, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndContentViewsAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
                     }
                     case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboWithTags(search, filterAbo, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
                     }
                     default -> {
-                        list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+                        list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, tag, PageRequest.of(page, size, Sort.by("id").descending()));
                     }
                 }
             } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
                 //Company-Type Filter used, sorter used.
                 switch (sorter) {
                     case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsCompanyWithTags(search, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
                     }
                     case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsCompanyWithTags(search, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndContentViewsCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
                     }
                     case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeCompanyWithTags(search, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
                     }
                     default -> {
-                        list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                        list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
                     }
                 }
             } else {
                 //Abo, Company type and sorter used.
                 switch (sorter) {
                     case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
                     }
                     case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndContentViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
                     }
                     case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
                     }
                     default -> {
-                        list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                        list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
                     }
                 }
             }
         } else {
             //Neither filters nor sorter used.
             if(filterAbo.isBlank() && filterTyp.isBlank()) {
-                list = userRepository.getAllByNicenameContainingAllWithTags(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                list = userRepository.getAllByNicenameContainingAllWithTags(search, tag, PageRequest.of(page, size, Sort.by("id").descending()));
             } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
                 //Abo-Filter used.
-                list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+                list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, tag, PageRequest.of(page, size, Sort.by("id").descending()));
             } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
                 //Company-Filter used.
-                list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
             } else {
                 //Both filters used, no sorter used.
-                list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
             }
         }
 
@@ -1676,101 +1676,6 @@ public class UserController {
         return objectMapper.writeValueAsString(hourlyViews);
     }
 
-    /*
-        Unusable Query made method unusable which makes this one not find it. Blocked and reported
-    @GetMapping("/getProfilePerformance")
-    public String getProfilePerformance(@RequestParam Long userId, @RequestParam int daysback){
-        List<Long> postIdsOfUser = postRepository.findPostIdsByUserId(userId);
-        Long[] postClicksSum = postHourlyService.getSumByDaysbackWithActualDaysBack(postIdsOfUser,daysback);
-        Long[] userViewsSum = userViewsHourService.getSumByDaysbackWithActualDaysBack(userId,daysback);
-
-        Double Score = 0.0;
-        String Response="";
-
-        if(postClicksSum[1].equals(userViewsSum[1])){
-            Score= (postClicksSum[0] + userViewsSum[0])/(double)postClicksSum[1];
-            Response=Score.toString();
-        }else {Response="Späteren Zeitpunkt wählen";}
-
-        return Response;
-    }
-
-
-    @GetMapping("/getProfilePerformanceOfAllProfiles")
-    public String getProfilePerformanceOfAllProfiles(@RequestParam int daysback) {
-        List<Long> allUserIds = userRepository.findAllUserIds();
-        Map<Long, String> unsortedScores = new HashMap<>();
-
-        for (Long id : allUserIds) {
-            String score = getProfilePerformance(id, daysback);
-            if (score.equals("Späteren Zeitpunkt wählen")) {
-                return "Späteren Zeitpunkt wählen";
-            }
-            unsortedScores.put(id, score);
-        }
-
-        // Sortieren der Map-Einträge nach Werten (Scores)
-        List<Map.Entry<Long, String>> sortedEntries = unsortedScores.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .collect(Collectors.toList());
-
-        // Erstellen einer LinkedHashMap, um die sortierte Reihenfolge zu bewahren
-        Map<Long, String> sortedScores = new LinkedHashMap<>();
-        for (Map.Entry<Long, String> entry : sortedEntries) {
-            sortedScores.put(entry.getKey(), entry.getValue());
-        }
-
-        return sortedScores.toString();
-    }
-    /**
-     * Ermittelt die Ausreißer in den Profilleistungen für einen gegebenen Zeitraum.
-     * Die Methode identifiziert gute (hohe) und schlechte (niedrige) Ausreißer basierend auf den Performance-Daten.
-     * Gute Ausreißer sind jene mit ungewöhnlich hohen Leistungswerten, während schlechte Ausreißer ungewöhnlich niedrige Werte aufweisen.
-     *
-     * @param daysback Die Anzahl der Tage in der Vergangenheit, für die die Leistung analysiert werden soll.
-     * @return Ein JSON-String, der zwei Arrays enthält: das erste Array beinhaltet die schlechten Ausreißer, das zweite die guten Ausreißer.
-     *         Jedes Array besteht aus JSON-Objekten mit den Schlüsseln 'id' (Benutzer-ID) und 'score' (Leistungswert).
-     *         Gibt "Späteren Zeitpunkt wählen" zurück, falls die Leistungsdaten für den gewählten Zeitraum nicht verfügbar sind.
-     */
-    /*
-    @GetMapping("/getAllOutliersByProfilePerformances")
-    public String getAllOutliersByProfilePerformances(@RequestParam int daysback) {
-        String allProfilesPerformance = getProfilePerformanceOfAllProfiles(daysback);
-        if (allProfilesPerformance.equals("Späteren Zeitpunkt wählen")) {
-            return "Späteren Zeitpunkt wählen";
-        }
-        Map<Long, Double> performanceScores = processAndConvertToDouble(allProfilesPerformance);
-
-        List<Double> scores = new ArrayList<>(performanceScores.values());
-        List<Double> lowerOutliersValues = MathHelper.getLowerBoundOutliersDouble(scores);
-        List<Double> upperOutliersValues = MathHelper.getUpperBoundOutliersDouble(scores);
-
-        JSONArray jsonArray = new JSONArray();
-        JSONArray badOutliersArray = new JSONArray();
-        JSONArray goodOutliersArray = new JSONArray();
-
-        performanceScores.forEach((id, score) -> {
-            try{
-            if (lowerOutliersValues.contains(score)) {
-                JSONObject outlier = new JSONObject();
-                outlier.put("id", id);
-                outlier.put("score", score);
-                badOutliersArray.put(outlier);
-            }
-            if (upperOutliersValues.contains(score)) {
-                JSONObject outlier = new JSONObject();
-                outlier.put("id", id);
-                outlier.put("score", score);
-                goodOutliersArray.put(outlier);
-            }}catch(JSONException e){}
-        });
-
-        jsonArray.put(badOutliersArray);
-        jsonArray.put(goodOutliersArray);
-
-        return jsonArray.toString();
-    }
-    */
     private Map<Long, Double> processAndConvertToDouble(String performanceData) {
         Map<Long, Double> performanceScores = new HashMap<>();
         // Entfernen der Anfangs- und Endklammern und Aufteilen der Einträge
@@ -1792,85 +1697,51 @@ public class UserController {
         return performanceScores;
     }
 
-    public String decryptTag(String cryptedTag) {
-        Pattern pattern = Pattern.compile("\"([^\"]+)\"");
-        Matcher matcher = pattern.matcher(cryptedTag);
-        if (matcher.find()) {
-            return matcher.group(1);
+    /**
+     *
+     * @param cryptedTag a full value of a profiles tags, including MULTIPLE tags.
+     * @return a List of Strings, containing all Tags in this String.
+     */
+    public List<String> decryptTags(String cryptedTag) {
+        Pattern cleaner = Pattern.compile("\"([^\"]+)\"");
+        Matcher matcher = cleaner.matcher(cryptedTag);
+        List<String> tags = new ArrayList<>();
+        while(matcher.find()) {
+            tags.add(matcher.group(1));
         }
-        return null;
+        return tags;
     }
 
-    public List<String> decryptTags(List<String> cryptedTags) {
-        List<String> decryptedTags = new ArrayList<>();
-        for (String tag : cryptedTags) {
-            String decryptedTag = decryptTag(tag);
-            if (decryptedTag != null) {
-                decryptedTags.add(decryptedTag);
+    /**
+     *
+     * @param cryptedTags profile_tags String for several users.
+     * @return a List of a List of Strings, containing all Tags in this String.
+     */
+    public List<List<String>> decryptTagsStringInList(List<String> cryptedTags) {
+        List<List<String>> list = new ArrayList<>();
+        for(String tags : cryptedTags) {
+            list.add(decryptTags(tags));
+        }
+        return list;
+    }
+
+
+    public JSONObject getUserCountForAllTags() throws JSONException {
+        List<String> allTags = wpUserMetaRepository.getAllUserTagRowsInList(wpUserMetaRepository.getAllUserIdsWithTags());
+        List<List<String>> decryptedAndCleanedTags= decryptTagsStringInList(allTags);
+        JSONObject json = new JSONObject();
+
+        for(List<String> tags : decryptedAndCleanedTags) {
+            for (String tag : tags) {
+                try {
+                    json.put(tag, json.getInt(tag) + 1);
+                } catch (Exception e) {
+                    json.put(tag, 1);
+                }
             }
         }
-        return decryptedTags;
-    }
 
-    public String cleanTag(String encryptedTag) {
-        if (encryptedTag.startsWith("\"") && encryptedTag.endsWith("\"")) {
-            return encryptedTag.substring(1, encryptedTag.length() - 1);
-        }
-        return encryptedTag;
-    }
-
-    public List<String> cleanTags(List<String> encryptedTags) {
-        List<String> cleanedTags = new ArrayList<>();
-        for (String tag : encryptedTags) {
-            cleanedTags.add(cleanTag(tag));
-        }
-        return cleanedTags;
-    }
-
-    public Map<String, Integer> getUserCountForAllTags() {
-        List<String> allTags = wpUserMetaRepository.getAllTags();
-        List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
-
-        Map<String, Integer> companiesPerTag = new HashMap<>();
-
-        for (String tag : decryptedAndCleanedTags) {
-            int count = wpUserMetaRepository.countUsersByTag(tag);
-            companiesPerTag.put(tag, count);
-        }
-        return companiesPerTag;
-    }
-
-    public JSONArray getUserCountForAllTagsSorted() {
-        List<String> allTags = wpUserMetaRepository.getAllTags();
-        List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
-
-        List<Integer> counts = new ArrayList<>();
-
-        for (String tag : decryptedAndCleanedTags) {
-            int count = wpUserMetaRepository.countUsersByTag(tag);
-            counts.add(count);
-        }
-        counts.sort((o1, o2) -> o2 - o1);
-
-        return new JSONArray(counts);
-    }
-
-
-
-
-    @GetMapping("/getTagRankingsByUsageCount")
-    public JSONArray lemmeCook() throws JSONException {
-        List<String> allTags = wpUserMetaRepository.getAllTags();
-        List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
-        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
-
-        JSONArray result = new JSONArray();
-
-        for (String tag : decryptedAndCleanedTags) {
-            int count = wpUserMetaRepository.countUsersByTag(tag);
-            result.put(new JSONObject().put("name", tag).put("count", count).put("percentage", (double) count / totalUsersWithTag * 100).put("id", termRepo.findBySlug(tag).getId()));
-        }
-        return result;
+        return json;
     }
 
     /**
@@ -1880,7 +1751,7 @@ public class UserController {
      */
 
     @GetMapping("/userCountForAllTags")
-    public String getUserCountForAllTagsString() {
+    public String getUserCountForAllTagsString() throws JSONException {
         return getUserCountForAllTags().toString();
     }
 
@@ -1891,7 +1762,7 @@ public class UserController {
         int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
 
         // Tags und ihre Anzahl holen
-        Map<String, Integer> companiesPerTag = getUserCountForAllTags();
+        JSONObject companiesPerTag = getUserCountForAllTags();
 
         //Array als Container erstellen
         List<JSONObject> array = new ArrayList<>();
@@ -1900,12 +1771,14 @@ public class UserController {
         List<String> tagLabel = new ArrayList<>();
         List<Double> tagPercentages = new ArrayList<>();
 
+
+        var iterator = companiesPerTag.keys();
         // Prozentualen Anteil für jeden Tag berechnen
-        for (Map.Entry<String, Integer> entry : companiesPerTag.entrySet()) {
-            String tag = entry.getKey();
-            int count = entry.getValue();
+        while(iterator.hasNext()) {
+            String key = companiesPerTag.keys().next().toString();
+            int count = companiesPerTag.getInt(key);
             double percentage = (double) count / totalUsersWithTag * 100;
-            array.add(new JSONObject().put(tag, percentage));
+            array.add(new JSONObject().put(key, percentage));
         }
 
         array.sort((o1, o2) -> {
@@ -1923,58 +1796,6 @@ public class UserController {
         }
 
         return new JSONObject().put("tagLabel", new JSONArray(tagLabel.toArray())).put("tagPercentages", new JSONArray(tagPercentages.toArray()));
-    }
-
-    public JSONObject getTagPercentageOfAllSetTags() throws JSONException {
-        // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
-        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
-
-        int countTagsTotal = 0;
-
-        // Tags und ihre Anzahl holen
-        Map<String, Integer> companiesPerTag = getUserCountForAllTags();
-
-        //Array als Container erstellen
-        List<JSONObject> array = new ArrayList<>();
-
-        // Map für prozentualen Anteil erstellen
-        List<String> tagLabel = new ArrayList<>();
-        List<Double> tagPercentages = new ArrayList<>();
-
-        //Gesamtanzahl der gesetzten Tags ausrechnen
-        for (Map.Entry<String, Integer> entry : companiesPerTag.entrySet()) {
-            countTagsTotal += entry.getValue();
-        }
-
-        // Prozentualen Anteil für jeden Tag berechnen
-        for (Map.Entry<String, Integer> entry : companiesPerTag.entrySet()) {
-            String tag = entry.getKey();
-            int count = entry.getValue();
-            double percentage = (double) count / countTagsTotal * 100;
-            array.add(new JSONObject().put(tag, percentage));
-        }
-
-        array.sort((o1, o2) -> {
-            try {
-                double v = o2.getDouble(o2.keys().next().toString()) - o1.getDouble(o1.keys().next().toString());
-                return (int) v;
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        for (JSONObject jsonObject : array) {
-            tagLabel.add(jsonObject.keys().next().toString());
-            tagPercentages.add(jsonObject.getDouble(jsonObject.keys().next().toString()));
-        }
-
-        return new JSONObject().put("tagLabel", new JSONArray(tagLabel.toArray())).put("tagPercentages", new JSONArray(tagPercentages.toArray()));
-    }
-
-
-    @GetMapping("/getTagPercentageOfAllSetTags")
-    public String getTagPercentageOfAllSetTagsString() throws JSONException {
-        return getTagPercentageOfAllSetTags().toString();
     }
 
     /**
@@ -1990,7 +1811,7 @@ public class UserController {
 
     public double getUserCountAsPercentageForSingleTag(String tag) {
         int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
-        int countForTag = wpUserMetaRepository.countUsersByTag(tag);
+        int countForTag = wpUserMetaRepository.countUsersByTag("\"" + tag + "\"");
 
         if (totalUsersWithTag == 0) {
             return 0; // Vermeidung der Division durch Null
@@ -2016,12 +1837,12 @@ public class UserController {
 
         if (tagData.isPresent()) {
             List<String> rawTags = Arrays.asList(tagData.get().split(";"));
-            List<String> decryptedTags = decryptTags(rawTags);
-            List<String> cleanedTags = cleanTags(decryptedTags);
-
-            for (String tag : cleanedTags) {
-                double percentage = getUserCountAsPercentageForSingleTag(tag);
-                tagPercentages.put(tag, percentage);
+            List<List<String>> decryptedTags = decryptTagsStringInList(rawTags);
+            for(List<String> tags : decryptedTags) {
+                for (String tag : tags) {
+                    double percentage = getUserCountAsPercentageForSingleTag(tag);
+                    tagPercentages.put(tag, percentage);
+                }
             }
         }
         return tagPercentages;
@@ -2053,13 +1874,14 @@ public class UserController {
 
         if (tagData.isPresent()) {
             List<String> rawTags = Arrays.asList(tagData.get().split(";"));
-            List<String> decryptedTags = decryptTags(rawTags);
-            List<String> cleanedTags = cleanTags(decryptedTags);
+            List<List<String>> decryptedTags = decryptTagsStringInList(rawTags);
 
-            for(String tag:cleanedTags){
-                List<Long> competingUserIdsWithTag = wpUserMetaRepository.getUserIdsByTag(tag);
-                List<String> competingUsersWithTag= userRepository.findAllDisplayNameByIdIn(competingUserIdsWithTag);
-                tagsWithCompetingUsers.put(tag,competingUsersWithTag.toString());
+            for(List<String> tags : decryptedTags) {
+                for (String tag : tags) {
+                    List<Long> competingUserIdsWithTag = wpUserMetaRepository.getUserIdsByTag("\"" + tag + "\"");
+                    List<String> competingUsersWithTag = userRepository.findAllDisplayNameByIdIn(competingUserIdsWithTag);
+                    tagsWithCompetingUsers.put(tag, competingUsersWithTag.toString());
+                }
             }
         }
 
@@ -2085,7 +1907,12 @@ public class UserController {
      */
     @GetMapping("/getAllUserTagsData")
     public String getAllUserTagsDataFusion() throws JSONException {
-        return getUserCountForAllTagsInPercentage().put("tagCounts", getUserCountForAllTagsSorted()).toString();
+        return getUserCountForAllTagsInPercentage().put("tagCounts", getUserCountForAllTags()).toString();
+    }
+
+    @GetMapping("/getSingleUserTagsData")
+    public String getSingleUserTagsData(long id, String sorter) throws JSONException {
+        return new JSONObject().put("ranking", new JSONObject(getRankingsInTagsForUserByProfileViews(id, sorter))).put("percentage", getPercentageForTagsByUserId(id)).toString();
     }
 
     @GetMapping("/getRankingInTag")
@@ -2114,36 +1941,45 @@ public class UserController {
 
     }
 
-
     private int getRankingInListByProfileView(String companyName, List<String> otherCompanies) {
-        if(!otherCompanies.contains(companyName)) {
-            otherCompanies.add(companyName);
+        List<String> allCompaniesList = new ArrayList<>(otherCompanies);
+        if(!allCompaniesList.contains(companyName)) {
+            allCompaniesList.add(companyName);
         }
         try {
-            otherCompanies.sort((o1, o2) -> Math.toIntExact((int) (userRepository.findByDisplayName(o2).isPresent() ?
-                    userViewsRepo.getSumForUser(userRepository.findByDisplayName(o2).get().getId()) : 0)
-                    - (userRepository.findByDisplayName(o1).isPresent() ?
-                    userViewsRepo.getSumForUser(userRepository.findByDisplayName(o1).get().getId()) : 0)));
-
-            return otherCompanies.indexOf(companyName) + 1;
+            allCompaniesList.sort((o1, o2) -> {
+                    int value1 = 0;
+                    int value2 = 0;
+                    if(userRepository.findByDisplayName(o2).isPresent()) {
+                        value2 = userViewsRepo.getSumForUser(userRepository.findByDisplayName(o2).get().getId()) != null ? Math.toIntExact(userViewsRepo.getSumForUser(userRepository.findByDisplayName(o2).get().getId())) : 0;
+                    }
+                    if(userRepository.findByDisplayName(o1).isPresent()) {
+                        value1 = userViewsRepo.getSumForUser(userRepository.findByDisplayName(o1).get().getId()) != null ? Math.toIntExact(userViewsRepo.getSumForUser(userRepository.findByDisplayName(o1).get().getId())) : 0;
+                    }
+                    return value2 - value1;
+            });
+            return allCompaniesList.indexOf(companyName) + 1;
         } catch (Exception e) {
+            e.printStackTrace();
             return -1;
         }
 
     }
 
     private int getRankingInListByContentView(String companyName, List<String> otherCompanies) {
-        if(!otherCompanies.contains(companyName)) {
-            otherCompanies.add(companyName);
+        List<String> allCompaniesList = new ArrayList<>(otherCompanies);
+        if(!allCompaniesList.contains(companyName)) {
+            allCompaniesList.add(companyName);
         }
         try {
-        otherCompanies.sort((o1, o2) -> Math.toIntExact((int)(userRepository.findByDisplayName(o2).isPresent() ?
+        allCompaniesList.sort((o1, o2) -> Math.toIntExact((int)(userRepository.findByDisplayName(o2).isPresent() ?
                 postController.getViewsOfUserById(userRepository.findByDisplayName(o2).get().getId()) : 0)
                 - (userRepository.findByDisplayName(o1).isPresent() ?
                 postController.getViewsOfUserById(userRepository.findByDisplayName(o1).get().getId()) : 0)));
 
-        return otherCompanies.indexOf(companyName) + 1;
+        return allCompaniesList.indexOf(companyName) + 1;
         } catch (Exception e) {
+            e.printStackTrace();
         return -1;
         }
     }

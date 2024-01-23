@@ -44,6 +44,6 @@ public interface UserViewsByHourDLCRepository extends JpaRepository<UserViewsByH
     List<Integer> getAvailableUniIdIn(@Param("Ids") List<Integer> Ids);
 
     @Query("SELECT SUM(u.views) FROM UserViewsByHourDLC u WHERE u.userId=:userId")
-    long getSumForUser(long userId);
+    Long getSumForUser(long userId);
 
 }

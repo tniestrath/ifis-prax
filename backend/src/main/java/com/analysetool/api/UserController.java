@@ -268,7 +268,7 @@ public class UserController {
 
 
     @GetMapping("/getAllWithTagsTest")
-    public String getAllWithTagsTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
+    public String getAllWithTagsTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String tag, String sorter) throws JSONException {
         List<WPUser> list;
 
 
@@ -277,80 +277,80 @@ public class UserController {
             if(filterAbo.isBlank() && filterTyp.isBlank()) {
                 switch (sorter) {
                     case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAllWithTags(search, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsAllWithTags(search, tag, PageRequest.of(page, size));
                     }
                     case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAllWithTags(search, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndContentViewsAllWithTags(search, tag, PageRequest.of(page, size));
                     }
                     case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAllWithTags(search, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAllWithTags(search, tag, PageRequest.of(page, size));
                     }
                     default -> {
-                        list = userRepository.getAllByNicenameContainingAllWithTags(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                        list = userRepository.getAllByNicenameContainingAllWithTags(search, tag, PageRequest.of(page, size, Sort.by("id").descending()));
                     }
                 }
             } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
                 //Abo-Filter used, sorter used.
                 switch (sorter) {
                     case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAboWithTags(search, filterAbo, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
                     }
                     case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAboWithTags(search, filterAbo, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndContentViewsAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
                     }
                     case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboWithTags(search, filterAbo, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
                     }
                     default -> {
-                        list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+                        list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, tag, PageRequest.of(page, size, Sort.by("id").descending()));
                     }
                 }
             } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
                 //Company-Type Filter used, sorter used.
                 switch (sorter) {
                     case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsCompanyWithTags(search, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
                     }
                     case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsCompanyWithTags(search, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndContentViewsCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
                     }
                     case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeCompanyWithTags(search, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
                     }
                     default -> {
-                        list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                        list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
                     }
                 }
             } else {
                 //Abo, Company type and sorter used.
                 switch (sorter) {
                     case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
                     }
                     case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndContentViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
                     }
                     case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
                     }
                     default -> {
-                        list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                        list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
                     }
                 }
             }
         } else {
             //Neither filters nor sorter used.
             if(filterAbo.isBlank() && filterTyp.isBlank()) {
-                list = userRepository.getAllByNicenameContainingAllWithTags(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                list = userRepository.getAllByNicenameContainingAllWithTags(search, tag, PageRequest.of(page, size, Sort.by("id").descending()));
             } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
                 //Abo-Filter used.
-                list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+                list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, tag, PageRequest.of(page, size, Sort.by("id").descending()));
             } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
                 //Company-Filter used.
-                list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
             } else {
                 //Both filters used, no sorter used.
-                list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
             }
         }
 
@@ -2113,7 +2113,6 @@ public class UserController {
         return json.toString();
 
     }
-
 
     private int getRankingInListByProfileView(String companyName, List<String> otherCompanies) {
         List<String> allCompaniesList = new ArrayList<>(otherCompanies);

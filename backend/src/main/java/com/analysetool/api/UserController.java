@@ -1858,6 +1858,21 @@ public class UserController {
 
 
 
+    @GetMapping("/getTagRankingsByUsageCount")
+    public JSONArray lemmeCook() throws JSONException {
+        List<String> allTags = wpUserMetaRepository.getAllTags();
+        List<String> decryptedAndCleanedTags= cleanTags(decryptTags(allTags));
+        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+
+        JSONArray result = new JSONArray();
+
+        for (String tag : decryptedAndCleanedTags) {
+            int count = wpUserMetaRepository.countUsersByTag(tag);
+            result.put(new JSONObject().put("name", tag).put("count", count).put("percentage", (double) count / totalUsersWithTag * 100).put("id", termRepo.findBySlug(tag).getId()));
+        }
+        return result;
+    }
+
     /**
      * Ermittelt die Anzahl der Anbieter für alle Tags.
      *

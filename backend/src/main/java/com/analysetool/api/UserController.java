@@ -2128,6 +2128,7 @@ public class UserController {
 
             return allCompaniesList.indexOf(companyName) + 1;
         } catch (Exception e) {
+            e.printStackTrace();
             return -1;
         }
 
@@ -2146,6 +2147,7 @@ public class UserController {
 
         return allCompaniesList.indexOf(companyName) + 1;
         } catch (Exception e) {
+            e.printStackTrace();
         return -1;
         }
     }

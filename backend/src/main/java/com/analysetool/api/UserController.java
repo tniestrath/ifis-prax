@@ -1972,6 +1972,7 @@ public class UserController {
         while (jsonKeys.hasNext()) {
             String tag = jsonKeys.next().toString();
             JSONObject tempJson;
+            int companyCount = new ArrayList<>(Arrays.stream(getCompetitionByTags(id).get(tag).split(",")).toList()).size();
             try {
                  tempJson = new JSONObject().put("percentage", percentage.getDouble(tag));
             } catch (Exception e) {
@@ -1984,6 +1985,8 @@ public class UserController {
                 e.printStackTrace();
                 tempJson.put("ranking", -1);
             }
+            tempJson.put("count", companyCount);
+
             array.put(tempJson);
         }
         return array.toString();

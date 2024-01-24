@@ -1,7 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../../../component/dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import Util, {DashColors} from "../../../../util/Util";
 import {SelectorItem} from "../../../selector/selector.component";
 import {Subject} from "rxjs";
 import {TagListItemComponent} from "../../../../component/tag/tag-list/tag-list-item/tag-list-item.component";
@@ -20,12 +18,18 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit(): void {
     this.setToolTip("", false);
-    this.db.getUserTagsDistributionPercentage().then((res : {tagLabel : string[], tagPercentages : number[], tagCounts : number[]})  => {
-      for (let i = 0; i < res.tagLabel.length; i++) {
-        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(String(res.tagLabel.at(i)), String(res.tagLabel.at(i)), String(res.tagPercentages.at(i)), String(res.tagCounts.at(i)), "")));
+    this.db.getUserTagsDistributionPercentage().then((res : {name: string, count: number}[])  => {
+      console.log(res)
+      let totalIndex = res.findIndex((value, index) => {return value.name.includes("countTotal");})
+      // @ts-ignore
+      let total = res.at(totalIndex).count;
+      for (let i = 0; i < res.length; i++) {
+        // @ts-ignore
+        if (i != totalIndex) this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(String(res.at(i).name), String(res.at(i).name), String((res.at(i).count / total) * 100), String(res.at(i).count), "")));
       }
+      this.selectorItems = this.selectorItems.sort((a, b) => Number((b.data as TagRanking).views) - Number((a.data as TagRanking).views));
       this.selectorItemsLoaded.next(this.selectorItems);
-    })
+    })//.finally(() => this.pdf.exportAsPDF(this.element.nativeElement));
   }
 
 }
@@ -42,15 +46,15 @@ export class SingleUserTagsDistComponent extends UserTagsDistComponent implement
     this.element.nativeElement.getElementsByClassName("component-box")[0].classList.add("no-margin-top");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].children[0].innerText = "Plazierung innerhalb der gewählten Themen";
 
-    //ROADWORK AHEAD
+    this.db.getUserTagsRanking(SysVars.USER_ID, "profile").then((res : {name : string, percentage : number, ranking : number}[])  => {
+      for (let tag of res) {
+        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.name,tag.name, String(tag.percentage), '#'+String(tag.ranking), "")));
+      }
+      for (let i = 0; i < res.length; i++) {
 
-
-    /*this.db.getUserTagsRanking(SysVars.USER_ID, "").then((res : {percentage : number[], ranking : number[]})  => {
-      for (let i = 0; i < res.tagLabel.length; i++) {
-        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(String(res.tagLabel.at(i)), String(res.tagLabel.at(i)), String(res.tagPercentages.at(i)), '#'+String(res.ranking.at(i)), "")));
       }
       this.selectorItemsLoaded.next(this.selectorItems);
-    })*/
+    });
   }
 
 }

@@ -27,11 +27,10 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
         // @ts-ignore
         if (i != totalIndex) this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(String(res.at(i).name), String(res.at(i).name), String((res.at(i).count / total) * 100), String(res.at(i).count), "")));
       }
-      this.selectorItems = this.selectorItems.sort((a, b) => Number((b.data as TagRanking).views) - Number((a.data as TagRanking).views));
+      this.selectorItems.sort((a, b) => Number((b.data as TagRanking).views) - Number((a.data as TagRanking).views));
       this.selectorItemsLoaded.next(this.selectorItems);
-    })//.finally(() => this.pdf.exportAsPDF(this.element.nativeElement));
+    })
   }
-
 }
 
 @Component({
@@ -46,13 +45,11 @@ export class SingleUserTagsDistComponent extends UserTagsDistComponent implement
     this.element.nativeElement.getElementsByClassName("component-box")[0].classList.add("no-margin-top");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].children[0].innerText = "Plazierung innerhalb der gewählten Themen";
 
-    this.db.getUserTagsRanking(SysVars.USER_ID, "profile").then((res : {name : string, percentage : number, ranking : number}[])  => {
+    this.db.getUserTagsRanking(SysVars.USER_ID, "profile").then((res : {name : string, percentage : number, ranking : number, count : number}[])  => {
       for (let tag of res) {
-        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.name,tag.name, String(tag.percentage), '#'+String(tag.ranking), "")));
+        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.name,tag.name, String(tag.percentage), '#' + tag.ranking + " / " + tag.count, "")));
       }
-      for (let i = 0; i < res.length; i++) {
-
-      }
+      this.selectorItems.sort((a, b) => Number((b.data as TagRanking).relevance) - Number((a.data as TagRanking).relevance))
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }

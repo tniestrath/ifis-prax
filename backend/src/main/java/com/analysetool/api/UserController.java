@@ -1618,7 +1618,7 @@ public class UserController {
 
                 List<WPUser> users = userRepository.getByAboType(type);
 
-                users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
+                users.sort((o1, o2) -> Math.toIntExact((userStatsRepository.existsByUserId(id) ? userStatsRepository.findByUserId(id).getProfileView() : 0) - (userStatsRepository.existsByUserId(id) ? userStatsRepository.findByUserId(id).getProfileView() : 0)));
 
                 return users.indexOf(userRepository.findById(id).get()) + 1;
             }
@@ -1650,7 +1650,7 @@ public class UserController {
             if(userViewsRepo.existsByUserId(id)) {
                 List<WPUser> users = userRepository.findAll();
 
-                users.sort((o1, o2) -> Math.toIntExact((userViewsRepo.existsByUserId(o2.getId()) ? userViewsRepo.getSumForUser(id) : 0) - (userViewsRepo.existsByUserId(o1.getId()) ? userViewsRepo.getSumForUser(id) : 0)));
+                users.sort((o1, o2) -> Math.toIntExact((userStatsRepository.existsByUserId(id) ? userStatsRepository.findByUserId(id).getProfileView() : 0) - (userStatsRepository.existsByUserId(id) ? userStatsRepository.findByUserId(id).getProfileView() : 0)));
 
                 return users.indexOf(userRepository.findById(id).get()) + 1;
             }
@@ -1875,8 +1875,8 @@ public class UserController {
         return tagPercentages;
     }
 
-    public Map<String, Double> getPercentageForTagsByUserId(Long userId) {
-        Map<String, Double> tagPercentages = new HashMap<>();
+    public JSONObject getPercentageForTagsByUserId(Long userId) throws JSONException {
+        JSONObject tagPercentages = new JSONObject();
         Optional<String> tagData = wpUserMetaRepository.getTags(userId);
 
         if (tagData.isPresent()) {
@@ -1901,7 +1901,7 @@ public class UserController {
      */
 
     @GetMapping("/getPercentageForTagsByUserId")
-    public String getPercentageForTagsByUserIdString(Long userId) {
+    public String getPercentageForTagsByUserIdString(Long userId) throws JSONException {
         return getPercentageForTagsByUserId(userId).toString();
     }
 
@@ -1970,7 +1970,19 @@ public class UserController {
 
         while (jsonKeys.hasNext()) {
             String tag = jsonKeys.next().toString();
-            JSONObject tempJson = new JSONObject().put("percentage", json.getJSONObject("percentage").getDouble(tag)).put("ranking", json.getJSONObject("ranking").getInt(tag)).put("name", tag);
+            JSONObject tempJson;
+            try {
+                 tempJson = new JSONObject().put("percentage", json.getJSONObject("percentage").getDouble(tag));
+            } catch (Exception e) {
+                e.printStackTrace();
+                tempJson = new JSONObject().put("percentage", -1);
+            }
+            try {
+                tempJson.put("ranking", json.getJSONObject("ranking").getInt(tag)).put("name", tag);
+            } catch (Exception e) {
+                e.printStackTrace();
+                tempJson.put("ranking", -1);
+            }
             array.put(tempJson);
         }
         return array.toString();

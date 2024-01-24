@@ -1998,17 +1998,16 @@ public class UserController {
         JSONObject json = new JSONObject();
 
         for(String key : competition.keySet()) {
-            if (!competition.get(key).equalsIgnoreCase(thisCompanyName)) {
-                List<String> companyNames = Arrays.stream(competition.get(key).split(",")).toList();
-                if(sorter.equalsIgnoreCase("content")) {
-                    json.put(key, getRankingInListByContentView(thisCompanyName, companyNames));
-                } else if(sorter.equalsIgnoreCase("profile")){
-                    json.put(key, getRankingInListByProfileView(thisCompanyName, companyNames));
-                } else {
-                    json.put(key, getRankingInListByProfileView(thisCompanyName, companyNames));
-                }
-
+            List<String> companyNames = Arrays.stream(competition.get(key).split(",")).toList();
+            System.out.println(companyNames);
+            if(sorter.equalsIgnoreCase("content")) {
+                json.put(key, getRankingInListByContentView(thisCompanyName, companyNames));
+            } else if(sorter.equalsIgnoreCase("profile")){
+                json.put(key, getRankingInListByProfileView(thisCompanyName, companyNames));
+            } else {
+                json.put(key, getRankingInListByProfileView(thisCompanyName, companyNames));
             }
+
         }
         return json.toString();
 

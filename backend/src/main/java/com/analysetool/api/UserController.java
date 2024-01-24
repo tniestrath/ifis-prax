@@ -1875,8 +1875,8 @@ public class UserController {
         return tagPercentages;
     }
 
-    public Map<String, Double> getPercentageForTagsByUserId(Long userId) {
-        Map<String, Double> tagPercentages = new HashMap<>();
+    public JSONObject getPercentageForTagsByUserId(Long userId) throws JSONException {
+        JSONObject tagPercentages = new JSONObject();
         Optional<String> tagData = wpUserMetaRepository.getTags(userId);
 
         if (tagData.isPresent()) {
@@ -1901,7 +1901,7 @@ public class UserController {
      */
 
     @GetMapping("/getPercentageForTagsByUserId")
-    public String getPercentageForTagsByUserIdString(Long userId) {
+    public String getPercentageForTagsByUserIdString(Long userId) throws JSONException {
         return getPercentageForTagsByUserId(userId).toString();
     }
 

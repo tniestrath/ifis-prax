@@ -1915,7 +1915,17 @@ public class UserController {
 
     @GetMapping("/getSingleUserTagsData")
     public String getSingleUserTagsData(long id, String sorter) throws JSONException {
-        return new JSONObject().put("ranking", new JSONObject(getRankingsInTagsForUserByProfileViews(id, sorter))).put("percentage", getPercentageForTagsByUserId(id)).toString();
+        JSONObject json = new JSONObject().put("ranking", new JSONObject(getRankingsInTagsForUserByProfileViews(id, sorter))).put("percentage", getPercentageForTagsByUserId(id));
+        var jsonKeys = json.keys();
+        JSONArray array = new JSONArray();
+
+        while (jsonKeys.hasNext()) {
+            String tag = jsonKeys.next().toString();
+            JSONObject tempJson = new JSONObject().put("percentage", json.getJSONObject("percentage").getDouble(tag)).put("ranking", json.getJSONObject("ranking").getInt(tag)).put("name", tag);
+            array.put(tempJson);
+        }
+        return array.toString();
+
     }
 
     @GetMapping("/getRankingInTag")

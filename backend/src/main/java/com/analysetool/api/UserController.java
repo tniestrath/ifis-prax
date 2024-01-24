@@ -1964,7 +1964,7 @@ public class UserController {
 
     @GetMapping("/getSingleUserTagsData")
     public String getSingleUserTagsData(long id, String sorter) throws JSONException {
-        JSONObject ranking = new JSONObject(getRankingsInTagsForUserByProfileViews(id, sorter));
+        JSONObject ranking = new JSONObject(getRankingsInTagsForUserBySorter(id, sorter));
         JSONObject percentage = getPercentageForTagsByUserId(id);
         var jsonKeys = ranking.keys();
         JSONArray array = new JSONArray();
@@ -1991,16 +1991,14 @@ public class UserController {
     }
 
     @GetMapping("/getRankingInTag")
-    public String getRankingsInTagsForUserByProfileViews(long id, String sorter) throws JSONException {
+    public String getRankingsInTagsForUserBySorter(long id, String sorter) throws JSONException {
         Map<String, String> competition = getCompetitionByTags(id);
         String thisCompanyName = userRepository.getDisplayNameById(id);
 
         JSONObject json = new JSONObject();
 
         for(String key : competition.keySet()) {
-            if(competition.get(key).equalsIgnoreCase(thisCompanyName)) {
-                json.put(key, 1);
-            } else {
+            if (!competition.get(key).equalsIgnoreCase(thisCompanyName)) {
                 List<String> companyNames = Arrays.stream(competition.get(key).split(",")).toList();
                 if(sorter.equalsIgnoreCase("content")) {
                     json.put(key, getRankingInListByContentView(thisCompanyName, companyNames));
@@ -2026,10 +2024,10 @@ public class UserController {
                     int value1 = 0;
                     int value2 = 0;
                     if(userRepository.findByDisplayName(o2).isPresent()) {
-                        value2 = userViewsRepo.getSumForUser(userRepository.findByDisplayName(o2).get().getId()) != null ? Math.toIntExact(userViewsRepo.getSumForUser(userRepository.findByDisplayName(o2).get().getId())) : 0;
+                        value2 = userStatsRepository.findByUserId(userRepository.findByDisplayName(o2).get().getId()) != null ? Math.toIntExact(userStatsRepository.findByUserId(userRepository.findByDisplayName(o2).get().getId()).getProfileView()) : 0;
                     }
                     if(userRepository.findByDisplayName(o1).isPresent()) {
-                        value1 = userViewsRepo.getSumForUser(userRepository.findByDisplayName(o1).get().getId()) != null ? Math.toIntExact(userViewsRepo.getSumForUser(userRepository.findByDisplayName(o1).get().getId())) : 0;
+                        value1 = userStatsRepository.findByUserId(userRepository.findByDisplayName(o1).get().getId()) != null ? Math.toIntExact(userStatsRepository.findByUserId(userRepository.findByDisplayName(o1).get().getId()).getProfileView()) : 0;
                     }
                     return value2 - value1;
             });

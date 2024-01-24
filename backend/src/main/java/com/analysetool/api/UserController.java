@@ -1757,7 +1757,7 @@ public class UserController {
 
 
 
-    public JSONObject getUserCountForAllTagsInPercentage() throws JSONException {
+    public JSONArray getUserCountForAllTagsInPercentage() throws JSONException {
         // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
         int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
 
@@ -1790,12 +1790,7 @@ public class UserController {
             }
         });
 
-        for (JSONObject jsonObject : array) {
-            tagLabel.add(jsonObject.keys().next().toString());
-            tagPercentages.add(jsonObject.getDouble(jsonObject.keys().next().toString()));
-        }
-
-        return new JSONObject().put("tagLabel", new JSONArray(tagLabel.toArray())).put("tagPercentages", new JSONArray(tagPercentages.toArray()));
+        return new JSONArray(array);
     }
 
     /**
@@ -1907,7 +1902,7 @@ public class UserController {
      */
     @GetMapping("/getAllUserTagsData")
     public String getAllUserTagsDataFusion() throws JSONException {
-        return getUserCountForAllTagsInPercentage().put("tagCounts", getUserCountForAllTags()).toString();
+        return getUserCountForAllTags().put("countTotal", wpUserMetaRepository.getAllUserTagRowsInList(wpUserMetaRepository.getAllUserIdsWithTags()).size()).toString();
     }
 
     @GetMapping("/getSingleUserTagsData")

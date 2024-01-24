@@ -11,7 +11,7 @@ public class FinalSearchStatDLC {
     private Long id;
     @Column(name = "final_search_id")
     private Long finalSearchId;
-    @Column(name = "uniId")
+    @Column(name = "uni_id")
     private int uniId;
     @Column(name = "hour")
     private int hour;
@@ -73,4 +73,16 @@ public class FinalSearchStatDLC {
     public void setPostId(Long postId) {
         this.postId = postId;
     }
+
+    @Override
+    public String toString() {
+        return "FinalSearchStatDLC{" +
+                "id=" + id +
+                ", finalSearchId=" + finalSearchId +
+                ", uniId=" + uniId +
+                ", hour=" + hour +
+                ", postId=" + postId +
+                '}';
+    }
+
 }

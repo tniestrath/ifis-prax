@@ -11,10 +11,10 @@ public class FinalSearchStat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "uniId", nullable = false)
+    @Column(name = "uni_id")
     private int uniId;
 
-    @Column(name = "hour", nullable = false)
+    @Column(name = "hour")
     private int hour;
 
     @Column(name = "country")

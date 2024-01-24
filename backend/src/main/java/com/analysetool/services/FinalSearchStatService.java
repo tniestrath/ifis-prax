@@ -7,7 +7,10 @@ import com.analysetool.repositories.FinalSearchStatRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FinalSearchStatService {
@@ -32,6 +35,34 @@ public class FinalSearchStatService {
     }
 
     @Transactional
+    public Boolean saveAllBooleanNotBatch(List<FinalSearchStat> stats) {
+        Boolean savedAll = false;
+        for(FinalSearchStat stat:stats){
+          try{
+              repository.save(stat);
+              savedAll = true;
+          }catch(Exception e){
+              savedAll=false;
+          }
+      }
+        return savedAll;
+    }
+
+    @Transactional
+    public Boolean saveAllDLCBooleanNotBatch(List<FinalSearchStatDLC> stats) {
+        Boolean savedAll = false;
+        for(FinalSearchStatDLC stat:stats){
+            try{
+                DLCRepo.save(stat);
+                savedAll = true;
+            }catch(Exception e){
+                savedAll=false;
+            }
+        }
+        return savedAll;
+    }
+
+    @Transactional
     public Boolean saveAllDLCBoolean(List<FinalSearchStatDLC> stats) {
         try{
             DLCRepo.saveAll(stats);
@@ -40,5 +71,19 @@ public class FinalSearchStatService {
             return false;
         }
     }
-    // Weitere Geschäftslogik
+
+
+    @Transactional
+    public Boolean saveAllDLCBooleanFromMap(Map<String, FinalSearchStatDLC> statsMap) {
+        try {
+            List<FinalSearchStatDLC> statsList = new ArrayList<>(statsMap.values());
+
+            DLCRepo.saveAll(statsList);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
 }

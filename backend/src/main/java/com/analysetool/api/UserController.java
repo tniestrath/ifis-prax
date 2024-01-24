@@ -1775,7 +1775,7 @@ public class UserController {
         var iterator = companiesPerTag.keys();
         // Prozentualen Anteil für jeden Tag berechnen
         while(iterator.hasNext()) {
-            String key = companiesPerTag.keys().next().toString();
+            String key = iterator.next().toString();
             int count = companiesPerTag.getInt(key);
             double percentage = (double) count / totalUsersWithTag * 100;
             array.add(new JSONObject().put(key, percentage));

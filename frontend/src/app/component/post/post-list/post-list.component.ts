@@ -249,12 +249,14 @@ export class UserPostListComponent extends PostListComponent{
           this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
         }
         this.pageIndex = 0;
+        this.pagesComplete = true;
         this.selectorItemsLoaded.next(this.selectorItems);
       });
     });
 
     this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, " ", "").then((value : {posts:  Post[], count : number}) => {
       this.selectorItems = [];
+      this.pagesComplete = false;
       for (const valueElement of value.posts) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
         this.selectorItems.sort((a, b) => Number(b.data.id) - Number(a.data.id));
@@ -296,6 +298,7 @@ export class UserPostListComponent extends PostListComponent{
   loadItems(){
     this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.filter, this.search_text).then((value : {posts:  Post[], count : number}) => {
       this.selectorItems = [];
+      this.pagesComplete = false;
       for (const valueElement of value.posts) {
         this.selectorItems.push(new SelectorItem(PostListItemComponent, valueElement));
       }

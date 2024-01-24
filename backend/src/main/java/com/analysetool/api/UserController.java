@@ -1902,7 +1902,15 @@ public class UserController {
      */
     @GetMapping("/getAllUserTagsData")
     public String getAllUserTagsDataFusion() throws JSONException {
-        return getUserCountForAllTags().put("countTotal", wpUserMetaRepository.getAllUserTagRowsInList(wpUserMetaRepository.getAllUserIdsWithTags()).size()).toString();
+        JSONObject json = getUserCountForAllTags();
+        var jsonKeys = json.keys();
+        JSONArray array = new JSONArray();
+        while(jsonKeys.hasNext()) {
+            String tag = jsonKeys.next().toString();
+            array.put(new JSONObject().put(tag, json.getInt(tag)));
+        }
+        array.put(new JSONObject().put("countTotal", wpUserMetaRepository.getAllUserTagRowsInList(wpUserMetaRepository.getAllUserIdsWithTags()).size()));
+        return array.toString();
     }
 
     @GetMapping("/getSingleUserTagsData")

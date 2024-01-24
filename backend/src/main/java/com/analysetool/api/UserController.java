@@ -1315,6 +1315,52 @@ public class UserController {
         return "none";
     }
 
+
+    /**
+     *
+     * @param id user id to fetch account type for.
+     * @return "basis" "plus" "premium" "sponsor" "basis-plus" "admin" "none"
+     */
+    private String getTypeDirty(int id) {
+        /*
+            This code is currently out of order, since booked packages do not align with user roles
+
+        if(wpMemberRepo.getUserMembership(id) != null) {
+            switch (wpMemberRepo.getUserMembership(id)) {
+                case (1) -> {
+                    return "basis";
+                }
+                case (3) -> {
+                    return "plus";
+                }
+                case (5) -> {
+                    return "premium";
+                }
+                case (6), (9) -> {
+                    return "sponsor";
+                }
+                case (7) -> {
+                    return "basis-plus";
+                }
+            }
+        }
+        */
+        if (wpUserMetaRepository.existsByUserId((long) id)){
+            String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
+            if (wpUserMeta.contains("customer")) return "customer";
+            if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "administrator";
+            if (wpUserMeta.contains("plus-anbieter")) return "plus-anbieter";
+            if (wpUserMeta.contains("um_basis-anbieter-plus")  || wpUserMeta.contains("um_basis-plus")) return "um_basis-anbieter-plus";
+            if(wpUserMeta.contains("um_premium-anbieter-sponsoren")) return "um_premium-anbieter-sponsoren";
+            if (wpUserMeta.contains("premium-anbieter")) return "premium-anbieter";
+            if(wpUserMeta.contains("um_basis-anbieter")) return "um_basis-anbieter";
+            if (wpUserMeta.contains("anbieter")) return "none";
+        }
+
+
+        return "none";
+    }
+
     public List<String> getNewUsersByTypeToday(String type) {
         List<String> list = new ArrayList<>();
         for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
@@ -1568,7 +1614,7 @@ public class UserController {
     public int getRankingInTypeProfileViews(long id) throws JSONException {
         if(userRepository.findById(id).isPresent()) {
             if(userViewsRepo.existsByUserId(id)) {
-                String type = getType((int) id);
+                String type = getTypeDirty((int) id);
 
                 List<WPUser> users = userRepository.getByAboType(type);
 
@@ -1587,7 +1633,7 @@ public class UserController {
     public int getRankingInTypeContentViews(long id) throws JSONException {
         if(userRepository.findById(id).isPresent()) {
 
-                String type = getType((int) id);
+                String type = getTypeDirty((int) id);
 
                 List<WPUser> users = userRepository.getByAboType(type);
 
@@ -1618,6 +1664,9 @@ public class UserController {
         if(userRepository.findById(id).isPresent()) {
 
             List<WPUser> users = userRepository.findAll();
+
+            users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o2.getId()) - postController.getViewsOfUserById(o1.getId()))
+            );
 
             return users.indexOf(userRepository.findById(id).get()) + 1;
 

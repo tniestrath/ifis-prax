@@ -1998,7 +1998,14 @@ public class UserController {
         JSONObject json = new JSONObject();
 
         for(String key : competition.keySet()) {
-            List<String> companyNames = Arrays.stream(competition.get(key).split(",")).toList();
+            List<String> companyNames = new ArrayList<>(Arrays.stream(competition.get(key).split(",")).toList());
+
+            for(String name : companyNames) {
+                if(name.startsWith(" ")) {
+                    companyNames.set(companyNames.indexOf(name), name.replaceFirst(" ", ""));
+                }
+            }
+
             System.out.println("COMPANY NAMES" + companyNames);
             if(sorter.equalsIgnoreCase("content")) {
                 json.put(key, getRankingInListByContentView(thisCompanyName, companyNames));

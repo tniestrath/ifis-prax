@@ -1970,7 +1970,19 @@ public class UserController {
 
         while (jsonKeys.hasNext()) {
             String tag = jsonKeys.next().toString();
-            JSONObject tempJson = new JSONObject().put("percentage", json.getJSONObject("percentage").getDouble(tag)).put("ranking", json.getJSONObject("ranking").getInt(tag)).put("name", tag);
+            JSONObject tempJson;
+            try {
+                 tempJson = new JSONObject().put("percentage", json.getJSONObject("percentage").getDouble(tag));
+            } catch (Exception e) {
+                e.printStackTrace();
+                tempJson = new JSONObject().put("percentage", -1);
+            }
+            try {
+                tempJson.put("ranking", json.getJSONObject("ranking").getInt(tag)).put("name", tag);
+            } catch (Exception e) {
+                e.printStackTrace();
+                tempJson.put("ranking", -1);
+            }
             array.put(tempJson);
         }
         return array.toString();

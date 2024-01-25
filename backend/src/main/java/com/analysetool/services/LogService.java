@@ -113,12 +113,15 @@ public class LogService {
     private BufferedReader br;
     private String path = "";
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
-    private final String BlogSSPattern = "^.*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
-    private final String ArtikelSSPattern = "^.*GET /artikel/(\\S+)/.*s=(\\S+)\".*";//search +1, view +1,(bei match) vor artikel view pattern
+    //private final String BlogSSPattern = "^.*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
+    private final String ArtikelSSPattern = "^.*GET /artikel/([^/]+)/.*s=([^&\"]+)\"";
+    private final String PresseSSViewPatter = "^.*GET /news/([^/]+)/.*s=([^&\"]+)\"";
+    private final String BlogSSPattern = "^.*GET /blog/([^/]+)/.*s=([^&\"]+)\"";
+    private final String WhitepaperSSPattern = "^.*GET /whitepaper/([^/]+)/.*s=([^&\"]+)\"";//search +1, view +1,(bei match) vor artikel view pattern
     //private final String ArtikelSSPattern = "^.*GET /artikel/([^ ]+)/.*[?&]s=([^&\"]+).*";
 
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
-    private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
+   // private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
     private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
@@ -137,7 +140,7 @@ public class LogService {
 
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
-    private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
+    //private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
 
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
 
@@ -530,19 +533,19 @@ public class LogService {
 
                     //Does it match an article-type?
                     Matcher matched_articleView = articleViewPattern.matcher(request);
-                    Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(request);
+                    Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
 
                     //Does it match a blog-type?
                     Matcher matched_blogView = blogViewPattern.matcher(request);
-                    Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(request);
+                    Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
 
                     //Does it match a news-type?
                     Matcher matched_newsView = newsViewPattern.matcher(request);
-                    Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(request);
+                    Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(line);
 
                     //Does it match a whitepaper-type?
                     Matcher matched_whitepaperView = patternWhitepaperView.matcher(request);
-                    Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(request);
+                    Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
 
                     //Does it match the main-page-type?
                     Matcher matched_main_page = mainPagePattern.matcher(request);
@@ -601,7 +604,7 @@ public class LogService {
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
-                    if(matched_articleView.find()) {
+/*                    if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
                     } else if(matched_articleSearchSuccess.find()) {
@@ -625,6 +628,31 @@ public class LogService {
                     } else if(matched_whitepaperSearchSuccess.find()) {
                         whatMatched = "wpSS";
                         patternMatcher = matched_whitepaperSearchSuccess;
+                        */
+                    if(matched_articleSearchSuccess.find()) {
+                        whatMatched = "articleSS";
+                        patternMatcher = matched_articleSearchSuccess;
+                    } else if(matched_blogSearchSuccess.find()) {
+                        whatMatched = "blogSS";
+                        patternMatcher = matched_blogSearchSuccess;
+                    } else if(matched_newsSearchSuccess.find()) {
+                        whatMatched = "newsSS";
+                        patternMatcher = matched_newsSearchSuccess;
+                    } else if(matched_whitepaperSearchSuccess.find()) {
+                        whatMatched = "wpSS";
+                        patternMatcher = matched_whitepaperSearchSuccess;
+                    } else if(matched_articleView.find()) {
+                        whatMatched = "articleView";
+                        patternMatcher = matched_articleView;
+                    } else if(matched_blogView.find()) {
+                        whatMatched = "blogView";
+                        patternMatcher = matched_blogView;
+                    } else if(matched_newsView.find()) {
+                        whatMatched = "newsView";
+                        patternMatcher = matched_newsView;
+                    } else if(matched_whitepaperView.find()) {
+                        whatMatched = "wpView";
+                        patternMatcher = matched_whitepaperView;
                     } else if(matched_podcast_view.find()) {
                         whatMatched = "podView";
                         patternMatcher = matched_podcast_view;
@@ -971,7 +999,7 @@ public class LogService {
         userRedirectService.persistAllUserRedirectsHourly(userRedirectsMap);
         //maps clearen nur um sicher zu gehen
         cleanMaps();
-        //updateFinalSearchStatsAndTemporarySearchStats();
+        updateFinalSearchStatsAndTemporarySearchStats();
     }
 
     private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
@@ -1393,9 +1421,10 @@ public class LogService {
                 break;
             case "articleSS", "blogSS", "newsSS", "wpSS":
                 try {
-                    updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
-                    updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
-                    //updateSearchDLCMap(ip,patternMatcher.group(2),postRepository.getIdByName(patternMatcher.group(1)),dateLog);
+                    updateSearchDLCMap(ip,patternMatcher.group(2),postRepository.getIdByName(patternMatcher.group(1)),dateLog);
+                    UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                   // updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                   // updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
                 } catch(Exception e) {
                     System.out.println("SS PROCESS LINE EXCEPTION " +line);
                 }
@@ -2715,7 +2744,6 @@ public class LogService {
 
     public void updateSearchDLCMap(String ip,String SearchQuery,Long postId,LocalDateTime dateLog){
         int uniId = uniRepo.getLatestUniStat().getId();
-        String time = String.valueOf(dateLog.getMinute());
         String key = ip + "_" + SearchQuery  ;
 
         FinalSearchStatDLC searchDLC = searchDLCMap.get(key);
@@ -2730,6 +2758,7 @@ public class LogService {
     }
     public void linkSearchSuccessesWithSearches(List<TemporarySearchStat> tempSearches, List<FinalSearchStat> finalSearches) {
         // Erstelle zuerst eine Map für die Zuordnung von TempID zu FinalSearchStat
+        System.out.println(searchDLCMap);
         Map<Long, FinalSearchStat> tempIdToFinalSearchMap = new HashMap<>();
         for (FinalSearchStat finalSearch : finalSearches) {
             tempIdToFinalSearchMap.put(finalSearch.getTempId(), finalSearch);
@@ -2747,6 +2776,8 @@ public class LogService {
                 }
             }
         }
+       Boolean saveSuccess = finalSearchService.saveAllDLCBooleanFromMap(searchDLCMap);
+        System.out.println("SearchDLC save success: "+saveSuccess);
     }
 
 
@@ -2769,13 +2800,14 @@ public class LogService {
         }
         System.out.println(zuSpeicherndeFinalSearches);
         Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);
+        System.out.println(saveSuccess);
         if(saveSuccess){
             linkSearchSuccessesWithSearches(alleTempSearches,zuSpeicherndeFinalSearches);
-            /*Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
+            Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
             if(!deleteSuccess){
                 System.out.println("Löschen von TemporarySearch mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
-            }*/
-            System.out.println("OK");
+            }
+            System.out.println("Final Search Stats saved ! Temporary Search Stats deleted !");
         }else{
             System.out.println("Erstellen/Speichern von FinalSearch der TemporarySearches mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
         }

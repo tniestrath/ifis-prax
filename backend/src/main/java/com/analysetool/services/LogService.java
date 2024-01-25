@@ -1220,7 +1220,7 @@ public class LogService {
                 uniCategories = universalCategoriesDLCRepo.getLast();
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                 //Update users
-                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
+                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userRatgeberSelf - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
                 uniCategories.setBesucherArticle(uniCategories.getBesucherArticle() + userArticle);
                 uniCategories.setBesucherNews(uniCategories.getBesucherNews() + userNews);
                 uniCategories.setBesucherBlog(uniCategories.getBesucherBlog() + userBlog);

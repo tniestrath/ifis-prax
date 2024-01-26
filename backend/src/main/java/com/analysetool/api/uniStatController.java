@@ -614,7 +614,7 @@ public class uniStatController {
 
         List<Post> posts = postRepository.findAllUserPosts();
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
 

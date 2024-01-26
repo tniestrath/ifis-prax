@@ -739,7 +739,7 @@ public class UserController {
             viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
         } catch (NullPointerException ignored) {
         }
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
         int tagIdNews = termRepo.findBySlug("news").getId().intValue();
         int tagIdWhitepaper = termRepo.findBySlug("whitepaper").getId().intValue();
@@ -1375,7 +1375,7 @@ public class UserController {
 
     @GetMapping("/getPostDistribution")
     public String getPostDistribution() throws JSONException {
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
         List<Post> posts = postRepository.findAllUserPosts();

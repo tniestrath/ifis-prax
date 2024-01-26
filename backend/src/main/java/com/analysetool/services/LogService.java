@@ -1340,7 +1340,7 @@ public class LogService {
         long newsCounter = 0;
         long blogCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
 
@@ -2082,7 +2082,7 @@ public class LogService {
         long newsCounter =0;
         long blogCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
 

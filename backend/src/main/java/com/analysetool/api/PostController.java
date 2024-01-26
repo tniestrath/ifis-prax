@@ -462,7 +462,7 @@ public class PostController {
     public long getViewsOfUserById(@RequestParam Long id){
         List<Post> posts = postRepo.findByAuthor(id.intValue());
         long views = 0 ;
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
         int tagIdPodcast = termRepo.findBySlug("podcast_first_series").getId().intValue();
         int tagIdWhitepaper = termRepo.findBySlug("whitepaper").getId().intValue();
@@ -488,7 +488,7 @@ public class PostController {
     public long getPostCountOfUserById(@RequestParam Long id){
         List<Post> posts = postRepo.findByAuthor(id.intValue());
         long PostCount = 0 ;
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
 
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();

@@ -2129,7 +2129,7 @@ public class LogService {
         long whiteCounter = 0;
         long podCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
         int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
         int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
         int tagIdWhite = termRepo.findBySlug("whitepaper").getId().intValue();

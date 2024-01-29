@@ -119,48 +119,6 @@ public class UserController {
         return obj.toString();
     }
 
-    @Deprecated
-    @GetMapping("/getAllNew")
-    public String getAllNew() throws JSONException {
-        List<WPUser> list = userRepository.findAll();
-
-        JSONArray response = new JSONArray();
-        for (WPUser i : list) {
-            JSONObject obj = new JSONObject();
-            obj.put("id",i.getId());
-            obj.put("email",i.getEmail());
-            obj.put("displayName",i.getNicename());
-            if(userStatsRepository.existsByUserId(i.getId())){
-                UserStats statsUser = userStatsRepository.findByUserId(i.getId());
-                obj.put("profileViews", statsUser.getProfileView());
-                obj.put("postViews", postController.getViewsOfUserById(i.getId()));
-                obj.put("postCount", postController.getPostCountOfUserById(i.getId()));
-
-            } else {
-                obj.put("profileViews", 0);
-                obj.put("postViews",0);
-                obj.put("postCount",0);
-                obj.put ("performance",0);
-            }
-            if (wpUserMetaRepository.existsByUserId(i.getId())){
-                String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(i.getId());
-                obj.put("accountType", "undefined");
-                if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "ohne abo");
-                if (wpUserMeta.contains("basis-anbieter")) obj.put("accountType", "basis");
-                if (wpUserMeta.contains("basis-anbieter-plus")) obj.put("accountType", "basis-plus");
-                if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
-                if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
-                if (wpUserMeta.contains("premium-anbieter-sponsoren")) obj.put("accountType", "sponsor");
-            }else {
-                obj.put( "accountType" ,"undefined");
-            }
-            response.put(obj);
-        }
-        return response.toString();
-    }
-
-
     /**
      *
      * @param page which page of results of the given size you want to fetch.

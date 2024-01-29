@@ -78,7 +78,7 @@ public class UserController {
     }
 
     @GetMapping("/getById")
-    public String getUserById(@RequestParam String id) throws JSONException {
+    public String getUserById(@RequestParam String id) {
         try {
             JSONObject obj = new JSONObject();
             var user = userRepository.findById(Long.valueOf(id));
@@ -126,8 +126,8 @@ public class UserController {
      * @param search the search-term you want results for, give empty string for none.
      * @param filterAbo "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
      * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
-     * @return
-     * @throws JSONException
+     * @return a JSON String containing information about all users in the specified page, and the amount of users loaded.
+     * @throws JSONException .
      */
     @GetMapping("/getAll")
     public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
@@ -1536,7 +1536,7 @@ public class UserController {
         }
     }
 
-    public int getRankingInTypeProfileViews(long id) throws JSONException {
+    public int getRankingInTypeProfileViews(long id) {
         if(userRepository.findById(id).isPresent()) {
             if(userViewsRepo.existsByUserId(id)) {
                 String type = getTypeDirty((int) id);
@@ -1555,7 +1555,7 @@ public class UserController {
         return -1;
     }
 
-    public int getRankingInTypeContentViews(long id) throws JSONException {
+    public int getRankingInTypeContentViews(long id) {
         if(userRepository.findById(id).isPresent()) {
 
                 String type = getTypeDirty((int) id);
@@ -1570,7 +1570,7 @@ public class UserController {
         }
     }
 
-    public int getRankingTotalProfileViews(long id) throws JSONException {
+    public int getRankingTotalProfileViews(long id) {
         if(userRepository.findById(id).isPresent()) {
             if(userViewsRepo.existsByUserId(id)) {
                 List<WPUser> users = userRepository.findAll();
@@ -1585,7 +1585,7 @@ public class UserController {
         return -1;
     }
 
-    public int getRankingTotalContentViews(long id) throws JSONException {
+    public int getRankingTotalContentViews(long id)  {
         if(userRepository.findById(id).isPresent()) {
 
             List<WPUser> users = userRepository.findAll();
@@ -1631,7 +1631,7 @@ public class UserController {
         List<UserViewsByHourDLC> combinedViews = new ArrayList<>();
         combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, previousUniId)); // Daten von gestern
         combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, latestUniId));   // Daten von heute
-        System.out.println("combined views: "+combinedViews.toString());
+        System.out.println("combined views: "+combinedViews);
         Map<Integer, Long> hourlyViews = new LinkedHashMap<>();
         LocalDateTime now = LocalDateTime.now();
         int currentHour = now.getHour();
@@ -1662,7 +1662,7 @@ public class UserController {
                     Long id = Long.parseLong(parts[0].trim());
                     Double score = Double.parseDouble(parts[1].trim());
                     performanceScores.put(id, score);
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException ignored) {
 
                 }
             }

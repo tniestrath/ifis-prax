@@ -10,6 +10,12 @@ public class Constants {
     private final String podastSlug = "podcast";
     private final String newsSlug = "news";
 
+
+    private final String basisAnbieter = "um_basis";
+    private final String basisPlusAnbieter = "um_basis-plus";
+    private final String plusAnbieter = "um_plus";
+    private final String premiumAnbieter = "um_premium";
+
     // Private constructor to prevent external instantiation
     private Constants() {
     }
@@ -44,5 +50,21 @@ public class Constants {
 
     public String getNewsSlug() {
         return newsSlug;
+    }
+
+    public String getBasisAnbieter() {
+        return basisAnbieter;
+    }
+
+    public String getBasisPlusAnbieter() {
+        return basisPlusAnbieter;
+    }
+
+    public String getPlusAnbieter() {
+        return plusAnbieter;
+    }
+
+    public String getPremiumAnbieter() {
+        return premiumAnbieter;
     }
 }

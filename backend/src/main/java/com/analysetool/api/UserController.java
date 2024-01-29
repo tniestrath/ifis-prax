@@ -4,7 +4,8 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.PostClicksByHourDLCService;
 import com.analysetool.services.UserViewsByHourDLCService;
-import com.analysetool.util.*;
+import com.analysetool.util.Constants;
+import com.analysetool.util.DashConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -1164,19 +1165,19 @@ public class UserController {
         HashMap<String, Integer> counts = new HashMap<>();
 
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {
-                if (s.contains("um_anbieter")) // hoffe "leere" Accounts sind "um_anbieter" und nicht "anbieter" oder was auch immer
+                if (s.contains("anbieter"))
                     counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
                 if (s.contains("administrator") || s.contains("organizer"))
                     counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
-                if ((s.contains("um_basis-anbieter") ) && !s.contains("plus"))
+                if ((s.contains(Constants.getInstance().getBasisAnbieter()) ) && !s.contains("plus"))
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-                if (s.contains("um_plus-anbieter"))
+                if (s.contains(Constants.getInstance().getPlusAnbieter()))
                     counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
-                if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
+                if (!s.contains("sponsoren") && s.contains(Constants.getInstance().getPremiumAnbieter()))
                     counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
-                if (s.contains("um_premium-anbieter-sponsoren"))
+                if (s.contains("sponsor"))
                     counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
-                if (s.contains("um_basis-anbieter-plus")  || s.contains("um_basis-plus"))
+                if (s.contains(Constants.getInstance().getBasisPlusAnbieter()))
                     counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
     });
         return new JSONObject(counts).toString();
@@ -1303,11 +1304,10 @@ public class UserController {
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "none";
             if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "admin";
-            if (wpUserMeta.contains("plus-anbieter")) return "plus";
-            if (wpUserMeta.contains("um_basis-anbieter-plus")  || wpUserMeta.contains("um_basis-plus")) return "basis-plus";
-            if(wpUserMeta.contains("um_premium-anbieter-sponsoren")) return "sponsor";
-            if (wpUserMeta.contains("premium-anbieter")) return "premium";
-            if(wpUserMeta.contains("um_basis-anbieter")) return "basis";
+            if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return "plus";
+            if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "basis-plus";
+            if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium";
+            if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "basis";
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 
@@ -1349,11 +1349,11 @@ public class UserController {
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "customer";
             if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "administrator";
-            if (wpUserMeta.contains("plus-anbieter")) return "plus-anbieter";
-            if (wpUserMeta.contains("um_basis-anbieter-plus")  || wpUserMeta.contains("um_basis-plus")) return "um_basis-anbieter-plus";
-            if(wpUserMeta.contains("um_premium-anbieter-sponsoren")) return "um_premium-anbieter-sponsoren";
-            if (wpUserMeta.contains("premium-anbieter")) return "premium-anbieter";
-            if(wpUserMeta.contains("um_basis-anbieter")) return "um_basis-anbieter";
+            if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return "plus-anbieter";
+            if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "um_basis-anbieter-plus";
+            if(wpUserMeta.contains("sponsor")) return "um_premium-anbieter-sponsoren";
+            if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium-anbieter";
+            if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "um_basis-anbieter";
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 

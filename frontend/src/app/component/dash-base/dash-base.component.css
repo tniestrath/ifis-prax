@@ -14,3 +14,14 @@
   font-size: xx-large;
   color: #7C7C7C;
 }
+@media print {
+  .component-box {
+    background-color: white;
+    border-radius: 5px;
+    height: 100%;
+    box-shadow: none;
+  }
+  .component-box .help-button{
+    display: none !important;
+  }
+}

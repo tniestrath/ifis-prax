@@ -11,9 +11,9 @@ public class Constants {
     private final String newsSlug = "news";
 
 
-    private final String basisAnbieter = "um_basis";
-    private final String basisPlusAnbieter = "um_basis-plus";
-    private final String plusAnbieter = "um_plus";
+    private final String basisAnbieter = "um_basis-anbieter";
+    private final String basisPlusAnbieter = "um_basis-plus-anbieter";
+    private final String plusAnbieter = "um_plus-anbieter";
     private final String premiumAnbieter = "um_premium";
 
     // Private constructor to prevent external instantiation

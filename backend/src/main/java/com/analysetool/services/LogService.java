@@ -20,11 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -2755,18 +2753,26 @@ public class LogService {
         uniTimeSpentRepo.save(uniTime);
     }
 
-    public void updateSearchDLCMap(String ip,String SearchQuery,Long postId,LocalDateTime dateLog){
+    public void updateSearchDLCMap(String ip,String searchQuery,Long postId,LocalDateTime dateLog){
         int uniId = uniRepo.getLatestUniStat().getId();
-        String key = ip + "_" + SearchQuery  ;
+        String cleanedQuery = searchQuery;
+        try {
+            cleanedQuery = URLDecoder.decode(searchQuery, "UTF-8");
 
-        FinalSearchStatDLC searchDLC = searchDLCMap.get(key);
-        if (searchDLC == null) {
+            String key = ip + "_" + cleanedQuery  ;
 
-           searchDLCMap.put(key,new FinalSearchStatDLC(uniId,dateLog.getHour(),postId));
+            FinalSearchStatDLC searchDLC = searchDLCMap.get(key);
+            if (searchDLC == null) {
 
-        }else if(!postId.equals(searchDLC.getPostId())){
-            searchDLCMap.put(key,new FinalSearchStatDLC(uniId,dateLog.getHour(),postId));
-        }
+                searchDLCMap.put(key,new FinalSearchStatDLC(uniId,dateLog.getHour(),postId));
+
+            }else if(!postId.equals(searchDLC.getPostId())){
+                searchDLCMap.put(key,new FinalSearchStatDLC(uniId,dateLog.getHour(),postId));
+            }
+
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Fehler beim decodieren des Url String weiter mit codierte Search Query");
+    }
 
     }
     public void linkSearchSuccessesWithSearches(List<TemporarySearchStat> tempSearches, List<FinalSearchStat> finalSearches) {

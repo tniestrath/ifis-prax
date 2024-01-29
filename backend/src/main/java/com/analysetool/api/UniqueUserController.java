@@ -1,11 +1,21 @@
 package com.analysetool.api;
 
+import com.analysetool.modells.UniqueUser;
 import com.analysetool.repositories.UniqueUserRepository;
+import com.analysetool.services.UniqueUserService;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -14,65 +24,53 @@ public class UniqueUserController {
 
     @Autowired
     UniqueUserRepository uniqueUserRepo;
+    @Autowired
+    UniqueUserService uniqueUserService;
 
-    @GetMapping("/getCountGlobal")
-    public int getCountGlobal() {
-        return uniqueUserRepo.getUserCountGlobal();
+
+    // Endpoint, um die durchschnittliche Verweildauer aller Nutzer als String zurückzugeben
+    @GetMapping("/average-time-spent")
+    public String getAverageTimeSpent() {
+        Double averageTimeSpent = uniqueUserRepo.getAverageTimeSpent();
+        return averageTimeSpent != null ? String.format("%.2f", averageTimeSpent) : "Daten nicht verfügbar";
     }
+
+
+    // Endpoint, um die durchschnittliche Verweildauer der Nutzer für den heutigen Tag als String zurückzugeben
+    @GetMapping("/average-time-spent-today")
+    public String getTodayAverageTimeSpent() {
+        LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = LocalDateTime.now().toLocalDate().atTime(23, 59, 59);
+        Double todayAverageTimeSpent = uniqueUserRepo.getAverageTimeSpentBetweenDates(startOfDay, endOfDay);
+        return todayAverageTimeSpent != null ? String.format("%.2f", todayAverageTimeSpent) : "Daten nicht verfügbar";
+    }
+
+
 
     /**
+     * Retrieves the click paths of users who have more than two clicks.
+     * This method returns the click paths as a single string, with each path separated by commas.
+     * Each path represents the sequence of categories clicked by a user.
+     * The number of users' paths returned is limited by the provided 'limit' parameter.
      *
-     * @param category "article" | "blog" | "news" | "whitepaper" | "podcast" | "ratgeber" | "global" | "main" | "ueber" | "impressum" | "preisliste" | "partner" | "datenschutz" | "newsletter" | "image" | "agb"
-     * @return count of all uniqueusers, that visited the subsite of "category" first.
+     * @param limit The maximum number of user paths to return. If not specified, defaults to 10.
+     *              This limits the number of users to be considered for generating click paths.
+     * @return A String containing the click paths of users, separated by commas. -> "main,blog,news"
+     *         Each click path is a sequence of category names representing the order of clicks.
+     *         Returns an empty string if no valid paths are found or if an error occurs.
      */
-    @GetMapping("/getCountByFirstCategory")
-    public int getCountByFirstCategory(String category) {
-        return uniqueUserRepo.getUserCountByFirstCategory(category);
+    @GetMapping("/paths")
+    public String getUserPaths(@RequestParam(defaultValue = "10") int limit) {
+        return uniqueUserService.getUserPaths(limit);
     }
 
-    /**
-     *
-     * @param category the category you want to check for. Valid values for category are ("article" | "blog" | "news" | "whitepaper" | "podcast" | "ratgeber" | "global" | "main" | "ueber" | "impressum" | "preisliste" | "partner" | "datenschutz" | "newsletter" | "image" | "agb")
-     * @return the count of all Users that have visited the subsite of "category" at all
-     */
-    @GetMapping("/getCountByCategory")
-    public int getCountByCategory(String category) {
-
-        switch(category) {
-            case "article":
-                return uniqueUserRepo.getUserCountArticle();
-            case "blog":
-                return uniqueUserRepo.getUserCountBlog();
-            case "news":
-                return uniqueUserRepo.getUserCountNews();
-            case "whitepaper":
-                return uniqueUserRepo.getUserCountWhitepaper();
-            case "podcast":
-                return uniqueUserRepo.getUserCountPodcast();
-            case "ratgeber":
-                return uniqueUserRepo.getUserCountRatgeber();
-            case "global":
-                return uniqueUserRepo.getUserCountGlobal();
-            case "main":
-                return uniqueUserRepo.getUserCountMain();
-            case "ueber":
-                return uniqueUserRepo.getUserCountUeber();
-            case "impressum":
-                return uniqueUserRepo.getUserCountImpressum();
-            case "preisliste":
-                return uniqueUserRepo.getUserCountPreisliste();
-            case "partner":
-                return uniqueUserRepo.getUserCountPartner();
-            case "datenschutz":
-                return uniqueUserRepo.getUserCountDatenschutz();
-            case "newsletter":
-                return uniqueUserRepo.getUserCountNewsletter();
-            case "image":
-                return uniqueUserRepo.getUserCountImage();
-            case "agb":
-                return uniqueUserRepo.getUserCountAGB();
-            default:
-                return 0;
-        }
+    @GetMapping("/all-paths")
+    public String getAllUserPaths() {
+        return uniqueUserService.getAllUserPaths();
     }
+
+
+
+
+
 }

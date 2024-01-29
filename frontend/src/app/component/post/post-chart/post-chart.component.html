@@ -4,6 +4,8 @@
       <option value="artikel">Artikel</option>
       <option value="blog">Blog</option>
       <option value="news">News</option>
+      <option value="podcast">Podcast</option>
+      <option value="whitepaper">Whitepaper</option>
     </select>
     <input type="radio" name="time_range" value="all_time" checked (change)="getData($event)">
     <input type="radio" name="time_range" value="half_year" id="post-range-halfyear" (change)="getData($event)">
@@ -13,5 +15,4 @@
   <div class="chart-canvas-box">
     <canvas [attr.id]="canvas_id" [ngStyle]="{'visibility': visibility}">{{chart}}</canvas>
   </div>
-
 </div>

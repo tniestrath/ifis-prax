@@ -8,6 +8,8 @@ import {Callup, CategoriesData} from "../component/call-up-chart/call-up-chart.c
 import {SystemUsage} from "../component/system/systemload/systemload.component";
 import Util from "../util/Util";
 import {Subject, Subscription} from "rxjs";
+import {ProfileState} from "../component/profile-completion/profile-completion.component";
+import {SysVars} from "./sys-vars-service";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -26,15 +28,27 @@ export enum dbUrl {
   GET_USER_CLICKS = "/users/getViewsBrokenDown?id=",
   GET_USER_BY_LOGINNAME = "/users/getByLogin?u=",
   GET_USER_BY_ID = "/users/getById?id=",
-  GET_USER_ORIGIN_MAP = "/users/getViewsByLocation?id=",
+  GET_USER_ALL_STATS_BY_ID = "/users/getAllSingleUser?id=",
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
+  GET_USER_RANKINGS = "/users/getRankings?id=ID",
   HAS_USER_POST = "/users/hasPost?id=",
+  GET_USER_PROFILE_COMPLETION = "/users/getPotentialById?userId=USERID",
+  GET_USER_PROFILE_AND_POSTS_BY_DATE = "/users/getUserClicksChartData?id=ID&start=START&end=END",
+  GET_USER_POSTCOUNT_BY_TYPE = "/users/getPostCountByType?id=ID",
+  GET_USER_EVENTCOUNT = "/users/getAmountOfEvents?id=ID",
+  GET_USER_EVENTCOUNT_CREATED_YESTERDAY = "/users/getAmountOfEventsCreatedYesterday?id=ID",
+  GET_USER_EVENTS_LIKE_POSTS = "/users/getEventsWithStatsAndId?&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH&id=ID",
+  GET_USER_TAG_DISTRIBUTION_PRECENTAGE = "/users/getSingleUserTagsData?id=ID&sorter=SORTER",
 
-  GET_USERS_ALL = "/users/getAllNew",
+  GET_USERS_ALL = "/users/getAll?page=PAGE&size=SIZE&search=SEARCH&filterAbo=ACCFILTER&filterTyp=USRFILTER&sorter=SORTER",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/users/getAccountTypeAllYesterday",
   GET_USERS_ACCOUNTTYPES_ALL_NEW = "/users/getNewUsersAll",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
+  GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE = "/users/getUserProfileAndPostViewsAveragesByType",
+  GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING = "/users/getUserProfileViewsAveragesByTypeAndPosts",
+  GET_USERS_TAG_DISTRIBUTION_PRECENTAGE = "/users/getAllUserTagsData",
+
 
   GET_POST = "/posts/getPostStatsByIdWithAuthor?id=ID",
   GET_POST_BY_USERS_BEST = "/posts/bestPost?id=ID&type=TYPE",
@@ -43,8 +57,11 @@ export enum dbUrl {
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
 
   GET_POSTS_ALL = "/posts/getAllPostsWithStats",
+  GET_POSTS_ALL_PAGED = "/posts/pageByTitle?page=PAGE&size=SIZE&sortBy=SORTER&filter=FILTER&search=SEARCH",
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
+  GET_POSTS_BY_AUTHOR = "/posts/getPostsByAuthor?authorId=ID&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH",
+  GET_POSTS_BY_IDS = "/posts/getPostStatsForList?list=LIST",
   GET_POSTS_PER_TYPE = "/bericht/getPostsByType",
   GET_POSTS_PER_TYPE_YESTERDAY = "/bericht/getPostsByTypeYesterday",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
@@ -63,12 +80,14 @@ export enum dbUrl {
 
   GET_EVENTS = "/events/getAmountOfEvents",
   GET_EVENTS_YESTERDAY = "/events/getAmountOfEventsCreatedYesterday",
+  GET_EVENTS_LIKE_POSTS = "/posts/getEventsWithStats?&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH",
 
   GET_GEO_GERMANY_ALL_TIME = "/geo/getTotalGermanGeoAllTime",
   GET_GEO_GERMANY_BY_DATES = "/geo/getTotalGermanGeoByDay?start=START&end=END",
   GET_GEO_GERMANY_ALL_TIME_BY_REGION = "/geo/getRegionGermanGeoAllTime?region=REGION",
   GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES = "/geo/getRegionGermanGeoByDate?region=REGION&start=START&end=END",
   GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES_LISTED = "/geo/getRegionGermanGeoByDateAsList?region=REGION&start=START&end=END",
+  GET_GEO_USER_BY_DATES = "/geo/getUserGeoByIdAndDay?id=USRID&start=START&end=END",
   GET_GEO_LAST_TIMESTAMP = "/geo/lastEntry",
   GET_GEO_FIRST_TIMESTAMP = "/geo/firstEntry",
   GET_GEO_TIMESPAN = "/geo/geoRange",
@@ -147,6 +166,10 @@ export class DbService {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USER_BY_ID) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
+  async getUserAllStatsById(id : string) : Promise<User>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_ALL_STATS_BY_ID) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
 
   async validate() : Promise<{"user_id":string}>{
     this.setLoading();
@@ -188,16 +211,14 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_TAG_RANKING), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async loadAllUsers() {
+  async getAllUsers(page: number, size: number, search: string, filter: { sort: string, accType: string, usrType: string }, signal: AbortSignal) {
     this.setLoading();
-    if (DbService.Users.length > 0){
-      return;
-    }
-    await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL), {credentials: "include"}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then(res => {
-      for (let user of res) {
-        DbService.Users.push(user);
-      }
-    });
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", search).replace("ACCFILTER", filter.accType).replace("USRFILTER", filter.usrType).replace("SORTER", filter.sort), {credentials: "include", signal: signal}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then((res : {users: any[], count : number}) => {
+      DbService.Users = res.users;
+      return res;
+    }, reason => {
+      console.log(reason);
+      return {users: [], count: 0}});
   }
 
   async getUserPostsDay(id : string){
@@ -207,6 +228,14 @@ export class DbService {
   async getUserPostsWithStats(id : string){
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_USER_WITH_STATS) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserPostsPaged(id : string, page : number, size : number, filter : string, search : string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_BY_AUTHOR).replace("ID", id).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getPostsByIDs(list : string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_BY_IDS).replace("LIST", list), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserImgSrc(id : string){
@@ -252,6 +281,27 @@ export class DbService {
     this.setLoading();
     return fetch(DbService.getUrl(dbUrl.HAS_USER_POST) + id).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
+  async getUserProfileCompletion(id : string): Promise<ProfileState> {
+    this.setLoading();
+    return fetch(DbService.getUrl(dbUrl.GET_USER_PROFILE_COMPLETION).replace("USERID", id)).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getUserClicksChartData(id : string, start : string, end : string): Promise<{date: string, profileViews: number, biggestPost: {id: number, title: string, type: string, clicks: number}, posts: {id: number, title: string, type: string, clicks: number}[]}[]> {
+    this.setLoading();
+    return fetch(DbService.getUrl(dbUrl.GET_USER_PROFILE_AND_POSTS_BY_DATE).replace("ID", id).replace("START", start).replace("END", end)).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserEventCount(id : string) {
+    this.setLoading();
+    return fetch(DbService.getUrl(dbUrl.GET_USER_EVENTCOUNT).replace("ID", id)).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserEventCountYesterday(id : string) {
+    this.setLoading();
+    return fetch(DbService.getUrl(dbUrl.GET_USER_EVENTCOUNT_CREATED_YESTERDAY).replace("ID", id)).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserPostCountByType(id : string) {
+    this.setLoading();
+    return fetch(DbService.getUrl(dbUrl.GET_USER_POSTCOUNT_BY_TYPE).replace("ID", id)).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
 
   async getMaxPerformance(){
     this.setLoading();
@@ -280,6 +330,10 @@ export class DbService {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
+  async getPostsAllPaged(page : number, size : number, sorter : string, filter : string, search : string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_POSTS_ALL_PAGED).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
 
   async getPostById(id: number) : Promise<Post> {
     this.setLoading();
@@ -295,9 +349,9 @@ export class DbService {
     return await fetch(DbService.getUrl(dbUrl.GET_POSTS_PER_TYPE_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getOriginMapByUser(id : number){
+  async getOriginMapByUser(id : number, start : string, end : string){
     this.setLoading();
-    return await  fetch(DbService.getUrl(dbUrl.GET_USER_ORIGIN_MAP) + id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await  fetch(DbService.getUrl(dbUrl.GET_GEO_USER_BY_DATES).replace("USRID", String(id)).replace("START", start).replace("END", end), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getGeoAll() : Promise<Map<string,number>> {
@@ -339,9 +393,23 @@ export class DbService {
     return await fetch((DbService.getUrl(dbUrl.GET_PODCAST_ALL)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
+  async getRatgeberAll() : Promise<Post[]> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_RATGEBER_ALL)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
   async getClicksByTime(id : number){
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USER_VIEWS_PER_HOUR)+ id, {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserRankings(id: string) : Promise<{
+    rankingContent: number;
+    rankingContentByGroup: number;
+    rankingProfile: number;
+    rankingProfileByGroup: number
+  }>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_RANKINGS).replace("ID", id), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getClicksByTimeAll() : Promise<number[]>{
     this.setLoading();
@@ -438,5 +506,32 @@ export class DbService {
   async getEventsYesterday() : Promise<string[]> {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_EVENTS_YESTERDAY), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getEventsLikePostsPaged(page : number, size : number,filter : string, search: string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_EVENTS_LIKE_POSTS).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserEventsLikePostsPaged(id : string, page : number, size : number,filter : string, search: string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_EVENTS_LIKE_POSTS).replace("ID", id).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getUserProfileViewsAverageByType() {
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getUserTagsDistributionPercentage() {
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_TAG_DISTRIBUTION_PRECENTAGE), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserTagsRanking(id : string, sorter: string){
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USER_TAG_DISTRIBUTION_PRECENTAGE).replace("ID", id).replace("SORTER", sorter), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getUserClicksAverageByViewType() {
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 }

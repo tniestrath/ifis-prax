@@ -2,12 +2,16 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
-import com.analysetool.util.MathHelper;
+import com.analysetool.services.ContentDownloadsHourlyService;
+import com.analysetool.services.PostClicksByHourDLCService;
+import com.analysetool.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -35,6 +39,8 @@ public class PostController {
     @Autowired
     private PostRepository postRepo;
     @Autowired
+    private PostClicksByHourDLCService postClicksService;
+    @Autowired
     private UserStatsRepository userStatsRepo;
     @Autowired
     private TagStatRepository tagStatRepo;
@@ -48,6 +54,12 @@ public class PostController {
     private WPUserRepository userRepo;
     @Autowired
     private PostTypeRepository postTypeRepo;
+    @Autowired
+    private ContentDownloadsHourlyService contentDownloadsService;
+    @Autowired
+    private EventsController eventsController;
+    @Autowired
+    private EventsRepository eventsRepo;
 
     PostRepository postRepository;
     PostStatsRepository statsRepo;
@@ -77,36 +89,6 @@ public class PostController {
     @GetMapping("/publishedPosts")
     public List<Post> getPublishedPosts(){return postRepository.findPublishedPosts();}
 
-    //ToDo Rename
-    @GetMapping("/getPostsByAuthorLine")
-    public String PostsByAuthor(@RequestParam int id) throws JSONException, ParseException {
-
-        JSONArray list = new JSONArray();
-        List<Post> posts = postRepository.findByAuthor(id);
-        DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
-
-        if (!posts.isEmpty()) {
-            for (Post i : posts) {
-                JSONObject obj = new JSONObject();
-                Date date = onlyDate.parse(i.getDate().toString());
-                String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-                obj.put("title", i.getTitle());
-                obj.put("date", formattedDate);
-                obj.put("count",1);
-
-                if (list.length() > 0 && list.getJSONObject(list.length() - 1).getString("date").equals(formattedDate)) {
-                    String currentId = list.getJSONObject(list.length() - 1).getString("title");
-                    int currentCount = list.getJSONObject(list.length() - 1).getInt("count");
-                    list.getJSONObject(list.length() - 1).put("title", currentId + "," + i.getTitle());
-                    list.getJSONObject(list.length() - 1).put("count", currentCount + 1);
-                } else {
-                    list.put(obj);
-                }
-            }
-        }
-        return list.toString();
-    }
 
     //ToDo Rename
     @GetMapping("/getPostsByAuthorLine2")
@@ -141,7 +123,7 @@ public class PostController {
                         }
                     }
 
-                    type = getType(id);
+                    type = getType(i.getId()) == null ? "default" : getType(i.getId());
 
                     JSONObject obj = new JSONObject();
                     Date date = onlyDate.parse(i.getDate().toString());
@@ -165,6 +147,33 @@ public class PostController {
             }
         }
         return list.toString();
+    }
+
+    /**
+     *
+     * @param authorId the user_id of the author you want posts from.
+     * @param page the page of results you want to receive.
+     * @param size the amount of results you want to receive at most.
+     * @param filter the EXACT slug of a term the post is supposed to have.
+     * @param search a String you want to search the db for, searches content AND title of posts.
+     * @return a JSONObject containing a JSONArray of JSONObjects that contain PostStats, and the count of Posts originally found.
+     * @throws JSONException
+     * @throws ParseException
+     */
+    @GetMapping("/getPostsByAuthor")
+    public String postsByAuthorPageable(long authorId, int page, int size, String filter, String search) throws JSONException, ParseException {
+        List<JSONObject> stats = new ArrayList<>();
+        List<Post> list = null;
+        if(filter.isBlank()) {
+            list = postRepo.findByAuthorPageable(authorId, search, PageRequest.of(page, size));
+        } else {
+            list = postRepo.findByAuthorPageable(authorId, search, filter, PageRequest.of(page, size));
+        }
+
+        for(Post post : list) {
+            stats.add(new JSONObject(PostStatsByIdForFrontend(post.getId())));
+        }
+        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
 
     @GetMapping("/getNewestPostWithStatsByAuthor")
@@ -193,6 +202,11 @@ public class PostController {
 
         }
         return leViews;
+    }
+
+    @GetMapping("/postClicksDistributedByHours")
+    public String getPostClicksOfLast24HourByPostIdAndDaysBackDistributedByHour(Long postId, Integer daysback){
+       return postClicksService.getPostClicksOfLast24HourByPostIdAndDaysBackDistributedByHour(postId,daysback).toString();//banger Name
     }
 
     //ToDo Rename
@@ -319,8 +333,6 @@ public class PostController {
         Date date = onlyDate.parse(post.getDate().toString());
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-        String filepath = postMetaRepo.getFilePath(id);
-
         obj.put("id", post.getId());
         obj.put("title", post.getTitle());
         obj.put("date", formattedDate);
@@ -333,12 +345,6 @@ public class PostController {
             obj.put("relevance", ((float)PostStats.getRelevance()/maxRelevance));
             obj.put("clicks", PostStats.getClicks().toString());
             obj.put("lettercount", PostStats.getLettercount());
-            obj.put("duration", 0);
-            if(type.contains("podcast")) {
-                try {
-                    obj.put("duration", getAudioDuration(filepath));
-                } catch (Exception ignored) {}
-            }
         }else {
             obj.put("performance",0);
             obj.put("relevance",0);
@@ -456,16 +462,17 @@ public class PostController {
     public long getViewsOfUserById(@RequestParam Long id){
         List<Post> posts = postRepo.findByAuthor(id.intValue());
         long views = 0 ;
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 PostStats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
-                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse) {
+                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse || termTax.getTermId() == tagIdPodcast || termTax.getTermId() == tagIdWhitepaper) {
                             views = views + Stat.getClicks();
                         }
                     }
@@ -481,16 +488,18 @@ public class PostController {
     public long getPostCountOfUserById(@RequestParam Long id){
         List<Post> posts = postRepo.findByAuthor(id.intValue());
         long PostCount = 0 ;
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 PostStats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
-                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse) {
+                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse || termTax.getTermId() == tagIdWhitepaper || termTax.getTermId() == tagIdPodcast) {
                             PostCount++ ;
                         }
                     }
@@ -667,54 +676,93 @@ public class PostController {
     /**
      *
      * @param id the id of the post you want the type of.
-     * @return the type of Post "news" | "article" | "blog" | "podcast" | "whitepaper" | "ratgeber"
+     * @return the type of Post "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber"
      * @throws JSONException .
      * @throws ParseException .
      */
     public String getType(@RequestParam long id) throws JSONException, ParseException {
-        if(!postRepository.findById(id).isPresent()) {return null;}
+        if(postRepository.findById(id).isEmpty()) {return null;}
 
-        if(postTypeRepo.getType((int) id) != null) {
-            if(!postTypeRepo.getType((int) id).contains("cyber-risk")) {
-                return postTypeRepo.getType((int) id);
-            } else {
-                return "ratgeber";
-            }
-        }
 
-        Post post = postRepository.findById(id).get();
-        List<String> tags = new ArrayList<>();
-        String type = "default";
-        List<Long> tagIDs = null;
-        if(termRelationRepo.existsByObjectId(post.getId())){
-            tagIDs = termRelationRepo.getTaxIdByObject(post.getId());
-        }
-        List<WPTerm> terms = new ArrayList<>();
-        if (tagIDs != null) {
-            for (long l : tagIDs) {
-                if (wpTermRepo.existsById(l)) {
-                    if (wpTermRepo.findById(l).isPresent()) {
-                        terms.add(wpTermRepo.findById(l).get());
-                    }
+        if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("post")) {
+
+            if (postTypeRepo.getType((int) id) != null) {
+                if (!postTypeRepo.getType((int) id).contains("cyber-risk")) {
+                    return postTypeRepo.getType((int) id);
+                } else {
+                    return "ratgeber";
                 }
             }
-        }
-        for (WPTerm t: terms) {
-            if (wpTermTaxonomyRepo.existsById(t.getId())){
-                if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
-                    WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
-                    if (Objects.equals(tt.getTaxonomy(), "category")){
-                        if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
-                            type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
+
+            if (postTypeRepo.getType((int) id) != null) {
+                if (!postTypeRepo.getType((int) id).contains("podcast")) {
+                    return postTypeRepo.getType((int) id);
+                } else {
+                    return "podcast";
+                }
+            }
+
+            Post post = postRepository.findById(id).get();
+            String type = "default";
+            List<Long> tagIDs = null;
+            if (termRelationRepo.existsByObjectId(post.getId())) {
+                tagIDs = termRelationRepo.getTaxIdByObject(post.getId());
+            }
+            List<WPTerm> terms = new ArrayList<>();
+            if (tagIDs != null) {
+                for (long l : tagIDs) {
+                    if (wpTermRepo.existsById(l)) {
+                        if (wpTermRepo.findById(l).isPresent()) {
+                            terms.add(wpTermRepo.findById(l).get());
                         }
-                    } else if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
-                        tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
                     }
                 }
             }
+            for (WPTerm t : terms) {
+                if (wpTermTaxonomyRepo.existsById(t.getId())) {
+                    if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()) {
+                        WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
+                        if (Objects.equals(tt.getTaxonomy(), "category")) {
+                            if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
+                                type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if (type == null) {
+                System.out.println(id + "\n");
+            }
+
+            return type;
+
+        } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("event")){
+            String type = "Event: ";
+            switch(eventsController.getEventType(eventsRepo.findByPostID(id).get())) {
+                case "o", "r" ->  type += "Sonstige";
+                case "k" -> type += "Kongress";
+                case "m" -> type += "Messe";
+                case "s" -> type += "Schulung/Seminar";
+                case "w" -> type += "Workshop";
+            }
+            return type;
         }
 
-        return type;
+
+        return "error";
+    }
+
+
+    @GetMapping("/getPostStatsForList")
+    public String getStatsForPostsArray(String list) throws JSONException, ParseException {
+        String[] postIds = list.split("-");
+        JSONArray json = new JSONArray();
+        for(String id : postIds) {
+            json.put(new JSONObject(PostStatsByIdForFrontend(Integer.parseInt(id))));
+        }
+        return json.toString();
     }
 
     /**
@@ -857,10 +905,10 @@ public class PostController {
         if(top != null) {
             switch (sorter) {
                 case "relevance" -> {
-                    top.sort((o1, o2) -> (int) (o2.getRelevance() - o1.getRelevance()));
+                    top.sort((o1, o2) -> Float.compare(o2.getRelevance(), o1.getRelevance()));
                 }
                 case "performance" -> {
-                    top.sort((o1, o2) -> (int) (o2.getPerformance() - o1.getPerformance()));
+                    top.sort((o1, o2) -> Float.compare(o2.getPerformance(), o1.getPerformance()));
                 }
                 case "clicks" -> {
                     top.sort((o1, o2) -> (int) (o2.getClicks() - o1.getClicks()));
@@ -969,6 +1017,62 @@ public class PostController {
 
         return new JSONObject(answer).toString();
     }
+
+
+    @GetMapping("/page")
+    public String getPostsPageable(Integer page, Integer size, String sortBy) throws JSONException, ParseException {
+        List<Long> list = postRepo.findByTypeOrderByDateDesc(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        List<JSONObject> stats = new ArrayList<>();
+        for(Long id : list) {
+            if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper")) {
+                stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+            }
+        }
+        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
+    }
+
+
+    @GetMapping("/pageByTitle")
+    public String pageTitleFinder(Integer page, Integer size, String sortBy, String filter, String search) throws JSONException, ParseException {
+        List<Post> list;
+        if(!filter.isBlank()) {
+             list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy)));
+        } else {
+            list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
+        }
+        List<JSONObject> stats = new ArrayList<>();
+        for(Post post : list) {
+            long id = post.getId();
+            stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+        }
+        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
+    }
+
+
+    @GetMapping("/getEventsWithStats")
+    public String getEventsWithStats(Integer page, Integer size,  String filter, String search) throws JSONException, ParseException {
+        List<Post> list;
+        if(search.isBlank()) {
+            list = postRepo.findByStatusIsAndTypeIsOrderByModifiedDesc("publish", "event", PageRequest.of(page, size));
+        } else {
+            list = postRepo.findByTitleContainingAndStatusIsAndTypeIsOrderByModifiedDesc(search, "publish", "event", PageRequest.of(page, size));
+        }
+        List<JSONObject> stats = new ArrayList<>();
+
+        for(Post post : list) {
+            long id = post.getId();
+            if((eventsRepo.findByPostID(post.getId()).isPresent())) {
+                if(filter.isBlank() || eventsController.getEventType(eventsRepo.findByPostID(post.getId()).get()).equalsIgnoreCase(filter)) {
+                    stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+                }
+            }
+        }
+
+        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
+    }
+
+
+
 
     /**
      * Endpoint for retrieval of ALL Posts that are not Original Content (User Posts (Blog, Article, Whitepaper), News)
@@ -1517,6 +1621,7 @@ public class PostController {
 
 
     public double getAudioDuration(String filePath) throws IOException, UnsupportedAudioFileException {
+
         File audioFile = new File(filePath);
 
         // Get the audio file format

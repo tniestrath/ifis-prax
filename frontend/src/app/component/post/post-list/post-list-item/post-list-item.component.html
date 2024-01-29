@@ -4,7 +4,7 @@
       <div class="post-label" [style]="{'color': typeColor, 'background': bgColor, 'font-weight': 'bold'}">{{data.type.toUpperCase()}}</div>
       <p>{{data.title}}</p>
     </div>
-    <div class="post-detail-group-5">
+    <div [class.post-detail-group-5]="!data.type.startsWith('Event')" [class.post-detail-group-3]="data.type.startsWith('Event')">
       <div class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Datum</div>
         <p>{{formattedDate}}</p>
@@ -17,25 +17,29 @@
         <div class="post-label" [style]="{'background': bgColor}">Dauer</div>
         <p>{{data.duration}}</p>
       </div>
-      <div *ngIf="!data.type.startsWith('podcast')" class="post-detail">
+      <div *ngIf="!data.type.startsWith('podcast') && !data.type.startsWith('Event')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Zeichen</div>
         <p>{{data.lettercount}}</p>
       </div>
-      <div class="post-detail">
+      <div *ngIf="!data.type.startsWith('Event')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Perf</div>
         <p>{{(data.performance * 100).toFixed()}}</p>
       </div>
-      <div class="post-detail">
+      <div *ngIf="!data.type.startsWith('Event')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Rel</div>
         <p>{{(data.relevance * 100).toFixed()}}</p>
       </div>
-    </div>
-    <div class="post-detail-group-2">
-      <div class="post-detail">
+      <div *ngIf="data.type.startsWith('Event')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Autoren</div>
         <p>{{data.authors}}</p>
       </div>
-      <div class="post-detail">
+    </div>
+    <div *ngIf="!data.type.startsWith('ratgeber')" class="post-detail-group-2">
+      <div *ngIf="!data.type.startsWith('Event')" class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Autoren</div>
+        <p>{{data.authors}}</p>
+      </div>
+      <div *ngIf="!data.type.startsWith('Event')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Themen</div>
         <p>{{formattedTags}}</p>
       </div>

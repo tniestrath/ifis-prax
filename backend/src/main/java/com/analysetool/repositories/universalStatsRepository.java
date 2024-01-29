@@ -1,9 +1,10 @@
 package com.analysetool.repositories;
 
 import com.analysetool.modells.UniversalStats;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
+import org.springframework.data.domain.Pageable;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,11 @@ public interface universalStatsRepository extends JpaRepository<UniversalStats, 
 
     @Query("SELECT u FROM UniversalStats u ORDER BY u.id ASC LIMIT 1")
     UniversalStats getEarliestUniStat();
+
+
+    @Query("SELECT u.id FROM UniversalStats u ORDER BY u.id DESC")
+    Page<Integer> getLastIdsByPageable(Pageable pageable);
+
 
 }
 

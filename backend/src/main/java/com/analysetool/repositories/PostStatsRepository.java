@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +50,9 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     void updateRefferings( Long artId,  Long refferings);
 
     List<PostStats> findByArtId(Long artId);
+
+    @Query("SELECT SUM(p.clicks) FROM PostStats p WHERE p.artId=:artId")
+    Integer getSumClicks(long artId);
 
     // Zähle die Anzahl der Stats-Objekte anhand der artId
     Long countByArtId(Long artId);
@@ -148,13 +150,6 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
     @Query("SELECT MAX(s.relevance) FROM PostStats s")
     public float getMaxRelevance();
-
-    @Query("SELECT s.viewsPerHour FROM PostStats s WHERE s.artId=:artId")
-    public HashMap getViewsPerHour(int artId);
-
-    @Query("SELECT s.viewsPerHour FROM PostStats s")
-    public List<HashMap> getAllViewsPerHour();
-
     @Query("SELECT s FROM PostStats s ORDER BY s.performance DESC LIMIT 5")
     public List<PostStats> getTop5Relevance();
 

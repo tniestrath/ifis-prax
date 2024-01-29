@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.util.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,11 +92,6 @@ public class uniStatController {
         }
 
         return response.toString();
-    }
-    @GetMapping(value="/getViewsPerHourByDaysBack")
-    public String getViewsPerHourByDaysBack(@RequestParam int daysBack) throws ParseException {
-        String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(daysBack).format(DateTimeFormatter.ISO_DATE);
-        return uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(dateString)).get().getViewsPerHour().toString();
     }
 
     /**
@@ -190,6 +186,10 @@ public class uniStatController {
         labelsForCategory.add("Podcast");
         labelsForCategory.add("Whitepaper");
         labelsForCategory.add("Ratgeber");
+        labelsForCategory.add("Ratgeber-Post");
+        labelsForCategory.add("Ratgeber-Buch");
+        labelsForCategory.add("Ratgeber-Glossar");
+        labelsForCategory.add("Ratgeber-Selbstlernangebot");
         labelsForCategory.add("Ueber");
         labelsForCategory.add("Impressum");
         labelsForCategory.add("Preisliste");
@@ -210,6 +210,10 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPodcast());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsWhitepaper());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeber());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberPost());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberBuch());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberGlossar());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberSelf());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsUeber());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsImpressum());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPreisliste());
@@ -228,6 +232,10 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPodcast());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherWhitepaper());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeber());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberPost());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberBuch());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberGlossar());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberSelf());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherUeber());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherImpressum());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPreisliste());
@@ -260,6 +268,10 @@ public class uniStatController {
         labelsForCategory.add("Podcast");
         labelsForCategory.add("Whitepaper");
         labelsForCategory.add("Ratgeber");
+        labelsForCategory.add("Ratgeber-Post");
+        labelsForCategory.add("Ratgeber-Buch");
+        labelsForCategory.add("Ratgeber-Glossar");
+        labelsForCategory.add("Ratgeber-Self");
         labelsForCategory.add("Ueber");
         labelsForCategory.add("Impressum");
         labelsForCategory.add("Preisliste");
@@ -283,6 +295,10 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperByUniStatId(id));
         //Ratgeber
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberPostByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberBuchByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberGlossarByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberSelfByUniStatId(id));
         //Footer
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsUeberByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImpressumByUniStatId(id));
@@ -305,6 +321,10 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperByUniStatId(id));
         //Ratgeber
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberPostByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberBuchByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberGlossarByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberSelfByUniStatId(id));
         //Footer
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserUeberByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImpressumByUniStatId(id));
@@ -334,6 +354,10 @@ public class uniStatController {
         labelsForCategory.add("Podcast");
         labelsForCategory.add("Whitepaper");
         labelsForCategory.add("Ratgeber");
+        labelsForCategory.add("Ratgeber-Post");
+        labelsForCategory.add("Ratgeber-Buch");
+        labelsForCategory.add("Ratgeber-Glossar");
+        labelsForCategory.add("Ratgeber-Self");
         labelsForCategory.add("Ueber");
         labelsForCategory.add("Impressum");
         labelsForCategory.add("Preisliste");
@@ -356,6 +380,10 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperAllTime());
         //Ratgeber
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberPostAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberBuchAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberGlossarAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberSelfAllTime());
         //Footer
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsUeberAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImpressumAllTime());
@@ -378,6 +406,10 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperAllTime());
         //Ratgeber
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberPostAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberBuchAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberGlossarAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberSelfAllTime());
         //Footer
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserUeberAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImpressumAllTime());
@@ -583,9 +615,11 @@ public class uniStatController {
 
         List<Post> posts = postRepository.findAllUserPosts();
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdNews = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
 
         for (Post post : posts) {
 
@@ -607,12 +641,23 @@ public class uniStatController {
                             ergebnis.put(obj);
                         }
 
-                        if (termTax.getTermId() == tagIdPresse && type.equals("news")) {
+                        if (termTax.getTermId() == tagIdNews && type.equals("news")) {
                             JSONObject obj = new JSONObject();
                             obj = getClickOfDayAsJson(post.getId(),daysBack);
                             ergebnis.put(obj);
                         }
 
+                        if (termTax.getTermId() == tagIdWhitepaper && type.equals("whitepaper")) {
+                            JSONObject obj = new JSONObject();
+                            obj = getClickOfDayAsJson(post.getId(),daysBack);
+                            ergebnis.put(obj);
+                        }
+
+                        if (termTax.getTermId() == tagIdPodcast && type.equals("podcast")) {
+                            JSONObject obj = new JSONObject();
+                            obj = getClickOfDayAsJson(post.getId(),daysBack);
+                            ergebnis.put(obj);
+                        }
                     }
                 }
 

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
@@ -12,7 +12,7 @@ import Util, {DashColors} from "../../util/Util";
 })
 export class ClicksComponent extends DashBaseComponent implements OnInit, AfterViewInit{
 
-  colors : string[] = [DashColors.ARTICLE, DashColors.BLOG, DashColors.NEWS];
+  colors : string[] = [DashColors.ARTICLE, DashColors.BLOG, DashColors.NEWS, DashColors.PODCAST, DashColors.WHITEPAPER];
   c_chart: any;
   p_chart: any;
 
@@ -20,7 +20,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
   p_chart_total : number  = 0;
   isError: boolean = false;
 
-  createChart(canvas_id : string, labels : string[], realData : number[], onClick : EventEmitter<number> | undefined){
+  createChart(canvas_id : string, labels : string[], realData : number[], realData2?: number[], onClick? : EventEmitter<number> | undefined){
 
     const donughtInner  = {
       id: "donughtInner",
@@ -55,21 +55,29 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
         ctx.fillText(totalText, x, y+2);
       }
     }
-
-
+    var datasets = [{
+      label: "",
+      data: realData,
+      backgroundColor: this.colors,
+      borderRadius: 5,
+      borderWidth: 5
+    }];
+    if (realData2){
+      datasets.push({
+          label: "",
+          data: realData2,
+          backgroundColor: this.colors,
+          borderRadius: 5,
+          borderWidth: 5
+        });
+    };
 
     // @ts-ignore
     return new Chart(canvas_id, {
       type: "doughnut",
       data: {
         labels: labels,
-        datasets: [{
-          label: "",
-          data: realData,
-          backgroundColor: this.colors,
-          borderRadius: 5,
-          borderWidth: 5
-        }]
+        datasets: datasets
       },
       options: {
         aspectRatio: 1,
@@ -123,29 +131,34 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
       const datasetIndex = dataset.index;
       const bgColor = dataset.fillStyle;
 
-      const li = document.createElement("LI");
-      li.classList.add("clicks-item-li");
-      li.style.display = "flex";
-      li.style.alignItems = "center";
-      li.style.flexDirection = "row";
-      li.style.height = "20px";
-      li.style.margin = "5px";
-      const spanBox = document.createElement("SPAN");
-      spanBox.classList.add("clicks-item-span");
-      spanBox.style.display = "inline-block";
-      spanBox.style.height = "100%";
-      spanBox.style.width = "20px";
-      spanBox.style.marginRight = "5px";
-      spanBox.style.borderRadius = "5px";
-      spanBox.style.backgroundColor = bgColor;
+      if (Number(chart.data.datasets[0].data[datasetIndex]) > 0){
+        const li = document.createElement("LI");
+        li.classList.add("clicks-item-li");
+        li.style.display = "flex";
+        li.style.alignItems = "center";
+        li.style.flexDirection = "row";
+        li.style.height = "20px";
+        li.style.margin = "5px";
+        const spanBox = document.createElement("SPAN");
+        spanBox.classList.add("clicks-item-span");
+        spanBox.style.display = "inline-block";
+        spanBox.style.height = "100%";
+        spanBox.style.width = "20px";
+        spanBox.style.marginRight = "5px";
+        spanBox.style.borderRadius = "5px";
+        spanBox.style.backgroundColor = bgColor;
 
-      const p = document.createElement("P");
-      p.classList.add("clicks-item-text");
-      p.innerText = text + ": " + chart.data.datasets[0].data[datasetIndex];
-
-      ul.appendChild(li);
-      li.appendChild(spanBox);
-      li.appendChild(p);
+        const p = document.createElement("P");
+        p.classList.add("clicks-item-text");
+        if (chart.data.datasets[1]){
+          p.innerText = text + ": " + Util.formatNumbers(Number(chart.data.datasets[0].data[datasetIndex])) + " (" + Number(chart.data.datasets[1].data[datasetIndex]) + ")";
+        } else {
+          p.innerText = text + ": " + Util.formatNumbers(Number(chart.data.datasets[0].data[datasetIndex]));
+        }
+        ul.appendChild(li);
+        li.appendChild(spanBox);
+        li.appendChild(p);
+      }
     });
 
     const media_ratio = window.matchMedia("(min-aspect-ratio: 5/4)");
@@ -199,25 +212,29 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
     }
     this.c_chart_total = 0;
     this.p_chart_total = 0;
+    this.db.getUserPostCountByType(SysVars.USER_ID).then((res : {Whitepaper: number, Blogs: number, Artikel: number, News: number, Podcasts: number}) => {
+      var realData2 = res;
+      this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsNews: number, viewsPodcast: number, viewsWhitepaper: number} | string) => {
+        if (typeof res !== "string"){
+          this.isError = false;
+          this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News", "Podcast", "Whitepaper"], [res.viewsArtikel,res.viewsBlog, res.viewsNews, res.viewsPodcast, res.viewsWhitepaper],
+                                [realData2.Artikel,realData2.Blogs,realData2.News,realData2.Podcasts,realData2.Whitepaper]);
+          this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsNews)]);
+          this.createLegend("clicks-content-box", this.c_chart);
+          this.createLegend("clicks-profile-box", this.p_chart);
+          this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsNews + res.viewsPodcast + res.viewsWhitepaper;
+          this.p_chart_total = res.viewsProfile + this.c_chart_total;
+          this.cdr.detectChanges();
+        }
+        else {
+          this.isError = true;
+          this.cdr.detectChanges();
+        }
 
-    this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsPresse: number} | string) => {
-      if (typeof res !== "string"){
-        this.isError = false;
-        this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News"], [res.viewsArtikel,res.viewsBlog, res.viewsPresse], undefined);
-        this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsPresse)], undefined);
-        this.createLegend("clicks-content-box", this.c_chart);
-        this.createLegend("clicks-profile-box", this.p_chart);
-        this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsPresse;
-        this.p_chart_total = res.viewsProfile + this.c_chart_total;
-        this.cdr.detectChanges();
-      }
-      else {
-        this.isError = true;
-        this.cdr.detectChanges();
-      }
+        //this.pdf.exportAsPDF(this.p_chart);
+      });
+    });
 
-      //this.pdf.exportAsPDF(this.p_chart);
-    })
     this.cdr.detectChanges();
   }
 
@@ -238,4 +255,5 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
   }
 
 
+  protected readonly Util = Util;
 }

@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { PolarChartComponent } from './component/polar-chart/polar-chart.component';
+import { ProfileCompletionComponent } from './component/profile-completion/profile-completion.component';
 import { HeaderComponent } from './page/header/header.component';
 import { CounterComponent } from './component/counter/counter.component';
 import { GaugeComponent } from './component/gauge/gauge.component';
@@ -17,7 +17,7 @@ import { PageComponent } from './page/page-einzel/page.component';
 import {CookieService} from "ngx-cookie-service";
 import { SelectorComponent } from './page/selector/selector.component';
 import { SelectableDirective } from './page/selector/selectable.directive';
-import { UserComponent } from './page/page-einzel/user/user.component';
+import {UserComponent} from './page/page-einzel/user/user.component';
 import {NgOptimizedImage} from "@angular/common";
 import { DashBaseComponent } from './component/dash-base/dash-base.component';
 import { ClicksComponent } from './component/clicks/clicks.component';
@@ -35,21 +35,41 @@ import { OriginMapComponent } from './component/origin-map/origin-map.component'
 import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time.component';
 import { TagPieComponent } from './component/tag/tag-pie/tag-pie.component';
 import { ImgFallbackDirective } from './img-fallback.directive';
-import { PostListComponent, PodcastListComponent } from './component/post/post-list/post-list.component';
-import { PostListItemComponent } from './component/post/post-list/post-list-item/post-list-item.component';
+import {
+  PostListComponent,
+  PodcastListComponent,
+  RatgeberListComponent,
+  UserPostListComponent,
+  EventListComponent, UserEventListComponent
+} from './component/post/post-list/post-list.component';
+import {
+  PostListItemComponent
+} from './component/post/post-list/post-list-item/post-list-item.component';
 import { TagChartComponent } from './component/tag/tag-chart/tag-chart.component';
 import { CallUpChartComponent } from './component/call-up-chart/call-up-chart.component';
 import { OriginByTimeChartComponent } from './component/origin-by-time-chart/origin-by-time-chart.component';
 import { Top5PostsComponent, Top5ArticleComponent, Top5BlogComponent, Top5NewsComponent, Top5WhitepaperComponent } from './component/post/top5-posts/top5-posts.component';
 import { NewsletterStatsComponent } from './component/newsletter-stats/newsletter-stats.component';
-import { EventsStatsComponent } from './component/events-stats/events-stats.component';
+import {EventsStatsComponent, UserEventsStatsComponent} from './component/events-stats/events-stats.component';
 import { SystemloadComponent } from './component/system/systemload/systemload.component';
 import { PostTypeComponent } from './component/post/post-type/post-type.component';
+import { UserListComponent } from './page/page-einzel/user/user-list/user-list.component';
+import { UserComparatorComponent } from './page/page-einzel/user/user-comparator/user-comparator.component';
+import {
+  UserStatsByPlanComponent,
+  UserStatsByPlanViewTypeCompareComponent
+} from './page/page-einzel/user/user-stats-by-plan/user-stats-by-plan.component';
+import { UserDisplayComponentComponent } from './page/page-einzel/user/user-display-component/user-display-component.component';
+import { UserClicksChartComponent } from './page/page-einzel/user/user-clicks-chart/user-clicks-chart.component';
+import {
+  SingleUserTagsDistComponent,
+  UserTagsDistComponent
+} from './page/page-einzel/user/user-tags-dist/user-tags-dist.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    PolarChartComponent,
+    ProfileCompletionComponent,
     HeaderComponent,
     CounterComponent,
     GaugeComponent,
@@ -77,6 +97,10 @@ import { PostTypeComponent } from './component/post/post-type/post-type.componen
     ImgFallbackDirective,
     PostListComponent,
     PodcastListComponent,
+    RatgeberListComponent,
+    UserPostListComponent,
+    EventListComponent,
+    UserEventListComponent,
     PostListItemComponent,
     TagChartComponent,
     CallUpChartComponent,
@@ -88,8 +112,17 @@ import { PostTypeComponent } from './component/post/post-type/post-type.componen
     Top5WhitepaperComponent,
     NewsletterStatsComponent,
     EventsStatsComponent,
+    UserEventsStatsComponent,
     SystemloadComponent,
-    PostTypeComponent
+    PostTypeComponent,
+    UserListComponent,
+    UserComparatorComponent,
+    UserStatsByPlanComponent,
+    UserStatsByPlanViewTypeCompareComponent,
+    UserDisplayComponentComponent,
+    UserClicksChartComponent,
+    UserTagsDistComponent,
+    SingleUserTagsDistComponent
   ],
     imports: [
         BrowserModule,

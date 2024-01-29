@@ -119,4 +119,10 @@ export class HeaderComponent implements AfterViewInit{
       this.html_err_code = "";
     }
   }
+
+  onLogoutClick() {
+    this.cs.deleteAll("/");
+    SysVars.WELCOME = true;
+    location.reload();
+  }
 }

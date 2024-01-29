@@ -1,6 +1,6 @@
 .clicks-box {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   flex-direction: column;
   flex-wrap: nowrap;
   height: 100%;

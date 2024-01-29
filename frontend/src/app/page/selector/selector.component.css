@@ -1,8 +1,8 @@
 .selector-box{
-  max-height: calc(100vh - 70px);
+  max-height: calc(100vh - 60px);
   display: grid;
   grid-gap: 0;
   grid-column-gap: 5px;
-  padding: 5px 5vw;
+  padding: 0 5vw;
   overflow-y: auto;
 }

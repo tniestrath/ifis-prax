@@ -4,6 +4,8 @@ import {SafeUrl} from "@angular/platform-browser";
 import {DbService} from "../../../services/db.service";
 import {User} from "./user";
 import Util from "../../../util/Util";
+import {SysVars} from "../../../services/sys-vars-service";
+import {DashBaseComponent} from "../../../component/dash-base/dash-base.component";
 
 @Component({
   selector: 'dash-user',
@@ -11,34 +13,24 @@ import Util from "../../../util/Util";
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements SelectableComponent, OnInit {
-  @Input() data: User = new User("", "", "", 0, 0, 0, 50, "", 0, "");
+  @Input() data: User = new User();
 
-  @Input() clicked: EventEmitter<User> = new EventEmitter<User>();
+  bgColor: string = "0";
 
-  user_img: SafeUrl = "";
-  bgColor: string = "fff";
-  performance_image_id: string = "33";
+  tendency: string = "stagniert";
 
   constructor(private db: DbService) {
   }
 
   onClick(): void {
-    this.clicked?.emit(this.data);
+    SysVars.SELECTED_USER_ID.emit(Number(this.data.id));
   }
 
   ngOnInit(): void {
-    if (this.data.performance <= 33) this.performance_image_id = "33";
-    else if (this.data.performance > 33 && this.data.performance <= 66) this.performance_image_id = "66";
-    else if (this.data.performance > 66) this.performance_image_id = "100";
 
-    this.db.getUserImgSrc(this.data.id).then(dataUrl => {
-      this.user_img = dataUrl;
-    });
-  }
-
-  getUserImg() {
-    return this.user_img;
   }
 
   protected readonly Util = Util;
+  protected readonly parseFloat = parseFloat;
+  protected readonly Math = Math;
 }

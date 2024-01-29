@@ -194,13 +194,13 @@ public class SearchStatsController {
             } else if (limit == 0) {
                 latestEventSearches = eventSearchRepo.findAll();
             }
-
+            System.out.println("leS "+latestEventSearches.toString());
             List<Integer> resultCounts = latestEventSearches.stream()
                     .map(EventSearch::getResultCount)
                     .collect(Collectors.toList());
-
+            System.out.println("count "+resultCounts.toString());
             List<Integer> lowerBoundOutliers = MathHelper.getLowerBoundOutliersInt(resultCounts);
-
+            System.out.println("lbO "+lowerBoundOutliers.toString());
             List<EventSearch> filteredEventSearches = latestEventSearches.stream()
                     .filter(eventSearch -> lowerBoundOutliers.contains(eventSearch.getResultCount()))
                     .collect(Collectors.toList());
@@ -211,6 +211,12 @@ public class SearchStatsController {
             return "Fehler beim Verarbeiten der Daten";
         }
     }
+
+    @GetMapping("getZeroCountEventSearches")
+    public String getZeroCountEventSearches(){
+        return eventSearchRepo.getEventSearchesWithCountZero().toString();
+    }
+
 
 
 

@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {SysVars} from "../../services/sys-vars-service";
+import {User} from "../../page/page-einzel/user/user";
 
 enum Reason {
   CORRECT,
@@ -22,9 +23,9 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
   }
 
   onSubmit(username: string, userpass: string) {
+    // @ts-ignore
     this.db.login(username, userpass).then(res => {
       res.text().then(ans => {
-        console.log(ans);
         ans = decodeURIComponent(ans);
         this.cs.deleteAll();
         this.styleLogin(Reason.CORRECT);

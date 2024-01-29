@@ -43,8 +43,20 @@ export default class Util {
 
   static getFormattedNow(offset_day?: number){
     let now = new Date(Date.now());
+    let month = "";
+    let day = "";
     if (offset_day) now.setDate(now.getDate() + offset_day);
-    let formatteddate = now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+    if (now.getMonth() + 1 < 10){
+      month = "0" + (now.getMonth() + 1);
+    } else {
+      month = "" + (now.getMonth() +1);
+    }
+    if (now.getDate() < 10){
+      day = "0" + now.getDate();
+    } else {
+      day = "" + now.getDate();
+    }
+    let formatteddate = now.getFullYear() + "-" + month + "-" + day;
     return formatteddate;
   }
 
@@ -67,6 +79,46 @@ export default class Util {
       case 6: return "Sa";
       default : return "ERR";
     }
+  }
+
+  static getColor(option: string, type : string){
+    switch (option) {
+      case "plan":
+        switch (type) {
+          case "basis":
+            return DashColors.PLAN_BASIC;
+          case "basis-plus":
+            return DashColors.PLAN_BASIC_PLUS;
+          case "plus":
+            return DashColors.PLAN_PLUS;
+          case "premium":
+          case "sponsor":
+            return DashColors.PLAN_PREMIUM;
+          default:
+            return DashColors.PLAN_WITHOUT;
+        }
+      case "post":
+        switch (type) {
+          case "article":
+          case "artikel":
+            return DashColors.ARTICLE;
+          case "blog":
+            return DashColors.BLOG;
+          case  "news":
+            return DashColors.NEWS;
+          case "whitepaper":
+            return DashColors.WHITEPAPER;
+          case "podcast":
+            return DashColors.PODCAST;
+          case "ratgeber":
+            return DashColors.RATGEBER;
+          default:
+            return DashColors.GREY;
+        }
+      default:
+        return DashColors.GREY;
+    }
+
   }
 }
 export enum DashColors {
@@ -103,9 +155,11 @@ export enum DashColors {
 
   BLACK_50 = "rgba(0,0,0, .5)",
 
+  RATGEBER = "rgb(130,106,34)",
+
   GREY = "rgb(200,200,200)",
   PLAN_WITHOUT = "rgb(200,200,200)",
   BACKGROUND = "rgb(200,200,200)",
 
-  GREY_50 = "rgba(200,200,200, .5)"
+  GREY_50 = "rgba(200,200,200, .5)",
 }

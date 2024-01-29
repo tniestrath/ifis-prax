@@ -1,11 +1,13 @@
 package com.analysetool.services;
 
 import com.analysetool.api.PostController;
+import com.analysetool.api.UserController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.util.Constants;
 import com.analysetool.util.DashConfig;
 import com.analysetool.util.IPHelper;
-import com.analysetool.util.MapHelper;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
@@ -18,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -32,7 +37,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
 
 @Service
 public class LogService {
@@ -83,19 +87,44 @@ public class LogService {
     @Autowired
     private PostController postController;
 
+    @Autowired
+    private UserController userController;
+
+    @Autowired
+    private UniversalAverageClicksDLCRepository uniAverageClicksRepo;
+
+    @Autowired
+    private UniversalTimeSpentDLCRepository uniTimeSpentRepo;
+
+    @Autowired
+    private PostClicksByHourDLCService postClicksByHourDLCService;
+
+    @Autowired
+    private ContentDownloadsHourlyRepository contentDownloadsHourlyRepo;
+    @Autowired
+    private EventsRepository eventRepo;
+    @Autowired
+    private FinalSearchStatService finalSearchService;
+    @Autowired
+    private TemporarySearchStatService temporarySearchService;
+
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
     private BufferedReader br;
     private String path = "";
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
-    private final String BlogSSPattern = "^.*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
-    private final String ArtikelSSPattern = "^.*GET /artikel/(\\S+)/.*s=(\\S+)\".*";//search +1, view +1,(bei match) vor artikel view pattern
+    //private final String BlogSSPattern = "^.*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
+    private final String ArtikelSSPattern = "^.*GET /artikel/([^/]+)/.*s=([^&\"]+)\"";
+    private final String PresseSSViewPatter = "^.*GET /news/([^/]+)/.*s=([^&\"]+)\"";
+    private final String BlogSSPattern = "^.*GET /blog/([^/]+)/.*s=([^&\"]+)\"";
+    private final String WhitepaperSSPattern = "^.*GET /whitepaper/([^/]+)/.*s=([^&\"]+)\"";//search +1, view +1,(bei match) vor artikel view pattern
+    //private final String ArtikelSSPattern = "^.*GET /artikel/([^ ]+)/.*[?&]s=([^&\"]+).*";
+
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
-    private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
+   // private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
     private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
-    private final String RedirectUserPattern ="/.*GET .*goto=.*\"(https?:/.*/(user)/(\\S*)/)";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
 
     //Blog view +1 bei match
@@ -107,11 +136,17 @@ public class LogService {
     private final String ratgeberGlossarView = "^.*GET /ratgeber/glossar-cyber-sicherheit/";
 
     private final String ratgeberBuchView = "^.*GET /ratgeber/cyber-sicherheit/";
+
+    private final String ratgeberSelfView = "^.*GET /ratgeber/selbstlernangebot-it-sicherheit/";
+
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
-    private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
+    //private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
 
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
+
+    private final String contentDownload ="^.*GET /wp-content/uploads/[\\d]{4}/[\\d]{2}/(\\S+).pdf";
+    //private final String ContentDownload = "^.*GET /wp-content/uploads/[\\d]{4}/[\\d]{2}/(\\S+?)(-\\d{3})?.pdf";
 
     private final String PodcastViewPattern = "^.*GET /podcast/(\\S+)/";
 
@@ -141,6 +176,11 @@ public class LogService {
 
     private final String image = "^.*GET /ziel-des-marktplatz-it-sicherheit/";
 
+    private final String RedirectUserPattern =".*GET .*goto/(.*) HTTP/";
+
+    private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
+
+    private final String eventSSView="^.*GET /veranstaltungen/(\\S+)/.*s=(\\S+)\".*";
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
     Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
@@ -168,10 +208,10 @@ public class LogService {
     Pattern ratgeberPostViewPattern = Pattern.compile(ratgeberView);
     Pattern ratgeberGlossarViewPattern = Pattern.compile(ratgeberGlossarView);
     Pattern ratgeberBuchViewPattern = Pattern.compile(ratgeberBuchView);
-
+    Pattern ratgeberSelfViewPattern = Pattern.compile(ratgeberSelfView);
     Pattern podcastViewPattern = Pattern.compile(PodcastViewPattern);
-
-
+    Pattern contentDownloadPattern= Pattern.compile(contentDownload);
+    Pattern eventViewPattern = Pattern.compile(eventView);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -223,6 +263,28 @@ public class LogService {
     @Autowired
     private UniversalStatsHourlyRepository uniHourlyRepo;
 
+    @Autowired
+    private UserViewsByHourDLCRepository userViewHourDLCRepo;
+
+    @Autowired
+    private UserViewsByHourDLCService userViewsByHourDLCService;
+
+    @Autowired
+    private ContentDownloadsHourlyService contentDownloadsHourlyService;
+
+    @Autowired
+    private UserRedirectsHourlyService userRedirectService;
+
+    @Autowired
+    private UserRedirectsHourlyRepository userRedirectRepo;
+
+    private Map<String, UserViewsByHourDLC> userViewsHourDLCMap = new HashMap<>();
+    private Map<String, ContentDownloadsHourly> contentDownloadsMap = new HashMap<>();
+
+    private Map<String,PostClicksByHourDLC> postClicksMap = new HashMap<>();
+    private Map<String,UserRedirectsHourly> userRedirectsMap = new HashMap<>();
+
+    private Map<String,FinalSearchStatDLC> searchDLCMap = new HashMap<>();
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
@@ -358,7 +420,7 @@ public class LogService {
     }
 
 
-    public void findAMatch(SysVar sysVar) throws IOException, ParseException {
+    public void findAMatch(SysVar sysVar) throws IOException, ParseException, JSONException {
         String line;
 
         int totalClicks = 0;
@@ -372,6 +434,7 @@ public class LogService {
         int viewsRatgeberPost = 0;
         int viewsRatgeberGlossar = 0;
         int viewsRatgeberBuch = 0;
+        int viewsRatgeberSelf = 0;
         int viewsMain = 0;
         int viewsUeber = 0;
         int viewsAGBS = 0;
@@ -393,6 +456,7 @@ public class LogService {
         int userRatgeberPost = 0;
         int userRatgeberGlossar = 0;
         int userRatgeberBuch = 0;
+        int userRatgeberSelf = 0;
         int userMain = 0;
         int userUeber = 0;
         int userAGBS = 0;
@@ -405,10 +469,12 @@ public class LogService {
 
         int serverErrors = 0;
 
-        Map<String,Long> viewsByHour = new HashMap<>();
-
         String last_ip = null;
         String last_request = null;
+        JSONArray blacklist2 = null;
+        try {
+            blacklist2 = new JSONArray(new String(Files.readAllBytes(Path.of(getClass().getResource("blacklist.json").toURI()))));
+        } catch (Exception ignored){}
 
         while ((line = br.readLine()) != null ) {
             UniqueUser user = null;
@@ -438,58 +504,49 @@ public class LogService {
                 boolean isServerError = Integer.parseInt(responseCode) >= 500;
                 //Filter for Spam
                 boolean isSpam = false;
+
                 if(!(last_ip == null || last_request == null)) {
                     if (request.equals(last_request) && ip.equals(last_ip)) {
                         isSpam = true;
                     }
                 }
 
+                boolean isGet = request.contains("GET") && !request.contains("HEAD") && !request.contains("POST");
+
+
                 //Schaue, ob der UserAgent auf der Blacklist steht.
                 boolean isBlacklisted = false;
                 for (String item : blacklistUserAgents) {
                     isBlacklisted = userAgent.matches("^.*" + item + ".*") && !isBlacklisted;
                 }
-
-                if(isBlacklisted) {
-                    System.out.println(request + userAgent + " : BANNED");
+                if(blacklist2 != null) {
+                    for (int i = 0; i < blacklist2.length(); i++) {
+                        isBlacklisted = isBlacklisted || ip.equals(blacklist2.get(i));
+                    }
                 }
-
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam) {
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam && isGet) {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
-                    erhoeheViewsPerHour2(viewsByHour, dateLog.toLocalTime());
 
                     //erhöhe Clicks und Besucher, falls anwendbar
                     totalClicks++;
-                    if(isUnique) {
-                        uniqueUsers++;
-                        user = new UniqueUser();
-                        user.setGlobal(1);
-                        user.setIp(ip);
-                        user.setCategory("global");
-                        uniqueUserRepo.save(user);
-                    } else {
-                        user = uniqueUserRepo.findByIP(ip);
-                        user.setGlobal(1);
-                        uniqueUserRepo.save(user);
-                    }
 
                     //Does it match an article-type?
                     Matcher matched_articleView = articleViewPattern.matcher(request);
-                    Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(request);
+                    Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
 
                     //Does it match a blog-type?
                     Matcher matched_blogView = blogViewPattern.matcher(request);
-                    Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(request);
+                    Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
 
                     //Does it match a news-type?
                     Matcher matched_newsView = newsViewPattern.matcher(request);
-                    Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(request);
+                    Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(line);
 
                     //Does it match a whitepaper-type?
                     Matcher matched_whitepaperView = patternWhitepaperView.matcher(request);
-                    Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(request);
+                    Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
 
                     //Does it match the main-page-type?
                     Matcher matched_main_page = mainPagePattern.matcher(request);
@@ -521,6 +578,9 @@ public class LogService {
                     //Does it match user-view?
                     Matcher matched_userViews = userViewPattern.matcher(request);
 
+                    //Does it match user-redirect?
+                    Matcher matched_userRedirect = userRedirectPattern.matcher(request);
+
                     //Does it match a ratgeber-subpost-view
                     Matcher matched_ratgeber_post = ratgeberPostViewPattern.matcher(request);
 
@@ -530,13 +590,22 @@ public class LogService {
                     //Does it match a ratgeber-buch view
                     Matcher matched_ratgeber_buch = ratgeberBuchViewPattern.matcher(request);
 
+                    //Does it match a ratgeber-self-help view
+                    Matcher matched_ratgeber_self = ratgeberSelfViewPattern.matcher(request);
+
                     //Does it match a podcast-view
                     Matcher matched_podcast_view = podcastViewPattern.matcher(request);
+
+                    //Does it match a content-download
+                    Matcher matched_content_download= contentDownloadPattern.matcher(request);
+
+                    //Does it match an event-View?
+                    Matcher matched_event_view= eventViewPattern.matcher(request);
 
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
-                    if(matched_articleView.find()) {
+/*                    if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
                     } else if(matched_articleSearchSuccess.find()) {
@@ -560,6 +629,31 @@ public class LogService {
                     } else if(matched_whitepaperSearchSuccess.find()) {
                         whatMatched = "wpSS";
                         patternMatcher = matched_whitepaperSearchSuccess;
+                        */
+                    if(matched_articleSearchSuccess.find()) {
+                        whatMatched = "articleSS";
+                        patternMatcher = matched_articleSearchSuccess;
+                    } else if(matched_blogSearchSuccess.find()) {
+                        whatMatched = "blogSS";
+                        patternMatcher = matched_blogSearchSuccess;
+                    } else if(matched_newsSearchSuccess.find()) {
+                        whatMatched = "newsSS";
+                        patternMatcher = matched_newsSearchSuccess;
+                    } else if(matched_whitepaperSearchSuccess.find()) {
+                        whatMatched = "wpSS";
+                        patternMatcher = matched_whitepaperSearchSuccess;
+                    } else if(matched_articleView.find()) {
+                        whatMatched = "articleView";
+                        patternMatcher = matched_articleView;
+                    } else if(matched_blogView.find()) {
+                        whatMatched = "blogView";
+                        patternMatcher = matched_blogView;
+                    } else if(matched_newsView.find()) {
+                        whatMatched = "newsView";
+                        patternMatcher = matched_newsView;
+                    } else if(matched_whitepaperView.find()) {
+                        whatMatched = "wpView";
+                        patternMatcher = matched_whitepaperView;
                     } else if(matched_podcast_view.find()) {
                         whatMatched = "podView";
                         patternMatcher = matched_podcast_view;
@@ -602,6 +696,24 @@ public class LogService {
                     } else if(matched_ratgeber_buch.find()) {
                         whatMatched = "ratgeberBuch";
                         patternMatcher = matched_ratgeber_buch;
+                    }else if(matched_ratgeber_self.find()){
+                        whatMatched = "ratgeberSelf";
+                        patternMatcher = matched_ratgeber_self;
+                    } else if(matched_content_download.find()){
+                        whatMatched = "contentDownload";
+                        patternMatcher = matched_content_download;
+                    } else if(matched_userRedirect.find()){
+                        whatMatched = "userRedirect";
+                        patternMatcher = matched_userRedirect;
+                    } else if(matched_event_view.find()){
+                        whatMatched = "eventView";
+                        patternMatcher = matched_event_view;
+                    }
+
+                    //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
+                    if(isUnique && !whatMatched.equals("")) {
+                        uniqueUsers++;
+                        initUniqueUser(ip, dateLog);
                     }
 
                     switch (whatMatched) {
@@ -611,17 +723,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userArticle++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("article");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getArticle() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getArticle()).length() < 2) {
                                     userArticle++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setArticle(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "article", dateLog);
                         }
 
                         case "blogView", "blogSS" -> {
@@ -631,17 +738,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userBlog++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("blog");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getBlog() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getBlog()).length() < 2) {
                                     userBlog++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setBlog(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "blog", dateLog);
                         }
 
                         case "newsView", "newsSS" -> {
@@ -651,17 +753,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userNews++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("news");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getNews() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNews()).length() < 2) {
                                     userNews++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setNews(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "news", dateLog);
                         }
 
                         case "wpView", "wpSS" -> {
@@ -671,17 +768,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userWhitepaper++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("whitepaper");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getWhitepaper() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getWhitepaper()).length() < 2) {
                                     userWhitepaper++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setWhitepaper(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "whitepaper", dateLog);
                         }
                         case "podView" -> {
                             //Erhöhe Clicks für Podcast um 1.
@@ -689,34 +781,24 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userPodcast++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("podcast");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getPodcast() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPodcast()).length() < 2) {
                                     userPodcast++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setPodcast(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "podcast", dateLog);
                         }
                         case "main" -> {
                             viewsMain++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userMain++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("main");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getMain() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getMain()).length() < 2) {
                                     userMain++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setMain(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "main", dateLog);
                         }
                         case "ueber" -> {
                             //Erhöhe Clicks für Ueber-Uns um 1.
@@ -724,17 +806,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userUeber++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("ueber");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getUeber() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getUeber()).length() < 2) {
                                     userUeber++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setUeber(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "ueber", dateLog);
                         }
                         case "impressum" -> {
                             //Erhöhe Clicks für Impressum um 1.
@@ -742,17 +819,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userImpressum++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("impressum");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getImpressum() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImpressum()).length() < 2) {
                                     userImpressum++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setImpressum(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "impressum", dateLog);
                         }
                         case "preisliste" -> {
                             //Erhöhe Clicks für Preisliste um 1.
@@ -760,17 +832,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userPreisliste++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("preisliste");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getPreisliste() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPreisliste()).length() < 2) {
                                     userPreisliste++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setPreisliste(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "preisliste", dateLog);
                         }
                         case "partner" -> {
                             //Erhöhe Clicks für Partner um 1.
@@ -778,17 +845,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userPartner++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("partner");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getPartner() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPartner()).length() < 2) {
                                     userPartner++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setPartner(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "partner", dateLog);
                         }
                         case "datenschutz" -> {
                             //Erhöhe Clicks für Datenschutzerkl. um 1.
@@ -796,17 +858,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userDatenschutz++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("datenschutz");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getDatenschutz() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getDatenschutz()).length() < 2) {
                                     userDatenschutz++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setDatenschutz(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "datenschutz", dateLog);
                         }
                         case "newsletter" -> {
                             //Erhöhe Clicks für Newsletter um 1.
@@ -814,17 +871,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userNewsletter++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("newsletter");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getNewsletter() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNewsletter()).length() < 2) {
                                     userNewsletter++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setNewsletter(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "newsletter", dateLog);
                         }
                         case "image" -> {
                             //Erhöhe Clicks für Image um 1.
@@ -832,17 +884,12 @@ public class LogService {
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userImage++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("image");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getImage() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImage()).length() < 2) {
                                     userImage++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setImage(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "image", dateLog);
                         }
                         case "agb" -> {
                             //Erhöhe Clicks für AGBS um 1.
@@ -850,42 +897,32 @@ public class LogService {
                             //Wenn der User Unique ist, erstelle eine Zeile in UniqueUser.
                             if (isUnique) {
                                 userAGBS++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("agbs");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getAgb() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getAgb()).length() < 2) {
                                     userAGBS++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setAgb(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "agb", dateLog);
                         }
                         case "userView" -> {
                             try {
-                                updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId());
+                                updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId(),dateLog);
                             } catch (Exception e) {
                                 System.out.println(patternMatcher.group(1));
                             }
                         }
-                        case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch" -> {
+                        case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch", "ratgeberSelf" -> {
                             //Erhöhe Clicks für RatgeberViews um 1.
                             viewsRatgeber++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
                                 userRatgeber++;
-                                user = uniqueUserRepo.findByIP(ip);
-                                user.setCategory("ratgeber");
-                                user.setIp(ip);
                             } else {
-                                if (uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                     userRatgeber++;
                                 }
-                                user = uniqueUserRepo.findByIP(ip);
                             }
-                            user.setRatgeber(1);
-                            uniqueUserRepo.save(user);
+                            updateUniqueUser(ip, "ratgeber", dateLog);
 
                             //Update stats for more concrete type of Ratgeber
                             if(whatMatched.equals("ratgeberPost")) {
@@ -893,7 +930,7 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberPost++;
                                 } else {
-                                    if (uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                         userRatgeberPost++;
                                     }
                                 }
@@ -902,28 +939,39 @@ public class LogService {
                                 if (isUnique) {
                                     userRatgeberGlossar++;
                                 } else {
-                                    if (uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                         userRatgeberGlossar++;
                                     }
                                 }
-                            } else {
+                            } else if(whatMatched.equals("ratgeberBuch")){
                                 viewsRatgeberBuch++;
                                 if (isUnique) {
                                     userRatgeberBuch++;
                                 } else {
-                                    if (uniqueUserRepo.findByIP(ip).getRatgeber() == 0) {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
                                         userRatgeberBuch++;
+                                    }
+                                }
+                            } else if(whatMatched.equals("ratgeberSelf")){
+                                viewsRatgeberSelf++;
+                                if (isUnique) {
+                                    userRatgeberSelf++;
+                                } else {
+                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                        userRatgeberSelf++;
                                     }
                                 }
                             }
 
 
+                        } case "userRedirect" -> {
+                        } case "eventView" -> {
                         }
                         default -> System.out.println(line);
                     }
 
+
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
-                    //A bunch of variables necessary to update UniStats
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead))) {
                     if(isBlacklisted) {
@@ -944,17 +992,28 @@ public class LogService {
             }
 
         }
-        updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors, viewsByHour);
+        updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsRatgeberSelf, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userRatgeberSelf, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
+        //Service weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
+        userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
+        contentDownloadsHourlyService.persistAllContentDownloadsHourly(contentDownloadsMap);
+        postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
+        userRedirectService.persistAllUserRedirectsHourly(userRedirectsMap);
+        //maps clearen nur um sicher zu gehen
+        cleanMaps();
+        updateFinalSearchStatsAndTemporarySearchStats();
     }
 
-    private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors, Map<String, Long> viewsByHour) throws ParseException {
+    private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
-        dateStirng += Calendar.getInstance().get(Calendar.MONTH) + 1  < 10 ? "0" + Calendar.getInstance().get(Calendar.MONTH) + 1 : Calendar.getInstance().get(Calendar.MONTH) + 1;
+        dateStirng += Calendar.getInstance().get(Calendar.MONTH) + 1  < 10 ? "0" + (Calendar.getInstance().get(Calendar.MONTH) + 1) : Calendar.getInstance().get(Calendar.MONTH) + 1;
         dateStirng += "-" + (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) < 10 ? "0" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) : Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(dateStirng);
+        System.out.println("Date Stirng" + dateStirng);
+        System.out.println("uniLastDateString" + uniLastDateString);
+        System.out.println(dateStirng.equalsIgnoreCase(uniLastDateString));
         final int curHour = LocalDateTime.now().getHour();
 
         //Updating UniversalStats
@@ -967,8 +1026,6 @@ public class LogService {
                     uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
                     uni.setInternalClicks(uni.getInternalClicks() + internalClicks);
                     uni.setServerErrors(uni.getServerErrors() + serverErrors);
-                    MapHelper.mergeTimeMaps(viewsByHour, uni.getViewsPerHour());
-                    uni.setViewsPerHour(viewsByHour);
                     uni.setAnbieterProfileAnzahl(wpUserRepo.count());
                     uni = setNewsArticelBlogCountForUniversalStats(date, uni);
                     uni = setAccountTypeAllUniStats(uni);
@@ -978,7 +1035,6 @@ public class LogService {
                     uni.setTotalClicks(totalClicks);
                     uni.setInternalClicks(internalClicks);
                     uni.setServerErrors(serverErrors);
-                    uni.setViewsPerHour(viewsByHour);
                     uni.setAnbieterProfileAnzahl(wpUserRepo.count());
                     uni = setNewsArticelBlogCountForUniversalStats(date, uni);
                     uni = setAccountTypeAllUniStats(uni);
@@ -1080,7 +1136,6 @@ public class LogService {
             if(universalCategoriesDLCRepo.getLastStunde() != curHour) {
                 //Create and identify a new row of UniversalCategoriesDLC
                 int viewsGlobal = totalClicks - viewsArticle - viewsNews - viewsBlog - viewsPodcast - viewsWhitepaper - viewsRatgeber - viewsMain - viewsUeber - viewsImpressum - viewsPreisliste - viewsPartner - viewsDatenschutz - viewsNewsletter - viewsImage - viewsAGBS;
-                int usersGlobal = uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS;
                 if(curHour == 4
                         && universalCategoriesDLCRepo.getByUniStatIdAndStunde(universalCategoriesDLCRepo.getLast().getUniStatId(), 1) == null
                         && universalCategoriesDLCRepo.getByUniStatIdAndStunde(universalCategoriesDLCRepo.getLast().getUniStatId(), 2) == null
@@ -1097,7 +1152,7 @@ public class LogService {
                         cat.setStunde(i);
                         i++;
                         //Create entries for users.
-                        cat.setBesucherGlobal(usersGlobal / 4);
+                        cat.setBesucherGlobal(uniqueUsers / 4);
                         cat.setBesucherArticle(userArticle / 4);
                         cat.setBesucherNews(userNews / 4);
                         cat.setBesucherBlog(userBlog / 4);
@@ -1107,6 +1162,7 @@ public class LogService {
                         cat.setBesucherRatgeber(userRatgeberPost / 4);
                         cat.setBesucherRatgeber(userRatgeberGlossar / 4);
                         cat.setBesucherRatgeber(userRatgeberBuch / 4);
+                        cat.setBesucherRatgeberSelf(userRatgeberSelf / 4);
                         cat.setBesucherMain(userMain / 4);
                         cat.setBesucherUeber(userUeber / 4);
                         cat.setBesucherImpressum(userImpressum / 4);
@@ -1127,6 +1183,7 @@ public class LogService {
                         cat.setViewsRatgeber(viewsRatgeberPost / 4);
                         cat.setViewsRatgeber(viewsRatgeberGlossar / 4);
                         cat.setViewsRatgeber(viewsRatgeberBuch / 4);
+                        cat.setViewsRatgeberSelf(viewsRatgeberSelf / 4);
                         cat.setViewsMain(viewsMain / 4);
                         cat.setViewsUeber(viewsUeber / 4);
                         cat.setViewsImpressum(viewsImpressum / 4);
@@ -1143,7 +1200,7 @@ public class LogService {
                     uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                     uniCategories.setStunde(curHour);
                     //Create entries for users.
-                    uniCategories.setBesucherGlobal(usersGlobal);
+                    uniCategories.setBesucherGlobal(uniqueUsers);
                     uniCategories.setBesucherArticle(userArticle);
                     uniCategories.setBesucherNews(userNews);
                     uniCategories.setBesucherBlog(userBlog);
@@ -1153,6 +1210,7 @@ public class LogService {
                     uniCategories.setBesucherRatgeberPost(userRatgeberPost);
                     uniCategories.setBesucherRatgeberGlossar(userRatgeberGlossar);
                     uniCategories.setBesucherRatgeberBuch(userRatgeberBuch);
+                    uniCategories.setBesucherRatgeberSelf(userRatgeberSelf);
                     uniCategories.setBesucherMain(userMain);
                     uniCategories.setBesucherUeber(userUeber);
                     uniCategories.setBesucherImpressum(userImpressum);
@@ -1173,6 +1231,7 @@ public class LogService {
                     uniCategories.setViewsRatgeberPost(viewsRatgeberPost);
                     uniCategories.setViewsRatgeberGlossar(viewsRatgeberGlossar);
                     uniCategories.setViewsRatgeberBuch(viewsRatgeberBuch);
+                    uniCategories.setViewsRatgeberSelf(viewsRatgeberSelf);
                     uniCategories.setViewsMain(viewsMain);
                     uniCategories.setViewsUeber(viewsUeber);
                     uniCategories.setViewsImpressum(viewsImpressum);
@@ -1190,7 +1249,7 @@ public class LogService {
                 uniCategories = universalCategoriesDLCRepo.getLast();
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                 //Update users
-                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
+                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userRatgeberSelf - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
                 uniCategories.setBesucherArticle(uniCategories.getBesucherArticle() + userArticle);
                 uniCategories.setBesucherNews(uniCategories.getBesucherNews() + userNews);
                 uniCategories.setBesucherBlog(uniCategories.getBesucherBlog() + userBlog);
@@ -1200,6 +1259,7 @@ public class LogService {
                 uniCategories.setBesucherRatgeberPost(uniCategories.getBesucherRatgeberPost() + userRatgeberPost);
                 uniCategories.setBesucherRatgeberGlossar(uniCategories.getBesucherRatgeberGlossar() + userRatgeberGlossar);
                 uniCategories.setBesucherRatgeberBuch(uniCategories.getBesucherRatgeberBuch() + userRatgeberBuch);
+                uniCategories.setBesucherRatgeberSelf(uniCategories.getBesucherRatgeberSelf() + userRatgeberSelf);
                 uniCategories.setBesucherMain(userMain + uniCategories.getBesucherMain());
                 uniCategories.setBesucherUeber(userUeber + uniCategories.getBesucherUeber());
                 uniCategories.setBesucherImpressum(userImpressum + uniCategories.getBesucherImpressum());
@@ -1220,6 +1280,7 @@ public class LogService {
                 uniCategories.setViewsRatgeberPost(viewsRatgeberPost + uniCategories.getViewsRatgeberPost());
                 uniCategories.setViewsRatgeberGlossar(viewsRatgeberGlossar + uniCategories.getViewsRatgeberGlossar());
                 uniCategories.setViewsRatgeberBuch(viewsRatgeberBuch + uniCategories.getViewsRatgeberBuch());
+                uniCategories.setViewsRatgeberSelf(viewsRatgeberSelf + uniCategories.getViewsRatgeberSelf());
                 uniCategories.setViewsMain(viewsMain + uniCategories.getViewsMain());
                 uniCategories.setViewsUeber(viewsUeber + uniCategories.getViewsUeber());
                 uniCategories.setViewsImpressum(viewsImpressum + uniCategories.getViewsImpressum());
@@ -1233,26 +1294,35 @@ public class LogService {
                 universalCategoriesDLCRepo.save(uniCategories);
             }
         }
+
     }
 
     private UniversalStatsHourly setAccountTypeAllUniStats(UniversalStatsHourly uniHourly) {
         HashMap<String, Integer> counts = new HashMap<>();
 
-        wpUserMetaRepository.getWpCapabilities().forEach(s -> {
+        for(WPUser user : wpUserRepo.findAll()) {
+            switch(userController.getType(Math.toIntExact(user.getId()))) {
+                case "basis" -> {
+                    counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
+                }
+                case "basis-plus" -> {
+                    counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
+                }
+                case "plus" -> {
+                    counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
+                }
+                case "premium" -> {
+                    counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
+                }
+                case "sponsor" -> {
+                    counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
+                }
+                case "none" -> {
+                    counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
+                }
+            }
+        }
 
-            if (s.contains("um_anbieter"))
-                counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
-            if (s.contains("um_basis-anbieter")  && !s.contains("plus"))
-                counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-            if (s.contains("um_plus-anbieter"))
-                counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
-            if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
-                counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
-            if (s.contains("um_premium-anbieter-sponsoren"))
-                counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
-            if (s.contains("um_basis-anbieter-plus"))
-                counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
-        });
         uniHourly.setAnbieter_abolos_anzahl(counts.getOrDefault("Anbieter", 0));
         uniHourly.setAnbieterBasicAnzahl(counts.getOrDefault("Basic",0));
         uniHourly.setAnbieterBasicPlusAnzahl(counts.getOrDefault("Basic-Plus",0));
@@ -1260,13 +1330,7 @@ public class LogService {
         uniHourly.setAnbieterPremiumAnzahl(counts.getOrDefault("Premium",0));
         uniHourly.setAnbieterPremiumSponsorenAnzahl(counts.getOrDefault("Sponsor",0));
 
-        long umsatzBasicPlus =uniHourly.getAnbieterBasicPlusAnzahl()*200;
-        long umsatzPlus =uniHourly.getAnbieterPlusAnzahl()*1000;
-        long umsatzPremium =uniHourly.getAnbieterPremiumAnzahl()*1500;
-        long umsatzSponsor = uniHourly.getAnbieterPremiumSponsorenAnzahl()*3000;
-
         return uniHourly;
-
     }
 
     private UniversalStatsHourly setNewsArticelBlogCountForUniversalStats(UniversalStatsHourly uniHourly) {
@@ -1277,9 +1341,9 @@ public class LogService {
         long newsCounter = 0;
         long blogCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
         for (Post post : posts) {
 
@@ -1322,11 +1386,23 @@ public class LogService {
             updateGeo();
             System.out.println("KEIN FEHLER BEI UPDATE GEO");
         } catch (Exception e) {
-        System.out.println("---------------------------------------------------------------------FEHLER BEI UPDATEGEO");
-        e.printStackTrace();
+            System.out.println("---------------------------------------------------------------------FEHLER BEI UPDATEGEO");
+            e.printStackTrace();
+        }
+        try {
+            System.out.println("PERMANENTIFY ALL USERS");
+            permanentifyAllUsers();
+        } catch (Exception e) {
+            System.out.println("FEHLER BEI PERMANENTIFY ALL USERS");
+            e.printStackTrace();
         }
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
 
+
+        List<UserStats> userStats = userStatsRepo.findAll();
+        userStatsRepo.saveAll(userStats);
+
+        //Just in case permanentify failed
         deleteOldIPs();
     }
 
@@ -1339,14 +1415,17 @@ public class LogService {
                 try {
                     UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                     updateIPsByPost(ip, postRepository.getIdByName(patternMatcher.group(1)));
+                    updatePostClicksMap(postRepository.getIdByName(patternMatcher.group(1)),dateLog);
                 } catch (Exception e) {
                     System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
                 }
                 break;
             case "articleSS", "blogSS", "newsSS", "wpSS":
                 try {
-                    updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
-                    updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
+                    updateSearchDLCMap(ip,patternMatcher.group(2),postRepository.getIdByName(patternMatcher.group(1)),dateLog);
+                    UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                   // updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                   // updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
                 } catch(Exception e) {
                     System.out.println("SS PROCESS LINE EXCEPTION " +line);
                 }
@@ -1355,11 +1434,72 @@ public class LogService {
                 try {
                     if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
                         Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
-                        updateUserStats(userId);
+                        updateUserStats(userId,dateLog);
                         updateIPsByUser(ip, userId);
                     }
                 } catch (Exception e) {
                     System.out.println("USERVIEW EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+                break;
+            case "contentDownload":
+                try {
+                    System.out.println("FOUND CONTENT DOWNLOAD \n\n");
+                    if(postRepository.findByTitleLike(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long postId = postRepository.findByTitleLike(patternMatcher.group(1).replace("+", "-")).get();
+
+                        System.out.println("TITLE HAS BEEN FOUND FOR CONTENT DOWNLOAD");
+                        ContentDownloadsHourly contentDownload = new ContentDownloadsHourly();
+                        if(contentDownloadsHourlyRepo.getByPostIdUniIdHour(postId, uniRepo.getLatestUniStat().getId(), dateLog.getHour()).isPresent()) {
+                            contentDownload = contentDownloadsHourlyRepo.getByPostIdUniIdHour(postId, uniRepo.getLatestUniStat().getId(), dateLog.getHour()).get();
+                            contentDownload.setDownloads(contentDownload.getDownloads() + 1);
+                        } else {
+                            contentDownload.setDownloads(1L);
+                            contentDownload.setPostId(postId);
+                            contentDownload.setHour(dateLog.getHour());
+                            contentDownload.setUniId(uniRepo.getLatestUniStat().getId());
+                        }
+                        contentDownloadsHourlyRepo.save(contentDownload);
+
+                        updateContentDownloadMap(postId,dateLog);
+                    }
+                }
+                catch (Exception e){
+                    System.out.println("CONTENT DOWNLOAD EXCEPTION BEI: "+ line);
+                }
+            break;
+            case "userRedirect":
+                try {
+                    if(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)) != null) {
+                        UserRedirectsHourly redirects;
+                        if(userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).isPresent()) {
+                           redirects = userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).get();
+                       } else {
+                           redirects = new UserRedirectsHourly();
+                           redirects.setHour(dateLog.getHour());
+                           redirects.setUniId(uniRepo.getLatestUniStat().getId());
+                           redirects.setUserId(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)));
+                           redirects.setRedirects(0L);
+                       }
+                        redirects.setRedirects(redirects.getRedirects() + 1);
+                        userRedirectRepo.save(redirects);
+                    }
+                }
+                catch (Exception e) {
+                    System.out.println("USERREDIRECT EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+            case "eventView":
+                try {
+                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
+                        Long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
+                        UpdatePerformanceAndViews(dateLog, postId);
+                        updateIPsByPost(ip, postId);
+                        updatePostClicksMap(postId,dateLog);
+                    }
+                }
+                catch (Exception e) {
+                    System.out.println("EVENTVIEW EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
                 break;
@@ -1576,6 +1716,7 @@ public class LogService {
         }
         }
     }
+
     @Transactional
     public void erhoeheWertFuerLogDatum(long id, LocalDate logDatum, LocalTime logUhrzeit) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
@@ -1713,20 +1854,95 @@ public class LogService {
    }
 
     @Transactional
-    public void updateUserStats(long id){
+    public void updateUserStats(long id,LocalDateTime dateLog){
         if(userStatsRepo.existsByUserId(id)) {
 
             UserStats Stats = userStatsRepo.findByUserId(id);
             long views = Stats.getProfileView() + 1 ;
             Stats.setProfileView(views);
             userStatsRepo.save(Stats);
-
         }else {
-
             userStatsRepo.save(new UserStats(id, 1));
+        }
+        updateUserViewsByHourDLCList(id,dateLog);
+    }
 
+    public void updateUserViewsByHourDLCList(long userId,LocalDateTime dateLog){
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String key = uniId + "_" + userId;
+
+        UserViewsByHourDLC userViews = userViewsHourDLCMap.get(key);
+
+        if (userViews != null) {
+
+            userViews.setViews(userViews.getViews() + 1);
+
+        } else {
+
+            UserViewsByHourDLC newUserViews = new UserViewsByHourDLC(uniId,userId,dateLog.getHour(),1L);
+
+            userViewsHourDLCMap.put(key, newUserViews);
+        }
+
+    }
+
+    public void updateContentDownloadMap(Long postId,LocalDateTime dateLog){
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String key = uniId + "_" + postId;
+
+        ContentDownloadsHourly contentDownloads = contentDownloadsMap.get(key);
+        if (contentDownloads != null) {
+
+            contentDownloads.setDownloads(contentDownloads.getDownloads() + 1);
+
+        } else {
+
+            ContentDownloadsHourly newContentDownload = new ContentDownloadsHourly(uniId,postId,dateLog.getHour(),1L);
+
+            contentDownloadsMap.put(key, newContentDownload);
+        }
+
+    }
+
+    public void updatePostClicksMap(Long postId,LocalDateTime dateLog){
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String key = uniId + "_" + postId;
+
+        PostClicksByHourDLC postClicks = postClicksMap.get(key);
+        if (postClicks != null) {
+
+            postClicks.setClicks(postClicks.getClicks() + 1);
+
+        } else {
+
+            PostClicksByHourDLC newPostClicks = new PostClicksByHourDLC(uniId,postId,dateLog.getHour(),1L);
+
+            postClicksMap.put(key, newPostClicks);
+        }
+
+    }
+
+    public void updateUserRedirectsMap(Long userId, LocalDateTime dateLog) {
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String key = uniId + "_" + userId;
+
+        UserRedirectsHourly userRedirects = userRedirectsMap.get(key);
+        if (userRedirects != null) {
+            userRedirects.setRedirects(userRedirects.getRedirects() + 1);
+        } else {
+            UserRedirectsHourly newUserRedirects = new UserRedirectsHourly(uniId, userId, dateLog.getHour(), 1L);
+            userRedirectsMap.put(key, newUserRedirects);
         }
     }
+
+    public void cleanMaps(){
+        userRedirectsMap.clear();
+        postClicksMap.clear();
+        contentDownloadsMap.clear();
+        userViewsHourDLCMap.clear();
+    }
+
+
 
     public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd.MM");
@@ -1858,212 +2074,6 @@ public class LogService {
     public static String generateLogFileNameLastDay() {
        return "access.log-" + getLastDay() + ".gz";
     }
-    public void setUniversalStats(SysVar SystemVariabeln) {
-        int daysToLookBack = 9; // Anzahl der Tage, die zurückgeschaut werden sollen
-
-        if (!sysVarRepo.findAll().get(sysVarRepo.findAll().size() - 1).isFlagScanLast14()) {
-            while (daysToLookBack > 0) {
-                try {
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-                    Date date = dateFormat.parse(getDay(daysToLookBack));
-
-                    if (uniRepo.findByDatum(date).isEmpty()) {
-                        String pathOfOldLog = "/var/log/nginx/access.log-" + getDay(daysToLookBack) + ".gz";
-                        FileInputStream fileInputStream = new FileInputStream(pathOfOldLog);
-                        GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
-                        InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
-                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-                        UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date), bufferedReader,SystemVariabeln);
-                        uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
-                        //m
-                        uniStats = setNewsArticelBlogCountForUniversalStats(date,uniStats);
-
-                        uniStats = setAccountTypeAllUniStats(uniStats);
-
-                        uniRepo.save(uniStats);
-                    } else {
-                        System.out.println("Tag " + daysToLookBack + " bereits in der Statistik");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                daysToLookBack--; // Verringert die Anzahl der zurückzuschauenden Tage
-            }
-
-            SysVar sysVar =sysVarRepo.findAll().get(sysVarRepo.findAll().size() - 1);
-            sysVar.setFlagScanLast14(true);
-            sysVarRepo.save(sysVar);
-
-        } else {
-            // Ihr bisheriger Code für den Fall, dass das Flag gesetzt ist
-            try {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-                Date date = dateFormat.parse(getDay(0));
-                if (uniRepo.findByDatum(date).isEmpty()) {
-                    /*String pathOfOldLog = "/var/log/nginx/access.log-" + getLastDay() + ".gz";
-                    FileInputStream fileInputStream = new FileInputStream(pathOfOldLog);
-                    GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
-                    InputStreamReader inputStreamReader = new InputStreamReader(gzipInputStream);
-                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);*/
-
-                    br = new BufferedReader(new FileReader(Pfad));
-                    UniversalStats uniStats = proccessLinesOfOldLog(new UniversalStats(date), br,SystemVariabeln);
-                    uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
-                    uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
-                    uniStats = setAccountTypeAllUniStats(uniStats);
-                    uniRepo.save(uniStats);
-                } else {
-                    br = new BufferedReader(new FileReader(Pfad));
-                    UniversalStats uniStats = proccessLinesOfOldLog(uniRepo.findTop1ByOrderByDatumDesc(), br,SystemVariabeln);
-                    uniStats.setAnbieterProfileAnzahl(wpUserRepo.count());
-                    uniStats = setNewsArticelBlogCountForUniversalStats(uniStats);
-                    uniStats = setAccountTypeAllUniStats(uniStats);
-                    uniRepo.save(uniStats);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Transactional
-    public UniversalStats proccessLinesOfOldLog(UniversalStats uniStat, BufferedReader bufferedReader, SysVar Systemvariabeln) throws IOException {
-
-        Map<String,Long>viewsPerHour=uniStat.getViewsPerHour();
-
-        ArrayList<String> uniqueIps = new ArrayList<>();
-        String line;
-        long allClicks = 0;
-        if(uniStat.getTotalClicks()!=null){allClicks=uniStat.getTotalClicks();}
-        Long Besucher = (long) 0;
-        if(uniStat.getBesucherAnzahl()!=null){Besucher=uniStat.getBesucherAnzahl();}
-
-        long lastLineCount = Systemvariabeln.getLastLineCount();
-        long lineCount = 0;
-
-        while ((line = bufferedReader.readLine()) != null) {
-
-            while(lastLineCount>lineCount){
-                bufferedReader.readLine();
-                lineCount++;
-            }
-
-            Matcher matcher1_1 = articleViewPattern.matcher(line);
-
-            if (matcher1_1.find()) {
-                Matcher matcher1_2 = articleSearchSuccessPattern.matcher(line);
-
-
-                if (matcher1_2.find()) {
-                    // Do something with the matched 1.2 patterns
-                    if(!uniqueIps.contains(hashIp(matcher1_2.group(1)))){uniqueIps.add(hashIp(matcher1_2.group(1)));
-                    }
-                    LocalTime logtime = getLocalTimeFromMatcher(matcher1_2);
-                    viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
-                    allClicks++;
-
-                } else {//1.1 matched
-
-                    if(!uniqueIps.contains(hashIp(matcher1_1.group(1)))){uniqueIps.add(hashIp(matcher1_1.group(1)));
-                    }
-                    LocalTime logtime = getLocalTimeFromMatcher(matcher1_1);
-                    viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
-                    allClicks++;
-
-                }
-            }
-            // }
-            else {
-                Matcher matcher2_1 = blogViewPattern.matcher(line);
-
-                if (matcher2_1.find()) {
-                    Matcher matcher2_2 = blogSearchSuccessPattern.matcher(line);
-
-                    if (matcher2_2.find()) {
-                        // Do something with the matched 2.2 patterns
-
-                        if(!uniqueIps.contains(hashIp(matcher2_2.group(1)))){uniqueIps.add(hashIp(matcher2_2.group(1)));
-                        }
-                        LocalTime logtime = getLocalTimeFromMatcher(matcher2_2);
-                        viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
-                        allClicks++;
-
-                    } else {
-                        //2.1 match
-
-                        if(!uniqueIps.contains(hashIp(matcher2_1.group(1)))){uniqueIps.add(hashIp(matcher2_1.group(1)));
-                        }
-                        LocalTime logtime = getLocalTimeFromMatcher(matcher2_1);
-                        viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
-                        allClicks++;
-
-                    }
-                } else {
-                    Matcher matcher5_1 = newsViewPattern.matcher(line);
-
-                    if (matcher5_1.find()) {
-
-                        Matcher matcher5_2 = newsSearchSuccessPattern.matcher(line);
-                        if (matcher5_2.find()) {
-                            if(!uniqueIps.contains(hashIp(matcher5_2.group(1)))){uniqueIps.add(hashIp(matcher5_2.group(1)));
-                            }
-                            LocalTime logtime = getLocalTimeFromMatcher(matcher5_2);
-                            viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
-                            allClicks++;
-                        } else {
-                            if(!uniqueIps.contains(hashIp(matcher5_1.group(1)))){uniqueIps.add(hashIp(matcher5_1.group(1)));
-                            }
-                            LocalTime logtime = getLocalTimeFromMatcher(matcher5_1);
-                            viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
-                            allClicks++;
-                        }
-                    }
-                }
-            }
-
-            Matcher matcher3 = redirectPattern.matcher(line);
-            if (matcher3.find()) {
-                if(!uniqueIps.contains(hashIp(matcher3.group(1)))){uniqueIps.add(hashIp(matcher3.group(1)));
-                }
-                LocalTime logtime = getLocalTimeFromMatcher(matcher3);
-                viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
-                allClicks++;
-            }
-            Matcher matcher4 = userViewPattern.matcher(line);
-            if (matcher4.find()) {
-                if(!uniqueIps.contains(hashIp(matcher4.group(1)))){uniqueIps.add(hashIp(matcher4.group(1)));
-                }
-                LocalTime logtime = getLocalTimeFromMatcher(matcher4);
-                viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
-                allClicks++;
-            }
-            Matcher matcher4_2 = userRedirectPattern.matcher(line);
-            if (matcher4_2.find()) {
-                if(!uniqueIps.contains(hashIp(matcher4_2.group(1)))){uniqueIps.add(hashIp(matcher4_2.group(1)));
-                }
-                LocalTime logtime = getLocalTimeFromMatcher(matcher4_2);
-                viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
-                allClicks++;
-            }
-            Matcher matcher6_1 = searchPattern.matcher(line);
-            if (matcher6_1.find()) {
-
-                if(!uniqueIps.contains(hashIp(matcher6_1.group(1)))){uniqueIps.add(hashIp(matcher6_1.group(1)));
-                }
-                LocalTime logtime = getLocalTimeFromMatcher(matcher6_1);
-                viewsPerHour=erhoeheViewsPerHour2(viewsPerHour,logtime);
-                allClicks++;
-
-            }
-        }
-
-        uniStat.setBesucherAnzahl((long) uniqueIps.size()+Besucher);
-        uniStat.setTotalClicks(allClicks);
-        uniStat.setViewsPerHour(viewsPerHour);
-        return uniStat;
-    }
 
     public UniversalStats setNewsArticelBlogCountForUniversalStats(UniversalStats uniStats){
 
@@ -2072,10 +2082,14 @@ public class LogService {
         long artikelCounter = 0 ;
         long newsCounter =0;
         long blogCounter = 0;
+        long whitepaperCounter = 0;
+        long podcastCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
         for (Post post : posts) {
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
@@ -2091,6 +2105,14 @@ public class LogService {
 
                         if (termTax.getTermId() == tagIdPresse) {
                             newsCounter++ ;
+                        }
+
+                        if (termTax.getTermId() == tagIdWhitepaper) {
+                            whitepaperCounter++ ;
+                        }
+
+                        if (termTax.getTermId() == tagIdPodcast) {
+                            podcastCounter++ ;
                         }
                     }
 
@@ -2120,11 +2142,11 @@ public class LogService {
         long whiteCounter = 0;
         long podCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
-        int tagIdWhite = termRepo.findBySlug("whitepaper").getId().intValue();
-        int tagIdPod = termRepo.findBySlug("podcast").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
         for (Post post : posts) {
             LocalDateTime postDateTime = post.getDate(); // Nehmen wir an, das ist vom Typ LocalDateTime
@@ -2144,11 +2166,11 @@ public class LogService {
                             newsCounter++;
                         }
 
-                        if (termTax.getTermId() == tagIdWhite) {
+                        if (termTax.getTermId() == tagIdWhitepaper) {
                             whiteCounter++;
                         }
 
-                        if (termTax.getTermId() == tagIdPod) {
+                        if (termTax.getTermId() == tagIdPodcast) {
                             podCounter++;
                         }
                     }
@@ -2169,21 +2191,29 @@ public class LogService {
     public UniversalStats setAccountTypeAllUniStats(UniversalStats uniStats){
         HashMap<String, Integer> counts = new HashMap<>();
 
-        wpUserMetaRepository.getWpCapabilities().forEach(s -> {
+        for(WPUser user : wpUserRepo.findAll()) {
+            switch(userController.getType(Math.toIntExact(user.getId()))) {
+                case "basis" -> {
+                    counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
+                }
+                case "basis-plus" -> {
+                    counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
+                }
+                case "plus" -> {
+                    counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
+                }
+                case "premium" -> {
+                    counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
+                }
+                case "sponsor" -> {
+                    counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
+                }
+                case "none" -> {
+                    counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
+                }
+            }
+        }
 
-            if (s.contains("um_anbieter"))
-                counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
-            if (s.contains("um_basis-anbieter")  && !s.contains("plus"))
-                counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-            if (s.contains("um_plus-anbieter"))
-                counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
-            if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
-                counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
-            if (s.contains("um_premium-anbieter-sponsoren"))
-                counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
-            if (s.contains("um_basis-anbieter-plus"))
-                counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
-        });
         uniStats.setAnbieter_abolos_anzahl(counts.getOrDefault("Anbieter", 0));
         uniStats.setAnbieterBasicAnzahl(counts.getOrDefault("Basic",0));
         uniStats.setAnbieterBasicPlusAnzahl(counts.getOrDefault("Basic-Plus",0));
@@ -2312,6 +2342,73 @@ public class LogService {
         }
     }
 
+    private void updateClicksByIpLiveDay(String ip) {
+        int uniId = uniRepo.getLatestUniStat().getId();
+        ClicksByCountry clicksByCountry;
+        ClicksByBundesland clicksByBundesland;
+        ClicksByBundeslandCitiesDLC clicksByBundeslandCitiesDLC;
+        //If the country is Germany, try to update ClicksByBundesland
+        if (IPHelper.getCountryISO(ip) != null) {
+            if (IPHelper.getCountryISO(ip).equals("DE")) {
+                System.out.println("TRY TO UPDATE CLICKSBYBUNDESLAND FOR: " + ip);
+                clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
+                        ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
+
+                clicksByBundesland.setUniStatId(uniId);
+                //If the ip can be matched to a bundesland, update and save it. Otherwise, don't.
+                if (IPHelper.getSubISO(ip) != null) {
+                    System.out.println("SUCCESS IN TRY TO UPDATE CLICKSBYBUNDESLAND");
+                    clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
+                    clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
+                    clicksByBundeslandRepo.save(clicksByBundesland);
+                    //If the ip can be matched to a city, set, update and save ClicksByBundeslandCitiesDLC
+                    if (IPHelper.getCityName(ip) != null) {
+                        System.out.println("TRY TO UPDATE CLICKSBYBUNDESLAND");
+                        clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip)) == null
+                                ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip));
+                        clicksByBundeslandCitiesDLC.setUni_id(uniId);
+                        clicksByBundeslandCitiesDLC.setBundesland(IPHelper.getSubISO(ip));
+                        clicksByBundeslandCitiesDLC.setCity(IPHelper.getCityName(ip));
+                        clicksByBundeslandCitiesDLC.setClicks(clicksByBundeslandCitiesDLC.getClicks() + 1);
+                        clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
+                    }
+                }
+
+            } else if(IPHelper.getCountryISO(ip).equals("BE")) {
+                System.out.println("TRY TO UPDATE CLICKSBYCITY FOR BELGIUM");
+                if (IPHelper.getCityName(ip) != null) {
+                    clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip)) == null
+                            ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip));
+                    clicksByBundeslandCitiesDLC.setUni_id(uniId);
+                    clicksByBundeslandCitiesDLC.setBundesland("BG");
+                    clicksByBundeslandCitiesDLC.setCity(IPHelper.getCityName(ip));
+                    clicksByBundeslandCitiesDLC.setClicks(clicksByBundeslandCitiesDLC.getClicks() + 1);
+                    clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
+                }
+            } else if(IPHelper.getCountryISO(ip).equals("NL") || IPHelper.getCountryISO(ip).equals("AT") || IPHelper.getCountryISO(ip).equals("CH") || IPHelper.getCountryISO(ip).equals("LU")){
+                System.out.println("TRY TO UPDATE CLICKSBYCITY FOR OTHER COUNTRIES");
+                if (IPHelper.getCityName(ip) != null) {
+                    clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip)) == null
+                            ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip));
+                    clicksByBundeslandCitiesDLC.setUni_id(uniId);
+                    clicksByBundeslandCitiesDLC.setBundesland(IPHelper.getCountryISO(ip));
+                    clicksByBundeslandCitiesDLC.setCity(IPHelper.getCityName(ip));
+                    clicksByBundeslandCitiesDLC.setClicks(clicksByBundeslandCitiesDLC.getClicks() + 1);
+                    clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
+                }
+            }
+            //Update ClicksByCountry
+            System.out.println("TRY TO UPDATE CLICKSBYCOUNTRY");
+            clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null
+                    ? new ClicksByCountry() : clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip));
+            clicksByCountry.setUniStatId(uniId);
+            clicksByCountry.setCountry(IPHelper.getCountryName(ip));
+            clicksByCountry.setClicks(clicksByCountry.getClicks() + 1);
+            clicksByCountryRepo.save(clicksByCountry);
+
+        }
+    }
+
     private void updateGeo() {
         updatePostGeo();
         updateUserGeo();
@@ -2431,11 +2528,302 @@ public class LogService {
     }
 
     private void updatePostTypes() throws JSONException, ParseException {
-        for(Integer id : statsRepo.getIdsOfUntyped()) {
+        for(Integer id : postRepository.getIdsOfUntyped()) {
             PostTypes type = new PostTypes();
             type.setPost_id(Long.valueOf(id));
             type.setType(postController.getType(id));
             postTypeRepo.save(type);
         }
     }
+
+    private void updateUniqueUser(String ip, String category, LocalDateTime clickTime) throws JSONException {
+        UniqueUser user = uniqueUserRepo.findByIP(ip);
+        //Check whether user has clicked within last hour, if not, permanentify the user and open a new User.
+        if(clickTime.isAfter(user.getFirst_click().plusMinutes(20).plusSeconds(user.getTime_spent()))) {
+            permanentifyUser(ip);
+            uniqueUserRepo.delete(user);
+            initUniqueUser(ip, clickTime);
+            user = uniqueUserRepo.findByIP(ip);
+        }
+        //Get the highest Click in all Lists, then add 1 because we are currently processing a click
+        int clicks = user.getAmount_of_clicks() + 1;
+        user.setAmount_of_clicks(clicks);
+
+
+        //calculate the time that passed between the first and current click
+        user.setTime_spent((int) Duration.between(user.getFirst_click(), clickTime).toSeconds());
+
+        //Update the List of clicked categories
+        switch(category) {
+            case "article" -> {
+                user.setArticle(new JSONArray(user.getArticle()).put(clicks).toString());
+            }
+            case "blog" -> {
+                user.setBlog(new JSONArray(user.getBlog()).put(clicks).toString());
+            }
+            case "news" -> {
+                user.setNews(new JSONArray(user.getNews()).put(clicks).toString());
+            }
+            case "whitepaper" -> {
+                user.setWhitepaper(new JSONArray(user.getWhitepaper()).put(clicks).toString());
+            }
+            case "podcast" -> {
+                user.setPodcast(new JSONArray(user.getPodcast()).put(clicks).toString());
+            }
+            case "ratgeber" -> {
+                user.setRatgeber(new JSONArray(user.getRatgeber()).put(clicks).toString());
+            }
+            case "main" -> {
+                user.setMain(new JSONArray(user.getMain()).put(clicks).toString());
+            }
+            case "ueber" -> {
+                user.setUeber(new JSONArray(user.getUeber()).put(clicks).toString());
+            }
+            case "impressum" -> {
+                user.setImpressum(new JSONArray(user.getImpressum()).put(clicks).toString());
+            }
+            case "preisliste" -> {
+                user.setPreisliste(new JSONArray(user.getPreisliste()).put(clicks).toString());
+            }
+            case "partner" -> {
+                user.setPartner(new JSONArray(user.getPartner()).put(clicks).toString());
+            }
+            case "datenschutz" -> {
+                user.setDatenschutz(new JSONArray(user.getDatenschutz()).put(clicks).toString());
+            }
+            case "newsletter" -> {
+                user.setNewsletter(new JSONArray(user.getNewsletter()).put(clicks).toString());
+            }
+            case "image" -> {
+                user.setImage(new JSONArray(user.getImage()).put(clicks).toString());
+            }
+            case "agb" -> {
+                user.setAgb(new JSONArray(user.getAgb()).put(clicks).toString());
+            }
+        }
+
+        uniqueUserRepo.save(user);
+
+    }
+
+    private void initUniqueUser(String ip, LocalDateTime clickTime) {
+        UniqueUser user = new UniqueUser();
+        user.setIp(ip);
+        user.setArticle(new JSONArray().put(0).toString());
+        user.setBlog(new JSONArray().put(0).toString());
+        user.setNews(new JSONArray().put(0).toString());
+        user.setWhitepaper(new JSONArray().put(0).toString());
+        user.setPodcast(new JSONArray().put(0).toString());
+        user.setRatgeber(new JSONArray().put(0).toString());
+        user.setMain(new JSONArray().put(0).toString());
+        user.setUeber(new JSONArray().put(0).toString());
+        user.setImpressum(new JSONArray().put(0).toString());
+        user.setPreisliste(new JSONArray().put(0).toString());
+        user.setPartner(new JSONArray().put(0).toString());
+        user.setDatenschutz(new JSONArray().put(0).toString());
+        user.setNewsletter(new JSONArray().put(0).toString());
+        user.setImage(new JSONArray().put(0).toString());
+        user.setAgb(new JSONArray().put(0).toString());
+        user.setFirst_click(clickTime);
+        user.setTime_spent(0);
+        user.setAmount_of_clicks(0);
+
+        uniqueUserRepo.save(user);
+    }
+
+    private void permanentifyUser(String ip) throws JSONException {
+        if(uniAverageClicksRepo.findById(uniRepo.getLatestUniStat().getId()).isEmpty()) {
+            initUniAverages();
+            initUniTime();
+        }
+
+        UniqueUser user = uniqueUserRepo.findByIP(ip);
+
+        if(user != null) {
+            int articleLength = new JSONArray(user.getArticle()).length() - 1;
+            int newsLength = new JSONArray(user.getNews()).length() - 1;
+            int blogLength = new JSONArray(user.getBlog()).length() - 1;
+            int podcastLength = new JSONArray(user.getPodcast()).length() - 1;
+            int wpLength = new JSONArray(user.getWhitepaper()).length() - 1;
+            int ratgeberLength = new JSONArray(user.getRatgeber()).length() - 1;
+            int mainLength = new JSONArray(user.getMain()).length() - 1;
+            int amountOfFooters = 8;
+            int footerLength = new JSONArray(user.getUeber()).length() + new JSONArray(user.getImpressum()).length() + new JSONArray(user.getPreisliste()).length() + new JSONArray(user.getPartner()).length() + new JSONArray(user.getDatenschutz()).length() + new JSONArray(user.getNewsletter()).length() + new JSONArray(user.getImage()).length() + new JSONArray(user.getAgb()).length() - amountOfFooters;
+
+            //Update ClicksBy for User
+            updateClicksByIpLiveDay(ip);
+
+            //Update average-clicks for the deleted user, if user had clicks
+            if(user.getAmount_of_clicks() > 0) {
+                UniversalAverageClicksDLC uniAvg = uniAverageClicksRepo.getLatest();
+
+                int oldClicks = uniAvg.getAmount_clicks();
+                uniAvg.setAmount_clicks(uniAvg.getAmount_clicks() + user.getAmount_of_clicks());
+                uniAvg.setAmount_users(uniAvg.getAmount_users() + 1);
+
+                int clicks = uniAvg.getAmount_clicks();
+
+                if(mainLength == clicks && clicks >= 15) {
+                    JSONArray json = null;
+                    if(getClass().getResource("blacklist.json") != null) {
+                        json = new JSONArray(getClass().getResource("blacklist.json").getPath());
+                        json.put(ip);
+
+                        try {
+                            try (FileWriter writer = new FileWriter(getClass().getResource("blacklist.json").getPath())) {
+                                writer.write(json.toString());
+                            }
+                        } catch (Exception ignored) {
+                        }
+                    }
+                }
+
+                uniAvg.setArticle(((uniAvg.getArticle() * oldClicks) + articleLength) / clicks);
+                uniAvg.setNews(((uniAvg.getNews() * oldClicks) + newsLength) / clicks);
+                uniAvg.setBlog(((uniAvg.getBlog() * oldClicks) + blogLength) / clicks);
+                uniAvg.setPodcast(((uniAvg.getPodcast() * oldClicks) + podcastLength) / clicks);
+                uniAvg.setWhitepaper(((uniAvg.getWhitepaper() * oldClicks) + wpLength) / clicks);
+                uniAvg.setRatgeber(((uniAvg.getRatgeber() * oldClicks) + ratgeberLength) / clicks);
+                uniAvg.setMain(((uniAvg.getMain() * oldClicks) + mainLength) / clicks);
+                uniAvg.setFooter(((uniAvg.getFooter() * oldClicks) + footerLength) / clicks);
+
+                uniAverageClicksRepo.save(uniAvg);
+
+                //Update time spent for the deleted user, if user spent time
+                if(user.getTime_spent() > 0) {
+                    UniversalTimeSpentDLC uniTime = uniTimeSpentRepo.getLatest();
+                    uniTime.setAmount_clicks(uniTime.getAmount_clicks() + user.getAmount_of_clicks());
+                    uniTime.setAmount_users(uniTime.getAmount_users() + 1);
+
+                    clicks = uniTime.getAmount_clicks();
+
+                    uniTime.setTotal_time(uniTime.getTotal_time() + user.getTime_spent());
+
+                    uniTime.setArticle(user.getTime_spent() * ((float) articleLength / clicks));
+                    uniTime.setNews(user.getTime_spent() * ((float) newsLength / clicks));
+                    uniTime.setBlog(user.getTime_spent() * ((float) blogLength / clicks));
+                    uniTime.setPodcast(user.getTime_spent() * ((float) podcastLength / clicks));
+                    uniTime.setWhitepaper(user.getTime_spent() * ((float) wpLength / clicks));
+                    uniTime.setRatgeber(user.getTime_spent() * ((float) ratgeberLength / clicks));
+                    uniTime.setMain(user.getTime_spent() * ((float) mainLength / clicks));
+                    uniTime.setFooter(user.getTime_spent() * ((float) footerLength / clicks));
+
+                    uniTimeSpentRepo.save(uniTime);
+                }
+            }
+            uniqueUserRepo.delete(uniqueUserRepo.findByIP(ip));
+        }
+    }
+
+    private void permanentifyAllUsers() throws JSONException {
+        for(UniqueUser user : uniqueUserRepo.findAll()) {
+            String ip = user.getIp();
+            permanentifyUser(ip);
+        }
+    }
+
+    private void initUniAverages() {
+        UniversalAverageClicksDLC uniAverage = new UniversalAverageClicksDLC();
+        uniAverage.setArticle(0);
+        uniAverage.setBlog(0);
+        uniAverage.setMain(0);
+        uniAverage.setPodcast(0);
+        uniAverage.setFooter(0);
+        uniAverage.setNews(0);
+        uniAverage.setRatgeber(0);
+        uniAverage.setWhitepaper(0);
+        uniAverage.setAmount_clicks(0);
+        uniAverage.setAmount_users(0);
+        uniAverage.setUni_stat_id(uniRepo.getLatestUniStat().getId());
+        uniAverageClicksRepo.save(uniAverage);
+    }
+
+    private void initUniTime() {
+        UniversalTimeSpentDLC uniTime = new UniversalTimeSpentDLC();
+        uniTime.setArticle(0);
+        uniTime.setBlog(0);
+        uniTime.setMain(0);
+        uniTime.setPodcast(0);
+        uniTime.setFooter(0);
+        uniTime.setNews(0);
+        uniTime.setRatgeber(0);
+        uniTime.setWhitepaper(0);
+        uniTime.setAmount_clicks(0);
+        uniTime.setAmount_users(0);
+        uniTime.setTotal_time(0);
+        uniTime.setUni_stat_id(uniRepo.getLatestUniStat().getId());
+        uniTimeSpentRepo.save(uniTime);
+    }
+
+    public void updateSearchDLCMap(String ip,String SearchQuery,Long postId,LocalDateTime dateLog){
+        int uniId = uniRepo.getLatestUniStat().getId();
+        String key = ip + "_" + SearchQuery  ;
+
+        FinalSearchStatDLC searchDLC = searchDLCMap.get(key);
+        if (searchDLC == null) {
+
+           searchDLCMap.put(key,new FinalSearchStatDLC(uniId,dateLog.getHour(),postId));
+
+        }else if(!postId.equals(searchDLC.getPostId())){
+            searchDLCMap.put(key,new FinalSearchStatDLC(uniId,dateLog.getHour(),postId));
+        }
+
+    }
+    public void linkSearchSuccessesWithSearches(List<TemporarySearchStat> tempSearches, List<FinalSearchStat> finalSearches) {
+        // Erstelle zuerst eine Map für die Zuordnung von TempID zu FinalSearchStat
+        System.out.println(searchDLCMap);
+        Map<Long, FinalSearchStat> tempIdToFinalSearchMap = new HashMap<>();
+        for (FinalSearchStat finalSearch : finalSearches) {
+            tempIdToFinalSearchMap.put(finalSearch.getTempId(), finalSearch);
+        }
+
+        // Durchlaufen aller DLC-Objekte und aktualisieren mit den entsprechenden FinalSearchStat-IDs
+        for (TemporarySearchStat tempSearch : tempSearches) {
+            String key = tempSearch.getSearchIp() + "_" + tempSearch.getSearchQuery() ;
+            FinalSearchStatDLC searchDLC = searchDLCMap.get(key);
+
+            if (searchDLC != null) {
+                FinalSearchStat matchingFinalSearch = tempIdToFinalSearchMap.get(tempSearch.getId());
+                if (matchingFinalSearch != null) {
+                    searchDLC.setFinalSearchId(matchingFinalSearch.getId());
+                }
+            }
+        }
+       Boolean saveSuccess = finalSearchService.saveAllDLCBooleanFromMap(searchDLCMap);
+        System.out.println("SearchDLC save success: "+saveSuccess);
+    }
+
+
+    private void updateFinalSearchStatsAndTemporarySearchStats(){
+        List<TemporarySearchStat> alleTempSearches= temporarySearchService.getAllSearchStat();
+        List<FinalSearchStat> zuSpeicherndeFinalSearches = new ArrayList<>();
+
+        Calendar calendar = Calendar.getInstance();
+        Integer hour = 0;
+        Integer uniId = uniRepo.getLatestUniStat().getId();
+
+        for(TemporarySearchStat stat: alleTempSearches){
+           String country = IPHelper.getCountryISO(stat.getSearchIp());
+           String state = IPHelper.getSubISO(stat.getSearchIp());
+           String city = IPHelper.getCityName(stat.getSearchIp());
+           calendar.setTime(stat.getDate());
+           hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+           zuSpeicherndeFinalSearches.add(new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),stat.getSearchQuery(), stat.getId()));
+        }
+        System.out.println(zuSpeicherndeFinalSearches);
+        Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);
+        System.out.println(saveSuccess);
+        if(saveSuccess){
+            linkSearchSuccessesWithSearches(alleTempSearches,zuSpeicherndeFinalSearches);
+            Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
+            if(!deleteSuccess){
+                System.out.println("Löschen von TemporarySearch mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
+            }
+            System.out.println("Final Search Stats saved ! Temporary Search Stats deleted !");
+        }else{
+            System.out.println("Erstellen/Speichern von FinalSearch der TemporarySearches mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
+        }
+    }
+
 }

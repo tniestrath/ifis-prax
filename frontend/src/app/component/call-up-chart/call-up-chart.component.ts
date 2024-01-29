@@ -2,9 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
-import _default from "chart.js/dist/plugins/plugin.legend";
-import labels = _default.defaults.labels;
-import {SysVars} from "../../services/sys-vars-service";
 
 export class Callup {
   clicks : number = 0;
@@ -65,7 +62,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       "Partner",
       "DSV",
       "Newsletter",
-      "Image-Film",
+      "Ziel",
       "AGBs"];
 
   categoriesViews : number[] = [];
@@ -104,62 +101,21 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
-        if (this.slidedOut){
-          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Immer");
-        } else {
-          this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, "Immer");
-        }
+        this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Immer");
       });
     } else {
       this.db.getCallupsByCategoriesNewest().then(res => {
         this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
-        if (this.slidedOut) {
-          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Heute");
-        } else {
-          this.createCategoriesChart(this.categories.slice(0, 7), this.categoriesViews, this.categoriesVisitors, "Heute");
-        }
+        this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Heute");
       });
     }
-  }
-
-  addData(chart: any) {
-    if (chart == undefined)return;
-    chart.data.labels = this.categories;
-    chart.update("none");
-  }
-
-  removeData(chart: any) {
-    if (chart == undefined)return;
-    chart.data.labels = this.categories.slice(0, 7);
-    chart.update("none");
   }
 
   ngOnInit(): void {
     this.getData();
     this.setToolTip("Hier werden die Aufrufe und einzigartigen Besucher pro Zeit dargestellt. Unter \"24h\" befindet sich eine Auflistung der letzten 23 Stunden.");
-    var slideOutButton = document.querySelector("#slide-out-button") as HTMLDivElement;
-    var uniChartBox = document.querySelector("#uni-chart-box") as HTMLDivElement;
-    var categoriesChartBox = document.querySelector("#categories-chart-box") as HTMLDivElement;
-    if (slideOutButton && uniChartBox && categoriesChartBox){
-      slideOutButton.addEventListener("click", evt => {
-        if (!this.slidedOut){
-          uniChartBox.style.width = "49%";
-          categoriesChartBox.style.width = "49%";
-          slideOutButton.innerHTML = "<p style='font-weight: bold'>></p>"
-          this.addData(this.categories_chart);
-          this.slidedOut = true;
-
-        } else {
-          uniChartBox.style.width = "73%";
-          categoriesChartBox.style.width = "25%";
-          slideOutButton.innerHTML = "<p style='font-weight: bold'><</p>"
-          this.removeData(this.categories_chart);
-          this.slidedOut = false;
-        }
-      })
-    }
   }
 
   createCategoriesChart(labels: string[], clicksData : number[], visitorsData: number[], timestamp : string){
@@ -197,36 +153,29 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         clip: false,
         aspectRatio: .5,
         maintainAspectRatio: false,
+        indexAxis: "y",
         layout: {
         },
         scales: {
-          y: {
+          x: {
             min: 0,
             stacked: false,
           },
-          x: {
-            stacked: true
+          y: {
+            stacked: true,
+            ticks: {
+              autoSkip: false
+            }
           }
         },
         plugins: {
           datalabels: {
-            display: (ctx) => {
-              if ((clicksData[ctx.dataIndex] >= (c_max * 0.2) || visitorsData[ctx.dataIndex] >= (v_max * 0.2) )&& clicksData[ctx.dataIndex] > (visitorsData[ctx.dataIndex] * 1.2)){
-                return true;
-              }
-              return false;
-            },
-            font: {
-              size: 8
-            },
-            anchor: "end",
-            align: "bottom",
-            clamp: true
+            display: false
           },
           title: {
             display: true,
             text: timestamp,
-            position: "top",
+            position: "bottom",
             fullSize: true,
             font: {
               size: 14,
@@ -250,7 +199,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           },
         },
         interaction: {
-          mode: "x",
+          mode: "y",
           intersect: true
         },
         onClick(event: ChartEvent, elements: ActiveElement[]) {
@@ -376,7 +325,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
                   position: "center",
                   padding: 2,
                   font: {
-                    size: 10
+                    size: 14
                   }
                 }
               },
@@ -392,7 +341,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
                   position: "center",
                   padding: 2,
                   font: {
-                    size: 10
+                    size: 14
                   }
                 }
               }
@@ -418,11 +367,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
-        if (this.slidedOut){
-          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date);
-        } else {
-          this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, date);
-        }
+        this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date);
       });
     } else if (timespan == "day"){
       this.db.getSystemTimeHour().then(currHour => {
@@ -433,11 +378,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           this.categories = res.labels;
           this.categoriesViews = res.clicks;
           this.categoriesVisitors = res.besucher;
-          if (this.slidedOut){
-            this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date + "Uhr");
-          } else {
-            this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, date + "Uhr");
-          }
+          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date + "Uhr");
         });
       });
     }
@@ -446,11 +387,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
-        if (this.slidedOut){
-          this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Immer");
-        } else {
-          this.createCategoriesChart(this.categories.slice(0,7), this.categoriesViews, this.categoriesVisitors, "Immer");
-        }
+        this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Immer");
       });
     }
   }

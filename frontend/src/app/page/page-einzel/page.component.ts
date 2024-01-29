@@ -1,49 +1,49 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
-import {SelectorItem} from "../selector/selector.component";
 import {DbService} from "../../services/db.service";
-import {UserComponent} from "./user/user.component";
 import {Observable, Subject} from "rxjs";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
 import {PostChartComponent} from "../../component/post/post-chart/post-chart.component";
 import {GaugeComponent} from "../../component/gauge/gauge.component";
 import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
-import {PostComponent} from "../../component/post/post.component";
 import {SysVars} from "../../services/sys-vars-service";
 import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
-import {User} from "./user/user";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
-import {ClicksByTimeComponent} from "../../component/clicks-by-time/clicks-by-time.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
-import {PodcastListComponent, PostListComponent} from "../../component/post/post-list/post-list.component";
+import {
+  EventListComponent,
+  PodcastListComponent,
+  PostListComponent,
+  RatgeberListComponent, UserEventListComponent,
+  UserPostListComponent
+} from "../../component/post/post-list/post-list.component";
 import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
 import {CallUpChartComponent} from "../../component/call-up-chart/call-up-chart.component";
-import {
-  Top5ArticleComponent,
-  Top5BlogComponent, Top5NewsComponent,
-  Top5PostsComponent, Top5WhitepaperComponent
-} from "../../component/post/top5-posts/top5-posts.component";
+import {Top5ArticleComponent, Top5BlogComponent, Top5NewsComponent, Top5WhitepaperComponent} from "../../component/post/top5-posts/top5-posts.component";
 import {NewsletterStatsComponent} from "../../component/newsletter-stats/newsletter-stats.component";
 import {SystemloadComponent} from "../../component/system/systemload/systemload.component";
-import {EventsStatsComponent} from "../../component/events-stats/events-stats.component";
+import {EventsStatsComponent, UserEventsStatsComponent} from "../../component/events-stats/events-stats.component";
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
-import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
-
+import {ProfileCompletionComponent} from "../../component/profile-completion/profile-completion.component";
+import {UserComparatorComponent} from "./user/user-comparator/user-comparator.component";
+import {
+  UserStatsByPlanComponent,
+  UserStatsByPlanViewTypeCompareComponent
+} from "./user/user-stats-by-plan/user-stats-by-plan.component";
+import {UserDisplayComponentComponent} from "./user/user-display-component/user-display-component.component";
+import {UserClicksChartComponent} from "./user/user-clicks-chart/user-clicks-chart.component";
+import {SingleUserTagsDistComponent, UserTagsDistComponent} from "./user/user-tags-dist/user-tags-dist.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
   styleUrls: ['./page.component.css']
 })
 export class PageComponent implements OnInit {
-  displayContent: string = "none";
 
-  selectorItems : SelectorItem[] = [];
-  selectorItemsLoaded = new Subject<SelectorItem[]>();
-  searchValue = "";
-  filterValues : { accType : string, sort : string } = {accType: "all", sort : "uid"};
+  resetSearchbar : Subject<boolean> = new Subject<boolean>();
 
   @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
@@ -59,16 +59,26 @@ export class PageComponent implements OnInit {
 
   getUserPageCards() {
     return [
+      {type: UserComparatorComponent, row: 1, col: 1, height: 4, width: 6},
+      {type: UserStatsByPlanComponent, row: 1, col: 4, height: 1, width: 3},
+      {type: UserStatsByPlanViewTypeCompareComponent, row: 2, col: 4, height: 1, width: 3},
+      {type: UserTagsDistComponent, row: 3, col: 4, height: 2, width: 2}
+    ];
+  }
+
+  getUserDetailPageCards() {
+    return [
       {type: ClicksComponent, row: 1, col: 1, height: 4, width: 1},
-      //@ts-ignore
-      {type: PostChartComponent, row: 1, col: 2, height: 2, width: 4},
-      //@ts-ignore
-      {type: GaugeComponent, row: 4, col: 6, height: 1, width: 1},
-      {type: RelevanceComponent, row: 3, col: 6, height: 1, width: 1},
-      //@ts-ignore
-      {type: PostComponent, row: 1, col: 6, height: 2, width: 1},
-      {type: ClicksByTimeComponent, row: 3, col: 2, height: 2, width: 2},
-      {type: OriginMapComponent, row: 3, col: 4, height: 2, width: 2}
+      {type: UserClicksChartComponent, row: 1, col: 2, height: 2, width: 3},
+      {type: ProfileCompletionComponent, row: 3, col: 2, height: 2, width: 2},
+      {type: UserEventsStatsComponent, row: 3, col: 4, height: 2, width: 1},
+      {type: OriginMapComponent, row: 5, col: 2, height: 2, width: 2},
+      {type: UserDisplayComponentComponent, row: 1, col: 5, height: 1, width: 2},
+      {type: SingleUserTagsDistComponent, row: 2, col: 5, height: 1, width: 2},
+      {type: UserPostListComponent, row: 3, col: 5, height: 2, width: 2},
+      {type: UserEventListComponent, row: 5, col: 5, height: 2, width: 2},
+      {type: GaugeComponent, row: 5, col: 1, height: 1, width: 1},
+      {type: RelevanceComponent, row: 6, col: 1, height: 1, width: 1}
     ];
   }
   getTagsPageCards() {
@@ -102,44 +112,19 @@ export class PageComponent implements OnInit {
 
   getContentPageCards() {
     return [
-      {type: PodcastListComponent,  row: 1, col: 1, height: 4, width: 2}
+      {type: PodcastListComponent,  row: 1, col: 1, height: 4, width: 2},
+      {type: EventListComponent,  row: 1, col: 3, height: 4, width: 2},
+      {type: RatgeberListComponent,  row: 1, col: 5, height: 4, width: 2}
     ];
-  }
-
-  onSelected(id: string, name: string) {
-    if (id != "0") {
-      this.displayContent = "grid";
-      this.cardsLoaded.next(this.getUserPageCards());
-      SysVars.CURRENT_PAGE = "Anbieter";
-    } else {
-      this.displayContent = "none";
-    }
-    SysVars.USER_ID = id;
-  }
-
-  onSearchInput(value : string){
-    this.searchValue = value;
-    this.loadSelector(this.filterValues);
-  }
-
-  onFilterChange(filter: { accType: string; sort: string }){
-    this.filterValues = {accType : filter.accType, sort : filter.sort};
-    this.loadSelector(this.filterValues)
   }
 
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
-      this.displayContent = "grid";
       switch (page) {
         case "Anbieter":{
-          if (SysVars.USER_ID != "0" && SysVars.ADMIN){
-            this.displayContent = "grid";
-            this.cardsLoaded.next(this.getUserPageCards());
-          } else {
-            this.displayContent = "none";
-            this.loadSelector(this.filterValues);
-          }
+          this.cardsLoaded.next(this.getUserPageCards());
+          this.resetSearchbar.next(true);
           this.db.resetStatus();
           break;
         }
@@ -172,40 +157,12 @@ export class PageComponent implements OnInit {
           break;
         }
       }
+    });
+    SysVars.SELECTED_USER_ID.subscribe(id => {
+      SysVars.USER_ID = String(id);
+      this.cardsLoaded.next(this.getUserDetailPageCards());
+      this.db.resetStatus();
     })
 
   }
-
-  loadSelector(filter: {accType : string, sort : string}){
-      this.db.loadAllUsers().then(() => {
-        this.selectorItems = [];
-        for (let u of DbService.Users) {
-          this.selectorItems.push(new SelectorItem(UserComponent, new User(u.id, u.email, u.displayName, u.profileViews, u.postViews, u.postCount, u.performance, u.accountType, u.potential, u.img)));
-        }
-      }).then(() => {
-        this.selectorItems = this.selectorItems.filter(item => item.data.name.toUpperCase().includes(this.searchValue.toUpperCase()) ||
-          (item.data as User).email.toUpperCase().includes(this.searchValue.toUpperCase()))
-      }).then(() => {
-        // @ts-ignore
-        if (filter.accType != "all"){
-          this.selectorItems = this.selectorItems.filter((item ) => (item.data as User).accountType == filter.accType);
-        }
-        switch (filter.sort) {
-          case "uid": {
-            this.selectorItems = this.selectorItems.sort((a, b) => (Number(a.data.id) - Number(b.data.id)));
-            break;
-          }
-          case "views": {
-            this.selectorItems = this.selectorItems.sort((a, b) => ( (b.data as User).profileViews + (b.data as User).postViews ) - ( (a.data as User).profileViews + (a.data as User).postViews ) );
-            break;
-          }
-          case "performance": {
-            this.selectorItems = this.selectorItems.sort((a, b) => (b.data as User).performance - (a.data as User).performance);
-            break;
-          }
-          default: break;
-        }
-      }).finally(() =>
-        this.selectorItemsLoaded.next(this.selectorItems));
-    }
 }

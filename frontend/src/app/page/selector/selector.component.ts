@@ -1,5 +1,5 @@
 import {
-  Component,
+  Component, ElementRef,
   EventEmitter,
   Input,
   OnInit, Output,
@@ -23,17 +23,19 @@ export class SelectorItem {
 })
 export class SelectorComponent implements OnInit{
   @Input() columnsForm = "repeat(3, 1fr)";
-  @Input() padding : string = "5px 5vw";
+  @Input() padding : string = "0 5vw";
   @Input() dataLoaded = new Observable<SelectorItem[]>();
   @Input() zebraColorMode: boolean = false;
 
-  @Output() itemClick = new EventEmitter<DbObject>();
+  @Output() scrollEnd = new EventEmitter<void>();
 
   @ViewChild(SelectableDirective, {static: true}) dashSelectable!: SelectableDirective;
+  @ViewChild(SelectorComponent, {static: true}) scrollable!: SelectorComponent;
 
   private sub = new Subscription();
 
-
+  constructor(protected element : ElementRef) {
+  }
 
   ngOnInit(): void {
     console.log("Selector Component loaded");
@@ -53,12 +55,26 @@ export class SelectorComponent implements OnInit{
     for (let item of s) {
       const componentRef = viewContainerRef.createComponent<SelectableComponent>(item.component);
       componentRef.instance.data = item.data;
-      componentRef.setInput("clicked", this.itemClick);
       if (index % 2 == 0 && this.zebraColorMode){
         componentRef.location.nativeElement.setAttribute("style", "background : #EFEFEF; border-radius : 5px");
         componentRef.instance.bgColor = "#EFEFEF";
       }
+      if (this.columnsForm.includes("1fr 1fr") && index < 2){
+        componentRef.instance.bgColor = "60px";
+      }
       index++;
+    }
+  }
+
+  onScroll($event: Event) {
+    console.log("keep on scrollin bebe");
+    let container = $event.target as HTMLDivElement;
+    let scrollPos = container.scrollTop;
+    let maxScroll = container.scrollHeight - container.clientHeight;
+    let scrollPercentage = (scrollPos / maxScroll)* 100;
+
+    if (scrollPercentage > 80){
+      this.scrollEnd.emit();
     }
   }
 }

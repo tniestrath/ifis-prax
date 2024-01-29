@@ -1,26 +1,54 @@
-<div class="user-box" (click)="onClick()">
-  <img alt="" [src]="getUserImg()" dashImgFallback>
+<div class="user-box" (click)="onClick()" [style.margin-top]="bgColor">
+  <img class="user-profile-img" alt="" [src]="data.img" dashImgFallback
+       [style.border-color]="Util.getColor('plan', data.accountType)">
   <div class="user-name-box">
-    <p>{{data.displayName}}</p>
+    <p>{{data.niceName}}</p>
   </div>
   <div class="user-type-box">
-    <p>{{data.accountType}}</p>
+    <div [style]="{display: 'flex', alignItems: 'center'}" [ngSwitch]="data.category">
+      <img *ngSwitchCase="'startup' || 'mittelstand' || 'großkonzern'" alt="unternehmen" src="assets/company.png">
+      <img *ngSwitchCase="'hochschule'" src="assets/uni_hat.png" alt="hochschule">
+      <img *ngSwitchCase="'verband'" src="assets/verband.png" alt="verband">
+      <p [style.margin]="0">{{data.employees}}</p>
+    </div>
   </div>
-  <div class="user-id-box">
-    <p>{{data.id}}</p>
+  <div class="user-acc-type-box">
+    <p [style.color]="Util.getColor('plan', data.accountType)">{{data.accountType}}</p>
+  </div>
+  <div class="user-badges-box">
+    <img *ngIf="data.TeleDE" alt="SecureITy made in DE" src="assets/IT_de.png">
+    <img *ngIf="data.TeleEU" alt="SecureITy made in EU" src="assets/IT_eu.png">
   </div>
   <div class="user-potential-box">
     <div class="potential-background">
-      <div class="potential-value" [style.width]="data.potential+'%'"></div>
+      <div class="potential-value" [style.width]="Math.min((data.potential * 100), 100)+'%'"></div>
     </div>
   </div>
   <div class="user-email-box">
     <p>{{data.email}}</p>
   </div>
-  <div class="user-post-count-box">
-    <p>Views: {{Util.formatNumbers(data.profileViews + data.postViews)}}</p>
+  <div class="user-id-box">
+    <p>{{data.id}}</p>
   </div>
-  <div class="user-performance-box">
-    <img [src]="'assets/performance_icon_' + performance_image_id + '.png'" alt="performance indicator">
+  <div class="user-redirects-box">
+    <img src="assets/target.png">
+    <p>{{data.redirects}}</p>
   </div>
+  <div class="user-profile-views-box">
+    <img alt="Profil Aufrufe" src="assets/profile_views.png">
+    <p>{{Util.formatNumbers(data.profileViews)}}</p>
+  </div>
+  <div class="user-post-views-box">
+    <img alt="Inhalts Aufrufe" src="assets/pencil-solid.png">
+    <p>{{Util.formatNumbers(data.postViews)}}</p>
+  </div>
+  <div class="user-views-daily-box">
+    <p>TA: {{+parseFloat(data.viewsPerDay.toFixed(2))}}</p>
+  </div>
+  <div class="user-tendency-box">
+    <img *ngIf="this.data.tendency" alt="Tendenz steigend" src="assets/trend_up.png">
+    <img *ngIf="!this.data.tendency && !(this.data.tendency == null)" alt="Tendenz fallend" src="assets/trend_down.png">
+    <img *ngIf="this.data.tendency == null" alt="Tendenz stagnierend" src="assets/trend_flat.png">
+  </div>
+
 </div>

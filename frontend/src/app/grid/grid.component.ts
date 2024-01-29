@@ -18,7 +18,7 @@ import {GridCard} from "./GridCard";
 })
 export class GridComponent implements OnInit{
   @Input() columnsForm = "repeat(6, 1fr)";
-  @Input() rowsForm = "repeat(3, 1fr)"
+  @Input() rowsForm = "repeat(6, 1fr)"
   @Input() padding : string = "5px";
   @Input() dataLoaded = new Observable<GridCard[]>();
 

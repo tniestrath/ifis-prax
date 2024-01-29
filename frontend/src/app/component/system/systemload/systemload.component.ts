@@ -40,7 +40,12 @@ export class SystemloadComponent extends DashBaseComponent implements OnInit{
     chart?.data.datasets[0].data.shift();
     chart?.data.datasets[0].data.push(Number(newData));
     this.updateMaxAvg(chart);
-    chart.update("none");
+    try {
+      chart.update("none");
+    } catch (e) {
+
+    }
+
   }
 
   updateMaxAvg(chart: any) {
@@ -119,7 +124,7 @@ export class SystemloadComponent extends DashBaseComponent implements OnInit{
                   position: "center",
                   padding: 2,
                   font: {
-                    size: 10
+                    size: 12
                   }
                 }
               },
@@ -135,7 +140,7 @@ export class SystemloadComponent extends DashBaseComponent implements OnInit{
                   position: "center",
                   padding: 2,
                   font: {
-                    size: 10
+                    size: 12
                   }
                 }
               }

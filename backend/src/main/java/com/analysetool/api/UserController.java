@@ -1903,7 +1903,6 @@ public class UserController {
                 }
             }
 
-            System.out.println("COMPANY NAMES" + companyNames);
             if(sorter.equalsIgnoreCase("content")) {
                 json.put(key, getRankingInListByContentView(thisCompanyName, companyNames));
             } else if(sorter.equalsIgnoreCase("profile")){
@@ -1928,7 +1927,6 @@ public class UserController {
                     int value2 = 0;
                     if(userRepository.findByDisplayName(o2).isPresent()) {
                         value2 = userStatsRepository.findByUserId(userRepository.findByDisplayName(o2).get().getId()) != null ? Math.toIntExact(userStatsRepository.findByUserId(userRepository.findByDisplayName(o2).get().getId()).getProfileView()) : 0;
-                        System.out.println("VALUE 2" + value2);
                     }
                     if(userRepository.findByDisplayName(o1).isPresent()) {
                         value1 = userStatsRepository.findByUserId(userRepository.findByDisplayName(o1).get().getId()) != null ? Math.toIntExact(userStatsRepository.findByUserId(userRepository.findByDisplayName(o1).get().getId()).getProfileView()) : 0;

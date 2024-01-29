@@ -53,3 +53,16 @@ h1{
   grid-row: 2;
   grid-column: 6 / 8;
 }
+
+@media print {
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    font-family: 'Helvetica Neue', sans-serif;
+    overflow: visible;
+  }
+  dash-header{
+    display: none;
+  }
+}

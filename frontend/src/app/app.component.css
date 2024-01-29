@@ -4,3 +4,12 @@ dash-page{
   overflow-y: scroll;
   overflow-x: hidden;
 }
+
+@media print {
+  dash-page{
+    display: block;
+    height: 100vh;
+    overflow-y: visible;
+    overflow-x: visible;
+  }
+}

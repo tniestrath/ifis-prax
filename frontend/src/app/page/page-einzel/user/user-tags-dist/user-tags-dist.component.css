@@ -10,6 +10,9 @@
   margin-top: 0;
   height: 100% !important;
 }
+.no-full-width{
+  width: calc(100% - 45px) !important;
+}
 .user-tags-dist-title{
   display: flex;
   width: calc(100% - 10px);
@@ -21,7 +24,6 @@
   left: 5px;
   right: 5px;
   top: 5px;
-
 }
 .user-tags-dist-title > p{
   margin: 0;

@@ -10,6 +10,7 @@
       <img *ngSwitchCase="'hochschule'" src="assets/uni_hat.png" alt="hochschule">
       <img *ngSwitchCase="'verband'" src="assets/verband.png" alt="verband">
       <p [style.margin]="0">{{user.employees}}</p>
+      <p *ngIf="user.service != 'none'">&nbsp;{{user.service}}</p>
     </div>
   </div>
   <div class="user-acc-type-box">

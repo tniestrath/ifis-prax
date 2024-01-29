@@ -125,4 +125,8 @@ export class HeaderComponent implements AfterViewInit{
     SysVars.WELCOME = true;
     location.reload();
   }
+
+  protected readonly SysVars = SysVars;
+  protected readonly print = print;
+  protected readonly window = window;
 }

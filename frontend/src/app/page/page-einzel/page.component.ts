@@ -81,6 +81,15 @@ export class PageComponent implements OnInit {
       {type: RelevanceComponent, row: 6, col: 1, height: 1, width: 1}
     ];
   }
+  getUserDetailPageCardsPRINT() {
+    return [
+      {type: ClicksComponent, row: 1, col: 1, height: 4, width: 2},
+      {type: ProfileCompletionComponent, row: 3, col: 3, height: 2, width: 4},
+      {type: UserDisplayComponentComponent, row: 1, col: 3, height: 1, width: 4},
+      {type: SingleUserTagsDistComponent, row: 2, col: 3, height: 1, width: 4},
+    ];
+  }
+
   getTagsPageCards() {
     return [
       {type: TagListComponent, row: 1, col: 5, height: 2, width: 2},
@@ -152,6 +161,10 @@ export class PageComponent implements OnInit {
           this.cardsLoaded.next(this.getLandingPageCards());
           break;
         }
+        case "PRINT":{
+          this.cardsLoaded.next(this.getUserDetailPageCardsPRINT());
+          break;
+        }
         default: {
           this.cardsLoaded.next(this.getLandingPageCards());
           break;
@@ -159,6 +172,7 @@ export class PageComponent implements OnInit {
       }
     });
     SysVars.SELECTED_USER_ID.subscribe(id => {
+      SysVars.CURRENT_PAGE = "UserDetail";
       SysVars.USER_ID = String(id);
       this.cardsLoaded.next(this.getUserDetailPageCards());
       this.db.resetStatus();

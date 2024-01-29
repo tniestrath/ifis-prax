@@ -23,6 +23,7 @@ export class UserDisplayComponentComponent extends DashBaseComponent implements 
       this.user.rankingProfile = res.rankingProfile;
       this.user.rankingProfileByGroup = res.rankingProfileByGroup;
       this.cdr.detectChanges();
+
     });
   }
 

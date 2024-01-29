@@ -10,6 +10,7 @@ import {Observable, Subscription} from "rxjs";
 import {GridCardDirective} from "./grid-card.directive";
 import {DashBaseComponent} from "../component/dash-base/dash-base.component";
 import {GridCard} from "./GridCard";
+import {SysVars} from "../services/sys-vars-service";
 
 @Component({
   selector: 'dash-grid',

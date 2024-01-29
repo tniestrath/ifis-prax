@@ -77,3 +77,21 @@
   height: 90%;
   width: 90%;
 }
+.print-box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 10px;
+  z-index: 1000;
+
+  right: 60px;
+  height: 40px;
+  width: 40px;
+  border: 1px solid #951D40;
+  border-radius: 5px;
+}
+.print-box img{
+  height: 90%;
+  width: 90%;
+}

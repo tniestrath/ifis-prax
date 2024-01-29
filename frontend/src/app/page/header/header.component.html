@@ -9,6 +9,12 @@
   <div id="loading-bar-progress"></div>
   {{html_err_code}}
 </div>
+<div *ngIf="SysVars.CURRENT_PAGE == 'UserDetail'" class="print-box" (click)="setSelected('PRINT')">
+  <img src="../../../assets/preview.png"/>
+</div>
+<div *ngIf="SysVars.CURRENT_PAGE == 'PRINT'" class="print-box" (click)="window.print()">
+  <img src="../../../assets/pdf-file.png"/>
+</div>
 <div class="loggout-box" (click)="onLogoutClick()">
   <img src="../../../assets/logout.png"/>
 </div>

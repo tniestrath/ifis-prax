@@ -282,8 +282,6 @@ public class LogService {
     private Map<String,PostClicksByHourDLC> postClicksMap = new HashMap<>();
     private Map<String,UserRedirectsHourly> userRedirectsMap = new HashMap<>();
 
-    private Map<String,FinalSearchStatDLC> searchDLCMap1 = new HashMap<>();
-
     private Map<String, List<FinalSearchStatDLC>> searchDLCMap = new HashMap<>();
 
 
@@ -2764,8 +2762,8 @@ public class LogService {
         try {
             cleanedQuery = URLDecoder.decode(searchQuery, "UTF-8");
             cleanedQuery = cleanedQuery.toLowerCase();
-        } catch (UnsupportedEncodingException e) {
-            System.out.println("Fehler beim Decodieren des URL-Strings, weiter mit codierter Suchanfrage");
+        } catch (Exception e) {
+            System.out.println("Fehler beim Decodieren des URL-Strings, weiter mit codierter Suchanfrage :" + e.getMessage());
         }
 
         String key = ip + "_" + cleanedQuery;

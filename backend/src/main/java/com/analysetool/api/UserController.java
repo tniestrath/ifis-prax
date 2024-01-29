@@ -77,29 +77,6 @@ public class UserController {
         this.config = config;
     }
 
-    @GetMapping("/getById")
-    public String getUserById(@RequestParam String id) {
-        try {
-            JSONObject obj = new JSONObject();
-            var user = userRepository.findById(Long.valueOf(id));
-            if (user.isPresent()) {
-                obj.put("id", user.get().getId());
-                obj.put("displayName", user.get().getDisplayName());
-                if (wpUserMetaRepository.existsByUserId(user.get().getId())) {
-                    String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.get().getId());
-                    if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
-                    if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                    if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
-                    if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
-                    if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
-                }
-            }
-            return obj.toString();
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
     @GetMapping("/getByLogin")
     public String getUserByLogin(@RequestParam String u) throws JSONException {
         JSONObject obj = new JSONObject();
@@ -111,9 +88,10 @@ public class UserController {
                 String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.get().getId());
                 if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
                 if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
-                if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
-                if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
+                if (wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) obj.put("accountType", "basic");
+                if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) obj.put("accountType", "basic-plus");
+                if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) obj.put("accountType", "plus");
+                if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) obj.put("accountType", "premium");
             }
         }
         return obj.toString();
@@ -1391,16 +1369,7 @@ public class UserController {
         }
 
 
-        int countTags = 0;
-        Matcher matcher = null;
-        try {
-            if(wpUserMetaRepository.getTags((long) userId).isPresent()) {
-                matcher = Pattern.compile(";i:(\\d+);").matcher(wpUserMetaRepository.getTags((long) userId).get());
-            }
-        } catch (Exception ignored) {}
-        while(matcher != null && matcher.find()) {
-            countTags++;
-        }
+        int countTags = new JSONArray(getSingleUserTagsData(userId, "profile")).length();
 
         //Check how many solutions are allowed, and how many are set.
         int solutions = 0;

@@ -282,7 +282,10 @@ public class LogService {
     private Map<String,PostClicksByHourDLC> postClicksMap = new HashMap<>();
     private Map<String,UserRedirectsHourly> userRedirectsMap = new HashMap<>();
 
-    private Map<String,FinalSearchStatDLC> searchDLCMap = new HashMap<>();
+    private Map<String,FinalSearchStatDLC> searchDLCMap1 = new HashMap<>();
+
+    private Map<String, List<FinalSearchStatDLC>> searchDLCMap = new HashMap<>();
+
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
@@ -2753,28 +2756,30 @@ public class LogService {
         uniTimeSpentRepo.save(uniTime);
     }
 
-    public void updateSearchDLCMap(String ip,String searchQuery,Long postId,LocalDateTime dateLog){
+
+
+    public void updateSearchDLCMap(String ip, String searchQuery, Long postId, LocalDateTime dateLog) {
         int uniId = uniRepo.getLatestUniStat().getId();
         String cleanedQuery = searchQuery;
         try {
             cleanedQuery = URLDecoder.decode(searchQuery, "UTF-8");
-
-            String key = ip + "_" + cleanedQuery  ;
-
-            FinalSearchStatDLC searchDLC = searchDLCMap.get(key);
-            if (searchDLC == null) {
-
-                searchDLCMap.put(key,new FinalSearchStatDLC(uniId,dateLog.getHour(),postId));
-
-            }else if(!postId.equals(searchDLC.getPostId())){
-                searchDLCMap.put(key,new FinalSearchStatDLC(uniId,dateLog.getHour(),postId));
-            }
-
+            cleanedQuery = cleanedQuery.toLowerCase();
         } catch (UnsupportedEncodingException e) {
-            System.out.println("Fehler beim decodieren des Url String weiter mit codierte Search Query");
+            System.out.println("Fehler beim Decodieren des URL-Strings, weiter mit codierter Suchanfrage");
+        }
+
+        String key = ip + "_" + cleanedQuery;
+        List<FinalSearchStatDLC> searchDLCList = searchDLCMap.getOrDefault(key, new ArrayList<>());
+
+        FinalSearchStatDLC newSearchDLC = new FinalSearchStatDLC(uniId, dateLog.getHour(), postId);
+
+        searchDLCList.add(newSearchDLC);
+
+        searchDLCMap.put(key, searchDLCList);
     }
 
-    }
+
+
     public void linkSearchSuccessesWithSearches(List<TemporarySearchStat> tempSearches, List<FinalSearchStat> finalSearches) {
         // Erstelle zuerst eine Map für die Zuordnung von TempID zu FinalSearchStat
         System.out.println(searchDLCMap);
@@ -2785,19 +2790,23 @@ public class LogService {
 
         // Durchlaufen aller DLC-Objekte und aktualisieren mit den entsprechenden FinalSearchStat-IDs
         for (TemporarySearchStat tempSearch : tempSearches) {
-            String key = tempSearch.getSearchIp() + "_" + tempSearch.getSearchQuery() ;
-            FinalSearchStatDLC searchDLC = searchDLCMap.get(key);
+            String searchQuery = tempSearch.getSearchQuery().toLowerCase();
+            String key = tempSearch.getSearchIp() + "_" + searchQuery;
+            List<FinalSearchStatDLC> searchDLCList = searchDLCMap.get(key);
 
-            if (searchDLC != null) {
-                FinalSearchStat matchingFinalSearch = tempIdToFinalSearchMap.get(tempSearch.getId());
-                if (matchingFinalSearch != null) {
-                    searchDLC.setFinalSearchId(matchingFinalSearch.getId());
+            if (searchDLCList != null) {
+                for (FinalSearchStatDLC searchDLC : searchDLCList) {
+                    FinalSearchStat matchingFinalSearch = tempIdToFinalSearchMap.get(tempSearch.getId());
+                    if (matchingFinalSearch != null) {
+                        searchDLC.setFinalSearchId(matchingFinalSearch.getId());
+                    }
                 }
             }
         }
-       Boolean saveSuccess = finalSearchService.saveAllDLCBooleanFromMap(searchDLCMap);
-        System.out.println("SearchDLC save success: "+saveSuccess);
+        Boolean saveSuccess = finalSearchService.saveAllDLCBooleanFromMap(searchDLCMap);
+        System.out.println("SearchDLC save success: " + saveSuccess);
     }
+
 
 
     private void updateFinalSearchStatsAndTemporarySearchStats(){
@@ -2814,8 +2823,9 @@ public class LogService {
            String city = IPHelper.getCityName(stat.getSearchIp());
            calendar.setTime(stat.getDate());
            hour = calendar.get(Calendar.HOUR_OF_DAY);
+           String searchQuery = stat.getSearchQuery().toLowerCase();
 
-           zuSpeicherndeFinalSearches.add(new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),stat.getSearchQuery(), stat.getId()));
+           zuSpeicherndeFinalSearches.add(new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),searchQuery, stat.getId()));
         }
         System.out.println(zuSpeicherndeFinalSearches);
         Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);

@@ -73,10 +73,17 @@ public class FinalSearchStatService {
     }
 
 
+
     @Transactional
-    public Boolean saveAllDLCBooleanFromMap(Map<String, FinalSearchStatDLC> statsMap) {
+    public Boolean saveAllDLCBooleanFromMap(Map<String, List<FinalSearchStatDLC>> statsMap) {
         try {
-            List<FinalSearchStatDLC> statsList = new ArrayList<>(statsMap.values());
+
+            List<FinalSearchStatDLC> statsList = new ArrayList<>();
+
+            for (List<FinalSearchStatDLC> dlcList : statsMap.values()) {
+                statsList.addAll(dlcList);
+            }
+
 
             DLCRepo.saveAll(statsList);
             return true;
@@ -84,6 +91,7 @@ public class FinalSearchStatService {
             return false;
         }
     }
+
 
 
 }

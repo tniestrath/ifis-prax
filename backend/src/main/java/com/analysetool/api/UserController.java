@@ -1113,7 +1113,7 @@ public class UserController {
                 if (s.contains("sponsor")) {
                     counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
                 } else
-                if (s.contains(Constants.getInstance().getBasisPlusAnbieter())) {
+                if (s.contains(Constants.getInstance().getBasisPlusAnbieter()) || s.contains("um_basis-anbieter-plus")) {
                     counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
                 } else if ((s.contains(Constants.getInstance().getBasisAnbieter()) ) && !s.contains("plus")) {
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);

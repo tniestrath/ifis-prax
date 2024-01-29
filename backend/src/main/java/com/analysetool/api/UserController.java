@@ -1103,8 +1103,6 @@ public class UserController {
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {
                 if (s.contains("administrator") || s.contains("organizer"))
                     counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
-                if ((s.contains(Constants.getInstance().getBasisAnbieter()) ) && !s.contains("plus"))
-                    counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
                 if (s.contains(Constants.getInstance().getPlusAnbieter()))
                     counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
                 if (!s.contains("sponsoren") && s.contains(Constants.getInstance().getPremiumAnbieter()))
@@ -1115,6 +1113,8 @@ public class UserController {
                     counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
                 if (s.contains("anbieter"))
                     counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
+                if ((s.contains(Constants.getInstance().getBasisAnbieter()) ) && !s.contains("plus"))
+                    counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
     });
         return new JSONObject(counts).toString();
     }

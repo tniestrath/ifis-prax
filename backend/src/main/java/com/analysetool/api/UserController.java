@@ -1307,11 +1307,11 @@ public class UserController {
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "customer";
             if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "administrator";
-            if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return "plus-anbieter";
-            if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "um_basis-anbieter-plus";
+            if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return Constants.getInstance().getPlusAnbieter();
+            if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return Constants.getInstance().getBasisPlusAnbieter();
             if(wpUserMeta.contains("sponsor")) return "um_premium-anbieter-sponsoren";
-            if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium-anbieter";
-            if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "um_basis-anbieter";
+            if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return Constants.getInstance().getPremiumAnbieter();
+            if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return Constants.getInstance().getBasisAnbieter();
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 

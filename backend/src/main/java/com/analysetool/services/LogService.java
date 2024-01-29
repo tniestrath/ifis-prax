@@ -4,6 +4,7 @@ import com.analysetool.api.PostController;
 import com.analysetool.api.UserController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.util.Constants;
 import com.analysetool.util.DashConfig;
 import com.analysetool.util.IPHelper;
 
@@ -113,12 +114,15 @@ public class LogService {
     private BufferedReader br;
     private String path = "";
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
-    private final String BlogSSPattern = "^.*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
-    private final String ArtikelSSPattern = "^.*GET /artikel/(\\S+)/.*s=(\\S+)\".*";//search +1, view +1,(bei match) vor artikel view pattern
+    //private final String BlogSSPattern = "^.*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
+    private final String ArtikelSSPattern = "^.*GET /artikel/([^/]+)/.*s=([^&\"]+)\"";
+    private final String PresseSSViewPatter = "^.*GET /news/([^/]+)/.*s=([^&\"]+)\"";
+    private final String BlogSSPattern = "^.*GET /blog/([^/]+)/.*s=([^&\"]+)\"";
+    private final String WhitepaperSSPattern = "^.*GET /whitepaper/([^/]+)/.*s=([^&\"]+)\"";//search +1, view +1,(bei match) vor artikel view pattern
     //private final String ArtikelSSPattern = "^.*GET /artikel/([^ ]+)/.*[?&]s=([^&\"]+).*";
 
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
-    private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
+   // private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
     private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
@@ -137,7 +141,7 @@ public class LogService {
 
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
-    private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
+    //private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
 
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
 
@@ -530,19 +534,19 @@ public class LogService {
 
                     //Does it match an article-type?
                     Matcher matched_articleView = articleViewPattern.matcher(request);
-                    Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(request);
+                    Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
 
                     //Does it match a blog-type?
                     Matcher matched_blogView = blogViewPattern.matcher(request);
-                    Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(request);
+                    Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
 
                     //Does it match a news-type?
                     Matcher matched_newsView = newsViewPattern.matcher(request);
-                    Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(request);
+                    Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(line);
 
                     //Does it match a whitepaper-type?
                     Matcher matched_whitepaperView = patternWhitepaperView.matcher(request);
-                    Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(request);
+                    Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
 
                     //Does it match the main-page-type?
                     Matcher matched_main_page = mainPagePattern.matcher(request);
@@ -601,7 +605,7 @@ public class LogService {
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
-                    if(matched_articleView.find()) {
+/*                    if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
                     } else if(matched_articleSearchSuccess.find()) {
@@ -625,6 +629,31 @@ public class LogService {
                     } else if(matched_whitepaperSearchSuccess.find()) {
                         whatMatched = "wpSS";
                         patternMatcher = matched_whitepaperSearchSuccess;
+                        */
+                    if(matched_articleSearchSuccess.find()) {
+                        whatMatched = "articleSS";
+                        patternMatcher = matched_articleSearchSuccess;
+                    } else if(matched_blogSearchSuccess.find()) {
+                        whatMatched = "blogSS";
+                        patternMatcher = matched_blogSearchSuccess;
+                    } else if(matched_newsSearchSuccess.find()) {
+                        whatMatched = "newsSS";
+                        patternMatcher = matched_newsSearchSuccess;
+                    } else if(matched_whitepaperSearchSuccess.find()) {
+                        whatMatched = "wpSS";
+                        patternMatcher = matched_whitepaperSearchSuccess;
+                    } else if(matched_articleView.find()) {
+                        whatMatched = "articleView";
+                        patternMatcher = matched_articleView;
+                    } else if(matched_blogView.find()) {
+                        whatMatched = "blogView";
+                        patternMatcher = matched_blogView;
+                    } else if(matched_newsView.find()) {
+                        whatMatched = "newsView";
+                        patternMatcher = matched_newsView;
+                    } else if(matched_whitepaperView.find()) {
+                        whatMatched = "wpView";
+                        patternMatcher = matched_whitepaperView;
                     } else if(matched_podcast_view.find()) {
                         whatMatched = "podView";
                         patternMatcher = matched_podcast_view;
@@ -971,7 +1000,7 @@ public class LogService {
         userRedirectService.persistAllUserRedirectsHourly(userRedirectsMap);
         //maps clearen nur um sicher zu gehen
         cleanMaps();
-        //updateFinalSearchStatsAndTemporarySearchStats();
+        updateFinalSearchStatsAndTemporarySearchStats();
     }
 
     private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
@@ -1220,7 +1249,7 @@ public class LogService {
                 uniCategories = universalCategoriesDLCRepo.getLast();
                 uniCategories.setUniStatId(uniRepo.getSecondLastUniStats().get(0).getId());
                 //Update users
-                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
+                uniCategories.setBesucherGlobal(uniCategories.getBesucherGlobal() + uniqueUsers - userArticle - userNews - userBlog - userPodcast - userWhitepaper - userRatgeber - userRatgeberSelf - userMain - userUeber - userImpressum - userPreisliste - userPartner - userDatenschutz - userNewsletter - userImage - userAGBS);
                 uniCategories.setBesucherArticle(uniCategories.getBesucherArticle() + userArticle);
                 uniCategories.setBesucherNews(uniCategories.getBesucherNews() + userNews);
                 uniCategories.setBesucherBlog(uniCategories.getBesucherBlog() + userBlog);
@@ -1312,9 +1341,9 @@ public class LogService {
         long newsCounter = 0;
         long blogCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
         for (Post post : posts) {
 
@@ -1393,9 +1422,10 @@ public class LogService {
                 break;
             case "articleSS", "blogSS", "newsSS", "wpSS":
                 try {
-                    updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
-                    updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
-                    //updateSearchDLCMap(ip,patternMatcher.group(2),postRepository.getIdByName(patternMatcher.group(1)),dateLog);
+                    updateSearchDLCMap(ip,patternMatcher.group(2),postRepository.getIdByName(patternMatcher.group(1)),dateLog);
+                    UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                   // updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                   // updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
                 } catch(Exception e) {
                     System.out.println("SS PROCESS LINE EXCEPTION " +line);
                 }
@@ -2052,10 +2082,14 @@ public class LogService {
         long artikelCounter = 0 ;
         long newsCounter =0;
         long blogCounter = 0;
+        long whitepaperCounter = 0;
+        long podcastCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
         for (Post post : posts) {
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
@@ -2071,6 +2105,14 @@ public class LogService {
 
                         if (termTax.getTermId() == tagIdPresse) {
                             newsCounter++ ;
+                        }
+
+                        if (termTax.getTermId() == tagIdWhitepaper) {
+                            whitepaperCounter++ ;
+                        }
+
+                        if (termTax.getTermId() == tagIdPodcast) {
+                            podcastCounter++ ;
                         }
                     }
 
@@ -2100,11 +2142,11 @@ public class LogService {
         long whiteCounter = 0;
         long podCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
-        int tagIdWhite = termRepo.findBySlug("whitepaper").getId().intValue();
-        int tagIdPod = termRepo.findBySlug("podcast").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
         for (Post post : posts) {
             LocalDateTime postDateTime = post.getDate(); // Nehmen wir an, das ist vom Typ LocalDateTime
@@ -2124,11 +2166,11 @@ public class LogService {
                             newsCounter++;
                         }
 
-                        if (termTax.getTermId() == tagIdWhite) {
+                        if (termTax.getTermId() == tagIdWhitepaper) {
                             whiteCounter++;
                         }
 
-                        if (termTax.getTermId() == tagIdPod) {
+                        if (termTax.getTermId() == tagIdPodcast) {
                             podCounter++;
                         }
                     }
@@ -2715,7 +2757,6 @@ public class LogService {
 
     public void updateSearchDLCMap(String ip,String SearchQuery,Long postId,LocalDateTime dateLog){
         int uniId = uniRepo.getLatestUniStat().getId();
-        String time = String.valueOf(dateLog.getMinute());
         String key = ip + "_" + SearchQuery  ;
 
         FinalSearchStatDLC searchDLC = searchDLCMap.get(key);
@@ -2730,6 +2771,7 @@ public class LogService {
     }
     public void linkSearchSuccessesWithSearches(List<TemporarySearchStat> tempSearches, List<FinalSearchStat> finalSearches) {
         // Erstelle zuerst eine Map für die Zuordnung von TempID zu FinalSearchStat
+        System.out.println(searchDLCMap);
         Map<Long, FinalSearchStat> tempIdToFinalSearchMap = new HashMap<>();
         for (FinalSearchStat finalSearch : finalSearches) {
             tempIdToFinalSearchMap.put(finalSearch.getTempId(), finalSearch);
@@ -2747,6 +2789,8 @@ public class LogService {
                 }
             }
         }
+       Boolean saveSuccess = finalSearchService.saveAllDLCBooleanFromMap(searchDLCMap);
+        System.out.println("SearchDLC save success: "+saveSuccess);
     }
 
 
@@ -2769,13 +2813,14 @@ public class LogService {
         }
         System.out.println(zuSpeicherndeFinalSearches);
         Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);
+        System.out.println(saveSuccess);
         if(saveSuccess){
             linkSearchSuccessesWithSearches(alleTempSearches,zuSpeicherndeFinalSearches);
-            /*Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
+            Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
             if(!deleteSuccess){
                 System.out.println("Löschen von TemporarySearch mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
-            }*/
-            System.out.println("OK");
+            }
+            System.out.println("Final Search Stats saved ! Temporary Search Stats deleted !");
         }else{
             System.out.println("Erstellen/Speichern von FinalSearch der TemporarySearches mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
         }

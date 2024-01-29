@@ -72,7 +72,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND (pt.type='blog' OR pt.type='news' OR pt.type='artikel' OR pt.type LIKE '%podcast%' OR pt.type='whitepaper')")
    List<Post> pageByTitleWithTypeQuery(String title, String status, String type, Pageable pageable);
 
-   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE '%'+:filter+'%'")
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter%")
    List<Post> pageByTitleWithTypeQueryWithFilter(String title, String status, String type, String filter, Pageable pageable);
 
    List<Post> findByTitleContainingAndStatusIsAndTypeIsOrderByModifiedDesc(String title, String status, String type, Pageable pageable);

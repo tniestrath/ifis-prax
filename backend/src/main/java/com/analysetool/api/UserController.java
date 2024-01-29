@@ -4,6 +4,7 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.PostClicksByHourDLCService;
 import com.analysetool.services.UserViewsByHourDLCService;
+import com.analysetool.util.Constants;
 import com.analysetool.util.DashConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,29 +77,6 @@ public class UserController {
         this.config = config;
     }
 
-    @GetMapping("/getById")
-    public String getUserById(@RequestParam String id) throws JSONException {
-        try {
-            JSONObject obj = new JSONObject();
-            var user = userRepository.findById(Long.valueOf(id));
-            if (user.isPresent()) {
-                obj.put("id", user.get().getId());
-                obj.put("displayName", user.get().getDisplayName());
-                if (wpUserMetaRepository.existsByUserId(user.get().getId())) {
-                    String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.get().getId());
-                    if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
-                    if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                    if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
-                    if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
-                    if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
-                }
-            }
-            return obj.toString();
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
     @GetMapping("/getByLogin")
     public String getUserByLogin(@RequestParam String u) throws JSONException {
         JSONObject obj = new JSONObject();
@@ -110,55 +88,14 @@ public class UserController {
                 String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.get().getId());
                 if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
                 if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "basic");
-                if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
-                if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
+                if (wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) obj.put("accountType", "basic");
+                if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) obj.put("accountType", "basic-plus");
+                if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) obj.put("accountType", "plus");
+                if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) obj.put("accountType", "premium");
             }
         }
         return obj.toString();
     }
-
-    @Deprecated
-    @GetMapping("/getAllNew")
-    public String getAllNew() throws JSONException {
-        List<WPUser> list = userRepository.findAll();
-
-        JSONArray response = new JSONArray();
-        for (WPUser i : list) {
-            JSONObject obj = new JSONObject();
-            obj.put("id",i.getId());
-            obj.put("email",i.getEmail());
-            obj.put("displayName",i.getNicename());
-            if(userStatsRepository.existsByUserId(i.getId())){
-                UserStats statsUser = userStatsRepository.findByUserId(i.getId());
-                obj.put("profileViews", statsUser.getProfileView());
-                obj.put("postViews", postController.getViewsOfUserById(i.getId()));
-                obj.put("postCount", postController.getPostCountOfUserById(i.getId()));
-
-            } else {
-                obj.put("profileViews", 0);
-                obj.put("postViews",0);
-                obj.put("postCount",0);
-                obj.put ("performance",0);
-            }
-            if (wpUserMetaRepository.existsByUserId(i.getId())){
-                String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(i.getId());
-                obj.put("accountType", "undefined");
-                if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                if (wpUserMeta.contains("anbieter")) obj.put("accountType", "ohne abo");
-                if (wpUserMeta.contains("basis-anbieter")) obj.put("accountType", "basis");
-                if (wpUserMeta.contains("basis-anbieter-plus")) obj.put("accountType", "basis-plus");
-                if (wpUserMeta.contains("plus-anbieter")) obj.put("accountType", "plus");
-                if (wpUserMeta.contains("premium-anbieter")) obj.put("accountType", "premium");
-                if (wpUserMeta.contains("premium-anbieter-sponsoren")) obj.put("accountType", "sponsor");
-            }else {
-                obj.put( "accountType" ,"undefined");
-            }
-            response.put(obj);
-        }
-        return response.toString();
-    }
-
 
     /**
      *
@@ -167,8 +104,8 @@ public class UserController {
      * @param search the search-term you want results for, give empty string for none.
      * @param filterAbo "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
      * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
-     * @return
-     * @throws JSONException
+     * @return a JSON String containing information about all users in the specified page, and the amount of users loaded.
+     * @throws JSONException .
      */
     @GetMapping("/getAll")
     public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
@@ -739,11 +676,11 @@ public class UserController {
             viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
         } catch (NullPointerException ignored) {
         }
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdNews = termRepo.findBySlug("news").getId().intValue();
-        int tagIdWhitepaper = termRepo.findBySlug("whitepaper").getId().intValue();
-        int tagIdPodcast = termRepo.findBySlug("podcast").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdNews = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
 
         List<Post> posts = postRepository.findByAuthor(id.intValue());
 
@@ -1164,19 +1101,19 @@ public class UserController {
         HashMap<String, Integer> counts = new HashMap<>();
 
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {
-                if (s.contains("um_anbieter")) // hoffe "leere" Accounts sind "um_anbieter" und nicht "anbieter" oder was auch immer
+                if (s.contains("anbieter"))
                     counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
                 if (s.contains("administrator") || s.contains("organizer"))
                     counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
-                if ((s.contains("um_basis-anbieter") ) && !s.contains("plus"))
+                if ((s.contains(Constants.getInstance().getBasisAnbieter()) ) && !s.contains("plus"))
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-                if (s.contains("um_plus-anbieter"))
+                if (s.contains(Constants.getInstance().getPlusAnbieter()))
                     counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
-                if (!s.contains("sponsoren") && s.contains("um_premium-anbieter"))
+                if (!s.contains("sponsoren") && s.contains(Constants.getInstance().getPremiumAnbieter()))
                     counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
-                if (s.contains("um_premium-anbieter-sponsoren"))
+                if (s.contains("sponsor"))
                     counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
-                if (s.contains("um_basis-anbieter-plus")  || s.contains("um_basis-plus"))
+                if (s.contains(Constants.getInstance().getBasisPlusAnbieter()))
                     counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
     });
         return new JSONObject(counts).toString();
@@ -1303,11 +1240,10 @@ public class UserController {
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "none";
             if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "admin";
-            if (wpUserMeta.contains("plus-anbieter")) return "plus";
-            if (wpUserMeta.contains("um_basis-anbieter-plus")  || wpUserMeta.contains("um_basis-plus")) return "basis-plus";
-            if(wpUserMeta.contains("um_premium-anbieter-sponsoren")) return "sponsor";
-            if (wpUserMeta.contains("premium-anbieter")) return "premium";
-            if(wpUserMeta.contains("um_basis-anbieter")) return "basis";
+            if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return "plus";
+            if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "basis-plus";
+            if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium";
+            if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "basis";
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 
@@ -1349,11 +1285,11 @@ public class UserController {
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "customer";
             if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "administrator";
-            if (wpUserMeta.contains("plus-anbieter")) return "plus-anbieter";
-            if (wpUserMeta.contains("um_basis-anbieter-plus")  || wpUserMeta.contains("um_basis-plus")) return "um_basis-anbieter-plus";
-            if(wpUserMeta.contains("um_premium-anbieter-sponsoren")) return "um_premium-anbieter-sponsoren";
-            if (wpUserMeta.contains("premium-anbieter")) return "premium-anbieter";
-            if(wpUserMeta.contains("um_basis-anbieter")) return "um_basis-anbieter";
+            if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return Constants.getInstance().getPlusAnbieter();
+            if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return Constants.getInstance().getBasisPlusAnbieter();
+            if(wpUserMeta.contains("sponsor")) return "um_premium-anbieter-sponsoren";
+            if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return Constants.getInstance().getPremiumAnbieter();
+            if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return Constants.getInstance().getBasisAnbieter();
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 
@@ -1369,39 +1305,6 @@ public class UserController {
             }
         }
         return list;
-    }
-
-
-
-    @GetMapping("/getPostDistribution")
-    public String getPostDistribution() throws JSONException {
-        int tagIdBlog = termRepo.findBySlug("blog").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
-        List<Post> posts = postRepository.findAllUserPosts();
-
-        int artCount = 0;
-        int blogCount = 0;
-        int newsCount = 0;
-
-        for(Post post : posts) {
-            for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
-                for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
-                    if (termTax.getTermId() == tagIdBlog) blogCount++;
-                    if (termTax.getTermId() == tagIdArtikel) artCount++;
-                    if (termTax.getTermId() == tagIdPresse) newsCount++;
-                }
-            }
-        }
-
-
-
-        JSONObject obj = new JSONObject();
-        obj.put("blogCount", blogCount);
-        obj.put("artCount", artCount);
-        obj.put("newsCount", newsCount);
-        return obj.toString();
-
     }
 
     @GetMapping("/hasPost")
@@ -1466,16 +1369,7 @@ public class UserController {
         }
 
 
-        int countTags = 0;
-        Matcher matcher = null;
-        try {
-            if(wpUserMetaRepository.getTags((long) userId).isPresent()) {
-                matcher = Pattern.compile(";i:(\\d+);").matcher(wpUserMetaRepository.getTags((long) userId).get());
-            }
-        } catch (Exception ignored) {}
-        while(matcher != null && matcher.find()) {
-            countTags++;
-        }
+        int countTags = new JSONArray(getSingleUserTagsData(userId, "profile")).length();
 
         //Check how many solutions are allowed, and how many are set.
         int solutions = 0;
@@ -1611,7 +1505,7 @@ public class UserController {
         }
     }
 
-    public int getRankingInTypeProfileViews(long id) throws JSONException {
+    public int getRankingInTypeProfileViews(long id) {
         if(userRepository.findById(id).isPresent()) {
             if(userViewsRepo.existsByUserId(id)) {
                 String type = getTypeDirty((int) id);
@@ -1630,7 +1524,7 @@ public class UserController {
         return -1;
     }
 
-    public int getRankingInTypeContentViews(long id) throws JSONException {
+    public int getRankingInTypeContentViews(long id) {
         if(userRepository.findById(id).isPresent()) {
 
                 String type = getTypeDirty((int) id);
@@ -1645,7 +1539,7 @@ public class UserController {
         }
     }
 
-    public int getRankingTotalProfileViews(long id) throws JSONException {
+    public int getRankingTotalProfileViews(long id) {
         if(userRepository.findById(id).isPresent()) {
             if(userViewsRepo.existsByUserId(id)) {
                 List<WPUser> users = userRepository.findAll();
@@ -1660,7 +1554,7 @@ public class UserController {
         return -1;
     }
 
-    public int getRankingTotalContentViews(long id) throws JSONException {
+    public int getRankingTotalContentViews(long id)  {
         if(userRepository.findById(id).isPresent()) {
 
             List<WPUser> users = userRepository.findAll();
@@ -1706,7 +1600,7 @@ public class UserController {
         List<UserViewsByHourDLC> combinedViews = new ArrayList<>();
         combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, previousUniId)); // Daten von gestern
         combinedViews.addAll(userViewsRepo.findByUserIdAndUniId(userId, latestUniId));   // Daten von heute
-        System.out.println("combined views: "+combinedViews.toString());
+        System.out.println("combined views: "+combinedViews);
         Map<Integer, Long> hourlyViews = new LinkedHashMap<>();
         LocalDateTime now = LocalDateTime.now();
         int currentHour = now.getHour();
@@ -1737,7 +1631,7 @@ public class UserController {
                     Long id = Long.parseLong(parts[0].trim());
                     Double score = Double.parseDouble(parts[1].trim());
                     performanceScores.put(id, score);
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException ignored) {
 
                 }
             }
@@ -2009,7 +1903,6 @@ public class UserController {
                 }
             }
 
-            System.out.println("COMPANY NAMES" + companyNames);
             if(sorter.equalsIgnoreCase("content")) {
                 json.put(key, getRankingInListByContentView(thisCompanyName, companyNames));
             } else if(sorter.equalsIgnoreCase("profile")){
@@ -2034,7 +1927,6 @@ public class UserController {
                     int value2 = 0;
                     if(userRepository.findByDisplayName(o2).isPresent()) {
                         value2 = userStatsRepository.findByUserId(userRepository.findByDisplayName(o2).get().getId()) != null ? Math.toIntExact(userStatsRepository.findByUserId(userRepository.findByDisplayName(o2).get().getId()).getProfileView()) : 0;
-                        System.out.println("VALUE 2" + value2);
                     }
                     if(userRepository.findByDisplayName(o1).isPresent()) {
                         value1 = userStatsRepository.findByUserId(userRepository.findByDisplayName(o1).get().getId()) != null ? Math.toIntExact(userStatsRepository.findByUserId(userRepository.findByDisplayName(o1).get().getId()).getProfileView()) : 0;

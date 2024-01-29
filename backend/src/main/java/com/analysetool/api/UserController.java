@@ -4,7 +4,7 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.PostClicksByHourDLCService;
 import com.analysetool.services.UserViewsByHourDLCService;
-import com.analysetool.util.DashConfig;
+import com.analysetool.util.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -739,11 +739,11 @@ public class UserController {
             viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
         } catch (NullPointerException ignored) {
         }
-        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdNews = termRepo.findBySlug("news").getId().intValue();
-        int tagIdWhitepaper = termRepo.findBySlug("whitepaper").getId().intValue();
-        int tagIdPodcast = termRepo.findBySlug("podcast").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdNews = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
 
         List<Post> posts = postRepository.findByAuthor(id.intValue());
 
@@ -1369,39 +1369,6 @@ public class UserController {
             }
         }
         return list;
-    }
-
-
-
-    @GetMapping("/getPostDistribution")
-    public String getPostDistribution() throws JSONException {
-        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
-        List<Post> posts = postRepository.findAllUserPosts();
-
-        int artCount = 0;
-        int blogCount = 0;
-        int newsCount = 0;
-
-        for(Post post : posts) {
-            for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
-                for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
-                    if (termTax.getTermId() == tagIdBlog) blogCount++;
-                    if (termTax.getTermId() == tagIdArtikel) artCount++;
-                    if (termTax.getTermId() == tagIdPresse) newsCount++;
-                }
-            }
-        }
-
-
-
-        JSONObject obj = new JSONObject();
-        obj.put("blogCount", blogCount);
-        obj.put("artCount", artCount);
-        obj.put("newsCount", newsCount);
-        return obj.toString();
-
     }
 
     @GetMapping("/hasPost")

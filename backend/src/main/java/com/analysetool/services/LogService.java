@@ -4,6 +4,7 @@ import com.analysetool.api.PostController;
 import com.analysetool.api.UserController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.util.Constants;
 import com.analysetool.util.DashConfig;
 import com.analysetool.util.IPHelper;
 
@@ -1340,9 +1341,9 @@ public class LogService {
         long newsCounter = 0;
         long blogCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
         for (Post post : posts) {
 
@@ -2081,10 +2082,14 @@ public class LogService {
         long artikelCounter = 0 ;
         long newsCounter =0;
         long blogCounter = 0;
+        long whitepaperCounter = 0;
+        long podcastCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
         for (Post post : posts) {
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
@@ -2100,6 +2105,14 @@ public class LogService {
 
                         if (termTax.getTermId() == tagIdPresse) {
                             newsCounter++ ;
+                        }
+
+                        if (termTax.getTermId() == tagIdWhitepaper) {
+                            whitepaperCounter++ ;
+                        }
+
+                        if (termTax.getTermId() == tagIdPodcast) {
+                            podcastCounter++ ;
                         }
                     }
 
@@ -2129,11 +2142,11 @@ public class LogService {
         long whiteCounter = 0;
         long podCounter = 0;
 
-        int tagIdBlog = termRepo.findBySlug("blogeintrag").getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug("artikel").getId().intValue();
-        int tagIdPresse = termRepo.findBySlug("news").getId().intValue();
-        int tagIdWhite = termRepo.findBySlug("whitepaper").getId().intValue();
-        int tagIdPod = termRepo.findBySlug("podcast").getId().intValue();
+        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
+        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
+        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
+        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
+        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
         for (Post post : posts) {
             LocalDateTime postDateTime = post.getDate(); // Nehmen wir an, das ist vom Typ LocalDateTime
@@ -2153,11 +2166,11 @@ public class LogService {
                             newsCounter++;
                         }
 
-                        if (termTax.getTermId() == tagIdWhite) {
+                        if (termTax.getTermId() == tagIdWhitepaper) {
                             whiteCounter++;
                         }
 
-                        if (termTax.getTermId() == tagIdPod) {
+                        if (termTax.getTermId() == tagIdPodcast) {
                             podCounter++;
                         }
                     }

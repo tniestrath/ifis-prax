@@ -1101,8 +1101,6 @@ public class UserController {
         HashMap<String, Integer> counts = new HashMap<>();
 
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {
-                if (s.contains("anbieter"))
-                    counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
                 if (s.contains("administrator") || s.contains("organizer"))
                     counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
                 if ((s.contains(Constants.getInstance().getBasisAnbieter()) ) && !s.contains("plus"))
@@ -1115,6 +1113,8 @@ public class UserController {
                     counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
                 if (s.contains(Constants.getInstance().getBasisPlusAnbieter()))
                     counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
+                if (s.contains("anbieter"))
+                    counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
     });
         return new JSONObject(counts).toString();
     }

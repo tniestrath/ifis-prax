@@ -1101,20 +1101,25 @@ public class UserController {
         HashMap<String, Integer> counts = new HashMap<>();
 
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {
-                if (s.contains("anbieter"))
-                    counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
-                if (s.contains("administrator") || s.contains("organizer"))
+                if (s.contains("administrator") || s.contains("organizer")) {
                     counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
-                if ((s.contains(Constants.getInstance().getBasisAnbieter()) ) && !s.contains("plus"))
-                    counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-                if (s.contains(Constants.getInstance().getPlusAnbieter()))
+                } else
+                if (s.contains(Constants.getInstance().getPlusAnbieter())) {
                     counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
-                if (!s.contains("sponsoren") && s.contains(Constants.getInstance().getPremiumAnbieter()))
+                } else
+                if (!s.contains("sponsoren") && s.contains(Constants.getInstance().getPremiumAnbieter())) {
                     counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
-                if (s.contains("sponsor"))
+                } else
+                if (s.contains("sponsor")) {
                     counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
-                if (s.contains(Constants.getInstance().getBasisPlusAnbieter()))
+                } else
+                if (s.contains(Constants.getInstance().getBasisPlusAnbieter()) || s.contains("um_basis-anbieter-plus")) {
                     counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
+                } else if ((s.contains(Constants.getInstance().getBasisAnbieter()) ) && !s.contains("plus")) {
+                    counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
+                } else {
+                    counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
+                }
     });
         return new JSONObject(counts).toString();
     }

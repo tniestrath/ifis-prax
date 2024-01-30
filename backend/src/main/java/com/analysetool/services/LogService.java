@@ -1410,14 +1410,30 @@ public class LogService {
                     System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
                 }
                 break;
-            case "articleSS", "blogSS", "newsSS", "wpSS","eventSS":
+            case "articleSS", "blogSS", "newsSS", "wpSS":
                 try {
-                    updateSearchDLCMap(ip,patternMatcher.group(2),postRepository.getIdByName(patternMatcher.group(1)),dateLog,"post");
+                    Long postId = postRepository.getIdByName(patternMatcher.group(1));
+                    updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
                     UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                    updatePostClicksMap(postId,dateLog);
                    // updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                    // updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
                 } catch(Exception e) {
                     System.out.println("SS PROCESS LINE EXCEPTION " +line);
+                }
+                break;
+            case "eventSS":
+                try {
+                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
+                        Long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
+                        updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
+                        UpdatePerformanceAndViews(dateLog, postId);
+                        updateIPsByPost(ip, postId);
+                        updatePostClicksMap(postId,dateLog);
+                    }
+                }   catch (Exception e) {
+                    System.out.println("EVENTVIEW EXCEPTION BEI: " + line);
+                    e.printStackTrace();
                 }
                 break;
             case "userSS":
@@ -2768,6 +2784,11 @@ public class LogService {
         try {
             cleanedQuery = URLDecoder.decode(searchQuery, "UTF-8");
             cleanedQuery = cleanedQuery.toLowerCase();
+            // Entfernen von nicht-alphanumerischen Zeichen außer Leerzeichen
+            cleanedQuery = cleanedQuery.replaceAll("[^a-z0-9 ]", "");
+
+            //  Ersetzen von mehreren aufeinanderfolgenden Leerzeichen durch ein einzelnes Leerzeichen
+            cleanedQuery = cleanedQuery.replaceAll("\\s+", " ").trim();
         } catch (Exception e) {
             System.out.println("Fehler beim Decodieren des URL-Strings, weiter mit codierter Suchanfrage :" + e.getMessage());
         }
@@ -2802,10 +2823,17 @@ public class LogService {
 
         // Durchlaufen aller DLC-Objekte und aktualisieren mit den entsprechenden FinalSearchStat-IDs
         for (TemporarySearchStat tempSearch : tempSearches) {
-            String searchQuery = tempSearch.getSearchQuery().toLowerCase();
-            String key = tempSearch.getSearchIp() + "_" + searchQuery;
-            List<FinalSearchStatDLC> searchDLCList = searchDLCMap.get(key);
 
+            String cleanedQuery = tempSearch.getSearchQuery().toLowerCase();
+            // Entfernen von nicht-alphanumerischen Zeichen außer Leerzeichen
+            cleanedQuery = cleanedQuery.replaceAll("[^a-z0-9 ]", "");
+
+            // Optional: Ersetzen von mehreren aufeinanderfolgenden Leerzeichen durch ein einzelnes Leerzeichen
+            cleanedQuery = cleanedQuery.replaceAll("\\s+", " ").trim();
+
+            String key = tempSearch.getSearchIp() + "_" + cleanedQuery;
+            List<FinalSearchStatDLC> searchDLCList = searchDLCMap.get(key);
+            System.out.println(key);
             if (searchDLCList != null) {
                 for (FinalSearchStatDLC searchDLC : searchDLCList) {
                     FinalSearchStat matchingFinalSearch = tempIdToFinalSearchMap.get(tempSearch.getId());

@@ -2003,7 +2003,7 @@ public class UserController {
 
     public JSONObject getUserCountForAllTags() throws JSONException {
         List<String> allTags = getAllUserTagRowsInList(getAllUserIdsWithTags());
-        System.out.println(allTags.toString());
+        System.out.println(getAllUserIdsWithTags().toString());
         List<List<String>> decryptedAndCleanedTags= decryptTagsStringInList(allTags);
         JSONObject json = new JSONObject();
 
@@ -2011,12 +2011,10 @@ public class UserController {
             for (String tag : tags) {
                 try {
                     json.put(tag, json.getInt(tag) + 1);
-                    System.out.println(tag + json.getInt(tag));
                 } catch (Exception e) {
                     json.put(tag, 1);
                 }
             }
-            System.out.println(tags);
         }
 
         return json;

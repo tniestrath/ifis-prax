@@ -983,18 +983,28 @@ public class UserController {
     private void buildAveragesFromCountsAndClicks(JSONObject counts, JSONObject clicks, JSONObject averages) throws JSONException {
         if(counts.getInt("basis") != 0) {
             averages.put("basis", clicks.getInt("basis") / counts.getInt("basis"));
+        } else {
+            averages.put("basis", 0);
         }
         if(counts.getInt("basis-plus") != 0) {
             averages.put("basis-plus", clicks.getInt("basis-plus") / counts.getInt("basis-plus"));
+        } else {
+            averages.put("basis-plus", 0);
         }
         if(counts.getInt("plus") != 0) {
             averages.put("plus", clicks.getInt("plus") / counts.getInt("plus"));
+        } else {
+            averages.put("plus", 0);
         }
         if(counts.getInt("premium") != 0) {
             averages.put("premium", clicks.getInt("premium") / counts.getInt("premium"));
+        } else {
+            averages.put("premium", 0);
         }
         if(counts.getInt("sponsor") != 0) {
             averages.put("sponsor", clicks.getInt("sponsor") / counts.getInt("sponsor"));
+        } else {
+            averages.put("sponsor", 0);
         }
     }
 

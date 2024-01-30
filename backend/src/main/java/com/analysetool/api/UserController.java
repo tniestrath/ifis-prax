@@ -380,11 +380,11 @@ public class UserController {
             }
 
 
-            if (wpUserMetaRepository.getTags(user.getId(), getTypeProfileTags(Math.toIntExact(user.getId()))).isEmpty()) {
+            if (getTags(user.getId(), getTypeProfileTags(Math.toIntExact(user.getId()))).isEmpty()) {
                 obj.put("tags", "none");
             } else {
                 JSONArray json = new JSONArray();
-                Matcher matcher = pattern.matcher(wpUserMetaRepository.getTags(user.getId(), getTypeProfileTags(Math.toIntExact(user.getId()))).get());
+                Matcher matcher = pattern.matcher(getTags(user.getId(), getTypeProfileTags(Math.toIntExact(user.getId()))).get());
                 if (matcher.find()) {
                     for (int i = 0; i < matcher.groupCount(); i++) {
                         json.put(matcher.group(i));
@@ -1777,7 +1777,7 @@ public class UserController {
 
     public JSONObject getPercentageForTagsByUserId(Long userId) throws JSONException {
         JSONObject tagPercentages = new JSONObject();
-        Optional<String> tagData = wpUserMetaRepository.getTags(userId, getTypeProfileTags(Math.toIntExact(userId)));
+        Optional<String> tagData = getTags(userId, getTypeProfileTags(Math.toIntExact(userId)));
 
         if (tagData.isPresent()) {
             List<String> rawTags = Arrays.asList(tagData.get().split(";"));
@@ -1814,7 +1814,7 @@ public class UserController {
      */
     public Map<String,String> getCompetitionByTags(Long userId){
         Map<String, String> tagsWithCompetingUsers = new HashMap<>();
-        Optional<String> tagData = wpUserMetaRepository.getTags(userId, getTypeProfileTags(Math.toIntExact(userId)));
+        Optional<String> tagData = getTags(userId, getTypeProfileTags(Math.toIntExact(userId)));
 
         if (tagData.isPresent()) {
             List<String> rawTags = Arrays.asList(tagData.get().split(";"));
@@ -1993,6 +1993,24 @@ public class UserController {
 
     public Integer countUsersByTag(String tag) {
         return wpUserMetaRepository.countUsersByTagBasis("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagBasisPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPremium("\"" + tag + "\"");
+    }
+
+    public Optional<String> getTags(long userId, String type) {
+        switch (type) {
+            case "basis" -> {
+                return wpUserMetaRepository.getTagsBasis(userId);
+            }
+            case "basis_plus" -> {
+                return wpUserMetaRepository.getTagsBasisPlus(userId);
+            }
+            case "plus" -> {
+                return wpUserMetaRepository.getTagsPlus(userId);
+            }
+            case "premium" -> {
+                return wpUserMetaRepository.getTagsPremium(userId);
+            }
+        }
+        return Optional.empty();
     }
 
 }

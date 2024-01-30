@@ -66,22 +66,26 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='profile_tags_' + :accType AND p.userId=:user_id")
     Optional<String> getTags(Long user_id, String accType);
 
+    //Counts of Users with a specific tag see aggregate in UserController
 
     @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags_basis' AND p.value LIKE %:tag%")
     Integer countUsersByTagBasis(String tag);
-
     @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags_basis_plus' AND p.value LIKE %:tag%")
     Integer countUsersByTagBasisPlus(String tag);
-
     @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags_plus' AND p.value LIKE %:tag%")
     Integer countUsersByTagPlus(String tag);
-
     @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags_premium' AND p.value LIKE %:tag%")
     Integer countUsersByTagPremium(String tag);
 
-    @Query("SELECT DISTINCT p.userId FROM WPUserMeta p WHERE p.key='profile_tags' AND p.value LIKE %:tag%")
-    List<Long> getUserIdsByTag(String tag);
-
+    //UserIds for Users with a specific tag selected, see aggregate in UserController
+    @Query("SELECT DISTINCT p.userId FROM WPUserMeta p WHERE p.key='profile_tags_basis' AND p.value LIKE %:tag%")
+    List<Long> getUserIdsByTagBasis(String tag);
+    @Query("SELECT DISTINCT p.userId FROM WPUserMeta p WHERE p.key='profile_tags_basis_plus' AND p.value LIKE %:tag%")
+    List<Long> getUserIdsByTagBasisPlus(String tag);
+    @Query("SELECT DISTINCT p.userId FROM WPUserMeta p WHERE p.key='profile_tags_plus' AND p.value LIKE %:tag%")
+    List<Long> getUserIdsByTagPlus(String tag);
+    @Query("SELECT DISTINCT p.userId FROM WPUserMeta p WHERE p.key='profile_tags_premium' AND p.value LIKE %:tag%")
+    List<Long> getUserIdsByTagPremium(String tag);
 
     @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'profile_tags' AND u.userId IN :list")
     List<String> getAllUserTagRowsInList(List<Long> list);

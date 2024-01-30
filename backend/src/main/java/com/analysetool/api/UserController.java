@@ -1831,7 +1831,7 @@ public class UserController {
 
             for(List<String> tags : decryptedTags) {
                 for (String tag : tags) {
-                    List<Long> competingUserIdsWithTag = wpUserMetaRepository.getUserIdsByTag("\"" + tag + "\"");
+                    List<Long> competingUserIdsWithTag = getUserIdsByTag(tag);
                     List<String> competingUsersWithTag = userRepository.findAllDisplayNameByIdIn(competingUserIdsWithTag);
                     tagsWithCompetingUsers.put(tag, competingUsersWithTag.toString());
                 }
@@ -1839,6 +1839,15 @@ public class UserController {
         }
 
         return tagsWithCompetingUsers;
+    }
+
+    public List<Long> getUserIdsByTag(String tag) {
+        List<Long> list = new ArrayList<>();
+        list.addAll(wpUserMetaRepository.getUserIdsByTagBasis("\"" + tag + "\""));
+        list.addAll(wpUserMetaRepository.getUserIdsByTagBasisPlus("\"" + tag + "\""));
+        list.addAll(wpUserMetaRepository.getUserIdsByTagPlus("\"" + tag + "\""));
+        list.addAll(wpUserMetaRepository.getUserIdsByTagPremium("\"" + tag + "\""));
+        return list;
     }
 
     /**

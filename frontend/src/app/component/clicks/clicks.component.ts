@@ -203,7 +203,7 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
   }
 
   ngOnInit(): void {
-    this.setToolTip("Hier sehen Sie wie die Impressionen ihres Profils und Ihrer Beiträge auf einzelne Bereiche verteilt sind.");
+    this.setToolTip("Hier sehen Sie wie die Impressionen ihres Profils und Ihrer Beiträge auf einzelne Bereiche verteilt sind.", SysVars.CURRENT_PAGE != "PRINT");
     if (this.c_chart != undefined) {
       this.c_chart.destroy();
     }

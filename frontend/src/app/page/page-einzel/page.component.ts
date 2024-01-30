@@ -37,6 +37,7 @@ import {UserDisplayComponentComponent} from "./user/user-display-component/user-
 import {UserClicksChartComponent} from "./user/user-clicks-chart/user-clicks-chart.component";
 import {SingleUserTagsDistComponent, UserTagsDistComponent} from "./user/user-tags-dist/user-tags-dist.component";
 import {PdfService} from "../../services/pdf.service";
+import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -85,9 +86,11 @@ export class PageComponent implements OnInit {
   getUserDetailPageCardsPRINT() {
     return [
       {type: ClicksComponent, row: 1, col: 1, height: 4, width: 2},
-      {type: ProfileCompletionComponent, row: 3, col: 3, height: 2, width: 4},
+      {type: ProfileCompletionComponent, row: 5, col: 1, height: 2, width: 2},
       {type: UserDisplayComponentComponent, row: 1, col: 3, height: 1, width: 4},
-      {type: SingleUserTagsDistComponent, row: 2, col: 3, height: 1, width: 4},
+      {type: SingleUserTagsDistComponent, row: 2, col: 3, height: 2, width: 4},
+      {type: UserClicksChartComponent, row: 4, col: 3, height: 2, width: 4},
+      {type: EventListComponent, row: 6, col: 3, height: 1, width: 4}
     ];
   }
 

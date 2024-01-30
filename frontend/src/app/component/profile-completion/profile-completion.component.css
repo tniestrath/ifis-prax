@@ -46,3 +46,25 @@ p {
   height: 40px;
   box-sizing: border-box;
 }
+
+@media print {
+  .profile-completion-title{
+    display: none;
+  }
+  .profile-completion-content{
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 5px;
+  }
+  p {
+    position: relative;
+    padding: 10px 0;
+    margin: 0;
+    font-size: 15px;
+    height: 40px;
+    box-sizing: border-box;
+  }
+}

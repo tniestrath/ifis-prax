@@ -15,6 +15,7 @@
 }
 .user-tags-dist-title{
   display: flex;
+  justify-content: center;
   width: calc(100% - 10px);
   height: 30px;
   position: relative;
@@ -49,4 +50,17 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
+}
+
+@media print {
+  .user-tags-dist-title{
+    display: none;
+  }
+  .user-tags-dist-selector-container{
+    height: 100%;
+    width: 100%;
+  }
+  #shadow {
+    display: none;
+  }
 }

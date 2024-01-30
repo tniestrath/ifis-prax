@@ -110,11 +110,11 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
 
     @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis' AND (wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_basis\"%')")
     List<Long> getAllUserIdsWithTagsBasis();
-    @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"basis-plus\"%'")
+    @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_basis-plus\"%'")
     List<Long> getAllUserIdsWithTagsBasisPlus();
-    @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"plus\"%'")
+    @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_plus\"%'")
     List<Long> getAllUserIdsWithTagsPlus();
-    @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_premium' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"premium\"%'")
+    @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_premium' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_premium\"%'")
     List<Long> getAllUserIdsWithTagsPremium();
 
 
@@ -122,11 +122,11 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
 
     @Query("SELECT count(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis' AND (wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_basis\"%')")
     Integer getTotalCountOfUsersWithTagBasis();
-    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"basis-plus\"%'")
+    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_basis-plus\"%'")
     Integer getTotalCountOfUsersWithTagBasisPlus();
-    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"plus\"%'")
+    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_plus\"%'")
     Integer getTotalCountOfUsersWithTagPlus();
-    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_premium' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"premium\"%'")
+    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_premium' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_premium\"%'")
     Integer getTotalCountOfUsersWithTagPremium();
 
 

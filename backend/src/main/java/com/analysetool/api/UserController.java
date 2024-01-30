@@ -1001,11 +1001,6 @@ public class UserController {
         } else {
             averages.put("premium", 0);
         }
-        if(counts.getInt("sponsor") != 0) {
-            averages.put("sponsor", clicks.getInt("sponsor") / counts.getInt("sponsor"));
-        } else {
-            averages.put("sponsor", 0);
-        }
     }
 
     private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews) throws JSONException {
@@ -2003,7 +1998,7 @@ public class UserController {
 
     public JSONObject getUserCountForAllTags() throws JSONException {
         List<String> allTags = getAllUserTagRowsInList(getAllUserIdsWithTags());
-        System.out.println(allTags.toString());
+        System.out.println(getAllUserIdsWithTags().toString());
         List<List<String>> decryptedAndCleanedTags= decryptTagsStringInList(allTags);
         JSONObject json = new JSONObject();
 
@@ -2011,12 +2006,10 @@ public class UserController {
             for (String tag : tags) {
                 try {
                     json.put(tag, json.getInt(tag) + 1);
-                    System.out.println(tag + json.getInt(tag));
                 } catch (Exception e) {
-                    json.put(tag, 1);
+                    json.put(tag, 0);
                 }
             }
-            System.out.println(tags);
         }
 
         return json;

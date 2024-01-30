@@ -1233,10 +1233,6 @@ public class UserController {
         return "none";
     }
 
-    public Integer getTotalCountOfUsersWithTags() {
-        return wpUserMetaRepository.getTotalCountOfUsersWithTagBasis() + wpUserMetaRepository.getTotalCountOfUsersWithTagBasisPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPremium();
-    }
-
     /**
      *
      * @param id user id to fetch account type for.
@@ -1768,11 +1764,6 @@ public class UserController {
         return (double) countForTag / totalUsersWithTag * 100;
     }
 
-
-    public Integer countUsersByTag(String tag) {
-        return wpUserMetaRepository.countUsersByTagBasis("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagBasisPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPremium("\"" + tag + "\"");
-    }
-
     public Map<String, Double> getPercentageForMultipleTags(List<String> tags) {
         Map<String, Double> tagPercentages = new HashMap<>();
 
@@ -1839,24 +1830,6 @@ public class UserController {
         }
 
         return tagsWithCompetingUsers;
-    }
-
-    public List<String> getAllUserTagRowsInList(List<Long> list) {
-        List<String> listOfTags = new ArrayList<>();
-        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListBasis(list));
-        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListBasisPlus(list));
-        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListPlus(list));
-        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListPremium(list));
-        return listOfTags;
-    }
-
-    public List<Long> getUserIdsByTag(String tag) {
-        List<Long> list = new ArrayList<>();
-        list.addAll(wpUserMetaRepository.getUserIdsByTagBasis("\"" + tag + "\""));
-        list.addAll(wpUserMetaRepository.getUserIdsByTagBasisPlus("\"" + tag + "\""));
-        list.addAll(wpUserMetaRepository.getUserIdsByTagPlus("\"" + tag + "\""));
-        list.addAll(wpUserMetaRepository.getUserIdsByTagPremium("\"" + tag + "\""));
-        return list;
     }
 
     /**
@@ -1993,5 +1966,33 @@ public class UserController {
     }
 
 
+
+    //Aggregate Queries for profile tags
+
+    public List<String> getAllUserTagRowsInList(List<Long> list) {
+        List<String> listOfTags = new ArrayList<>();
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListBasis(list));
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListBasisPlus(list));
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListPlus(list));
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListPremium(list));
+        return listOfTags;
+    }
+
+    public List<Long> getUserIdsByTag(String tag) {
+        List<Long> list = new ArrayList<>();
+        list.addAll(wpUserMetaRepository.getUserIdsByTagBasis("\"" + tag + "\""));
+        list.addAll(wpUserMetaRepository.getUserIdsByTagBasisPlus("\"" + tag + "\""));
+        list.addAll(wpUserMetaRepository.getUserIdsByTagPlus("\"" + tag + "\""));
+        list.addAll(wpUserMetaRepository.getUserIdsByTagPremium("\"" + tag + "\""));
+        return list;
+    }
+
+    public Integer getTotalCountOfUsersWithTags() {
+        return wpUserMetaRepository.getTotalCountOfUsersWithTagBasis() + wpUserMetaRepository.getTotalCountOfUsersWithTagBasisPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPremium();
+    }
+
+    public Integer countUsersByTag(String tag) {
+        return wpUserMetaRepository.countUsersByTagBasis("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagBasisPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPremium("\"" + tag + "\"");
+    }
 
 }

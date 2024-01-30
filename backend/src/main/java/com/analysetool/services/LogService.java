@@ -1414,8 +1414,8 @@ public class LogService {
                 try {
                     Long postId = postRepository.getIdByName(patternMatcher.group(1));
                     updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
-                    UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                     updatePostClicksMap(postId,dateLog);
+                    UpdatePerformanceAndViews(dateLog, postId);
                    // updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                    // updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
                 } catch(Exception e) {

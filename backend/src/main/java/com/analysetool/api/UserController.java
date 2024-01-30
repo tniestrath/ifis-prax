@@ -1759,13 +1759,18 @@ public class UserController {
 
     public double getUserCountAsPercentageForSingleTag(String tag) {
         int totalUsersWithTag = getTotalCountOfUsersWithTags();
-        int countForTag = wpUserMetaRepository.countUsersByTag("\"" + tag + "\"");
+        int countForTag = countUsersByTag(tag);
 
         if (totalUsersWithTag == 0) {
             return 0; // Vermeidung der Division durch Null
         }
 
         return (double) countForTag / totalUsersWithTag * 100;
+    }
+
+
+    public Integer countUsersByTag(String tag) {
+        return wpUserMetaRepository.countUsersByTagBasis("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagBasisPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPremium("\"" + tag + "\"");
     }
 
     public Map<String, Double> getPercentageForMultipleTags(List<String> tags) {

@@ -66,8 +66,19 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='profile_tags_' + :accType AND p.userId=:user_id")
     Optional<String> getTags(Long user_id, String accType);
 
-    @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags' AND p.value LIKE %:tag%")
-    Integer countUsersByTag(String tag);
+
+    @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags_basis' AND p.value LIKE %:tag%")
+    Integer countUsersByTagBasis(String tag);
+
+    @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags_basis_plus' AND p.value LIKE %:tag%")
+    Integer countUsersByTagBasisPlus(String tag);
+
+    @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags_plus' AND p.value LIKE %:tag%")
+    Integer countUsersByTagPlus(String tag);
+
+    @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags_premium' AND p.value LIKE %:tag%")
+    Integer countUsersByTagPremium(String tag);
+
     @Query("SELECT DISTINCT p.userId FROM WPUserMeta p WHERE p.key='profile_tags' AND p.value LIKE %:tag%")
     List<Long> getUserIdsByTag(String tag);
 

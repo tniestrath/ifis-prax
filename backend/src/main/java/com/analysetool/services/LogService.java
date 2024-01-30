@@ -1432,7 +1432,7 @@ public class LogService {
                         updatePostClicksMap(postId,dateLog);
                     }
                 }   catch (Exception e) {
-                    System.out.println("EVENTVIEW EXCEPTION BEI: " + line);
+                    System.out.println("EVENTSS EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
                 break;

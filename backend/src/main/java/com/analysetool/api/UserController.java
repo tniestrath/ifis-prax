@@ -2007,7 +2007,7 @@ public class UserController {
                 try {
                     json.put(tag, json.getInt(tag) + 1);
                 } catch (Exception e) {
-                    json.put(tag, 1);
+                    json.put(tag, 0);
                 }
             }
         }

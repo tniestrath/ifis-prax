@@ -380,11 +380,11 @@ public class UserController {
             }
 
 
-            if (wpUserMetaRepository.getTags(user.getId()).isEmpty()) {
+            if (wpUserMetaRepository.getTags(user.getId(), getTypeProfileTags(Math.toIntExact(user.getId()))).isEmpty()) {
                 obj.put("tags", "none");
             } else {
                 JSONArray json = new JSONArray();
-                Matcher matcher = pattern.matcher(wpUserMetaRepository.getTags(user.getId()).get());
+                Matcher matcher = pattern.matcher(wpUserMetaRepository.getTags(user.getId(), getTypeProfileTags(Math.toIntExact(user.getId()))).get());
                 if (matcher.find()) {
                     for (int i = 0; i < matcher.groupCount(); i++) {
                         json.put(matcher.group(i));
@@ -1218,29 +1218,6 @@ public class UserController {
      */
     @GetMapping("/getTypeById")
     public String getType(int id) {
-        /*
-            This code is currently out of order, since booked packages do not align with user roles
-
-        if(wpMemberRepo.getUserMembership(id) != null) {
-            switch (wpMemberRepo.getUserMembership(id)) {
-                case (1) -> {
-                    return "basis";
-                }
-                case (3) -> {
-                    return "plus";
-                }
-                case (5) -> {
-                    return "premium";
-                }
-                case (6), (9) -> {
-                    return "sponsor";
-                }
-                case (7) -> {
-                    return "basis-plus";
-                }
-            }
-        }
-        */
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "none";
@@ -1255,7 +1232,6 @@ public class UserController {
 
         return "none";
     }
-
 
     /**
      *
@@ -1295,6 +1271,22 @@ public class UserController {
             if(wpUserMeta.contains("sponsor")) return "um_premium-anbieter-sponsoren";
             if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return Constants.getInstance().getPremiumAnbieter();
             if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return Constants.getInstance().getBasisAnbieter();
+            if (wpUserMeta.contains("anbieter")) return "none";
+        }
+
+
+        return "none";
+    }
+
+    private String getTypeProfileTags(int id) {
+        if (wpUserMetaRepository.existsByUserId((long) id)){
+            String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
+            if (wpUserMeta.contains("customer")) return "none";
+            if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "admin";
+            if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return "plus";
+            if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "basis_plus";
+            if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium";
+            if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "basis";
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 
@@ -1675,7 +1667,7 @@ public class UserController {
 
 
     public JSONObject getUserCountForAllTags() throws JSONException {
-        List<String> allTags = wpUserMetaRepository.getAllUserTagRowsInList(wpUserMetaRepository.getAllUserIdsWithTags());
+        List<String> allTags = getAllUserTagRowsInList(getAllUserIdsWithTags());
         List<List<String>> decryptedAndCleanedTags= decryptTagsStringInList(allTags);
         JSONObject json = new JSONObject();
 
@@ -1690,6 +1682,15 @@ public class UserController {
         }
 
         return json;
+    }
+
+    public List<Long> getAllUserIdsWithTags() {
+        List<Long> list = new ArrayList<>();
+        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsBasis());
+        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsBasisPlus());
+        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsPlus());
+        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsPremium());
+        return list;
     }
 
     /**
@@ -1707,7 +1708,7 @@ public class UserController {
 
     public JSONArray getUserCountForAllTagsInPercentage() throws JSONException {
         // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
-        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+        int totalUsersWithTag = getTotalCountOfUsersWithTags();
 
         // Tags und ihre Anzahl holen
         JSONObject companiesPerTag = getUserCountForAllTags();
@@ -1753,8 +1754,8 @@ public class UserController {
     }
 
     public double getUserCountAsPercentageForSingleTag(String tag) {
-        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
-        int countForTag = wpUserMetaRepository.countUsersByTag("\"" + tag + "\"");
+        int totalUsersWithTag = getTotalCountOfUsersWithTags();
+        int countForTag = countUsersByTag(tag);
 
         if (totalUsersWithTag == 0) {
             return 0; // Vermeidung der Division durch Null
@@ -1776,7 +1777,7 @@ public class UserController {
 
     public JSONObject getPercentageForTagsByUserId(Long userId) throws JSONException {
         JSONObject tagPercentages = new JSONObject();
-        Optional<String> tagData = wpUserMetaRepository.getTags(userId);
+        Optional<String> tagData = wpUserMetaRepository.getTags(userId, getTypeProfileTags(Math.toIntExact(userId)));
 
         if (tagData.isPresent()) {
             List<String> rawTags = Arrays.asList(tagData.get().split(";"));
@@ -1813,7 +1814,7 @@ public class UserController {
      */
     public Map<String,String> getCompetitionByTags(Long userId){
         Map<String, String> tagsWithCompetingUsers = new HashMap<>();
-        Optional<String> tagData = wpUserMetaRepository.getTags(userId);
+        Optional<String> tagData = wpUserMetaRepository.getTags(userId, getTypeProfileTags(Math.toIntExact(userId)));
 
         if (tagData.isPresent()) {
             List<String> rawTags = Arrays.asList(tagData.get().split(";"));
@@ -1821,7 +1822,7 @@ public class UserController {
 
             for(List<String> tags : decryptedTags) {
                 for (String tag : tags) {
-                    List<Long> competingUserIdsWithTag = wpUserMetaRepository.getUserIdsByTag("\"" + tag + "\"");
+                    List<Long> competingUserIdsWithTag = getUserIdsByTag(tag);
                     List<String> competingUsersWithTag = userRepository.findAllDisplayNameByIdIn(competingUserIdsWithTag);
                     tagsWithCompetingUsers.put(tag, competingUsersWithTag.toString());
                 }
@@ -1857,7 +1858,7 @@ public class UserController {
             String tag = jsonKeys.next().toString();
             array.put(new JSONObject().put("count", json.getInt(tag)).put("name", tag));
         }
-        array.put(new JSONObject().put("count", wpUserMetaRepository.getAllUserTagRowsInList(wpUserMetaRepository.getAllUserIdsWithTags()).size()).put("name", "countTotal"));
+        array.put(new JSONObject().put("count", getAllUserTagRowsInList(getAllUserIdsWithTags()).size()).put("name", "countTotal"));
         return array.toString();
     }
 
@@ -1965,5 +1966,33 @@ public class UserController {
     }
 
 
+
+    //Aggregate Queries for profile tags
+
+    public List<String> getAllUserTagRowsInList(List<Long> list) {
+        List<String> listOfTags = new ArrayList<>();
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListBasis(list));
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListBasisPlus(list));
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListPlus(list));
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListPremium(list));
+        return listOfTags;
+    }
+
+    public List<Long> getUserIdsByTag(String tag) {
+        List<Long> list = new ArrayList<>();
+        list.addAll(wpUserMetaRepository.getUserIdsByTagBasis("\"" + tag + "\""));
+        list.addAll(wpUserMetaRepository.getUserIdsByTagBasisPlus("\"" + tag + "\""));
+        list.addAll(wpUserMetaRepository.getUserIdsByTagPlus("\"" + tag + "\""));
+        list.addAll(wpUserMetaRepository.getUserIdsByTagPremium("\"" + tag + "\""));
+        return list;
+    }
+
+    public Integer getTotalCountOfUsersWithTags() {
+        return wpUserMetaRepository.getTotalCountOfUsersWithTagBasis() + wpUserMetaRepository.getTotalCountOfUsersWithTagBasisPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPremium();
+    }
+
+    public Integer countUsersByTag(String tag) {
+        return wpUserMetaRepository.countUsersByTagBasis("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagBasisPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPremium("\"" + tag + "\"");
+    }
 
 }

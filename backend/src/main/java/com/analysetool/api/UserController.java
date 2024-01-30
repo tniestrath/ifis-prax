@@ -1995,9 +1995,13 @@ public class UserController {
     public List<Long> getAllUserIdsWithTags() {
         List<Long> list = new ArrayList<>();
         list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsBasis());
+        System.out.println("Basis" + wpUserMetaRepository.getAllUserIdsWithTagsBasis().toString());
         list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsBasisPlus());
+        System.out.println("BasisPlus" + wpUserMetaRepository.getAllUserIdsWithTagsBasisPlus().toString());
         list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsPlus());
+        System.out.println("Plus" + wpUserMetaRepository.getAllUserIdsWithTagsPlus().toString());
         list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsPremium());
+        System.out.println("Premium" + wpUserMetaRepository.getAllUserIdsWithTagsPremium().toString());
         return list;
     }
 

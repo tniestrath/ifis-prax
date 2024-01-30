@@ -1226,7 +1226,7 @@ public class UserController {
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "none";
-            if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "admin";
+            if (wpUserMeta.contains("administrator")) return "admin";
             if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return "plus";
             if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "basis-plus";
             if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium";
@@ -1270,7 +1270,7 @@ public class UserController {
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "customer";
-            if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "administrator";
+            if (wpUserMeta.contains("administrator") ) return "administrator";
             if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return Constants.getInstance().getPlusAnbieter();
             if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return Constants.getInstance().getBasisPlusAnbieter();
             if(wpUserMeta.contains("sponsor")) return "um_premium-anbieter-sponsoren";
@@ -1287,7 +1287,7 @@ public class UserController {
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "none";
-            if (wpUserMeta.contains("administrator") || wpUserMeta.contains("organizer")) return "admin";
+            if (wpUserMeta.contains("administrator")) return "admin";
             if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return "plus";
             if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "basis_plus";
             if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium";

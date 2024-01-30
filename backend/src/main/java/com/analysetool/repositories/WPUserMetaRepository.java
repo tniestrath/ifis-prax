@@ -64,7 +64,12 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     Optional<String> getAdresseOrt(Long user_id);
 
 
-    //A single row of tags for a given user, and a given type (usually getTypeProfileTags, if the current one is needed)
+    /**
+     * A single row of tags for a given user, and a given type ("basis", "basis_plus", "plus", "premium") (usually getTypeProfileTags, if the current one is needed)
+     * @param user_id the id to fetch a user for.
+     * @param accType a specifically formatted accountType.
+     * @return an Optional of a row of tags.
+     */
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='profile_tags_' + :accType AND p.userId=:user_id")
     Optional<String> getTags(Long user_id, String accType);

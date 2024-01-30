@@ -2016,6 +2016,7 @@ public class UserController {
                     json.put(tag, 1);
                 }
             }
+            System.out.println(tags);
         }
 
         return json;

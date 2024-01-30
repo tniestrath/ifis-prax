@@ -18,6 +18,9 @@ public class FinalSearchStatDLC {
     @Column(name = "clicked_post_id")
     private Long postId;
 
+    @Column(name ="clicked_user_id")
+    private Long userId;
+
     public FinalSearchStatDLC() {
     }
 
@@ -26,6 +29,11 @@ public class FinalSearchStatDLC {
         this.uniId = uniId;
         this.hour = hour;
         this.postId = postId;
+    }
+
+    public FinalSearchStatDLC(int uniId, int hour) {
+        this.uniId = uniId;
+        this.hour = hour;
     }
 
     public FinalSearchStatDLC(int uniId, int hour, Long postId) {
@@ -72,6 +80,14 @@ public class FinalSearchStatDLC {
 
     public void setPostId(Long postId) {
         this.postId = postId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override

@@ -1676,33 +1676,6 @@ public class UserController {
     }
 
 
-    public JSONObject getUserCountForAllTags() throws JSONException {
-        List<String> allTags = getAllUserTagRowsInList(getAllUserIdsWithTags());
-        List<List<String>> decryptedAndCleanedTags= decryptTagsStringInList(allTags);
-        JSONObject json = new JSONObject();
-
-        for(List<String> tags : decryptedAndCleanedTags) {
-            for (String tag : tags) {
-                try {
-                    json.put(tag, json.getInt(tag) + 1);
-                } catch (Exception e) {
-                    json.put(tag, 1);
-                }
-            }
-        }
-
-        return json;
-    }
-
-    public List<Long> getAllUserIdsWithTags() {
-        List<Long> list = new ArrayList<>();
-        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsBasis());
-        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsBasisPlus());
-        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsPlus());
-        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsPremium());
-        return list;
-    }
-
     /**
      * Ermittelt die Anzahl der Anbieter für alle Tags.
      *
@@ -1854,11 +1827,7 @@ public class UserController {
         return getCompetitionByTags(userId).toString();
     }
 
-    /**
-     * Aggregates tagLabels, tagPercentages and tagCounts from different sources and puts them in one JSONObject. Order of entries is important.
-     * @return a JSON-String containing sorted lists of tagLabels, tagCounts and tagPercentages. Largest entry is always first.
-     * @throws JSONException .
-     */
+
     @GetMapping("/getAllUserTagsData")
     public String getAllUserTagsDataFusion() throws JSONException {
         JSONObject json = getUserCountForAllTags();
@@ -2021,6 +1990,35 @@ public class UserController {
             }
         }
         return Optional.empty();
+    }
+
+    public List<Long> getAllUserIdsWithTags() {
+        List<Long> list = new ArrayList<>();
+        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsBasis());
+        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsBasisPlus());
+        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsPlus());
+        list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsPremium());
+        return list;
+    }
+
+    public JSONObject getUserCountForAllTags() throws JSONException {
+        List<String> allTags = getAllUserTagRowsInList(getAllUserIdsWithTags());
+        System.out.println(allTags.toString());
+        List<List<String>> decryptedAndCleanedTags= decryptTagsStringInList(allTags);
+        JSONObject json = new JSONObject();
+
+        for(List<String> tags : decryptedAndCleanedTags) {
+            for (String tag : tags) {
+                try {
+                    json.put(tag, json.getInt(tag) + 1);
+                    System.out.println(tag + json.getInt(tag));
+                } catch (Exception e) {
+                    json.put(tag, 1);
+                }
+            }
+        }
+
+        return json;
     }
 
 }

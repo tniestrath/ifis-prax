@@ -138,12 +138,12 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
             this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-accountType-basic":
-            selected_account_filter = "\"um_basis-anbieter\""; // TODO: "um_basis"
+            selected_account_filter = "\"um_basis\"";
             this.selectedAccFilterString = "Basis";
             this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-accountType-basicPlus":
-            selected_account_filter = "\"um_basis-anbieter-plus\""; // TODO: "um_basis-plus"
+            selected_account_filter = "\"um_basis-plus\"";
             this.selectedAccFilterString = "Basis+";
             this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
             break;
@@ -153,7 +153,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
             this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-accountType-premium":
-            selected_account_filter = "\"um_premium-anbieter"; // TODO: "um_premium"
+            selected_account_filter = "\"um_premium\"";
             this.selectedAccFilterString = "Premium";
             this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
             break;

@@ -1671,7 +1671,7 @@ public class UserController {
 
 
     public JSONObject getUserCountForAllTags() throws JSONException {
-        List<String> allTags = wpUserMetaRepository.getAllUserTagRowsInList(getAllUserIdsWithTags());
+        List<String> allTags = getAllUserTagRowsInList(getAllUserIdsWithTags());
         List<List<String>> decryptedAndCleanedTags= decryptTagsStringInList(allTags);
         JSONObject json = new JSONObject();
 
@@ -1841,6 +1841,15 @@ public class UserController {
         return tagsWithCompetingUsers;
     }
 
+    public List<String> getAllUserTagRowsInList(List<Long> list) {
+        List<String> listOfTags = new ArrayList<>();
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListBasis(list));
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListBasisPlus(list));
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListPlus(list));
+        listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListPremium(list));
+        return listOfTags;
+    }
+
     public List<Long> getUserIdsByTag(String tag) {
         List<Long> list = new ArrayList<>();
         list.addAll(wpUserMetaRepository.getUserIdsByTagBasis("\"" + tag + "\""));
@@ -1876,7 +1885,7 @@ public class UserController {
             String tag = jsonKeys.next().toString();
             array.put(new JSONObject().put("count", json.getInt(tag)).put("name", tag));
         }
-        array.put(new JSONObject().put("count", wpUserMetaRepository.getAllUserTagRowsInList(getAllUserIdsWithTags()).size()).put("name", "countTotal"));
+        array.put(new JSONObject().put("count", getAllUserTagRowsInList(getAllUserIdsWithTags()).size()).put("name", "countTotal"));
         return array.toString();
     }
 

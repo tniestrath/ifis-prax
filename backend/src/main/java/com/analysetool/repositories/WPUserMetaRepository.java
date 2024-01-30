@@ -63,6 +63,9 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='adresse_ort' AND p.userId=:user_id")
     Optional<String> getAdresseOrt(Long user_id);
 
+
+    //A single row of tags for a given user, and a given type (usually getTypeProfileTags, if the current one is needed)
+
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='profile_tags_' + :accType AND p.userId=:user_id")
     Optional<String> getTags(Long user_id, String accType);
 
@@ -87,9 +90,16 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     @Query("SELECT DISTINCT p.userId FROM WPUserMeta p WHERE p.key='profile_tags_premium' AND p.value LIKE %:tag%")
     List<Long> getUserIdsByTagPremium(String tag);
 
-    @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'profile_tags' AND u.userId IN :list")
-    List<String> getAllUserTagRowsInList(List<Long> list);
 
+    //List of Tag-Rows for all Users in a given list and the type.
+    @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'profile_tags_basis' AND u.userId IN :list")
+    List<String> getAllUserTagRowsInListBasis(List<Long> list);
+    @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'profile_tags_basis_plus' AND u.userId IN :list")
+    List<String> getAllUserTagRowsInListBasisPlus(List<Long> list);
+    @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'profile_tags_plus' AND u.userId IN :list")
+    List<String> getAllUserTagRowsInListPlus(List<Long> list);
+    @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'profile_tags_premium' AND u.userId IN :list")
+    List<String> getAllUserTagRowsInListPremium(List<Long> list);
 
 
     //UserIds for Users with Tags see aggregate in UserController

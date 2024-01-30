@@ -17,11 +17,39 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
     this.getData();
   }
 
+  protected sorter(a : any, b : any){
+    let c = 0;
+    if (a.at(0) == "basis"){
+      c = -1;
+    } else if (a.at(0) == "basis-plus"){
+      c = -2;
+    } else  if (a.at(0) == "plus"){
+      c = -3;
+    } else if (a.at(0) == "premium"){
+      c = -4;
+    } else if (a.at(0) == "sponsor"){
+      c = -5;
+    }
+    let d = 0;
+    if (b.at(0) == "basis"){
+      d = -1;
+    } else if (b.at(0) == "basis-plus"){
+      d = -2;
+    } else  if (b.at(0) == "plus"){
+      d = -3;
+    } else if (b.at(0) == "premium"){
+      d = -4;
+    } else if (b.at(0) == "sponsor"){
+      d = -5;
+    }
+    return d - c;
+  }
+
   protected getData(){
     this.db.getUserProfileViewsAverageByType().then(res => {
-      let map : Map<string, number> = new Map(Object.entries(res[0]));
-      let map1 : Map<string, number> = new Map(Object.entries(res[1]));
-      let map2 : Map<string, number> = new Map(Object.entries(res[2]));
+      let map : Map<string, number> = new Map(Object.entries<number>(res[0]).sort((a ,b) => this.sorter(a, b)));
+      let map1 : Map<string, number> = new Map(Object.entries<number>(res[1]).sort((a,b) => this.sorter(a, b)));
+      let map2 : Map<string, number> = new Map(Object.entries<number>(res[2]).sort((a,b) => this.sorter(a, b)));
       this.createChart(map, map1, map2);
     });
   }
@@ -33,19 +61,19 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
     let datasets = [];
       datasets = [{
         label: this.datasetLabels[0],
-        data: Array.from(map.values()).reverse(),
+        data: Array.from(map.values()),
         backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
       },
         {
           label: this.datasetLabels[1],
-          data: Array.from(map1.values()).reverse(),
+          data: Array.from(map1.values()),
           backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
         }];
   if (map2){
     datasets.push({
       label: this.datasetLabels[2],
       // @ts-ignore
-      data: Array.from(map2.values()).reverse(),
+      data: Array.from(map2.values()),
       backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
     });
   }
@@ -54,7 +82,7 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
     this.chart = new Chart(this.element.nativeElement.querySelector("#stat_chart"), {
       type: "bar",
       data: {
-        labels: Array.from(map.keys()).reverse(),
+        labels: Array.from(map.keys()),
         datasets: datasets
       },
       options: {
@@ -126,8 +154,8 @@ export class UserStatsByPlanViewTypeCompareComponent extends UserStatsByPlanComp
 
   override getData(){
     this.db.getUserClicksAverageByViewType().then(res => {
-      let map : Map<string, number> = new Map(Object.entries(res[0]));
-      let map1 : Map<string, number> = new Map(Object.entries(res[1]));
+      let map : Map<string, number> = new Map(Object.entries<number>(res[0]).sort((a ,b) => this.sorter(a, b)));
+      let map1 : Map<string, number> = new Map(Object.entries<number>(res[1]).sort((a,b) => this.sorter(a, b)));
       this.createChart(map, map1);
     });
   }

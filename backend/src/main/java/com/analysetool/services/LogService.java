@@ -2760,9 +2760,11 @@ public class LogService {
 
 
 
-    public void updateSearchDLCMap(String ip, String searchQuery, Long postId, LocalDateTime dateLog) {
+    public void updateSearchDLCMap(String ip, String searchQuery, Long Id, LocalDateTime dateLog, String matchCase) {
+
         int uniId = uniRepo.getLatestUniStat().getId();
         String cleanedQuery = searchQuery;
+
         try {
             cleanedQuery = URLDecoder.decode(searchQuery, "UTF-8");
             cleanedQuery = cleanedQuery.toLowerCase();

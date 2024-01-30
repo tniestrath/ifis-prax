@@ -1001,11 +1001,6 @@ public class UserController {
         } else {
             averages.put("premium", 0);
         }
-        if(counts.getInt("sponsor") != 0) {
-            averages.put("sponsor", clicks.getInt("sponsor") / counts.getInt("sponsor"));
-        } else {
-            averages.put("sponsor", 0);
-        }
     }
 
     private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews) throws JSONException {

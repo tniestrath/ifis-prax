@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {DbService} from "../../services/db.service";
 import {Observable, Subject} from "rxjs";
@@ -36,6 +36,7 @@ import {
 import {UserDisplayComponentComponent} from "./user/user-display-component/user-display-component.component";
 import {UserClicksChartComponent} from "./user/user-clicks-chart/user-clicks-chart.component";
 import {SingleUserTagsDistComponent, UserTagsDistComponent} from "./user/user-tags-dist/user-tags-dist.component";
+import {PdfService} from "../../services/pdf.service";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -48,7 +49,7 @@ export class PageComponent implements OnInit {
   @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
 
-  constructor(private cookieService : CookieService, private db : DbService) {
+  constructor(private cookieService : CookieService, private db : DbService, private pdf : PdfService, private element : ElementRef) {
   }
 
   getLandingPageCards(){
@@ -132,40 +133,48 @@ export class PageComponent implements OnInit {
       SysVars.CURRENT_PAGE = page;
       switch (page) {
         case "Anbieter":{
+          this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getUserPageCards());
           this.resetSearchbar.next(true);
           this.db.resetStatus();
           break;
         }
         case "Themen":{
+          this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getTagsPageCards());
           this.db.resetStatus();
           break;
         }
         case "Beiträge":{
+          this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getPostsPageCards());
           this.db.resetStatus();
           break;
         }
         case "Übersicht":{
+          this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getOverviewPageCards());
           this.db.resetStatus();
           break;
         }
         case "Inhalte":{
+          this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getContentPageCards());
           this.db.resetStatus();
           break;
         }
         case "Login":{
+          this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getLandingPageCards());
           break;
         }
         case "PRINT":{
+          this.pdf.bringInFormat(this.element.nativeElement);
           this.cardsLoaded.next(this.getUserDetailPageCardsPRINT());
           break;
         }
         default: {
+          this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getLandingPageCards());
           break;
         }

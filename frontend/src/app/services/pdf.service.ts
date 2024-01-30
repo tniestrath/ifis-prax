@@ -3,43 +3,51 @@ import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
 import {Chart} from "chart.js/auto";
 import {style} from "@angular/animations";
+import {overflow} from "html2canvas/dist/types/css/property-descriptors/overflow";
 @Injectable({
   providedIn: 'root'
 })
 export class PdfService {
 
+  private oldElementStyle : string = "";
+  private oldChildStyle : string = "";
+
   constructor() {
   }
 
-  exportCahrtAsPDF(chart : Chart) {
+  public bringInFormat(element : HTMLElement) {
+    let child = element.children[0] as HTMLElement;
     // @ts-ignore
-    html2canvas(document.querySelector<HTMLCanvasElement>("#c_clicks"))
-      .then(canvas => {
-        console.log(chart)
-        var doc = new jsPDF('p', 'pt', [canvas.width, canvas.height]);
-        const contentDataURL = chart.canvas.toDataURL('image/png');
-        doc.addImage(contentDataURL, 'PNG', 0, 0, canvas.width, canvas.height);
-        doc.save('Filename.pdf');
-      });
+    this.oldElementStyle = element.getAttribute("style");
+    // @ts-ignore
+    this.oldChildStyle = child.getAttribute("style");
+
+    element.style.display = "flex";
+    element.style.flexDirection = "row";
+    element.style.justifyContent = "center";
+
+    child.style.display = "block";
+    child.style.width = "21cm";
+    child.style.height = "29.7cm";
+    child.style.margin = "0";
+    child.style.padding = "0";
+    child.style.backgroundColor = "white";
+    child.style.overflow = "visible";
+    child.style.setProperty("box-shadow", "none", "important");
+
+    Array.from(element.querySelectorAll(".component-box")).forEach(element => {
+      let htmlTag = element as HTMLElement;
+      console.log(htmlTag)
+      htmlTag.style.setProperty("box-shadow", "none");
+    })
   }
-
-
-  savePdf(element : HTMLElement) {
-    console.log(element)
-    var data = element;
-    html2canvas(data).then(canvas => {
-      // Few necessary setting options
-      var imgWidth = 208;
-      var pageHeight = 295;
-      var imgHeight = canvas.height * imgWidth / canvas.width;
-      var heightLeft = imgHeight;
-
-      const contentDataURL = canvas.toDataURL('image/png')
-      let pdf = new jsPDF('l', 'mm', 'a4'); // A4 size page of PDF
-      var position = 0;
-      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight)
-      pdf.save('MYPdf.pdf'); // Generated PDF
-    });
-
+  public restoreStyle(element : HTMLElement){
+    if (this.oldElementStyle != "") {
+      element.setAttribute("style", this.oldElementStyle);
+      let child = element.children[0] as HTMLElement;
+      child.setAttribute("style", this.oldChildStyle);
+      this.oldElementStyle = "";
+      this.oldChildStyle = "";
+    }
   }
 }

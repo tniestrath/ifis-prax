@@ -77,12 +77,14 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'profile_tags' AND u.userId IN :list")
     List<String> getAllUserTagRowsInList(List<Long> list);
 
-    @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags' AND p.value <> 'a:0:{}'")
-    Integer getTotalCountOfUsersWithTag();
-
-
-    @Query("SELECT DISTINCT p.value FROM WPUserMeta p WHERE p.key='profile_tags'")
-    List<String> getAllTags();
+    @Query("SELECT count(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis' AND (wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_basis\"%')")
+    Integer getTotalCountOfUsersWithTagBasis();
+    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"basis-plus\"%'\n")
+    Integer getTotalCountOfUsersWithTagBasisPlus();
+    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"plus\"%'\n")
+    Integer getTotalCountOfUsersWithTagPlus();
+    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_premium' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"premium\"%'\n")
+    Integer getTotalCountOfUsersWithTagPremium();
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='solution_head_1' AND p.userId=:user_id")
     Optional<String> getSolutionHead1(Long user_id);

@@ -1256,6 +1256,10 @@ public class UserController {
         return "none";
     }
 
+    public Integer getTotalCountOfUsersWithTags() {
+        return wpUserMetaRepository.getTotalCountOfUsersWithTagBasis() + wpUserMetaRepository.getTotalCountOfUsersWithTagBasisPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPremium();
+    }
+
 
     /**
      *
@@ -1707,7 +1711,7 @@ public class UserController {
 
     public JSONArray getUserCountForAllTagsInPercentage() throws JSONException {
         // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
-        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+        int totalUsersWithTag = getTotalCountOfUsersWithTags();
 
         // Tags und ihre Anzahl holen
         JSONObject companiesPerTag = getUserCountForAllTags();
@@ -1753,7 +1757,7 @@ public class UserController {
     }
 
     public double getUserCountAsPercentageForSingleTag(String tag) {
-        int totalUsersWithTag = wpUserMetaRepository.getTotalCountOfUsersWithTag();
+        int totalUsersWithTag = getTotalCountOfUsersWithTags();
         int countForTag = wpUserMetaRepository.countUsersByTag("\"" + tag + "\"");
 
         if (totalUsersWithTag == 0) {

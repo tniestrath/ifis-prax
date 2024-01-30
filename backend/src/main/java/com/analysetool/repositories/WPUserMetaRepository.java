@@ -63,28 +63,48 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='adresse_ort' AND p.userId=:user_id")
     Optional<String> getAdresseOrt(Long user_id);
 
-    @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='profile_tags' AND p.userId=:user_id")
-    Optional<String> getTags(Long user_id);
+    @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='profile_tags_' + :accType AND p.userId=:user_id")
+    Optional<String> getTags(Long user_id, String accType);
 
     @Query("SELECT count(DISTINCT p.userId) FROM WPUserMeta p WHERE p.key='profile_tags' AND p.value LIKE %:tag%")
     Integer countUsersByTag(String tag);
     @Query("SELECT DISTINCT p.userId FROM WPUserMeta p WHERE p.key='profile_tags' AND p.value LIKE %:tag%")
     List<Long> getUserIdsByTag(String tag);
 
-    @Query("SELECT DISTINCT(u.userId) FROM WPUserMeta u WHERE u.key = 'profile_tags'")
-    List<Long> getAllUserIdsWithTags();
 
     @Query("SELECT u.value FROM WPUserMeta u WHERE u.key = 'profile_tags' AND u.userId IN :list")
     List<String> getAllUserTagRowsInList(List<Long> list);
 
+
+
+    //UserIds for Users with Tags see aggregate in UserController
+
+    @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis' AND (wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_basis\"%')")
+    List<Long> getAllUserIdsWithTagsBasis();
+    @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"basis-plus\"%'")
+    List<Long> getAllUserIdsWithTagsBasisPlus();
+    @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"plus\"%'")
+    List<Long> getAllUserIdsWithTagsPlus();
+    @Query("SELECT DISTINCT u.userId FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_premium' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"premium\"%'")
+    List<Long> getAllUserIdsWithTagsPremium();
+
+
+    //Counts of Users with Tags see aggregate in UserController
+
     @Query("SELECT count(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis' AND (wum.key = 'wp_capabilities' AND wum.value LIKE '%\"um_basis\"%')")
     Integer getTotalCountOfUsersWithTagBasis();
-    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"basis-plus\"%'\n")
+    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_basis_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"basis-plus\"%'")
     Integer getTotalCountOfUsersWithTagBasisPlus();
-    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"plus\"%'\n")
+    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_plus' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"plus\"%'")
     Integer getTotalCountOfUsersWithTagPlus();
-    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_premium' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"premium\"%'\n")
+    @Query("SELECT COUNT(DISTINCT u.userId) FROM WPUserMeta u LEFT JOIN WPUserMeta wum ON u.userId = wum.userId WHERE u.key = 'profile_tags_premium' AND wum.key = 'wp_capabilities' AND wum.value LIKE '%\"premium\"%'")
     Integer getTotalCountOfUsersWithTagPremium();
+
+
+
+
+
+
 
     @Query("SELECT p.value FROM WPUserMeta p WHERE p.key='solution_head_1' AND p.userId=:user_id")
     Optional<String> getSolutionHead1(Long user_id);

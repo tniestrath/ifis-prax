@@ -41,7 +41,7 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
 export class SingleUserTagsDistComponent extends UserTagsDistComponent implements OnInit{
 
   override ngOnInit(): void {
-    this.setToolTip("", true);
+    this.setToolTip("", SysVars.CURRENT_PAGE != "PRINT");
     this.element.nativeElement.getElementsByClassName("component-box")[0].classList.add("no-margin-top");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].classList.add("no-full-width");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].children[0].innerText = "Platzierung innerhalb der gewählten Themen";
@@ -54,5 +54,4 @@ export class SingleUserTagsDistComponent extends UserTagsDistComponent implement
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }
-
 }

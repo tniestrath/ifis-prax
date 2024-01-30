@@ -27,6 +27,7 @@ export class ProfileCompletionComponent extends DashBaseComponent implements OnI
   status : ProfileState = new ProfileState();
 
   ngOnInit(): void {
+    this.setToolTip("", SysVars.CURRENT_PAGE != "PRINT")
     this.db.getUserProfileCompletion(SysVars.USER_ID).then(res => {
       this.status = res;
     });

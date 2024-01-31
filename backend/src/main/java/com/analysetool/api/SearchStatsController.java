@@ -235,6 +235,18 @@ public class SearchStatsController {
         return fSearchStatService.getSearchStatsByUserId(userId).toString();
     }
 
+    /**
+     * Retrieves and returns search statistics for posts similar to a given post, based on tag similarity.
+     * Similarity is determined by a specified minimum similarity percentage. The result includes each similar
+     * post's search statistics, similarity score, and post ID.
+     *
+     * @param postId The ID of the reference post for which similar posts are sought.
+     * @param similarityPercentage The minimum threshold of tag similarity (in percentage)
+     *        to consider a post similar to the given post.
+     * @return A JSON string representing an array of objects. Each object contains the post ID,
+     *         its similarity score to the given post, and its search statistics.
+     * @throws JSONException If an issue occurs during JSON processing.
+     */
     @GetMapping("/getSearchStatsForSimilarPostsByTags")
     public String getSearchStatsForSimilarPostsByTags(@RequestParam Long postId,@RequestParam float similarityPercentage) throws JSONException {
         JSONArray ergebnis = new JSONArray();

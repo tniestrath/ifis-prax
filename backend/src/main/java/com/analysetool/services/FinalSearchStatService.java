@@ -92,6 +92,18 @@ public class FinalSearchStatService {
         }
     }
 
+    public List<FinalSearchStat> getSearchStatsByPostId(Long postId){
+        List<Long> FinalSearchStatIds=DLCRepo.getFinalSearchStatIdsByPostId(postId);
+        List<FinalSearchStat> stats = repository.findAllById(FinalSearchStatIds);
 
+        return stats;
+    }
+
+    public List<FinalSearchStat> getSearchStatsByUserId(Long userId){
+        List<Long> FinalSearchStatIds=DLCRepo.getFinalSearchStatIdsByUserId(userId);
+        List<FinalSearchStat> stats = repository.findAllById(FinalSearchStatIds);
+
+        return stats;
+    }
 
 }

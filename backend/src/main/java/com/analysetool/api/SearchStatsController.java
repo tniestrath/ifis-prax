@@ -1,9 +1,11 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.AnbieterSearch;
+import com.analysetool.modells.FinalSearchStat;
 import com.analysetool.modells.SearchStats;
 import com.analysetool.repositories.AnbieterSearchRepository;
 import com.analysetool.repositories.SearchStatsRepository;
+import com.analysetool.services.FinalSearchStatService;
 import com.analysetool.util.MathHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +36,8 @@ public class SearchStatsController {
     AnbieterSearchRepository anbieterSearchRepo;
     @Autowired
     private EventSearchRepository eventSearchRepo;
+    @Autowired
+    private FinalSearchStatService fSearchStatService;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -217,9 +221,15 @@ public class SearchStatsController {
         return eventSearchRepo.getEventSearchesWithCountZero().toString();
     }
 
+    @GetMapping("/getSearchStatsByPostId")
+    public String getSearchStatsByPostId(@RequestParam Long postId){
+       return fSearchStatService.getSearchStatsByPostId(postId).toString();
+    }
 
-
-
+    @GetMapping("/getSearchStatsByUserId")
+    public String getSearchStatsByUserId(@RequestParam Long userId){
+        return fSearchStatService.getSearchStatsByUserId(userId).toString();
+    }
 
 }
 

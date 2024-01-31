@@ -2867,7 +2867,8 @@ public class LogService {
 
            FinalSearchStat search = new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),searchQuery, stat.getId());
            if(!zuSpeicherndeFinalSearches.contains(search)){
-           zuSpeicherndeFinalSearches.add(search);}
+           zuSpeicherndeFinalSearches.add(search);
+           }else{alleTempSearches.remove(stat);}
         }
         System.out.println(zuSpeicherndeFinalSearches);
         Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);

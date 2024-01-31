@@ -242,7 +242,7 @@ public class SearchStatsController {
      *
      * @param postId The ID of the reference post for which similar posts are sought.
      * @param similarityPercentage The minimum threshold of tag similarity (in percentage)
-     *        to consider a post similar to the given post.
+     *        to consider a post similar to the given post. !!60% = 60 ; 0,6% = 0,6 ...!!
      * @return A JSON string representing an array of objects. Each object contains the post ID,
      *         its similarity score to the given post, and its search statistics.
      * @throws JSONException If an issue occurs during JSON processing.

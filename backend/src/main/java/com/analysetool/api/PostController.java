@@ -703,7 +703,9 @@ public class PostController {
             }
 
             if (postTypeRepo.getType((int) id) != null) {
-                if (postTypeRepo.getType((int) id).contains("blog")) {
+                if (!postTypeRepo.getType((int) id).contains("blog")) {
+                    return postTypeRepo.getType((int) id);
+                } else {
                     return "blog";
                 }
             }
@@ -737,6 +739,10 @@ public class PostController {
                 }
             }
 
+
+            if(type.equals("blogeintrag")) {
+                return "blog";
+            }
 
             if (type == null) {
                 System.out.println(id + "\n");
@@ -896,7 +902,7 @@ public class PostController {
         JSONArray array = new JSONArray();
 
         switch(type) {
-            case "news", "artikel", "blog", "whitepaper" -> {
+            case "news", "artikel", "whitepaper" -> {
                 top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong(type));
             }
             case "podcast", "ratgeber" -> {
@@ -905,6 +911,9 @@ public class PostController {
                 } else {
                     top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("cyber-risk-check"));
                 }
+            }
+            case "blog" -> {
+                top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("blogeintrag"));
             }
         }
 

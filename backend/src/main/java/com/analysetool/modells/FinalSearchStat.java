@@ -2,6 +2,8 @@ package com.analysetool.modells;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 
 @Entity
 @Table(name = "final_search_stats")
@@ -226,4 +228,15 @@ public class FinalSearchStat {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FinalSearchStat that)) return false;
+        return getUniId() == that.getUniId() && getHour() == that.getHour() && getFoundArtikelCount() == that.getFoundArtikelCount() && getFoundBlogCount() == that.getFoundBlogCount() && getFoundNewsCount() == that.getFoundNewsCount() && getFoundWhitepaperCount() == that.getFoundWhitepaperCount() && getFoundRatgeberCount() == that.getFoundRatgeberCount() && getFoundPodcastCount() == that.getFoundPodcastCount() && getFoundAnbieterCount() == that.getFoundAnbieterCount() && getFoundEventsCount() == that.getFoundEventsCount() && Objects.equals(getCountry(), that.getCountry()) && Objects.equals(getState(), that.getState()) && Objects.equals(getCity(), that.getCity()) && Objects.equals(getSearchQuery(), that.getSearchQuery());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUniId(), getHour(), getCountry(), getState(), getCity(), getFoundArtikelCount(), getFoundBlogCount(), getFoundNewsCount(), getFoundWhitepaperCount(), getFoundRatgeberCount(), getFoundPodcastCount(), getFoundAnbieterCount(), getFoundEventsCount(), getSearchQuery());
+    }
 }

@@ -4,6 +4,7 @@ package com.analysetool.modells;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "temporary_search_stats")
@@ -141,5 +142,35 @@ public class TemporarySearchStat {
 
     public void setFoundEventsCount(int foundEventsCount) {
         this.foundEventsCount = foundEventsCount;
+    }
+
+    @Override
+    public String toString() {
+        return "TemporarySearchStat{" +
+                "id=" + id +
+                ", searchQuery='" + searchQuery + '\'' +
+                ", date=" + date +
+                ", searchIp='" + searchIp + '\'' +
+                ", foundArtikelCount=" + foundArtikelCount +
+                ", foundBlogCount=" + foundBlogCount +
+                ", foundNewsCount=" + foundNewsCount +
+                ", foundWhitepaperCount=" + foundWhitepaperCount +
+                ", foundRatgeberCount=" + foundRatgeberCount +
+                ", foundPodcastCount=" + foundPodcastCount +
+                ", foundAnbieterCount=" + foundAnbieterCount +
+                ", foundEventsCount=" + foundEventsCount +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TemporarySearchStat that)) return false;
+        return getFoundArtikelCount() == that.getFoundArtikelCount() && getFoundBlogCount() == that.getFoundBlogCount() && getFoundNewsCount() == that.getFoundNewsCount() && getFoundWhitepaperCount() == that.getFoundWhitepaperCount() && getFoundRatgeberCount() == that.getFoundRatgeberCount() && getFoundPodcastCount() == that.getFoundPodcastCount() && getFoundAnbieterCount() == that.getFoundAnbieterCount() && getFoundEventsCount() == that.getFoundEventsCount() && Objects.equals(getSearchQuery(), that.getSearchQuery()) && Objects.equals(getDate(), that.getDate()) && Objects.equals(getSearchIp(), that.getSearchIp());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSearchQuery(), getDate(), getSearchIp(), getFoundArtikelCount(), getFoundBlogCount(), getFoundNewsCount(), getFoundWhitepaperCount(), getFoundRatgeberCount(), getFoundPodcastCount(), getFoundAnbieterCount(), getFoundEventsCount());
     }
 }

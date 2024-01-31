@@ -2865,7 +2865,9 @@ public class LogService {
            hour = calendar.get(Calendar.HOUR_OF_DAY);
            String searchQuery = stat.getSearchQuery().toLowerCase();
 
-           zuSpeicherndeFinalSearches.add(new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),searchQuery, stat.getId()));
+           FinalSearchStat search = new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),searchQuery, stat.getId());
+           if(!zuSpeicherndeFinalSearches.contains(search)){
+           zuSpeicherndeFinalSearches.add(search);}
         }
         System.out.println(zuSpeicherndeFinalSearches);
         Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);

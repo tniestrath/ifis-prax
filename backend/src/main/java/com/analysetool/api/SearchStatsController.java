@@ -6,6 +6,7 @@ import com.analysetool.modells.SearchStats;
 import com.analysetool.repositories.AnbieterSearchRepository;
 import com.analysetool.repositories.SearchStatsRepository;
 import com.analysetool.services.FinalSearchStatService;
+import com.analysetool.services.PostService;
 import com.analysetool.util.MathHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +24,7 @@ import com.analysetool.repositories.EventSearchRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -38,6 +40,8 @@ public class SearchStatsController {
     private EventSearchRepository eventSearchRepo;
     @Autowired
     private FinalSearchStatService fSearchStatService;
+    @Autowired
+    private PostService postService;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -231,5 +235,25 @@ public class SearchStatsController {
         return fSearchStatService.getSearchStatsByUserId(userId).toString();
     }
 
+    @GetMapping("/getSearchStatsForSimilarPostsByTags")
+    public String getSearchStatsForSimilarPostsByTags(@RequestParam Long postId,@RequestParam float similarityPercentage) throws JSONException {
+        JSONArray ergebnis = new JSONArray();
+        Map<Long,Float> similarityMap = postService.getSimilarPosts(postId,similarityPercentage);
+        List< FinalSearchStat> searchStats= new ArrayList<>();
+
+        for(Long postIds : similarityMap.keySet()){
+            JSONObject obj = new JSONObject();
+           searchStats = fSearchStatService.getSearchStatsByPostId(postIds);
+           if((!(searchStats==null))&& (!searchStats.isEmpty())){
+
+               obj.put("searchStats",fSearchStatService.toStringList(searchStats));
+               obj.put("similarity",similarityMap.get(postIds));
+               obj.put("postId",postIds);
+
+               ergebnis.put(obj);
+           }
+        }
+        return ergebnis.toString();
+    }
 }
 

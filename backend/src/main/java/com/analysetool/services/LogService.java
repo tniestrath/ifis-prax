@@ -1427,9 +1427,9 @@ public class LogService {
                     if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
                         Long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
                         updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
-                        UpdatePerformanceAndViews(dateLog, postId);
                         updateIPsByPost(ip, postId);
                         updatePostClicksMap(postId,dateLog);
+                        UpdatePerformanceAndViews(dateLog, postId);
                     }
                 }   catch (Exception e) {
                     System.out.println("EVENTSS EXCEPTION BEI: " + line);

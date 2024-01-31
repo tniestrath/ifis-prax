@@ -4,10 +4,13 @@ import com.analysetool.modells.FinalSearchStat;
 import com.analysetool.modells.FinalSearchStatDLC;
 import com.analysetool.repositories.FinalSearchStatDLCRepository;
 import com.analysetool.repositories.FinalSearchStatRepository;
+import com.analysetool.repositories.universalStatsRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +22,8 @@ public class FinalSearchStatService {
     private FinalSearchStatRepository repository;
     @Autowired
     private FinalSearchStatDLCRepository DLCRepo;
-
+    @Autowired
+    private universalStatsRepository uniRepo;
     public void saveAll(List<FinalSearchStat> stats) {
         repository.saveAll(stats);
     }
@@ -104,6 +108,23 @@ public class FinalSearchStatService {
         List<FinalSearchStat> stats = repository.findAllById(FinalSearchStatIds);
 
         return stats;
+    }
+    public String toStringList(List<FinalSearchStat>stats){
+        String response = "";
+
+        for(FinalSearchStat stat:stats){
+            response=response+toString(stat);
+        }
+
+        return response;
+    }
+
+    public String toString(FinalSearchStat stat){
+        int uniId = stat.getUniId();
+        int newestUniId = uniRepo.getLatestUniStat().getId();
+        int daysBack= newestUniId-uniId;
+        LocalDate date = LocalDate.now().minusDays(daysBack);
+        return stat.toStringAlt(date);
     }
 
 }

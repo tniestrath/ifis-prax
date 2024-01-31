@@ -2,6 +2,8 @@ package com.analysetool.modells;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 
@@ -225,6 +227,24 @@ public class FinalSearchStat {
                 ", foundEventsCount=" + foundEventsCount +
                 ", searchQuery='" + searchQuery + '\'' +
                 ", tempId=" + tempId +
+                '}';
+    }
+    public String toStringAlt(LocalDate date) {
+        return  "{ searchQuery='" + searchQuery + '\'' +
+                ", date='" + date.toString() + '\'' +
+                ", hour='" + hour + '\'' +
+                ", country='" + country + '\'' +
+                ", state='" + state + '\'' +
+                ", city='" + city + '\'' +
+                ", foundArtikelCount=" + foundArtikelCount +
+                ", foundBlogCount=" + foundBlogCount +
+                ", foundNewsCount=" + foundNewsCount +
+                ", foundWhitepaperCount=" + foundWhitepaperCount +
+                ", foundRatgeberCount=" + foundRatgeberCount +
+                ", foundPodcastCount=" + foundPodcastCount +
+                ", foundAnbieterCount=" + foundAnbieterCount +
+                ", foundEventsCount=" + foundEventsCount +'\'' +
+
                 '}';
     }
 

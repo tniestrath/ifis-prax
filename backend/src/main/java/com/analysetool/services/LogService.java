@@ -117,6 +117,7 @@ public class LogService {
     private final String PresseSSViewPatter = "^.*GET /news/([^/]+)/.*s=([^&\"]+)\"";
     private final String BlogSSPattern = "^.*GET /blog/([^/]+)/.*s=([^&\"]+)\"";
     private final String WhitepaperSSPattern = "^.*GET /whitepaper/([^/]+)/.*s=([^&\"]+)\"";//search +1, view +1,(bei match) vor artikel view pattern
+    private final String AnbieterSSView = "^.*GET /user/([^/]+)/.*s=([^&\"]+)\"";
     //private final String ArtikelSSPattern = "^.*GET /artikel/([^ ]+)/.*[?&]s=([^&\"]+).*";
 
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
@@ -178,7 +179,7 @@ public class LogService {
 
     private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
 
-    private final String eventSSView="^.*GET /veranstaltungen/(\\S+)/.*s=(\\S+)\".*";
+    private final String eventSSView="^.*GET /veranstaltungen/([^/]+)/.*s=([^&\"]+)\"";
 
     Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
     Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
@@ -210,6 +211,8 @@ public class LogService {
     Pattern podcastViewPattern = Pattern.compile(PodcastViewPattern);
     Pattern contentDownloadPattern= Pattern.compile(contentDownload);
     Pattern eventViewPattern = Pattern.compile(eventView);
+    Pattern eventSSPattern = Pattern.compile(eventSSView);
+    Pattern anbieterSSPattern = Pattern.compile(AnbieterSSView);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -601,34 +604,16 @@ public class LogService {
                     //Does it match an event-View?
                     Matcher matched_event_view= eventViewPattern.matcher(request);
 
+                    //Does it match an event Search Success?
+                    Matcher matched_event_search_success= eventSSPattern.matcher(line);
+
+                    //Does it match an user Search Success?
+                    Matcher matched_user_search_success= anbieterSSPattern.matcher(line);
+
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
-/*                    if(matched_articleView.find()) {
-                        whatMatched = "articleView";
-                        patternMatcher = matched_articleView;
-                    } else if(matched_articleSearchSuccess.find()) {
-                        whatMatched = "articleSS";
-                        patternMatcher = matched_articleSearchSuccess;
-                    } else if(matched_blogView.find()) {
-                        whatMatched = "blogView";
-                        patternMatcher = matched_blogView;
-                    } else if(matched_blogSearchSuccess.find()) {
-                        whatMatched = "blogSS";
-                        patternMatcher = matched_blogSearchSuccess;
-                    } else if(matched_newsView.find()) {
-                        whatMatched = "newsView";
-                        patternMatcher = matched_newsView;
-                    }else if(matched_newsSearchSuccess.find()) {
-                        whatMatched = "newsSS";
-                        patternMatcher = matched_newsSearchSuccess;
-                    }else if(matched_whitepaperView.find()) {
-                        whatMatched = "wpView";
-                        patternMatcher = matched_whitepaperView;
-                    } else if(matched_whitepaperSearchSuccess.find()) {
-                        whatMatched = "wpSS";
-                        patternMatcher = matched_whitepaperSearchSuccess;
-                        */
+
                     if(matched_articleSearchSuccess.find()) {
                         whatMatched = "articleSS";
                         patternMatcher = matched_articleSearchSuccess;
@@ -641,6 +626,12 @@ public class LogService {
                     } else if(matched_whitepaperSearchSuccess.find()) {
                         whatMatched = "wpSS";
                         patternMatcher = matched_whitepaperSearchSuccess;
+                    } else if(matched_event_search_success.find()) {
+                        whatMatched = "eventSS";
+                        patternMatcher = matched_event_search_success;
+                    } else if(matched_user_search_success.find()) {
+                        whatMatched = "userSS";
+                        patternMatcher = matched_user_search_success;
                     } else if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
@@ -1421,12 +1412,41 @@ public class LogService {
                 break;
             case "articleSS", "blogSS", "newsSS", "wpSS":
                 try {
-                    updateSearchDLCMap(ip,patternMatcher.group(2),postRepository.getIdByName(patternMatcher.group(1)),dateLog);
-                    UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                    Long postId = postRepository.getIdByName(patternMatcher.group(1));
+                    updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
+                    updatePostClicksMap(postId,dateLog);
+                    UpdatePerformanceAndViews(dateLog, postId);
                    // updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                    // updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
                 } catch(Exception e) {
                     System.out.println("SS PROCESS LINE EXCEPTION " +line);
+                }
+                break;
+            case "eventSS":
+                try {
+                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
+                        Long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
+                        updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
+                        UpdatePerformanceAndViews(dateLog, postId);
+                        updateIPsByPost(ip, postId);
+                        updatePostClicksMap(postId,dateLog);
+                    }
+                }   catch (Exception e) {
+                    System.out.println("EVENTSS EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+                break;
+            case "userSS":
+                try {
+                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
+                        updateSearchDLCMap(ip,patternMatcher.group(2),userId,dateLog,"user");
+                        updateUserStats(userId,dateLog);
+                        updateIPsByUser(ip, userId);
+                    }
+                } catch (Exception e) {
+                    System.out.println("USERSS EXCEPTION BEI: " + line);
+                    e.printStackTrace();
                 }
                 break;
             case "userView":
@@ -2756,12 +2776,19 @@ public class LogService {
 
 
 
-    public void updateSearchDLCMap(String ip, String searchQuery, Long postId, LocalDateTime dateLog) {
+    public void updateSearchDLCMap(String ip, String searchQuery, Long Id, LocalDateTime dateLog, String matchCase) {
+
         int uniId = uniRepo.getLatestUniStat().getId();
         String cleanedQuery = searchQuery;
+
         try {
             cleanedQuery = URLDecoder.decode(searchQuery, "UTF-8");
             cleanedQuery = cleanedQuery.toLowerCase();
+            // Entfernen von nicht-alphanumerischen Zeichen außer Leerzeichen
+            cleanedQuery = cleanedQuery.replaceAll("[^a-z0-9 ]", "");
+
+            //  Ersetzen von mehreren aufeinanderfolgenden Leerzeichen durch ein einzelnes Leerzeichen
+            cleanedQuery = cleanedQuery.replaceAll("\\s+", " ").trim();
         } catch (Exception e) {
             System.out.println("Fehler beim Decodieren des URL-Strings, weiter mit codierter Suchanfrage :" + e.getMessage());
         }
@@ -2769,10 +2796,18 @@ public class LogService {
         String key = ip + "_" + cleanedQuery;
         List<FinalSearchStatDLC> searchDLCList = searchDLCMap.getOrDefault(key, new ArrayList<>());
 
-        FinalSearchStatDLC newSearchDLC = new FinalSearchStatDLC(uniId, dateLog.getHour(), postId);
+        FinalSearchStatDLC newSearchDLC = new FinalSearchStatDLC(uniId, dateLog.getHour());
+
+        switch (matchCase) {
+            case "user":
+                newSearchDLC.setUserId(Id);
+                break;
+            case "post":
+                newSearchDLC.setPostId(Id);
+                break;
+        }
 
         searchDLCList.add(newSearchDLC);
-
         searchDLCMap.put(key, searchDLCList);
     }
 
@@ -2788,10 +2823,17 @@ public class LogService {
 
         // Durchlaufen aller DLC-Objekte und aktualisieren mit den entsprechenden FinalSearchStat-IDs
         for (TemporarySearchStat tempSearch : tempSearches) {
-            String searchQuery = tempSearch.getSearchQuery().toLowerCase();
-            String key = tempSearch.getSearchIp() + "_" + searchQuery;
-            List<FinalSearchStatDLC> searchDLCList = searchDLCMap.get(key);
 
+            String cleanedQuery = tempSearch.getSearchQuery().toLowerCase();
+            // Entfernen von nicht-alphanumerischen Zeichen außer Leerzeichen
+            cleanedQuery = cleanedQuery.replaceAll("[^a-z0-9 ]", "");
+
+            // Optional: Ersetzen von mehreren aufeinanderfolgenden Leerzeichen durch ein einzelnes Leerzeichen
+            cleanedQuery = cleanedQuery.replaceAll("\\s+", " ").trim();
+
+            String key = tempSearch.getSearchIp() + "_" + cleanedQuery;
+            List<FinalSearchStatDLC> searchDLCList = searchDLCMap.get(key);
+            System.out.println(key);
             if (searchDLCList != null) {
                 for (FinalSearchStatDLC searchDLC : searchDLCList) {
                     FinalSearchStat matchingFinalSearch = tempIdToFinalSearchMap.get(tempSearch.getId());

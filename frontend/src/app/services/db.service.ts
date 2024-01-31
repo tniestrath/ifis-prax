@@ -595,7 +595,7 @@ export class DbService {
         });
       });
     } else {
-      return await fetch("https://seo.internet-sicherheit.de/api/sistrix/domain/sichtbarkeitsindexHistory/internet-sicherheit.de?isMobile="+isMobile, {
+      return await fetch("https://seo.internet-sicherheit.de/api/sistrix/domain/sichtbarkeitsindexHistory/it-sicherheit.de?isMobile="+isMobile, {
         "headers": {
           "accept": "application/json, text/plain, */*",
           "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
@@ -654,7 +654,7 @@ export class DbService {
         });
       });
     } else {
-      return await fetch("https://seo.internet-sicherheit.de/api/sistrix/domain/sichtbarkeitsindexHistory/internet-sicherheit.de?isMobile=false", {
+      return await fetch("https://seo.internet-sicherheit.de/api/sistrix/domain/sichtbarkeitsindexHistory/it-sicherheit.de?isMobile=false", {
         "headers": {
           "accept": "application/json, text/plain, */*",
           "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",

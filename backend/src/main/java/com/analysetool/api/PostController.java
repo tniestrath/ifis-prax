@@ -902,7 +902,7 @@ public class PostController {
         JSONArray array = new JSONArray();
 
         switch(type) {
-            case "news", "artikel", "whitepaper" -> {
+            case "news", "artikel", "whitepaper", "blog" -> {
                 top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong(type));
             }
             case "podcast", "ratgeber" -> {
@@ -911,9 +911,6 @@ public class PostController {
                 } else {
                     top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("cyber-risk-check"));
                 }
-            }
-            case "blog" -> {
-                top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("blogeintrag"));
             }
         }
 

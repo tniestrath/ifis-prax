@@ -37,7 +37,7 @@ export class PdfService {
     child.style.margin = "0";
     child.style.padding = "0";
     child.style.backgroundColor = "white";
-    child.style.overflow = "visible";
+    child.style.overflow = "clip";
 
     grid.style.gridTemplateRows = "repeat(8, calc(calc(100% - 10px) / 6))"
   }

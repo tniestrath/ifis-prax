@@ -65,6 +65,8 @@ import {
   SingleUserTagsDistComponent,
   UserTagsDistComponent
 } from './page/page-einzel/user/user-tags-dist/user-tags-dist.component';
+import { SeoOverTimeComponent } from './component/seo/seo-over-time/seo-over-time.component';
+import { SeoStatDisplayComponent } from './component/seo/seo-stat-display/seo-stat-display.component';
 
 @NgModule({
   declarations: [
@@ -122,7 +124,9 @@ import {
     UserDisplayComponentComponent,
     UserClicksChartComponent,
     UserTagsDistComponent,
-    SingleUserTagsDistComponent
+    SingleUserTagsDistComponent,
+    SeoOverTimeComponent,
+    SeoStatDisplayComponent
   ],
     imports: [
         BrowserModule,

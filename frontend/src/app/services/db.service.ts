@@ -117,6 +117,9 @@ export class DbService {
   private failedRequestCount = 0;
   private lastFail : string = dbUrl.HOST;
 
+
+  private seoToken : string = "";
+
   constructor(private sanitizer : DomSanitizer) { }
 
   private static getUrl( prompt : string){
@@ -534,4 +537,149 @@ export class DbService {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
+
+  async loginSeo() {
+    this.setLoading();
+    return await fetch("https://seo.internet-sicherheit.de/api/auth/login", {
+      "headers": {
+        "accept": "application/json, text/plain, */*",
+        "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+        "cache-control": "no-cache",
+        "content-type": "application/json",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\"\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "origin": "https://seo.internet-sicherheit.de/"
+      },
+      "referrer": "https://seo.internet-sicherheit.de/",
+      "referrerPolicy": "strict-origin-when-cross-origin",
+      "body": "{\"username\":\"AnalyseITSicherheit\",\"password\":\"EnTUFpSbRt83EM3\"}",
+      "method": "POST",
+      "mode": "cors",
+      "credentials": "omit"
+    }).then(res => {this.setFinished(res.status, res.url); return res.json()}).then((value : {token : string} ) => {this.seoToken = value.token})
+  }
+
+  async getSeoIndexOverTime(isMobile : string) : Promise<{id : any, sichtbarkeitsindex : number, date : number}[]> {
+    this.setLoading();
+    if (this.seoToken == "") {
+      return this.loginSeo().then(value => {
+        return fetch("https://seo.internet-sicherheit.de/api/sistrix/domain/sichtbarkeitsindexHistory/it-sicherheit.de?isMobile="+isMobile, {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+            "authorization": "Bearer " + this.seoToken,
+            "cache-control": "no-cache",
+            "content-type": "application/json",
+            "pragma": "no-cache",
+            "sec-ch-ua": "\"\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin"
+          },
+          "referrer": "https://seo.internet-sicherheit.de/",
+          "referrerPolicy": "strict-origin-when-cross-origin",
+          "body": null,
+          "method": "GET",
+          "mode": "cors",
+          "credentials": "omit"
+        }).then(res => {
+          this.setFinished(res.status, res.url);
+          return res.json();
+        });
+      });
+    } else {
+      return await fetch("https://seo.internet-sicherheit.de/api/sistrix/domain/sichtbarkeitsindexHistory/internet-sicherheit.de?isMobile="+isMobile, {
+        "headers": {
+          "accept": "application/json, text/plain, */*",
+          "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+          "authorization": "Bearer " + this.seoToken,
+          "cache-control": "no-cache",
+          "content-type": "application/json",
+          "pragma": "no-cache",
+          "sec-ch-ua": "\"\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin"
+        },
+        "referrer": "https://seo.internet-sicherheit.de/",
+        "referrerPolicy": "strict-origin-when-cross-origin",
+        "body": null,
+        "method": "GET",
+        "mode": "cors",
+        "credentials": "omit"
+      }).then(res => {
+        this.setFinished(res.status, res.url);
+        return res.json();
+      });
+    }
+  }
+
+  async getSeoStatsNow() : Promise<{id : any, sichtbarkeitsindex : number, date : number}[]> {
+    this.setLoading();
+    if (this.seoToken == "") {
+      return this.loginSeo().then(value => {
+        return fetch("https://seo.internet-sicherheit.de/api/sistrix/domain/sichtbarkeitsindexHistory/it-sicherheit.de?isMobile=false", {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+            "authorization": "Bearer " + this.seoToken,
+            "cache-control": "no-cache",
+            "content-type": "application/json",
+            "pragma": "no-cache",
+            "sec-ch-ua": "\"\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin"
+          },
+          "referrer": "https://seo.internet-sicherheit.de/",
+          "referrerPolicy": "strict-origin-when-cross-origin",
+          "body": null,
+          "method": "GET",
+          "mode": "cors",
+          "credentials": "omit"
+        }).then(res => {
+          this.setFinished(res.status, res.url);
+          return res.json();
+        });
+      });
+    } else {
+      return await fetch("https://seo.internet-sicherheit.de/api/sistrix/domain/sichtbarkeitsindexHistory/internet-sicherheit.de?isMobile=false", {
+        "headers": {
+          "accept": "application/json, text/plain, */*",
+          "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
+          "authorization": "Bearer " + this.seoToken,
+          "cache-control": "no-cache",
+          "content-type": "application/json",
+          "pragma": "no-cache",
+          "sec-ch-ua": "\"\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin"
+        },
+        "referrer": "https://seo.internet-sicherheit.de/",
+        "referrerPolicy": "strict-origin-when-cross-origin",
+        "body": null,
+        "method": "GET",
+        "mode": "cors",
+        "credentials": "omit"
+      }).then(res => {
+        this.setFinished(res.status, res.url);
+        return res.json();
+      });
+    }
+  }
+
 }

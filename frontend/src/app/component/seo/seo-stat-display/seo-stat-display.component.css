@@ -1,0 +1,39 @@
+.seo-stats-box{
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+  align-items: center;
+}
+.seo-desktop-box{
+  font-size: 1.5vh;
+  color: black;
+  width: 100%;
+}
+.seo-mobile-box{
+  font-size: 1.5vh;
+  color: black;
+  width: 100%;
+}
+.number-box{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.number-xl{
+  font-size: 6vh;
+}
+.number-m{
+  font-size: 3vh;
+}
+.number-s{
+  font-size: 1.5vh;
+}
+
+p {
+  margin: 0;
+  text-align: center;
+  width: 100%;
+}

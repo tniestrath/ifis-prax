@@ -38,6 +38,8 @@ import {UserClicksChartComponent} from "./user/user-clicks-chart/user-clicks-cha
 import {SingleUserTagsDistComponent, UserTagsDistComponent} from "./user/user-tags-dist/user-tags-dist.component";
 import {PdfService} from "../../services/pdf.service";
 import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
+import {SeoOverTimeComponent} from "../../component/seo/seo-over-time/seo-over-time.component";
+import {SeoStatDisplayComponent} from "../../component/seo/seo-stat-display/seo-stat-display.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -131,6 +133,21 @@ export class PageComponent implements OnInit {
     ];
   }
 
+  getSeoPageCards() {
+    return [
+      {type: SeoOverTimeComponent, row: 1, col: 1, height: 2, width: 5},
+      {type: SeoStatDisplayComponent, row: 1, col: 6, height: 2, width: 1},
+    ];
+  }
+
+  getSystemPageCards() {
+    return [
+      {type: PodcastListComponent,  row: 1, col: 1, height: 4, width: 2},
+      {type: EventListComponent,  row: 1, col: 3, height: 4, width: 2},
+      {type: RatgeberListComponent,  row: 1, col: 5, height: 4, width: 2}
+    ];
+  }
+
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
@@ -169,6 +186,16 @@ export class PageComponent implements OnInit {
         case "Login":{
           this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getLandingPageCards());
+          break;
+        }
+        case "SEO":{
+          this.pdf.restoreStyle(this.element.nativeElement);
+          this.cardsLoaded.next(this.getSeoPageCards());
+          break;
+        }
+        case "System":{
+          this.pdf.restoreStyle(this.element.nativeElement);
+          this.cardsLoaded.next(this.getSystemPageCards());
           break;
         }
         case "PRINT":{

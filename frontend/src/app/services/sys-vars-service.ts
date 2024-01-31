@@ -29,6 +29,8 @@ export class SysVars {
   public static SELECTED_POST_IDS : EventEmitter<string> = new EventEmitter<string>();
   public static WELCOME : boolean = true;
 
+  public static SEO_DATA : EventEmitter<{desktop: {now: number, last: number}, mobile: {now: number, last: number}}> = new EventEmitter<{desktop: {now: number; last: number}; mobile: {now: number; last: number}}>();
+
   public static PAGES = [
     //new PAGE(0, "Login", "Login");
     new PAGE(1, "Overview", "Übersicht"),

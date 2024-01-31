@@ -702,6 +702,12 @@ public class PostController {
                 }
             }
 
+            if (postTypeRepo.getType((int) id) != null) {
+                if (postTypeRepo.getType((int) id).contains("blog")) {
+                    return "blog";
+                }
+            }
+
             Post post = postRepository.findById(id).get();
             String type = "default";
             List<Long> tagIDs = null;

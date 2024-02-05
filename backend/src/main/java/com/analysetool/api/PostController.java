@@ -902,15 +902,9 @@ public class PostController {
                     if(postClicksByHourRepo.getSumForDayForPost(uniId, id).isPresent()) {
                         dates.put(uniRepo.findById(Math.toIntExact(uniId)).get().getDatum().toString().substring(0, 9));
                         views.put(postClicksByHourRepo.getSumForDayForPost(uniId, id).get());
-                    }  else {
-                        return "???? very weird error in getPostViewsByTime";
                     }
-                } else {
-                    return "UniversalStats not found";
                 }
             }
-        } else {
-            return "post not found";
         }
         return new JSONObject().put("dates", dates.toString()).put("views", views.toString()).toString();
     }

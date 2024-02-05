@@ -1241,32 +1241,9 @@ public class UserController {
     /**
      *
      * @param id user id to fetch account type for.
-     * @return "basis" "plus" "premium" "sponsor" "basis-plus" "admin" "none"
+     * @return "um_basis" "um_plus" "um_premium" "um_basis-plus" "admin" "none"
      */
     private String getTypeDirty(int id) {
-        /*
-            This code is currently out of order, since booked packages do not align with user roles
-
-        if(wpMemberRepo.getUserMembership(id) != null) {
-            switch (wpMemberRepo.getUserMembership(id)) {
-                case (1) -> {
-                    return "basis";
-                }
-                case (3) -> {
-                    return "plus";
-                }
-                case (5) -> {
-                    return "premium";
-                }
-                case (6), (9) -> {
-                    return "sponsor";
-                }
-                case (7) -> {
-                    return "basis-plus";
-                }
-            }
-        }
-        */
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "customer";

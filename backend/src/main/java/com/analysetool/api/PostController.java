@@ -60,6 +60,10 @@ public class PostController {
     private EventsController eventsController;
     @Autowired
     private EventsRepository eventsRepo;
+    @Autowired
+    private PostClicksByHourDLCRepository postClicksByHourRepo;
+    @Autowired
+    private universalStatsRepository uniRepo;
 
     PostRepository postRepository;
     PostStatsRepository statsRepo;
@@ -885,6 +889,31 @@ public class PostController {
 
     }
 
+
+    @GetMapping("/getPostViewsByTime")
+    public String getPostViewsByTime(long id) throws JSONException {
+        JSONArray dates = new JSONArray();
+        JSONArray views = new JSONArray();
+
+
+        if(postRepo.findById(id).isPresent()) {
+            for(Long uniId :  postClicksByHourRepo.getUniIdsForPost(id)) {
+                if(uniRepo.findById(Math.toIntExact(uniId)).isPresent()) {
+                    if(postClicksByHourRepo.getSumForDayForPost(uniId, id).isPresent()) {
+                        dates.put(uniRepo.findById(Math.toIntExact(uniId)).get().getDatum().toString().substring(0, 9));
+                        views.put(postClicksByHourRepo.getSumForDayForPost(uniId, id).get());
+                    }  else {
+                        return "???? very weird error in getPostViewsByTime";
+                    }
+                } else {
+                    return "UniversalStats not found";
+                }
+            }
+        } else {
+            return "post not found";
+        }
+        return new JSONObject().put("dates", dates.toString()).put("views", views.toString()).toString();
+    }
 
 
     /**

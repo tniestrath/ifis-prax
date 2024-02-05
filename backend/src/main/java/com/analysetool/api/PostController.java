@@ -900,7 +900,7 @@ public class PostController {
             for(Long uniId :  postClicksByHourRepo.getUniIdsForPost(id)) {
                 if(uniRepo.findById(Math.toIntExact(uniId)).isPresent()) {
                     if(postClicksByHourRepo.getSumForDayForPost(uniId, id).isPresent()) {
-                        dates.put(uniRepo.findById(Math.toIntExact(uniId)).get().getDatum().toString().substring(0, 9));
+                        dates.put(uniRepo.findById(Math.toIntExact(uniId)).get().getDatum().toString().substring(0, 10));
                         views.put(postClicksByHourRepo.getSumForDayForPost(uniId, id).get());
                     }
                 }

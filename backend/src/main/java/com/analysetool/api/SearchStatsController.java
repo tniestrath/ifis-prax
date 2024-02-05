@@ -1,9 +1,12 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.AnbieterSearch;
+import com.analysetool.modells.FinalSearchStat;
 import com.analysetool.modells.SearchStats;
 import com.analysetool.repositories.AnbieterSearchRepository;
 import com.analysetool.repositories.SearchStatsRepository;
+import com.analysetool.services.FinalSearchStatService;
+import com.analysetool.services.PostService;
 import com.analysetool.util.MathHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +24,7 @@ import com.analysetool.repositories.EventSearchRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,6 +38,10 @@ public class SearchStatsController {
     AnbieterSearchRepository anbieterSearchRepo;
     @Autowired
     private EventSearchRepository eventSearchRepo;
+    @Autowired
+    private FinalSearchStatService fSearchStatService;
+    @Autowired
+    private PostService postService;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -217,9 +225,47 @@ public class SearchStatsController {
         return eventSearchRepo.getEventSearchesWithCountZero().toString();
     }
 
+    @GetMapping("/getSearchStatsByPostId")
+    public String getSearchStatsByPostId(@RequestParam Long postId){
+       return fSearchStatService.getSearchStatsByPostId(postId).toString();
+    }
 
+    @GetMapping("/getSearchStatsByUserId")
+    public String getSearchStatsByUserId(@RequestParam Long userId){
+        return fSearchStatService.getSearchStatsByUserId(userId).toString();
+    }
 
+    /**
+     * Retrieves and returns search statistics for posts similar to a given post, based on tag similarity.
+     * Similarity is determined by a specified minimum similarity percentage. The result includes each similar
+     * post's search statistics, similarity score, and post ID.
+     *
+     * @param postId The ID of the reference post for which similar posts are sought.
+     * @param similarityPercentage The minimum threshold of tag similarity (in percentage)
+     *        to consider a post similar to the given post. !!60% = 60 ; 0,6% = 0,6 ...!!<--------------------------
+     * @return A JSON string representing an array of objects. Each object contains the post ID,
+     *         its similarity score to the given post, and its search statistics.
+     * @throws JSONException If an issue occurs during JSON processing.
+     */
+    @GetMapping("/getSearchStatsForSimilarPostsByTags")
+    public String getSearchStatsForSimilarPostsByTags(@RequestParam Long postId,@RequestParam float similarityPercentage) throws JSONException {
+        JSONArray ergebnis = new JSONArray();
+        Map<Long,Float> similarityMap = postService.getSimilarPosts(postId,similarityPercentage);
+        List< FinalSearchStat> searchStats= new ArrayList<>();
 
+        for(Long postIds : similarityMap.keySet()){
+            JSONObject obj = new JSONObject();
+           searchStats = fSearchStatService.getSearchStatsByPostId(postIds);
+           if((!(searchStats==null))&& (!searchStats.isEmpty())){
 
+               obj.put("searchStats",fSearchStatService.toStringList(searchStats));
+               obj.put("similarity",similarityMap.get(postIds));
+               obj.put("postId",postIds);
+
+               ergebnis.put(obj);
+           }
+        }
+        return ergebnis.toString();
+    }
 }
 

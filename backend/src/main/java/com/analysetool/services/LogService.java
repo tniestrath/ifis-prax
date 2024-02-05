@@ -136,7 +136,7 @@ public class LogService {
 
     private final String ratgeberBuchView = "^.*GET /ratgeber/cyber-sicherheit/";
 
-    private final String ratgeberSelfView = "^.*GET /ratgeber/selbstlernangebot-it-sicherheit/";
+    private final String ratgeberSelfView = "^.*GET /selbstlernangebot-it-sicherheit/";
 
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
@@ -1427,9 +1427,9 @@ public class LogService {
                     if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
                         Long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
                         updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
-                        UpdatePerformanceAndViews(dateLog, postId);
                         updateIPsByPost(ip, postId);
                         updatePostClicksMap(postId,dateLog);
+                        UpdatePerformanceAndViews(dateLog, postId);
                     }
                 }   catch (Exception e) {
                     System.out.println("EVENTSS EXCEPTION BEI: " + line);
@@ -2865,7 +2865,10 @@ public class LogService {
            hour = calendar.get(Calendar.HOUR_OF_DAY);
            String searchQuery = stat.getSearchQuery().toLowerCase();
 
-           zuSpeicherndeFinalSearches.add(new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),searchQuery, stat.getId()));
+           FinalSearchStat search = new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),searchQuery, stat.getId());
+           if(!zuSpeicherndeFinalSearches.contains(search)){
+           zuSpeicherndeFinalSearches.add(search);
+           }else{alleTempSearches.remove(stat);}
         }
         System.out.println(zuSpeicherndeFinalSearches);
         Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);

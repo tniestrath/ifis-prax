@@ -4,7 +4,8 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.ContentDownloadsHourlyService;
 import com.analysetool.services.PostClicksByHourDLCService;
-import com.analysetool.util.*;
+import com.analysetool.util.Constants;
+import com.analysetool.util.MathHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,6 +62,10 @@ public class PostController {
     private EventsController eventsController;
     @Autowired
     private EventsRepository eventsRepo;
+    @Autowired
+    private PostClicksByHourDLCRepository postClicksByHourRepo;
+    @Autowired
+    private universalStatsRepository uniRepo;
 
     PostRepository postRepository;
     PostStatsRepository statsRepo;
@@ -885,6 +891,35 @@ public class PostController {
 
     }
 
+
+    @GetMapping("/getPostViewsByTime")
+    public String getPostViewsByTime(long id) throws JSONException {
+        JSONArray dates = new JSONArray();
+        JSONArray views = new JSONArray();
+
+        LocalDate now = LocalDate.now();
+        java.sql.Date oldest = new java.sql.Date(uniRepo.findById(Math.toIntExact(postClicksByHourRepo.findOldestUni())).get().getDatum().getTime());
+
+       for(LocalDate date : oldest.toLocalDate().datesUntil(now.plusDays(1)).toList()) {
+           int uniId = 0;
+
+           //Check if we have stats for the day we are checking
+           if (uniRepo.findByDatum(java.sql.Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+               uniId = uniRepo.findByDatum(java.sql.Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+           }
+           if(uniId != 0) {
+               dates.put(uniRepo.findById(Math.toIntExact(uniId)).get().getDatum().toString().substring(0, 10));
+               if(postClicksByHourRepo.getSumForDayForPost(uniId, id).isPresent()) {
+                   views.put(postClicksByHourRepo.getSumForDayForPost(uniId, id).get());
+               } else {
+                   views.put(0);
+               }
+           }
+
+       }
+
+        return new JSONObject().put("dates", dates.toString()).put("views", views.toString()).toString();
+    }
 
 
     /**

@@ -2,6 +2,10 @@ package com.analysetool.modells;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
 
 @Entity
 @Table(name = "final_search_stats")
@@ -225,5 +229,34 @@ public class FinalSearchStat {
                 ", tempId=" + tempId +
                 '}';
     }
+    public String toStringAlt(LocalDate date) {
+        return  "{ searchQuery='" + searchQuery + '\'' +
+                ", date='" + date.toString() + '\'' +
+                ", hour='" + hour + '\'' +
+                ", country='" + country + '\'' +
+                ", state='" + state + '\'' +
+                ", city='" + city + '\'' +
+                ", foundArtikelCount=" + foundArtikelCount +
+                ", foundBlogCount=" + foundBlogCount +
+                ", foundNewsCount=" + foundNewsCount +
+                ", foundWhitepaperCount=" + foundWhitepaperCount +
+                ", foundRatgeberCount=" + foundRatgeberCount +
+                ", foundPodcastCount=" + foundPodcastCount +
+                ", foundAnbieterCount=" + foundAnbieterCount +
+                ", foundEventsCount=" + foundEventsCount +'\'' +
 
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FinalSearchStat that)) return false;
+        return getUniId() == that.getUniId() && getHour() == that.getHour() && getFoundArtikelCount() == that.getFoundArtikelCount() && getFoundBlogCount() == that.getFoundBlogCount() && getFoundNewsCount() == that.getFoundNewsCount() && getFoundWhitepaperCount() == that.getFoundWhitepaperCount() && getFoundRatgeberCount() == that.getFoundRatgeberCount() && getFoundPodcastCount() == that.getFoundPodcastCount() && getFoundAnbieterCount() == that.getFoundAnbieterCount() && getFoundEventsCount() == that.getFoundEventsCount() && Objects.equals(getCountry(), that.getCountry()) && Objects.equals(getState(), that.getState()) && Objects.equals(getCity(), that.getCity()) && Objects.equals(getSearchQuery(), that.getSearchQuery());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUniId(), getHour(), getCountry(), getState(), getCity(), getFoundArtikelCount(), getFoundBlogCount(), getFoundNewsCount(), getFoundWhitepaperCount(), getFoundRatgeberCount(), getFoundPodcastCount(), getFoundAnbieterCount(), getFoundEventsCount(), getSearchQuery());
+    }
 }

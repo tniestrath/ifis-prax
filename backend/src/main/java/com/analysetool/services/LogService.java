@@ -136,7 +136,7 @@ public class LogService {
 
     private final String ratgeberBuchView = "^.*GET /ratgeber/cyber-sicherheit/";
 
-    private final String ratgeberSelfView = "^.*GET /ratgeber/selbstlernangebot-it-sicherheit/";
+    private final String ratgeberSelfView = "^.*GET /selbstlernangebot-it-sicherheit/";
 
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
     //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";

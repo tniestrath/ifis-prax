@@ -40,6 +40,8 @@ import {PdfService} from "../../services/pdf.service";
 import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
 import {SeoOverTimeComponent} from "../../component/seo/seo-over-time/seo-over-time.component";
 import {SeoStatDisplayComponent} from "../../component/seo/seo-stat-display/seo-stat-display.component";
+import {SeoCtrComponent} from "../../component/seo/seo-ctr/seo-ctr.component";
+import {SeoKeywordListComponent} from "../../component/seo/seo-keyword-list/seo-keyword-list.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -137,14 +139,14 @@ export class PageComponent implements OnInit {
     return [
       {type: SeoOverTimeComponent, row: 1, col: 1, height: 2, width: 5},
       {type: SeoStatDisplayComponent, row: 1, col: 6, height: 2, width: 1},
+      {type: SeoCtrComponent, row: 3, col: 1, height: 2, width: 4},
+      {type: SeoKeywordListComponent, row: 3, col: 5, height: 2, width: 2}
     ];
   }
 
   getSystemPageCards() {
     return [
-      {type: PodcastListComponent,  row: 1, col: 1, height: 4, width: 2},
-      {type: EventListComponent,  row: 1, col: 3, height: 4, width: 2},
-      {type: RatgeberListComponent,  row: 1, col: 5, height: 4, width: 2}
+      {type: SystemloadComponent, row: 1, col: 1, height: 2, width: 2},
     ];
   }
 

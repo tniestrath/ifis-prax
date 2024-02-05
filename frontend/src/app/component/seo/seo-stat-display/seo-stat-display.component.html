@@ -3,7 +3,7 @@
     <div class="number-box" [style]="{color: DashColors.RED}">
       <p class="number-m"></p>
       <p class="number-xl" [style]="{width: 'fit-content'}">{{Util.formatNumbers(seoNowDesktop)}}</p>
-      <p class="number-m" [style]="{textAlign: 'center'}">{{seoChangeDesktop}}</p>
+      <p class="number-m" [style]="{textAlign: 'center'}">{{Number(seoChangeDesktop > 0 ? "+" + seoChangeDesktop : seoChangeDesktop).toFixed(6)}}</p>
     </div>
     <p>Sichtbarkeitsindex (Desktop)</p>
     <p>&nbsp;</p>
@@ -11,7 +11,7 @@
       <div class="number-box" [style]="{color: DashColors.BLUE}">
         <p class="number-s"></p>
         <p class="number-m" [style]="{width: 'fit-content'}">{{Util.formatNumbers(seoNowMobile)}}</p>
-        <p class="number-s" [style]="{textAlign: 'center'}">{{seoChangeMobile > 0 ? "+" + seoChangeMobile : seoChangeMobile }}</p>
+        <p class="number-s" [style]="{textAlign: 'center'}">{{Number(seoChangeMobile > 0 ? "+" + seoChangeMobile : seoChangeMobile).toFixed(6)}}</p>
       </div>
       <p>Sichtbarkeitsindex (Mobile)</p>
   </div>

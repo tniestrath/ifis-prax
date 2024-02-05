@@ -1,0 +1,32 @@
+.seo-keywords-list-item-box-nohover{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ffffff00;
+}
+.seo-keywords-list-item-box:hover{
+  border: 1px solid black;
+}
+
+.seo-keywords-imp{
+  width: 20%;
+  text-align: left;
+}
+.seo-keywords-name{
+  width: 60%;
+  text-align: center;
+}
+.seo-keywords-clicks{
+  width: 20%;
+  text-align: right;
+}
+.seo-keywords-more{
+  display: none;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ffffff00;
+}

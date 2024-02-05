@@ -67,6 +67,9 @@ import {
 } from './page/page-einzel/user/user-tags-dist/user-tags-dist.component';
 import { SeoOverTimeComponent } from './component/seo/seo-over-time/seo-over-time.component';
 import { SeoStatDisplayComponent } from './component/seo/seo-stat-display/seo-stat-display.component';
+import { SeoCtrComponent } from './component/seo/seo-ctr/seo-ctr.component';
+import { SeoKeywordListComponent } from './component/seo/seo-keyword-list/seo-keyword-list.component';
+import { SeoKeywordListItemComponent } from './component/seo/seo-keyword-list/seo-keyword-list-item/seo-keyword-list-item.component';
 
 @NgModule({
   declarations: [
@@ -126,7 +129,10 @@ import { SeoStatDisplayComponent } from './component/seo/seo-stat-display/seo-st
     UserTagsDistComponent,
     SingleUserTagsDistComponent,
     SeoOverTimeComponent,
-    SeoStatDisplayComponent
+    SeoStatDisplayComponent,
+    SeoCtrComponent,
+    SeoKeywordListComponent,
+    SeoKeywordListItemComponent
   ],
     imports: [
         BrowserModule,

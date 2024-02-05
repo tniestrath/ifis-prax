@@ -1,0 +1,12 @@
+<div class="seo-keywords-list-item-box" (mouseenter)="onOver(true, more)" (mouseleave)="onOver(false, more)">
+  <div class="seo-keywords-list-item-box-nohover">
+    <div class="seo-keywords-imp">{{data.impressions}}</div>
+    <div class="seo-keywords-name">{{data.name}}</div>
+    <div class="seo-keywords-clicks">{{data.clicks}}</div>
+  </div>
+  <div #more class="seo-keywords-more">
+    <div class="seo-keywords-url">{{data.url.substring(0,55)}}</div>
+    <div class="seo-keywords-ctr">{{data.ctr}}</div>
+  </div>
+</div>
+

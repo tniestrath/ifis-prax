@@ -1,0 +1,29 @@
+.seo-ctr-title{
+  border-radius: 5px;
+  border: 1px solid #A0A0A0;
+  padding: 5px;
+  margin: 0;
+  text-align: center;
+}
+
+.seo-ctr-header{
+  display: grid;
+  width: calc(100% - 45px);
+  height: 30px;
+  position: relative;
+  box-sizing: border-box;
+
+  left: 5px;
+  top: 5px;
+}
+
+.chart-canvas-box{
+  display: flex;
+  height: calc(100% - 40px);
+  width: 100%;
+  flex-direction: row;
+  align-items: flex-start;
+
+  box-sizing: border-box;
+  padding: 5px;
+}

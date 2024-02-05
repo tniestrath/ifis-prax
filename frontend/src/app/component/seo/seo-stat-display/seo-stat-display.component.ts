@@ -29,4 +29,5 @@ export class SeoStatDisplayComponent extends DashBaseComponent implements OnInit
 
   protected readonly DashColors = DashColors;
   protected readonly Util = Util;
+  protected readonly Number = Number;
 }

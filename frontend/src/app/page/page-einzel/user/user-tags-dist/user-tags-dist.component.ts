@@ -19,7 +19,6 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.setToolTip("", false);
     this.db.getUserTagsDistributionPercentage().then((res : {name: string, count: number}[])  => {
-      console.log(res)
       let totalIndex = res.findIndex((value, index) => {return value.name.includes("countTotal");})
       // @ts-ignore
       let total = res.at(totalIndex).count;

@@ -248,10 +248,6 @@ public class LogService {
 
     ArrayList<String> blacklistResponseCodes = new ArrayList<>();
 
-
-    //Toter Code wird bis zum fertigen ConfigReader hier gelassen.
-    //private String Pfad=Application.class.getClassLoader().getResource("access.log").getPath();
-    //private String Pfad = Paths.get(Application.class.getClassLoader().getResource("access.log").toURI()).toString();
     private final DashConfig config;
     private final String Pfad;
 

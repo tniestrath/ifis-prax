@@ -2548,6 +2548,7 @@ public class LogService {
     }
 
     private void updatePostTypes() throws JSONException, ParseException {
+        postTypeRepo.deleteAll(postTypeRepo.getDefault());
         for(Integer id : postRepository.getIdsOfUntyped()) {
             PostTypes type = new PostTypes();
             type.setPost_id(Long.valueOf(id));

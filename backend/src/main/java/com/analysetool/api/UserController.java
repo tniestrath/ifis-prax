@@ -310,7 +310,7 @@ public class UserController {
             obj.put("email", user.getEmail());
             obj.put("displayName", user.getDisplayName());
             obj.put("niceName", user.getNicename());
-            obj.put("creationDate", user.getRegistered().toString());
+            obj.put("creationDate", user.getRegistered().toLocalDate().toString());
             if (userStatsRepository.existsByUserId(user.getId())) {
                 UserStats statsUser = userStatsRepository.findByUserId(user.getId());
                 obj.put("profileViews", statsUser.getProfileView());
@@ -397,6 +397,12 @@ public class UserController {
             try {
                 obj.put("potential", getPotentialPercent(Math.toIntExact(user.getId())));
             } catch (Exception ignored) {
+            }
+
+            if(wpUserMetaRepository.getTelIntern(user.getId()).isPresent()) {
+                obj.put("tel", wpUserMetaRepository.getTelIntern(user.getId()).get());
+            } else if(wpUserMetaRepository.getTelExtern(user.getId()).isPresent()) {
+                obj.put("tel", wpUserMetaRepository.getTelExtern(user.getId()).get());
             }
 
             if(wpUserMetaRepository.getSlogan(user.getId()).isPresent()) {
@@ -1095,7 +1101,7 @@ public class UserController {
         int clicks = 0;
         for(Post post : posts) {
             if(post != null) {
-                clicks += statRepository.getClicksByArtId(post.getId());
+                clicks += statRepository.getClicksByArtId(post.getId()) != null ? statRepository.getClicksByArtId(post.getId()) : 0;
             }
         }
 

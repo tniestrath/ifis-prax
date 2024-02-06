@@ -399,6 +399,12 @@ public class UserController {
             } catch (Exception ignored) {
             }
 
+            if(wpUserMetaRepository.getTelIntern(user.getId()).isPresent()) {
+                obj.put("tel", wpUserMetaRepository.getTelIntern(user.getId()).get());
+            } else if(wpUserMetaRepository.getTelExtern(user.getId()).isPresent()) {
+                obj.put("tel", wpUserMetaRepository.getTelExtern(user.getId()).get());
+            }
+
             if(wpUserMetaRepository.getSlogan(user.getId()).isPresent()) {
                 obj.put("slogan", wpUserMetaRepository.getSlogan(user.getId()).get());
             } else {

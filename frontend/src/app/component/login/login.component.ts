@@ -24,7 +24,7 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
 
   onSubmit(username: string, userpass: string) {
     // @ts-ignore
-    this.db.login(username, userpass).then(res => {
+    this.db.loginWithBody(username, userpass).then(res => {
       res.text().then(ans => {
         ans = decodeURIComponent(ans);
         this.cs.deleteAll();

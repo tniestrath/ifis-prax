@@ -1470,7 +1470,8 @@ public class LogService {
             case "contentDownload":
                 try {
                     System.out.println("FOUND CONTENT DOWNLOAD \n\n");
-                    String filename = patternMatcher.group(1) + ".pdf";
+                    //Edit Filename to make sure very similar files still work as intended
+                    String filename = "/" + patternMatcher.group(1) + ".pdf";
                     if(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).isPresent()) {
                         long id = postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).get();
                         ContentDownloadsHourly download;

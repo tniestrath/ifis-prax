@@ -1101,7 +1101,7 @@ public class UserController {
         int clicks = 0;
         for(Post post : posts) {
             if(post != null) {
-                clicks += statRepository.getClicksByArtId(post.getId());
+                clicks += statRepository.getClicksByArtId(post.getId()) != null ? statRepository.getClicksByArtId(post.getId()) : 0;
             }
         }
 

@@ -19,4 +19,7 @@ public interface PostTypeRepository extends JpaRepository<PostTypes, Long> {
 
     @Query("SELECT p.post_id FROM PostTypes p WHERE p.type =:type")
     List<Long> getPostsByTypeLong(String type);
+
+    @Query("SELECT p FROM PostTypes p WHERE p.type='default'")
+    List<PostTypes> getDefault();
 }

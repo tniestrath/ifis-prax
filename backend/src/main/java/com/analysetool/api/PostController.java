@@ -66,6 +66,8 @@ public class PostController {
     private PostClicksByHourDLCRepository postClicksByHourRepo;
     @Autowired
     private universalStatsRepository uniRepo;
+    @Autowired
+    private ContentDownloadsHourlyRepository contentDownloadsRepo;
 
     PostRepository postRepository;
     PostStatsRepository statsRepo;
@@ -360,6 +362,13 @@ public class PostController {
             obj.put("referrings",0);
             obj.put("lettercount", 0);
             obj.put("articleReferringRate",0);
+        }
+        if(type.equalsIgnoreCase("whitepaper")) {
+            if(contentDownloadsRepo.existsByPostId(id)) {
+                obj.put("downloads", contentDownloadsRepo.getAllDownloadsOfPostIdSummed(id));
+            } else {
+                obj.put("downloads", 0);
+            }
         }
 
         obj.put("authors", postMetaRepo.getAuthorsByPostId(id));
@@ -918,7 +927,7 @@ public class PostController {
 
        }
 
-        return new JSONObject().put("dates", dates.toString()).put("views", views.toString()).toString();
+        return new JSONObject().put("dates", dates).put("views", views).toString();
     }
 
 

@@ -92,5 +92,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p.id FROM Post p WHERE p.id NOT IN (SELECT u.post_id FROM PostTypes u) AND p.status='publish' AND p.type='post'")
    List<Integer> getIdsOfUntyped();
 
+   @Query("SELECT p.parentId FROM Post p WHERE p.type='attachment' AND p.status='inherit' AND p.id IN :postIds AND p.guid LIKE %:filename")
+   Optional<Long> getParentFromListAnd(List<Long> postIds, String filename);
+
 }
 

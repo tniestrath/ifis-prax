@@ -69,6 +69,15 @@
   text-align: end;
   font-size: 1vw;
 }
+.user-est-box{
+  grid-row: 4;
+  grid-column: 4 / span 2;
+  font-style: italic;
+  font-weight: lighter;
+  color: #A0A0A0;
+  text-align: start;
+  font-size: 1vw;
+}
 .user-potential-box{
   grid-row: 3;
   grid-column-start: 2;
@@ -89,6 +98,12 @@
 .user-email-box{
   grid-row: 5;
   grid-column: 2;
+  display: flex;
+  align-items: end;
+}
+.user-tel-box{
+  grid-row: 5;
+  grid-column: 3;
   display: flex;
   align-items: end;
 }

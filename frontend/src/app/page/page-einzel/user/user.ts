@@ -25,6 +25,8 @@ export class User extends DbObject {
               public rankingProfileByGroup : number = -1,
               public slogan : string = " - ",
               public service: string = "",
+              public tel: string = "",
+              public creationDate: string = "",
               public img : string = "") {
     super(id, displayName);
   }

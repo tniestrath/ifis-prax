@@ -3,6 +3,7 @@ import {DashBaseComponent} from "../../../../component/dash-base/dash-base.compo
 import {ActiveElement, Chart, ChartEvent, PointStyle, TooltipItem, TooltipLabelStyle} from "chart.js/auto";
 import Util, {DashColors} from "../../../../util/Util";
 import {SysVars} from "../../../../services/sys-vars-service";
+import {Post} from "../../../../component/post/Post";
 
 @Component({
   selector: 'dash-user-clicks-chart',
@@ -20,26 +21,45 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
   ]);
 
   selectedTimeSpan = 31;
+  isPostSelected: boolean = false;
+  selectedPost: Post = new Post();
 
   ngOnInit(): void {
     this.getData();
+
+    SysVars.SELECTED_POST.subscribe(post => {
+      console.log(post)
+      this.selectedPost = post;
+      this.isPostSelected = true;
+      (document.querySelector("#post-type-select-view") as HTMLOptionElement).innerText = "Ausgew. Beitrag";
+      this.getData();
+    });
   }
 
   getData($event?: Event) {
     if ((event?.target as HTMLInputElement).type == "radio") { // @ts-ignore
       this.selectedTimeSpan = this.timeSpanMap.get((event?.target as HTMLInputElement).value);
     }
+    if ((event?.target as HTMLInputElement).type == "select-one"){
+      this.isPostSelected = ((event?.target as HTMLInputElement).value != "viewProfile");
+      (document.querySelector("#post-type-select-view") as HTMLOptionElement).innerText = "Profilaufrufe";
+    }
     let start = Util.getFormattedNow(-this.selectedTimeSpan);
     let end = Util.getFormattedNow();
 
-
-    this.db.getUserClicksChartData(SysVars.USER_ID, start, end).then(res => {
-      let data = this.collectData(res);
-      this.createChart(data.dates, data.profileClicks, data.biggestPost, data.posts, (posts) => {
-        let list  = posts.map(value => value.id).reduce((previousValue, currentValue) => previousValue + "-" + currentValue);
-        SysVars.SELECTED_POST_IDS.next(list);
+    if (!this.isPostSelected){
+      this.db.getUserClicksChartData(SysVars.USER_ID, start, end).then(res => {
+        let data = this.collectData(res);
+        this.createChart(data.dates, data.profileClicks, data.biggestPost, data.posts, (posts) => {
+          let list  = posts.map(value => value.id).reduce((previousValue, currentValue) => previousValue + "-" + currentValue);
+          SysVars.SELECTED_POST_IDS.next(list);
+        });
       });
-    });
+    }else {
+      this.db.getPostViewsByTime(this.selectedPost.id).then(value => {
+        this.createPostChart(value.dates, value.views, this.selectedPost.title + " : " + this.selectedPost.date, Util.getColor("post" ,this.selectedPost.type));
+      })
+    }
   }
 
   collectData(data: {date : string, profileViews : number, biggestPost: {id: number, title: string, type: string, clicks: number}, posts: {id: number, title: string, type: string, clicks: number}[]}[]){
@@ -196,6 +216,80 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
         onClick(event: ChartEvent, elements: ActiveElement[]) {
           // @ts-ignore
           onClick(posts.at(elements.at(0).index));
+        },
+      }
+    })
+  }
+
+  private createPostChart(labels: string[], data: number[], postName : string, postColor : string) {
+    if (this.chart){
+      this.chart.destroy();
+    }
+    // @ts-ignore
+    this.chart = new Chart(this.element.nativeElement.querySelector("#user-clicks-chart"), {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Views",
+          data: data,
+          backgroundColor: postColor,
+          borderColor: postColor,
+          borderJoinStyle: 'round',
+          borderWidth: 5
+        }]
+      },
+      options: {
+        aspectRatio: 2.8,
+        maintainAspectRatio: false,
+        clip: false,
+        layout: {
+          padding: {
+            bottom: 0
+          }
+        },
+        scales: {
+          y: {
+          },
+          x: {
+            display: true
+          }
+        },
+        plugins: {
+          datalabels: {
+            display: false
+          },
+          title: {
+            display: true,
+            text: postName,
+            position: "top",
+            fullSize: true,
+            font: {
+              size: 18,
+              weight: "bold",
+              family: "'Helvetica Neue', sans-serif"
+            }
+          },
+          legend: {
+            display: false,
+            position: "bottom"
+          },
+          tooltip: {
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            },
+            callbacks: {
+            }
+          }
+        },
+        interaction: {
+          mode: "nearest",
+          intersect: true
+        },
+        onClick(event: ChartEvent, elements: ActiveElement[]) {
         },
       }
     })

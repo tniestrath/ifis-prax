@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Post} from "../../Post";
 import Util, {DashColors} from "../../../../util/Util";
+import {SysVars} from "../../../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-post-list-item',
@@ -45,5 +46,10 @@ export class PostListItemComponent implements OnInit{
     if (this.data.tags != null && this.data.tags.length > 0){
       this.formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");
     }
+  }
+
+
+  onClick(data: Post) {
+    SysVars.SELECTED_POST.next(data);
   }
 }

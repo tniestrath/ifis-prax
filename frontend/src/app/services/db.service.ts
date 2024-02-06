@@ -55,6 +55,7 @@ export enum dbUrl {
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
   GET_POST_MAX_PERFORMANCE = "/posts/maxPerformance",
   GET_POST_MAX_RELEVANCE = "/posts/maxRelevance",
+  GET_POST_VIEWS_BY_TIME = "/posts/getPostViewsByTime?id=ID",
 
   GET_POSTS_ALL = "/posts/getAllPostsWithStats",
   GET_POSTS_ALL_PAGED = "/posts/pageByTitle?page=PAGE&size=SIZE&sortBy=SORTER&filter=FILTER&search=SEARCH",
@@ -320,6 +321,10 @@ export class DbService {
     this.setLoading();
     let max : Promise<number> = await fetch(DbService.getUrl(dbUrl.GET_POST_MAX_RELEVANCE), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
     return max;
+  }
+  async getPostViewsByTime(id : string) : Promise<{dates: string[], views: number[]}>{
+    this.setLoading();
+    return  await fetch(DbService.getUrl(dbUrl.GET_POST_VIEWS_BY_TIME).replace("ID", id), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
 

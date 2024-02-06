@@ -1,7 +1,8 @@
 <div class="component-box user-clicks-chart-box">
   <form class="post-chart-form">
-    <select id="post-type-select" name="post_type">
-      <option value="artikel">Profilaufrufe</option>
+    <select id="post-type-select" name="post_type" (change)="getData($event)">
+      <option id="post-type-select-view" value="view" name="post_type">Profilaufrufe</option>
+      <option *ngIf="isPostSelected" value="viewProfile" name="post_type">Profilaufrufe</option>
     </select>
     <input type="radio" name="time_range" value="all_time" (change)="getData($event)">
     <input type="radio" name="time_range" value="half_year" id="post-range-halfyear" (change)="getData($event)">

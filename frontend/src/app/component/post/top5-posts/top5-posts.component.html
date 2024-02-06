@@ -10,8 +10,8 @@
   <div class="top5-post-box">
     <div class="post-box" *ngFor="let data of dataArray">
       <div class="post-details">
-        <div class="post-detail" [style]="{'borderColor': data['typeColor'], 'border': '2px solid'}">
-          <div class="post-label" [style]="{'color': data['typeColor'], 'font-weight': 'bold'}">{{data["type"].toUpperCase()}}</div>
+        <div class="post-detail" [style]="{'borderColor': Util.getColor('post' ,data['type']), 'border': '2px solid'}">
+          <div class="post-label" [style]="{'color': Util.getColor('post' ,data['type']), 'font-weight': 'bold'}">{{data["type"].toUpperCase()}}</div>
           <p>{{getTitleSliced(String(data["title"]))}}</p>
         </div>
         <div class="post-detail-group-3">
@@ -23,7 +23,11 @@
             <div class="post-label" >Clicks</div>
             <p>{{Util.formatNumbers(data["clicks"])}}</p>
           </div>
-          <div class="post-detail">
+          <div class="post-detail" *ngIf="postType=='Whitepaper'">
+            <div class="post-label" >Downloads</div>
+            <p>{{Util.formatNumbers(data["downloads"])}}</p>
+          </div>
+          <div class="post-detail" *ngIf="postType!='Whitepaper'">
             <div class="post-label" >Zeichen</div>
             <p>{{Util.formatNumbers(data["lettercount"])}}</p>
           </div>

@@ -15,16 +15,9 @@ export class Post extends DbObject{
               public lettercount: number = 0,
               public duration: number = 0,
               public authors: string = "",
+              public downloads: number = 0,
               public override id : string = "-1") {
     super(id, title);
   }
 }
 
-export class PostWithTypeColor extends Post{
-
-  public typeColor : string = "";
-  constructor(post : Post, typeColor : string){
-    super(post.title,post.date,post.type,post.clicks,post.tags,post.performance,post.relevance,post.searchSuccesses,post.searchSuccessRate,post.referrings,post.articleReferringRate,post.lettercount,post.duration,post.authors,post.id);
-    this.typeColor = typeColor;
-  }
-}

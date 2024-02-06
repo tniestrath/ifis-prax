@@ -1,4 +1,4 @@
-<div class="post-box">
+<div class="post-box" (click)="onClick(data)">
   <div class="post-details">
     <div class="post-detail" [style]="{'borderColor': typeColor, 'border': '2px solid'}">
       <div class="post-label" [style]="{'color': typeColor, 'background': bgColor, 'font-weight': 'bold'}">{{data.type.toUpperCase()}}</div>
@@ -17,9 +17,13 @@
         <div class="post-label" [style]="{'background': bgColor}">Dauer</div>
         <p>{{data.duration}}</p>
       </div>
-      <div *ngIf="!data.type.startsWith('podcast') && !data.type.startsWith('Event')" class="post-detail">
+      <div *ngIf="!data.type.startsWith('podcast') && !data.type.startsWith('Event') && !data.type.startsWith('whitepaper')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Zeichen</div>
         <p>{{data.lettercount}}</p>
+      </div>
+      <div *ngIf="data.type.startsWith('whitepaper')" class="post-detail">
+        <div class="post-label" [style]="{'background': bgColor}">Downloads</div>
+        <p>{{data.downloads}}</p>
       </div>
       <div *ngIf="!data.type.startsWith('Event')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Perf</div>

@@ -109,6 +109,7 @@ export default class Util {
           case "whitepaper":
             return DashColors.WHITEPAPER;
           case "podcast":
+          case"podcast_first_series":
             return DashColors.PODCAST;
           case "ratgeber":
             return DashColors.RATGEBER;

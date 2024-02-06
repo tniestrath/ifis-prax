@@ -927,7 +927,7 @@ public class PostController {
 
        }
 
-        return new JSONObject().put("dates", dates.toString()).put("views", views.toString()).toString();
+        return new JSONObject().put("dates", dates).put("views", views).toString();
     }
 
 

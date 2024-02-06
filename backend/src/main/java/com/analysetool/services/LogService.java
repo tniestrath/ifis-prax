@@ -144,7 +144,8 @@ public class LogService {
 
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
 
-    private final String contentDownload ="^.*GET /wp-content/uploads/[\\d]{4}/[\\d]{2}/(\\S+).pdf";
+    private final String contentDownload = "^.*\"GET /wp-content/uploads/\\d{4}/\\d{2}/([^ ]+)\\.pdf";
+
     //private final String ContentDownload = "^.*GET /wp-content/uploads/[\\d]{4}/[\\d]{2}/(\\S+?)(-\\d{3})?.pdf";
 
     private final String PodcastViewPattern = "^.*GET /podcast/(\\S+)/";
@@ -494,9 +495,12 @@ public class LogService {
 
                 //Bilde filternde Variablen aus der Zeile.
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
+
+                //Does it match a content-download
+                Matcher matched_content_download= contentDownloadPattern.matcher(line);
                 //Filter für Request-Types.
                 boolean isDevAccess = request.contains("/api/")
-                        || request.contains("/wp-content") || request.contains("/wp-includes")
+                        || (request.contains("/wp-content") && !matched_content_download.find()) || request.contains("/wp-includes")
                         || request.contains("/wp-admin") || request.contains("/robots.txt");
                 //Filter für IPs.
                 boolean isUnique = (uniqueUserRepo.findByIP(ip) == null);
@@ -599,8 +603,8 @@ public class LogService {
                     Matcher matched_podcast_view = podcastViewPattern.matcher(request);
 
                     //Does it match a content-download
-                    Matcher matched_content_download= contentDownloadPattern.matcher(request);
-
+                    //Matcher matched_content_download= contentDownloadPattern.matcher(line);
+                    matched_content_download= contentDownloadPattern.matcher(line);
                     //Does it match an event-View?
                     Matcher matched_event_view= eventViewPattern.matcher(request);
 
@@ -1480,7 +1484,7 @@ public class LogService {
                         }
                         contentDownloadsHourlyRepo.save(contentDownload);
 
-                        updateContentDownloadMap(postId,dateLog);
+                        //updateContentDownloadMap(postId,dateLog);
                     }
                 }
                 catch (Exception e){

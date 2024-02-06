@@ -1,5 +1,6 @@
 package com.analysetool.services;
 import com.analysetool.modells.ContentDownloadsHourly;
+import com.analysetool.modells.Post;
 import com.analysetool.modells.UserViewsByHourDLC;
 import com.analysetool.repositories.ContentDownloadsHourlyRepository;
 import com.analysetool.repositories.PostRepository;
@@ -186,6 +187,11 @@ public class ContentDownloadsHourlyService {
             downloadsMap.put((Long) result[0], (Long) result[1]);
         }
         return downloadsMap;
+    }
+
+    public Post getPostByContent(ContentDownloadsHourly contentDownload){
+       Post content= postRepo.findById(contentDownload.getPostId()).get();
+       return postRepo.findById(content.getParentId()).get();
     }
 
 }

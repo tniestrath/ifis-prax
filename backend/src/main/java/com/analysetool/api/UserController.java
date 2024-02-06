@@ -310,7 +310,7 @@ public class UserController {
             obj.put("email", user.getEmail());
             obj.put("displayName", user.getDisplayName());
             obj.put("niceName", user.getNicename());
-            obj.put("creationDate", user.getRegistered().toString());
+            obj.put("creationDate", user.getRegistered().toLocalDate().toString());
             if (userStatsRepository.existsByUserId(user.getId())) {
                 UserStats statsUser = userStatsRepository.findByUserId(user.getId());
                 obj.put("profileViews", statsUser.getProfileView());

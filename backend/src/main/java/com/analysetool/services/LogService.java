@@ -1470,14 +1470,15 @@ public class LogService {
             case "contentDownload":
                 try {
                     System.out.println("FOUND CONTENT DOWNLOAD \n\n");
-                    if(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), patternMatcher.group(1)).isPresent()) {
-                        long id = postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), patternMatcher.group(1)).get();
+                    String filename = patternMatcher.group(1) + ".pdf";
+                    if(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).isPresent()) {
+                        long id = postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).get();
                         ContentDownloadsHourly download;
                         if(contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).isEmpty()) {
                             download = new ContentDownloadsHourly();
                             download.setUniId(uniRepo.getLatestUniStat().getId());
                             download.setHour(LocalDateTime.now().getHour());
-                            download.setPostId(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), patternMatcher.group(1)).get());
+                            download.setPostId(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).get());
                             download.setDownloads(1L);
                         } else {
                             download = contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).get();

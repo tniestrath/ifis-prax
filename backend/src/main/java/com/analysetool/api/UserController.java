@@ -1982,7 +1982,6 @@ public class UserController {
 
     public JSONObject getUserCountForAllTags() throws JSONException {
         List<String> allTags = getAllUserTagRowsInList(getAllUserIdsWithTags());
-        System.out.println(getAllUserIdsWithTags().toString());
         List<List<String>> decryptedAndCleanedTags= decryptTagsStringInList(allTags);
         JSONObject json = new JSONObject();
 

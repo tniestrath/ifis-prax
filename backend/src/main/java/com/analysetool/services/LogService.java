@@ -53,6 +53,9 @@ public class LogService {
     private final UserStatsRepository userStatsRepo;
 
     @Autowired
+    private PostMetaRepository postMetaRepo;
+
+    @Autowired
     private UniqueUserRepository uniqueUserRepo;
 
     @Autowired
@@ -989,7 +992,6 @@ public class LogService {
         updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsRatgeberSelf, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userRatgeberSelf, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
         //Service weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
-        contentDownloadsHourlyService.persistAllContentDownloadsHourly(contentDownloadsMap);
         postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
         userRedirectService.persistAllUserRedirectsHourly(userRedirectsMap);
         //maps clearen nur um sicher zu gehen
@@ -1468,23 +1470,20 @@ public class LogService {
             case "contentDownload":
                 try {
                     System.out.println("FOUND CONTENT DOWNLOAD \n\n");
-                    if(postRepository.findByTitleLike(patternMatcher.group(1).replace("+","-")).isPresent()) {
-                        Long postId = postRepository.findByTitleLike(patternMatcher.group(1).replace("+", "-")).get();
-
-                        System.out.println("TITLE HAS BEEN FOUND FOR CONTENT DOWNLOAD");
-                        ContentDownloadsHourly contentDownload = new ContentDownloadsHourly();
-                        if(contentDownloadsHourlyRepo.getByPostIdUniIdHour(postId, uniRepo.getLatestUniStat().getId(), dateLog.getHour()).isPresent()) {
-                            contentDownload = contentDownloadsHourlyRepo.getByPostIdUniIdHour(postId, uniRepo.getLatestUniStat().getId(), dateLog.getHour()).get();
-                            contentDownload.setDownloads(contentDownload.getDownloads() + 1);
+                    if(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), patternMatcher.group(1)).isPresent()) {
+                        long id = postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), patternMatcher.group(1)).get();
+                        ContentDownloadsHourly download;
+                        if(contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).isEmpty()) {
+                            download = new ContentDownloadsHourly();
+                            download.setUniId(uniRepo.getLatestUniStat().getId());
+                            download.setHour(LocalDateTime.now().getHour());
+                            download.setPostId(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), patternMatcher.group(1)).get());
+                            download.setDownloads(1L);
                         } else {
-                            contentDownload.setDownloads(1L);
-                            contentDownload.setPostId(postId);
-                            contentDownload.setHour(dateLog.getHour());
-                            contentDownload.setUniId(uniRepo.getLatestUniStat().getId());
+                            download = contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).get();
+                            download.setDownloads(download.getDownloads() + 1);
                         }
-                        contentDownloadsHourlyRepo.save(contentDownload);
-
-                        //updateContentDownloadMap(postId,dateLog);
+                        contentDownloadsHourlyRepo.save(download);
                     }
                 }
                 catch (Exception e){

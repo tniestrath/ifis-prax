@@ -100,6 +100,7 @@ export enum dbUrl {
   GET_SYSTEM_TIME_HOUR = "/systemLoad/getHour",
 
   LOGIN = "/login?user=USERNAME&pass=PASSWORD",
+  LOGIN_VIA_JSON = "/login2",
   VALIDATE = "/validate",
   MANUAL_VALIDATE = "/validateCookie?value=VALUE",
 }
@@ -160,6 +161,10 @@ export class DbService {
   async login(username : string, userpass : string) {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.LOGIN).replace("USERNAME", username).replace("PASSWORD", userpass), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.blob()});
+  }
+  async loginViaJSON(username : string, userpass : string){
+    this.setLoading();
+    await fetch(DbService.getUrl(dbUrl.LOGIN_VIA_JSON), {method: "POST", credentials: "include", body: "{\"username\":\"" + username + "\",\"password\":\" "+ userpass +" \"}"}).then(res => {this.setFinished(res.status, res.url); return res.blob()});
   }
   async getUserByLogin(login : string) : Promise<User> {
     this.setLoading();

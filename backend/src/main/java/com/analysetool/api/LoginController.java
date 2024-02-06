@@ -3,8 +3,10 @@ package com.analysetool.api;
 import com.analysetool.util.DashConfig;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -12,11 +14,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,8 +23,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -110,6 +111,10 @@ public class LoginController {
 
 
     private final DashConfig config;
+    private static class LoginForm {
+        public String username;
+        public String password;
+    }
 
 
     public LoginController(DashConfig config) {
@@ -169,6 +174,52 @@ public class LoginController {
 
         return responseCookie;
     }
+    @PostMapping("/login2")
+    public String login2(@RequestBody LoginForm loginForm){
+        HttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost(config.getWplogin());
+
+        String responseCookie = "";
+
+        try {
+            List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("log", loginForm.username));
+            params.add(new BasicNameValuePair("pwd", loginForm.password));
+
+            httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+            HttpResponse response = httpClient.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            //Header[] headers = response.getAllHeaders();
+
+            Header[] allSetCookie = response.getHeaders("Set-Cookie");
+            for (Header h: allSetCookie) {
+                if (h.getValue().contains("wordpress_logged_in")){
+                    responseCookie = h.getValue();
+                }
+            }
+            String userData = userController.getUserByLogin(loginForm.username);
+            if (responseCookie.isEmpty() || !(new JSONObject(userData).get("accountType").equals("admin"))){
+                responseCookie = "LOGIN REJECTED";
+            }
+
+            // Process the response
+            String responseBody = EntityUtils.toString(entity);
+            for (int i = 0; i < allSetCookie.length; i++) {
+                System.out.println(responseCookie);
+            }
+            //ToDo Toten Code aufräumen
+            /*for (int i = 0; i < headers.length; i++) {
+                System.out.println("Name: " + headers[i].getName() + ", Value: " + headers[i].getValue());
+            }*/
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return responseCookie;
+    }
+
     @GetMapping("/validate")
     public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();

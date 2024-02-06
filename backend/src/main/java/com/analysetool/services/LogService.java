@@ -2853,6 +2853,7 @@ public class LogService {
 
     private void updateFinalSearchStatsAndTemporarySearchStats(){
         List<TemporarySearchStat> alleTempSearches= temporarySearchService.getAllSearchStat();
+        List<TemporarySearchStat> zuEntfernendeTemSearches = new ArrayList<>();
         List<FinalSearchStat> zuSpeicherndeFinalSearches = new ArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
@@ -2870,12 +2871,13 @@ public class LogService {
            FinalSearchStat search = new FinalSearchStat(uniId,hour,country,state,city,stat.getFoundArtikelCount(),stat.getFoundBlogCount(),stat.getFoundNewsCount(),stat.getFoundWhitepaperCount(),stat.getFoundRatgeberCount(),stat.getFoundPodcastCount(),stat.getFoundAnbieterCount(),stat.getFoundEventsCount(),searchQuery, stat.getId());
            if(!zuSpeicherndeFinalSearches.contains(search)){
            zuSpeicherndeFinalSearches.add(search);
-           }else{alleTempSearches.remove(stat);}
+           }else{zuEntfernendeTemSearches.add(stat);}
         }
         System.out.println(zuSpeicherndeFinalSearches);
         Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);
         System.out.println(saveSuccess);
         if(saveSuccess){
+            alleTempSearches.removeAll(zuEntfernendeTemSearches);
             linkSearchSuccessesWithSearches(alleTempSearches,zuSpeicherndeFinalSearches);
             Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
             if(!deleteSuccess){

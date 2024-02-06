@@ -16,4 +16,6 @@ public interface FinalSearchStatDLCRepository extends JpaRepository<FinalSearchS
     @Query("SELECT f.finalSearchId from FinalSearchStatDLC f where f.userId=:userId and f.finalSearchId > 0")
     List<Long> getFinalSearchStatIdsByUserId(Long userId);
 
+
+    List<FinalSearchStatDLC> findAllByFinalSearchId(Long id);
 }

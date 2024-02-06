@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,6 +109,17 @@ public class FinalSearchStatService {
         List<FinalSearchStat> stats = repository.findAllById(FinalSearchStatIds);
 
         return stats;
+    }
+
+    public Map<FinalSearchStat,List<FinalSearchStatDLC>> getSearchStatsByCity(String city){
+        Map<FinalSearchStat,List<FinalSearchStatDLC>> response = new HashMap<>();
+        List<FinalSearchStat> allSearchesOfCity= repository.findAllByCity(city);
+        List<FinalSearchStatDLC> allSearchSuccessesOfSearch = new ArrayList<>();
+        for(FinalSearchStat stat:allSearchesOfCity){
+            allSearchSuccessesOfSearch = DLCRepo.findAllByFinalSearchId(stat.getId());
+            response.put(stat,allSearchSuccessesOfSearch);
+        }
+        return response;
     }
     public String toStringList(List<FinalSearchStat>stats){
         String response = "";

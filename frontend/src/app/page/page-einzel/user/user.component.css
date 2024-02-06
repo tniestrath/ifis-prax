@@ -67,7 +67,7 @@
   font-weight: lighter;
   color: #A0A0A0;
   text-align: end;
-  font-size: 1vw;
+  font-size: .8vw;
 }
 .user-est-box{
   grid-row: 4;
@@ -76,7 +76,7 @@
   font-weight: lighter;
   color: #A0A0A0;
   text-align: start;
-  font-size: 1vw;
+  font-size: .8vw;
 }
 .user-potential-box{
   grid-row: 3;
@@ -127,6 +127,7 @@
   display: flex;
   align-items: center;
   justify-content: start;
+  font-size: 1vw;
 }
 .user-tendency-box{
   grid-row: 2;

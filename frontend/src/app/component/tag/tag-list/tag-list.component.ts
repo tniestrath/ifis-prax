@@ -4,8 +4,6 @@ import {SelectorItem} from "../../../page/selector/selector.component";
 import {Subject} from "rxjs";
 import {TagRanking} from "../Tag";
 import {TagListItemComponent} from "./tag-list-item/tag-list-item.component";
-import {DbObject} from "../../../services/DbObject";
-import {SysVars} from "../../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-tag-list',

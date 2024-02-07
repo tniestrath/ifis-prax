@@ -1,0 +1,6 @@
+<div class="user-tag-dist-item-box" (click)="onClick()">
+  <div class="user-tag-precentage">{{+parseFloat(String(data.percentage)).toFixed(0)}}%</div>
+  <div class="user-tag-name">{{data.name}}</div>
+  <div *ngIf="data.ranking != ''" class="user-tag-ranking">{{data.ranking}}</div>
+  <div *ngIf="data.count != -1" class="user-tag-count">{{data.count}}</div>
+</div>

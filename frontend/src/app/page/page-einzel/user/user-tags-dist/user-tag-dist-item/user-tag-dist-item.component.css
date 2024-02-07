@@ -1,0 +1,28 @@
+.user-tag-dist-item-box{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ffffff00;
+}
+.user-tag-dist-item-box:hover{
+  border: 1px solid black;
+}
+
+.user-tag-precentage{
+  width: 20%;
+  text-align: left;
+}
+.user-tag-name{
+  width: 60%;
+  text-align: center;
+}
+.user-tag-count{
+  width: 20%;
+  text-align: right;
+}
+.user-tag-ranking{
+    width: 20%;
+    text-align: right;
+}

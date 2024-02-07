@@ -3,8 +3,9 @@ import {DashBaseComponent} from "../../../../component/dash-base/dash-base.compo
 import {SelectorItem} from "../../../selector/selector.component";
 import {Subject} from "rxjs";
 import {TagListItemComponent} from "../../../../component/tag/tag-list/tag-list-item/tag-list-item.component";
-import {TagRanking} from "../../../../component/tag/Tag";
+import {TagRanking, UserTagDist} from "../../../../component/tag/Tag";
 import {SysVars} from "../../../../services/sys-vars-service";
+import {UserTagDistItemComponent} from "./user-tag-dist-item/user-tag-dist-item.component";
 
 @Component({
   selector: 'dash-user-tags-dist',
@@ -24,9 +25,9 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
       let total = res.at(totalIndex).count;
       for (let i = 0; i < res.length; i++) {
         // @ts-ignore
-        if (i != totalIndex) this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(String(res.at(i).name), String(res.at(i).name), String((res.at(i).count / total) * 100), String(res.at(i).count), "")));
+        if (i != totalIndex) this.selectorItems.push(new SelectorItem(UserTagDistItemComponent, new UserTagDist("", String(res.at(i).name), String(res.at(i).count), "", String((res.at(i).count / total) * 100))));
       }
-      this.selectorItems.sort((a, b) => Number((b.data as TagRanking).views) - Number((a.data as TagRanking).views));
+      this.selectorItems.sort((a, b) => Number((b.data as UserTagDist).percentage) - Number((a.data as UserTagDist).percentage));
       this.selectorItemsLoaded.next(this.selectorItems);
     })
   }
@@ -47,9 +48,9 @@ export class SingleUserTagsDistComponent extends UserTagsDistComponent implement
 
     this.db.getUserTagsRanking(SysVars.USER_ID, "profile").then((res : {name : string, percentage : number, ranking : number, count : number}[])  => {
       for (let tag of res) {
-        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.name,tag.name, String(tag.percentage), '#' + tag.ranking + " / " + tag.count, "")));
+        this.selectorItems.push(new SelectorItem(UserTagDistItemComponent, new UserTagDist("", tag.name, -1, '#' + tag.ranking + " / " + tag.count, tag.percentage)));
       }
-      this.selectorItems.sort((a, b) => Number((b.data as TagRanking).relevance) - Number((a.data as TagRanking).relevance))
+      this.selectorItems.sort((a, b) => Number((b.data as UserTagDist).percentage) - Number((a.data as UserTagDist).percentage))
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }

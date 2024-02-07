@@ -70,6 +70,7 @@ import { SeoStatDisplayComponent } from './component/seo/seo-stat-display/seo-st
 import { SeoCtrComponent } from './component/seo/seo-ctr/seo-ctr.component';
 import { SeoKeywordListComponent } from './component/seo/seo-keyword-list/seo-keyword-list.component';
 import { SeoKeywordListItemComponent } from './component/seo/seo-keyword-list/seo-keyword-list-item/seo-keyword-list-item.component';
+import { UserTagDistItemComponent } from './page/page-einzel/user/user-tags-dist/user-tag-dist-item/user-tag-dist-item.component';
 
 @NgModule({
   declarations: [
@@ -132,7 +133,8 @@ import { SeoKeywordListItemComponent } from './component/seo/seo-keyword-list/se
     SeoStatDisplayComponent,
     SeoCtrComponent,
     SeoKeywordListComponent,
-    SeoKeywordListItemComponent
+    SeoKeywordListItemComponent,
+    UserTagDistItemComponent
   ],
     imports: [
         BrowserModule,

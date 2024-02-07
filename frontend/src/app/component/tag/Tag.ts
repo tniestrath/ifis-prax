@@ -35,3 +35,9 @@ export class TagStats extends TagRanking{
     super(id, name, relevance, views, count);
   }
 }
+
+export class UserTagDist extends DbObject{
+  constructor(public override id : string = "0", public override name : string = "", public count : number = -1, public ranking : string = "#-1/-1", public percentage : number = 0, public userIDs : number[] = []) {
+    super(id, name);
+  }
+}

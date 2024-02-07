@@ -1,8 +1,6 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.AnbieterSearch;
-import com.analysetool.modells.FinalSearchStat;
-import com.analysetool.modells.SearchStats;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.AnbieterSearchRepository;
 import com.analysetool.repositories.SearchStatsRepository;
 import com.analysetool.services.FinalSearchStatService;
@@ -19,10 +17,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.analysetool.modells.EventSearch;
 import com.analysetool.repositories.EventSearchRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -266,6 +264,31 @@ public class SearchStatsController {
            }
         }
         return ergebnis.toString();
+    }
+
+    /**
+     * Retrieves demand data based on location and analysis type.
+     *
+     * @param location         The location to analyze.
+     * @param locationType     The type of location (e.g., city, country, state).
+     * @param searchThreshold  The threshold for the number of occurrences of a search query.
+     * @param resultThreshold  The threshold for the result count.
+     * @param analysisType     The type of analysis to perform ("searchSuccess" or "resultCount").
+     * @return A map containing frequent searches with few results based on the given thresholds.
+     */
+    @GetMapping("/getDemandByLocation")
+    public String getDemandByLocation(@RequestParam String location, @RequestParam String locationType,@RequestParam int searchThreshold, @RequestParam int resultThreshold, @RequestParam String analysisType){
+        Map <FinalSearchStat, List<FinalSearchStatDLC>> dataPool = fSearchStatService.getSearchStatsByLocation(location,locationType);
+        Map <String,Integer> response = new HashMap<>();
+                switch (analysisType){
+                    case"searchSuccess":
+                        response= fSearchStatService.findFrequentSearchesWithFewSearchSuccesses(dataPool,searchThreshold,resultThreshold);
+                        break;
+                    case "resultCount":
+                        response= fSearchStatService.findFrequentSearchesWithFewResults(dataPool,searchThreshold,resultThreshold);
+                        break;
+                }
+        return response.toString();
     }
 }
 

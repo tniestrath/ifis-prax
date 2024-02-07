@@ -211,7 +211,14 @@ public class FinalSearchStatService {
     }
 
 
-
+    /**
+     * Finds frequent searches with few search successes based on the given thresholds.
+     *
+     * @param searchStatsMap         A map containing search statistics mapped to their respective search DLCs.
+     * @param searchThreshold        The threshold for the number of occurrences of a search query.
+     * @param searchSuccessThreshold The threshold for the search success count.
+     * @return A map containing frequent searches with few search successes based on the given thresholds.
+     */
     public Map<String, Integer> findFrequentSearchesWithFewSearchSuccesses(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap, int searchThreshold, int searchSuccessThreshold) {
         Map<String, Integer> frequentSearches = new HashMap<>();
 

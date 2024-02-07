@@ -111,16 +111,36 @@ public class FinalSearchStatService {
         return stats;
     }
 
-    public Map<FinalSearchStat,List<FinalSearchStatDLC>> getSearchStatsByCity(String city){
+
+
+
+    public Map<FinalSearchStat,List<FinalSearchStatDLC>> getSearchStatsByLocation(String location, String locationType){
         Map<FinalSearchStat,List<FinalSearchStatDLC>> response = new HashMap<>();
-        List<FinalSearchStat> allSearchesOfCity= repository.findAllByCity(city);
+        List<FinalSearchStat> allSearchesOfLocation = new ArrayList<>();
+
+        switch(locationType){
+            case "city":
+                allSearchesOfLocation = repository.findAllByCity(location);
+                break;
+            case "state":
+                allSearchesOfLocation = repository.findAllByState(location);
+                break;
+            case "country":
+                allSearchesOfLocation = repository.findAllByCountry(location);
+                break;
+        }
+
         List<FinalSearchStatDLC> allSearchSuccessesOfSearch = new ArrayList<>();
-        for(FinalSearchStat stat:allSearchesOfCity){
+
+        for(FinalSearchStat stat:allSearchesOfLocation){
             allSearchSuccessesOfSearch = DLCRepo.findAllByFinalSearchId(stat.getId());
             response.put(stat,allSearchSuccessesOfSearch);
         }
+
         return response;
     }
+
+
     public String toStringList(List<FinalSearchStat>stats){
         String response = "";
 

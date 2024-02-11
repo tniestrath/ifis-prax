@@ -258,7 +258,13 @@ public class FinalSearchStatService {
                 .collect(Collectors.groupingBy(FinalSearchStat::getHour, Collectors.counting()));
     }
 
+    public Map<String, Map<String, Long>> getPopularSearchQueriesByLocation(List<FinalSearchStat> searchStats, String locationType) {
+        Function<FinalSearchStat, String> locationFunction = "city".equals(locationType) ? FinalSearchStat::getCity : "country".equals(locationType)? FinalSearchStat::getCountry : FinalSearchStat::getState  ;
 
+        return searchStats.stream()
+                .collect(Collectors.groupingBy(locationFunction,
+                        Collectors.groupingBy(FinalSearchStat::getSearchQuery, Collectors.counting())));
+    }
     public String toStringList(List<FinalSearchStat>stats){
         String response = "";
 

@@ -253,6 +253,10 @@ public class FinalSearchStatService {
         return frequentSearches;
     }
 
+    public Map<Integer, Long> getPopularSearchHours(List<FinalSearchStat> searchStats) {
+        return searchStats.stream()
+                .collect(Collectors.groupingBy(FinalSearchStat::getHour, Collectors.counting()));
+    }
 
 
     public String toStringList(List<FinalSearchStat>stats){

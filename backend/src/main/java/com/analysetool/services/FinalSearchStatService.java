@@ -265,6 +265,36 @@ public class FinalSearchStatService {
                 .collect(Collectors.groupingBy(locationFunction,
                         Collectors.groupingBy(FinalSearchStat::getSearchQuery, Collectors.counting())));
     }
+    public double getAverageResultsPerSearch(List<FinalSearchStat> searchStats) {
+        if (searchStats.isEmpty()) {
+            return 0.0;
+        }
+
+        double totalResults = searchStats.stream()
+                .mapToInt(stat -> stat.getFoundArtikelCount() + stat.getFoundBlogCount() + stat.getFoundNewsCount() +
+                        stat.getFoundWhitepaperCount() + stat.getFoundRatgeberCount() + stat.getFoundPodcastCount() +
+                        stat.getFoundAnbieterCount() + stat.getFoundEventsCount())
+                .sum();
+
+        return totalResults / searchStats.size();
+    }
+
+    public double getAverageSearchSuccess(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap) {
+        if (searchStatsMap.isEmpty()) {
+            return 0.0; // Verhindert Division durch Null, falls keine Daten vorhanden sind.
+        }
+
+        // Berechnen der Gesamtanzahl von Klicks über alle Suchanfragen.
+        long totalClicks = searchStatsMap.values().stream()
+                .mapToLong(List::size) // Größe jeder Liste gibt die Anzahl der Klicks pro Suchanfrage an.
+                .sum();
+
+        // Berechnen der Gesamtanzahl der Suchanfragen.
+        long totalSearches = searchStatsMap.size();
+
+        // Berechnen der durchschnittlichen Erfolgsrate als Verhältnis von totalClicks zu totalSearches.
+        return (double) totalClicks / totalSearches;
+    }
     public String toStringList(List<FinalSearchStat>stats){
         String response = "";
 

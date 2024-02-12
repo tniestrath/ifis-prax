@@ -323,6 +323,39 @@ public class FinalSearchStatService {
         // Berechnen der durchschnittlichen Erfolgsrate als Verhältnis von totalClicks zu totalSearches.
         return (double) totalClicks / totalSearches;
     }
+
+    public Map<String, Integer> getContentTypesDistribution(List<FinalSearchStat> searchStats) {
+        Map<String, Integer> contentDistribution = new HashMap<>();
+
+        searchStats.forEach(stat -> {
+            contentDistribution.merge("Artikel", stat.getFoundArtikelCount(), Integer::sum);
+            contentDistribution.merge("Blogs", stat.getFoundBlogCount(), Integer::sum);
+            contentDistribution.merge("News", stat.getFoundNewsCount(), Integer::sum);
+            contentDistribution.merge("Whitepapers", stat.getFoundWhitepaperCount(), Integer::sum);
+            contentDistribution.merge("Ratgeber", stat.getFoundRatgeberCount(), Integer::sum);
+            contentDistribution.merge("Podcasts", stat.getFoundPodcastCount(), Integer::sum);
+            contentDistribution.merge("Anbieter", stat.getFoundAnbieterCount(), Integer::sum);
+            contentDistribution.merge("Events", stat.getFoundEventsCount(), Integer::sum);
+        });
+
+        return contentDistribution;
+    }
+
+    public Map<String, Long> getSearchQueryDistributionByCountry(List<FinalSearchStat> searchStats) {
+        return searchStats.stream()
+                .collect(Collectors.groupingBy(FinalSearchStat::getCountry, Collectors.counting()));
+    }
+
+    public Map<String, Long> getSearchQueryDistributionByCity(List<FinalSearchStat> searchStats) {
+        return searchStats.stream()
+                .collect(Collectors.groupingBy(FinalSearchStat::getCity, Collectors.counting()));
+    }
+
+    public Map<String, Long> getSearchQueryDistributionByState(List<FinalSearchStat> searchStats) {
+        return searchStats.stream()
+                .collect(Collectors.groupingBy(FinalSearchStat::getState, Collectors.counting()));
+    }
+
     public Map<Long, Long> getMostFoundPosts(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap) {
         return searchStatsMap.values().stream()
                 .flatMap(List::stream) // Erstellen einer Stream aus allen DLC-Objekten

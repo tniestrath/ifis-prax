@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -252,6 +253,61 @@ public class FinalSearchStatService {
 
         return frequentSearches;
     }
+
+    // Generische Methode zur Analyse von Suchanfragen
+    public Map<String, Integer> analyzeSearchQueries(
+            Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap,
+            int searchThreshold,
+            int resultThreshold,
+            Function<FinalSearchStat, Integer> resultCounter) {
+
+        // Erzeugen einer Map von searchQuery zu deren DLCs
+        Map<String, Integer> queryToResultsCount = searchStatsMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().getSearchQuery(),
+                        e -> resultCounter.apply(e.getKey()) // Anwendung der resultCounter Funktion auf jeden FinalSearchStat
+                ));
+
+        // Filtern der Ergebnisse basierend auf den Schwellenwerten
+        return queryToResultsCount.entrySet().stream()
+                .filter(e -> e.getValue() >= searchThreshold && e.getValue() <= resultThreshold)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    // Methode zur Berechnung der Gesamtanzahl der Ergebnisse für einen FinalSearchStat
+    private int getTotalResultCount(FinalSearchStat stat) {
+        return stat.getFoundArtikelCount() +
+                stat.getFoundBlogCount() +
+                stat.getFoundNewsCount() +
+                stat.getFoundWhitepaperCount() +
+                stat.getFoundRatgeberCount() +
+                stat.getFoundPodcastCount() +
+                stat.getFoundAnbieterCount() +
+                stat.getFoundEventsCount();
+    }
+
+/*
+    // Optimierung für Sucherfolge
+    public Map<String, Integer> findFrequentSearchesWithFewSearchSuccessesOptimized(
+            Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap,
+            int searchThreshold,
+            int searchSuccessThreshold) {
+
+        // Nutzung der analyzeSearchQueries Methode mit einer angepassten resultCounter Funktion
+        return analyzeSearchQueries(searchStatsMap, searchThreshold, searchSuccessThreshold,
+                stat -> stat.getList().size()); // Hier muss die Logik angepasst werden, um die Anzahl der Sucherfolge korrekt zu zählen
+    }
+
+    // Optimierung für Resultat-Zählungen
+    public Map<String, Integer> findFrequentSearchesWithFewResultsOptimized(
+            Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap,
+            int searchThreshold,
+            int resultThreshold) {
+
+        return analyzeSearchQueries(searchStatsMap, searchThreshold, resultThreshold, this::getTotalResultCount);
+    }
+*/
+
 
     public Map<Integer, Long> getPopularSearchHours(List<FinalSearchStat> searchStats) {
         return searchStats.stream()

@@ -265,6 +265,34 @@ public class FinalSearchStatService {
                 .collect(Collectors.groupingBy(locationFunction,
                         Collectors.groupingBy(FinalSearchStat::getSearchQuery, Collectors.counting())));
     }
+
+
+
+    public Map<String, Double> getSearchSuccessRate(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap) {
+        // Berechnen der Gesamtanzahl von Suchanfragen pro Suchbegriff
+        Map<String, Long> totalSearchesPerQuery = searchStatsMap.keySet().stream()
+                .collect(Collectors.groupingBy(FinalSearchStat::getSearchQuery, Collectors.counting()));
+
+        // Berechnen der Gesamtanzahl von Klicks pro Suchbegriff
+        Map<String, Long> totalClicksPerQuery = searchStatsMap.entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream().map(dlc -> new AbstractMap.SimpleEntry<>(entry.getKey().getSearchQuery(), dlc)))
+                .collect(Collectors.groupingBy(AbstractMap.SimpleEntry::getKey, Collectors.counting()));
+
+        // Berechnen der Erfolgsrate pro Suchbegriff
+        return totalSearchesPerQuery.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        entry -> {
+                            Long totalClicks = totalClicksPerQuery.getOrDefault(entry.getKey(), 0L);
+                            Long totalSearches = entry.getValue();
+                            // Verhindern der Division durch Null
+                            if (totalSearches > 0) {
+                                return (totalClicks.doubleValue() / totalSearches) * 100; // Multipliziert mit 100, um Prozentwerte zu erhalten
+                            } else {
+                                return 0.0; // Keine Suchanfragen entspricht einer Erfolgsrate von 0%
+                            }
+                        }));
+    }
+
     public double getAverageResultsPerSearch(List<FinalSearchStat> searchStats) {
         if (searchStats.isEmpty()) {
             return 0.0;

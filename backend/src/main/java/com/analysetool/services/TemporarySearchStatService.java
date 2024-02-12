@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class TemporarySearchStatService {
@@ -16,6 +17,10 @@ public class TemporarySearchStatService {
 
     public List<TemporarySearchStat> getAllSearchStat() {
        return repository.findAll();
+    }
+
+    public CopyOnWriteArrayList<TemporarySearchStat> getAllSearchStatConcurrent() {
+        return repository.findAllConcurrent();
     }
     public void saveSearchStat(TemporarySearchStat searchStat) {
         repository.save(searchStat);

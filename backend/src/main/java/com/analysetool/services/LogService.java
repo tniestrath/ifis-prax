@@ -33,6 +33,8 @@ import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -285,7 +287,7 @@ public class LogService {
     private Map<String,PostClicksByHourDLC> postClicksMap = new HashMap<>();
     private Map<String,UserRedirectsHourly> userRedirectsMap = new HashMap<>();
 
-    private Map<String, List<FinalSearchStatDLC>> searchDLCMap = new HashMap<>();
+    private Map<String, List<FinalSearchStatDLC>> searchDLCMap = new ConcurrentHashMap<>();
 
 
     @Autowired
@@ -2818,7 +2820,7 @@ public class LogService {
     public void linkSearchSuccessesWithSearches(List<TemporarySearchStat> tempSearches, List<FinalSearchStat> finalSearches) {
         // Erstelle zuerst eine Map für die Zuordnung von TempID zu FinalSearchStat
         System.out.println(searchDLCMap);
-        Map<Long, FinalSearchStat> tempIdToFinalSearchMap = new HashMap<>();
+        Map<Long, FinalSearchStat> tempIdToFinalSearchMap = new ConcurrentHashMap<>();
         for (FinalSearchStat finalSearch : finalSearches) {
             tempIdToFinalSearchMap.put(finalSearch.getTempId(), finalSearch);
         }
@@ -2852,9 +2854,10 @@ public class LogService {
 
 
     private void updateFinalSearchStatsAndTemporarySearchStats(){
-        List<TemporarySearchStat> alleTempSearches= temporarySearchService.getAllSearchStat();
-        List<TemporarySearchStat> zuEntfernendeTemSearches = new ArrayList<>();
-        List<FinalSearchStat> zuSpeicherndeFinalSearches = new ArrayList<>();
+        //List<TemporarySearchStat> alleTempSearches= temporarySearchService.getAllSearchStat();
+        CopyOnWriteArrayList<TemporarySearchStat> alleTempSearches= temporarySearchService.getAllSearchStatConcurrent();
+        List<TemporarySearchStat> zuEntfernendeTemSearches = new CopyOnWriteArrayList<>();
+        List<FinalSearchStat> zuSpeicherndeFinalSearches = new CopyOnWriteArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
         Integer hour = 0;

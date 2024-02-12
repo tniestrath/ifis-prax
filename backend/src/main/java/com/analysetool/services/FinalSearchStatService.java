@@ -323,6 +323,37 @@ public class FinalSearchStatService {
         // Berechnen der durchschnittlichen Erfolgsrate als Verhältnis von totalClicks zu totalSearches.
         return (double) totalClicks / totalSearches;
     }
+    public Map<Long, Long> getMostFoundPosts(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap) {
+        return searchStatsMap.values().stream()
+                .flatMap(List::stream) // Erstellen einer Stream aus allen DLC-Objekten
+                .map(FinalSearchStatDLC::getPostId) // Extrahieren der postId
+                .filter(Objects::nonNull) // Sicherstellen, dass die postId nicht null ist
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())) // Zählen der Vorkommen jeder postId
+                .entrySet().stream()
+                .sorted(Map.Entry.<Long, Long>comparingByValue().reversed()) // Sortieren der Einträge nach ihrer Häufigkeit, absteigend
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new)); // Sammeln der Ergebnisse in einer Map, die die Reihenfolge beibehält
+    }
+
+    public Map<Long, Long> getMostFoundUsers(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap) {
+        return searchStatsMap.values().stream()
+                .flatMap(List::stream) // Erstellen einer Stream aus allen DLC-Objekten
+                .map(FinalSearchStatDLC::getUserId) // Extrahieren der userId
+                .filter(Objects::nonNull) // Sicherstellen, dass die userId nicht null ist
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())) // Zählen der Vorkommen jeder userId
+                .entrySet().stream()
+                .sorted(Map.Entry.<Long, Long>comparingByValue().reversed()) // Sortieren der Einträge nach ihrer Häufigkeit, absteigend
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new)); // Sammeln der Ergebnisse in einer Map, die die Reihenfolge beibehält
+    }
+
+
     public String toStringList(List<FinalSearchStat>stats){
         String response = "";
 

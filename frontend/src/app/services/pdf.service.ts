@@ -1,9 +1,4 @@
 import {Injectable} from '@angular/core';
-import {jsPDF} from "jspdf";
-import html2canvas from "html2canvas";
-import {Chart} from "chart.js/auto";
-import {style} from "@angular/animations";
-import {overflow} from "html2canvas/dist/types/css/property-descriptors/overflow";
 @Injectable({
   providedIn: 'root'
 })

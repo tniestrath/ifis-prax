@@ -626,15 +626,16 @@ public class GeoController {
 
             //If we do have stats, put stats for the day into the json.
 
-            //ToDo add clause to prevent access of non-generated userGeo
             if (uniId != 0) {
                 UserGeo user = userGeoRepo.findByUserIdAndUniStatId(userId, uniId);
-                setRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());
+                if(user != null) {
+                    setRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());
 
-                for (Post post : postRepo.findByAuthor(userId)) {
-                    PostGeo postGeo = postGeoRepo.findByPostIdAndUniStatId(post.getId(), uniId);
-                    if (postGeo != null) {
-                        setRegionals(json, postGeo.getHh(), postGeo.getHb(), postGeo.getBe(), postGeo.getMv(), postGeo.getBb(), postGeo.getSn(), postGeo.getSt(), postGeo.getBye(), postGeo.getSl(), postGeo.getRp(), postGeo.getSh(), postGeo.getTh(), postGeo.getNb(), postGeo.getHe(), postGeo.getBW(), postGeo.getNW(), postGeo.getAusland());
+                    for (Post post : postRepo.findByAuthor(userId)) {
+                        PostGeo postGeo = postGeoRepo.findByPostIdAndUniStatId(post.getId(), uniId);
+                        if (postGeo != null) {
+                            setRegionals(json, postGeo.getHh(), postGeo.getHb(), postGeo.getBe(), postGeo.getMv(), postGeo.getBb(), postGeo.getSn(), postGeo.getSt(), postGeo.getBye(), postGeo.getSl(), postGeo.getRp(), postGeo.getSh(), postGeo.getTh(), postGeo.getNb(), postGeo.getHe(), postGeo.getBW(), postGeo.getNW(), postGeo.getAusland());
+                        }
                     }
                 }
             }
@@ -686,15 +687,16 @@ public class GeoController {
 
             //If we do have stats, put stats for the day into the json.
 
-            //ToDo add clause to prevent access of non-generated userGeo
             if (uniId != 0) {
                 UserGeo user = userGeoRepo.findByUserIdAndUniStatId(userId, uniId);
-                setRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());
+                if (user != null) {
+                    setRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());
 
-                for (Post post : postRepo.findByAuthor(userId)) {
-                    PostGeo postGeo = postGeoRepo.findByPostIdAndUniStatId(post.getId(), uniId);
-                    if (postGeo != null) {
-                        setRegionals(json, postGeo.getHh(), postGeo.getHb(), postGeo.getBe(), postGeo.getMv(), postGeo.getBb(), postGeo.getSn(), postGeo.getSt(), postGeo.getBye(), postGeo.getSl(), postGeo.getRp(), postGeo.getSh(), postGeo.getTh(), postGeo.getNb(), postGeo.getHe(), postGeo.getBW(), postGeo.getNW(), postGeo.getAusland());
+                    for (Post post : postRepo.findByAuthor(userId)) {
+                        PostGeo postGeo = postGeoRepo.findByPostIdAndUniStatId(post.getId(), uniId);
+                        if (postGeo != null) {
+                            setRegionals(json, postGeo.getHh(), postGeo.getHb(), postGeo.getBe(), postGeo.getMv(), postGeo.getBb(), postGeo.getSn(), postGeo.getSt(), postGeo.getBye(), postGeo.getSl(), postGeo.getRp(), postGeo.getSh(), postGeo.getTh(), postGeo.getNb(), postGeo.getHe(), postGeo.getBW(), postGeo.getNW(), postGeo.getAusland());
+                        }
                     }
                 }
             }

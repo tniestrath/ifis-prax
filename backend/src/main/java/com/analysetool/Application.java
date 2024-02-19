@@ -42,44 +42,6 @@ public class Application {
 	public static void main(String[] args) {
 		try{
 		ApplicationContext context = SpringApplication.run(Application.class, args);
-			//ToDo Toten Code aufräumen
-		/*HttpClient httpClient = HttpClients.createDefault();
-		HttpPost httpPost = new HttpPost("http://test.it-sicherheit.de/wp-login.php");
-
-
-		String username = "rest_api_test";
-		String password = "test_api_rest";
-		// Set the login credentials
-		try {
-			List<NameValuePair> params = new ArrayList<>();
-			params.add(new BasicNameValuePair("log", username));
-			params.add(new BasicNameValuePair("pwd", password));
-
-			httpPost.setEntity(new UrlEncodedFormEntity(params));
-
-			HttpResponse response = httpClient.execute(httpPost);
-			HttpEntity entity = response.getEntity();
-			Header[] headers = response.getAllHeaders();
-			// Get the session cookie from the response headers
-			String sessionCookie = response.getFirstHeader("Set-Cookie").getValue();
-			Header[] allSetCookie = response.getHeaders("Set-Cookie");
-
-			// Process the response
-			String responseBody = EntityUtils.toString(entity);
-			System.out.println(responseBody);
-		*//*for (int i = 0; i < allSetCookie.length; i++) {
-			System.out.println("Name: " + allSetCookie[i].getName() + ", Value: " + allSetCookie[i].getValue());
-		}*//*
-			for (int i = 0; i < headers.length; i++) {
-				System.out.println("Name: " + headers[i].getName() + ", Value: " + headers[i].getValue());
-			}
-
-			// Use the sessionCookie for further requests
-			//System.out.println("Session Cookie: " + sessionCookie);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
 
 		System.out.println("lel");
 

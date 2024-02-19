@@ -1298,6 +1298,32 @@ public class UserController {
         return !postRepository.findByAuthor(id).isEmpty();
     }
 
+    @GetMapping("/hasPostByType")
+    public String hasPostByType(int id) throws JSONException, ParseException {
+        JSONObject jsonTypes = new JSONObject();
+        boolean news = false, artikel = false, blog = false, podcast = false, whitepaper= false;
+        for(Post p : postRepository.findByAuthor(id)) {
+            switch(postController.getType(p.getId())) {
+                case "news" -> news = true;
+                case "artikel" -> artikel = true;
+                case "blog" -> blog = true;
+                case "podcast" -> podcast = true;
+                case "whitepaper" -> whitepaper = true;
+            }
+        }
+        jsonTypes.put("news", news);
+        jsonTypes.put("artikel", artikel);
+        jsonTypes.put("blog", blog);
+        jsonTypes.put("podcast", podcast);
+        jsonTypes.put("whitepaper", whitepaper);
+
+        return jsonTypes.toString();
+    }
+
+    private boolean hasPostByType(String type) {
+        return false;
+    }
+
     /**
      *
      * @param userId  id des users.

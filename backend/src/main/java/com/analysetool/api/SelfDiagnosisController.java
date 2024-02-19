@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +32,7 @@ public class SelfDiagnosisController {
      * @return an ordered JSONArray-String, containing information about all Problems that have been found.
      * @throws JSONException .
      */
+    @GetMapping("/doCheckUp")
     public String doCheckUp() throws JSONException {
         JSONArray problems = new JSONArray();
 

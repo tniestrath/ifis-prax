@@ -66,6 +66,7 @@ public class SelfDiagnosisController {
 
     private List<Problem> findUniStatProblems() {
         List<Problem> list = new ArrayList<>();
+        list.addAll(uniDateConsistencyCheckup());
         return list;
     }
 

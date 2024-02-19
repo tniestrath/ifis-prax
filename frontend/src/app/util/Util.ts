@@ -81,6 +81,12 @@ export default class Util {
     }
   }
 
+
+  /**
+   *
+   * @param option 'plan' | 'post'
+   * @param type
+   */
   static getColor(option: string, type : string){
     switch (option) {
       case "plan":

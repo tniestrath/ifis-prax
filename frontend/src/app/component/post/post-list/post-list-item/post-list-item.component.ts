@@ -16,32 +16,7 @@ export class PostListItemComponent implements OnInit{
   bgColor: string = "#FFFFFF";
 
   ngOnInit(): void {
-    switch (this.data.type) {
-      case "artikel": {
-        this.typeColor = DashColors.ARTICLE;
-        break;
-      }
-      case "blog": {
-        this.typeColor = DashColors.BLOG;
-        break;
-      }
-      case "news": {
-        this.typeColor = DashColors.NEWS;
-        break;
-      }
-      case "whitepaper": {
-        this.typeColor = DashColors.WHITEPAPER;
-        break;
-      }
-      case "podcast_first_series": {
-        this.typeColor = DashColors.PODCAST;
-        break;
-      }
-      case "ratgeber": {
-        this.typeColor = DashColors.RATGEBER;
-        break;
-      }
-    }
+    this.typeColor = Util.getColor("post", this.data.type);
     this.formattedDate = new Date(this.data.date).toLocaleDateString();
     if (this.data.tags != null && this.data.tags.length > 0){
       this.formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");

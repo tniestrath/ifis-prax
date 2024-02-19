@@ -218,7 +218,7 @@ public class SearchStatsController {
         }
     }
 
-    @GetMapping("getZeroCountEventSearches")
+    @GetMapping("/getZeroCountEventSearches")
     public String getZeroCountEventSearches(){
         return eventSearchRepo.getEventSearchesWithCountZero().toString();
     }

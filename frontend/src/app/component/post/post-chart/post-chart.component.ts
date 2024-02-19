@@ -23,6 +23,8 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
   data : Promise<Post[]> | undefined;
 
+  postTypes : { blog: boolean; news: boolean; artikel: boolean; podcast: boolean; whitepaper: boolean } = { blog: false, news: false, artikel: false, podcast: false, whitepaper: false };
+
   timeSpanMap = new Map<string, number>([
     ["all_time", 365*2],
     ["half_year", 182],
@@ -30,8 +32,6 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
     ["week", 7],
     ["day", 1]
   ]);
-
-  //ToDo: REQUEST SOMETHING LIKE hasPostByType TO CHECK IF CHART NEEDS TO PROVIDE AN OPTION FOR THEM.
 
   createChart(labels: string[], fullLabels : string[], data: number[], data2: number[], data3: string[], onClick: (index : number) => void){
     if (this.chart){
@@ -185,6 +185,9 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       if ((event?.target as HTMLInputElement).type == "select-one") this.postType = (event?.target as HTMLInputElement).value;
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
+    this.db.hasUserPostTypes(SysVars.USER_ID).then(value => {
+      this.postTypes = { blog : value.blog, news : value.news, artikel : value.artikel, podcast : value.podcast, whitepaper : value.whitepaper }
+    });
     if (this.data == undefined){this.data = this.db.getUserPostsWithStats(SysVars.USER_ID)}
     this.data.then((res : Post[]) => {
       var postLabel : string[] = [];
@@ -240,7 +243,7 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit(): void {
     this.setToolTip("Diese Grafik zeigt die Performance / Relevanz all ihrer Beiträge, im angegebenen Zeitraum. " +
-      "Sie können einen Post anwählen, um rechts weitere Details dazu zu erhalten.")
+      "Sie können einen Post anwählen, um rechts weitere Details dazu zu erhalten.");
     this.getData();
   }
 

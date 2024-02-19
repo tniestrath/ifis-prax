@@ -32,6 +32,7 @@ export enum dbUrl {
   GET_USER_VIEWS_PER_HOUR = "/users/getViewsPerHour?id=",
   GET_USER_RANKINGS = "/users/getRankings?id=ID",
   HAS_USER_POST = "/users/hasPost?id=",
+  HAS_USER_POST_TYPES = "/users/hasPostByType?id=ID",
   GET_USER_PROFILE_COMPLETION = "/users/getPotentialById?userId=USERID",
   GET_USER_PROFILE_AND_POSTS_BY_DATE = "/users/getUserClicksChartData?id=ID&start=START&end=END",
   GET_USER_POSTCOUNT_BY_TYPE = "/users/getPostCountByType?id=ID",
@@ -289,6 +290,10 @@ export class DbService {
   async hasUserPost(id : number) {
     this.setLoading();
     return fetch(DbService.getUrl(dbUrl.HAS_USER_POST) + id).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async hasUserPostTypes(id: string) : Promise<{ blog: boolean; news: boolean; artikel: boolean; podcast: boolean; whitepaper: boolean }> {
+    this.setLoading();
+    return fetch(DbService.getUrl(dbUrl.HAS_USER_POST_TYPES) + id).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getUserProfileCompletion(id : string): Promise<ProfileState> {
     this.setLoading();

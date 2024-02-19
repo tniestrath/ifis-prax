@@ -1,13 +1,17 @@
 package com.analysetool.api;
 
+import com.analysetool.modells.UniversalStats;
+import com.analysetool.repositories.universalStatsRepository;
 import com.analysetool.util.Problem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +19,10 @@ import java.util.List;
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RequestMapping("/self")
 public class SelfDiagnosisController {
+
+
+    @Autowired
+    universalStatsRepository uniRepo;
 
     //ToDo : Add Logic to partial checkups.
 
@@ -57,6 +65,42 @@ public class SelfDiagnosisController {
     private List<Problem> findUniStatProblems() {
         List<Problem> list = new ArrayList<>();
         return list;
+    }
+
+    private List<Problem> uniDateConsistencyCheckup() {
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "unistat-date";
+        int severityMissing = 0;
+        int severityDuplicate = 5;
+        String descriptionMissing = "A missing Date has been found between: ";
+        String descriptionDuplicate = "A duplicate Date has been found: ";
+
+
+        java.sql.Date lastDate = null;
+        for (UniversalStats uni : uniRepo.findAllOrderById()) {
+            if(lastDate == null) {
+                lastDate = new java.sql.Date(uni.getDatum().getTime());
+            } else {
+                //If two Dates are the same, add a duplicate problem
+                if(lastDate.equals(new java.sql.Date(uni.getDatum().getTime()))) {
+                    list.add(new Problem(severityDuplicate, descriptionDuplicate + lastDate, area));
+                } else {
+                    //Check whether the distance between the two dates is greater than a day, if so, add a missing Problem.
+                    java.sql.Date sqlDate2 = new java.sql.Date(uni.getDatum().getTime());
+                    // Calculate difference in milliseconds
+                    long differenceInMilliseconds = Math.abs(sqlDate2.getTime() - lastDate.getTime());
+                    // Convert milliseconds to days
+                    long differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+                    if(differenceInDays > 1) {
+                        list.add(new Problem(severityMissing, descriptionMissing + lastDate + " and " + sqlDate2, area));
+                    }
+
+                }
+            }
+        }
+        return list;
+
     }
 
     private List<Problem> findUniDLCProblems() {

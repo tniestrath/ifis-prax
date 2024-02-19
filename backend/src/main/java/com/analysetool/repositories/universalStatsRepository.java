@@ -37,6 +37,9 @@ public interface universalStatsRepository extends JpaRepository<UniversalStats, 
     @Query("SELECT u.id FROM UniversalStats u ORDER BY u.id DESC")
     Page<Integer> getLastIdsByPageable(Pageable pageable);
 
+    @Query("SELECT u FROM UniversalStats u ORDER by u.id ASC")
+    List<UniversalStats> findAllOrderById();
+
 
 }
 

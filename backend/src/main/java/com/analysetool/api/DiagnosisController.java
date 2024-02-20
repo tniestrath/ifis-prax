@@ -58,6 +58,7 @@ public class DiagnosisController {
         largeList.addAll(findGeoProblems());
         largeList.addAll(findSearchStatProblems());
         largeList.addAll(findTypeProblems());
+        largeList.addAll(findWebsiteProblems());
 
         largeList.sort((o1, o2) -> o2.getSeverity() - o1.getSeverity());
         return largeList;
@@ -125,6 +126,11 @@ public class DiagnosisController {
         return list;
     }
 
+
+    private List<Problem> findWebsiteProblems() {
+        List<Problem> list = new ArrayList<>();
+        return list;
+    }
 
 
 }

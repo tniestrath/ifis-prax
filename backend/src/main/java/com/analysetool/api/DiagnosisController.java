@@ -12,14 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping("/self")
-public class SelfDiagnosisController {
+@RequestMapping("/diagnosis")
+public class DiagnosisController {
 
 
     @Autowired

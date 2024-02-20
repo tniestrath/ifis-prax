@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @RestController
@@ -290,5 +291,60 @@ public class SearchStatsController {
                 }
         return response.toString();
     }
+
+    @GetMapping("/getTop10SearchQueriesBySS")
+    public String getTop10SearchQueriesBySS(){
+        JSONArray response = new JSONArray();
+
+        Map<FinalSearchStat,List<FinalSearchStatDLC>> allSearchStats = fSearchStatService.getAllSearchStats();
+        System.out.println(allSearchStats);
+        List<Map.Entry<String, Integer>> top10 = fSearchStatService.getRankingTopNSearchQueriesInMapBySS(allSearchStats,10);
+
+
+        AtomicInteger rank = new AtomicInteger(1);
+        top10.forEach(entry -> {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("rank", rank.getAndIncrement());
+                obj.put("query", entry.getKey());
+                obj.put("sSCount", entry.getValue());
+                response.put(obj);
+
+            } catch (JSONException e) {
+                 System.out.println(e.getStackTrace());
+            }
+
+        });
+
+        return response.toString();
+    }
+
+    @GetMapping("/getTop10SearchQueries")
+    public String getTop10SearchQueries(){
+        JSONArray response = new JSONArray();
+
+        Map<FinalSearchStat,List<FinalSearchStatDLC>> allSearchStats = fSearchStatService.getAllSearchStats();
+        System.out.println(allSearchStats);
+        List<Map.Entry<String, Long>> top10 = fSearchStatService.getRankingTopNSearchedQueries(allSearchStats,10);
+
+
+        AtomicInteger rank = new AtomicInteger(1);
+        top10.forEach(entry -> {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("rank", rank.getAndIncrement());
+                obj.put("query", entry.getKey());
+                obj.put("searchedCount", entry.getValue());
+                response.put(obj);
+
+            } catch (JSONException e) {
+                System.out.println(e.getStackTrace());
+            }
+
+        });
+
+        return response.toString();
+    }
+    
 }
 

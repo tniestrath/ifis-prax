@@ -139,8 +139,21 @@ public class FinalSearchStatService {
         return response;
     }
 
+    public Map<FinalSearchStat,List<FinalSearchStatDLC>> getAllSearchStats(){
+        Map<FinalSearchStat,List<FinalSearchStatDLC>> response = new HashMap<>();
+        List<FinalSearchStat> allSearches = repository.findAll();
 
-    public List<Map.Entry<String, Integer>> getRankingTopNSearchQueriesInMap(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap, int topN) {
+
+
+        for(FinalSearchStat stat:allSearches){
+            List<FinalSearchStatDLC> allSearchSuccessesOfSearch = DLCRepo.findAllByFinalSearchId(stat.getId());
+            response.put(stat,allSearchSuccessesOfSearch);
+        }
+
+        return response;
+    }
+
+    public List<Map.Entry<String, Integer>> getRankingTopNSearchQueriesInMapBySS(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap, int topN) {
         Map<String, Integer> searchQueryClicks = new HashMap<>();
 
         // Zusammenführen der Klicks aller Suchanfragen
@@ -157,6 +170,27 @@ public class FinalSearchStatService {
 
         return topSearchQueries;
     }
+
+    public List<Map.Entry<String, Long>> getRankingTopNSearchedQueries(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap, int topN) {
+        // Erstellen einer Map zur Speicherung der Häufigkeit jeder Suchanfrage
+        Map<String, Long> searchQueryFrequencies = new HashMap<>();
+
+        // Zählen, wie oft jede Suchanfrage vorkommt
+        searchStatsMap.keySet().forEach(searchStat -> {
+            String searchQuery = searchStat.getSearchQuery();
+            // Erhöhen der Anzahl für jede Suchanfrage
+            searchQueryFrequencies.merge(searchQuery, 1L, Long::sum);
+        });
+
+        // Sortierung der Map nach Häufigkeit der Suchanfragen und Ermittlung der Top-N
+        List<Map.Entry<String, Long>> topSearchedQueries = searchQueryFrequencies.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(topN)
+                .collect(Collectors.toList());
+
+        return topSearchedQueries;
+    }
+
 
     /**
      * Ermittelt Suchanfragen, die häufig durchgeführt werden, aber nur wenige oder keine Ergebnisse liefern.

@@ -367,6 +367,16 @@ public class SearchStatsController {
         return response.toString();
     }
 
+    /**
+     * Gibt die Verteilung der Suchanfragen über einen bestimmten Zeitraum zurück.
+     * Diese Methode berechnet die Anzahl der Suchanfragen pro Tag für die letzte Woche, den letzten Monat oder das letzte Jahr,
+     * abhängig vom übergebenen {@code distributionType}. Die Ergebnisse sind für die Darstellung in einem Liniendiagramm
+     * aufbereitet, wobei jedes Datenobjekt ein Datum und die entsprechende Anzahl der Suchanfragen für dieses Datum enthält.
+     *
+     * @param distributionType Der Zeitraum der Verteilung: "week" für die letzte Woche, "month" für den letzten Monat, "year" für das letzte Jahr.
+     * @return Ein JSON-String, der eine Array von Objekten enthält, wobei jedes Objekt ein Datum (im Format DD-MM-YYYY) und die Anzahl der Suchanfragen an diesem Tag repräsentiert.
+     * @throws JSONException Falls beim Erstellen der JSON-Objekte ein Fehler auftritt.
+     */
     @GetMapping("/getSearchCountDistributedByTime")
     public String getSearchCountDistributedByTime(@RequestParam String distributionType) throws JSONException {
         Integer latestUniId = uniRepo.getLatestUniStat().getId();

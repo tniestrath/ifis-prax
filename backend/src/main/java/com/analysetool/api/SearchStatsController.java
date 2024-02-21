@@ -278,18 +278,38 @@ public class SearchStatsController {
      * @return A map containing frequent searches with few results based on the given thresholds.
      */
     @GetMapping("/getDemandByLocation")
-    public String getDemandByLocation(@RequestParam String location, @RequestParam String locationType,@RequestParam int searchThreshold, @RequestParam int resultThreshold, @RequestParam String analysisType){
-        Map <FinalSearchStat, List<FinalSearchStatDLC>> dataPool = fSearchStatService.getSearchStatsByLocation(location,locationType);
-        Map <String,Integer> response = new HashMap<>();
-                switch (analysisType){
-                    case"searchSuccess":
-                        response= fSearchStatService.findFrequentSearchesWithFewSearchSuccesses(dataPool,searchThreshold,resultThreshold);
-                        break;
-                    case "resultCount":
-                        response= fSearchStatService.findFrequentSearchesWithFewResults(dataPool,searchThreshold,resultThreshold);
-                        break;
-                }
-        return response.toString();
+    public String getDemandByLocation(@RequestParam String location, @RequestParam String locationType, @RequestParam int searchThreshold, @RequestParam int resultThreshold, @RequestParam String analysisType) {
+        Map<FinalSearchStat, List<FinalSearchStatDLC>> dataPool = fSearchStatService.getSearchStatsByLocation(location, locationType);
+        Map<String, Integer> responseMap;
+        switch (analysisType) {
+            case "searchSuccess":
+                responseMap = fSearchStatService.findFrequentSearchesWithFewSearchSuccesses(dataPool, searchThreshold, resultThreshold);
+                break;
+            case "resultCount":
+                responseMap = fSearchStatService.findFrequentSearchesWithFewResults(dataPool, searchThreshold, resultThreshold);
+                break;
+            default:
+                responseMap = new HashMap<>();
+        }
+
+        try {
+            // Konvertieren der Map in eine Liste von Objekten für eine einfachere JSON-Struktur
+            List<Map<String, Object>> responseList = responseMap.entrySet().stream()
+                    .map(entry -> {
+                        Map<String, Object> item = new HashMap<>();
+                        item.put("searchQuery", entry.getKey());
+                        item.put("count", entry.getValue());
+                        return item;
+                    })
+                    .collect(Collectors.toList());
+
+            // Konvertieren der Liste in einen JSON-String
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(responseList);
+        } catch (Exception e) {
+            // Rückgabe eines Fehler-JSON-Strings im Fehlerfall
+            return "{\"error\":\"Error processing request\"}";
+        }
     }
 
     @GetMapping("/getTop10SearchQueriesBySS")

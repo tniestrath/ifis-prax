@@ -3,6 +3,7 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.AnbieterSearchRepository;
 import com.analysetool.repositories.SearchStatsRepository;
+import com.analysetool.repositories.universalStatsRepository;
 import com.analysetool.services.FinalSearchStatService;
 import com.analysetool.services.PostService;
 import com.analysetool.util.MathHelper;
@@ -19,10 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.analysetool.repositories.EventSearchRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -41,6 +40,8 @@ public class SearchStatsController {
     private FinalSearchStatService fSearchStatService;
     @Autowired
     private PostService postService;
+    @Autowired
+    private universalStatsRepository uniRepo;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -365,6 +366,45 @@ public class SearchStatsController {
 
         return response.toString();
     }
-    
+
+    @GetMapping("/getSearchCountDistributedByTime")
+    public String getSearchCountDistributedByTime(@RequestParam String distributionType) throws JSONException {
+        Integer latestUniId = uniRepo.getLatestUniStat().getId();
+        Integer lowerBoundUniId=0;
+        Map<Integer,Long> allSearchCountsByUniId= fSearchStatService.getSearchCountDistributedByUniId();
+        Calendar cal = Calendar.getInstance();
+
+        JSONArray response = new JSONArray();
+
+        switch (distributionType){
+
+            case "week":
+                lowerBoundUniId=latestUniId-7;
+                break;
+            case "month":
+                lowerBoundUniId=latestUniId-30;
+                break;
+            case "year":
+                lowerBoundUniId=latestUniId-365;
+                break;
+
+        }
+
+        cal.add(Calendar.DAY_OF_YEAR, -(latestUniId-lowerBoundUniId ));
+
+        for(Integer lowerBound=lowerBoundUniId;lowerBound<=latestUniId;lowerBound++){
+            JSONObject obj = new JSONObject();
+
+            Long count = allSearchCountsByUniId.getOrDefault(lowerBound,0L);
+            String date = String.format("%1$td-%1$tm-%1$tY", cal.getTime());
+
+            obj.put("date",date);
+            obj.put("count",count);
+            response.put(obj);
+            cal.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        return response.toString();
+    }
 }
 

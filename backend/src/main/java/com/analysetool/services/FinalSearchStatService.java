@@ -476,7 +476,17 @@ public class FinalSearchStatService {
                         LinkedHashMap::new)); // Sammeln der Ergebnisse in einer Map, die die Reihenfolge beibehält
     }
 
-
+    public Map<Integer,Long> getSearchCountDistributedByUniId(){
+        Map<Integer,Long> response = new HashMap<>();
+        List<Object[]> obj = repository.findUniIdCounts();
+        for(Object[] object:obj){
+            Integer uniId = ((Number) object[0]).intValue();
+            Long count = ((Number) object[1]).longValue();
+            System.out.println("uniId : "+uniId+" count: "+count);
+            response.put(uniId,count);
+        }
+        return response;
+    }
     public String toStringList(List<FinalSearchStat>stats){
         String response = "";
 

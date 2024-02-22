@@ -28,7 +28,7 @@ public class DiagnosisController {
 
     /**
      * An aggregate methods to find Problems in all parts of the database.
-     * @return an ordered JSONArray-String, containing information about all Problems that have been found.
+     * @return an ordered JSONArray-String, containing information about all Problems that have been found. (ordered by descending severity)
      * @throws JSONException .
      */
     @GetMapping("/doCheckUp")

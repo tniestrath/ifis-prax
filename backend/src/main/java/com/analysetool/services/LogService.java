@@ -183,6 +183,11 @@ public class LogService {
 
     private final String RedirectUserPattern =".*GET .*goto/(.*) HTTP/";
 
+    private final String outgoingRedirectLinkedIn =".*GET /goto/https://www\\.linkedin\\.com/company/marktplatz-it-sicherheit/";
+
+    private final String outgoingRedirectFacebook =".*GET /goto/https://www\\.facebook\\.com/Internet\\.Sicherheit\\.ifis";
+    private final String outgoingRedirectYoutube =".*GET /goto/https://www\\.youtube\\.com/user/InternetSicherheitDE";
+    private final String outgoingRedirectTwitter =".*GET /goto/https://twitter\\.com/_securitynews";
     private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
 
     private final String eventSSView="^.*GET /veranstaltungen/([^/]+)/.*s=([^&\"]+)\"";
@@ -219,6 +224,10 @@ public class LogService {
     Pattern eventViewPattern = Pattern.compile(eventView);
     Pattern eventSSPattern = Pattern.compile(eventSSView);
     Pattern anbieterSSPattern = Pattern.compile(AnbieterSSView);
+    Pattern outgoingRedirectPatternLinkedin = Pattern.compile(outgoingRedirectLinkedIn);
+    Pattern outgoingRedirectPatternTwitter = Pattern.compile(outgoingRedirectTwitter);
+    Pattern outgoingRedirectPatternFacebook = Pattern.compile(outgoingRedirectFacebook);
+    Pattern outgoingRedirectPatternYoutube = Pattern.compile(outgoingRedirectYoutube);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;

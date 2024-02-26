@@ -8,7 +8,7 @@ import {Post} from "../../post/Post";
 @Component({
   selector: 'dash-user-clicks-chart',
   templateUrl: './user-clicks-chart.component.html',
-  styleUrls: ['./user-clicks-chart.component.css', '../../../../component/dash-base/dash-base.component.css']
+  styleUrls: ['./user-clicks-chart.component.css', '../../dash-base/dash-base.component.css']
 })
 export class UserClicksChartComponent extends DashBaseComponent implements OnInit{
 

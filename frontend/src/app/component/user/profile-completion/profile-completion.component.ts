@@ -20,7 +20,7 @@ export class ProfileState {
 @Component({
   selector: 'dash-polar-chart',
   templateUrl: './profile-completion.component.html',
-  styleUrls: ['./profile-completion.component.css', "../../../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./profile-completion.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class ProfileCompletionComponent extends DashBaseComponent implements OnInit{
 

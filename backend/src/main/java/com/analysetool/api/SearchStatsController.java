@@ -474,14 +474,15 @@ public class SearchStatsController {
     @GetMapping("/getSearchesRanked")
     public String getSearchesRanked(int page, int size) throws JSONException {
         JSONArray array = new JSONArray();
-        Map<String, Integer> map = finalSearchStatRepo.getAllSearchesWithCount(PageRequest.of(page, size));
-        for(String search : map.keySet()) {
+        List<FinalSearchStat> list = finalSearchStatRepo.getAllSearchesOrderedByCount(PageRequest.of(page, size));
+        for(FinalSearchStat f : list) {
+
             JSONObject json = new JSONObject();
-            json.put("search", search);
-            json.put("count", map.getOrDefault(search, 0));
+            json.put("search", f.getSearchQuery());
+            json.put("count", finalSearchStatRepo.getCountForSearch(f.getSearchQuery()));
 
             List<FinalSearchStatDLC> listOfDLC = new ArrayList<>();
-            for(Integer id : finalSearchStatRepo.getIdsBySearch(search)) {
+            for(Integer id : finalSearchStatRepo.getIdsBySearch(f.getSearchQuery())) {
                 listOfDLC.addAll(finalDLCRepo.findAllByFinalSearchId(Long.valueOf(id)));
             }
             int postSS = 0, userSS = 0, neitherSS = 0;

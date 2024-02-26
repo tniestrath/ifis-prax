@@ -100,7 +100,7 @@ export enum dbUrl {
   GET_RATGEBER_ALL = "/posts/getAllRatgeberWithStats",
 
   GET_SEARCHES_NO_RESULTS = "/search-stats/getAllUnfixedSearches",
-  POST_SEARCH_IGNORE = "/search-stats/blockSearch?search=SEARCH",
+  POST_SEARCH_IGNORE = "/search-stats/blockSearch?id=SEARCH",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",

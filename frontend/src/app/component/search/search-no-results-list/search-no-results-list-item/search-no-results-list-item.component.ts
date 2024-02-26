@@ -7,8 +7,8 @@ import {SysVars} from "../../../../services/sys-vars-service";
 export class SearchItem extends DbObject{
   public search : string;
   public count : number;
-  constructor(searchString : string, count : number) {
-    super(searchString, searchString);
+  constructor(id : string, searchString : string, count : number) {
+    super(id, searchString);
     this.search = searchString;
     this.count = count;
   }
@@ -20,7 +20,7 @@ export class SearchItem extends DbObject{
   styleUrls: ['./search-no-results-list-item.component.css']
 })
 export class SearchNoResultsListItemComponent {
-  data : SearchItem = new SearchItem("", 0);
+  data : SearchItem = new SearchItem("","", 0);
 
   protected onClick(){
     SysVars.SELECTED_SEARCH.emit({item: this.data, operation: "IGNORE"});

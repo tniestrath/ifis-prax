@@ -23,15 +23,16 @@ export class SearchNoResultsListComponent extends DashBaseComponent implements O
   ngOnInit(): void {
     this.db.getSearchesWithoutResults().then(res => {
       for (var search of res) {
-        this.selectorItems.push(new SelectorItem(SearchNoResultsListItemComponent, new SearchItem(search.search, search.count)));
+        this.selectorItems.push(new SelectorItem(SearchNoResultsListItemComponent, new SearchItem(search.id, search.search, search.count)));
       }
       this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
 
+    SysVars.SELECTED_SEARCH.observers = [];
     SysVars.SELECTED_SEARCH.subscribe(selection => {
       if (selection.operation == "IGNORE"){
-        this.db.ignoreSearch(selection.item.search).then(r => {
+        this.db.ignoreSearch(selection.item.id).then(r => {
           console.log( selection.item.search + " : Successfully set to ignore: " + r)});
       }
     });

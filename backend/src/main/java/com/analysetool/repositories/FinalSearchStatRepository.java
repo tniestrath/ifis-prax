@@ -23,6 +23,6 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
     @Query("SELECT s FROM FinalSearchStat s ORDER BY (s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount + s.foundWhitepaperCount) ASC")
     List<FinalSearchStat> getAllSearchesOrderedByFoundAscending();
 
-    @Query("SELECT s FROM FinalSearchStat s WHERE s.searchQuery=:search AND (s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount + s.foundWhitepaperCount) > 0 LIMIT 1")
+    @Query("SELECT s FROM FinalSearchStat s WHERE s.searchQuery=:search AND ((s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount + s.foundWhitepaperCount) > 0) ORDER BY s.id DESC LIMIT 1")
     FinalSearchStat hasFoundForSearch(String search);
 }

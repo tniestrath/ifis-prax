@@ -1,10 +1,7 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.*;
-import com.analysetool.repositories.AnbieterSearchRepository;
-import com.analysetool.repositories.EventSearchRepository;
-import com.analysetool.repositories.SearchStatsRepository;
-import com.analysetool.repositories.universalStatsRepository;
+import com.analysetool.repositories.*;
 import com.analysetool.services.FinalSearchStatService;
 import com.analysetool.services.PostService;
 import com.analysetool.util.MathHelper;
@@ -39,6 +36,8 @@ public class SearchStatsController {
     private PostService postService;
     @Autowired
     private universalStatsRepository uniRepo;
+    @Autowired
+    private FinalSearchStatRepository finalSearchStatRepo;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -111,6 +110,7 @@ public class SearchStatsController {
      * @return Ein JSON-String, der schlechte Ausreißer repräsentiert(nur wenige oder keine Anbieter).
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
+    //Error
     @GetMapping("/getBadOutlierAllProviderSearches")
     public String getBadOutlierAllProviderSearches() throws JSONException {
         JSONArray Ergebnis = new JSONArray();
@@ -307,6 +307,7 @@ public class SearchStatsController {
         }
     }
 
+    //Error
     @GetMapping("/getTop10SearchQueriesBySS")
     public String getTop10SearchQueriesBySS(){
         JSONArray response = new JSONArray();
@@ -333,6 +334,7 @@ public class SearchStatsController {
         return response.toString();
     }
 
+    //Error
     @GetMapping("/getTop10SearchQueries")
     public String getTop10SearchQueries(){
         JSONArray response = new JSONArray();
@@ -408,5 +410,31 @@ public class SearchStatsController {
 
         return response.toString();
     }
+
+    /**
+     * Finds all Search-Queries and the number of times they have been searched.
+     * Only 'Unfixed', so only searches that have never found anything.
+     * @return a JSONArray-String, containing JSON-Objects with 'search' and 'count'
+     */
+    @GetMapping("/getAllUnfixedSearches")
+    public String getAllUnfixedZeroCountSearches() throws JSONException {
+        Map<String, Integer> searchesAndCounts = new HashMap<>();
+        JSONArray array = new JSONArray();
+        for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
+            if(finalSearchStatRepo.hasFoundForSearch(f.getSearchQuery()).isEmpty()) {
+                searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
+            }
+        }
+
+        for(String key : searchesAndCounts.keySet()) {
+            JSONObject json = new JSONObject();
+            json.put("search", key);
+            json.put("count", searchesAndCounts.get(key));
+            array.put(json);
+        }
+
+        return array.toString();
+    }
+
 }
 

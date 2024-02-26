@@ -38,6 +38,8 @@ public class SearchStatsController {
     private universalStatsRepository uniRepo;
     @Autowired
     private FinalSearchStatRepository finalSearchStatRepo;
+    @Autowired
+    private FinalSearchStatDLCRepository finalDLCRepo;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -460,6 +462,48 @@ public class SearchStatsController {
 
         return array.toString();
     }
+
+    /**
+     *
+     * @param page the page to fetch.
+     * @param size the number of results to fetch.
+     * @return a JSON-String of a JSONArray, containing JSONObjects.
+     * Labels are 'search', 'count', 'successUserCount', 'successUserCount', 'successButNeitherCount'
+     * @throws JSONException .
+     */
+    @GetMapping("/getSearchesRanked")
+    public String getSearchesRanked(int page, int size) throws JSONException {
+        JSONArray array = new JSONArray();
+        Map<String, Integer> map = finalSearchStatRepo.getAllSearchesWithCount(PageRequest.of(page, size));
+        for(String search : map.keySet()) {
+            JSONObject json = new JSONObject();
+            json.put("search", search);
+            json.put("count", map.getOrDefault(search, 0));
+
+            List<FinalSearchStatDLC> listOfDLC = new ArrayList<>();
+            for(Integer id : finalSearchStatRepo.getIdsBySearch(search)) {
+                listOfDLC.addAll(finalDLCRepo.findAllByFinalSearchId(Long.valueOf(id)));
+            }
+            int postSS = 0, userSS = 0, neitherSS = 0;
+            for(FinalSearchStatDLC fdlc : listOfDLC) {
+                if(fdlc.getPostId() != null) {
+                    postSS++;
+                } else if(fdlc.getUserId() != null) {
+                    userSS++;
+                } else {
+                    neitherSS++;
+                }
+            }
+
+            json.put("successUserCount", userSS);
+            json.put("successUserCount", postSS);
+            json.put("successButNeitherCount", neitherSS);
+
+            array.put(json);
+        }
+        return array.toString();
+    }
+
 
     boolean isHack(String text) {
         return text.contains("&") && text.contains(";");

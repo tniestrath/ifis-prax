@@ -340,6 +340,7 @@ public class SearchStatsController {
     }
 
     //Error
+    //schick mal den error bei mir ging es lokal ohne probleme
     @GetMapping("/getTop10SearchQueries")
     public String getTop10SearchQueries(){
         JSONArray response = new JSONArray();

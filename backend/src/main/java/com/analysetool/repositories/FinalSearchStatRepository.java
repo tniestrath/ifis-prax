@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat, Long> {
@@ -25,5 +24,5 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
     List<FinalSearchStat> getAllSearchesOrderedByFoundAscending();
 
     @Query("SELECT s FROM FinalSearchStat s WHERE s.searchQuery=:search AND (s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount + s.foundWhitepaperCount) > 0 LIMIT 1")
-    Optional<FinalSearchStat> hasFoundForSearch(String search);
+    FinalSearchStat hasFoundForSearch(String search);
 }

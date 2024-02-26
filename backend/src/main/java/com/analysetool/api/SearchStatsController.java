@@ -421,7 +421,7 @@ public class SearchStatsController {
         Map<String, Integer> searchesAndCounts = new HashMap<>();
         JSONArray array = new JSONArray();
         for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
-            if(finalSearchStatRepo.hasFoundForSearch(f.getSearchQuery()).isEmpty()) {
+            if(finalSearchStatRepo.hasFoundForSearch(f.getSearchQuery()) == null) {
                 searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
             }
         }

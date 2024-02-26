@@ -2,24 +2,21 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.AnbieterSearchRepository;
+import com.analysetool.repositories.EventSearchRepository;
 import com.analysetool.repositories.SearchStatsRepository;
 import com.analysetool.repositories.universalStatsRepository;
 import com.analysetool.services.FinalSearchStatService;
 import com.analysetool.services.PostService;
 import com.analysetool.util.MathHelper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.analysetool.repositories.EventSearchRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -61,7 +58,7 @@ public class SearchStatsController {
 
             JSONObject obj = new JSONObject();
             obj.put("search_string", alleStats.get(i).getSearchString());
-            obj.put("search_succes", alleStats.get(i).getSearchSuccessFlag());
+            obj.put("search_success", alleStats.get(i).getSearchSuccessFlag());
             if (alleStats.get(i).getClickedPost() != null) {
 
                 obj.put("clicked_post", alleStats.get(i).getClickedPost());

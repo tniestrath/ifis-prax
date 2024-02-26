@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -40,6 +41,8 @@ public class SearchStatsController {
     private FinalSearchStatRepository finalSearchStatRepo;
     @Autowired
     private FinalSearchStatDLCRepository finalDLCRepo;
+    @Autowired
+    private BlockedSearchesRepository blockedRepo;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -424,7 +427,7 @@ public class SearchStatsController {
         Map<String, Integer> searchesAndCounts = new HashMap<>();
         JSONArray array = new JSONArray();
         for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
-            if(finalSearchStatRepo.hasFoundForSearch(f.getSearchQuery()) == null && !isHack(f.getSearchQuery())) {
+            if(finalSearchStatRepo.hasFoundForSearch(f.getSearchQuery()) == null && !isHack(f.getSearchQuery()) && blockedRepo.getByBlocked_search_id(f.getId()).isEmpty()) {
                 searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
             }
         }
@@ -448,7 +451,7 @@ public class SearchStatsController {
         Map<String, Integer> searchesAndCounts = new HashMap<>();
         JSONArray array = new JSONArray();
         for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
-            if(isHack(f.getSearchQuery())) {
+            if(isHack(f.getSearchQuery()) && blockedRepo.getByBlocked_search_id(f.getId()).isEmpty()) {
                 searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
             }
         }
@@ -476,35 +479,82 @@ public class SearchStatsController {
         JSONArray array = new JSONArray();
         List<FinalSearchStat> list = finalSearchStatRepo.getAllSearchesOrderedByCount(PageRequest.of(page, size));
         for(FinalSearchStat f : list) {
+            if(blockedRepo.getByBlocked_search_id(f.getId()).isEmpty()) {
+                JSONObject json = new JSONObject();
+                json.put("search", f.getSearchQuery());
+                json.put("count", finalSearchStatRepo.getCountForSearch(f.getSearchQuery()));
 
-            JSONObject json = new JSONObject();
-            json.put("search", f.getSearchQuery());
-            json.put("count", finalSearchStatRepo.getCountForSearch(f.getSearchQuery()));
-
-            List<FinalSearchStatDLC> listOfDLC = new ArrayList<>();
-            for(Integer id : finalSearchStatRepo.getIdsBySearch(f.getSearchQuery())) {
-                listOfDLC.addAll(finalDLCRepo.findAllByFinalSearchId(Long.valueOf(id)));
-            }
-            int postSS = 0, userSS = 0, neitherSS = 0;
-            for(FinalSearchStatDLC fdlc : listOfDLC) {
-                if(fdlc.getPostId() != null) {
-                    postSS++;
-                } else if(fdlc.getUserId() != null) {
-                    userSS++;
-                } else {
-                    neitherSS++;
+                List<FinalSearchStatDLC> listOfDLC = new ArrayList<>();
+                for (Integer id : finalSearchStatRepo.getIdsBySearch(f.getSearchQuery())) {
+                    listOfDLC.addAll(finalDLCRepo.findAllByFinalSearchId(Long.valueOf(id)));
                 }
+                int postSS = 0, userSS = 0, neitherSS = 0;
+                for (FinalSearchStatDLC fdlc : listOfDLC) {
+                    if (fdlc.getPostId() != null) {
+                        postSS++;
+                    } else if (fdlc.getUserId() != null) {
+                        userSS++;
+                    } else {
+                        neitherSS++;
+                    }
+                }
+
+                json.put("successUserCount", userSS);
+                json.put("successUserCount", postSS);
+                json.put("successButNeitherCount", neitherSS);
+
+                array.put(json);
             }
-
-            json.put("successUserCount", userSS);
-            json.put("successUserCount", postSS);
-            json.put("successButNeitherCount", neitherSS);
-
-            array.put(json);
         }
         return array.toString();
     }
 
+    @PostMapping("/blockSearch")
+    @Modifying
+    public boolean blockSearch(String search) {
+        boolean deleted = false;
+        for(Integer id : finalSearchStatRepo.getIdsBySearch(search)) {
+            if(blockedRepo.getByBlocked_search_id(id.longValue()).isEmpty()) {
+                BlockedSearches block = new BlockedSearches();
+                block.setBlocked_search_id(Long.valueOf(id));
+                block.setSearch(search);
+                blockedRepo.save(block);
+                deleted = true;
+            }
+        }
+        return deleted;
+    }
+
+    @PostMapping("/unblockSearch")
+    @Modifying
+    public boolean unblockSearch(String search) {
+        boolean deleted = false;
+        for(BlockedSearches blocked : blockedRepo.getBySearch(search)) {
+            blockedRepo.delete(blocked);
+            deleted = true;
+        }
+        return deleted;
+    }
+
+    @GetMapping("/getAllBlocked")
+    public String getAllBlocked() throws JSONException {
+        Map<String, Integer> searchesAndCounts = new HashMap<>();
+        JSONArray array = new JSONArray();
+        for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
+            if(blockedRepo.getByBlocked_search_id(f.getId()).isPresent()) {
+                searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
+            }
+        }
+
+        for(String key : searchesAndCounts.keySet()) {
+            JSONObject json = new JSONObject();
+            json.put("search", key);
+            json.put("count", searchesAndCounts.get(key));
+            array.put(json);
+        }
+
+        return array.toString();
+    }
 
     boolean isHack(String text) {
         return text.contains("&") && text.contains(";");

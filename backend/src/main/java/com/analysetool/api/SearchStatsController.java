@@ -435,6 +435,7 @@ public class SearchStatsController {
         for(String key : searchesAndCounts.keySet()) {
             JSONObject json = new JSONObject();
             json.put("search", key);
+            json.put("id", finalSearchStatRepo.getIdsBySearch(key).get(0));
             json.put("count", searchesAndCounts.get(key));
             array.put(json);
         }
@@ -511,12 +512,13 @@ public class SearchStatsController {
 
     @PostMapping("/blockSearch")
     @Modifying
-    public boolean blockSearch(String search) {
+    public boolean blockSearch(Long id) {
         boolean deleted = false;
-        for(Integer id : finalSearchStatRepo.getIdsBySearch(search)) {
-            if(blockedRepo.getByBlocked_search_id(id.longValue()).isEmpty()) {
+        String search = finalSearchStatRepo.findById(id).get().getSearchQuery();
+        for(Integer currentId : finalSearchStatRepo.getIdsBySearch(search)) {
+            if(blockedRepo.getByBlocked_search_id(currentId.longValue()).isEmpty()) {
                 BlockedSearches block = new BlockedSearches();
-                block.setBlocked_search_id(Long.valueOf(id));
+                block.setBlocked_search_id(Long.valueOf(currentId));
                 block.setSearch(search);
                 blockedRepo.save(block);
                 deleted = true;
@@ -527,8 +529,9 @@ public class SearchStatsController {
 
     @PostMapping("/unblockSearch")
     @Modifying
-    public boolean unblockSearch(String search) {
+    public boolean unblockSearch(Long id) {
         boolean deleted = false;
+        String search = finalSearchStatRepo.findById(id).get().getSearchQuery();
         for(BlockedSearches blocked : blockedRepo.getBySearch(search)) {
             blockedRepo.delete(blocked);
             deleted = true;

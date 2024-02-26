@@ -27,21 +27,24 @@ import {NewsletterStatsComponent} from "../../component/newsletter-stats/newslet
 import {SystemloadComponent} from "../../component/system/systemload/systemload.component";
 import {EventsStatsComponent, UserEventsStatsComponent} from "../../component/events-stats/events-stats.component";
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
-import {ProfileCompletionComponent} from "../../component/profile-completion/profile-completion.component";
-import {UserComparatorComponent} from "./user/user-comparator/user-comparator.component";
+import {ProfileCompletionComponent} from "../../component/user/profile-completion/profile-completion.component";
+import {UserComparatorComponent} from "../../component/user/user-comparator/user-comparator.component";
 import {
   UserStatsByPlanComponent,
   UserStatsByPlanViewTypeCompareComponent
-} from "./user/user-stats-by-plan/user-stats-by-plan.component";
-import {UserDisplayComponentComponent} from "./user/user-display-component/user-display-component.component";
-import {UserClicksChartComponent} from "./user/user-clicks-chart/user-clicks-chart.component";
-import {SingleUserTagsDistComponent, UserTagsDistComponent} from "./user/user-tags-dist/user-tags-dist.component";
+} from "../../component/user/user-stats-by-plan/user-stats-by-plan.component";
+import {UserDisplayComponentComponent} from "../../component/user/user-display-component/user-display-component.component";
+import {UserClicksChartComponent} from "../../component/user/user-clicks-chart/user-clicks-chart.component";
+import {SingleUserTagsDistComponent, UserTagsDistComponent} from "../../component/user/user-tags-dist/user-tags-dist.component";
 import {PdfService} from "../../services/pdf.service";
 import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
 import {SeoOverTimeComponent} from "../../component/seo/seo-over-time/seo-over-time.component";
 import {SeoStatDisplayComponent} from "../../component/seo/seo-stat-display/seo-stat-display.component";
 import {SeoCtrComponent} from "../../component/seo/seo-ctr/seo-ctr.component";
 import {SeoKeywordListComponent} from "../../component/seo/seo-keyword-list/seo-keyword-list.component";
+import {
+  SearchNoResultsListComponent
+} from "../../component/search/search-no-results-list/search-no-results-list.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -150,6 +153,12 @@ export class PageComponent implements OnInit {
     ];
   }
 
+  getSearchPageCards() {
+    return [
+      {type: SearchNoResultsListComponent, row: 1, col: 1, height: 2, width: 2},
+    ];
+  }
+
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
@@ -198,6 +207,11 @@ export class PageComponent implements OnInit {
         case "System":{
           this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getSystemPageCards());
+          break;
+        }
+        case "Suche":{
+          this.pdf.restoreStyle(this.element.nativeElement);
+          this.cardsLoaded.next(this.getSearchPageCards());
           break;
         }
         case "PRINT":{

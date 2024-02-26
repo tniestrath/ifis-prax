@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {DashBaseComponent} from "../../../../component/dash-base/dash-base.component";
-import Util from "../../../../util/Util";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
+import Util from "../../../util/Util";
 import {User} from "../user";
-import {SysVars} from "../../../../services/sys-vars-service";
+import {SysVars} from "../../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-user-display-component',

@@ -1,7 +1,10 @@
 import {EventEmitter, Injectable} from '@angular/core';
 
-import {User} from "../page/page-einzel/user/user";
+import {User} from "../component/user/user";
 import {Post} from "../component/post/Post";
+import {
+  SearchItem
+} from "../component/search/search-no-results-list/search-no-results-list-item/search-no-results-list-item.component";
 
 export class PAGE {
   id: number = 0;
@@ -32,6 +35,8 @@ export class SysVars {
   public static WELCOME : boolean = true;
 
   public static SEO_DATA : EventEmitter<{desktop: {now: number, last: number}, mobile: {now: number, last: number}}> = new EventEmitter<{desktop: {now: number; last: number}; mobile: {now: number; last: number}}>();
+
+  public static SELECTED_SEARCH : EventEmitter<{item: SearchItem, operation: string}> = new EventEmitter<{item: SearchItem; operation: string}>();
 
   public static PAGES = [
     //new PAGE(0, "Login", "Login");

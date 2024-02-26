@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import Util from "../../../../../util/Util";
-import {UserTagDist} from "../../../../../component/tag/Tag";
+import Util from "../../../../util/Util";
+import {UserTagDist} from "../../../tag/Tag";
 
 @Component({
   selector: 'dash-user-tag-dist-item',

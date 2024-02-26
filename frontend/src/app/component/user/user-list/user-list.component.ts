@@ -1,16 +1,14 @@
 import {Component, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {DashBaseComponent} from "../../../../component/dash-base/dash-base.component";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Subject} from "rxjs";
-import {SelectorItem} from "../../../selector/selector.component";
+import {SelectorItem} from "../../../page/selector/selector.component";
 import {UserComponent} from "../user.component";
-import {DbObject} from "../../../../services/DbObject";
-import {SysVars} from "../../../../services/sys-vars-service";
 
 
 @Component({
   selector: 'dash-user-list',
   templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.css', '../../../../component/dash-base/dash-base.component.css']
+  styleUrls: ['./user-list.component.css', '../../dash-base/dash-base.component.css']
 })
 export class UserListComponent extends DashBaseComponent implements OnInit{
   selectorItemsLoaded = new Subject<SelectorItem[]>();

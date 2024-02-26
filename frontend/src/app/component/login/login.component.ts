@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {SysVars} from "../../services/sys-vars-service";
-import {User} from "../../page/page-einzel/user/user";
+import {User} from "../user/user";
 
 enum Reason {
   CORRECT,

@@ -1,15 +1,17 @@
 import {Injectable} from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
-import {Tag, TagRanking, TagStats} from "../component/tag/Tag";
+import {Tag, TagStats} from "../component/tag/Tag";
 import {DbObject} from "./DbObject";
 import {Post} from "../component/post/Post";
-import {User} from "../page/page-einzel/user/user";
+import {User} from "../component/user/user";
 import {Callup, CategoriesData} from "../component/call-up-chart/call-up-chart.component";
 import {SystemUsage} from "../component/system/systemload/systemload.component";
 import Util from "../util/Util";
-import {Subject, Subscription} from "rxjs";
-import {ProfileState} from "../component/profile-completion/profile-completion.component";
-import {SysVars} from "./sys-vars-service";
+import {Subject} from "rxjs";
+import {ProfileState} from "../component/user/profile-completion/profile-completion.component";
+import {
+  SearchItem
+} from "../component/search/search-no-results-list/search-no-results-list-item/search-no-results-list-item.component";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -96,6 +98,9 @@ export enum dbUrl {
 
   GET_PODCAST_ALL = "/posts/getAllPodcastsWithStats",
   GET_RATGEBER_ALL = "/posts/getAllRatgeberWithStats",
+
+  GET_SEARCHES_NO_RESULTS = "/search-stats/getAllUnfixedSearches",
+  POST_SEARCH_IGNORE = "/search-stats/blockSearch?search=SEARCH",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -703,6 +708,16 @@ export class DbService {
       return res.json();
     });
     });
+  }
+
+  async getSearchesWithoutResults() : Promise<SearchItem[]> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_NO_RESULTS)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async ignoreSearch(searchString : string) : Promise<boolean> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_IGNORE).replace("SEARCH", searchString)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
 }

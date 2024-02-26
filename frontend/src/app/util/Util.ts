@@ -127,6 +127,29 @@ export default class Util {
     }
 
   }
+
+  static getLevenshteinDistance(s1 : string, s2 : string) : number {
+    var array = new Array(s1.length + 1);
+    for (var i = 0; i < s1.length + 1; i++)
+      array[i] = new Array(s2.length + 1);
+
+    for (var i = 0; i < s1.length + 1; i++)
+      array[i][0] = i;
+    for (var j = 0; j < s2.length + 1; j++)
+      array[0][j] = j;
+
+    for (var i = 1; i < s1.length + 1; i++) {
+      for (var j = 1; j < s2.length + 1; j++) {
+        if (s1[i - 1] == s2[j - 1]) array[i][j] = array[i - 1][j - 1];
+        else {
+          array[i][j] = Math.min(array[i][j - 1] + 1, array[i - 1][j] + 1);
+          array[i][j] = Math.min(array[i][j], array[i - 1][j - 1] + 1);
+        }
+      }
+    }
+    return array[s1.length][s2.length];
+  };
+
 }
 export enum DashColors {
   GREEN = "rgb(134,218,118)",
@@ -170,3 +193,26 @@ export enum DashColors {
 
   GREY_50 = "rgba(200,200,200, .5)",
 }
+
+// @ts-ignore
+String.prototype.LevenshteinDistance = function (s2) {
+  var array = new Array(this.length + 1);
+  for (var i = 0; i < this.length + 1; i++)
+    array[i] = new Array(s2.length + 1);
+
+  for (var i = 0; i < this.length + 1; i++)
+    array[i][0] = i;
+  for (var j = 0; j < s2.length + 1; j++)
+    array[0][j] = j;
+
+  for (var i = 1; i < this.length + 1; i++) {
+    for (var j = 1; j < s2.length + 1; j++) {
+      if (this[i - 1] == s2[j - 1]) array[i][j] = array[i - 1][j - 1];
+      else {
+        array[i][j] = Math.min(array[i][j - 1] + 1, array[i - 1][j] + 1);
+        array[i][j] = Math.min(array[i][j], array[i - 1][j - 1] + 1);
+      }
+    }
+  }
+  return array[this.length][s2.length];
+};

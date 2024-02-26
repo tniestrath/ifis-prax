@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {DashBaseComponent} from "../../../../component/dash-base/dash-base.component";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent, PointStyle, TooltipItem, TooltipLabelStyle} from "chart.js/auto";
-import Util, {DashColors} from "../../../../util/Util";
-import {SysVars} from "../../../../services/sys-vars-service";
-import {Post} from "../../../../component/post/Post";
+import Util, {DashColors} from "../../../util/Util";
+import {SysVars} from "../../../services/sys-vars-service";
+import {Post} from "../../post/Post";
 
 @Component({
   selector: 'dash-user-clicks-chart',

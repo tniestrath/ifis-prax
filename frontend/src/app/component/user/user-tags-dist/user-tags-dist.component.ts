@@ -1,16 +1,16 @@
 import {Component, OnInit} from '@angular/core';
-import {DashBaseComponent} from "../../../../component/dash-base/dash-base.component";
-import {SelectorItem} from "../../../selector/selector.component";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
+import {SelectorItem} from "../../../page/selector/selector.component";
 import {Subject} from "rxjs";
-import {TagListItemComponent} from "../../../../component/tag/tag-list/tag-list-item/tag-list-item.component";
-import {TagRanking, UserTagDist} from "../../../../component/tag/Tag";
-import {SysVars} from "../../../../services/sys-vars-service";
+import {TagListItemComponent} from "../../tag/tag-list/tag-list-item/tag-list-item.component";
+import {TagRanking, UserTagDist} from "../../tag/Tag";
+import {SysVars} from "../../../services/sys-vars-service";
 import {UserTagDistItemComponent} from "./user-tag-dist-item/user-tag-dist-item.component";
 
 @Component({
   selector: 'dash-user-tags-dist',
   templateUrl: './user-tags-dist.component.html',
-  styleUrls: ['./user-tags-dist.component.css', "./../../../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./user-tags-dist.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
   selectorItems : SelectorItem[] = [];
@@ -36,7 +36,7 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
 @Component({
   selector: 'dash-user-tags-dist',
   templateUrl: './user-tags-dist.component.html',
-  styleUrls: ['./user-tags-dist.component.css', "./../../../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./user-tags-dist.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class SingleUserTagsDistComponent extends UserTagsDistComponent implements OnInit{
 

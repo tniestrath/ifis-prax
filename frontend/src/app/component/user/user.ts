@@ -1,4 +1,4 @@
-import {DbObject} from "../../../services/DbObject";
+import {DbObject} from "../../services/DbObject";
 import {SafeUrl} from "@angular/platform-browser";
 
 export class User extends DbObject {

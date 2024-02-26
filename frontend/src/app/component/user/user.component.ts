@@ -1,11 +1,11 @@
 import {Component, EventEmitter, Input, OnInit} from '@angular/core';
-import {SelectableComponent} from "../../selector/selectable.component";
+import {SelectableComponent} from "../../page/selector/selectable.component";
 import {SafeUrl} from "@angular/platform-browser";
-import {DbService} from "../../../services/db.service";
+import {DbService} from "../../services/db.service";
 import {User} from "./user";
-import Util from "../../../util/Util";
-import {SysVars} from "../../../services/sys-vars-service";
-import {DashBaseComponent} from "../../../component/dash-base/dash-base.component";
+import Util from "../../util/Util";
+import {SysVars} from "../../services/sys-vars-service";
+import {DashBaseComponent} from "../dash-base/dash-base.component";
 
 @Component({
   selector: 'dash-user',

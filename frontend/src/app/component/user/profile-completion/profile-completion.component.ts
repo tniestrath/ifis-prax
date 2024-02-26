@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {DashColors} from "../../util/Util";
-import {SysVars} from "../../services/sys-vars-service";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
+import {DashColors} from "../../../util/Util";
+import {SysVars} from "../../../services/sys-vars-service";
 
 export class ProfileState {
   profilePicture : number = 0;
@@ -20,7 +20,7 @@ export class ProfileState {
 @Component({
   selector: 'dash-polar-chart',
   templateUrl: './profile-completion.component.html',
-  styleUrls: ['./profile-completion.component.css', "../dash-base/dash-base.component.css"]
+  styleUrls: ['./profile-completion.component.css', "../../../../component/dash-base/dash-base.component.css"]
 })
 export class ProfileCompletionComponent extends DashBaseComponent implements OnInit{
 

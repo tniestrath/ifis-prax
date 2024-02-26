@@ -1,0 +1,34 @@
+.search-no-results-list-item-box{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ffffff00;
+}
+.search-no-results-list-item-box:hover{
+  border: 1px solid black;
+}
+
+.snr-string{
+  display: flex;
+  align-items: center;
+  width: 85%;
+  text-align: left;
+}
+.snr-count{
+  display: flex;
+  align-items: center;
+  width: 10%;
+  text-align: right;
+}
+.snr-ignore{
+  display: flex;
+  align-items: center;
+  width: 5%;
+}
+.snr-ignore img{
+  width: 90%;
+  aspect-ratio: 1;
+  padding: 2px;
+}

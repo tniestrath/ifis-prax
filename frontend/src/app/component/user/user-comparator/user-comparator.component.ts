@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {DashBaseComponent} from "../../../../component/dash-base/dash-base.component";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
 
 @Component({
   selector: 'dash-user-comparator',

@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ProfileCompletionComponent } from './component/profile-completion/profile-completion.component';
+import { ProfileCompletionComponent } from './component/user/profile-completion/profile-completion.component';
 import { HeaderComponent } from './page/header/header.component';
 import { CounterComponent } from './component/counter/counter.component';
 import { GaugeComponent } from './component/gauge/gauge.component';
@@ -17,7 +17,7 @@ import { PageComponent } from './page/page-einzel/page.component';
 import {CookieService} from "ngx-cookie-service";
 import { SelectorComponent } from './page/selector/selector.component';
 import { SelectableDirective } from './page/selector/selectable.directive';
-import {UserComponent} from './page/page-einzel/user/user.component';
+import {UserComponent} from './component/user/user.component';
 import {NgOptimizedImage} from "@angular/common";
 import { DashBaseComponent } from './component/dash-base/dash-base.component';
 import { ClicksComponent } from './component/clicks/clicks.component';
@@ -53,24 +53,26 @@ import { NewsletterStatsComponent } from './component/newsletter-stats/newslette
 import {EventsStatsComponent, UserEventsStatsComponent} from './component/events-stats/events-stats.component';
 import { SystemloadComponent } from './component/system/systemload/systemload.component';
 import { PostTypeComponent } from './component/post/post-type/post-type.component';
-import { UserListComponent } from './page/page-einzel/user/user-list/user-list.component';
-import { UserComparatorComponent } from './page/page-einzel/user/user-comparator/user-comparator.component';
+import { UserListComponent } from './component/user/user-list/user-list.component';
+import { UserComparatorComponent } from './component/user/user-comparator/user-comparator.component';
 import {
   UserStatsByPlanComponent,
   UserStatsByPlanViewTypeCompareComponent
-} from './page/page-einzel/user/user-stats-by-plan/user-stats-by-plan.component';
-import { UserDisplayComponentComponent } from './page/page-einzel/user/user-display-component/user-display-component.component';
-import { UserClicksChartComponent } from './page/page-einzel/user/user-clicks-chart/user-clicks-chart.component';
+} from './component/user/user-stats-by-plan/user-stats-by-plan.component';
+import { UserDisplayComponentComponent } from './component/user/user-display-component/user-display-component.component';
+import { UserClicksChartComponent } from './component/user/user-clicks-chart/user-clicks-chart.component';
 import {
   SingleUserTagsDistComponent,
   UserTagsDistComponent
-} from './page/page-einzel/user/user-tags-dist/user-tags-dist.component';
+} from './component/user/user-tags-dist/user-tags-dist.component';
 import { SeoOverTimeComponent } from './component/seo/seo-over-time/seo-over-time.component';
 import { SeoStatDisplayComponent } from './component/seo/seo-stat-display/seo-stat-display.component';
 import { SeoCtrComponent } from './component/seo/seo-ctr/seo-ctr.component';
 import { SeoKeywordListComponent } from './component/seo/seo-keyword-list/seo-keyword-list.component';
 import { SeoKeywordListItemComponent } from './component/seo/seo-keyword-list/seo-keyword-list-item/seo-keyword-list-item.component';
-import { UserTagDistItemComponent } from './page/page-einzel/user/user-tags-dist/user-tag-dist-item/user-tag-dist-item.component';
+import { UserTagDistItemComponent } from './component/user/user-tags-dist/user-tag-dist-item/user-tag-dist-item.component';
+import { SearchNoResultsListComponent } from './component/search/search-no-results-list/search-no-results-list.component';
+import { SearchNoResultsListItemComponent } from './component/search/search-no-results-list/search-no-results-list-item/search-no-results-list-item.component';
 
 @NgModule({
   declarations: [
@@ -134,7 +136,9 @@ import { UserTagDistItemComponent } from './page/page-einzel/user/user-tags-dist
     SeoCtrComponent,
     SeoKeywordListComponent,
     SeoKeywordListItemComponent,
-    UserTagDistItemComponent
+    UserTagDistItemComponent,
+    SearchNoResultsListComponent,
+    SearchNoResultsListItemComponent
   ],
     imports: [
         BrowserModule,

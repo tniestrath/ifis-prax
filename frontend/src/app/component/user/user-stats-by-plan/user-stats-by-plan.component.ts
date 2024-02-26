@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {DashBaseComponent} from "../../../../component/dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
-import {DashColors} from "../../../../util/Util";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
+import {Chart} from "chart.js/auto";
+import {DashColors} from "../../../util/Util";
 
 @Component({
   selector: 'dash-user-stats-by-plan',
   templateUrl: './user-stats-by-plan.component.html',
-  styleUrls: ['./user-stats-by-plan.component.css', "../../../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./user-stats-by-plan.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class UserStatsByPlanComponent extends DashBaseComponent implements OnInit{
   protected title : string = "Durchschnittliche Profilaufrufe nach Abomodell und Beitragsbesitz";
@@ -146,7 +146,7 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
 @Component({
   selector: 'dash-user-stats-by-plan',
   templateUrl: './user-stats-by-plan.component.html',
-  styleUrls: ['./user-stats-by-plan.component.css', "../../../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./user-stats-by-plan.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class UserStatsByPlanViewTypeCompareComponent extends UserStatsByPlanComponent implements OnInit{
   override title : string = "Durchschnittliche Profilaufrufe und Inhaltsaufrufe nach Abomodell";

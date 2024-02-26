@@ -199,13 +199,10 @@ public class SearchStatsController {
             } else if (limit == 0) {
                 latestEventSearches = eventSearchRepo.findAll();
             }
-            System.out.println("leS "+latestEventSearches.toString());
             List<Integer> resultCounts = latestEventSearches.stream()
                     .map(EventSearch::getResultCount)
                     .collect(Collectors.toList());
-            System.out.println("count "+resultCounts.toString());
             List<Integer> lowerBoundOutliers = MathHelper.getLowerBoundOutliersInt(resultCounts);
-            System.out.println("lbO "+lowerBoundOutliers.toString());
             List<EventSearch> filteredEventSearches = latestEventSearches.stream()
                     .filter(eventSearch -> lowerBoundOutliers.contains(eventSearch.getResultCount()))
                     .collect(Collectors.toList());
@@ -315,7 +312,6 @@ public class SearchStatsController {
         JSONArray response = new JSONArray();
 
         Map<FinalSearchStat,List<FinalSearchStatDLC>> allSearchStats = fSearchStatService.getAllSearchStats();
-        System.out.println(allSearchStats);
         List<Map.Entry<String, Integer>> top10 = fSearchStatService.getRankingTopNSearchQueriesInMapBySS(allSearchStats,10);
 
 
@@ -329,7 +325,7 @@ public class SearchStatsController {
                 response.put(obj);
 
             } catch (JSONException e) {
-                 System.out.println(e.getStackTrace());
+                 e.printStackTrace();
             }
 
         });
@@ -342,7 +338,6 @@ public class SearchStatsController {
         JSONArray response = new JSONArray();
 
         Map<FinalSearchStat,List<FinalSearchStatDLC>> allSearchStats = fSearchStatService.getAllSearchStats();
-        System.out.println(allSearchStats);
         List<Map.Entry<String, Long>> top10 = fSearchStatService.getRankingTopNSearchedQueries(allSearchStats,10);
 
 
@@ -356,7 +351,7 @@ public class SearchStatsController {
                 response.put(obj);
 
             } catch (JSONException e) {
-                System.out.println(e.getStackTrace());
+                e.printStackTrace();
             }
 
         });

@@ -98,7 +98,7 @@ public class DiagnosisController {
                     if(differenceInDays > 1) {
                         list.add(new Problem(severityMissing, descriptionMissing + lastDate + " and " + sqlDate2, area));
                     }
-
+                    lastDate = sqlDate2;
                 }
             }
         }

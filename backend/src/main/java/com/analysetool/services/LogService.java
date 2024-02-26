@@ -110,6 +110,8 @@ public class LogService {
     private FinalSearchStatService finalSearchService;
     @Autowired
     private TemporarySearchStatService temporarySearchService;
+    @Autowired
+    private OutgoingSocialsRedirectsRepository outgoingSocialsRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -624,6 +626,16 @@ public class LogService {
                     //Does it match an user Search Success?
                     Matcher matched_user_search_success= anbieterSSPattern.matcher(line);
 
+                    //Does it match an outgoing socials redirect?
+                    Matcher matched_outgoing_linkedin_redirect= outgoingRedirectPatternLinkedin.matcher(request);
+
+                    //Does it match an outgoing socials redirect?
+                    Matcher matched_outgoing_facebook_redirect= outgoingRedirectPatternFacebook.matcher(request);
+                    //Does it match an outgoing socials redirect?
+                    Matcher matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(request);
+                    //Does it match an outgoing socials redirect?
+                    Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(request);
+
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
@@ -709,6 +721,18 @@ public class LogService {
                     } else if(matched_userRedirect.find()){
                         whatMatched = "userRedirect";
                         patternMatcher = matched_userRedirect;
+                    }else if(matched_outgoing_linkedin_redirect.find()){
+                        whatMatched = "socialsLinkedInRedirect";
+                        patternMatcher = matched_outgoing_linkedin_redirect;
+                    }else if(matched_outgoing_twitter_redirect.find()){
+                        whatMatched = "socialsTwitterRedirect";
+                        patternMatcher = matched_outgoing_twitter_redirect;
+                    }else if(matched_outgoing_facebook_redirect.find()){
+                        whatMatched = "socialsFacebookRedirect";
+                        patternMatcher = matched_outgoing_facebook_redirect;
+                    }else if(matched_outgoing_youtube_redirect.find()){
+                        whatMatched = "socialsYouTubeRedirect";
+                        patternMatcher = matched_outgoing_youtube_redirect;
                     } else if(matched_event_view.find()){
                         whatMatched = "eventView";
                         patternMatcher = matched_event_view;
@@ -1498,7 +1522,7 @@ public class LogService {
                 catch (Exception e){
                     System.out.println("CONTENT DOWNLOAD EXCEPTION BEI: "+ line);
                 }
-            break;
+                break;
             case "userRedirect":
                 try {
                     if(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)) != null) {
@@ -1520,6 +1544,34 @@ public class LogService {
                     System.out.println("USERREDIRECT EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
+                break;
+            case "socialsLinkedInRedirect","socialsTwitterRedirect","socialsYouTubeRedirect","socialsFacebookRedirect":
+                try {
+                        Integer latestUniId= uniRepo.getLatestUniStat().getId();
+                        Integer hour = dateLog.getHour();
+                        OutgoingSocialsRedirects redirects;
+
+                        if(outgoingSocialsRepo.findByUniIdAndHour(latestUniId,hour).isPresent()) {
+                            redirects = outgoingSocialsRepo.findByUniIdAndHour(latestUniId,hour).get();
+                        } else {
+                            redirects = new OutgoingSocialsRedirects();
+                            redirects.setHour(dateLog.getHour());
+                            redirects.setUniId(uniRepo.getLatestUniStat().getId());
+                            redirects.setLinkedin(0L);
+                            redirects.setFacebook(0L);
+                            redirects.setTwitter(0L);
+                            redirects.setYoutube(0L);
+
+                        }
+
+                        outgoingSocialsRepo.save( updateSocialsRedirects(whatMatched , redirects));
+
+                }
+                catch (Exception e) {
+                    System.out.println("SOCIALSREDIRECT EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+                break;
             case "eventView":
                 try {
                     if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
@@ -2901,4 +2953,43 @@ public class LogService {
         }
     }
 
+
+    private OutgoingSocialsRedirects updateSocialsRedirects(String whatMatched ,  OutgoingSocialsRedirects redirects){
+        Long counter;
+
+        //System.out.println(whatMatched);
+
+        switch(whatMatched){
+
+            case "socialsLinkedInRedirect":
+                counter= redirects.getLinkedin();
+                counter++;
+                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
+                redirects.setLinkedin(counter);
+                break;
+
+            case "socialsFacebookRedirect":
+                counter= redirects.getFacebook();
+                counter++;
+                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
+                redirects.setFacebook(counter);
+                break;
+
+            case "socialsTwitterRedirect":
+                counter= redirects.getTwitter();
+                counter++;
+                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
+                redirects.setTwitter(counter);
+                break;
+
+            case "socialsYouTubeRedirect":
+                counter= redirects.getYoutube();
+                counter++;
+                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
+                redirects.setYoutube(counter);
+                break;
+        }
+        //System.out.println("UPPPPDAAAATEEE REEEEDDIRREEEEEECCCCTTTTT----------------------------->>>>> "+redirects);
+        return redirects;
+    }
 }

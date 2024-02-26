@@ -414,6 +414,7 @@ public class SearchStatsController {
     /**
      * Finds all Search-Queries and the number of times they have been searched.
      * Only 'Unfixed', so only searches that have never found anything.
+     * Nonsense or nonlegit (potential attacks) are NOT listed.
      * @return a JSONArray-String, containing JSON-Objects with 'search' and 'count'
      */
     @GetMapping("/getAllUnfixedSearches")
@@ -421,7 +422,7 @@ public class SearchStatsController {
         Map<String, Integer> searchesAndCounts = new HashMap<>();
         JSONArray array = new JSONArray();
         for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
-            if(finalSearchStatRepo.hasFoundForSearch(f.getSearchQuery()) == null) {
+            if(finalSearchStatRepo.hasFoundForSearch(f.getSearchQuery()) == null && !isHack(f.getSearchQuery())) {
                 searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
             }
         }
@@ -434,6 +435,10 @@ public class SearchStatsController {
         }
 
         return array.toString();
+    }
+
+    boolean isHack(String text) {
+        return text.contains("&") && text.contains(";");
     }
 
 }

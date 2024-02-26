@@ -8,7 +8,7 @@ import {GaugeComponent} from "../../component/gauge/gauge.component";
 import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
 import {SysVars} from "../../services/sys-vars-service";
-import {UserPlanComponent} from "../../component/user-plan/user-plan.component";
+import {UserPlanComponent} from "../../component/user/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
 import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";

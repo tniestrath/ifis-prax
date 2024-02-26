@@ -1,13 +1,13 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
-import {DashBaseComponent} from "../dash-base/dash-base.component";
+import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
-import Util, {DashColors} from "../../util/Util";
+import Util, {DashColors} from "../../../util/Util";
 
 @Component({
   selector: 'dash-user-plan',
   templateUrl: './user-plan.component.html',
-  styleUrls: ['./user-plan.component.css', "../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./user-plan.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class UserPlanComponent extends DashBaseComponent implements OnInit{
 

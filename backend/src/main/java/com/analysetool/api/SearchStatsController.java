@@ -437,6 +437,30 @@ public class SearchStatsController {
         return array.toString();
     }
 
+    /**
+     * Gets all potentially threatening queries.
+     * @return a JSONArray-String, containing JSON-Objects with 'search' and 'count'
+     */
+    @GetMapping("/getAllThreats")
+    public String getAllThreats() throws JSONException {
+        Map<String, Integer> searchesAndCounts = new HashMap<>();
+        JSONArray array = new JSONArray();
+        for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
+            if(isHack(f.getSearchQuery())) {
+                searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
+            }
+        }
+
+        for(String key : searchesAndCounts.keySet()) {
+            JSONObject json = new JSONObject();
+            json.put("search", key);
+            json.put("count", searchesAndCounts.get(key));
+            array.put(json);
+        }
+
+        return array.toString();
+    }
+
     boolean isHack(String text) {
         return text.contains("&") && text.contains(";");
     }

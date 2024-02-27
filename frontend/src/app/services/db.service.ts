@@ -10,8 +10,8 @@ import Util from "../util/Util";
 import {Subject} from "rxjs";
 import {ProfileState} from "../component/user/profile-completion/profile-completion.component";
 import {
-  SearchItem
-} from "../component/search/search-no-results-list/search-no-results-list-item/search-no-results-list-item.component";
+  SearchItem, SearchRank, SearchSS
+} from "../component/search/search-no-results-list/search-list-item/search-list-item.component";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -100,6 +100,8 @@ export enum dbUrl {
   GET_RATGEBER_ALL = "/posts/getAllRatgeberWithStats",
 
   GET_SEARCHES_NO_RESULTS = "/search-stats/getAllUnfixedSearches",
+  GET_SEARCHES_TOP_N = "/search-stats/getTopNSearchQueries?number=NUMBER",
+  GET_SEARCHES_TOP_N_BY_SS = "/search-stats/getTopNSearchQueriesBySS?number=NUMBER",
   POST_SEARCH_IGNORE = "/search-stats/blockSearch?id=SEARCH",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
@@ -713,6 +715,14 @@ export class DbService {
   async getSearchesWithoutResults() : Promise<SearchItem[]> {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_NO_RESULTS)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getSearchesTopN(num : number) : Promise<SearchRank[]> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_TOP_N).replace("NUMBER", String(num))) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getSearchesTopNBySS(num : number) : Promise<SearchSS[]> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_TOP_N_BY_SS).replace("NUMBER", String(num))) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async ignoreSearch(searchID : string) : Promise<boolean> {

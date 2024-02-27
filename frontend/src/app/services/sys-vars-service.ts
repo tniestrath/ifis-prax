@@ -4,7 +4,8 @@ import {User} from "../component/user/user";
 import {Post} from "../component/post/Post";
 import {
   SearchItem
-} from "../component/search/search-no-results-list/search-no-results-list-item/search-no-results-list-item.component";
+} from "../component/search/search-no-results-list/search-list-item/search-list-item.component";
+import {DbObject} from "./DbObject";
 
 export class PAGE {
   id: number = 0;
@@ -36,7 +37,7 @@ export class SysVars {
 
   public static SEO_DATA : EventEmitter<{desktop: {now: number, last: number}, mobile: {now: number, last: number}}> = new EventEmitter<{desktop: {now: number; last: number}; mobile: {now: number; last: number}}>();
 
-  public static SELECTED_SEARCH : EventEmitter<{item: SearchItem, operation: string}> = new EventEmitter<{item: SearchItem; operation: string}>();
+  public static SELECTED_SEARCH : EventEmitter<{item: DbObject, operation: string}> = new EventEmitter<{item: DbObject; operation: string}>();
 
   public static PAGES = [
     //new PAGE(0, "Login", "Login");

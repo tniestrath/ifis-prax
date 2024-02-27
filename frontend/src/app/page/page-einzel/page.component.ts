@@ -43,8 +43,8 @@ import {SeoStatDisplayComponent} from "../../component/seo/seo-stat-display/seo-
 import {SeoCtrComponent} from "../../component/seo/seo-ctr/seo-ctr.component";
 import {SeoKeywordListComponent} from "../../component/seo/seo-keyword-list/seo-keyword-list.component";
 import {
-  SearchNoResultsListComponent
-} from "../../component/search/search-no-results-list/search-no-results-list.component";
+  SearchListComponent, SearchListNoResultsComponent, SearchListRankComponent, SearchListSSComponent
+} from "../../component/search/search-no-results-list/search-list.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -155,7 +155,9 @@ export class PageComponent implements OnInit {
 
   getSearchPageCards() {
     return [
-      {type: SearchNoResultsListComponent, row: 1, col: 1, height: 2, width: 2},
+      {type: SearchListNoResultsComponent, row: 1, col: 1, height: 2, width: 2},
+      {type: SearchListRankComponent, row: 1, col: 3, height: 2, width: 2},
+      {type: SearchListSSComponent, row: 1, col: 5, height: 2, width: 2},
     ];
   }
 

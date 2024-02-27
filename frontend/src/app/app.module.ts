@@ -71,8 +71,13 @@ import { SeoCtrComponent } from './component/seo/seo-ctr/seo-ctr.component';
 import { SeoKeywordListComponent } from './component/seo/seo-keyword-list/seo-keyword-list.component';
 import { SeoKeywordListItemComponent } from './component/seo/seo-keyword-list/seo-keyword-list-item/seo-keyword-list-item.component';
 import { UserTagDistItemComponent } from './component/user/user-tags-dist/user-tag-dist-item/user-tag-dist-item.component';
-import { SearchNoResultsListComponent } from './component/search/search-no-results-list/search-no-results-list.component';
-import { SearchNoResultsListItemComponent } from './component/search/search-no-results-list/search-no-results-list-item/search-no-results-list-item.component';
+import {
+  SearchListComponent,
+  SearchListNoResultsComponent,
+  SearchListRankComponent,
+  SearchListSSComponent
+} from './component/search/search-no-results-list/search-list.component';
+import { SearchListItemComponent, SearchListNoResultsItemComponent, SearchListRankItemComponent, SearchListSSItemComponent } from './component/search/search-no-results-list/search-list-item/search-list-item.component';
 
 @NgModule({
   declarations: [
@@ -137,8 +142,14 @@ import { SearchNoResultsListItemComponent } from './component/search/search-no-r
     SeoKeywordListComponent,
     SeoKeywordListItemComponent,
     UserTagDistItemComponent,
-    SearchNoResultsListComponent,
-    SearchNoResultsListItemComponent
+    SearchListComponent,
+    SearchListNoResultsComponent,
+    SearchListRankComponent,
+    SearchListSSComponent,
+    SearchListItemComponent,
+    SearchListRankItemComponent,
+    SearchListNoResultsItemComponent,
+    SearchListSSItemComponent
   ],
     imports: [
         BrowserModule,

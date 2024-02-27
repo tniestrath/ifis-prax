@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SearchNoResultsListItemComponent } from './search-no-results-list-item.component';
+import { SearchListItemComponent } from './search-list-item.component';
 
 describe('SearchNoResultsListItemComponent', () => {
-  let component: SearchNoResultsListItemComponent;
-  let fixture: ComponentFixture<SearchNoResultsListItemComponent>;
+  let component: SearchListItemComponent;
+  let fixture: ComponentFixture<SearchListItemComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SearchNoResultsListItemComponent]
+      declarations: [SearchListItemComponent]
     });
-    fixture = TestBed.createComponent(SearchNoResultsListItemComponent);
+    fixture = TestBed.createComponent(SearchListItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

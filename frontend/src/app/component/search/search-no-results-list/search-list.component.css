@@ -18,6 +18,7 @@
 
 .search-no-results-list-selector-container{
   margin-left: 5px;
+  margin-top: 7px;
   height: calc(100% - 47px);
   width: calc(100% - 8px);
 }

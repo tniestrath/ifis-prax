@@ -1,4 +1,4 @@
-.search-no-results-list-item-box{
+.search-list-item-box{
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -6,7 +6,7 @@
   box-sizing: border-box;
   border: 1px solid #ffffff00;
 }
-.search-no-results-list-item-box:hover{
+.search-list-item-box:hover{
   border: 1px solid black;
 }
 
@@ -20,6 +20,13 @@
   display: flex;
   align-items: center;
   width: 10%;
+  text-align: right;
+}
+.snr-count-long{
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  width: 15%;
   text-align: right;
 }
 .snr-ignore{

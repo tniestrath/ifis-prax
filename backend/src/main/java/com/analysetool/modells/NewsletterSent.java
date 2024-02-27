@@ -1,14 +1,12 @@
 package com.analysetool.modells;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 
 @Entity
 @Table(name = "wp_newsletter_sent")
+@IdClass(NewsletterSentId.class)
 public class NewsletterSent implements Serializable {
 
     @Id

@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface NewsletterStatsRepository extends JpaRepository<NewsletterStats, Long> {
 
-    @Query("SELECT COUNT(n.url) FROM NewsletterStats n WHERE n.emailId=:emailid AND n.url!=''")
+    @Query("SELECT COUNT(n.url) FROM NewsletterStats n WHERE n.emailId=:emailId AND n.url!=''")
     int getCountInteractionsForEmail(String emailId);
 
     @Query("SELECT n FROM NewsletterStats n WHERE n.emailId=:emailId")

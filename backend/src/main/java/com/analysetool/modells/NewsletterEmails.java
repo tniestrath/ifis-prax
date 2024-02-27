@@ -25,6 +25,9 @@ public class NewsletterEmails implements Serializable {
     @Column(name="created")
     private Timestamp created;
 
+    @Column(name="status")
+    private String status;
+
     @Column(name="total")
     private int total;
 
@@ -93,6 +96,15 @@ public class NewsletterEmails implements Serializable {
 
     @Column(name="updated")
     private String updated;
+
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public Long getId() {
         return id;

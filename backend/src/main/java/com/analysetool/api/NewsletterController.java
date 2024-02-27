@@ -1,10 +1,13 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.Newsletter;
+import com.analysetool.modells.NewsletterStats;
 import com.analysetool.repositories.NewsletterEmailsRepository;
 import com.analysetool.repositories.NewsletterRepository;
 import com.analysetool.repositories.NewsletterSentRepository;
 import com.analysetool.repositories.NewsletterStatsRepository;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -116,5 +119,37 @@ public class NewsletterController {
         return subs;
     }
 
+    @GetMapping("/getLatestNewsletterCallup")
+    public String getLatestNewsletterCallup() throws JSONException {
+        return getNewsletterCallup(Math.toIntExact(newsEmailsRepo.getLatestNewsletter().getId()));
+    }
+
+    @GetMapping("/getNewsletterCallup")
+    public String getNewsletterCallup(int emailId) throws JSONException {
+        if(newsEmailsRepo.findById((long) emailId).isPresent()) {
+            JSONObject json = new JSONObject();
+            json.put("totalOpens", newsSentRepo.getSumOpenedForEmail(emailId));
+            json.put("OR", newsSentRepo.getAmountSentOfEmail(emailId) / newsSentRepo.getAmountOpenedBy(emailId));
+            json.put("subject", newsEmailsRepo.findById((long) emailId).get().getSubject());
+            json.put("interactions", newsStatsRepo.getCountInteractionsForEmail(String.valueOf(emailId)));
+            json.put("problems", newsSentRepo.getAmountErrorsForEmail(emailId));
+
+            List<Integer> hourlyInteractions = new ArrayList<>();
+            for(NewsletterStats n : newsStatsRepo.getAllNewsletterStatsOfEmail(String.valueOf(emailId))) {
+                int hour = n.getCreated().toLocalDateTime().getHour();
+                if(hourlyInteractions.size() >= hour) {
+                    hourlyInteractions.set(hour, hourlyInteractions.get(hour));
+                } else {
+                    hourlyInteractions.set(hour, 1);
+                }
+            }
+            json.put("interactionTimes", hourlyInteractions);
+
+            return json.toString();
+        } else {
+            return "email id invalid";
+        }
+
+    }
 
 }

@@ -7,7 +7,6 @@ import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
 import com.analysetool.util.DashConfig;
 import com.analysetool.util.IPHelper;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
@@ -20,8 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.net.URISyntaxException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -110,6 +111,8 @@ public class LogService {
     private FinalSearchStatService finalSearchService;
     @Autowired
     private TemporarySearchStatService temporarySearchService;
+    @Autowired
+    private OutgoingSocialsRedirectsRepository outgoingSocialsRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -144,8 +147,6 @@ public class LogService {
     private final String ratgeberSelfView = "^.*GET /selbstlernangebot-it-sicherheit/";
 
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
-    //private String PresseSSViewPatter = "^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET /pressemitteilung/(\\S+)/.*s=(\\S+)";
-    //private final String PresseSSViewPatter = "^.*GET /news/(\\S+)/.*s=(\\S+)\".*";
 
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
 
@@ -192,49 +193,49 @@ public class LogService {
 
     private final String eventSSView="^.*GET /veranstaltungen/([^/]+)/.*s=([^&\"]+)\"";
 
-    Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
-    Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
-    Pattern blogViewPattern = Pattern.compile(BlogViewPattern);
-    Pattern blogSearchSuccessPattern = Pattern.compile(BlogSSPattern);
+    final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
+    final Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
+    final Pattern blogViewPattern = Pattern.compile(BlogViewPattern);
+    final Pattern blogSearchSuccessPattern = Pattern.compile(BlogSSPattern);
     Pattern redirectPattern = Pattern.compile(RedirectPattern);
-    Pattern userViewPattern = Pattern.compile(UserViewPattern);
-    Pattern newsViewPattern = Pattern.compile(NewsViewPatter);
-    Pattern newsSearchSuccessPattern = Pattern.compile(PresseSSViewPatter);
-    Pattern userRedirectPattern = Pattern.compile(RedirectUserPattern);
+    final Pattern userViewPattern = Pattern.compile(UserViewPattern);
+    final Pattern newsViewPattern = Pattern.compile(NewsViewPatter);
+    final Pattern newsSearchSuccessPattern = Pattern.compile(PresseSSViewPatter);
+    final Pattern userRedirectPattern = Pattern.compile(RedirectUserPattern);
     Pattern searchPattern = Pattern.compile(SearchPattern);
-    Pattern patternWhitepaperView = Pattern.compile(WhitepaperViewPattern);
-    Pattern patternWhitepaperSearchSuccess = Pattern.compile(WhitepaperSSPattern);
-    Pattern patternPreMatch = Pattern.compile(prePattern);
+    final Pattern patternWhitepaperView = Pattern.compile(WhitepaperViewPattern);
+    final Pattern patternWhitepaperSearchSuccess = Pattern.compile(WhitepaperSSPattern);
+    final Pattern patternPreMatch = Pattern.compile(prePattern);
     Pattern reffererPattern=Pattern.compile(ReffererPattern);
-    Pattern mainPagePattern = Pattern.compile(mainPage);
-    Pattern ueberPattern = Pattern.compile(ueber);
-    Pattern impressumPattern = Pattern.compile(impressum);
-    Pattern agbsPattern = Pattern.compile(agbs);
-    Pattern datenschutzerklaerungPattern = Pattern.compile(datenschutzerklaerung);
-    Pattern preislistePattern = Pattern.compile(preisliste);
-    Pattern partnerPattern = Pattern.compile(partner);
-    Pattern newsletterPattern = Pattern.compile(newsletter);
-    Pattern imagePattern = Pattern.compile(image);
-    Pattern ratgeberPostViewPattern = Pattern.compile(ratgeberView);
-    Pattern ratgeberGlossarViewPattern = Pattern.compile(ratgeberGlossarView);
-    Pattern ratgeberBuchViewPattern = Pattern.compile(ratgeberBuchView);
-    Pattern ratgeberSelfViewPattern = Pattern.compile(ratgeberSelfView);
-    Pattern podcastViewPattern = Pattern.compile(PodcastViewPattern);
-    Pattern contentDownloadPattern= Pattern.compile(contentDownload);
-    Pattern eventViewPattern = Pattern.compile(eventView);
-    Pattern eventSSPattern = Pattern.compile(eventSSView);
-    Pattern anbieterSSPattern = Pattern.compile(AnbieterSSView);
-    Pattern outgoingRedirectPatternLinkedin = Pattern.compile(outgoingRedirectLinkedIn);
-    Pattern outgoingRedirectPatternTwitter = Pattern.compile(outgoingRedirectTwitter);
-    Pattern outgoingRedirectPatternFacebook = Pattern.compile(outgoingRedirectFacebook);
-    Pattern outgoingRedirectPatternYoutube = Pattern.compile(outgoingRedirectYoutube);
+    final Pattern mainPagePattern = Pattern.compile(mainPage);
+    final Pattern ueberPattern = Pattern.compile(ueber);
+    final Pattern impressumPattern = Pattern.compile(impressum);
+    final Pattern agbsPattern = Pattern.compile(agbs);
+    final Pattern datenschutzerklaerungPattern = Pattern.compile(datenschutzerklaerung);
+    final Pattern preislistePattern = Pattern.compile(preisliste);
+    final Pattern partnerPattern = Pattern.compile(partner);
+    final Pattern newsletterPattern = Pattern.compile(newsletter);
+    final Pattern imagePattern = Pattern.compile(image);
+    final Pattern ratgeberPostViewPattern = Pattern.compile(ratgeberView);
+    final Pattern ratgeberGlossarViewPattern = Pattern.compile(ratgeberGlossarView);
+    final Pattern ratgeberBuchViewPattern = Pattern.compile(ratgeberBuchView);
+    final Pattern ratgeberSelfViewPattern = Pattern.compile(ratgeberSelfView);
+    final Pattern podcastViewPattern = Pattern.compile(PodcastViewPattern);
+    final Pattern contentDownloadPattern= Pattern.compile(contentDownload);
+    final Pattern eventViewPattern = Pattern.compile(eventView);
+    final Pattern eventSSPattern = Pattern.compile(eventSSView);
+    final Pattern anbieterSSPattern = Pattern.compile(AnbieterSSView);
+    final Pattern outgoingRedirectPatternLinkedin = Pattern.compile(outgoingRedirectLinkedIn);
+    final Pattern outgoingRedirectPatternTwitter = Pattern.compile(outgoingRedirectTwitter);
+    final Pattern outgoingRedirectPatternFacebook = Pattern.compile(outgoingRedirectFacebook);
+    final Pattern outgoingRedirectPatternYoutube = Pattern.compile(outgoingRedirectYoutube);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
     private boolean liveScanning ;
 
     //Set User-Agents that shouldn't be counted as click
-    String[] blacklistUserAgents = {
+    final String[] blacklistUserAgents = {
         "bot",
         "spider",
         "crawl",
@@ -268,7 +269,6 @@ public class LogService {
     private SearchStatsRepository searchStatRepo;
 
     private final HashMap<String,ArrayList<LocalDateTime>> userViewTimes= new HashMap<>();
-    private final HashMap<String, Integer> userViews = new HashMap<>();
     private final HashMap<String, Integer> impressions = new HashMap<>();
     @Autowired
     private universalStatsRepository uniRepo;
@@ -290,17 +290,17 @@ public class LogService {
     @Autowired
     private UserRedirectsHourlyRepository userRedirectRepo;
 
-    private Map<String, UserViewsByHourDLC> userViewsHourDLCMap = new HashMap<>();
-    private Map<String, ContentDownloadsHourly> contentDownloadsMap = new HashMap<>();
+    private final Map<String, UserViewsByHourDLC> userViewsHourDLCMap = new HashMap<>();
+    private final Map<String, ContentDownloadsHourly> contentDownloadsMap = new HashMap<>();
 
-    private Map<String,PostClicksByHourDLC> postClicksMap = new HashMap<>();
-    private Map<String,UserRedirectsHourly> userRedirectsMap = new HashMap<>();
+    private final Map<String,PostClicksByHourDLC> postClicksMap = new HashMap<>();
+    private final Map<String,UserRedirectsHourly> userRedirectsMap = new HashMap<>();
 
-    private Map<String, List<FinalSearchStatDLC>> searchDLCMap = new ConcurrentHashMap<>();
+    private final Map<String, List<FinalSearchStatDLC>> searchDLCMap = new ConcurrentHashMap<>();
 
 
     @Autowired
-    public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) throws URISyntaxException {
+    public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) {
         this.postRepository = postRepository;
         this.statsRepo = PostStatsRepository;
         this.tagStatRepo=tagStatRepo;
@@ -353,9 +353,6 @@ public class LogService {
                 SystemVariabeln.setDayInWeek(LocalDateTime.now().getDayOfWeek().getValue());
                 SystemVariabeln.setDayInMonth(LocalDateTime.now().getDayOfMonth());
                 SystemVariabeln.setLastLine("");
-        /*        if(!liveScanning){SystemVariabeln.setLastLineCount(0);
-
-                }*/
                 SystemVariabeln.setLogDate(getCreationDateOfAccessLog(Pfad));
            // }
 
@@ -402,7 +399,7 @@ public class LogService {
         updateLetterCountForAll();
     }
 
-    public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws IOException, ParseException {
+    public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws ParseException {
         this.liveScanning = liveScanning;
         this.path = path;
         lastLineCounter=SystemVariabeln.getLastLineCount();
@@ -418,7 +415,6 @@ public class LogService {
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();
-        saveStatsToDatabase();
 
         try {
             updatePostTypes();
@@ -486,7 +482,7 @@ public class LogService {
         String last_request = null;
         JSONArray blacklist2 = null;
         try {
-            blacklist2 = new JSONArray(new String(Files.readAllBytes(Path.of(getClass().getResource("blacklist.json").toURI()))));
+            blacklist2 = new JSONArray(new String(Files.readAllBytes(Path.of(Objects.requireNonNull(getClass().getResource("blacklist.json")).toURI()))));
         } catch (Exception ignored){}
 
         while ((line = br.readLine()) != null ) {
@@ -624,6 +620,16 @@ public class LogService {
                     //Does it match an user Search Success?
                     Matcher matched_user_search_success= anbieterSSPattern.matcher(line);
 
+                    //Does it match an outgoing socials redirect?
+                    Matcher matched_outgoing_linkedin_redirect= outgoingRedirectPatternLinkedin.matcher(request);
+
+                    //Does it match an outgoing socials redirect?
+                    Matcher matched_outgoing_facebook_redirect= outgoingRedirectPatternFacebook.matcher(request);
+                    //Does it match an outgoing socials redirect?
+                    Matcher matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(request);
+                    //Does it match an outgoing socials redirect?
+                    Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(request);
+
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
@@ -709,6 +715,18 @@ public class LogService {
                     } else if(matched_userRedirect.find()){
                         whatMatched = "userRedirect";
                         patternMatcher = matched_userRedirect;
+                    }else if(matched_outgoing_linkedin_redirect.find()){
+                        whatMatched = "socialsLinkedInRedirect";
+                        patternMatcher = matched_outgoing_linkedin_redirect;
+                    }else if(matched_outgoing_twitter_redirect.find()){
+                        whatMatched = "socialsTwitterRedirect";
+                        patternMatcher = matched_outgoing_twitter_redirect;
+                    }else if(matched_outgoing_facebook_redirect.find()){
+                        whatMatched = "socialsFacebookRedirect";
+                        patternMatcher = matched_outgoing_facebook_redirect;
+                    }else if(matched_outgoing_youtube_redirect.find()){
+                        whatMatched = "socialsYouTubeRedirect";
+                        patternMatcher = matched_outgoing_youtube_redirect;
                     } else if(matched_event_view.find()){
                         whatMatched = "eventView";
                         patternMatcher = matched_event_view;
@@ -910,7 +928,9 @@ public class LogService {
                         }
                         case "userView" -> {
                             try {
-                                updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId(),dateLog);
+                                if(wpUserRepo.findByNicename(patternMatcher.group(1)).isPresent()) {
+                                    updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId(), dateLog);
+                                }
                             } catch (Exception e) {
                                 System.out.println(patternMatcher.group(1));
                             }
@@ -929,40 +949,45 @@ public class LogService {
                             updateUniqueUser(ip, "ratgeber", dateLog);
 
                             //Update stats for more concrete type of Ratgeber
-                            if(whatMatched.equals("ratgeberPost")) {
-                                viewsRatgeberPost++;
-                                if (isUnique) {
-                                    userRatgeberPost++;
-                                } else {
-                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                            switch (whatMatched) {
+                                case "ratgeberPost" -> {
+                                    viewsRatgeberPost++;
+                                    if (isUnique) {
                                         userRatgeberPost++;
+                                    } else {
+                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                            userRatgeberPost++;
+                                        }
                                     }
                                 }
-                            } else if(whatMatched.equals("ratgeberGlossar")) {
-                                viewsRatgeberGlossar++;
-                                if (isUnique) {
-                                    userRatgeberGlossar++;
-                                } else {
-                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                case "ratgeberGlossar" -> {
+                                    viewsRatgeberGlossar++;
+                                    if (isUnique) {
                                         userRatgeberGlossar++;
+                                    } else {
+                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                            userRatgeberGlossar++;
+                                        }
                                     }
                                 }
-                            } else if(whatMatched.equals("ratgeberBuch")){
-                                viewsRatgeberBuch++;
-                                if (isUnique) {
-                                    userRatgeberBuch++;
-                                } else {
-                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                case "ratgeberBuch" -> {
+                                    viewsRatgeberBuch++;
+                                    if (isUnique) {
                                         userRatgeberBuch++;
+                                    } else {
+                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                            userRatgeberBuch++;
+                                        }
                                     }
                                 }
-                            } else if(whatMatched.equals("ratgeberSelf")){
-                                viewsRatgeberSelf++;
-                                if (isUnique) {
-                                    userRatgeberSelf++;
-                                } else {
-                                    if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                case "ratgeberSelf" -> {
+                                    viewsRatgeberSelf++;
+                                    if (isUnique) {
                                         userRatgeberSelf++;
+                                    } else {
+                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                            userRatgeberSelf++;
+                                        }
                                     }
                                 }
                             }
@@ -978,9 +1003,11 @@ public class LogService {
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead))) {
+                    //noinspection StatementWithEmptyBody
                     if(isBlacklisted) {
                         //System.out.println("BANNED!!!!!!!!! : " + line);
                     }
+                    //noinspection StatementWithEmptyBody
                     if(isSpam && !isInternal) {
                         //System.out.println("SPAM!!!: " + ip + " " + request + " " + userAgent);
                     }
@@ -1300,7 +1327,8 @@ public class LogService {
 
     }
 
-    private UniversalStatsHourly setAccountTypeAllUniStats(UniversalStatsHourly uniHourly) {
+    @SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
+    private void setAccountTypeAllUniStats(UniversalStatsHourly uniHourly) {
         HashMap<String, Integer> counts = new HashMap<>();
 
         for(WPUser user : wpUserRepo.findAll()) {
@@ -1333,10 +1361,9 @@ public class LogService {
         uniHourly.setAnbieterPremiumAnzahl(counts.getOrDefault("Premium",0));
         uniHourly.setAnbieterPremiumSponsorenAnzahl(counts.getOrDefault("Sponsor",0));
 
-        return uniHourly;
     }
 
-    private UniversalStatsHourly setNewsArticelBlogCountForUniversalStats(UniversalStatsHourly uniHourly) {
+    private void setNewsArticelBlogCountForUniversalStats(UniversalStatsHourly uniHourly) {
 
         List<Post> posts = postRepository.findAllUserPosts();
 
@@ -1372,7 +1399,6 @@ public class LogService {
         uniHourly.setAnzahlNews(newsCounter);
         uniHourly.setAnzahlBlog(blogCounter);
 
-        return uniHourly;
     }
 
     public void endDay() {
@@ -1429,8 +1455,6 @@ public class LogService {
                     updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
                     updatePostClicksMap(postId,dateLog);
                     UpdatePerformanceAndViews(dateLog, postId);
-                   // updatePerformanceViewsSearchSuccess(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
-                   // updateSearchStats(dateLog, postRepository.getIdByName(patternMatcher.group(1)), ip, patternMatcher.group(2));
                 } catch(Exception e) {
                     System.out.println("SS PROCESS LINE EXCEPTION " +line);
                 }
@@ -1438,7 +1462,7 @@ public class LogService {
             case "eventSS":
                 try {
                     if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
-                        Long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
+                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
                         updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
                         updateIPsByPost(ip, postId);
                         updatePostClicksMap(postId,dateLog);
@@ -1498,7 +1522,7 @@ public class LogService {
                 catch (Exception e){
                     System.out.println("CONTENT DOWNLOAD EXCEPTION BEI: "+ line);
                 }
-            break;
+                break;
             case "userRedirect":
                 try {
                     if(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)) != null) {
@@ -1520,10 +1544,38 @@ public class LogService {
                     System.out.println("USERREDIRECT EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
+                break;
+            case "socialsLinkedInRedirect","socialsTwitterRedirect","socialsYouTubeRedirect","socialsFacebookRedirect":
+                try {
+                        Integer latestUniId= uniRepo.getLatestUniStat().getId();
+                        Integer hour = dateLog.getHour();
+                        OutgoingSocialsRedirects redirects;
+
+                        if(outgoingSocialsRepo.findByUniIdAndHour(latestUniId,hour).isPresent()) {
+                            redirects = outgoingSocialsRepo.findByUniIdAndHour(latestUniId,hour).get();
+                        } else {
+                            redirects = new OutgoingSocialsRedirects();
+                            redirects.setHour(dateLog.getHour());
+                            redirects.setUniId(uniRepo.getLatestUniStat().getId());
+                            redirects.setLinkedin(0L);
+                            redirects.setFacebook(0L);
+                            redirects.setTwitter(0L);
+                            redirects.setYoutube(0L);
+
+                        }
+
+                        outgoingSocialsRepo.save( updateSocialsRedirects(whatMatched , redirects));
+
+                }
+                catch (Exception e) {
+                    System.out.println("SOCIALSREDIRECT EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+                break;
             case "eventView":
                 try {
                     if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
-                        Long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
+                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
                         UpdatePerformanceAndViews(dateLog, postId);
                         updateIPsByPost(ip, postId);
                         updatePostClicksMap(postId,dateLog);
@@ -1534,28 +1586,7 @@ public class LogService {
                     e.printStackTrace();
                 }
                 break;
-            case "ratgeberGlossar":
-                break;
-            case "ratgeberBuch":
-                break;
-            case "main":
-                break;
-            case "ueber":
-                break;
-            case "impressum":
-                break;
-            case "preisliste":
-                break;
-            case "partner":
-                break;
-            case "datenschutz":
-                break;
-            case "newsletter":
-                break;
-            case "image":
-                break;
-            case "agb":
-                break;
+            case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar":
 
             default:
                 break;
@@ -1567,23 +1598,6 @@ public class LogService {
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
         byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
         return Hex.toHexString(hashBytes);
-    }
-
-    public void saveStatsToDatabase() {
-        for (String user : userViews.keySet()) {
-            UserStats userStats = userStatsRepo.findByUserId(Long.valueOf(user));
-
-            long views = userViews.get(user);
-
-            if (userStats == null) {
-                userStats = new UserStats(Long.parseLong(user), views);
-            } else {
-                // Addiere die Werte zu den vorhandenen Statistiken
-                userStats.setProfileView(userStats.getProfileView() + views);
-            }
-
-            userStatsRepo.save(userStats);
-        }
     }
 
     public void updateSearchStats(LocalDateTime dateLog, long id, String ip, String searchString) {
@@ -1641,8 +1655,7 @@ public class LogService {
         String logMinute = timeParts[1];
         String logSecond = timeParts[2];
 
-        LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
-        return logTime;
+        return LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
     }
 
     public void updatePerformanceViewsSearchSuccess(LocalDateTime dateLog, long id) {
@@ -2004,7 +2017,7 @@ public class LogService {
 
     @Transactional
     public void updateTagStats(long id,boolean searchSuccess){
-        TagStat Stats = null;
+        TagStat Stats;
         try {
             Stats = tagStatRepo.getStatById((int) id);
         } catch (Exception e) {
@@ -2088,8 +2101,7 @@ public class LogService {
         Date vortag = calendar.getTime();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        String formattedDate = dateFormat.format(vortag);
-        return formattedDate;
+        return dateFormat.format(vortag);
     }
 
     public static String getDay(int zuruek){
@@ -2098,8 +2110,7 @@ public class LogService {
         Date vortag = calendar.getTime();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        String formattedDate = dateFormat.format(vortag);
-        return formattedDate;
+        return dateFormat.format(vortag);
     }
 
     public static String generateLogFileNameLastDay() {
@@ -2219,6 +2230,7 @@ public class LogService {
         return uniStats;
     }
 
+    @SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
     public UniversalStats setAccountTypeAllUniStats(UniversalStats uniStats){
         HashMap<String, Integer> counts = new HashMap<>();
 
@@ -2446,7 +2458,7 @@ public class LogService {
     }
 
     private void updatePostGeo() {
-        PostGeo postGeo = null;
+        PostGeo postGeo;
         System.out.println("POST GEO UPDATE");
         try {
             for (IPsByPost post : iPsByPostRepository.findAll()) {
@@ -2512,7 +2524,7 @@ public class LogService {
     }
 
     private void updateUserGeo() {
-        UserGeo userGeo = null;
+        UserGeo userGeo;
         System.out.println("USER GEO UPDATE");
         try {
             for (IPsByUser user : iPsByUserRepository.findAll()) {
@@ -2568,6 +2580,7 @@ public class LogService {
         }
     }
 
+    @SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
     private void updateUniqueUser(String ip, String category, LocalDateTime clickTime) throws JSONException {
         UniqueUser user = uniqueUserRepo.findByIP(ip);
         //Check whether user has clicked within last hour, if not, permanentify the user and open a new User.
@@ -2696,13 +2709,13 @@ public class LogService {
                 int clicks = uniAvg.getAmount_clicks();
 
                 if(mainLength == clicks && clicks >= 15) {
-                    JSONArray json = null;
+                    JSONArray json;
                     if(getClass().getResource("blacklist.json") != null) {
-                        json = new JSONArray(getClass().getResource("blacklist.json").getPath());
+                        json = new JSONArray(Objects.requireNonNull(getClass().getResource("blacklist.json")).getPath());
                         json.put(ip);
 
                         try {
-                            try (FileWriter writer = new FileWriter(getClass().getResource("blacklist.json").getPath())) {
+                            try (FileWriter writer = new FileWriter(Objects.requireNonNull(getClass().getResource("blacklist.json")).getPath())) {
                                 writer.write(json.toString());
                             }
                         } catch (Exception ignored) {
@@ -2795,7 +2808,7 @@ public class LogService {
         String cleanedQuery = searchQuery;
 
         try {
-            cleanedQuery = URLDecoder.decode(searchQuery, "UTF-8");
+            cleanedQuery = URLDecoder.decode(searchQuery, StandardCharsets.UTF_8);
             cleanedQuery = cleanedQuery.toLowerCase();
             // Entfernen von nicht-alphanumerischen Zeichen außer Leerzeichen
             cleanedQuery = cleanedQuery.replaceAll("[^a-z0-9 ]", "");
@@ -2812,12 +2825,8 @@ public class LogService {
         FinalSearchStatDLC newSearchDLC = new FinalSearchStatDLC(uniId, dateLog.getHour());
 
         switch (matchCase) {
-            case "user":
-                newSearchDLC.setUserId(Id);
-                break;
-            case "post":
-                newSearchDLC.setPostId(Id);
-                break;
+            case "user" -> newSearchDLC.setUserId(Id);
+            case "post" -> newSearchDLC.setPostId(Id);
         }
 
         searchDLCList.add(newSearchDLC);
@@ -2869,8 +2878,8 @@ public class LogService {
         List<FinalSearchStat> zuSpeicherndeFinalSearches = new CopyOnWriteArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
-        Integer hour = 0;
-        Integer uniId = uniRepo.getLatestUniStat().getId();
+        int hour;
+        int uniId = uniRepo.getLatestUniStat().getId();
 
         for(TemporarySearchStat stat: alleTempSearches){
            String country = IPHelper.getCountryISO(stat.getSearchIp());
@@ -2901,4 +2910,39 @@ public class LogService {
         }
     }
 
+
+    private OutgoingSocialsRedirects updateSocialsRedirects(String whatMatched ,  OutgoingSocialsRedirects redirects){
+        Long counter;
+
+        //System.out.println(whatMatched);
+
+        switch (whatMatched) {
+            case "socialsLinkedInRedirect" -> {
+                counter = redirects.getLinkedin();
+                counter++;
+                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
+                redirects.setLinkedin(counter);
+            }
+            case "socialsFacebookRedirect" -> {
+                counter = redirects.getFacebook();
+                counter++;
+                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
+                redirects.setFacebook(counter);
+            }
+            case "socialsTwitterRedirect" -> {
+                counter = redirects.getTwitter();
+                counter++;
+                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
+                redirects.setTwitter(counter);
+            }
+            case "socialsYouTubeRedirect" -> {
+                counter = redirects.getYoutube();
+                counter++;
+                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
+                redirects.setYoutube(counter);
+            }
+        }
+        //System.out.println("UPPPPDAAAATEEE REEEEDDIRREEEEEECCCCTTTTT----------------------------->>>>> "+redirects);
+        return redirects;
+    }
 }

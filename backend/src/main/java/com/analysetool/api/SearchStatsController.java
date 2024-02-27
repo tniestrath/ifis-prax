@@ -17,6 +17,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -119,14 +120,16 @@ public class SearchStatsController {
     @GetMapping("/getBadOutlierAllProviderSearches")
     public String getBadOutlierAllProviderSearches() throws JSONException {
         JSONArray Ergebnis = new JSONArray();
-        List<AnbieterSearch> anbieterSearches= anbieterSearchRepo.findAll();
-        List<Integer> counts=new ArrayList<>();
+
+        CopyOnWriteArrayList<AnbieterSearch> anbieterSearches = new CopyOnWriteArrayList<>(anbieterSearchRepo.findAll());
+
+        CopyOnWriteArrayList<Integer> counts=new CopyOnWriteArrayList<>();
 
         for(AnbieterSearch a:anbieterSearches){
             counts.add(a.getCount_found());}
         double mittelwert = MathHelper.getMeanInt(counts);
         //alle Ausreißer
-        List<Integer> Outlier = MathHelper.getOutliersInt(counts);
+        List<Integer> Outlier =  MathHelper.getOutliersInt(counts);
 
         for(Integer i:Outlier) {
 

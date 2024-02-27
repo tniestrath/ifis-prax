@@ -175,7 +175,7 @@ public class PostController {
         if(filter.isBlank()) {
             list = postRepo.findByAuthorPageable(authorId, search, PageRequest.of(page, size));
         } else {
-            list = postRepo.findByAuthorPageable(authorId, search, filter, PageRequest.of(page, size));
+            list = postRepo.findByAuthorPageable(authorId, search, remapTypeToWebsiteStandard(filter), PageRequest.of(page, size));
         }
 
         for(Post post : list) {
@@ -1689,5 +1689,13 @@ public class PostController {
         return microsecondDuration / 1_000_000.0;
     }
 
+
+
+    private String remapTypeToWebsiteStandard(String uncoolType) {
+        if(uncoolType.equals("blog")) {
+            return "blogeintrag";
+        }
+        return uncoolType;
+    }
 }
 

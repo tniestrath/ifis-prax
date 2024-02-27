@@ -112,7 +112,7 @@ public class SearchStatsController {
     /**
      * Endpoint, schlechte Ausreißer basierend auf den gefundenen Anbietern innerhalb eines Radius aller Anbietersuchen zu ermitteln.
      *
-     * @return Ein JSON-String, der schlechte Ausreißer repräsentiert(nur wenige oder keine Anbieter).
+     * @return Ein JSON-String, der schlechte Ausreißer repräsentiert (nur wenige oder keine Anbieter).
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
     //Error: ConcurrentModificationException
@@ -150,8 +150,7 @@ public class SearchStatsController {
     /**
      * Endpoint, schlechte Ausreißer basierend auf den gefundenen Anbietern innerhalb eines Radius einer gewissen Anzahl an Anbietersuchen zu ermitteln.
      * @param limit = 0 benutzt alle Suchen, sonst normales limit
-     * @return Ein JSON-String, der schlechte Ausreißer repräsentiert(nur wenige oder keine Anbieter).
-     * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
+     * @return Ein JSON-String, der schlechte Ausreißer repräsentiert (nur wenige oder keine Anbieter).
      */
     @GetMapping("/getBadOutlierForXProviderSearches")
     public String getBadOutlierForXProviderSearches(@RequestParam int limit) {
@@ -250,7 +249,7 @@ public class SearchStatsController {
     public String getSearchStatsForSimilarPostsByTags(@RequestParam Long postId,@RequestParam float similarityPercentage) throws JSONException {
         JSONArray ergebnis = new JSONArray();
         Map<Long,Float> similarityMap = postService.getSimilarPosts(postId,similarityPercentage);
-        List< FinalSearchStat> searchStats= new ArrayList<>();
+        List< FinalSearchStat> searchStats;
 
         for(Long postIds : similarityMap.keySet()){
             JSONObject obj = new JSONObject();
@@ -272,7 +271,7 @@ public class SearchStatsController {
      *
      * @param location         The location to analyze.
      * @param locationType     The type of location (e.g., city, country, state).
-     * @param searchThreshold  The threshold for the number of occurrences of a search query.
+     * @param searchThreshold  The threshold for the number of occurrences for a search query.
      * @param resultThreshold  The threshold for the result count.
      * @param analysisType     The type of analysis to perform ("searchSuccess" or "resultCount").
      * @return A map containing frequent searches with few results based on the given thresholds.
@@ -280,17 +279,13 @@ public class SearchStatsController {
     @GetMapping("/getDemandByLocation")
     public String getDemandByLocation(@RequestParam String location, @RequestParam String locationType, @RequestParam int searchThreshold, @RequestParam int resultThreshold, @RequestParam String analysisType) {
         Map<FinalSearchStat, List<FinalSearchStatDLC>> dataPool = fSearchStatService.getSearchStatsByLocation(location, locationType);
-        Map<String, Integer> responseMap;
-        switch (analysisType) {
-            case "searchSuccess":
-                responseMap = fSearchStatService.findFrequentSearchesWithFewSearchSuccesses(dataPool, searchThreshold, resultThreshold);
-                break;
-            case "resultCount":
-                responseMap = fSearchStatService.findFrequentSearchesWithFewResults(dataPool, searchThreshold, resultThreshold);
-                break;
-            default:
-                responseMap = new HashMap<>();
-        }
+        Map<String, Integer> responseMap = switch (analysisType) {
+            case "searchSuccess" ->
+                    fSearchStatService.findFrequentSearchesWithFewSearchSuccesses(dataPool, searchThreshold, resultThreshold);
+            case "resultCount" ->
+                    fSearchStatService.findFrequentSearchesWithFewResults(dataPool, searchThreshold, resultThreshold);
+            default -> new HashMap<>();
+        };
 
         try {
             // Konvertieren der Map in eine Liste von Objekten für eine einfachere JSON-Struktur
@@ -377,30 +372,22 @@ public class SearchStatsController {
      */
     @GetMapping("/getSearchCountDistributedByTime")
     public String getSearchCountDistributedByTime(@RequestParam String distributionType) throws JSONException {
-        Integer latestUniId = uniRepo.getLatestUniStat().getId();
-        Integer lowerBoundUniId=0;
+        int latestUniId = uniRepo.getLatestUniStat().getId();
+        int lowerBoundUniId=0;
         Map<Integer,Long> allSearchCountsByUniId= fSearchStatService.getSearchCountDistributedByUniId();
         Calendar cal = Calendar.getInstance();
 
         JSONArray response = new JSONArray();
 
-        switch (distributionType){
-
-            case "week":
-                lowerBoundUniId=latestUniId-7;
-                break;
-            case "month":
-                lowerBoundUniId=latestUniId-30;
-                break;
-            case "year":
-                lowerBoundUniId=latestUniId-365;
-                break;
-
+        switch (distributionType) {
+            case "week" -> lowerBoundUniId = latestUniId - 7;
+            case "month" -> lowerBoundUniId = latestUniId - 30;
+            case "year" -> lowerBoundUniId = latestUniId - 365;
         }
 
         cal.add(Calendar.DAY_OF_YEAR, -(latestUniId-lowerBoundUniId ));
 
-        for(Integer lowerBound=lowerBoundUniId;lowerBound<=latestUniId;lowerBound++){
+        for(int lowerBound = lowerBoundUniId; lowerBound<=latestUniId; lowerBound++){
             JSONObject obj = new JSONObject();
 
             Long count = allSearchCountsByUniId.getOrDefault(lowerBound,0L);
@@ -418,7 +405,7 @@ public class SearchStatsController {
     /**
      * Finds all Search-Queries and the number of times they have been searched.
      * Only 'Unfixed', so only searches that have never found anything.
-     * Nonsense or nonlegit (potential attacks) are NOT listed.
+     * Nonsense or non-legit (potential attacks) are NOT listed.
      * @return a JSONArray-String, containing JSON-Objects with 'search' and 'count'
      */
     @GetMapping("/getAllUnfixedSearches")

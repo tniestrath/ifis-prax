@@ -141,7 +141,7 @@ public class UniqueUserService {
         Long allUserCount = uniqueUserRepo.getCountOfAllUser();
         Long zeroClicksUserCount = uniqueUserRepo.getCountOfZeroClicksUser();
 
-        return (double)allUserCount/zeroClicksUserCount;
+        return (double)zeroClicksUserCount/allUserCount;
     }
 
 }

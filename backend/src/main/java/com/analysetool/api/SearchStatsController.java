@@ -115,7 +115,7 @@ public class SearchStatsController {
      * @return Ein JSON-String, der schlechte Ausreißer repräsentiert(nur wenige oder keine Anbieter).
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
-    //Error
+    //Error: ConcurrentModificationException
     @GetMapping("/getBadOutlierAllProviderSearches")
     public String getBadOutlierAllProviderSearches() throws JSONException {
         JSONArray Ergebnis = new JSONArray();
@@ -312,7 +312,6 @@ public class SearchStatsController {
         }
     }
 
-    //Error
     @GetMapping("/getTop10SearchQueriesBySS")
     public String getTop10SearchQueriesBySS(){
         JSONArray response = new JSONArray();
@@ -339,8 +338,7 @@ public class SearchStatsController {
         return response.toString();
     }
 
-    //Error
-    //schick mal den error bei mir ging es lokal ohne probleme
+    //Geht auch wieder (außer die wo es noch steht), vlt iwie DB-abhängig der Fehler
     @GetMapping("/getTop10SearchQueries")
     public String getTop10SearchQueries(){
         JSONArray response = new JSONArray();

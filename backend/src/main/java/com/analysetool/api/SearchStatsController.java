@@ -477,7 +477,8 @@ public class SearchStatsController {
     @GetMapping("/getSearchesRanked")
     public String getSearchesRanked(int page, int size) throws JSONException {
         JSONArray array = new JSONArray();
-        List<FinalSearchStat> list = finalSearchStatRepo.getAllSearchesOrderedByCount(PageRequest.of(page, size));
+        List<FinalSearchStat> list = finalSearchStatRepo.getAllSearches(PageRequest.of(page, size));
+        list.sort((o1, o2) -> (o2.getFoundAnbieterCount() + o2.getFoundArtikelCount() + o2.getFoundBlogCount() + o2.getFoundEventsCount() + o2.getFoundNewsCount() + o2.getFoundPodcastCount() + o2.getFoundRatgeberCount() + o2.getFoundPodcastCount()) - (o1.getFoundAnbieterCount() + o1.getFoundArtikelCount() + o1.getFoundBlogCount() + o1.getFoundEventsCount() + o1.getFoundNewsCount() + o1.getFoundPodcastCount() + o1.getFoundRatgeberCount() + o1.getFoundPodcastCount()));
         for(FinalSearchStat f : list) {
             if(blockedRepo.getByBlocked_search_id(f.getId()).isEmpty()) {
                 JSONObject json = new JSONObject();

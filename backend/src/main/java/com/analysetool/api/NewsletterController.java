@@ -233,7 +233,7 @@ public class NewsletterController {
         return json.toString();
     }
 
-    @GetMapping("/getNewsletterList")
+    @GetMapping("/getAll")
     public String getNewsletterList(int page, int size) throws JSONException {
         JSONArray array = new JSONArray();
         for(NewsletterEmails n : newsEmailsRepo.getAllSortedByDate(PageRequest.of(page, size))) {

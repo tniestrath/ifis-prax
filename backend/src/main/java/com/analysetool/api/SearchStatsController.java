@@ -338,7 +338,7 @@ public class SearchStatsController {
         return response.toString();
     }
 
-    //Geht auch wieder (außer die wo es noch steht), vlt iwie DB-abhängig der Fehler
+    //Geht auch wieder (außer die wo es noch steht) - no clue woran es lag
     @GetMapping("/getTop10SearchQueries")
     public String getTop10SearchQueries(){
         JSONArray response = new JSONArray();

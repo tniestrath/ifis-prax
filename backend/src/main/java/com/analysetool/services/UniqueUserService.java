@@ -136,4 +136,12 @@ public class UniqueUserService {
                 .collect(Collectors.toList());
     }
 
+    public double getBounceRateToday(){
+
+        Long allUserCount = uniqueUserRepo.getCountOfAllUser();
+        Long zeroClicksUserCount = uniqueUserRepo.getCountOfZeroClicksUser();
+
+        return (double)allUserCount/zeroClicksUserCount;
+    }
+
 }

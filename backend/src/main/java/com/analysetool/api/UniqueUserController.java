@@ -69,6 +69,11 @@ public class UniqueUserController {
         return uniqueUserService.getAllUserPaths();
     }
 
+    @GetMapping("/getBounceRateToday")
+    public String getBounceRate(){
+        return String.valueOf(uniqueUserService.getBounceRateToday());
+    }
+
 
 
 

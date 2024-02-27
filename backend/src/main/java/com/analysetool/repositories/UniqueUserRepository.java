@@ -33,4 +33,10 @@ public interface UniqueUserRepository extends JpaRepository<UniqueUser, Long> {
     @Query("SELECT u FROM UniqueUser u WHERE u.amount_of_clicks >= 2")
     List<UniqueUser> findAllByMoreThanTwoClicks();
 
+    @Query("SELECT count(u) FROM UniqueUser u WHERE u.amount_of_clicks = 0")
+    Long getCountOfZeroClicksUser();
+
+    @Query("SELECT count(u) FROM UniqueUser u ")
+    Long getCountOfAllUser();
+
 }

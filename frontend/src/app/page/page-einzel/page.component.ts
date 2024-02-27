@@ -161,6 +161,12 @@ export class PageComponent implements OnInit {
     ];
   }
 
+  getNewsletterPageCards() {
+    return [
+
+    ];
+  }
+
   ngOnInit(): void {
     this.pageSelected.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
@@ -214,6 +220,11 @@ export class PageComponent implements OnInit {
         case "Suche":{
           this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getSearchPageCards());
+          break;
+        }
+        case "Newsletter":{
+          this.pdf.restoreStyle(this.element.nativeElement);
+          this.cardsLoaded.next(this.getNewsletterPageCards());
           break;
         }
         case "PRINT":{

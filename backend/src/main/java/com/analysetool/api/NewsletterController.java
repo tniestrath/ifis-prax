@@ -234,7 +234,7 @@ public class NewsletterController {
     }
 
     @GetMapping("/getAll")
-    public String getNewsletterList(int page, int size) throws JSONException {
+    public String getNewsletterList(Integer page, Integer size) throws JSONException {
         JSONArray array = new JSONArray();
         for(NewsletterEmails n : newsEmailsRepo.getAllSortedByDate(PageRequest.of(page, size))) {
             array.put(new JSONObject(getNewsletterCallup(Math.toIntExact(n.getId()))));

@@ -116,7 +116,7 @@ public class SearchStatsController {
      * @return Ein JSON-String, der schlechte Ausreißer repräsentiert (nur wenige oder keine Anbieter).
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
-    //Error: ConcurrentModificationException
+
     @GetMapping("/getBadOutlierAllProviderSearches")
     public String getBadOutlierAllProviderSearches() throws JSONException {
         JSONArray Ergebnis = new JSONArray();

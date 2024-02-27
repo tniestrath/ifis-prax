@@ -14,9 +14,9 @@ public interface NewsletterSentRepository extends JpaRepository<NewsletterSent, 
     @Query("SELECT COUNT(n) FROM NewsletterSent n WHERE n.emailId=:emailId")
     double getAmountSentOfEmail(int emailId);
 
-    @Query("SELECT COUNT(n) FROM NewsletterSent n WHERE n.emailId=:emailid AND n.open > 0")
+    @Query("SELECT COUNT(n) FROM NewsletterSent n WHERE n.emailId=:emailId AND n.open > 0")
     double getAmountOpenedBy(int emailId);
 
-    @Query("SELECT COUNT(n) FROM NewsletterSent n WHERE n.emailId=:emailid AND n.error!=''")
+    @Query("SELECT COUNT(n) FROM NewsletterSent n WHERE n.emailId=:emailId AND n.error!=''")
     int getAmountErrorsForEmail(int emailId);
 }

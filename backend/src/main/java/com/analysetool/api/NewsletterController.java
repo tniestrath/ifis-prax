@@ -1,7 +1,10 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.Newsletter;
+import com.analysetool.repositories.NewsletterEmailsRepository;
 import com.analysetool.repositories.NewsletterRepository;
+import com.analysetool.repositories.NewsletterSentRepository;
+import com.analysetool.repositories.NewsletterStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,12 @@ public class NewsletterController {
 
     @Autowired
     NewsletterRepository newsRepo;
+    @Autowired
+    NewsletterEmailsRepository newsEmailsRepo;
+    @Autowired
+    NewsletterStatsRepository newsStatsRepo;
+    @Autowired
+    NewsletterSentRepository newsSentRepo;
 
     @GetMapping("/getStatusById")
     public char getStatusById(Long id) {

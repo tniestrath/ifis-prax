@@ -14,4 +14,7 @@ public interface EventSearchRepository extends JpaRepository<EventSearch, Long> 
 
     @Query("SELECT es FROM EventSearch es WHERE es.resultCount=0")
     List<EventSearch> getEventSearchesWithCountZero();
+
+    @Query("SELECT e FROM EventSearch e ORDER BY e.createdAt DESC")
+    List<EventSearch> getEventSearchesOrderedByDatum();
 }

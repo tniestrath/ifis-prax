@@ -138,7 +138,7 @@ public class NewsletterController {
             json.put("interactions", newsStatsRepo.getCountInteractionsForEmail(String.valueOf(emailId)));
             json.put("problems", newsSentRepo.getAmountErrorsForEmail(emailId));
 
-            List<Integer> hourlyInteractions = new ArrayList<>();
+            List<Integer> hourlyInteractions = new ArrayList<>(24);
             for(NewsletterStats n : newsStatsRepo.getAllNewsletterStatsOfEmail(String.valueOf(emailId))) {
                 int hour = n.getCreated().toLocalDateTime().getHour();
                 if(hourlyInteractions.size() >= hour) {

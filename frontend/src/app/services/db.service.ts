@@ -12,6 +12,7 @@ import {ProfileState} from "../component/user/profile-completion/profile-complet
 import {
   SearchItem, SearchRank, SearchSS
 } from "../component/search/search-no-results-list/search-list-item/search-list-item.component";
+import {Newsletter} from "../component/newsletter/Newsletter";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -81,6 +82,8 @@ export enum dbUrl {
   GET_NEWSLETTER_SUBS_YESTERDAY = "/newsletter/getAmountOfSubsYesterday",
   GET_NEWSLETTER_SUBS_BY_DATERANGE = "/newsletter/getAmountOfSubsByDateRange?daysBackTo=DAYSBACKTO&daysBackFrom=DAYSBACKFROM",
   GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS = "/newsletter/getMailByStatus?c=STATUS",
+
+  GET_NEWSLETTERS_ALL = "/newsletter/getAll?page=PAGE&size=SIZE",
 
   GET_EVENTS = "/events/getAmountOfEvents",
   GET_EVENTS_YESTERDAY = "/events/getAmountOfEventsCreatedYesterday",
@@ -497,6 +500,10 @@ export class DbService {
   async getNewsletterSubsAsMailByStatus(c : string) : Promise<string[]>{
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS).replace("STATUS", c), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getNewsletters(page : number, size : number) : Promise<Newsletter[]>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getSystemTimeHour() : Promise<number>{

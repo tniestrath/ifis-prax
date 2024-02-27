@@ -49,7 +49,7 @@ import { TagChartComponent } from './component/tag/tag-chart/tag-chart.component
 import { CallUpChartComponent } from './component/call-up-chart/call-up-chart.component';
 import { OriginByTimeChartComponent } from './component/origin-by-time-chart/origin-by-time-chart.component';
 import { Top5PostsComponent, Top5ArticleComponent, Top5BlogComponent, Top5NewsComponent, Top5WhitepaperComponent } from './component/post/top5-posts/top5-posts.component';
-import { NewsletterStatsComponent } from './component/newsletter-stats/newsletter-stats.component';
+import { NewsletterStatsComponent } from './component/newsletter/newsletter-stats/newsletter-stats.component';
 import {EventsStatsComponent, UserEventsStatsComponent} from './component/events-stats/events-stats.component';
 import { SystemloadComponent } from './component/system/systemload/systemload.component';
 import { PostTypeComponent } from './component/post/post-type/post-type.component';
@@ -78,6 +78,8 @@ import {
   SearchListSSComponent
 } from './component/search/search-no-results-list/search-list.component';
 import { SearchListItemComponent, SearchListNoResultsItemComponent, SearchListRankItemComponent, SearchListSSItemComponent } from './component/search/search-no-results-list/search-list-item/search-list-item.component';
+import { NewsletterListComponent } from './component/newsletter/newsletter-list/newsletter-list.component';
+import { NewsletterListItemComponent } from './component/newsletter/newsletter-list/newsletter-list-item/newsletter-list-item.component';
 
 @NgModule({
   declarations: [
@@ -149,7 +151,9 @@ import { SearchListItemComponent, SearchListNoResultsItemComponent, SearchListRa
     SearchListItemComponent,
     SearchListRankItemComponent,
     SearchListNoResultsItemComponent,
-    SearchListSSItemComponent
+    SearchListSSItemComponent,
+    NewsletterListComponent,
+    NewsletterListItemComponent
   ],
     imports: [
         BrowserModule,

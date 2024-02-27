@@ -312,12 +312,12 @@ public class SearchStatsController {
         }
     }
 
-    @GetMapping("/getTop10SearchQueriesBySS")
-    public String getTop10SearchQueriesBySS(){
+    @GetMapping("/getTopNSearchQueriesBySS")
+    public String getTop10SearchQueriesBySS(int number){
         JSONArray response = new JSONArray();
 
         Map<FinalSearchStat,List<FinalSearchStatDLC>> allSearchStats = fSearchStatService.getAllSearchStats();
-        List<Map.Entry<String, Integer>> top10 = fSearchStatService.getRankingTopNSearchQueriesInMapBySS(allSearchStats,10);
+        List<Map.Entry<String, Integer>> top10 = fSearchStatService.getRankingTopNSearchQueriesInMapBySS(allSearchStats,number);
 
 
         AtomicInteger rank = new AtomicInteger(1);
@@ -339,12 +339,12 @@ public class SearchStatsController {
     }
 
     //Geht auch wieder (außer die wo es noch steht) - no clue woran es lag
-    @GetMapping("/getTop10SearchQueries")
-    public String getTop10SearchQueries(){
+    @GetMapping("/getTopNSearchQueries")
+    public String getTop10SearchQueries(int number){
         JSONArray response = new JSONArray();
 
         Map<FinalSearchStat,List<FinalSearchStatDLC>> allSearchStats = fSearchStatService.getAllSearchStats();
-        List<Map.Entry<String, Long>> top10 = fSearchStatService.getRankingTopNSearchedQueries(allSearchStats,10);
+        List<Map.Entry<String, Long>> top10 = fSearchStatService.getRankingTopNSearchedQueries(allSearchStats,number);
 
 
         AtomicInteger rank = new AtomicInteger(1);
@@ -466,49 +466,6 @@ public class SearchStatsController {
         return array.toString();
     }
 
-    /**
-     *
-     * @param page the page to fetch.
-     * @param size the number of results to fetch.
-     * @return a JSON-String of a JSONArray, containing JSONObjects.
-     * Labels are 'search', 'count', 'successUserCount', 'successUserCount', 'successButNeitherCount'
-     * @throws JSONException .
-     */
-    @GetMapping("/getSearchesRanked")
-    public String getSearchesRanked(int page, int size) throws JSONException {
-        JSONArray array = new JSONArray();
-        List<FinalSearchStat> list = finalSearchStatRepo.getAllSearches(PageRequest.of(page, size));
-        list.sort((o1, o2) -> (o2.getFoundAnbieterCount() + o2.getFoundArtikelCount() + o2.getFoundBlogCount() + o2.getFoundEventsCount() + o2.getFoundNewsCount() + o2.getFoundPodcastCount() + o2.getFoundRatgeberCount() + o2.getFoundPodcastCount()) - (o1.getFoundAnbieterCount() + o1.getFoundArtikelCount() + o1.getFoundBlogCount() + o1.getFoundEventsCount() + o1.getFoundNewsCount() + o1.getFoundPodcastCount() + o1.getFoundRatgeberCount() + o1.getFoundPodcastCount()));
-        for(FinalSearchStat f : list) {
-            if(blockedRepo.getByBlocked_search_id(f.getId()).isEmpty()) {
-                JSONObject json = new JSONObject();
-                json.put("search", f.getSearchQuery());
-                json.put("count", finalSearchStatRepo.getCountForSearch(f.getSearchQuery()));
-
-                List<FinalSearchStatDLC> listOfDLC = new ArrayList<>();
-                for (Integer id : finalSearchStatRepo.getIdsBySearch(f.getSearchQuery())) {
-                    listOfDLC.addAll(finalDLCRepo.findAllByFinalSearchId(Long.valueOf(id)));
-                }
-                int postSS = 0, userSS = 0, neitherSS = 0;
-                for (FinalSearchStatDLC fdlc : listOfDLC) {
-                    if (fdlc.getPostId() != null) {
-                        postSS++;
-                    } else if (fdlc.getUserId() != null) {
-                        userSS++;
-                    } else {
-                        neitherSS++;
-                    }
-                }
-
-                json.put("successUserCount", userSS);
-                json.put("successUserCount", postSS);
-                json.put("successButNeitherCount", neitherSS);
-
-                array.put(json);
-            }
-        }
-        return array.toString();
-    }
 
     @PostMapping("/blockSearch")
     @Modifying

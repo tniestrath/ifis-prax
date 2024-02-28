@@ -55,4 +55,14 @@ public class Problem {
     public void setAffectedArea(String affectedArea) {
         this.affectedArea = affectedArea;
     }
+
+    @Override
+    public String toString() {
+        return "Problem{" +
+                "severity=" + severity +
+                ", description='" + description + '\'' +
+                ", affectedArea='" + affectedArea + '\'' +
+                ", suggestedSolutions='" + suggestedSolutions + '\'' +
+                '}';
+    }
 }

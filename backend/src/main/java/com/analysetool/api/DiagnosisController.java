@@ -1,12 +1,14 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.FinalSearchStatDLC;
+import com.analysetool.modells.UniqueUser;
 import com.analysetool.modells.UniversalCategoriesDLC;
 import com.analysetool.modells.UniversalStats;
 import com.analysetool.repositories.FinalSearchStatDLCRepository;
 import com.analysetool.repositories.PostTypeRepository;
 import com.analysetool.repositories.UniversalCategoriesDLCRepository;
 import com.analysetool.repositories.universalStatsRepository;
+import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Problem;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -35,6 +38,8 @@ public class DiagnosisController {
     PostTypeRepository postTypeRepo;
     @Autowired
     UniversalCategoriesDLCRepository uniCatRepo;
+    @Autowired
+    UniqueUserService uniqueUserService;
     //ToDo : Add Logic to partial checkups.
 
     /**
@@ -327,5 +332,49 @@ public class DiagnosisController {
         return list;
     }
 
+    private List<Problem> findPotentialBots(int repeatedClicksLimit){
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "UniqueUser";
+        int severityError= 2;
+        int severityNoBots=0;
+        String descriptionPotentialBot = "Potential Bot has been found. IP: ";
+        String noPotentialBotfound="No potential Bot has been found.";
+        String solutions = "add to Blacklist";
+        Integer clicks = 0;
+        String ip = "";
+
+        List<UniqueUser> potentialBots= uniqueUserService.getPossibleBots(repeatedClicksLimit);
+        if(!potentialBots.isEmpty()){
+
+            for(UniqueUser potBot: potentialBots){
+                try {
+                    Map <String,Long> categoryClicksMap = uniqueUserService.getClicksCategory(potBot);
+                    if(uniqueUserService.areClicksInSingleCategory(categoryClicksMap)){
+                        String category = uniqueUserService.getCategoryOfClicks(categoryClicksMap);
+                        clicks = potBot.getAmount_of_clicks();
+                        ip = potBot.getIp();
+                        Problem problem = new Problem(severityError,descriptionPotentialBot+ip+" ,suspicious click in this category: "+category+", amount of clicks: "+ String.valueOf(clicks),area,solutions);
+                        list.add(problem);
+                    }
+
+                } catch (Exception e) {
+                   System.out.println("potential bot processing error :"+e.getStackTrace());}
+            }
+
+        }else{
+            Problem noProblem= new Problem(severityNoBots,noPotentialBotfound,area);
+            list.add(noProblem);
+        }
+
+    return list;
+    }
+
+    //klappt wie es soll (nur Lokal getestet) muss man sich nur auf ein Limit einigen ab wv wiederholende Klicks jemand als Bot gilt und severity auch, kann ja ein Sicherheitsrisiko sein
+    @GetMapping("/getBotProblem")
+    private String findPotentialBotsTest(int repeatedClicksLimit) {
+
+        return findPotentialBots(repeatedClicksLimit).toString();
+    }
 
 }

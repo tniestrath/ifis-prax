@@ -203,11 +203,13 @@ public class NewsletterController {
     @GetMapping("/getNewsletterGeo")
     public String getNewsletterGeoTotal() throws JSONException {
         JSONObject json = new JSONObject();
+        int total = 0;
 
         for(NewsletterStats n : newsStatsRepo.findAll()) {
             String country, county;
             country = IPHelper.getCountryName(n.getIp());
             county = IPHelper.getSubISO(n.getIp());
+            total++;
 
             switch (country) {
 
@@ -226,8 +228,7 @@ public class NewsletterController {
                         json.put(countryISO,1);
                     }
                 }
-
-                default -> {
+                case "Germany" -> {
                     county = county == null ? "XD" : county;
                     try {
                         json.put(county, json.getInt(county) + 1);
@@ -237,6 +238,7 @@ public class NewsletterController {
                 }
             }
         }
+        json.put("total", total);
         return json.toString();
     }
 

@@ -1,12 +1,18 @@
 package com.analysetool.api;
 
+import com.analysetool.modells.FinalSearchStatDLC;
+import com.analysetool.modells.UniversalCategoriesDLC;
 import com.analysetool.modells.UniversalStats;
+import com.analysetool.repositories.FinalSearchStatDLCRepository;
+import com.analysetool.repositories.PostTypeRepository;
+import com.analysetool.repositories.UniversalCategoriesDLCRepository;
 import com.analysetool.repositories.universalStatsRepository;
 import com.analysetool.util.Problem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +29,12 @@ public class DiagnosisController {
 
     @Autowired
     universalStatsRepository uniRepo;
-
+    @Autowired
+    FinalSearchStatDLCRepository finalSearchStatDLCRepo;
+    @Autowired
+    PostTypeRepository postTypeRepo;
+    @Autowired
+    UniversalCategoriesDLCRepository uniCatRepo;
     //ToDo : Add Logic to partial checkups.
 
     /**
@@ -67,6 +78,31 @@ public class DiagnosisController {
     private List<Problem> findUniStatProblems() {
         List<Problem> list = new ArrayList<>();
         list.addAll(uniDateConsistencyCheckup());
+        list.addAll(uniValuesCheckup());
+        return list;
+    }
+
+    private List<Problem> uniValuesCheckup() {
+        List<Problem> list  = new ArrayList<>();
+        int severityNegative = 5;
+        String descriptionNegative = "A negative Value has been found, where it shouldn't be possible: ";
+        String area = "uni-stat-values";
+
+        for(UniversalStats uni : uniRepo.findAllOrderById()) {
+            if(uni.getTotalClicks() < 0) {
+                list.add(new Problem(severityNegative, descriptionNegative + "totalClicks " + uni.getId(), area));
+            } else if(uni.getAnbieter_abolos_anzahl() <0) {
+                list.add(new Problem(severityNegative, descriptionNegative + "anbieterAbolos at " + uni.getId(), area));
+            } else if(uni.getAnbieterBasicAnzahl() <0) {
+                list.add(new Problem(severityNegative, descriptionNegative + "anbieterBasic at " + uni.getId(), area));
+            } else if(uni.getAnbieterBasicPlusAnzahl() <0) {
+                list.add(new Problem(severityNegative, descriptionNegative + "anbieterBasicPlus at " + uni.getId(), area));
+            } else if(uni.getAnbieterPlusAnzahl() <0) {
+                list.add(new Problem(severityNegative, descriptionNegative + "anbieterPlus at " + uni.getId(), area));
+            } else if(uni.getAnbieterPremiumAnzahl() <0) {
+                list.add(new Problem(severityNegative, descriptionNegative + "anbieterPremium at " + uni.getId(), area));
+            }
+        }
         return list;
     }
 
@@ -108,6 +144,110 @@ public class DiagnosisController {
 
     private List<Problem> findUniDLCProblems() {
         List<Problem> list = new ArrayList<>();
+        list.addAll(uniDLCWrongReferenceCheckup());
+        list.addAll(uniDLCMissingHourCheckup());
+        list.addAll(uniDLCValuesCheckup());
+        return list;
+    }
+
+    private List<Problem> uniDLCWrongReferenceCheckup() {
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "UniDLC";
+        int severityError= 5;
+        String descriptionUniIdMissing = "A reference to a non-existent UniversalStats has been found. ID noted is: ";
+        String descriptionUniIdAfterLatest = "A reference to a UniversalStats of the future has been found. ID noted is: ";
+
+        List<Integer> uniIds = uniRepo.getAllUniIds();
+
+        for(UniversalCategoriesDLC cat : uniCatRepo.findAll()) {
+            if(!uniIds.contains(cat.getUniStatId())) {
+                if(uniRepo.getLatestUniStat().getId() < cat.getUniStatId()) {
+                    list.add(new Problem(severityError, descriptionUniIdAfterLatest + cat.getUniStatId(), area));
+                } else {
+                    list.add(new Problem(severityError, descriptionUniIdMissing + cat.getUniStatId(), area));
+                }
+            }
+        }
+        return list;
+    }
+
+    private List<Problem> uniDLCMissingHourCheckup() {
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "UniDLC";
+        int severityError= 2;
+        String descriptionHourMissing = "A missing hour has been found, on UniId: ";
+
+        int lastHour = -1;
+
+        for(UniversalCategoriesDLC cat : uniCatRepo.findAll(Sort.by("id"))) {
+            if(lastHour == -1) {
+                lastHour = cat.getStunde();
+            } else if(lastHour + 1 != cat.getStunde()){
+                list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
+            }
+        }
+
+        return list;
+    }
+
+    private List<Problem> uniDLCValuesCheckup() {
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "UniDLC";
+        int severityError= 1;
+        String descriptionInvaldValue = "An invalid value has been found for UniDLCId: ";
+
+
+        for(UniversalCategoriesDLC cat : uniCatRepo.findAll()) {
+            boolean besucherError= cat.getBesucherGlobal() < 0
+                    || cat.getBesucherArticle() < 0
+                    || cat.getBesucherNews() < 0
+                    || cat.getBesucherBlog() < 0
+                    || cat.getBesucherPodcast() < 0
+                    || cat.getBesucherWhitepaper() < 0
+                    || cat.getBesucherRatgeber() < 0
+                    || cat.getBesucherRatgeberPost() < 0
+                    || cat.getBesucherRatgeberBuch() < 0
+                    || cat.getBesucherRatgeberSelf() < 0
+                    || cat.getBesucherMain() < 0
+                    || cat.getBesucherUeber() < 0
+                    || cat.getBesucherImpressum() < 0
+                    || cat.getBesucherPreisliste() < 0
+                    || cat.getBesucherPartner() < 0
+                    || cat.getBesucherDatenschutz() < 0
+                    || cat.getBesucherNewsletter() < 0
+                    || cat.getBesucherImage() < 0
+                    || cat.getBesucherAGBS() < 0;
+            boolean viewError = cat.getViewsGlobal() < 0
+                    || cat.getViewsArticle() < 0
+                    || cat.getViewsNews() < 0
+                    || cat.getViewsBlog() < 0
+                    || cat.getViewsPodcast() < 0
+                    || cat.getViewsWhitepaper() < 0
+                    || cat.getViewsRatgeber() < 0
+                    || cat.getViewsRatgeberPost() < 0
+                    || cat.getViewsRatgeberBuch() < 0
+                    || cat.getViewsRatgeberSelf() < 0
+                    || cat.getViewsMain() < 0
+                    || cat.getViewsUeber() < 0
+                    || cat.getViewsImpressum() < 0
+                    || cat.getViewsPreisliste() < 0
+                    || cat.getViewsPartner() < 0
+                    || cat.getViewsDatenschutz() < 0
+                    || cat.getViewsNewsletter() < 0
+                    || cat.getViewsImage() < 0
+                    || cat.getViewsAGBS() < 0;
+
+            if(besucherError) {
+                list.add(new Problem(severityError, descriptionInvaldValue + cat.getId() + " in 'besucher'", area));
+            } else if (viewError) {
+                list.add(new Problem(severityError, descriptionInvaldValue + cat.getId() + " in 'views'", area));
+            }
+        }
+
+
         return list;
     }
 
@@ -121,11 +261,62 @@ public class DiagnosisController {
         return list;
     }
 
-    private List<Problem> findTypeProblems() {
-        List<Problem> list = new ArrayList<>();
+    /**
+     * Checks in FinalSearchStatsDLC, whether there are rows that report a SearchSuccess, without anything being clicked
+     * @return a List of Problems.
+     */
+    private List<Problem> successErrorCheck() {
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "SearchSuccess";
+        int severityError= 2;
+        String descriptionInvalid = "A row with neither a post or user clicked has been found for: ";
+        String descriptionNoFinal = "A row with no FinalSearchStatsId has been found for: ";
+
+        for(FinalSearchStatDLC f : finalSearchStatDLCRepo.findAll()) {
+            if(f.getPostId() == null && f.getUserId() == null) {
+                list.add(new Problem(severityError, descriptionInvalid + "SS DLC ID: " + f.getId() + "Final ID: " +f.getFinalSearchId(), area));
+            }
+            if(f.getFinalSearchId() == null) {
+                list.add(new Problem(severityError, descriptionNoFinal + f.getId() + "Final ID: " +f.getFinalSearchId(), area));
+            }
+        }
         return list;
     }
 
+    private List<Problem> findTypeProblems() {
+        List<Problem> list = new ArrayList<>();
+        list.addAll(newTypeFoundCheck());
+        return list;
+    }
+
+    private List<Problem> newTypeFoundCheck() {
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "PostTypes";
+        int severityError= 3;
+        String descriptionNewType = "A new Type has been found: ";
+        String solutions = "Add the Type to newTypeFoundCheck or change generating algorithm";
+
+        for(String type : postTypeRepo.getDistinctTypes()) {
+            if(!type.equalsIgnoreCase("cyber-risk-check")
+                    && !type.equalsIgnoreCase("artikel")
+                    && !type.equalsIgnoreCase("news")
+                    && !type.equalsIgnoreCase("Event: Sonstige")
+                    && !type.equalsIgnoreCase("blog")
+                    && !type.equalsIgnoreCase("whitepaper")
+                    && !type.equalsIgnoreCase("Event: Kongress")
+                    && !type.equalsIgnoreCase("Event: Schulung/Seminar")
+                    && !type.equalsIgnoreCase("podcast_first_series")
+                    && !type.equalsIgnoreCase("Event: Workshop")
+                    && !type.equalsIgnoreCase("Event: Messe")
+                    && !type.equalsIgnoreCase("videos")) {
+                    list.add(new Problem(severityError, descriptionNewType + type, area, solutions));
+            }
+        }
+
+        return list;
+    }
 
     private List<Problem> findWebsiteProblems() {
         List<Problem> list = new ArrayList<>();

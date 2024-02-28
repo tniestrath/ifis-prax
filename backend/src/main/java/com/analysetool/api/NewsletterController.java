@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -133,22 +134,26 @@ public class NewsletterController {
         if(newsEmailsRepo.findById((long) emailId).isPresent()) {
             JSONObject json = new JSONObject();
             json.put("totalOpens", newsSentRepo.getSumOpenedForEmail(emailId));
-            json.put("OR", newsSentRepo.getAmountSentOfEmail(emailId) / newsSentRepo.getAmountOpenedBy(emailId));
+            if(newsSentRepo.getAmountOpenedBy(emailId).isPresent() && newsSentRepo.getAmountOpenedBy(emailId).get() > 0 && newsSentRepo.getAmountSentOfEmail(emailId).isPresent()) {
+                json.put("OR", newsSentRepo.getAmountSentOfEmail(emailId).get() / newsSentRepo.getAmountOpenedBy(emailId).get());
+            } else {
+                json.put("OR", 0);
+            }
             json.put("subject", newsEmailsRepo.findById((long) emailId).get().getSubject());
             json.put("interactions", newsStatsRepo.getCountInteractionsForEmail(String.valueOf(emailId)));
             json.put("problems", newsSentRepo.getAmountErrorsForEmail(emailId));
 
-            List<Integer> hourlyInteractions = new ArrayList<>(24);
+            List<Integer> hourlyInteractions = new ArrayList<>(Collections.nCopies(24, 0));
             for(NewsletterStats n : newsStatsRepo.getAllNewsletterStatsOfEmail(String.valueOf(emailId))) {
                 int hour = n.getCreated().toLocalDateTime().getHour();
                 if(hourlyInteractions.size() >= hour) {
-                    hourlyInteractions.set(hour, hourlyInteractions.get(hour));
+                    hourlyInteractions.set(hour, hourlyInteractions.get(hour) + 1);
                 } else {
                     hourlyInteractions.set(hour, 1);
                 }
             }
             json.put("interactionTimes", hourlyInteractions);
-
+            json.put("id", emailId);
             return json.toString();
         } else {
             return "email id invalid";
@@ -214,14 +219,16 @@ public class NewsletterController {
                     }
                 }
                 case "Netherlands", "Switzerland", "Austria", "Luxembourg" -> {
+                    String countryISO = IPHelper.getCountryISO(n.getIp()) == null ? "XD" : IPHelper.getCountryISO(n.getIp());
                     try {
-                        json.put(IPHelper.getCountryISO(n.getIp()), json.getInt(IPHelper.getCountryISO(n.getIp()) + 1));
+                        json.put(countryISO, json.getInt(IPHelper.getCountryISO(n.getIp()) + 1));
                     } catch (JSONException e) {
-                        json.put(IPHelper.getCountryISO(n.getIp()),1);
+                        json.put(countryISO,1);
                     }
                 }
 
                 default -> {
+                    county = county == null ? "XD" : county;
                     try {
                         json.put(county, json.getInt(county) + 1);
                     } catch (JSONException e) {

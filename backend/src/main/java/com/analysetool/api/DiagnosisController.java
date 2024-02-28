@@ -259,6 +259,7 @@ public class DiagnosisController {
 
     private List<Problem> findSearchStatProblems() {
         List<Problem> list = new ArrayList<>();
+        list.addAll(successErrorCheck());
         return list;
     }
 

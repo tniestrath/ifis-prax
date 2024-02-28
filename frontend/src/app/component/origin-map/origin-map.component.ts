@@ -491,13 +491,6 @@ export class OriginMapNewsletterGlobalComponent extends OriginMapComponent{
         });
       }
     }, 100);
-
-    SysVars.SELECTED_NEWSLETTER.subscribe(nl => {
-      this.db.getNewsletterGeo(Number.parseInt(nl.id)).then(res => {
-        this.readData(res, svgElement);
-        this.cdr.detectChanges();
-      });
-    });
   }
 
   override readData(data : any, svgElement: any){

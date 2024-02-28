@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -138,7 +139,7 @@ public class NewsletterController {
             json.put("interactions", newsStatsRepo.getCountInteractionsForEmail(String.valueOf(emailId)));
             json.put("problems", newsSentRepo.getAmountErrorsForEmail(emailId));
 
-            List<Integer> hourlyInteractions = new ArrayList<>(24);
+            List<Integer> hourlyInteractions = new ArrayList<>(Collections.nCopies(24, 0));
             for(NewsletterStats n : newsStatsRepo.getAllNewsletterStatsOfEmail(String.valueOf(emailId))) {
                 int hour = n.getCreated().toLocalDateTime().getHour();
                 if(hourlyInteractions.size() >= hour) {

@@ -182,10 +182,10 @@ public class DiagnosisController {
         int lastHour = -1;
 
         for(UniversalCategoriesDLC cat : uniCatRepo.findAll(Sort.by("id"))) {
-            if(lastHour == -1) {
-                lastHour = cat.getStunde();
-            } else if(lastHour + 1 != cat.getStunde()){
-                list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
+            if (lastHour != -1) {
+                if(lastHour + 1 != cat.getStunde()){
+                    list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
+                }
             }
             lastHour = cat.getStunde();
         }

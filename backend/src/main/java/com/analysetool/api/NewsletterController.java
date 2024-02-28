@@ -152,7 +152,7 @@ public class NewsletterController {
                     hourlyInteractions.set(hour, 1);
                 }
             }
-            json.put("interactionTimes", hourlyInteractions);
+            json.put("interactionTimes", new JSONArray(hourlyInteractions));
             json.put("id", emailId);
             return json.toString();
         } else {

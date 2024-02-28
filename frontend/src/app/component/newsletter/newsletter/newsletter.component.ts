@@ -17,9 +17,11 @@ export class NewsletterComponent extends DashBaseComponent implements OnInit{
   title : string = "Aktueller Newsletter"
 
   ngOnInit(): void {
-    this.db.getLatestNewsletter().then(res => this.data = res);
-    this.interactionTimeMax = this.data.interactionTimes.indexOf(Math.max(...this.data.interactionTimes));
-    console.log(this.interactionTimeMax + " : " + this.data.interactionTimes)
+    this.db.getLatestNewsletter().then(res => {
+      this.data = res;
+      this.interactionTimeMax = this.data.interactionTimes.indexOf(Math.max(...this.data.interactionTimes, 1));
+    });
+
 
     SysVars.SELECTED_NEWSLETTER.subscribe( nl => {
       this.data = nl;

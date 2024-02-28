@@ -445,3 +445,71 @@ export class OriginMapNewsletterComponent extends OriginMapComponent{
     }
   }
 }
+
+@Component({
+  selector: 'dash-origin-map-newsletter-global',
+  templateUrl: './origin-map.component.html',
+  styleUrls: ['./origin-map.component.css', "../../component/dash-base/dash-base.component.css"],
+  animations: [
+    trigger('scaleOnLoad', [
+      state('initial', style({
+        transform: 'scale(0)',
+        transformOrigin: '50% 50%'
+      })),
+      state('scaled', style({
+        transform: 'scale(1)',
+        transformOrigin: '50% 50%'
+      })),
+      transition('initial => scaled', animate('1000ms ease-in'))
+    ])
+  ]
+})
+export class OriginMapNewsletterGlobalComponent extends OriginMapComponent{
+
+  override ngOnInit() {
+    this.setToolTip("Dies ist eine Karte, die durch Färbung die Orte angibt, von denen am meisten auf den Newsletter zugegriffen wird. " +
+      "Mit einem Click auf eine Region werden genauere Informationen angezeigt.");
+    this.isRegionSelected = "none";
+    this.showCharts = "none";
+
+    this.tooltipElement = document.getElementById("tooltip") ?? new HTMLElement();
+    this.tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
+    this.tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
+    this.tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
+
+    const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
+
+    const toHide = document.querySelectorAll<HTMLElement>(".hide-me-on-newsletter");
+    toHide.forEach(value => value.style.display = "none");
+
+    setTimeout(() => {
+      this.isScaled = true;
+      if (svgElement) {
+        this.db.getNewslettersGeo().then(res => {
+          this.readData(res, svgElement);
+          this.cdr.detectChanges();
+        });
+      }
+    }, 100);
+
+    SysVars.SELECTED_NEWSLETTER.subscribe(nl => {
+      this.db.getNewsletterGeo(Number.parseInt(nl.id)).then(res => {
+        this.readData(res, svgElement);
+        this.cdr.detectChanges();
+      });
+    });
+  }
+
+  override readData(data : any, svgElement: any){
+    let map : Map<string, number> = new Map(Object.entries(data));
+    // @ts-ignore
+    this.totalDE = map.get("totalDACH");
+    // @ts-ignore
+    this.percentage = this.totalDE / map.get("total");
+    this.region_clicks = [];
+    for (const region of map){
+      if (String(region.at(0)) == "total" || String(region.at(0)) == "totalDACH") continue;
+      this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
+    }
+  }
+}

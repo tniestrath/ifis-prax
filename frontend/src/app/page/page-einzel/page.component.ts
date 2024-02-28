@@ -10,7 +10,11 @@ import {RelevanceComponent} from "../../component/gauge/relevance/relevance.comp
 import {SysVars} from "../../services/sys-vars-service";
 import {UserPlanComponent} from "../../component/user/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
-import {OriginMapComponent, OriginMapNewsletterComponent} from "../../component/origin-map/origin-map.component";
+import {
+  OriginMapComponent,
+  OriginMapNewsletterComponent,
+  OriginMapNewsletterGlobalComponent
+} from "../../component/origin-map/origin-map.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
 import {
@@ -167,7 +171,8 @@ export class PageComponent implements OnInit {
     return [
       {type: NewsletterStatsComponent, row: 1, col: 1, height: 1, width: 1},
       {type: NewsletterComponent, row: 1, col: 2, height: 2, width: 3},
-      {type: NewsletterListComponent, row: 1, col: 5, height: 4, width: 2},
+      {type: NewsletterListComponent, row: 1, col: 5, height: 2, width: 2},
+      {type: OriginMapNewsletterGlobalComponent, row: 3, col: 5, height: 2, width: 2}
     ];
   }
 

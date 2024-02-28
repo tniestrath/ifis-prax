@@ -63,7 +63,7 @@ public class DiagnosisController {
     private List<Problem> allCheckups() {
         List<Problem> largeList  = new ArrayList<>();
 
-        //Add new lines for new checkups.
+        //Add new lines for new categories of checkups. If any of these are applicable, please add new routines in the respective subroutine.
         largeList.addAll(findUniStatProblems());
         largeList.addAll(findUniDLCProblems());
         largeList.addAll(findGeoProblems());

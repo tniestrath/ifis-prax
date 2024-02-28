@@ -187,6 +187,7 @@ public class DiagnosisController {
             } else if(lastHour + 1 != cat.getStunde()){
                 list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
             }
+            lastHour = cat.getStunde();
         }
 
         return list;

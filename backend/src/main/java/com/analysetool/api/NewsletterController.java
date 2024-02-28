@@ -198,6 +198,13 @@ public class NewsletterController {
                        json.put(county,1);
                    }
                }
+               default -> {
+                   try {
+                       json.put("XX", json.getInt("XX") + 1);
+                   } catch (JSONException e) {
+                       json.put("XX",1);
+                   }
+               }
            }
        }
        json.put("total", total);
@@ -228,7 +235,7 @@ public class NewsletterController {
                 case "Netherlands", "Switzerland", "Austria", "Luxembourg" -> {
                     String countryISO = IPHelper.getCountryISO(n.getIp()) == null ? "XD" : IPHelper.getCountryISO(n.getIp());
                     try {
-                        json.put(countryISO, json.getInt(IPHelper.getCountryISO(n.getIp()) + 1));
+                        json.put(countryISO, json.getInt(IPHelper.getCountryISO(n.getIp())) + 1);
                     } catch (JSONException e) {
                         json.put(countryISO,1);
                     }
@@ -239,6 +246,13 @@ public class NewsletterController {
                         json.put(county, json.getInt(county) + 1);
                     } catch (JSONException e) {
                         json.put(county,1);
+                    }
+                }
+                default -> {
+                    try {
+                        json.put("XX", json.getInt("XX") + 1);
+                    } catch (JSONException e) {
+                        json.put("XX",1);
                     }
                 }
             }

@@ -153,7 +153,7 @@ public class NewsletterController {
                 }
             }
             json.put("interactionTimes", hourlyInteractions);
-
+            json.put("id", emailId);
             return json.toString();
         } else {
             return "email id invalid";

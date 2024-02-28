@@ -31,7 +31,7 @@ import { PostComponent } from './component/post/post.component';
 import { PotentialComponent } from './component/potential/potential.component';
 import { UserPlanComponent } from './component/user/user-plan/user-plan.component';
 import { LoginComponent } from './component/login/login.component';
-import { OriginMapComponent } from './component/origin-map/origin-map.component';
+import {OriginMapComponent, OriginMapNewsletterComponent} from './component/origin-map/origin-map.component';
 import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time.component';
 import { TagPieComponent } from './component/tag/tag-pie/tag-pie.component';
 import { ImgFallbackDirective } from './img-fallback.directive';
@@ -108,6 +108,7 @@ import { NewsletterComponent } from './component/newsletter/newsletter/newslette
     UserPlanComponent,
     LoginComponent,
     OriginMapComponent,
+    OriginMapNewsletterComponent,
     ClicksByTimeComponent,
     TagPieComponent,
     ImgFallbackDirective,

@@ -77,13 +77,16 @@ export enum dbUrl {
   GET_CALLUP_CATEGORIES_BY_DATETIME = "/bericht/getCallupByCategoryDateAndHour?date=DATE&hour=HOUR",
   GET_CALLUP_CATEGORIES_ALL_TIME = "/bericht/getCallupByCategoryAllTime",
 
-
+  GET_NEWSLETTER = "/newsletter/getNewsletterCallup?emailId=ID",
+  GET_NEWSLETTER_LATEST = "/newsletter/getLatestNewsletterCallup",
   GET_NEWSLETTER_SUBS = "/newsletter/getStatusAll",
   GET_NEWSLETTER_SUBS_YESTERDAY = "/newsletter/getAmountOfSubsYesterday",
   GET_NEWSLETTER_SUBS_BY_DATERANGE = "/newsletter/getAmountOfSubsByDateRange?daysBackTo=DAYSBACKTO&daysBackFrom=DAYSBACKFROM",
   GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS = "/newsletter/getMailByStatus?c=STATUS",
+  GET_NEWSLETTER_GEO = "/newsletter/getNewsletterGeoSingle?emailId=ID",
 
   GET_NEWSLETTERS_ALL = "/newsletter/getAll?page=PAGE&size=SIZE",
+  GET_NEWSLETTERS_GEO = "/newsletter/getNewsletterGeo",
 
   GET_EVENTS = "/events/getAmountOfEvents",
   GET_EVENTS_YESTERDAY = "/events/getAmountOfEventsCreatedYesterday",
@@ -504,6 +507,22 @@ export class DbService {
   async getNewsletters(page : number, size : number) : Promise<Newsletter[]>{
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getNewslettersGeo() : Promise<Map<string,number>>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTERS_GEO), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getNewsletter(id : number) : Promise<Newsletter>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER).replace("ID", String(id)), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getLatestNewsletter() : Promise<Newsletter>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_LATEST), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getNewsletterGeo(id : number) : Promise<Map<string,number>>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_GEO).replace("ID", String(id)), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getSystemTimeHour() : Promise<number>{

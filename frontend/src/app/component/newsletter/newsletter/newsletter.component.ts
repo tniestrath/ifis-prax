@@ -11,15 +11,21 @@ import {SysVars} from "../../../services/sys-vars-service";
 })
 export class NewsletterComponent extends DashBaseComponent implements OnInit{
   data : Newsletter = new Newsletter("", "_blank", 0, 0, 0, 0, []);
-  protected interactionTimeMax = this.data.interactionTimes.indexOf(Math.max(...this.data.interactionTimes));
+  protected interactionTimeMax = 0;
   protected readonly DashColors = DashColors;
 
   title : string = "Aktueller Newsletter"
 
   ngOnInit(): void {
+    this.db.getLatestNewsletter().then(res => this.data = res);
+    this.interactionTimeMax = this.data.interactionTimes.indexOf(Math.max(...this.data.interactionTimes));
+    console.log(this.interactionTimeMax + " : " + this.data.interactionTimes)
+
     SysVars.SELECTED_NEWSLETTER.subscribe( nl => {
       this.data = nl;
       this.title = "Ausgewählter Newsletter";
     })
   }
+
+  protected readonly Number = Number;
 }

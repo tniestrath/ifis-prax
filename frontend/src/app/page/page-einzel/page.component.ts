@@ -10,7 +10,7 @@ import {RelevanceComponent} from "../../component/gauge/relevance/relevance.comp
 import {SysVars} from "../../services/sys-vars-service";
 import {UserPlanComponent} from "../../component/user/user-plan/user-plan.component";
 import {LoginComponent} from "../../component/login/login.component";
-import {OriginMapComponent} from "../../component/origin-map/origin-map.component";
+import {OriginMapComponent, OriginMapNewsletterComponent} from "../../component/origin-map/origin-map.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
 import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
 import {

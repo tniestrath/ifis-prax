@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {SysVars} from "../../services/sys-vars-service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
@@ -373,6 +373,75 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   }
 
   protected readonly Math = Math;
+  protected readonly SysVars = SysVars;
+}
 
+@Component({
+  selector: 'dash-origin-map-newsletter',
+  templateUrl: './origin-map.component.html',
+  styleUrls: ["../newsletter/newsletter/newsletter.component.css"],
+  animations: [
+    trigger('scaleOnLoad', [
+      state('initial', style({
+        transform: 'scale(0)',
+        transformOrigin: '50% 50%'
+      })),
+      state('scaled', style({
+        transform: 'scale(1)',
+        transformOrigin: '50% 50%'
+      })),
+      transition('initial => scaled', animate('1000ms ease-in'))
+    ])
+  ]
+})
+export class OriginMapNewsletterComponent extends OriginMapComponent{
+  @Input("emailId") emailId : string = "0";
 
+  override ngOnInit() {
+    this.setToolTip("Dies ist eine Karte, die durch Färbung die Orte angibt, von denen am meisten auf den Newsletter zugegriffen wird. " +
+      "Mit einem Click auf eine Region werden genauere Informationen angezeigt.", false);
+    this.isRegionSelected = "none";
+    this.showCharts = "none";
+
+    this.tooltipElement = document.getElementById("tooltip") ?? new HTMLElement();
+    this.tooltipCharts = document.getElementById("tooltip-charts") ?? new HTMLElement();
+    this.tooltipHeader = document.getElementById('tooltip-header') ?? new HTMLElement();
+    this.tooltipCities = document.getElementById('tooltip-cities') ?? new HTMLElement();
+
+    const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
+
+    // @ts-ignore
+    let titleElement = document.getElementsByClassName("origin-map-title")[0] as HTMLDivElement;
+    titleElement.remove();
+
+    setTimeout(() => {
+      this.isScaled = true;
+      if (svgElement) {
+        this.db.getNewsletterGeo(Number.parseInt(this.emailId)).then(res => {
+          this.readData(res, svgElement);
+          this.cdr.detectChanges();
+        });
+      }
+    }, 100);
+
+    SysVars.SELECTED_NEWSLETTER.subscribe(nl => {
+      this.db.getNewsletterGeo(Number.parseInt(nl.id)).then(res => {
+        this.readData(res, svgElement);
+        this.cdr.detectChanges();
+      });
+    });
+  }
+
+  override readData(data : any, svgElement: any){
+    let map : Map<string, number> = new Map(Object.entries(data));
+    // @ts-ignore
+    this.totalDE = map.get("totalDACH");
+    // @ts-ignore
+    this.percentage = this.totalDE / map.get("total");
+    this.region_clicks = [];
+    for (const region of map){
+      if (String(region.at(0)) == "total" || String(region.at(0)) == "totalDACH") continue;
+      this.setRegionColor(svgElement, String(region.at(0)), Number(region.at(1)), this.totalDE);
+    }
+  }
 }

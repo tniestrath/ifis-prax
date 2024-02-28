@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface NewsletterSentRepository extends JpaRepository<NewsletterSent, Long> {
 
@@ -12,10 +14,10 @@ public interface NewsletterSentRepository extends JpaRepository<NewsletterSent, 
     int getSumOpenedForEmail(int emailId);
 
     @Query("SELECT COUNT(n) FROM NewsletterSent n WHERE n.emailId=:emailId")
-    double getAmountSentOfEmail(int emailId);
+    Optional<Double> getAmountSentOfEmail(int emailId);
 
     @Query("SELECT COUNT(n) FROM NewsletterSent n WHERE n.emailId=:emailId AND n.open > 0")
-    double getAmountOpenedBy(int emailId);
+    Optional<Double> getAmountOpenedBy(int emailId);
 
     @Query("SELECT COUNT(n) FROM NewsletterSent n WHERE n.emailId=:emailId AND n.error!=''")
     int getAmountErrorsForEmail(int emailId);

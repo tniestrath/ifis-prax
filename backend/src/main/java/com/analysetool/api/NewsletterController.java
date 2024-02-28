@@ -134,7 +134,11 @@ public class NewsletterController {
         if(newsEmailsRepo.findById((long) emailId).isPresent()) {
             JSONObject json = new JSONObject();
             json.put("totalOpens", newsSentRepo.getSumOpenedForEmail(emailId));
-            json.put("OR", newsSentRepo.getAmountSentOfEmail(emailId) / newsSentRepo.getAmountOpenedBy(emailId));
+            if(newsSentRepo.getAmountOpenedBy(emailId).isPresent() && newsSentRepo.getAmountOpenedBy(emailId).get() > 0 && newsSentRepo.getAmountSentOfEmail(emailId).isPresent()) {
+                json.put("OR", newsSentRepo.getAmountSentOfEmail(emailId).get() / newsSentRepo.getAmountOpenedBy(emailId).get());
+            } else {
+                json.put("OR", 0);
+            }
             json.put("subject", newsEmailsRepo.findById((long) emailId).get().getSubject());
             json.put("interactions", newsStatsRepo.getCountInteractionsForEmail(String.valueOf(emailId)));
             json.put("problems", newsSentRepo.getAmountErrorsForEmail(emailId));

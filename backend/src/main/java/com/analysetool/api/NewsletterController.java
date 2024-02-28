@@ -219,14 +219,16 @@ public class NewsletterController {
                     }
                 }
                 case "Netherlands", "Switzerland", "Austria", "Luxembourg" -> {
+                    String countryISO = IPHelper.getCountryISO(n.getIp()) == null ? "XD" : IPHelper.getCountryISO(n.getIp());
                     try {
-                        json.put(IPHelper.getCountryISO(n.getIp()), json.getInt(IPHelper.getCountryISO(n.getIp()) + 1));
+                        json.put(countryISO, json.getInt(IPHelper.getCountryISO(n.getIp()) + 1));
                     } catch (JSONException e) {
-                        json.put(IPHelper.getCountryISO(n.getIp()),1);
+                        json.put(countryISO,1);
                     }
                 }
 
                 default -> {
+                    county = county == null ? "XD" : county;
                     try {
                         json.put(county, json.getInt(county) + 1);
                     } catch (JSONException e) {

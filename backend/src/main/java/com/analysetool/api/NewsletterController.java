@@ -147,7 +147,7 @@ public class NewsletterController {
             for(NewsletterStats n : newsStatsRepo.getAllNewsletterStatsOfEmail(String.valueOf(emailId))) {
                 int hour = n.getCreated().toLocalDateTime().getHour();
                 if(hourlyInteractions.size() >= hour) {
-                    hourlyInteractions.set(hour, hourlyInteractions.get(hour));
+                    hourlyInteractions.set(hour, hourlyInteractions.get(hour) + 1);
                 } else {
                     hourlyInteractions.set(hour, 1);
                 }

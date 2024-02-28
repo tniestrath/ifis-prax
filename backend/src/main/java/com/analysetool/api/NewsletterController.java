@@ -152,7 +152,7 @@ public class NewsletterController {
                     hourlyInteractions.set(hour, 1);
                 }
             }
-            json.put("interactionTimes", hourlyInteractions);
+            json.put("interactionTimes", new JSONArray(hourlyInteractions));
             json.put("id", emailId);
             return json.toString();
         } else {
@@ -164,11 +164,14 @@ public class NewsletterController {
     @GetMapping("/getNewsletterGeoSingle")
     public String getNewsletterGeo(int emailId) throws JSONException {
        JSONObject json = new JSONObject();
+       int total = 0;
+       int totalDACH = 0;
 
        for(NewsletterStats n : newsStatsRepo.getAllNewsletterStatsOfEmail(String.valueOf(emailId))) {
            String country, county;
            country = IPHelper.getCountryName(n.getIp());
            county = IPHelper.getSubISO(n.getIp());
+           total++;
 
            switch (country) {
 
@@ -178,24 +181,38 @@ public class NewsletterController {
                    } catch (JSONException e) {
                        json.put("BG",1);
                    }
+                   totalDACH++;
                }
                case "Netherlands", "Switzerland", "Austria", "Luxembourg" -> {
+                   String countryISO = IPHelper.getCountryISO(n.getIp()) == null ? "XD" : IPHelper.getCountryISO(n.getIp());
                    try {
-                       json.put(IPHelper.getCountryISO(n.getIp()), json.getInt(IPHelper.getCountryISO(n.getIp()) + 1));
+                       json.put(countryISO, json.getInt(countryISO) + 1);
                    } catch (JSONException e) {
-                       json.put(IPHelper.getCountryISO(n.getIp()),1);
+                       json.put(countryISO,1);
                    }
+                   totalDACH++;
                }
 
-               default -> {
+               case "Germany" -> {
+                   county = county == null ? "DX" : county;
                    try {
                        json.put(county, json.getInt(county) + 1);
                    } catch (JSONException e) {
                        json.put(county,1);
                    }
+                   totalDACH++;
+               }
+               default -> {
+                   try {
+                       json.put("XX", json.getInt("XX") + 1);
+                   } catch (JSONException e) {
+                       json.put("XX",1);
+                   }
                }
            }
        }
+       json.put("total", total);
+        json.put("totalDACH", totalDACH);
        return json.toString();
 
     }
@@ -203,11 +220,14 @@ public class NewsletterController {
     @GetMapping("/getNewsletterGeo")
     public String getNewsletterGeoTotal() throws JSONException {
         JSONObject json = new JSONObject();
+        int total = 0;
+        int totalDACH = 0;
 
         for(NewsletterStats n : newsStatsRepo.findAll()) {
             String country, county;
             country = IPHelper.getCountryName(n.getIp());
             county = IPHelper.getSubISO(n.getIp());
+            total++;
 
             switch (country) {
 
@@ -217,26 +237,63 @@ public class NewsletterController {
                     } catch (JSONException e) {
                         json.put("BG",1);
                     }
+                    totalDACH++;
                 }
                 case "Netherlands", "Switzerland", "Austria", "Luxembourg" -> {
                     String countryISO = IPHelper.getCountryISO(n.getIp()) == null ? "XD" : IPHelper.getCountryISO(n.getIp());
                     try {
-                        json.put(countryISO, json.getInt(IPHelper.getCountryISO(n.getIp()) + 1));
+                        json.put(countryISO, json.getInt(IPHelper.getCountryISO(n.getIp())) + 1);
                     } catch (JSONException e) {
                         json.put(countryISO,1);
                     }
+                    totalDACH++;
                 }
-
-                default -> {
-                    county = county == null ? "XD" : county;
+                case "Germany" -> {
+                    county = county == null ? "DX" : county;
                     try {
                         json.put(county, json.getInt(county) + 1);
                     } catch (JSONException e) {
                         json.put(county,1);
                     }
+                    totalDACH++;
+                }
+                default -> {
+                    try {
+                        json.put("XX", json.getInt("XX") + 1);
+                    } catch (JSONException e) {
+                        json.put("XX",1);
+                    }
                 }
             }
         }
+        json.put("total", total);
+        json.put("totalDACH", totalDACH);
+        return json.toString();
+    }
+
+    @GetMapping("/getNewsletterCallupGlobal")
+    public String getNewsletterCallupGlobal() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("totalOpens", newsSentRepo.getSumOpened());
+        if(newsSentRepo.getAmountOpenedTotal().isPresent() && newsSentRepo.getAmountOpenedTotal().get() > 0 && newsSentRepo.getAmountSent().isPresent()) {
+            json.put("OR", newsSentRepo.getAmountSent().get() / newsSentRepo.getAmountOpenedTotal().get());
+        } else {
+            json.put("OR", 0);
+        }
+
+        List<Integer> hourlyInteractions = new ArrayList<>(Collections.nCopies(24, 0));
+        for(NewsletterStats n : newsStatsRepo.findAll()) {
+            int hour = n.getCreated().toLocalDateTime().getHour();
+            if(hourlyInteractions.size() >= hour) {
+                hourlyInteractions.set(hour, hourlyInteractions.get(hour) + 1);
+            } else {
+                hourlyInteractions.set(hour, 1);
+            }
+        }
+        json.put("problems", newsSentRepo.getAmountErrors());
+        json.put("interactions", newsStatsRepo.getCountInteractions());
+        json.put("interactionTimes", hourlyInteractions);
+
         return json.toString();
     }
 

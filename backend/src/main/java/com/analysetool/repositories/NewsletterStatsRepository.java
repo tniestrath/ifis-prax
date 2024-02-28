@@ -13,6 +13,9 @@ public interface NewsletterStatsRepository extends JpaRepository<NewsletterStats
     @Query("SELECT COUNT(n.url) FROM NewsletterStats n WHERE n.emailId=:emailId AND n.url!=''")
     int getCountInteractionsForEmail(String emailId);
 
+    @Query("SELECT COUNT(n.url) FROM NewsletterStats n WHERE n.url!=''")
+    int getCountInteractions();
+
     @Query("SELECT n FROM NewsletterStats n WHERE n.emailId=:emailId")
     List<NewsletterStats> getAllNewsletterStatsOfEmail(String emailId);
 

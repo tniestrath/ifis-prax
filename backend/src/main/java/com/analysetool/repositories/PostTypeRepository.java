@@ -22,4 +22,7 @@ public interface PostTypeRepository extends JpaRepository<PostTypes, Long> {
 
     @Query("SELECT p FROM PostTypes p WHERE p.type='default'")
     List<PostTypes> getDefault();
+
+    @Query("SELECT DISTINCT(p.type) FROM PostTypes p")
+    List<String> getDistinctTypes();
 }

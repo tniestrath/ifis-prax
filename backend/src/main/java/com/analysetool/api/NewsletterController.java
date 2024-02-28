@@ -165,6 +165,7 @@ public class NewsletterController {
     public String getNewsletterGeo(int emailId) throws JSONException {
        JSONObject json = new JSONObject();
        int total = 0;
+       int totalDACH = 0;
 
        for(NewsletterStats n : newsStatsRepo.getAllNewsletterStatsOfEmail(String.valueOf(emailId))) {
            String country, county;
@@ -180,6 +181,7 @@ public class NewsletterController {
                    } catch (JSONException e) {
                        json.put("BG",1);
                    }
+                   totalDACH++;
                }
                case "Netherlands", "Switzerland", "Austria", "Luxembourg" -> {
                    String countryISO = IPHelper.getCountryISO(n.getIp()) == null ? "XD" : IPHelper.getCountryISO(n.getIp());
@@ -188,6 +190,7 @@ public class NewsletterController {
                    } catch (JSONException e) {
                        json.put(countryISO,1);
                    }
+                   totalDACH++;
                }
 
                case "Germany" -> {
@@ -197,6 +200,7 @@ public class NewsletterController {
                    } catch (JSONException e) {
                        json.put(county,1);
                    }
+                   totalDACH++;
                }
                default -> {
                    try {
@@ -208,6 +212,7 @@ public class NewsletterController {
            }
        }
        json.put("total", total);
+        json.put("totalDACH", totalDACH);
        return json.toString();
 
     }
@@ -216,6 +221,7 @@ public class NewsletterController {
     public String getNewsletterGeoTotal() throws JSONException {
         JSONObject json = new JSONObject();
         int total = 0;
+        int totalDACH = 0;
 
         for(NewsletterStats n : newsStatsRepo.findAll()) {
             String country, county;
@@ -231,6 +237,7 @@ public class NewsletterController {
                     } catch (JSONException e) {
                         json.put("BG",1);
                     }
+                    totalDACH++;
                 }
                 case "Netherlands", "Switzerland", "Austria", "Luxembourg" -> {
                     String countryISO = IPHelper.getCountryISO(n.getIp()) == null ? "XD" : IPHelper.getCountryISO(n.getIp());
@@ -239,6 +246,7 @@ public class NewsletterController {
                     } catch (JSONException e) {
                         json.put(countryISO,1);
                     }
+                    totalDACH++;
                 }
                 case "Germany" -> {
                     county = county == null ? "DX" : county;
@@ -247,6 +255,7 @@ public class NewsletterController {
                     } catch (JSONException e) {
                         json.put(county,1);
                     }
+                    totalDACH++;
                 }
                 default -> {
                     try {
@@ -258,6 +267,7 @@ public class NewsletterController {
             }
         }
         json.put("total", total);
+        json.put("totalDACH", totalDACH);
         return json.toString();
     }
 

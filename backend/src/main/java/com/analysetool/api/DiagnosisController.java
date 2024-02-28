@@ -183,7 +183,9 @@ public class DiagnosisController {
 
         for(UniversalCategoriesDLC cat : uniCatRepo.findAll(Sort.by("id"))) {
             if (lastHour != -1) {
-                if(lastHour + 1 != cat.getStunde()){
+                if(lastHour + 1 != cat.getStunde() && lastHour != 23){
+                    list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
+                } else if(lastHour == 23 && cat.getStunde() != 0) {
                     list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
                 }
             }

@@ -164,11 +164,13 @@ public class NewsletterController {
     @GetMapping("/getNewsletterGeoSingle")
     public String getNewsletterGeo(int emailId) throws JSONException {
        JSONObject json = new JSONObject();
+       int total = 0;
 
        for(NewsletterStats n : newsStatsRepo.getAllNewsletterStatsOfEmail(String.valueOf(emailId))) {
            String country, county;
            country = IPHelper.getCountryName(n.getIp());
            county = IPHelper.getSubISO(n.getIp());
+           total++;
 
            switch (country) {
 
@@ -180,14 +182,16 @@ public class NewsletterController {
                    }
                }
                case "Netherlands", "Switzerland", "Austria", "Luxembourg" -> {
+                   String countryISO = IPHelper.getCountryISO(n.getIp()) == null ? "XD" : IPHelper.getCountryISO(n.getIp());
                    try {
-                       json.put(IPHelper.getCountryISO(n.getIp()), json.getInt(IPHelper.getCountryISO(n.getIp()) + 1));
+                       json.put(countryISO, json.getInt(countryISO) + 1);
                    } catch (JSONException e) {
-                       json.put(IPHelper.getCountryISO(n.getIp()),1);
+                       json.put(countryISO,1);
                    }
                }
 
-               default -> {
+               case "Germany" -> {
+                   county = county == null ? "DX" : county;
                    try {
                        json.put(county, json.getInt(county) + 1);
                    } catch (JSONException e) {
@@ -196,6 +200,7 @@ public class NewsletterController {
                }
            }
        }
+       json.put("total", total);
        return json.toString();
 
     }
@@ -229,7 +234,7 @@ public class NewsletterController {
                     }
                 }
                 case "Germany" -> {
-                    county = county == null ? "XD" : county;
+                    county = county == null ? "DX" : county;
                     try {
                         json.put(county, json.getInt(county) + 1);
                     } catch (JSONException e) {

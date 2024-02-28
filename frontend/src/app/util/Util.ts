@@ -119,6 +119,8 @@ export default class Util {
             return DashColors.PODCAST;
           case "ratgeber":
             return DashColors.RATGEBER;
+          case "newsletter":
+            return DashColors.NEWSLETTER;
           default:
             return DashColors.GREY;
         }
@@ -186,6 +188,7 @@ export enum DashColors {
   BLACK_50 = "rgba(0,0,0, .5)",
 
   RATGEBER = "rgb(130,106,34)",
+  NEWSLETTER = "rgb(130,106,34)",
 
   GREY = "rgb(200,200,200)",
   PLAN_WITHOUT = "rgb(200,200,200)",

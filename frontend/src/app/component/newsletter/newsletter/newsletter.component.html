@@ -1,27 +1,30 @@
-<div class="newsletter-box" (click)="onClick()">
+<div class="newsletter-box component-box">
+  <div class="newsletter-title">
+    <p>{{title}}</p>
+  </div>
   <div class="newsletter-details">
     <div class="newsletter-detail" [style]="{'borderColor': DashColors.NEWSLETTER, 'border': '2px solid'}">
-      <div class="newsletter-label" [style]="{'color': DashColors.NEWSLETTER, 'background': bgColor, 'font-weight': 'bold'}">Newsletter</div>
+      <div class="newsletter-label" [style]="{'color': DashColors.NEWSLETTER, 'background': '#ffffff', 'font-weight': 'bold'}">Newsletter</div>
       <p>{{data.subject}}</p>
     </div>
     <div class="newsletter-detail-group-2">
       <div class="newsletter-detail">
-        <div class="newsletter-label" [style]="{'background': bgColor}">Öffnungsrate</div>
+        <div class="newsletter-label" [style]="{'background': '#ffffff'}">Öffnungsrate</div>
         <p>{{data.OR}}</p>
       </div>
       <div class="newsletter-detail">
-        <div class="newsletter-label" [style]="{'background': bgColor}">Häufigste Lese-Uhrzeit</div>
+        <div class="newsletter-label" [style]="{'background': '#ffffff'}">Häufigste Lese-Uhrzeit</div>
         <p *ngIf="interactionTimeMax!=-1">{{interactionTimeMax}}</p>
         <p *ngIf="interactionTimeMax==-1"> - </p>
       </div>
     </div>
     <div class="newsletter-detail-group-2">
       <div class="newsletter-detail">
-        <div class="newsletter-label" [style]="{'background': bgColor}">Interaktionen</div>
+        <div class="newsletter-label" [style]="{'background': '#ffffff'}">Interaktionen</div>
         <p>{{data.interactions}}</p>
       </div>
       <div class="newsletter-detail">
-        <div class="newsletter-label" [style]="{'background': bgColor}">Probleme</div>
+        <div class="newsletter-label" [style]="{'background': '#ffffff'}">Probleme</div>
         <p *ngIf="data.problems!=0">{{data.problems}}</p>
         <p *ngIf="data.problems==0"> - </p>
       </div>

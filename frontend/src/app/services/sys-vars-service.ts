@@ -6,6 +6,7 @@ import {
   SearchItem
 } from "../component/search/search-no-results-list/search-list-item/search-list-item.component";
 import {DbObject} from "./DbObject";
+import {Newsletter} from "../component/newsletter/Newsletter";
 
 export class PAGE {
   id: number = 0;
@@ -26,14 +27,19 @@ export class SysVars {
 
   public static USER_ID : string = "0";
   public static ADMIN : boolean = false;
-  public static SELECTED_POST_ID : EventEmitter<number> = new EventEmitter<number>();
-  public static SELECTED_POST : EventEmitter<Post> = new EventEmitter<Post>();
+  public static WELCOME : boolean = true;
   public static login : EventEmitter<User> = new EventEmitter<User>();
   public static CURRENT_PAGE : string = "landing";
-  public static SELECTED_TAG : EventEmitter<number> = new EventEmitter<number>();
-  public static SELECTED_USER_ID : EventEmitter<number> = new EventEmitter<number>();
+
+  public static SELECTED_POST_ID : EventEmitter<number> = new EventEmitter<number>();
+  public static SELECTED_POST : EventEmitter<Post> = new EventEmitter<Post>();
   public static SELECTED_POST_IDS : EventEmitter<string> = new EventEmitter<string>();
-  public static WELCOME : boolean = true;
+
+  public static SELECTED_TAG : EventEmitter<number> = new EventEmitter<number>();
+
+  public static SELECTED_USER_ID : EventEmitter<number> = new EventEmitter<number>();
+
+  public static SELECTED_NEWSLETTER : EventEmitter<Newsletter> = new EventEmitter<Newsletter>();
 
   public static SEO_DATA : EventEmitter<{desktop: {now: number, last: number}, mobile: {now: number, last: number}}> = new EventEmitter<{desktop: {now: number; last: number}; mobile: {now: number; last: number}}>();
 

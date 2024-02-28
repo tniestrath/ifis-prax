@@ -46,6 +46,7 @@ import {
   SearchListComponent, SearchListNoResultsComponent, SearchListRankComponent, SearchListSSComponent
 } from "../../component/search/search-no-results-list/search-list.component";
 import {NewsletterListComponent} from "../../component/newsletter/newsletter-list/newsletter-list.component";
+import {NewsletterComponent} from "../../component/newsletter/newsletter/newsletter.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -165,6 +166,7 @@ export class PageComponent implements OnInit {
   getNewsletterPageCards() {
     return [
       {type: NewsletterStatsComponent, row: 1, col: 1, height: 1, width: 1},
+      {type: NewsletterComponent, row: 1, col: 2, height: 2, width: 3},
       {type: NewsletterListComponent, row: 1, col: 5, height: 4, width: 2},
     ];
   }

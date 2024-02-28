@@ -16,7 +16,7 @@
   text-align: center;
 }
 
-.news-list-selector-container{
+.newsletter-list-selector-container{
   margin-left: 5px;
   margin-top: 7px;
   height: calc(100% - 47px);
@@ -39,9 +39,20 @@
   background-color: #EFEFEF;
   border-radius: 5px;
 }
-.search-no-results-list-selector-container dash-selector{
+.newsletter-list-selector-container dash-selector{
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
+}
+.newsletter-label {
+  position: relative;
+  top: -.75vh;
+  width: fit-content;
+  z-index: 1;
+  left: 10px;
+  font-size: 1.2vh;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #A0A0A0;
 }

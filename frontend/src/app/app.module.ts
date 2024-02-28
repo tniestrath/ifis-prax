@@ -80,6 +80,7 @@ import {
 import { SearchListItemComponent, SearchListNoResultsItemComponent, SearchListRankItemComponent, SearchListSSItemComponent } from './component/search/search-no-results-list/search-list-item/search-list-item.component';
 import { NewsletterListComponent } from './component/newsletter/newsletter-list/newsletter-list.component';
 import { NewsletterListItemComponent } from './component/newsletter/newsletter-list/newsletter-list-item/newsletter-list-item.component';
+import { NewsletterComponent } from './component/newsletter/newsletter/newsletter.component';
 
 @NgModule({
   declarations: [
@@ -153,7 +154,8 @@ import { NewsletterListItemComponent } from './component/newsletter/newsletter-l
     SearchListNoResultsItemComponent,
     SearchListSSItemComponent,
     NewsletterListComponent,
-    NewsletterListItemComponent
+    NewsletterListItemComponent,
+    NewsletterComponent
   ],
     imports: [
         BrowserModule,

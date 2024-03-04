@@ -337,9 +337,7 @@ public class DiagnosisController {
 
         String area = "UniqueUser";
         int severityError= 2;
-        int severityNoBots=0;
         String descriptionPotentialBot = "Potential Bot has been found. IP: ";
-        String noPotentialBotfound="No potential Bot has been found.";
         String solutions = "add to Blacklist";
         Integer clicks = 0;
         String ip = "";
@@ -362,9 +360,6 @@ public class DiagnosisController {
                    System.out.println("potential bot processing error :"+e.getStackTrace());}
             }
 
-        }else{
-            Problem noProblem= new Problem(severityNoBots,noPotentialBotfound,area);
-            list.add(noProblem);
         }
 
     return list;

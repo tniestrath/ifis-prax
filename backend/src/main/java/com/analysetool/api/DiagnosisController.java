@@ -143,7 +143,7 @@ public class DiagnosisController {
             html.append("</td>");
             html.append("<td>");
             if(!p.getFullSolutionLink().equals("none")) {
-                html.append("<form action=http://").append(p.getFullSolutionLink()).append(" method='post'>'").append("<button type=submit>Solve</button>").append("</form>");
+                html.append("<form target='_blank' action=http://").append(p.getFullSolutionLink()).append(" method='post'>").append("<button type=submit>Solve</button>").append("</form>");
 
             } else {
                 html.append("no solution");

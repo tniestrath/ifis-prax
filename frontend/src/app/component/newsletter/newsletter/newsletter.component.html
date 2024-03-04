@@ -10,7 +10,7 @@
     <div class="newsletter-detail-group-2">
       <div class="newsletter-detail">
         <div class="newsletter-label" [style]="{'background': '#ffffff'}">Öffnungsrate</div>
-        <p>{{data.OR}}</p>
+        <p>{{Math.round(data.OR * 100)}}%</p>
       </div>
       <div class="newsletter-detail">
         <div class="newsletter-label" [style]="{'background': '#ffffff'}">Häufigste Lese-Uhrzeit</div>

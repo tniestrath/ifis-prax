@@ -23,5 +23,4 @@ export class NewsletterListItemComponent implements AfterViewInit{
   ngAfterViewInit(): void {
     this.interactionTimeMax = this.data.interactionTimes.indexOf(Math.max(...this.data.interactionTimes, 1));
   }
-
 }

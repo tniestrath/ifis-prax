@@ -11,6 +11,16 @@ public class Problem {
     //Optional, but if potential solutions were found.
     private String suggestedSolutions = "none";
 
+    private String fullSolutionLink = "";
+
+    public Problem(int severity, String description, String affectedArea, String suggestedSolutions, String fullSolutionLink) {
+        this.severity = severity;
+        this.description = description;
+        this.affectedArea = affectedArea;
+        this.suggestedSolutions = suggestedSolutions;
+        this.fullSolutionLink = fullSolutionLink;
+    }
+
     public Problem(int severity, String description, String affectedArea, String suggestedSolutions) {
         this.severity = severity;
         this.description = description;
@@ -54,6 +64,14 @@ public class Problem {
 
     public void setAffectedArea(String affectedArea) {
         this.affectedArea = affectedArea;
+    }
+
+    public String getFullSolutionLink() {
+        return fullSolutionLink;
+    }
+
+    public void setFullSolutionLink(String fullSolutionLink) {
+        this.fullSolutionLink = fullSolutionLink;
     }
 
     @Override

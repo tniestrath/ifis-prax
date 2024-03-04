@@ -64,7 +64,8 @@ public class DiagnosisController {
             json.put("severity", p.getSeverity());
             json.put("description", p.getDescription());
             json.put("area", p.getAffectedArea());
-            json.put("solutions", p.getSuggestedSolutions());
+            json.put("suggestedSolution", p.getSuggestedSolutions());
+            json.put("solutionLink", p.getFullSolutionLink());
             problems.put(json);
         }
 

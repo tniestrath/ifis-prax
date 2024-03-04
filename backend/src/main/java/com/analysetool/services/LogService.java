@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -113,6 +112,8 @@ public class LogService {
     private TemporarySearchStatService temporarySearchService;
     @Autowired
     private OutgoingSocialsRedirectsRepository outgoingSocialsRepo;
+    @Autowired
+    private TrackingBlacklistRepository tbRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -480,10 +481,7 @@ public class LogService {
 
         String last_ip = null;
         String last_request = null;
-        JSONArray blacklist2 = null;
-        try {
-            blacklist2 = new JSONArray(new String(Files.readAllBytes(Path.of(Objects.requireNonNull(getClass().getResource("blacklist.json")).toURI()))));
-        } catch (Exception ignored){}
+        List<String> blacklist2 = tbRepo.getAllIps();
 
         while ((line = br.readLine()) != null ) {
             UniqueUser user = null;
@@ -532,8 +530,8 @@ public class LogService {
                     isBlacklisted = userAgent.matches("^.*" + item + ".*") && !isBlacklisted;
                 }
                 if(blacklist2 != null) {
-                    for (int i = 0; i < blacklist2.length(); i++) {
-                        isBlacklisted = isBlacklisted || ip.equals(blacklist2.get(i));
+                    for (String blacklistItem : blacklist2) {
+                        isBlacklisted = isBlacklisted || ip.equals(blacklistItem);
                     }
                 }
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
@@ -2708,21 +2706,6 @@ public class LogService {
 
                 int clicks = uniAvg.getAmount_clicks();
 
-                if(mainLength == clicks && clicks >= 15) {
-                    JSONArray json;
-                    if(getClass().getResource("blacklist.json") != null) {
-                        json = new JSONArray(Objects.requireNonNull(getClass().getResource("blacklist.json")).getPath());
-                        json.put(ip);
-
-                        try {
-                            try (FileWriter writer = new FileWriter(Objects.requireNonNull(getClass().getResource("blacklist.json")).getPath())) {
-                                writer.write(json.toString());
-                            }
-                        } catch (Exception ignored) {
-                        }
-                    }
-                }
-
                 uniAvg.setArticle(((uniAvg.getArticle() * oldClicks) + articleLength) / clicks);
                 uniAvg.setNews(((uniAvg.getNews() * oldClicks) + newsLength) / clicks);
                 uniAvg.setBlog(((uniAvg.getBlog() * oldClicks) + blogLength) / clicks);
@@ -2734,7 +2717,7 @@ public class LogService {
 
                 uniAverageClicksRepo.save(uniAvg);
 
-                //Update time spent for the deleted user, if user spent time
+                //Update time spent for the deleted user if user spent time
                 if(user.getTime_spent() > 0) {
                     UniversalTimeSpentDLC uniTime = uniTimeSpentRepo.getLatest();
                     uniTime.setAmount_clicks(uniTime.getAmount_clicks() + user.getAmount_of_clicks());

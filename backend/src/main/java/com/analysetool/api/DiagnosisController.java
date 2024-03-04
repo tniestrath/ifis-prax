@@ -125,7 +125,7 @@ public class DiagnosisController {
             html.append("</td>");
             html.append("<td>");
             if(!p.getFullSolutionLink().equals("none")) {
-                html.append("<a href=").append(p.getFullSolutionLink()).append(">").append("solve</a>");
+                html.append("<a rel='external' target='_blank' href=").append(p.getFullSolutionLink()).append(">").append("solve</a>");
             } else {
                 html.append("no solution");
             }

@@ -43,6 +43,11 @@ public class DiagnosisController {
     UniqueUserService uniqueUserService;
     //ToDo : Add Logic to partial checkups.
 
+
+    int MAX_CLICKS_UNTIL_BOT = 5;
+
+
+
     /**
      * An aggregate methods to find Problems in all parts of the database.
      * @return an ordered JSONArray-String, containing information about all Problems that have been found. (ordered by descending severity)
@@ -76,6 +81,7 @@ public class DiagnosisController {
         largeList.addAll(findSearchStatProblems());
         largeList.addAll(findTypeProblems());
         largeList.addAll(findWebsiteProblems());
+        largeList.addAll(findPotentialBots(MAX_CLICKS_UNTIL_BOT));
 
         largeList.sort((o1, o2) -> o2.getSeverity() - o1.getSeverity());
         return largeList;
@@ -124,23 +130,25 @@ public class DiagnosisController {
 
         java.sql.Date lastDate = null;
         for (UniversalStats uni : uniRepo.findAllOrderById()) {
-            if(lastDate == null) {
-                lastDate = new java.sql.Date(uni.getDatum().getTime());
-            } else {
-                //If two Dates are the same, add a duplicate problem
-                if(lastDate.equals(new java.sql.Date(uni.getDatum().getTime()))) {
-                    list.add(new Problem(severityDuplicate, descriptionDuplicate + lastDate, area));
+            if(uni.getId() > 3450) {
+                if (lastDate == null) {
+                    lastDate = new java.sql.Date(uni.getDatum().getTime());
                 } else {
-                    //Check whether the distance between the two dates is greater than a day, if so, add a missing Problem.
-                    java.sql.Date sqlDate2 = new java.sql.Date(uni.getDatum().getTime());
-                    // Calculate difference in milliseconds
-                    long differenceInMilliseconds = Math.abs(sqlDate2.getTime() - lastDate.getTime());
-                    // Convert milliseconds to days
-                    long differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
-                    if(differenceInDays > 1) {
-                        list.add(new Problem(severityMissing, descriptionMissing + lastDate + " and " + sqlDate2, area));
+                    //If two Dates are the same, add a duplicate problem
+                    if (lastDate.equals(new java.sql.Date(uni.getDatum().getTime()))) {
+                        list.add(new Problem(severityDuplicate, descriptionDuplicate + lastDate, area));
+                    } else {
+                        //Check whether the distance between the two dates is greater than a day, if so, add a missing Problem.
+                        java.sql.Date sqlDate2 = new java.sql.Date(uni.getDatum().getTime());
+                        // Calculate difference in milliseconds
+                        long differenceInMilliseconds = Math.abs(sqlDate2.getTime() - lastDate.getTime());
+                        // Convert milliseconds to days
+                        long differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+                        if (differenceInDays > 1) {
+                            list.add(new Problem(severityMissing, descriptionMissing + lastDate + " and " + sqlDate2, area));
+                        }
+                        lastDate = sqlDate2;
                     }
-                    lastDate = sqlDate2;
                 }
             }
         }
@@ -188,14 +196,16 @@ public class DiagnosisController {
         int lastHour = -1;
 
         for(UniversalCategoriesDLC cat : uniCatRepo.findAll(Sort.by("id"))) {
-            if (lastHour != -1) {
-                if(lastHour + 1 != cat.getStunde() && lastHour != 23){
-                    list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
-                } else if(lastHour == 23 && cat.getStunde() != 0) {
-                    list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
+            if(cat.getUniStatId() > 3450) {
+                if (lastHour != -1) {
+                    if (lastHour + 1 != cat.getStunde() && lastHour != 23) {
+                        list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
+                    } else if (lastHour == 23 && cat.getStunde() != 0) {
+                        list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
+                    }
                 }
+                lastHour = cat.getStunde();
             }
-            lastHour = cat.getStunde();
         }
 
         return list;

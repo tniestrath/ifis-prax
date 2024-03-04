@@ -7,13 +7,12 @@
     </div>
     <p>Newsletter Abonnenten</p>
   </div>
-  <div class="not-jet-verified-box">
+  <div class="verified-box">
     <div class="number-box" [style]="{color: DashColors.BLUE}">
-      <span class="tooltip-text" id="top">{{not_yet_verified_mails}}</span>
-      <p class="number-s"></p>
-      <p class="number-m" [style]="{width: 'fit-content'}">{{Util.formatNumbers(not_yet_verified)}}</p>
-      <p class="number-s" [style]="{textAlign: 'start'}">{{not_yet_verified_today >= 0 ? "+" + not_yet_verified_today : "-" + not_yet_verified_today}}</p>
+      <p class="number-m"></p>
+      <p class="number-xl" [style]="{width: 'fit-content'}">{{Math.round(openRate * 100)}}</p>
+      <p class="number-m" [style]="{textAlign: 'start'}">%</p>
     </div>
-    <p>noch nicht Verifiziert</p>
+    <p>Öffnungsrate</p>
   </div>
 </div>

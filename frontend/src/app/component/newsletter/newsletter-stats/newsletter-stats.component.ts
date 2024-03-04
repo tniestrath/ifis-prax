@@ -12,36 +12,31 @@ export class NewsletterStatsComponent extends DashBaseComponent implements OnIni
   protected readonly DashColors = DashColors;
 
   verified: number = 0;
-  not_yet_verified: number = 0;
-
   verified_today: number = 0;
-  not_yet_verified_today: number = 0;
-
   verified_yesterday: number = 0;
-  not_yet_verified_yesterday: number = 0;
-  not_yet_verified_mails: string = "";
+
+  openRate : number = 0;
 
   ngOnInit(): void {
     this.db.getNewsletterSubs().then(res => {
       for (let char of res) {
-        if (char == "S") this.not_yet_verified++;
         if (char == "C") this.verified++;
       }
     }).then( () =>
       this.db.getNewsletterSubsYesterday().then(res => {
       for (let char of res) {
-        if (char == "S") this.not_yet_verified_yesterday++;
         if (char == "C") this.verified_yesterday++;
       }
     })).then(() => {
       this.verified_today = this.verified - this.verified_yesterday;
-      this.not_yet_verified_today = this.not_yet_verified - this.not_yet_verified_yesterday;
     }).then( () =>
-      this.db.getNewsletterSubsAsMailByStatus("S").then(res => {
-        this.not_yet_verified_mails = res.toString().replace(/,/g, "\n");
+      this.db.getNewslettersOR().then(res => {
+        this.openRate = res;
       })
     )
 
-    this.setToolTip("Hier sind die aktuellen Newsletter-Abonnenten nach Status angezeigt. Mit Hover über die unbestätigten Nutzer werden genauere Daten angezeigt.");
+    this.setToolTip("Hier werden die aktuellen Newsletter-Abonnenten und die globale Öffnungsrate angezeigt.");
   }
+
+  protected readonly Math = Math;
 }

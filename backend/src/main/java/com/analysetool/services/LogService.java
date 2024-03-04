@@ -113,6 +113,8 @@ public class LogService {
     private TemporarySearchStatService temporarySearchService;
     @Autowired
     private OutgoingSocialsRedirectsRepository outgoingSocialsRepo;
+    @Autowired
+    private TrackingBlacklistRepository tbRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -480,10 +482,7 @@ public class LogService {
 
         String last_ip = null;
         String last_request = null;
-        JSONArray blacklist2 = null;
-        try {
-            blacklist2 = new JSONArray(new String(Files.readAllBytes(Path.of(Objects.requireNonNull(getClass().getResource("blacklist.json")).toURI()))));
-        } catch (Exception ignored){}
+        List<String> blacklist2 = tbRepo.getAllIps();
 
         while ((line = br.readLine()) != null ) {
             UniqueUser user = null;
@@ -532,8 +531,8 @@ public class LogService {
                     isBlacklisted = userAgent.matches("^.*" + item + ".*") && !isBlacklisted;
                 }
                 if(blacklist2 != null) {
-                    for (int i = 0; i < blacklist2.length(); i++) {
-                        isBlacklisted = isBlacklisted || ip.equals(blacklist2.get(i));
+                    for (String blacklistItem : blacklist2) {
+                        isBlacklisted = isBlacklisted || ip.equals(blacklistItem);
                     }
                 }
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.

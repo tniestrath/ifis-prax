@@ -84,11 +84,29 @@ public class DiagnosisController {
                 "    <meta charset=\"UTF-8\">" +
                 "    <title>Selbstdiagnose</title>" +
                 "    <style>" +
-                "       table{" +
-                "           border: 1px solid black;" +
-                "           width: 100%;" +
-                "           text-align: center;" +
-                "       }" +
+                "       table {\n" +
+                "    border: 1px solid black;\n" +
+                "    width: 100%;\n" +
+                "    border-collapse: collapse;\n" +
+                "}\n" +
+                "\n" +
+                "th, td {\n" +
+                "    border-bottom: 2px solid black;\n" +
+                "    padding: 8px;\n" +
+                "    text-align: left;\n" +
+                "}\n" +
+                "\n" +
+                "th {\n" +
+                "    background-color: #f2f2f2;\n" +
+                "}\n" +
+                "\n" +
+                "tr:nth-child(even) {\n" +
+                "    background-color: #f2f2f2;\n" +
+                "}\n" +
+                "\n" +
+                "tr:hover {\n" +
+                "    background-color: #ddd;\n" +
+                "}\n" +
                 "       tr{" +
                 "           border-bottom: 2px solid black;" +
                 "           height: 20px;" +

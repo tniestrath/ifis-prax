@@ -29,8 +29,14 @@
         <p *ngIf="data.problems==0"> - </p>
       </div>
     </div>
-    <div class="origin-map-container">
-      <dash-origin-map-newsletter emailId="{{data.id}}"></dash-origin-map-newsletter>
+    <div class="newsletter-stats-container">
+      <div class="origin-map-container">
+        <dash-origin-map-newsletter emailId="{{data.id}}"></dash-origin-map-newsletter>
+      </div>
+      <div class="newsletter-graph-container">
+          <canvas id="newsletter-stats-chart">{{chart}}</canvas>
+      </div>
     </div>
+
   </div>
 </div>

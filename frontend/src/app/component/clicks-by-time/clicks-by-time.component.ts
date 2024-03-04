@@ -3,6 +3,7 @@ import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {SysVars} from "../../services/sys-vars-service";
 import {DashColors} from "../../util/Util";
+import {NewsletterComponent} from "../newsletter/newsletter/newsletter.component";
 
 @Component({
   selector: 'dash-clicks-by-time',
@@ -103,4 +104,23 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
       }
     })
   }
+}
+
+@Component({
+  selector: 'dash-clicks-by-time-newsletter',
+  templateUrl: './clicks-by-time.component.html',
+  styleUrls: ['./clicks-by-time.component.css', "../../component/dash-base/dash-base.component.css"]
+})
+export class ClicksByTimeNewsletterComponent extends ClicksByTimeComponent{
+  override ngOnInit() {
+    this.setToolTip("Hier wird angezeigt, zu welcher Zeit wie oft der Newsletter im Durchschnitt pro Stunde geöffnet wird");
+    this.db.getNewslettersOpenTimes().then(res => {
+      this.chart = this.createChart("time_clicks", this.labels, res, undefined);
+      this.chart.callbacks.label = (tooltipItem: { dataIndex: string | number; }) => {
+        // @ts-ignore
+        return "Interaktionen: " + data[tooltipItem.dataIndex].toFixed();
+      };
+    });
+  }
+
 }

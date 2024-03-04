@@ -36,7 +36,10 @@ import {
   OriginMapNewsletterComponent,
   OriginMapNewsletterGlobalComponent
 } from './component/origin-map/origin-map.component';
-import { ClicksByTimeComponent } from './component/clicks-by-time/clicks-by-time.component';
+import {
+  ClicksByTimeComponent,
+  ClicksByTimeNewsletterComponent
+} from './component/clicks-by-time/clicks-by-time.component';
 import { TagPieComponent } from './component/tag/tag-pie/tag-pie.component';
 import { ImgFallbackDirective } from './img-fallback.directive';
 import {
@@ -115,6 +118,7 @@ import { NewsletterComponent } from './component/newsletter/newsletter/newslette
     OriginMapNewsletterComponent,
     OriginMapNewsletterGlobalComponent,
     ClicksByTimeComponent,
+    ClicksByTimeNewsletterComponent,
     TagPieComponent,
     ImgFallbackDirective,
     PostListComponent,

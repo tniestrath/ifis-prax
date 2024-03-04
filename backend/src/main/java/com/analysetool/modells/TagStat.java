@@ -2,7 +2,6 @@ package com.analysetool.modells;
 
 
 import jakarta.persistence.*;
-import org.bson.json.JsonObject;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 

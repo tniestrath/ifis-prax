@@ -126,6 +126,10 @@ export class HeaderComponent implements AfterViewInit{
     location.reload();
   }
 
+  onSpiderClick(){
+
+  }
+
   protected readonly SysVars = SysVars;
   protected readonly print = print;
   protected readonly window = window;

@@ -84,11 +84,29 @@ public class DiagnosisController {
                 "    <meta charset=\"UTF-8\">" +
                 "    <title>Selbstdiagnose</title>" +
                 "    <style>" +
-                "       table{" +
-                "           border: 1px solid black;" +
-                "           width: 100%;" +
-                "           text-align: center;" +
-                "       }" +
+                "       table {\n" +
+                "    border: 1px solid black;\n" +
+                "    width: 100%;\n" +
+                "    border-collapse: collapse;\n" +
+                "}\n" +
+                "\n" +
+                "th, td {\n" +
+                "    border-bottom: 2px solid black;\n" +
+                "    padding: 8px;\n" +
+                "    text-align: left;\n" +
+                "}\n" +
+                "\n" +
+                "th {\n" +
+                "    background-color: #f2f2f2;\n" +
+                "}\n" +
+                "\n" +
+                "tr:nth-child(even) {\n" +
+                "    background-color: #f2f2f2;\n" +
+                "}\n" +
+                "\n" +
+                "tr:hover {\n" +
+                "    background-color: #ddd;\n" +
+                "}\n" +
                 "       tr{" +
                 "           border-bottom: 2px solid black;" +
                 "           height: 20px;" +
@@ -125,7 +143,7 @@ public class DiagnosisController {
             html.append("</td>");
             html.append("<td>");
             if(!p.getFullSolutionLink().equals("none")) {
-                html.append("<a href=").append(p.getFullSolutionLink()).append(">").append("solve</a>");
+                html.append("<a rel='external' target='_blank' href=").append(p.getFullSolutionLink()).append(">").append("solve</a>");
             } else {
                 html.append("no solution");
             }
@@ -365,10 +383,10 @@ public class DiagnosisController {
 
         for(FinalSearchStatDLC f : finalSearchStatDLCRepo.findAll()) {
             if(f.getPostId() == null && f.getUserId() == null) {
-                list.add(new Problem(severityError, descriptionInvalid + "SS DLC ID: " + f.getId() + "Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
+                list.add(new Problem(severityError, descriptionInvalid + "SS DLC ID: " + f.getId() + " Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
             }
             if(f.getFinalSearchId() == null) {
-                list.add(new Problem(severityError, descriptionNoFinal + f.getId() + "Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
+                list.add(new Problem(severityError, descriptionNoFinal + f.getId() + " Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
             }
         }
         return list;

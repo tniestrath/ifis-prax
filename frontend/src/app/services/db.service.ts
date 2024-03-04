@@ -86,7 +86,9 @@ export enum dbUrl {
   GET_NEWSLETTER_GEO = "/newsletter/getNewsletterGeoSingle?emailId=ID",
 
   GET_NEWSLETTERS_ALL = "/newsletter/getAll?page=PAGE&size=SIZE",
-  GET_NEWSLETTERS_GEO = "/newsletter/getNewsletterGeo",
+  GET_NEWSLETTERS_ALL_GEO = "/newsletter/getNewsletterGeo",
+  GET_NEWSLETTERS_ALL_OPENTIMES = "/newsletter/getGlobalHourly",
+  GET_NEWSLETTERS_ALL_OPENRATE = "/newsletter/getGlobalOR",
 
   GET_EVENTS = "/events/getAmountOfEvents",
   GET_EVENTS_YESTERDAY = "/events/getAmountOfEventsCreatedYesterday",
@@ -510,7 +512,7 @@ export class DbService {
   }
   async getNewslettersGeo() : Promise<Map<string,number>>{
     this.setLoading();
-    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTERS_GEO), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTERS_ALL_GEO), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewsletter(id : number) : Promise<Newsletter>{
     this.setLoading();
@@ -523,6 +525,14 @@ export class DbService {
   async getNewsletterGeo(id : number) : Promise<Map<string,number>>{
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTER_GEO).replace("ID", String(id)), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getNewslettersOpenTimes() : Promise<number[]>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTERS_ALL_OPENTIMES), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getNewslettersOR() : Promise<number>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_NEWSLETTERS_ALL_OPENRATE), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getSystemTimeHour() : Promise<number>{

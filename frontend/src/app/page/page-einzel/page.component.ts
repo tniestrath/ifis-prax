@@ -51,6 +51,10 @@ import {
 } from "../../component/search/search-no-results-list/search-list.component";
 import {NewsletterListComponent} from "../../component/newsletter/newsletter-list/newsletter-list.component";
 import {NewsletterComponent} from "../../component/newsletter/newsletter/newsletter.component";
+import {
+  ClicksByTimeComponent,
+  ClicksByTimeNewsletterComponent
+} from "../../component/clicks-by-time/clicks-by-time.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -169,10 +173,11 @@ export class PageComponent implements OnInit {
 
   getNewsletterPageCards() {
     return [
-      {type: NewsletterStatsComponent, row: 1, col: 1, height: 1, width: 1},
+      {type: NewsletterStatsComponent, row: 1, col: 1, height: 2, width: 1},
       {type: NewsletterComponent, row: 1, col: 2, height: 2, width: 3},
-      {type: NewsletterListComponent, row: 1, col: 5, height: 2, width: 2},
-      {type: OriginMapNewsletterGlobalComponent, row: 3, col: 5, height: 2, width: 2}
+      {type: NewsletterListComponent, row: 1, col: 5, height: 4, width: 2},
+      {type: OriginMapNewsletterGlobalComponent, row: 3, col: 1, height: 2, width: 2},
+      {type: ClicksByTimeNewsletterComponent, row: 3, col: 3, height: 2, width: 2}
     ];
   }
 

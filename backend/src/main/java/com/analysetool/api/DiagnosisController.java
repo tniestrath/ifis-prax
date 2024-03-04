@@ -1,12 +1,14 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.FinalSearchStatDLC;
+import com.analysetool.modells.UniqueUser;
 import com.analysetool.modells.UniversalCategoriesDLC;
 import com.analysetool.modells.UniversalStats;
 import com.analysetool.repositories.FinalSearchStatDLCRepository;
 import com.analysetool.repositories.PostTypeRepository;
 import com.analysetool.repositories.UniversalCategoriesDLCRepository;
 import com.analysetool.repositories.universalStatsRepository;
+import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Problem;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -35,7 +39,14 @@ public class DiagnosisController {
     PostTypeRepository postTypeRepo;
     @Autowired
     UniversalCategoriesDLCRepository uniCatRepo;
+    @Autowired
+    UniqueUserService uniqueUserService;
     //ToDo : Add Logic to partial checkups.
+
+
+    int MAX_CLICKS_UNTIL_BOT = 5;
+
+
 
     /**
      * An aggregate methods to find Problems in all parts of the database.
@@ -70,6 +81,7 @@ public class DiagnosisController {
         largeList.addAll(findSearchStatProblems());
         largeList.addAll(findTypeProblems());
         largeList.addAll(findWebsiteProblems());
+        largeList.addAll(findPotentialBots(MAX_CLICKS_UNTIL_BOT));
 
         largeList.sort((o1, o2) -> o2.getSeverity() - o1.getSeverity());
         return largeList;
@@ -118,23 +130,25 @@ public class DiagnosisController {
 
         java.sql.Date lastDate = null;
         for (UniversalStats uni : uniRepo.findAllOrderById()) {
-            if(lastDate == null) {
-                lastDate = new java.sql.Date(uni.getDatum().getTime());
-            } else {
-                //If two Dates are the same, add a duplicate problem
-                if(lastDate.equals(new java.sql.Date(uni.getDatum().getTime()))) {
-                    list.add(new Problem(severityDuplicate, descriptionDuplicate + lastDate, area));
+            if(uni.getId() > 3450) {
+                if (lastDate == null) {
+                    lastDate = new java.sql.Date(uni.getDatum().getTime());
                 } else {
-                    //Check whether the distance between the two dates is greater than a day, if so, add a missing Problem.
-                    java.sql.Date sqlDate2 = new java.sql.Date(uni.getDatum().getTime());
-                    // Calculate difference in milliseconds
-                    long differenceInMilliseconds = Math.abs(sqlDate2.getTime() - lastDate.getTime());
-                    // Convert milliseconds to days
-                    long differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
-                    if(differenceInDays > 1) {
-                        list.add(new Problem(severityMissing, descriptionMissing + lastDate + " and " + sqlDate2, area));
+                    //If two Dates are the same, add a duplicate problem
+                    if (lastDate.equals(new java.sql.Date(uni.getDatum().getTime()))) {
+                        list.add(new Problem(severityDuplicate, descriptionDuplicate + lastDate, area));
+                    } else {
+                        //Check whether the distance between the two dates is greater than a day, if so, add a missing Problem.
+                        java.sql.Date sqlDate2 = new java.sql.Date(uni.getDatum().getTime());
+                        // Calculate difference in milliseconds
+                        long differenceInMilliseconds = Math.abs(sqlDate2.getTime() - lastDate.getTime());
+                        // Convert milliseconds to days
+                        long differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+                        if (differenceInDays > 1) {
+                            list.add(new Problem(severityMissing, descriptionMissing + lastDate + " and " + sqlDate2, area));
+                        }
+                        lastDate = sqlDate2;
                     }
-                    lastDate = sqlDate2;
                 }
             }
         }
@@ -182,14 +196,16 @@ public class DiagnosisController {
         int lastHour = -1;
 
         for(UniversalCategoriesDLC cat : uniCatRepo.findAll(Sort.by("id"))) {
-            if (lastHour != -1) {
-                if(lastHour + 1 != cat.getStunde() && lastHour != 23){
-                    list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
-                } else if(lastHour == 23 && cat.getStunde() != 0) {
-                    list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
+            if(cat.getUniStatId() > 3450) {
+                if (lastHour != -1) {
+                    if (lastHour + 1 != cat.getStunde() && lastHour != 23) {
+                        list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
+                    } else if (lastHour == 23 && cat.getStunde() != 0) {
+                        list.add(new Problem(severityError, descriptionHourMissing + cat.getUniStatId() + " and between hours: " + lastHour + " " + cat.getStunde(), area));
+                    }
                 }
+                lastHour = cat.getStunde();
             }
-            lastHour = cat.getStunde();
         }
 
         return list;
@@ -327,5 +343,44 @@ public class DiagnosisController {
         return list;
     }
 
+    private List<Problem> findPotentialBots(int repeatedClicksLimit){
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "UniqueUser";
+        int severityError= 2;
+        String descriptionPotentialBot = "Potential Bot has been found. IP: ";
+        String solutions = "add to Blacklist";
+        int clicks;
+        String ip;
+
+        List<UniqueUser> potentialBots= uniqueUserService.getPossibleBots(repeatedClicksLimit);
+        if(!potentialBots.isEmpty()){
+
+            for(UniqueUser potBot: potentialBots){
+                try {
+                    Map <String,Long> categoryClicksMap = uniqueUserService.getClicksCategory(potBot);
+                    if(uniqueUserService.areClicksInSingleCategory(categoryClicksMap)){
+                        String category = uniqueUserService.getCategoryOfClicks(categoryClicksMap);
+                        clicks = potBot.getAmount_of_clicks();
+                        ip = potBot.getIp();
+                        Problem problem = new Problem(severityError,descriptionPotentialBot+ip+" ,suspicious click in this category: "+category+", amount of clicks: "+ clicks,area,solutions);
+                        list.add(problem);
+                    }
+
+                } catch (Exception e) {
+                   System.out.println("potential bot processing error :"+ Arrays.toString(e.getStackTrace()));}
+            }
+
+        }
+
+    return list;
+    }
+
+    //klappt wie es soll (nur Lokal getestet) muss man sich nur auf ein Limit einigen ab wv wiederholende Klicks jemand als Bot gilt und severity auch, kann ja ein Sicherheitsrisiko sein
+    @GetMapping("/getBotProblem")
+    private String findPotentialBotsTest(int repeatedClicksLimit) {
+
+        return findPotentialBots(repeatedClicksLimit).toString();
+    }
 
 }

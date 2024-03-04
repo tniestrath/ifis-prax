@@ -9,10 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+
 
 @Service
 public class UniqueUserService {
@@ -56,7 +58,7 @@ public class UniqueUserService {
     }
 
 
-    public boolean isPotentialBot(UniqueUser user) {
+    public boolean isPotentialBot(UniqueUser user, int repeatedClicks) {
         Map<Integer, String> clickMap = new TreeMap<>();
         try {
             processCategoryClicks(user.getArticle(), "article", clickMap);
@@ -79,17 +81,17 @@ public class UniqueUserService {
             System.out.println("Error in processing clicks: " + e.getMessage());
         }
 
-        return hasSuspiciousClickPattern(clickMap);
+        return hasSuspiciousClickPattern(clickMap,repeatedClicks);
     }
 
-    public boolean hasSuspiciousClickPattern(Map<Integer, String> clickMap) {
+    public boolean hasSuspiciousClickPattern(Map<Integer, String> clickMap, int repeatedClicks) {
         String lastCategory = "";
         int repeatCount = 0;
 
         for (String category : clickMap.values()) {
             if (category.equals(lastCategory)) {
                 repeatCount++;
-                if (repeatCount >= 3) { // Annahme: 3 oder mehr Wiederholungen sind verdächtig
+                if (repeatCount >= repeatedClicks) { // mehr Wiederholungen sind verdächtig
                     return true;
                 }
             } else {
@@ -129,12 +131,55 @@ public class UniqueUserService {
      *
      * @return List<UniqueUser> containing users who are identified as potential bots based on the defined criteria.
      */
-    public List<UniqueUser> getPossibleBots() {
+    public List<UniqueUser> getPossibleBots(int repeatedClicks) {
         List<UniqueUser> users = uniqueUserRepo.findAll();
         return users.stream()
-                .filter(this::isPotentialBot)
+                .filter(user -> isPotentialBot(user, repeatedClicks)) // Use lambda to pass both parameters
                 .collect(Collectors.toList());
     }
+
+
+    public Map<String, Long> getClicksCategory(UniqueUser user) throws JSONException {
+        Map<Integer, String> clickMap = new TreeMap<>();
+        // Wiederholung des Prozesses, um die Klicks in Kategorien zu erfassen
+        processCategoryClicks(user.getArticle(), "article", clickMap);
+        processCategoryClicks(user.getBlog(), "blog", clickMap);
+        processCategoryClicks(user.getNews(), "news", clickMap);
+        processCategoryClicks(user.getWhitepaper(), "whitepaper", clickMap);
+        processCategoryClicks(user.getPodcast(), "podcast", clickMap);
+        processCategoryClicks(user.getRatgeber(), "ratgeber", clickMap);
+        processCategoryClicks(user.getMain(), "main", clickMap);
+        processCategoryClicks(user.getUeber(), "ueber", clickMap);
+        processCategoryClicks(user.getImpressum(), "impressum", clickMap);
+        processCategoryClicks(user.getPreisliste(), "preisliste", clickMap);
+        processCategoryClicks(user.getPartner(), "partner", clickMap);
+        processCategoryClicks(user.getDatenschutz(), "datenschutz", clickMap);
+        processCategoryClicks(user.getNewsletter(), "newsletter", clickMap);
+        processCategoryClicks(user.getImage(), "image", clickMap);
+        processCategoryClicks(user.getAgb(), "agb", clickMap);
+
+        // Zählen, wie oft in jeder Kategorie geklickt wurde
+        Map<String, Long> categoryClicksCount = clickMap.values().stream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        return categoryClicksCount;
+    }
+
+    public boolean areClicksInSingleCategory(Map<String, Long> clickMap) {
+
+        Set<String> uniqueCategories = new HashSet<>(clickMap.keySet());
+
+
+        return uniqueCategories.size() == 1;
+    }
+
+    public String getCategoryOfClicks(Map<String, Long> clickMap) {
+        Set<String> uniqueCategories = new HashSet<>(clickMap.keySet());
+
+        return uniqueCategories.stream().findFirst().get();
+
+    }
+
 
     public double getBounceRateToday(){
 

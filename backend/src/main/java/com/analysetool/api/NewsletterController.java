@@ -135,7 +135,7 @@ public class NewsletterController {
             JSONObject json = new JSONObject();
             json.put("totalOpens", newsSentRepo.getSumOpenedForEmail(emailId));
             if(newsSentRepo.getAmountOpenedBy(emailId).isPresent() && newsSentRepo.getAmountOpenedBy(emailId).get() > 0 && newsSentRepo.getAmountSentOfEmail(emailId).isPresent()) {
-                json.put("OR", newsSentRepo.getAmountSentOfEmail(emailId).get() / newsSentRepo.getAmountOpenedBy(emailId).get());
+                json.put("OR", newsSentRepo.getAmountOpenedBy(emailId).get() / newsSentRepo.getAmountSentOfEmail(emailId).get());
             } else {
                 json.put("OR", 0);
             }
@@ -276,7 +276,7 @@ public class NewsletterController {
         JSONObject json = new JSONObject();
         json.put("totalOpens", newsSentRepo.getSumOpened());
         if(newsSentRepo.getAmountOpenedTotal().isPresent() && newsSentRepo.getAmountOpenedTotal().get() > 0 && newsSentRepo.getAmountSent().isPresent()) {
-            json.put("OR", newsSentRepo.getAmountSent().get() / newsSentRepo.getAmountOpenedTotal().get());
+            json.put("OR", newsSentRepo.getAmountOpenedTotal().get() / newsSentRepo.getAmountSent().get());
         } else {
             json.put("OR", 0);
         }
@@ -295,6 +295,30 @@ public class NewsletterController {
         json.put("interactionTimes", hourlyInteractions);
 
         return json.toString();
+    }
+
+    @GetMapping("/getGlobalOR")
+    public double getGlobalOR() throws JSONException {
+        if(newsSentRepo.getAmountOpenedTotal().isPresent() && newsSentRepo.getAmountOpenedTotal().get() > 0 && newsSentRepo.getAmountSent().isPresent()) {
+            return newsSentRepo.getAmountOpenedTotal().get() / newsSentRepo.getAmountSent().get();
+        } else {
+            return 0;
+        }
+    }
+
+
+    @GetMapping("/getGlobalHourly")
+    public String getGlobalHourly() {
+        List<Integer> hourlyInteractions = new ArrayList<>(Collections.nCopies(24, 0));
+        for(NewsletterStats n : newsStatsRepo.findAll()) {
+            int hour = n.getCreated().toLocalDateTime().getHour();
+            if(hourlyInteractions.size() >= hour) {
+                hourlyInteractions.set(hour, hourlyInteractions.get(hour) + 1);
+            } else {
+                hourlyInteractions.set(hour, 1);
+            }
+        }
+        return new JSONArray(hourlyInteractions).toString();
     }
 
     @GetMapping("/getAll")

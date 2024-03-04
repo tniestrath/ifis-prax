@@ -11,7 +11,7 @@ public class Problem {
     //Optional, but if potential solutions were found.
     private String suggestedSolutions = "none";
 
-    private String fullSolutionLink = "";
+    private String fullSolutionLink = "none";
 
     public Problem(int severity, String description, String affectedArea, String suggestedSolutions, String fullSolutionLink) {
         this.severity = severity;

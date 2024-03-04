@@ -1,5 +1,7 @@
 package com.analysetool.api;
 
+import com.analysetool.modells.TrackingBlacklist;
+import com.analysetool.repositories.TrackingBlacklistRepository;
 import com.analysetool.util.DashConfig;
 import com.analysetool.util.IPHelper;
 import org.json.JSONException;
@@ -17,6 +19,9 @@ import java.util.regex.Pattern;
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RequestMapping("/ip")
 public class IPController {
+
+    @Autowired
+    TrackingBlacklistRepository tbRepo;
 
     private final DashConfig config;
 
@@ -57,4 +62,15 @@ public class IPController {
         }
         return String.valueOf(set.size());
     }
+
+    @PostMapping("/blockIp")
+    public void blockIp(String ip) {
+        if(tbRepo.findByIp(ip).isEmpty()) {
+            TrackingBlacklist tb = new TrackingBlacklist();
+            tb.setIp(ip);
+            tbRepo.save(tb);
+        }
+    }
+
+
 }

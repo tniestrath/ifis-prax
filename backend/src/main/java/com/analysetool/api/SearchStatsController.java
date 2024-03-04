@@ -506,6 +506,13 @@ public class SearchStatsController {
         return array.toString();
     }
 
+    @PostMapping("/deleteDLCById")
+    public void deleteDLCById(long id) {
+        if(finalDLCRepo.existsById(id)) {
+            finalDLCRepo.deleteById(id);
+        }
+    }
+
     boolean isHack(String text) {
         return text.contains("&") && text.contains(";");
     }

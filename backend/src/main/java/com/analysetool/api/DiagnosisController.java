@@ -57,8 +57,6 @@ public class DiagnosisController {
     public String doCheckUp() throws JSONException {
         JSONArray problems = new JSONArray();
 
-
-
         for(Problem p : allCheckups()) {
             JSONObject json = new JSONObject();
             json.put("severity", p.getSeverity());
@@ -71,6 +69,75 @@ public class DiagnosisController {
 
         return problems.toString();
     }
+
+    /**
+     * An aggregate methods to find Problems in all parts of the database.
+     * @return an ordered JSONArray-String, containing information about all Problems that have been found. (ordered by descending severity)
+     * @throws JSONException .
+     */
+    @GetMapping("/doCheckUpSite")
+    public String doCheckUpHTML() throws JSONException {
+
+        StringBuilder html = new StringBuilder("<!DOCTYPE html>" +
+                "<html lang=\"en\">" +
+                "<head>" +
+                "    <meta charset=\"UTF-8\">" +
+                "    <title>Selbstdiagnose</title>" +
+                "    <style>" +
+                "       table{" +
+                "           border: 1px solid black;" +
+                "           width: 100%;" +
+                "           text-align: center;" +
+                "       }" +
+                "       tr{" +
+                "           border-bottom: 2px solid black;" +
+                "           height: 20px;" +
+                "       }" +
+                "    </style>" +
+                "</head>" +
+                "<body>" +
+                "<table>" +
+                "<thead>" +
+                "<tr>" +
+                "<th>Severity</th>" +
+                "<th>Description</th>" +
+                "<th>Area</th>" +
+                "<th>Suggested Solution</th>" +
+                "<th>Solution Link</th>" +
+                "</tr>" +
+                "</thead>" +
+                "<tbody>");
+
+
+
+        for(Problem p : allCheckups()) {
+            html.append("<tr>" + "<td>");
+            html.append(p.getSeverity());
+            html.append("</td>");
+            html.append("<td>");
+            html.append(p.getDescription());
+            html.append("</td>");
+            html.append("<td>");
+            html.append(p.getAffectedArea());
+            html.append("</td>");
+            html.append("<td>");
+            html.append(p.getSuggestedSolutions());
+            html.append("</td>");
+            html.append("<td>");
+            if(!p.getFullSolutionLink().equals("none")) {
+                html.append("<a href=").append(p.getFullSolutionLink()).append(">").append("solve</a>");
+            } else {
+                html.append("no solution");
+            }
+            html.append("</td>");
+            html.append("</tr>");
+        }
+
+        html.append("</tbody>" + "</table>" + "</body>" + "</html>");
+
+        return html.toString();
+    }
+
 
     private List<Problem> allCheckups() {
         List<Problem> largeList  = new ArrayList<>();
@@ -293,13 +360,15 @@ public class DiagnosisController {
         int severityError= 2;
         String descriptionInvalid = "A row with neither a post or user clicked has been found for: ";
         String descriptionNoFinal = "A row with no FinalSearchStatsId has been found for: ";
+        String suggestedSol = "Delete entry";
+        String solutionLink = "analyse.it-sicherheit.de/api/search-stats/deleteDLCById?id=";
 
         for(FinalSearchStatDLC f : finalSearchStatDLCRepo.findAll()) {
             if(f.getPostId() == null && f.getUserId() == null) {
-                list.add(new Problem(severityError, descriptionInvalid + "SS DLC ID: " + f.getId() + "Final ID: " +f.getFinalSearchId(), area));
+                list.add(new Problem(severityError, descriptionInvalid + "SS DLC ID: " + f.getId() + "Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
             }
             if(f.getFinalSearchId() == null) {
-                list.add(new Problem(severityError, descriptionNoFinal + f.getId() + "Final ID: " +f.getFinalSearchId(), area));
+                list.add(new Problem(severityError, descriptionNoFinal + f.getId() + "Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
             }
         }
         return list;
@@ -351,6 +420,7 @@ public class DiagnosisController {
         int severityError= 2;
         String descriptionPotentialBot = "Potential Bot has been found. IP: ";
         String solutions = "add to Blacklist";
+        String solutionLinkBase = "analyse.it-sicherheit.de/api/ip/blockIp?ip=";
         int clicks;
         String ip;
 
@@ -364,7 +434,7 @@ public class DiagnosisController {
                         String category = uniqueUserService.getCategoryOfClicks(categoryClicksMap);
                         clicks = potBot.getAmount_of_clicks();
                         ip = potBot.getIp();
-                        Problem problem = new Problem(severityError,descriptionPotentialBot+ip+" ,suspicious click in this category: "+category+", amount of clicks: "+ clicks,area,solutions);
+                        Problem problem = new Problem(severityError,descriptionPotentialBot+ip+" ,suspicious click in this category: "+category+", amount of clicks: "+ clicks,area,solutions, solutionLinkBase + potBot.getIp());
                         list.add(problem);
                     }
 

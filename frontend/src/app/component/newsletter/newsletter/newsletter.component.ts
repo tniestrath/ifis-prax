@@ -15,25 +15,30 @@ export class NewsletterComponent extends DashBaseComponent implements OnInit{
   protected interactionTimeMax = 0;
   protected readonly DashColors = DashColors;
 
-  title : string = "Aktueller Newsletter"
+  title : string = "Aktueller Newsletter";
+  labels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
 
   ngOnInit(): void {
     this.db.getLatestNewsletter().then(res => {
       this.data = res;
       this.interactionTimeMax = this.data.interactionTimes.indexOf(Math.max(...this.data.interactionTimes, 1));
-      this.createChart("newsletter-stats-chart", ["0", "1", "2", "3", "4"], this.data.interactionTimes, undefined)
+      this.createChart("newsletter-stats-chart", this.labels, this.data.interactionTimes, undefined);
     });
 
 
     SysVars.SELECTED_NEWSLETTER.subscribe( nl => {
       this.data = nl;
       this.title = "Ausgewählter Newsletter";
+      this.createChart("newsletter-stats-chart", this.labels, this.data.interactionTimes, undefined);
     })
   }
 
   createChart(canvas_id : string, labels: string[], data: number[], onClick : EventEmitter<number> | undefined){
+    if (this.chart){
+      this.chart.destroy();
+    }
     // @ts-ignore
-    return new Chart(canvas_id, {
+    this.chart = new Chart(canvas_id, {
       type: "line",
       data: {
         labels : labels,
@@ -98,7 +103,7 @@ export class NewsletterComponent extends DashBaseComponent implements OnInit{
               //@ts-ignore
               label: ((tooltipItem) => {
                 // @ts-ignore
-                return "Clicks: " + data[tooltipItem.dataIndex].toFixed();
+                return "Interaktionen: " + data[tooltipItem.dataIndex].toFixed();
               })
             }
           },
@@ -108,4 +113,5 @@ export class NewsletterComponent extends DashBaseComponent implements OnInit{
   }
 
   protected readonly Number = Number;
+  protected readonly Math = Math;
 }

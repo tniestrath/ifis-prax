@@ -135,7 +135,7 @@ public class NewsletterController {
             JSONObject json = new JSONObject();
             json.put("totalOpens", newsSentRepo.getSumOpenedForEmail(emailId));
             if(newsSentRepo.getAmountOpenedBy(emailId).isPresent() && newsSentRepo.getAmountOpenedBy(emailId).get() > 0 && newsSentRepo.getAmountSentOfEmail(emailId).isPresent()) {
-                json.put("OR", newsSentRepo.getAmountSentOfEmail(emailId).get() / newsSentRepo.getAmountOpenedBy(emailId).get());
+                json.put("OR", newsSentRepo.getAmountOpenedBy(emailId).get() / newsSentRepo.getAmountSentOfEmail(emailId).get());
             } else {
                 json.put("OR", 0);
             }
@@ -276,7 +276,7 @@ public class NewsletterController {
         JSONObject json = new JSONObject();
         json.put("totalOpens", newsSentRepo.getSumOpened());
         if(newsSentRepo.getAmountOpenedTotal().isPresent() && newsSentRepo.getAmountOpenedTotal().get() > 0 && newsSentRepo.getAmountSent().isPresent()) {
-            json.put("OR", newsSentRepo.getAmountSent().get() / newsSentRepo.getAmountOpenedTotal().get());
+            json.put("OR", newsSentRepo.getAmountOpenedTotal().get() / newsSentRepo.getAmountSent().get());
         } else {
             json.put("OR", 0);
         }

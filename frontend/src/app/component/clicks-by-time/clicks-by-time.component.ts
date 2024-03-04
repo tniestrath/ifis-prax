@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {Chart} from "chart.js/auto";
+import {Chart, TooltipItem} from "chart.js/auto";
 import {SysVars} from "../../services/sys-vars-service";
 import {DashColors} from "../../util/Util";
 import {NewsletterComponent} from "../newsletter/newsletter/newsletter.component";
@@ -13,7 +13,7 @@ import {NewsletterComponent} from "../newsletter/newsletter/newsletter.component
 export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
 
   colors : string[] = [];
-
+  tooltipString = "Clicks";
   labels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
   ngOnInit(): void {
     this.setToolTip("Hier wird angezeigt, zu welcher Zeit wie viele Zugriffe auf den Marktplatz " +
@@ -52,10 +52,6 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
         scales: {
           x: {
             ticks: {
-              callback: (tickValue, index) => {
-                if (index % 2 == 0) return tickValue;
-                return;
-              },
               maxRotation: 0,
             }
           }
@@ -96,7 +92,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
               //@ts-ignore
               label: ((tooltipItem) => {
                 // @ts-ignore
-                return "Clicks: " + data[tooltipItem.dataIndex].toFixed();
+                return this.tooltipString +": " + data[tooltipItem.dataIndex].toFixed();
               })
             }
           },
@@ -114,12 +110,9 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
 export class ClicksByTimeNewsletterComponent extends ClicksByTimeComponent{
   override ngOnInit() {
     this.setToolTip("Hier wird angezeigt, zu welcher Zeit wie oft der Newsletter im Durchschnitt pro Stunde geöffnet wird");
+    this.tooltipString = "Interaktionen";
     this.db.getNewslettersOpenTimes().then(res => {
       this.chart = this.createChart("time_clicks", this.labels, res, undefined);
-      this.chart.callbacks.label = (tooltipItem: { dataIndex: string | number; }) => {
-        // @ts-ignore
-        return "Interaktionen: " + data[tooltipItem.dataIndex].toFixed();
-      };
     });
   }
 

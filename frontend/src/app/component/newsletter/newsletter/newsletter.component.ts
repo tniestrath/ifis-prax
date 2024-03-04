@@ -60,9 +60,6 @@ export class NewsletterComponent extends DashBaseComponent implements OnInit{
         scales: {
           x: {
             ticks: {
-              callback: (tickValue, index) => {
-                return tickValue + "Uhr";
-              },
               maxRotation: 0,
             }
           }

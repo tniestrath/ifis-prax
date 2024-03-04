@@ -297,6 +297,30 @@ public class NewsletterController {
         return json.toString();
     }
 
+    @GetMapping("/getGlobalOR")
+    public double getGlobalOR() throws JSONException {
+        if(newsSentRepo.getAmountOpenedTotal().isPresent() && newsSentRepo.getAmountOpenedTotal().get() > 0 && newsSentRepo.getAmountSent().isPresent()) {
+            return newsSentRepo.getAmountOpenedTotal().get() / newsSentRepo.getAmountSent().get();
+        } else {
+            return 0;
+        }
+    }
+
+
+    @GetMapping("/getGlobalHourly")
+    public String getGlobalHourly() {
+        List<Integer> hourlyInteractions = new ArrayList<>(Collections.nCopies(24, 0));
+        for(NewsletterStats n : newsStatsRepo.findAll()) {
+            int hour = n.getCreated().toLocalDateTime().getHour();
+            if(hourlyInteractions.size() >= hour) {
+                hourlyInteractions.set(hour, hourlyInteractions.get(hour) + 1);
+            } else {
+                hourlyInteractions.set(hour, 1);
+            }
+        }
+        return new JSONArray(hourlyInteractions).toString();
+    }
+
     @GetMapping("/getAll")
     public String getNewsletterList(Integer page, Integer size) throws JSONException {
         JSONArray array = new JSONArray();

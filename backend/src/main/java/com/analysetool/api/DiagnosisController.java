@@ -360,13 +360,15 @@ public class DiagnosisController {
         int severityError= 2;
         String descriptionInvalid = "A row with neither a post or user clicked has been found for: ";
         String descriptionNoFinal = "A row with no FinalSearchStatsId has been found for: ";
+        String suggestedSol = "Delete entry";
+        String solutionLink = "analyse.it-sicherheit.de/api/search-stats/deleteDLCById?id=";
 
         for(FinalSearchStatDLC f : finalSearchStatDLCRepo.findAll()) {
             if(f.getPostId() == null && f.getUserId() == null) {
-                list.add(new Problem(severityError, descriptionInvalid + "SS DLC ID: " + f.getId() + "Final ID: " +f.getFinalSearchId(), area));
+                list.add(new Problem(severityError, descriptionInvalid + "SS DLC ID: " + f.getId() + "Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
             }
             if(f.getFinalSearchId() == null) {
-                list.add(new Problem(severityError, descriptionNoFinal + f.getId() + "Final ID: " +f.getFinalSearchId(), area));
+                list.add(new Problem(severityError, descriptionNoFinal + f.getId() + "Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
             }
         }
         return list;

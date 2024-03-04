@@ -365,10 +365,10 @@ public class DiagnosisController {
 
         for(FinalSearchStatDLC f : finalSearchStatDLCRepo.findAll()) {
             if(f.getPostId() == null && f.getUserId() == null) {
-                list.add(new Problem(severityError, descriptionInvalid + "SS DLC ID: " + f.getId() + "Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
+                list.add(new Problem(severityError, descriptionInvalid + "SS DLC ID: " + f.getId() + " Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
             }
             if(f.getFinalSearchId() == null) {
-                list.add(new Problem(severityError, descriptionNoFinal + f.getId() + "Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
+                list.add(new Problem(severityError, descriptionNoFinal + f.getId() + " Final ID: " +f.getFinalSearchId(), area, suggestedSol, solutionLink + f.getId()));
             }
         }
         return list;

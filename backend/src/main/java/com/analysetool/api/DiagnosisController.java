@@ -4,10 +4,7 @@ import com.analysetool.modells.FinalSearchStatDLC;
 import com.analysetool.modells.UniqueUser;
 import com.analysetool.modells.UniversalCategoriesDLC;
 import com.analysetool.modells.UniversalStats;
-import com.analysetool.repositories.FinalSearchStatDLCRepository;
-import com.analysetool.repositories.PostTypeRepository;
-import com.analysetool.repositories.UniversalCategoriesDLCRepository;
-import com.analysetool.repositories.universalStatsRepository;
+import com.analysetool.repositories.*;
 import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Problem;
 import org.json.JSONArray;
@@ -41,6 +38,8 @@ public class DiagnosisController {
     UniversalCategoriesDLCRepository uniCatRepo;
     @Autowired
     UniqueUserService uniqueUserService;
+    @Autowired
+    TrackingBlacklistRepository tbRepo;
     //ToDo : Add Logic to partial checkups.
 
 
@@ -447,23 +446,25 @@ public class DiagnosisController {
         if(!potentialBots.isEmpty()){
 
             for(UniqueUser potBot: potentialBots){
-                try {
-                    Map <String,Long> categoryClicksMap = uniqueUserService.getClicksCategory(potBot);
-                    if(uniqueUserService.areClicksInSingleCategory(categoryClicksMap)){
-                        String category = uniqueUserService.getCategoryOfClicks(categoryClicksMap);
-                        clicks = potBot.getAmount_of_clicks();
-                        ip = potBot.getIp();
-                        Problem problem = new Problem(severityError,descriptionPotentialBot+ip+" ,suspicious click in this category: "+category+", amount of clicks: "+ clicks,area,solutions, solutionLinkBase + potBot.getIp());
-                        list.add(problem);
-                    }
+                if(tbRepo.findByIp(potBot.getIp()).isEmpty()) {
+                    try {
+                        Map<String, Long> categoryClicksMap = uniqueUserService.getClicksCategory(potBot);
+                        if (uniqueUserService.areClicksInSingleCategory(categoryClicksMap)) {
+                            String category = uniqueUserService.getCategoryOfClicks(categoryClicksMap);
+                            clicks = potBot.getAmount_of_clicks();
+                            ip = potBot.getIp();
+                            Problem problem = new Problem(severityError, descriptionPotentialBot + ip + " ,suspicious click in this category: " + category + ", amount of clicks: " + clicks, area, solutions, solutionLinkBase + potBot.getIp());
+                            list.add(problem);
+                        }
 
-                } catch (Exception e) {
-                   System.out.println("potential bot processing error :"+ Arrays.toString(e.getStackTrace()));}
+                    } catch (Exception e) {
+                        System.out.println("potential bot processing error :" + Arrays.toString(e.getStackTrace()));
+                    }
+                }
             }
 
         }
-
-    return list;
+        return list;
     }
 
     //klappt wie es soll (nur Lokal getestet) muss man sich nur auf ein Limit einigen ab wv wiederholende Klicks jemand als Bot gilt und severity auch, kann ja ein Sicherheitsrisiko sein

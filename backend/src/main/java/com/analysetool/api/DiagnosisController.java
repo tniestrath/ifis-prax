@@ -340,8 +340,8 @@ public class DiagnosisController {
         int severityError= 2;
         String descriptionPotentialBot = "Potential Bot has been found. IP: ";
         String solutions = "add to Blacklist";
-        Integer clicks = 0;
-        String ip = "";
+        int clicks;
+        String ip;
 
         List<UniqueUser> potentialBots= uniqueUserService.getPossibleBots(repeatedClicksLimit);
         if(!potentialBots.isEmpty()){
@@ -353,7 +353,7 @@ public class DiagnosisController {
                         String category = uniqueUserService.getCategoryOfClicks(categoryClicksMap);
                         clicks = potBot.getAmount_of_clicks();
                         ip = potBot.getIp();
-                        Problem problem = new Problem(severityError,descriptionPotentialBot+ip+" ,suspicious click in this category: "+category+", amount of clicks: "+ String.valueOf(clicks),area,solutions);
+                        Problem problem = new Problem(severityError,descriptionPotentialBot+ip+" ,suspicious click in this category: "+category+", amount of clicks: "+ clicks,area,solutions);
                         list.add(problem);
                     }
 

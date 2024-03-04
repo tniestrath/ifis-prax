@@ -185,11 +185,15 @@ public class LogService {
 
     private final String RedirectUserPattern =".*GET .*goto/(.*) HTTP/";
 
-    private final String outgoingRedirectLinkedIn =".*GET /goto/https://www\\.linkedin\\.com/company/marktplatz-it-sicherheit/";
+    private final String outgoingRedirectLinkedIn =".*GET /goto/https://www\\.linkedin\\.com/company/marktplatz-it-sicherheit/?";
 
-    private final String outgoingRedirectFacebook =".*GET /goto/https://www\\.facebook\\.com/Internet\\.Sicherheit\\.ifis";
-    private final String outgoingRedirectYoutube =".*GET /goto/https://www\\.youtube\\.com/user/InternetSicherheitDE";
-    private final String outgoingRedirectTwitter =".*GET /goto/https://twitter\\.com/_securitynews";
+
+    private final String outgoingRedirectFacebook =".*GET /goto/https://www\\.facebook\\.com/Internet\\.Sicherheit\\.ifis/?";
+
+    private final String outgoingRedirectYoutube =".*GET /goto/https://www\\.youtube\\.com/user/InternetSicherheitDE/?";
+
+    private final String outgoingRedirectTwitter =".*GET /goto/https://twitter\\.com/_securitynews/?";
+
     private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
 
     private final String eventSSView="^.*GET /veranstaltungen/([^/]+)/.*s=([^&\"]+)\"";

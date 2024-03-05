@@ -185,14 +185,14 @@ public class LogService {
 
     private final String RedirectUserPattern =".*GET .*goto/(.*) HTTP/";
 
-    private final String outgoingRedirectLinkedIn ="^.*GET /goto/https://(www\\.)?linkedin\\.com/company/marktplatz-it-sicherheit/?$";
+    private final String outgoingRedirectLinkedIn ="^.*GET /goto/https://(www.)?linkedin.com/company/marktplatz-it-sicherheit/?$";
 
 
-    private final String outgoingRedirectFacebook ="^.*GET /goto/https://(www\\.)?facebook\\.com/Internet\\.Sicherheit\\.ifis/?$";
+    private final String outgoingRedirectFacebook ="^.*GET /goto/https://(www.)?facebook.com/Internet.Sicherheit.ifis/?$";
 
-    private final String outgoingRedirectYoutube =".*^GET /goto/https://(www\\.)?youtube\\.com/user/InternetSicherheitDE/?$";
+    private final String outgoingRedirectYoutube =".*^GET /goto/https://(www.)?youtube.com/user/InternetSicherheitDE/?$";
 
-    private final String outgoingRedirectTwitter =".*^GET /goto/https://(www\\.)?twitter\\.com/_securitynews/?$";
+    private final String outgoingRedirectTwitter =".*^GET /goto/https://(www.)?twitter.com/_securitynews/?$";
 
     private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
 
@@ -506,6 +506,8 @@ public class LogService {
 
                 //Does it match a content-download
                 Matcher matched_content_download= contentDownloadPattern.matcher(line);
+
+                Matcher matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(line);
                 //Filter für Request-Types.
                 boolean isDevAccess = request.contains("/api/")
                         || (request.contains("/wp-content") && !matched_content_download.find()) || request.contains("/wp-includes")
@@ -539,7 +541,7 @@ public class LogService {
                     }
                 }
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam && isGet) {
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && (!request.contains("securitynews")||matched_outgoing_twitter_redirect.find())&& !isSpam && isGet) {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
 
@@ -592,8 +594,7 @@ public class LogService {
                     //Does it match user-view?
                     Matcher matched_userViews = userViewPattern.matcher(request);
 
-                    //Does it match user-redirect?
-                    Matcher matched_userRedirect = userRedirectPattern.matcher(request);
+
 
                     //Does it match a ratgeber-subpost-view
                     Matcher matched_ratgeber_post = ratgeberPostViewPattern.matcher(request);
@@ -628,9 +629,11 @@ public class LogService {
                     //Does it match an outgoing socials redirect?
                     Matcher matched_outgoing_facebook_redirect= outgoingRedirectPatternFacebook.matcher(line);
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(line);
+                    matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(line);
                     //Does it match an outgoing socials redirect?
                     Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(line);
+                    //Does it match user-redirect?
+                    Matcher matched_userRedirect = userRedirectPattern.matcher(request);
 
                     //Find out which pattern matched
                     String whatMatched = "";
@@ -714,10 +717,7 @@ public class LogService {
                     } else if(matched_content_download.find()){
                         whatMatched = "contentDownload";
                         patternMatcher = matched_content_download;
-                    } else if(matched_userRedirect.find()){
-                        whatMatched = "userRedirect";
-                        patternMatcher = matched_userRedirect;
-                    }else if(matched_outgoing_linkedin_redirect.find()){
+                    } else if(matched_outgoing_linkedin_redirect.find()){
                         whatMatched = "socialsLinkedInRedirect";
                         patternMatcher = matched_outgoing_linkedin_redirect;
                     }else if(matched_outgoing_twitter_redirect.find()){
@@ -732,6 +732,9 @@ public class LogService {
                     } else if(matched_event_view.find()){
                         whatMatched = "eventView";
                         patternMatcher = matched_event_view;
+                    }else if(matched_userRedirect.find()){
+                        whatMatched = "userRedirect";
+                        patternMatcher = matched_userRedirect;
                     }
 
                     //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.

@@ -1435,8 +1435,22 @@ public class LogService {
         List<UserStats> userStats = userStatsRepo.findAll();
         userStatsRepo.saveAll(userStats);
 
+
+        //Delete Post-Types for Posts, that no longer exist
+        deleteNullPostTypes();
         //Just in case permanentify failed
         deleteOldIPs();
+    }
+
+    /**
+     * Deletes Post-Type rows for Posts, that no longer exist.
+     */
+    private void deleteNullPostTypes() {
+        for(PostTypes type : postTypeRepo.findAll()) {
+            if(!postRepository.existsById(type.getPost_id())) {
+                postTypeRepo.delete(type);
+            }
+        }
     }
 
 

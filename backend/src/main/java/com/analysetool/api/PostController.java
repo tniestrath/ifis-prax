@@ -695,7 +695,7 @@ public class PostController {
      * @throws JSONException .
      * @throws ParseException .
      */
-    public String getType(@RequestParam long id) throws JSONException, ParseException {
+    public String getType(@RequestParam long id) {
         if(postRepository.findById(id).isEmpty()) {return null;}
 
 
@@ -1673,6 +1673,13 @@ public class PostController {
         combinedResult.put("outliers", outliersArray);
 
         return combinedResult.toString();
+    }
+
+    @PostMapping("/deletePostTypesById")
+    public void deletePostTypesById(int id) {
+        if(postTypeRepo.findById((long) id).isPresent()) {
+            postTypeRepo.delete(postTypeRepo.findById((long) id).get());
+        }
     }
 
 

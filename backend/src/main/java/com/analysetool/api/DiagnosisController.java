@@ -1,9 +1,6 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.FinalSearchStatDLC;
-import com.analysetool.modells.UniqueUser;
-import com.analysetool.modells.UniversalCategoriesDLC;
-import com.analysetool.modells.UniversalStats;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Problem;
@@ -17,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,10 +38,12 @@ public class DiagnosisController {
     UniqueUserService uniqueUserService;
     @Autowired
     TrackingBlacklistRepository tbRepo;
-    //ToDo : Add Logic to partial checkups.
-
+    @Autowired
+    PostController postController;
 
     int MAX_CLICKS_UNTIL_BOT = 5;
+
+    //ToDo: Offer more solutionLinks
 
 
 
@@ -395,6 +395,7 @@ public class DiagnosisController {
     private List<Problem> findTypeProblems() {
         List<Problem> list = new ArrayList<>();
         list.addAll(newTypeFoundCheck());
+        list.addAll(changedTypeCheck());
         return list;
     }
 
@@ -420,6 +421,25 @@ public class DiagnosisController {
                     && !type.equalsIgnoreCase("Event: Messe")
                     && !type.equalsIgnoreCase("videos")) {
                     list.add(new Problem(severityError, descriptionNewType + type, area, solutions));
+            }
+        }
+
+        return list;
+    }
+
+    private List<Problem> changedTypeCheck() {
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "PostTypes";
+        int severityError= 2;
+        String descriptionChangedType = "A Type that has changed has been found. Changed from: ";
+        String desPart2 = " to: ";
+        String solutions = "Delete the row of Post-Types or change it manually (offered solution is deletion)";
+        String solutionLink = "analyse.it-sicherheit.de/api/posts/deletePostTypesById?id=";
+
+        for(PostTypes type : postTypeRepo.findAll()) {
+            if(!postController.getType(type.getPost_id()).equals(type.getType())) {
+                list.add(new Problem(severityError, (descriptionChangedType + type.getType() + desPart2 + postController.getType(type.getPost_id())), area, solutions, solutionLink + type.getPost_id()));
             }
         }
 

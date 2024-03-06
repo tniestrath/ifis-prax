@@ -624,14 +624,14 @@ public class LogService {
                     Matcher matched_user_search_success= anbieterSSPattern.matcher(line);
 
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_linkedin_redirect= outgoingRedirectPatternLinkedin.matcher(line);
+                    Matcher matched_outgoing_linkedin_redirect= outgoingRedirectPatternLinkedin.matcher(request);
 
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_facebook_redirect= outgoingRedirectPatternFacebook.matcher(line);
+                    Matcher matched_outgoing_facebook_redirect= outgoingRedirectPatternFacebook.matcher(request);
                     //Does it match an outgoing socials redirect?
-                    matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(line);
+                    matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(request);
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(line);
+                    Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(request);
                     //Does it match user-redirect?
                     Matcher matched_userRedirect = userRedirectPattern.matcher(request);
 

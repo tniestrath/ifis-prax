@@ -507,7 +507,6 @@ public class LogService {
                 //Does it match a content-download
                 Matcher matched_content_download= contentDownloadPattern.matcher(line);
 
-                Matcher matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(line);
                 //Filter für Request-Types.
                 boolean isDevAccess = request.contains("/api/")
                         || (request.contains("/wp-content") && !matched_content_download.find()) || request.contains("/wp-includes")
@@ -541,7 +540,7 @@ public class LogService {
                     }
                 }
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && (!request.contains("securitynews")||matched_outgoing_twitter_redirect.find())&& !isSpam && isGet) {
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !isSpam && isGet) {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
 
@@ -629,7 +628,7 @@ public class LogService {
                     //Does it match an outgoing socials redirect?
                     Matcher matched_outgoing_facebook_redirect= outgoingRedirectPatternFacebook.matcher(request);
                     //Does it match an outgoing socials redirect?
-                    matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(request);
+                    Matcher matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(request);
                     //Does it match an outgoing socials redirect?
                     Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(request);
                     //Does it match user-redirect?

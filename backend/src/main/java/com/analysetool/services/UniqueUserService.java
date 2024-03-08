@@ -24,27 +24,31 @@ public class UniqueUserService {
     public String reconstructClickPath(UniqueUser user) {
         Map<Integer, String> clickMap = new TreeMap<>();
         try{
-            processCategoryClicks(user.getArticle(), "article", clickMap);
-            processCategoryClicks(user.getBlog(), "blog", clickMap);
-            processCategoryClicks(user.getNews(), "news", clickMap);
-            processCategoryClicks(user.getWhitepaper(), "whitepaper", clickMap);
-            processCategoryClicks(user.getPodcast(), "podcast", clickMap);
-            processCategoryClicks(user.getRatgeber(), "ratgeber", clickMap);
-            processCategoryClicks(user.getMain(), "main", clickMap);
-            processCategoryClicks(user.getUeber(), "ueber", clickMap);
-            processCategoryClicks(user.getImpressum(), "impressum", clickMap);
-            processCategoryClicks(user.getPreisliste(), "preisliste", clickMap);
-            processCategoryClicks(user.getPartner(), "partner", clickMap);
-            processCategoryClicks(user.getDatenschutz(), "datenschutz", clickMap);
-            processCategoryClicks(user.getNewsletter(), "newsletter", clickMap);
-            processCategoryClicks(user.getImage(), "image", clickMap);
-            processCategoryClicks(user.getAgb(), "agb", clickMap);
-            processCategoryClicks(user.getNonsense(), "nonsense", clickMap);
+            processAllCategoryClicks(user, clickMap);
         }
         catch (Exception e){System.out.println("computer sagt nein");}
 
         return clickMap.values().stream()
                 .collect(Collectors.joining(","));
+    }
+
+    private void processAllCategoryClicks(UniqueUser user, Map<Integer, String> clickMap) throws JSONException {
+        processCategoryClicks(user.getArticle(), "article", clickMap);
+        processCategoryClicks(user.getBlog(), "blog", clickMap);
+        processCategoryClicks(user.getNews(), "news", clickMap);
+        processCategoryClicks(user.getWhitepaper(), "whitepaper", clickMap);
+        processCategoryClicks(user.getPodcast(), "podcast", clickMap);
+        processCategoryClicks(user.getRatgeber(), "ratgeber", clickMap);
+        processCategoryClicks(user.getMain(), "main", clickMap);
+        processCategoryClicks(user.getUeber(), "ueber", clickMap);
+        processCategoryClicks(user.getImpressum(), "impressum", clickMap);
+        processCategoryClicks(user.getPreisliste(), "preisliste", clickMap);
+        processCategoryClicks(user.getPartner(), "partner", clickMap);
+        processCategoryClicks(user.getDatenschutz(), "datenschutz", clickMap);
+        processCategoryClicks(user.getNewsletter(), "newsletter", clickMap);
+        processCategoryClicks(user.getImage(), "image", clickMap);
+        processCategoryClicks(user.getAgb(), "agb", clickMap);
+        processCategoryClicks(user.getNonsense(), "nonsense", clickMap);
     }
 
     public void processCategoryClicks(String categoryData, String categoryName, Map<Integer, String> clickMap) throws JSONException {
@@ -63,22 +67,7 @@ public class UniqueUserService {
     public boolean isPotentialBot(UniqueUser user, int repeatedClicks) {
         Map<Integer, String> clickMap = new TreeMap<>();
         try {
-            processCategoryClicks(user.getArticle(), "article", clickMap);
-            processCategoryClicks(user.getBlog(), "blog", clickMap);
-            processCategoryClicks(user.getNews(), "news", clickMap);
-            processCategoryClicks(user.getWhitepaper(), "whitepaper", clickMap);
-            processCategoryClicks(user.getPodcast(), "podcast", clickMap);
-            processCategoryClicks(user.getRatgeber(), "ratgeber", clickMap);
-            processCategoryClicks(user.getMain(), "main", clickMap);
-            processCategoryClicks(user.getUeber(), "ueber", clickMap);
-            processCategoryClicks(user.getImpressum(), "impressum", clickMap);
-            processCategoryClicks(user.getPreisliste(), "preisliste", clickMap);
-            processCategoryClicks(user.getPartner(), "partner", clickMap);
-            processCategoryClicks(user.getDatenschutz(), "datenschutz", clickMap);
-            processCategoryClicks(user.getNewsletter(), "newsletter", clickMap);
-            processCategoryClicks(user.getImage(), "image", clickMap);
-            processCategoryClicks(user.getAgb(), "agb", clickMap);
-            processCategoryClicks(user.getNonsense(), "nonsense", clickMap);
+            processAllCategoryClicks(user, clickMap);
 
         } catch (Exception e) {
             System.out.println("Error in processing clicks: " + e.getMessage());
@@ -125,7 +114,6 @@ public class UniqueUserService {
 
     /**
      * Retrieves a list of users who are potentially bots based on their click patterns.
-     *
      * This method scans through all users in the database and applies a filtering logic to identify
      * potential bots. A user is considered a potential bot if their click behavior shows a pattern of
      * repeatedly clicking on the same category in a short sequence, e.g., 'main, main, main...'.
@@ -145,21 +133,7 @@ public class UniqueUserService {
     public Map<String, Long> getClicksCategory(UniqueUser user) throws JSONException {
         Map<Integer, String> clickMap = new TreeMap<>();
         // Wiederholung des Prozesses, um die Klicks in Kategorien zu erfassen
-        processCategoryClicks(user.getArticle(), "article", clickMap);
-        processCategoryClicks(user.getBlog(), "blog", clickMap);
-        processCategoryClicks(user.getNews(), "news", clickMap);
-        processCategoryClicks(user.getWhitepaper(), "whitepaper", clickMap);
-        processCategoryClicks(user.getPodcast(), "podcast", clickMap);
-        processCategoryClicks(user.getRatgeber(), "ratgeber", clickMap);
-        processCategoryClicks(user.getMain(), "main", clickMap);
-        processCategoryClicks(user.getUeber(), "ueber", clickMap);
-        processCategoryClicks(user.getImpressum(), "impressum", clickMap);
-        processCategoryClicks(user.getPreisliste(), "preisliste", clickMap);
-        processCategoryClicks(user.getPartner(), "partner", clickMap);
-        processCategoryClicks(user.getDatenschutz(), "datenschutz", clickMap);
-        processCategoryClicks(user.getNewsletter(), "newsletter", clickMap);
-        processCategoryClicks(user.getImage(), "image", clickMap);
-        processCategoryClicks(user.getAgb(), "agb", clickMap);
+        processAllCategoryClicks(user, clickMap);
 
         // Zählen, wie oft in jeder Kategorie geklickt wurde
         Map<String, Long> categoryClicksCount = clickMap.values().stream()

@@ -696,7 +696,7 @@ public class PostController {
      * @throws ParseException .
      */
     public String getType(@RequestParam long id) {
-        if(postRepository.findById(id).isEmpty()) {return null;}
+        if(postRepository.findById(id).isEmpty()) {return "error";}
 
 
         if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("post")) {

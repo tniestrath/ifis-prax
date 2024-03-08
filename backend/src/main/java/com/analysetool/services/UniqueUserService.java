@@ -3,6 +3,7 @@ import com.analysetool.repositories.UniqueUserRepository;
 import com.analysetool.modells.UniqueUser;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -94,6 +95,15 @@ public class UniqueUserService {
 
         return false;
     }
+
+    public boolean hasOverNumberNonsense(String ip, int number) throws JSONException {
+        if(uniqueUserRepo.findByIP(ip) != null) {
+            return new JSONObject(uniqueUserRepo.findByIP(ip).getNonsense()).length() > number;
+        } else {
+            return false;
+        }
+    }
+
 
     public String getUserPaths(int limit) {
         Pageable topLimit = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));

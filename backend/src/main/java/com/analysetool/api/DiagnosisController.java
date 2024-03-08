@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +40,8 @@ public class DiagnosisController {
     @Autowired
     PostController postController;
 
-    int MAX_CLICKS_UNTIL_BOT = 5;
+    int MAX_CLICKS_IN_CAT_UNTIL_BOT = 5;
+    final int MAX_NONSENSE_UNTIL_BOT = 10;
 
     //ToDo: Offer more solutionLinks
 
@@ -167,7 +167,7 @@ public class DiagnosisController {
         largeList.addAll(findSearchStatProblems());
         largeList.addAll(findTypeProblems());
         largeList.addAll(findWebsiteProblems());
-        largeList.addAll(findPotentialBots(MAX_CLICKS_UNTIL_BOT));
+        largeList.addAll(findPotentialBots(MAX_CLICKS_IN_CAT_UNTIL_BOT));
 
         largeList.sort((o1, o2) -> o2.getSeverity() - o1.getSeverity());
         return largeList;
@@ -481,6 +481,8 @@ public class DiagnosisController {
                                 problem = new Problem(severityError, descriptionPotentialBot + ip + " ,suspicious click in this category: " + category + ", amount of clicks: " + clicks, area, solutions, solutionLinkBase + potBot.getIp());
                             }
                             list.add(problem);
+                        } else if(uniqueUserService.hasOverNumberNonsense(potBot.getIp(), MAX_NONSENSE_UNTIL_BOT)) {
+                            list.add(new Problem(severityNonsense, descriptionPotentialBot + " , suspicious because of several clicks in nonsense (currently set to maximum: " + MAX_NONSENSE_UNTIL_BOT + ")", area, solutions, solutionLinkBase + potBot.getIp()));
                         }
 
                     } catch (Exception e) {

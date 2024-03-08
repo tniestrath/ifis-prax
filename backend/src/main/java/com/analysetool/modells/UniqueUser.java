@@ -66,6 +66,9 @@ public class UniqueUser {
     @Column(name = "agb")
     private String agb;
 
+    @Column(name = "nonsense")
+    private String nonsense;
+
     @Column(name="amount_of_clicks")
     private int amount_of_clicks;
 
@@ -219,6 +222,14 @@ public class UniqueUser {
 
     public void setAgb(String agb) {
         this.agb = agb;
+    }
+
+    public String getNonsense() {
+        return nonsense;
+    }
+
+    public void setNonsense(String nonsense) {
+        this.nonsense = nonsense;
     }
 
     public int getAmount_of_clicks() {

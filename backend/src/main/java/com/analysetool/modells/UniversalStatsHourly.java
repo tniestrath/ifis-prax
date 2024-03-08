@@ -48,6 +48,9 @@ public class UniversalStatsHourly {
     @Column(name = "anbieter_abolos_anzahl")
     private long anbieter_abolos_anzahl;
 
+    @Column(name="sensible_clicks")
+    private Long sensibleClicks;
+
     @Column(name = "total_clicks")
     private Long totalClicks;
 
@@ -191,6 +194,18 @@ public class UniversalStatsHourly {
 
     public void setUniStatId(int uniStatId) {
         this.uniStatId = uniStatId;
+    }
+
+    public void setAnbieterPlusAnzahl(Long anbieterPlusAnzahl) {
+        this.anbieterPlusAnzahl = anbieterPlusAnzahl;
+    }
+
+    public Long getSensibleClicks() {
+        return sensibleClicks;
+    }
+
+    public void setSensibleClicks(Long sensibleClicks) {
+        this.sensibleClicks = sensibleClicks;
     }
 }
 

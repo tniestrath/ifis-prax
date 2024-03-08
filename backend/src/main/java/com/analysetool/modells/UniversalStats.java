@@ -58,6 +58,9 @@ public class UniversalStats {
     @Column(name = "umsatz")
     private long umsatz;
 
+    @Column(name="sensible_clicks")
+    private Long sensibleClicks;
+
     @Column(name = "total_clicks")
     private Long totalClicks;
 
@@ -252,6 +255,14 @@ public class UniversalStats {
 
     public void setServerErrors(int serverErrors) {
         this.serverErrors = serverErrors;
+    }
+
+    public Long getSensibleClicks() {
+        return sensibleClicks;
+    }
+
+    public void setSensibleClicks(Long sensibleClicks) {
+        this.sensibleClicks = sensibleClicks;
     }
 }
 

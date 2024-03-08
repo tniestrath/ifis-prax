@@ -739,7 +739,7 @@ public class LogService {
                     }
 
                     //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
-                    if(isUnique && !whatMatched.equals("")) {
+                    if(isUnique) {
                         uniqueUsers++;
                         initUniqueUser(ip, dateLog);
                     }

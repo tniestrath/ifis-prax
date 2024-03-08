@@ -74,7 +74,7 @@ public class UniqueUserService {
             System.out.println("Error in processing clicks: " + e.getMessage());
         }
 
-        return hasSuspiciousClickPattern(clickMap,repeatedClicks);
+        return hasSuspiciousClickPattern(clickMap,repeatedClicks) || hasNumberOverNonsense(clickMap, repeatedClicks);
     }
 
     public boolean hasSuspiciousClickPattern(Map<Integer, String> clickMap, int repeatedClicks) {
@@ -96,12 +96,19 @@ public class UniqueUserService {
         return false;
     }
 
-    public boolean hasOverNumberNonsense(String ip, int number) throws JSONException {
-        if(uniqueUserRepo.findByIP(ip) != null) {
-            return new JSONObject(uniqueUserRepo.findByIP(ip).getNonsense()).length() > number;
-        } else {
-            return false;
+    public boolean hasNumberOverNonsense(Map<Integer, String> clickMap, int nonsenseClicks) {
+        int repeatCount = 0;
+
+        for (String category : clickMap.values()) {
+            if (category.equals("nonsense")) {
+                repeatCount++;
+                if (repeatCount >= nonsenseClicks) {
+                    return true;
+                }
+            }
         }
+
+        return false;
     }
 
 

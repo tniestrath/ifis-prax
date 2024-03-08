@@ -481,10 +481,7 @@ public class DiagnosisController {
                                 problem = new Problem(severityError, descriptionPotentialBot + ip + " ,suspicious click in this category: " + category + ", amount of clicks: " + clicks, area, solutions, solutionLinkBase + potBot.getIp());
                             }
                             list.add(problem);
-                        } else if(uniqueUserService.hasOverNumberNonsense(potBot.getIp(), MAX_NONSENSE_UNTIL_BOT)) {
-                            list.add(new Problem(severityNonsense, descriptionPotentialBot + " , suspicious because of several clicks in nonsense (currently set to maximum: " + MAX_NONSENSE_UNTIL_BOT + ")", area, solutions, solutionLinkBase + potBot.getIp()));
                         }
-
                     } catch (Exception e) {
                         System.out.println("potential bot processing error :" + Arrays.toString(e.getStackTrace()));
                     }

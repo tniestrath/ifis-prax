@@ -456,6 +456,7 @@ public class DiagnosisController {
 
         String area = "UniqueUser";
         int severityError= 2;
+        int severityNonsense = 4;
         String descriptionPotentialBot = "Potential Bot has been found. IP: ";
         String solutions = "add to Blacklist";
         String solutionLinkBase = "analyse.it-sicherheit.de/api/ip/blockIp?ip=";
@@ -473,7 +474,12 @@ public class DiagnosisController {
                             String category = uniqueUserService.getCategoryOfClicks(categoryClicksMap);
                             clicks = potBot.getAmount_of_clicks();
                             ip = potBot.getIp();
-                            Problem problem = new Problem(severityError, descriptionPotentialBot + ip + " ,suspicious click in this category: " + category + ", amount of clicks: " + clicks, area, solutions, solutionLinkBase + potBot.getIp());
+                            Problem problem;
+                            if(category.equals("nonsense")) {
+                                 problem = new Problem(severityNonsense, descriptionPotentialBot + ip + " ,suspicious click in this category: " + category + ", amount of clicks: " + clicks, area, solutions, solutionLinkBase + potBot.getIp());
+                            } else {
+                                problem = new Problem(severityError, descriptionPotentialBot + ip + " ,suspicious click in this category: " + category + ", amount of clicks: " + clicks, area, solutions, solutionLinkBase + potBot.getIp());
+                            }
                             list.add(problem);
                         }
 

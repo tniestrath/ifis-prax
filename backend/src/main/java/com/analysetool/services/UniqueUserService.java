@@ -38,7 +38,9 @@ public class UniqueUserService {
             processCategoryClicks(user.getDatenschutz(), "datenschutz", clickMap);
             processCategoryClicks(user.getNewsletter(), "newsletter", clickMap);
             processCategoryClicks(user.getImage(), "image", clickMap);
-            processCategoryClicks(user.getAgb(), "agb", clickMap);}
+            processCategoryClicks(user.getAgb(), "agb", clickMap);
+            processCategoryClicks(user.getNonsense(), "nonsense", clickMap);
+        }
         catch (Exception e){System.out.println("computer sagt nein");}
 
         return clickMap.values().stream()
@@ -76,6 +78,7 @@ public class UniqueUserService {
             processCategoryClicks(user.getNewsletter(), "newsletter", clickMap);
             processCategoryClicks(user.getImage(), "image", clickMap);
             processCategoryClicks(user.getAgb(), "agb", clickMap);
+            processCategoryClicks(user.getNonsense(), "nonsense", clickMap);
 
         } catch (Exception e) {
             System.out.println("Error in processing clicks: " + e.getMessage());

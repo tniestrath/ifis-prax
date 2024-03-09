@@ -759,6 +759,10 @@ public class PostController {
                 return "blog";
             }
 
+            if(type.contains("cyber-risk-check")) {
+               return "ratgeber";
+            }
+
             if (type == null) {
                 System.out.println(id + "\n");
             }

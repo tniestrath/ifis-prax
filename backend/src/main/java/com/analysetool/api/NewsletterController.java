@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -154,6 +155,8 @@ public class NewsletterController {
             }
             json.put("interactionTimes", new JSONArray(hourlyInteractions));
             json.put("id", emailId);
+            LocalDate date = new Date(newsEmailsRepo.findById((long) emailId).get().getSendOn()).toLocalDate();
+            json.put("date", date.getDayOfMonth() + "/" + date.getMonthValue() + "/" + date.getYear());
             return json.toString();
         } else {
             return "email id invalid";

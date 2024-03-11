@@ -113,7 +113,7 @@ export enum dbUrl {
   GET_SEARCHES_TOP_N = "/search-stats/getTopNSearchQueries?number=NUMBER",
   GET_SEARCHES_TOP_N_BY_SS = "/search-stats/getTopNSearchQueriesBySS?number=NUMBER",
   POST_SEARCH_IGNORE = "/search-stats/blockSearch?id=SEARCH",
-  ANBIETER_SEARCH_IGNORE = "/search-stats/deleteAbieterSearch?search=SEARCH&city=CITY",
+  ANBIETER_SEARCH_IGNORE = "/search-stats/deleteAnbieterSearch?search=SEARCH&city=CITY",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",

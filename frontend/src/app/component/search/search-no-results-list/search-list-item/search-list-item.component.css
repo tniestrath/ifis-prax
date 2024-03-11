@@ -19,7 +19,7 @@
 .snr-string-short{
   display: flex;
   align-items: center;
-  width: 45%;
+  width: 50%;
   text-align: left;
 }
 .snr-count{
@@ -38,7 +38,7 @@
 .snr-city{
   display: flex;
   align-items: center;
-  width: 40%;
+  width: 35%;
   text-align: left;
 }
 .snr-ignore{

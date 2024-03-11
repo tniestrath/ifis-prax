@@ -15,7 +15,11 @@
         <p *ngIf="interactionTimeMax==-1"> - </p>
       </div>
     </div>
-    <div class="newsletter-detail-group-2">
+    <div class="newsletter-detail-group-3">
+      <div class="newsletter-detail">
+        <div class="newsletter-label" [style]="{'background': bgColor}">Veröffentlichung</div>
+        <p>{{data.date}}</p>
+      </div>
       <div class="newsletter-detail">
         <div class="newsletter-label" [style]="{'background': bgColor}">Interaktionen</div>
         <p>{{data.interactions}}</p>

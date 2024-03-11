@@ -16,6 +16,12 @@
   width: 85%;
   text-align: left;
 }
+.snr-string-short{
+  display: flex;
+  align-items: center;
+  width: 45%;
+  text-align: left;
+}
 .snr-count{
   display: flex;
   align-items: center;
@@ -28,6 +34,12 @@
   justify-content: right;
   width: 15%;
   text-align: right;
+}
+.snr-city{
+  display: flex;
+  align-items: center;
+  width: 40%;
+  text-align: left;
 }
 .snr-ignore{
   display: flex;

@@ -35,7 +35,7 @@
 .newsletter-detail-group-3{
   display: grid;
   grid-template-rows: 1fr;
-  grid-template-columns: 1fr 1fr 3fr;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 5px;
 }
 .newsletter-detail-group-5{

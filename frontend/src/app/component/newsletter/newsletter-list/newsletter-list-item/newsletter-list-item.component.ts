@@ -9,7 +9,7 @@ import {SysVars} from "../../../../services/sys-vars-service";
   styleUrls: ['./newsletter-list-item.component.css']
 })
 export class NewsletterListItemComponent implements AfterViewInit{
-  data : Newsletter = new Newsletter("","", 0, 0, 0, 0, []);
+  data : Newsletter = new Newsletter("","", "", 0, 0, 0, 0, []);
   protected interactionTimeMax = -1;
 
   bgColor: string = "#FFFFFF";

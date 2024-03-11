@@ -666,6 +666,22 @@ public class LogService {
                     Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(request);
                     //Does it match user-redirect?
                     Matcher matched_userRedirect = userRedirectPattern.matcher(request);
+                    //Does it match a socials impression?
+                    Matcher matched_post_impression_facebook=postImpressionFacebookPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_post_impression_twitter=postImpressionTwitterPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_post_impression_LinkedIn=postImpressionLinkedinPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_post_impression_FacebookTwitterCombo=postImpressionFacebookTwitterComboPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_user_impression_facebook=userImpressionFacebookPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_user_impression_twitter=userImpressionTwitterPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_user_impression_LinkedIn=userImpressionLinkedInPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_user_impression_FacebookTwitterCombo=userImpressionTwitterFacebookComboPattern.matcher(line);
 
                     //Find out which pattern matched
                     String whatMatched = "";
@@ -689,7 +705,31 @@ public class LogService {
                     } else if(matched_user_search_success.find()) {
                         whatMatched = "userSS";
                         patternMatcher = matched_user_search_success;
-                    } else if(matched_articleView.find()) {
+                    } else if(matched_post_impression_facebook.find()) {
+                        whatMatched = "postImpressionFacebook";
+                        patternMatcher = matched_post_impression_facebook;
+                    }else if(matched_post_impression_twitter.find()) {
+                        whatMatched = "postImpressionTwitter";
+                        patternMatcher = matched_post_impression_twitter;
+                    } else if(matched_post_impression_LinkedIn.find()) {
+                        whatMatched = "postImpressionLinkedIn";
+                        patternMatcher = matched_post_impression_LinkedIn;
+                    } else if(matched_post_impression_FacebookTwitterCombo.find()) {
+                        whatMatched = "postImpressionFacebookTwitterCombo";
+                        patternMatcher = matched_post_impression_FacebookTwitterCombo;
+                    } else if(matched_user_impression_facebook.find()) {
+                        whatMatched = "userImpressionFacebook";
+                        patternMatcher = matched_user_impression_facebook;
+                    }else if(matched_user_impression_twitter.find()) {
+                        whatMatched = "userImpressionTwitter";
+                        patternMatcher = matched_user_impression_twitter;
+                    } else if(matched_user_impression_LinkedIn.find()) {
+                        whatMatched = "userImpressionLinkedIn";
+                        patternMatcher = matched_user_impression_LinkedIn;
+                    } else if(matched_user_impression_FacebookTwitterCombo.find()) {
+                        whatMatched = "userImpressionFacebookTwitterCombo";
+                        patternMatcher = matched_user_impression_FacebookTwitterCombo;
+                    }  else if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
                     } else if(matched_blogView.find() || matched_blogCat.find()) {

@@ -154,6 +154,7 @@ public class NewsletterController {
             }
             json.put("interactionTimes", new JSONArray(hourlyInteractions));
             json.put("id", emailId);
+            json.put("date", newsEmailsRepo.findById((long) emailId).get().getCreated().toString());
             return json.toString();
         } else {
             return "email id invalid";

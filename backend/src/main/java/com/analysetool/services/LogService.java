@@ -537,6 +537,12 @@ public class LogService {
                 notNonsense.add("author");
                 notNonsense.add("author");
 
+                boolean isNotNonsense = false;
+
+                for(String entry : notNonsense) {
+                    isNotNonsense = request.contains(entry);
+                }
+
 
                 //Schaue, ob der UserAgent auf der Blacklist steht.
                 boolean isBlacklisted = false;
@@ -1015,8 +1021,10 @@ public class LogService {
                         } case "eventView" -> {
                         }
                         default -> {
-                            updateUniqueUser(ip, "nonsense", dateLog);
-                            System.out.println(line);
+                            if(!isNotNonsense) {
+                                updateUniqueUser(ip, "nonsense", dateLog);
+                                System.out.println(line);
+                            }
                         }
                     }
 

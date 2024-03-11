@@ -527,12 +527,22 @@ public class SearchStatsController {
             String city = search.getCity_name().isBlank() ? geoNamesRepo.getCityByPlz(search.getPlz()) : search.getCity_name();
             String suche = search.getSearch().isBlank() ? "none" : search.getSearch();
             json.put("city", city);
+            json.put("id", search.getId());
             json.put("search", suche);
             array.put(json);
         }
 
         return array.toString();
     }
+
+    @PostMapping("/deleteAnbieterSearchById")
+    @Modifying
+    public void deleteAnbieterSearchById(long id) {
+        if(anbieterSearchRepo.existsById(id)) {
+            anbieterSearchRepo.deleteById(id);
+        }
+    }
+
 
     boolean isHack(String text) {
         return text.contains("&") && text.contains(";");

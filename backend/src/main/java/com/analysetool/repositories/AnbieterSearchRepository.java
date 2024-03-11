@@ -19,5 +19,8 @@ public interface AnbieterSearchRepository extends JpaRepository<AnbieterSearch, 
     @Query(value = "SELECT u FROM AnbieterSearch u ORDER BY u.id DESC LIMIT 10")
     List<AnbieterSearch> findLast10();
 
+    @Query("SELECT a FROM AnbieterSearch a WHERE a.count_found=0")
+    List<AnbieterSearch> findAllCount0();
+
     Page<AnbieterSearch> findAllByOrderByIdDesc(Pageable pageable);
 }

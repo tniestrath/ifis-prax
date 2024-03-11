@@ -1,9 +1,9 @@
 package com.analysetool.services;
-import com.analysetool.repositories.UniqueUserRepository;
+
 import com.analysetool.modells.UniqueUser;
+import com.analysetool.repositories.UniqueUserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -111,6 +110,20 @@ public class UniqueUserService {
         return false;
     }
 
+    public List<String> getIpsOfPotBots() throws JSONException {
+        List<String> potBots = new ArrayList<>();
+        for(UniqueUser u : uniqueUserRepo.findAllByMoreThanTwoClicks()) {
+            JSONArray array = new JSONArray(u.getNonsense());
+            if(array.length() > 10 || (array.length() > 3 && u.getAmount_of_clicks() < 10)) {
+                potBots.add(u.getIp());
+            } else {
+                if(u.getAmount_of_clicks() / 2 < array.length()) {
+                    potBots.add(u.getIp());
+                }
+            }
+        }
+        return potBots;
+    }
 
     public String getUserPaths(int limit) {
         Pageable topLimit = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));

@@ -157,7 +157,7 @@ public class DiagnosisController {
     }
 
 
-    private List<Problem> allCheckups() {
+    private List<Problem> allCheckups() throws JSONException {
         List<Problem> largeList  = new ArrayList<>();
 
         //Add new lines for new categories of checkups. If any of these are applicable, please add new routines in the respective subroutine.
@@ -168,6 +168,11 @@ public class DiagnosisController {
         largeList.addAll(findTypeProblems());
         largeList.addAll(findWebsiteProblems());
         largeList.addAll(findPotentialBots(MAX_CLICKS_IN_CAT_UNTIL_BOT));
+        try {
+            largeList.addAll(findPotentialBotsByNonsense());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
         largeList.sort((o1, o2) -> o2.getSeverity() - o1.getSeverity());
         return largeList;
@@ -451,10 +456,28 @@ public class DiagnosisController {
         return list;
     }
 
+
+    private List<Problem> findPotentialBotsByNonsense() throws JSONException {
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "UniqueUserNonsenseDetection";
+        int severityNonsense = 4;
+        String descriptionPotentialBot = "Potential Bot has been found. Had more nonsense than accepted. IP: ";
+        String solutions = "add to Blacklist";
+        String solutionLinkBase = "analyse.it-sicherheit.de/api/ip/blockIp?ip=";
+
+        List<String> potentialBots= uniqueUserService.getIpsOfPotBots();
+        for(String potBot : potentialBots) {
+            list.add(new Problem(severityNonsense, descriptionPotentialBot + potBot, area, solutions, solutionLinkBase + potBot));
+        }
+
+        return list;
+    }
+
     private List<Problem> findPotentialBots(int repeatedClicksLimit){
         List<Problem> list  = new ArrayList<>();
 
-        String area = "UniqueUser";
+        String area = "UniqueUserNormalDetection";
         int severityError= 2;
         int severityNonsense = 4;
         String descriptionPotentialBot = "Potential Bot has been found. IP: ";

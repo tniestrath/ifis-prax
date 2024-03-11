@@ -28,5 +28,8 @@ public interface AnbieterSearchRepository extends JpaRepository<AnbieterSearch, 
     @Query("SELECT c FROM AnbieterSearch c WHERE c.search=:search")
     List<AnbieterSearch> findBySearch(String search);
 
+    @Query("SELECT e FROM AnbieterSearch e WHERE e.search='' AND e.city_name=''")
+    List<AnbieterSearch> findAllEmpty();
+
     Page<AnbieterSearch> findAllByOrderByIdDesc(Pageable pageable);
 }

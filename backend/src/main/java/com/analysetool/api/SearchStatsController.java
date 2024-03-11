@@ -556,10 +556,19 @@ public class SearchStatsController {
     @PostMapping("/deleteAnbieterSearch")
     @Modifying
     public void deleteAnbieterSearchById(String search, String city) {
-        if(search.equals("none") || search.isBlank()) {
+        if(city.isBlank() && (search.isBlank() || search.equals("none"))) {
+            deleteAnbieterEmpty();
+        } else if(search.equals("none") || search.isBlank()) {
             deleteAnbieterSearchByCity(city);
         } else {
             deleteAnbieterSearchBySearch(search);
+        }
+    }
+
+    @Modifying
+    public void deleteAnbieterEmpty() {
+        if(!anbieterSearchRepo.findAllEmpty().isEmpty()) {
+            anbieterSearchRepo.deleteAll(anbieterSearchRepo.findAllEmpty());
         }
     }
 

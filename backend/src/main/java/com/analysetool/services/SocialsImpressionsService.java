@@ -1,5 +1,6 @@
 package com.analysetool.services;
 
+import com.analysetool.modells.SocialsImpressions;
 import com.analysetool.repositories.SocialsImpressionsRepository;
 import com.analysetool.repositories.universalStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ public class SocialsImpressionsService {
     public void updateSocialsImpressionsPost(String whatMatched, LocalDateTime dateLog, long postId){
         Integer uniId = uniRepo.getLatestUniStat().getId();
         Integer hour = dateLog.getHour();
+        SocialsImpressions impression;
 
         switch (whatMatched){
             case "postImpressionFacebook":
@@ -28,10 +30,12 @@ public class SocialsImpressionsService {
             case "postImpressionFacebookTwitterCombo":
                 break;
         }
+       // socialsImpressionsRepo.save(impression);
     }
     public void updateSocialsImpressionsUser(String whatMatched, LocalDateTime dateLog, long userId){
         Integer uniId = uniRepo.getLatestUniStat().getId();
         Integer hour = dateLog.getHour();
+        SocialsImpressions impression;
 
         switch (whatMatched){
             case "userImpressionFacebook":
@@ -43,5 +47,6 @@ public class SocialsImpressionsService {
             case "userImpressionFacebookTwitterCombo":
                 break;
         }
+        // socialsImpressionsRepo.save(impression);
     }
 }

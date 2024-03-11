@@ -3,7 +3,8 @@ import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {SelectorItem} from "../../../page/selector/selector.component";
 import {Subject} from "rxjs";
 import {
-  SearchItem,
+  SearchAnbieterItem,
+  SearchItem, SearchListAnbieterItemComponent,
   SearchListItemComponent, SearchListNoResultsItemComponent, SearchListRankItemComponent,
   SearchListSSItemComponent,
   SearchRank,
@@ -111,24 +112,24 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent {
   override title = "Anbietersuchen ohne Ergebnis";
   override ngOnInit(): void {
     this.selectorItems = [];
-    this.db.getSearchesWithoutResults().then(res => {
+    this.db.getSearchesAnbieterWithoutResults().then(res => {
       for (var search of res) {
-        this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, new SearchItem(search.id, search.search, search.count)));
+        this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, new SearchAnbieterItem(search.id, search.search, search.city, search.count)));
       }
       this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
 
     SysVars.SELECTED_SEARCH.observers = [];
-    SysVars.SELECTED_SEARCH.subscribe(selection => {
+    SysVars.SELECTED_SEARCH.subscribe(selection  => {
       if (selection.operation == "IGNORE") {
-        this.db.ignoreSearch(selection.item.id).then(r => {
-          console.log((selection.item as SearchItem).search + " : Successfully set to ignore: " + r)
+        this.db.ignoreAnbieterSearch((selection.item as SearchAnbieterItem).search, (selection.item as SearchAnbieterItem).city).then(r => {
+          console.log((selection.item as SearchAnbieterItem).search + " : " + (selection.item as SearchAnbieterItem).city + " : Successfully set deleted: " + r)
           if (r) {
             this.selectorItems = [];
-            this.db.getSearchesWithoutResults().then(res => {
+            this.db.getSearchesAnbieterWithoutResults().then(res => {
               for (var search of res) {
-                this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, new SearchItem(search.id, search.search, search.count)));
+                this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, new SearchAnbieterItem(search.id, search.search, search.city, search.count)));
               }
               this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
               this.selectorItemsLoaded.next(this.selectorItems);

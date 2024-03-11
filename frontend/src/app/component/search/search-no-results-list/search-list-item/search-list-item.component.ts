@@ -13,6 +13,15 @@ export class SearchItem extends DbObject{
     this.count = count;
   }
 }
+export class SearchAnbieterItem extends SearchItem{
+  public city : string;
+
+  constructor(id : string, searchString : string, city : string, count : number) {
+    super(id, searchString, count);
+    this.city = city;
+  }
+
+}
 export class SearchRank extends DbObject{
   public rank : number;
   public query : string;
@@ -74,4 +83,19 @@ export class SearchListRankItemComponent extends SearchListItemComponent{
 })
 export class SearchListSSItemComponent extends SearchListItemComponent{
   override data : SearchSS = new SearchSS("", "", 0, 0);
+}
+
+@Component({
+  selector: 'dash-search-anbieter-list-item',
+  templateUrl: './search-list-anbieter-item.component.html',
+  styleUrls: ['./search-list-item.component.css']
+})
+export class SearchListAnbieterItemComponent {
+  data : SearchAnbieterItem = new SearchAnbieterItem("","", "", 0);
+
+  protected onClick(){
+    SysVars.SELECTED_SEARCH.emit({item: this.data, operation: "IGNORE"});
+  }
+
+  protected readonly SearchItem = SearchItem;
 }

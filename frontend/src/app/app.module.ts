@@ -85,7 +85,13 @@ import {
   SearchListRankComponent,
   SearchListSSComponent
 } from './component/search/search-no-results-list/search-list.component';
-import { SearchListItemComponent, SearchListNoResultsItemComponent, SearchListRankItemComponent, SearchListSSItemComponent } from './component/search/search-no-results-list/search-list-item/search-list-item.component';
+import {
+  SearchListAnbieterItemComponent,
+  SearchListItemComponent,
+  SearchListNoResultsItemComponent,
+  SearchListRankItemComponent,
+  SearchListSSItemComponent
+} from './component/search/search-no-results-list/search-list-item/search-list-item.component';
 import { NewsletterListComponent } from './component/newsletter/newsletter-list/newsletter-list.component';
 import { NewsletterListItemComponent } from './component/newsletter/newsletter-list/newsletter-list-item/newsletter-list-item.component';
 import { NewsletterComponent } from './component/newsletter/newsletter/newsletter.component';
@@ -162,6 +168,7 @@ import { NewsletterComponent } from './component/newsletter/newsletter/newslette
     SearchListSSComponent,
     SearchListAnbieterNoResultsComponent,
     SearchListItemComponent,
+    SearchListAnbieterItemComponent,
     SearchListRankItemComponent,
     SearchListNoResultsItemComponent,
     SearchListSSItemComponent,

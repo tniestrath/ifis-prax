@@ -10,6 +10,7 @@ import Util from "../util/Util";
 import {Subject} from "rxjs";
 import {ProfileState} from "../component/user/profile-completion/profile-completion.component";
 import {
+  SearchAnbieterItem,
   SearchItem, SearchRank, SearchSS
 } from "../component/search/search-no-results-list/search-list-item/search-list-item.component";
 import {Newsletter} from "../component/newsletter/Newsletter";
@@ -108,10 +109,11 @@ export enum dbUrl {
   GET_RATGEBER_ALL = "/posts/getAllRatgeberWithStats",
 
   GET_SEARCHES_NO_RESULTS = "/search-stats/getAllUnfixedSearches",
-  GET_SEARCHES_ANBIETER_NO_RESULT = "search-stats/getAnbieterNoResult",
+  GET_SEARCHES_ANBIETER_NO_RESULT = "/search-stats/getAnbieterNoneFound",
   GET_SEARCHES_TOP_N = "/search-stats/getTopNSearchQueries?number=NUMBER",
   GET_SEARCHES_TOP_N_BY_SS = "/search-stats/getTopNSearchQueriesBySS?number=NUMBER",
   POST_SEARCH_IGNORE = "/search-stats/blockSearch?id=SEARCH",
+  ANBIETER_SEARCH_IGNORE = "/search-stats/deleteAbieterSearch?search=SEARCH&city=CITY",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -753,7 +755,7 @@ export class DbService {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_NO_RESULTS)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async getSearchesAnbieterWithoutResults() : Promise<SearchItem[]> {
+  async getSearchesAnbieterWithoutResults() : Promise<SearchAnbieterItem[]> {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_ANBIETER_NO_RESULT)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
@@ -769,6 +771,10 @@ export class DbService {
   async ignoreSearch(searchID : string) : Promise<boolean> {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_IGNORE).replace("SEARCH", searchID)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async ignoreAnbieterSearch(search : string, city : string) : Promise<boolean> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.ANBIETER_SEARCH_IGNORE).replace("SEARCH", search).replace("CITY", city)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
 }

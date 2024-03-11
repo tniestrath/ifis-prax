@@ -11,7 +11,7 @@ import {Chart} from "chart.js/auto";
   styleUrls: ['./newsletter.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class NewsletterComponent extends DashBaseComponent implements OnInit{
-  data : Newsletter = new Newsletter("", "_blank", 0, 0, 0, 0, []);
+  data : Newsletter = new Newsletter("", "_blank", "", 0, 0, 0, 0, []);
   protected interactionTimeMax = 0;
   protected readonly DashColors = DashColors;
 

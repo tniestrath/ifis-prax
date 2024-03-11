@@ -131,7 +131,9 @@ public class LogService {
 
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
    // private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
-    private final String BlogViewPattern = "^.*GET /blog/(\\S+)/";
+
+    private final String blogCategoryPattern= "^.*GET /blog/";
+    private final String BlogViewPattern = "^.*GET /blogeintrag/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
 
@@ -200,6 +202,7 @@ public class LogService {
 
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
     final Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
+    final Pattern blogCategory = Pattern.compile(blogCategoryPattern);
     final Pattern blogViewPattern = Pattern.compile(BlogViewPattern);
     final Pattern blogSearchSuccessPattern = Pattern.compile(BlogSSPattern);
     Pattern redirectPattern = Pattern.compile(RedirectPattern);
@@ -530,6 +533,10 @@ public class LogService {
 
                 boolean isGet = request.contains("GET") && !request.contains("HEAD") && !request.contains("POST");
 
+                List<String> notNonsense = new ArrayList<>();
+                notNonsense.add("author");
+                notNonsense.add("author");
+
 
                 //Schaue, ob der UserAgent auf der Blacklist steht.
                 boolean isBlacklisted = false;
@@ -555,6 +562,7 @@ public class LogService {
 
                     //Does it match a blog-type?
                     Matcher matched_blogView = blogViewPattern.matcher(request);
+                    Matcher matched_blogCat = blogViewPattern.matcher(request);
                     Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
 
                     //Does it match a news-type?
@@ -661,9 +669,13 @@ public class LogService {
                     } else if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
-                    } else if(matched_blogView.find()) {
-                        whatMatched = "blogView";
-                        patternMatcher = matched_blogView;
+                    } else if(matched_blogView.find() || matched_blogCat.find()) {
+                        if(matched_blogView.find()) {
+                            whatMatched = "blogView";
+                            patternMatcher = matched_blogView;
+                        } else {
+                            whatMatched = "blogCat";
+                        }
                     } else if(matched_newsView.find()) {
                         whatMatched = "newsView";
                         patternMatcher = matched_newsView;
@@ -759,7 +771,7 @@ public class LogService {
                             updateUniqueUser(ip, "article", dateLog);
                         }
 
-                        case "blogView", "blogSS" -> {
+                        case "blogView", "blogSS", "blogCat" -> {
                             //Erhöhe Clicks für Blog um 1.
                             viewsBlog++;
 

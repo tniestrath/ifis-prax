@@ -246,6 +246,14 @@ public class LogService {
     final Pattern outgoingRedirectPatternTwitter = Pattern.compile(outgoingRedirectTwitter);
     final Pattern outgoingRedirectPatternFacebook = Pattern.compile(outgoingRedirectFacebook);
     final Pattern outgoingRedirectPatternYoutube = Pattern.compile(outgoingRedirectYoutube);
+    final Pattern postImpressionFacebookPattern=Pattern.compile(postImpressionFacebook);
+    final Pattern postImpressionTwitterPattern=Pattern.compile(postImpressionTwitter);
+    final Pattern postImpressionLinkedinPattern=Pattern.compile(postImpressionLinkedin);
+    final Pattern postImpressionFacebookTwitterComboPattern=Pattern.compile(postImpressionTwitterFacebookCombo);
+    final Pattern userImpressionFacebookPattern=Pattern.compile(userImpressionFacebook);
+    final Pattern userImpressionTwitterPattern=Pattern.compile(userImpressionTwitter);
+    final Pattern userImpressionLinkedInPattern=Pattern.compile(userImpressionLinkedin);
+    final Pattern userImpressionTwitterFacebookComboPattern=Pattern.compile(userImpressionTwitterFacebookCombo);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;

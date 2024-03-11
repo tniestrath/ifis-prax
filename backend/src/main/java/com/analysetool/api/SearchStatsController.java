@@ -532,7 +532,7 @@ public class SearchStatsController {
                 if(search.getPlz() != 0) {
                     city = geoNamesRepo.getCityByPlz(search.getPlz());
                 } else {
-                    city = " - ";
+                    city = "none";
                 }
             }
             else {
@@ -566,7 +566,7 @@ public class SearchStatsController {
     @PostMapping("/deleteAnbieterSearch")
     @Modifying
     public void deleteAnbieterSearchById(String search, String city) {
-        if(city.isBlank() && (search.isBlank() || search.equals("none"))) {
+        if((city.isBlank() || city.equals("none")) && (search.isBlank() || search.equals("none"))) {
             deleteAnbieterEmpty();
         } else if(search.equals("none") || search.isBlank()) {
             deleteAnbieterSearchByCity(city);

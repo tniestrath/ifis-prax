@@ -114,6 +114,8 @@ public class LogService {
     private OutgoingSocialsRedirectsRepository outgoingSocialsRepo;
     @Autowired
     private TrackingBlacklistRepository tbRepo;
+    @Autowired
+    private SocialsImpressionsService socialsImpressionsService;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -1696,6 +1698,10 @@ public class LogService {
                     System.out.println("EVENTVIEW EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
+                break;
+            case "postImpressionFacebook","postImpressionTwitter","postImpressionLinkedIn","postImpressionFacebookTwitterCombo":
+                break;
+            case "userImpressionFacebook","userImpressionTwitter","userImpressionLinkedIn","userImpressionFacebookTwitterCombo":
                 break;
             case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar":
 

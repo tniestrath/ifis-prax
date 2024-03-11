@@ -101,3 +101,42 @@ export class SearchListSSComponent extends SearchListComponent {
     });
   }
 }
+
+@Component({
+  selector: 'dash-search-anbieter-no-results-list',
+  templateUrl: './search-list.component.html',
+  styleUrls: ['./search-list.component.css', "../../dash-base/dash-base.component.css"]
+})
+export class SearchListAnbieterNoResultsComponent extends SearchListComponent {
+  override title = "Anbietersuchen ohne Ergebnis";
+  override ngOnInit(): void {
+    this.selectorItems = [];
+    this.db.getSearchesWithoutResults().then(res => {
+      for (var search of res) {
+        this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, new SearchItem(search.id, search.search, search.count)));
+      }
+      this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+
+    SysVars.SELECTED_SEARCH.observers = [];
+    SysVars.SELECTED_SEARCH.subscribe(selection => {
+      if (selection.operation == "IGNORE") {
+        this.db.ignoreSearch(selection.item.id).then(r => {
+          console.log((selection.item as SearchItem).search + " : Successfully set to ignore: " + r)
+          if (r) {
+            this.selectorItems = [];
+            this.db.getSearchesWithoutResults().then(res => {
+              for (var search of res) {
+                this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, new SearchItem(search.id, search.search, search.count)));
+              }
+              this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
+              this.selectorItemsLoaded.next(this.selectorItems);
+            });
+          }
+        });
+
+      }
+    });
+  }
+}

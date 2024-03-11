@@ -217,6 +217,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
 
     var timestamps : string[] = [];
     var clicksData : number[] = [];
+    var clicksDataRAW : number[] = [];
     var visitorsData : number[] = [];
     for (var callup of callups) {
       if (timeSpan == "day"){
@@ -230,18 +231,23 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         timestamps.push(Util.formatDate(callup.date));
       }
       clicksData.push(callup.sensibleClicks);
+      clicksDataRAW.push(callup.clicks);
       visitorsData.push(callup.visitors);
     }
 
-    const max = Math.max.apply(null, clicksData);
-
-    // @ts-ignore
     // @ts-ignore
     this.chart = new Chart("uni-chart", {
       type: "line",
       data: {
         labels: timestamps,
         datasets: [{
+          label: "Aufrufe (Unbereinigt)",
+          data: clicksDataRAW,
+          backgroundColor: DashColors.GREY,
+          borderColor: DashColors.GREY,
+          borderJoinStyle: 'round',
+          borderWidth: 3
+        },{
           label: "Aufrufe",
           data: clicksData,
           backgroundColor: DashColors.RED,
@@ -269,8 +275,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         },
         scales: {
           y: {
-            min: 0,
-            max: max
+            min: 0
           },
           x: {
             display: true

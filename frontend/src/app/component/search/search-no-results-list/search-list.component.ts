@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {SelectorItem} from "../../../page/selector/selector.component";
-import {Subject} from "rxjs";
+import {Observable, Subject, Subscription} from "rxjs";
 import {
   SearchAnbieterItem,
   SearchItem, SearchListAnbieterItemComponent,
@@ -22,6 +22,8 @@ export class SearchListComponent extends DashBaseComponent implements OnInit{
   selectorItemsBackup = this.selectorItems;
   selectorItemsLoaded = new Subject<SelectorItem[]>();
 
+  selectedSearchObserver : Subscription = new Subscription();
+
   title : string = "Suchanfragen";
 
   ngOnInit(): void {
@@ -32,7 +34,7 @@ export class SearchListComponent extends DashBaseComponent implements OnInit{
   templateUrl: './search-list.component.html',
   styleUrls: ['./search-list.component.css', "../../dash-base/dash-base.component.css"]
 })
-export class SearchListNoResultsComponent extends SearchListComponent {
+export class SearchListNoResultsComponent extends SearchListComponent implements OnDestroy{
   override title = "Suchanfragen ohne Ergebnis";
   override ngOnInit(): void {
     this.selectorItems = [];
@@ -43,9 +45,7 @@ export class SearchListNoResultsComponent extends SearchListComponent {
       this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
-
-    SysVars.SELECTED_SEARCH.observers = [];
-    SysVars.SELECTED_SEARCH.subscribe(selection => {
+    this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection => {
       if (selection.operation == "IGNORE") {
         this.db.ignoreSearch(selection.item.id).then(r => {
           console.log((selection.item as SearchItem).search + " : Successfully set to ignore: " + r)
@@ -63,6 +63,9 @@ export class SearchListNoResultsComponent extends SearchListComponent {
 
       }
     });
+  }
+  override ngOnDestroy() {
+    this.selectedSearchObserver.unsubscribe();
   }
 }
 
@@ -108,8 +111,9 @@ export class SearchListSSComponent extends SearchListComponent {
   templateUrl: './search-list.component.html',
   styleUrls: ['./search-list.component.css', "../../dash-base/dash-base.component.css"]
 })
-export class SearchListAnbieterNoResultsComponent extends SearchListComponent {
+export class SearchListAnbieterNoResultsComponent extends SearchListComponent implements OnDestroy{
   override title = "Anbietersuchen ohne Ergebnis";
+
   override ngOnInit(): void {
     this.selectorItems = [];
     this.db.getSearchesAnbieterWithoutResults().then(res => {
@@ -119,10 +123,8 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent {
       this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
-
-    SysVars.SELECTED_SEARCH.observers = [];
-    SysVars.SELECTED_SEARCH.subscribe(selection  => {
-      if (selection.operation == "IGNORE") {
+    this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection  => {
+      if (selection.operation == "DELETE") {
         this.db.ignoreAnbieterSearch((selection.item as SearchAnbieterItem).search, (selection.item as SearchAnbieterItem).city).then(r => {
           console.log((selection.item as SearchAnbieterItem).search + " : " + (selection.item as SearchAnbieterItem).city + " : Successfully set deleted: " + r)
           if (r) {
@@ -139,5 +141,8 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent {
 
       }
     });
+  }
+  override ngOnDestroy() {
+    this.selectedSearchObserver.unsubscribe();
   }
 }

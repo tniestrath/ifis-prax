@@ -94,7 +94,7 @@ export class SearchListAnbieterItemComponent {
   data : SearchAnbieterItem = new SearchAnbieterItem("","", "", 0);
 
   protected onClick(){
-    SysVars.SELECTED_SEARCH.emit({item: this.data, operation: "IGNORE"});
+    SysVars.SELECTED_SEARCH.emit({item: this.data, operation: "DELETE"});
   }
 
   protected readonly SearchItem = SearchItem;

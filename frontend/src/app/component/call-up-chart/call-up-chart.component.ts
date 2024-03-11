@@ -5,11 +5,13 @@ import Util, {DashColors} from "../../util/Util";
 
 export class Callup {
   clicks : number = 0;
+  sensibleClicks : number = 0;
   visitors : number = 0;
   date : string = "00-00-0000"; // interpreted as hour if timespan = day
 
-  constructor(clicks : number, visitors : number, date : string) {
+  constructor(clicks : number, sensibleClicks : number, visitors : number, date : string) {
     this.clicks = clicks;
+    this.sensibleClicks = sensibleClicks;
     this.visitors = visitors;
     this.date = date;
   }
@@ -227,7 +229,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       else {
         timestamps.push(Util.formatDate(callup.date));
       }
-      clicksData.push(callup.clicks);
+      clicksData.push(callup.sensibleClicks);
       visitorsData.push(callup.visitors);
     }
 

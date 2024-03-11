@@ -1,9 +1,6 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.FinalSearchStatDLC;
-import com.analysetool.modells.UniqueUser;
-import com.analysetool.modells.UniversalCategoriesDLC;
-import com.analysetool.modells.UniversalStats;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Problem;
@@ -40,10 +37,13 @@ public class DiagnosisController {
     UniqueUserService uniqueUserService;
     @Autowired
     TrackingBlacklistRepository tbRepo;
-    //ToDo : Add Logic to partial checkups.
+    @Autowired
+    PostController postController;
 
+    int MAX_CLICKS_IN_CAT_UNTIL_BOT = 5;
+    final int MAX_NONSENSE_UNTIL_BOT = 10;
 
-    int MAX_CLICKS_UNTIL_BOT = 5;
+    //ToDo: Offer more solutionLinks
 
 
 
@@ -167,7 +167,7 @@ public class DiagnosisController {
         largeList.addAll(findSearchStatProblems());
         largeList.addAll(findTypeProblems());
         largeList.addAll(findWebsiteProblems());
-        largeList.addAll(findPotentialBots(MAX_CLICKS_UNTIL_BOT));
+        largeList.addAll(findPotentialBots(MAX_CLICKS_IN_CAT_UNTIL_BOT));
 
         largeList.sort((o1, o2) -> o2.getSeverity() - o1.getSeverity());
         return largeList;
@@ -395,6 +395,7 @@ public class DiagnosisController {
     private List<Problem> findTypeProblems() {
         List<Problem> list = new ArrayList<>();
         list.addAll(newTypeFoundCheck());
+        list.addAll(changedTypeCheck());
         return list;
     }
 
@@ -426,6 +427,25 @@ public class DiagnosisController {
         return list;
     }
 
+    private List<Problem> changedTypeCheck() {
+        List<Problem> list  = new ArrayList<>();
+
+        String area = "PostTypes";
+        int severityError= 2;
+        String descriptionChangedType = "A Type that has changed has been found. Changed from: ";
+        String desPart2 = " to: ";
+        String solutions = "Delete the row of Post-Types or change it manually (offered solution is deletion)";
+        String solutionLink = "analyse.it-sicherheit.de/api/posts/deletePostTypesById?id=";
+
+        for(PostTypes type : postTypeRepo.findAll()) {
+            if(!postController.getType(type.getPost_id()).equals(type.getType())) {
+                list.add(new Problem(severityError, (descriptionChangedType + type.getType() + desPart2 + postController.getType(type.getPost_id())), area, solutions, solutionLink + type.getPost_id()));
+            }
+        }
+
+        return list;
+    }
+
     private List<Problem> findWebsiteProblems() {
         List<Problem> list = new ArrayList<>();
         return list;
@@ -436,6 +456,7 @@ public class DiagnosisController {
 
         String area = "UniqueUser";
         int severityError= 2;
+        int severityNonsense = 4;
         String descriptionPotentialBot = "Potential Bot has been found. IP: ";
         String solutions = "add to Blacklist";
         String solutionLinkBase = "analyse.it-sicherheit.de/api/ip/blockIp?ip=";
@@ -453,10 +474,14 @@ public class DiagnosisController {
                             String category = uniqueUserService.getCategoryOfClicks(categoryClicksMap);
                             clicks = potBot.getAmount_of_clicks();
                             ip = potBot.getIp();
-                            Problem problem = new Problem(severityError, descriptionPotentialBot + ip + " ,suspicious click in this category: " + category + ", amount of clicks: " + clicks, area, solutions, solutionLinkBase + potBot.getIp());
+                            Problem problem;
+                            if(category.equals("nonsense")) {
+                                 problem = new Problem(severityNonsense, descriptionPotentialBot + ip + " ,suspicious click in this category: " + category + ", amount of clicks: " + clicks, area, solutions, solutionLinkBase + potBot.getIp());
+                            } else {
+                                problem = new Problem(severityError, descriptionPotentialBot + ip + " ,suspicious click in this category: " + category + ", amount of clicks: " + clicks, area, solutions, solutionLinkBase + potBot.getIp());
+                            }
                             list.add(problem);
                         }
-
                     } catch (Exception e) {
                         System.out.println("potential bot processing error :" + Arrays.toString(e.getStackTrace()));
                     }

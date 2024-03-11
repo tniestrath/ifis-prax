@@ -501,7 +501,7 @@ public class UserController {
                     if(biggestPostbuffer == null) {
                         biggestPostbuffer = post;
                     } else {
-                        if(statRepository.getSumClicks(post.getId()) != null) {
+                        if((statRepository.getSumClicks(post.getId())) != null) {
                             if(statRepository.getSumClicks(post.getId()) > statRepository.getSumClicks(biggestPostbuffer.getId())) {
                                 biggestPostbuffer = post;
                             }

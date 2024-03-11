@@ -74,6 +74,7 @@ public class uniStatController {
             for (UniversalStats uniStat : universalStatsList) {
                 JSONObject callup = new JSONObject();
                 callup.put("date", new SimpleDateFormat("yyyy-MM-dd").format(uniStat.getDatum()));
+                callup.put("sensibleClicks", uniStat.getSensibleClicks());
                 callup.put("clicks", uniStat.getTotalClicks());
                 callup.put("visitors", uniStat.getBesucherAnzahl());
 
@@ -84,6 +85,7 @@ public class uniStatController {
             for (UniversalStatsHourly uniStat : universalStatsList) {
                 JSONObject callup = new JSONObject();
                 callup.put("date", uniStat.getStunde());
+                callup.put("sensibleClicks", uniStat.getSensibleClicks());
                 callup.put("clicks", uniStat.getTotalClicks());
                 callup.put("visitors", uniStat.getBesucherAnzahl());
 

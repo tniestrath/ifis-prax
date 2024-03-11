@@ -695,8 +695,8 @@ public class PostController {
      * @throws JSONException .
      * @throws ParseException .
      */
-    public String getType(@RequestParam long id) throws JSONException, ParseException {
-        if(postRepository.findById(id).isEmpty()) {return null;}
+    public String getType(@RequestParam long id) {
+        if(postRepository.findById(id).isEmpty()) {return "error";}
 
 
         if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("post")) {
@@ -757,6 +757,10 @@ public class PostController {
 
             if(type.equals("blogeintrag")) {
                 return "blog";
+            }
+
+            if(type.contains("cyber-risk-check")) {
+               return "ratgeber";
             }
 
             if (type == null) {
@@ -1673,6 +1677,13 @@ public class PostController {
         combinedResult.put("outliers", outliersArray);
 
         return combinedResult.toString();
+    }
+
+    @PostMapping("/deletePostTypesById")
+    public void deletePostTypesById(int id) {
+        if(postTypeRepo.findById((long) id).isPresent()) {
+            postTypeRepo.delete(postTypeRepo.findById((long) id).get());
+        }
     }
 
 

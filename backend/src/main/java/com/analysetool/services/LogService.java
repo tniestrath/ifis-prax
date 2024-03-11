@@ -185,11 +185,15 @@ public class LogService {
 
     private final String RedirectUserPattern =".*GET .*goto/(.*) HTTP/";
 
-    private final String outgoingRedirectLinkedIn =".*GET /goto/https://www\\.linkedin\\.com/company/marktplatz-it-sicherheit/";
+    private final String outgoingRedirectLinkedIn ="^.*GET /goto/https://(www.)?linkedin.com/company/marktplatz-it-sicherheit*";
 
-    private final String outgoingRedirectFacebook =".*GET /goto/https://www\\.facebook\\.com/Internet\\.Sicherheit\\.ifis";
-    private final String outgoingRedirectYoutube =".*GET /goto/https://www\\.youtube\\.com/user/InternetSicherheitDE";
-    private final String outgoingRedirectTwitter =".*GET /goto/https://twitter\\.com/_securitynews";
+
+    private final String outgoingRedirectFacebook ="^.*GET /goto/https://(www.)?facebook.com/Internet.Sicherheit.ifis*";
+
+    private final String outgoingRedirectYoutube =".*^GET /goto/https://(www.)?youtube.com/user/InternetSicherheitDE*";
+
+    private final String outgoingRedirectTwitter =".*^GET /goto/https://(www.)?twitter.com/_securitynews*";
+
     private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
 
     private final String eventSSView="^.*GET /veranstaltungen/([^/]+)/.*s=([^&\"]+)\"";
@@ -435,6 +439,8 @@ public class LogService {
 
         int totalClicks = 0;
         int internalClicks = 0;
+        int sensibleClicks = 0;
+
         int viewsArticle = 0;
         int viewsNews = 0;
         int viewsBlog = 0;
@@ -502,6 +508,7 @@ public class LogService {
 
                 //Does it match a content-download
                 Matcher matched_content_download= contentDownloadPattern.matcher(line);
+
                 //Filter für Request-Types.
                 boolean isDevAccess = request.contains("/api/")
                         || (request.contains("/wp-content") && !matched_content_download.find()) || request.contains("/wp-includes")
@@ -535,7 +542,7 @@ public class LogService {
                     }
                 }
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !request.contains("securitynews") && !isSpam && isGet) {
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !isSpam && isGet) {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
 
@@ -588,8 +595,7 @@ public class LogService {
                     //Does it match user-view?
                     Matcher matched_userViews = userViewPattern.matcher(request);
 
-                    //Does it match user-redirect?
-                    Matcher matched_userRedirect = userRedirectPattern.matcher(request);
+
 
                     //Does it match a ratgeber-subpost-view
                     Matcher matched_ratgeber_post = ratgeberPostViewPattern.matcher(request);
@@ -627,6 +633,8 @@ public class LogService {
                     Matcher matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(request);
                     //Does it match an outgoing socials redirect?
                     Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(request);
+                    //Does it match user-redirect?
+                    Matcher matched_userRedirect = userRedirectPattern.matcher(request);
 
                     //Find out which pattern matched
                     String whatMatched = "";
@@ -710,10 +718,7 @@ public class LogService {
                     } else if(matched_content_download.find()){
                         whatMatched = "contentDownload";
                         patternMatcher = matched_content_download;
-                    } else if(matched_userRedirect.find()){
-                        whatMatched = "userRedirect";
-                        patternMatcher = matched_userRedirect;
-                    }else if(matched_outgoing_linkedin_redirect.find()){
+                    } else if(matched_outgoing_linkedin_redirect.find()){
                         whatMatched = "socialsLinkedInRedirect";
                         patternMatcher = matched_outgoing_linkedin_redirect;
                     }else if(matched_outgoing_twitter_redirect.find()){
@@ -728,10 +733,13 @@ public class LogService {
                     } else if(matched_event_view.find()){
                         whatMatched = "eventView";
                         patternMatcher = matched_event_view;
+                    }else if(matched_userRedirect.find()){
+                        whatMatched = "userRedirect";
+                        patternMatcher = matched_userRedirect;
                     }
 
                     //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
-                    if(isUnique && !whatMatched.equals("")) {
+                    if(isUnique) {
                         uniqueUsers++;
                         initUniqueUser(ip, dateLog);
                     }
@@ -994,9 +1002,15 @@ public class LogService {
                         } case "userRedirect" -> {
                         } case "eventView" -> {
                         }
-                        default -> System.out.println(line);
+                        default -> {
+                            updateUniqueUser(ip, "nonsense", dateLog);
+                            System.out.println(line);
+                        }
                     }
 
+                    if(!whatMatched.equals("")) {
+                        sensibleClicks++;
+                    }
 
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
 
@@ -1021,7 +1035,7 @@ public class LogService {
             }
 
         }
-        updateUniStats(totalClicks, internalClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsRatgeberSelf, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userRatgeberSelf, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
+        updateUniStats(totalClicks, internalClicks, sensibleClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsWhitepaper, viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsRatgeberSelf, viewsMain, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userWhitepaper, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userRatgeberSelf, userMain, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
         //Service weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
         postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
@@ -1031,7 +1045,7 @@ public class LogService {
         updateFinalSearchStatsAndTemporarySearchStats();
     }
 
-    private void updateUniStats(int totalClicks, int internalClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
+    private void updateUniStats(int totalClicks, int internalClicks, int sensibleClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
         dateStirng += Calendar.getInstance().get(Calendar.MONTH) + 1  < 10 ? "0" + (Calendar.getInstance().get(Calendar.MONTH) + 1) : Calendar.getInstance().get(Calendar.MONTH) + 1;
@@ -1051,6 +1065,7 @@ public class LogService {
                 if (dateStirng.equalsIgnoreCase(uniLastDateString)) {
                     uni = uniRepo.findTop1ByOrderByDatumDesc();
                     uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+                    uni.setSensibleClicks(uni.getSensibleClicks() + sensibleClicks);
                     uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
                     uni.setInternalClicks(uni.getInternalClicks() + internalClicks);
                     uni.setServerErrors(uni.getServerErrors() + serverErrors);
@@ -1060,6 +1075,7 @@ public class LogService {
                 } else {
                     uni = new UniversalStats();
                     uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+                    uni.setSensibleClicks((long) sensibleClicks);
                     uni.setTotalClicks(totalClicks);
                     uni.setInternalClicks(internalClicks);
                     uni.setServerErrors(serverErrors);
@@ -1089,6 +1105,7 @@ public class LogService {
                 uniHourly1.setStunde(1);
                 uniHourly1.setUniStatId(uniRepo.getLatestUniStat().getId());
                 uniHourly1.setBesucherAnzahl((long) uniqueUsers / 4);
+                uniHourly1.setSensibleClicks((long) sensibleClicks / 4);
                 uniHourly1.setTotalClicks((long) totalClicks / 4);
                 uniHourly1.setInternalClicks(internalClicks / 4);
                 uniHourly1.setServerErrors(serverErrors / 4);
@@ -1099,6 +1116,7 @@ public class LogService {
                 uniHourly2.setStunde(2);
                 uniHourly2.setUniStatId(uniRepo.getLatestUniStat().getId());
                 uniHourly2.setBesucherAnzahl((long) uniqueUsers / 4);
+                uniHourly2.setSensibleClicks((long) sensibleClicks / 4);
                 uniHourly2.setTotalClicks((long) totalClicks / 4);
                 uniHourly2.setInternalClicks(internalClicks / 4);
                 uniHourly2.setServerErrors(serverErrors / 4);
@@ -1109,6 +1127,7 @@ public class LogService {
                 uniHourly3.setStunde(3);
                 uniHourly3.setUniStatId(uniRepo.getLatestUniStat().getId());
                 uniHourly3.setBesucherAnzahl((long) uniqueUsers / 4);
+                uniHourly3.setSensibleClicks((long) sensibleClicks / 4);
                 uniHourly3.setTotalClicks((long) totalClicks / 4);
                 uniHourly3.setInternalClicks(internalClicks / 4);
                 uniHourly3.setServerErrors(serverErrors / 4);
@@ -1118,6 +1137,7 @@ public class LogService {
 
                 uniHourly4.setUniStatId(uniRepo.getLatestUniStat().getId());
                 uniHourly4.setBesucherAnzahl((long) uniqueUsers / 4);
+                uniHourly4.setTotalClicks((long) sensibleClicks / 4);
                 uniHourly4.setTotalClicks((long) totalClicks / 4);
                 uniHourly4.setInternalClicks(internalClicks / 4);
                 uniHourly4.setServerErrors(serverErrors / 4);
@@ -1139,6 +1159,7 @@ public class LogService {
                     uniHourly.setStunde(curHour);
                     //Set the stats-
                     uniHourly.setBesucherAnzahl((long) uniqueUsers);
+                    uniHourly.setSensibleClicks((long) sensibleClicks);
                     uniHourly.setTotalClicks((long) totalClicks);
                     uniHourly.setInternalClicks(internalClicks);
                     uniHourly.setServerErrors(serverErrors);
@@ -1147,6 +1168,7 @@ public class LogService {
                     uniHourly = uniHourlyRepo.getLast();
                     //Identifiers already exist, so skip to updating stats.
                     uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (long) uniqueUsers);
+                    uniHourly.setSensibleClicks(uniHourly.getSensibleClicks() + (long) sensibleClicks);
                     uniHourly.setTotalClicks(uniHourly.getTotalClicks() + (long) totalClicks);
                     uniHourly.setInternalClicks(uniHourly.getInternalClicks() + internalClicks);
                     uniHourly.setServerErrors(uniHourly.getServerErrors() + serverErrors);
@@ -1429,8 +1451,22 @@ public class LogService {
         List<UserStats> userStats = userStatsRepo.findAll();
         userStatsRepo.saveAll(userStats);
 
+
+        //Delete Post-Types for Posts, that no longer exist
+        deleteNullPostTypes();
         //Just in case permanentify failed
         deleteOldIPs();
+    }
+
+    /**
+     * Deletes Post-Type rows for Posts, that no longer exist.
+     */
+    private void deleteNullPostTypes() {
+        for(PostTypes type : postTypeRepo.findAll()) {
+            if(!postRepository.existsById(type.getPost_id())) {
+                postTypeRepo.delete(type);
+            }
+        }
     }
 
 
@@ -2643,6 +2679,9 @@ public class LogService {
             case "agb" -> {
                 user.setAgb(new JSONArray(user.getAgb()).put(clicks).toString());
             }
+            case "nonsense" -> {
+                user.setNonsense(new JSONArray(user.getNonsense()).put(clicks).toString());
+            }
         }
 
         uniqueUserRepo.save(user);
@@ -2667,6 +2706,7 @@ public class LogService {
         user.setNewsletter(new JSONArray().put(0).toString());
         user.setImage(new JSONArray().put(0).toString());
         user.setAgb(new JSONArray().put(0).toString());
+        user.setNonsense(new JSONArray().put(0).toString());
         user.setFirst_click(clickTime);
         user.setTime_spent(0);
         user.setAmount_of_clicks(0);

@@ -79,6 +79,7 @@ import { SeoKeywordListComponent } from './component/seo/seo-keyword-list/seo-ke
 import { SeoKeywordListItemComponent } from './component/seo/seo-keyword-list/seo-keyword-list-item/seo-keyword-list-item.component';
 import { UserTagDistItemComponent } from './component/user/user-tags-dist/user-tag-dist-item/user-tag-dist-item.component';
 import {
+  SearchListAnbieterNoResultsComponent,
   SearchListComponent,
   SearchListNoResultsComponent,
   SearchListRankComponent,
@@ -159,6 +160,7 @@ import { NewsletterComponent } from './component/newsletter/newsletter/newslette
     SearchListNoResultsComponent,
     SearchListRankComponent,
     SearchListSSComponent,
+    SearchListAnbieterNoResultsComponent,
     SearchListItemComponent,
     SearchListRankItemComponent,
     SearchListNoResultsItemComponent,

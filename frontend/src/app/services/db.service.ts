@@ -108,6 +108,7 @@ export enum dbUrl {
   GET_RATGEBER_ALL = "/posts/getAllRatgeberWithStats",
 
   GET_SEARCHES_NO_RESULTS = "/search-stats/getAllUnfixedSearches",
+  GET_SEARCHES_ANBIETER_NO_RESULT = "search-stats/getAnbieterNoResult",
   GET_SEARCHES_TOP_N = "/search-stats/getTopNSearchQueries?number=NUMBER",
   GET_SEARCHES_TOP_N_BY_SS = "/search-stats/getTopNSearchQueriesBySS?number=NUMBER",
   POST_SEARCH_IGNORE = "/search-stats/blockSearch?id=SEARCH",
@@ -751,6 +752,10 @@ export class DbService {
   async getSearchesWithoutResults() : Promise<SearchItem[]> {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_NO_RESULTS)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getSearchesAnbieterWithoutResults() : Promise<SearchItem[]> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_ANBIETER_NO_RESULT)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getSearchesTopN(num : number) : Promise<SearchRank[]> {
     this.setLoading();

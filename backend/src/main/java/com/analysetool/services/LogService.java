@@ -196,6 +196,15 @@ public class LogService {
 
     private final String outgoingRedirectTwitter =".*^GET /goto/https://(www.)?twitter.com/_securitynews*";
 
+    private final String postImpressionFacebook = "^.*GET /artikel|blogeintrag|news/([^/]+)/.*[facebookexternalhit/1.1 (\\+http://www.facebook.com/externalhit_uatext.php)]";
+    private final String postImpressionLinkedin="^.*GET /artikel|blogeintrag|news/([^/]+)/.*linkedin|LinkedIn";
+    private final String postImpressionTwitter="^.*GET /artikel|blogeintrag|news/([^/]+)/.*[Twitterbot/1.0]";
+    private final String postImpressionTwitterFacebookCombo="^.*GET /artikel|blogeintrag|news/([^/]+)/.*facebookexternalhit/1.1 Facebot Twitterbot/1.0";
+    private final String userImpressionFacebook="^.*GET /user/([^/]+)/.*[facebookexternalhit/1.1 (\\+http://www.facebook.com/externalhit_uatext.php)]";
+    private final String userImpressionLinkedin="^.*GET /user/([^/]+)/.*linkedin|LinkedIn";
+    private final String userImpressionTwitter=".*GET /user/([^/]+)/.*[Twitterbot/1.0]";
+    private final String userImpressionTwitterFacebookCombo="^.*GET /user/([^/]+)/.*facebookexternalhit/1.1 Facebot Twitterbot/1.0";
+
     private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
 
     private final String eventSSView="^.*GET /veranstaltungen/([^/]+)/.*s=([^&\"]+)\"";

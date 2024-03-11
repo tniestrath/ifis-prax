@@ -44,6 +44,8 @@ public class SearchStatsController {
     private FinalSearchStatDLCRepository finalDLCRepo;
     @Autowired
     private BlockedSearchesRepository blockedRepo;
+    @Autowired
+    private GeoNamesPostalRepository geoNamesRepo;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -515,9 +517,21 @@ public class SearchStatsController {
     }
 
 
-    @GetMapping("/getAnbieterDelta")
-    public String getAnbieterDelta() {
-        return "function not ready";
+    @GetMapping("/getAnbieterNoneFound")
+    public String getAnbieterNoneFound() throws JSONException {
+        JSONArray array = new JSONArray();
+
+        for(AnbieterSearch search : anbieterSearchRepo.findAllCount0()) {
+            JSONObject json = new JSONObject();
+
+            String city = search.getCity_name().isBlank() ? geoNamesRepo.getCityByPlz(search.getPlz()) : search.getCity_name();
+            String suche = search.getSearch().isBlank() ? "none" : search.getSearch();
+            json.put("city", city);
+            json.put("search", suche);
+            array.put(json);
+        }
+
+        return array.toString();
     }
 
     boolean isHack(String text) {

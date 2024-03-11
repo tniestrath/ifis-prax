@@ -507,10 +507,17 @@ public class SearchStatsController {
     }
 
     @PostMapping("/deleteDLCById")
+    @Modifying
     public void deleteDLCById(long id) {
         if(finalDLCRepo.existsById(id)) {
             finalDLCRepo.deleteById(id);
         }
+    }
+
+
+    @GetMapping("/getAnbieterDelta")
+    public String getAnbieterDelta() {
+        return "function not ready";
     }
 
     boolean isHack(String text) {

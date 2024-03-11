@@ -521,25 +521,59 @@ public class SearchStatsController {
     public String getAnbieterNoneFound() throws JSONException {
         JSONArray array = new JSONArray();
 
+        int count = 0;
+        String lastCity = null;
+        String lastSearch = null;
+
         for(AnbieterSearch search : anbieterSearchRepo.findAllCount0()) {
             JSONObject json = new JSONObject();
 
             String city = search.getCity_name().isBlank() ? geoNamesRepo.getCityByPlz(search.getPlz()) : search.getCity_name();
             String suche = search.getSearch().isBlank() ? "none" : search.getSearch();
-            json.put("city", city);
-            json.put("id", search.getId());
-            json.put("search", suche);
-            array.put(json);
+
+            //If new city or new suche, reset count.
+            if(lastCity!=null && lastSearch!=null && (!lastCity.equals(city) || !lastSearch.equals(suche))) {
+                json.put("city", city);
+                json.put("search", suche);
+                json.put("count", count);
+                array.put(json);
+                count = 0;
+            } else if((lastCity!=null && lastSearch!=null)) {
+                count++;
+            }
+
+            if(count == 0) {
+                count = 1;
+            }
+
+            lastCity = city;
+            lastSearch = suche;
         }
 
         return array.toString();
     }
 
-    @PostMapping("/deleteAnbieterSearchById")
+    @PostMapping("/deleteAnbieterSearch")
     @Modifying
-    public void deleteAnbieterSearchById(long id) {
-        if(anbieterSearchRepo.existsById(id)) {
-            anbieterSearchRepo.deleteById(id);
+    public void deleteAnbieterSearchById(String search, String city) {
+        if(search.equals("none") || search.isBlank()) {
+            deleteAnbieterSearchByCity(city);
+        } else {
+            deleteAnbieterSearchBySearch(search);
+        }
+    }
+
+    @Modifying
+    public void deleteAnbieterSearchByCity(String city) {
+        if(!anbieterSearchRepo.findByCity(city).isEmpty()) {
+            anbieterSearchRepo.deleteAll(anbieterSearchRepo.findByCity(city));
+        }
+    }
+
+    @Modifying
+    public void deleteAnbieterSearchBySearch(String search) {
+        if(!anbieterSearchRepo.findBySearch(search).isEmpty()) {
+            anbieterSearchRepo.deleteAll(anbieterSearchRepo.findBySearch(search));
         }
     }
 

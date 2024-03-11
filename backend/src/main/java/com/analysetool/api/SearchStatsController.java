@@ -527,8 +527,18 @@ public class SearchStatsController {
 
         for(AnbieterSearch search : anbieterSearchRepo.findAllCount0()) {
             JSONObject json = new JSONObject();
+            String city;
+            if (search.getCity_name().isBlank()) {
+                if(search.getPlz() != 0) {
+                    city = geoNamesRepo.getCityByPlz(search.getPlz());
+                } else {
+                    city = " - ";
+                }
+            }
+            else {
+                city = search.getCity_name();
+            }
 
-            String city = search.getCity_name().isBlank() ? geoNamesRepo.getCityByPlz(search.getPlz()) : search.getCity_name();
             String suche = search.getSearch().isBlank() ? "none" : search.getSearch();
 
             //If new city or new suche, reset count.

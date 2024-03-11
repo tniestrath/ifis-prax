@@ -565,13 +565,16 @@ public class SearchStatsController {
 
     @PostMapping("/deleteAnbieterSearch")
     @Modifying
-    public void deleteAnbieterSearchById(String search, String city) {
+    public boolean deleteAnbieterSearchById(String search, String city) {
         if((city.isBlank() || city.equals("none")) && (search.isBlank() || search.equals("none"))) {
             deleteAnbieterEmpty();
+            return true;
         } else if(search.equals("none") || search.isBlank()) {
             deleteAnbieterSearchByCity(city);
+            return true;
         } else {
             deleteAnbieterSearchBySearch(search);
+            return true;
         }
     }
 

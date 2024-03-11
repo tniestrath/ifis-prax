@@ -527,8 +527,18 @@ public class SearchStatsController {
 
         for(AnbieterSearch search : anbieterSearchRepo.findAllCount0()) {
             JSONObject json = new JSONObject();
+            String city;
+            if (search.getCity_name().isBlank()) {
+                if(search.getPlz() != 0) {
+                    city = geoNamesRepo.getCityByPlz(search.getPlz());
+                } else {
+                    city = "none";
+                }
+            }
+            else {
+                city = search.getCity_name();
+            }
 
-            String city = search.getCity_name().isBlank() ? geoNamesRepo.getCityByPlz(search.getPlz()) : search.getCity_name();
             String suche = search.getSearch().isBlank() ? "none" : search.getSearch();
 
             //If new city or new suche, reset count.
@@ -556,10 +566,19 @@ public class SearchStatsController {
     @PostMapping("/deleteAnbieterSearch")
     @Modifying
     public void deleteAnbieterSearchById(String search, String city) {
-        if(search.equals("none") || search.isBlank()) {
+        if((city.isBlank() || city.equals("none")) && (search.isBlank() || search.equals("none"))) {
+            deleteAnbieterEmpty();
+        } else if(search.equals("none") || search.isBlank()) {
             deleteAnbieterSearchByCity(city);
         } else {
             deleteAnbieterSearchBySearch(search);
+        }
+    }
+
+    @Modifying
+    public void deleteAnbieterEmpty() {
+        if(!anbieterSearchRepo.findAllEmpty().isEmpty()) {
+            anbieterSearchRepo.deleteAll(anbieterSearchRepo.findAllEmpty());
         }
     }
 

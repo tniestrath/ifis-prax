@@ -415,6 +415,7 @@ public class DiagnosisController {
         for(String type : postTypeRepo.getDistinctTypes()) {
             if(!type.equalsIgnoreCase("cyber-risk-check")
                     && !type.equalsIgnoreCase("artikel")
+                    && !type.equalsIgnoreCase("ratgeber")
                     && !type.equalsIgnoreCase("news")
                     && !type.equalsIgnoreCase("Event: Sonstige")
                     && !type.equalsIgnoreCase("blog")
@@ -468,7 +469,9 @@ public class DiagnosisController {
 
         List<String> potentialBots= uniqueUserService.getIpsOfPotBots();
         for(String potBot : potentialBots) {
-            list.add(new Problem(severityNonsense, descriptionPotentialBot + potBot, area, solutions, solutionLinkBase + potBot));
+            if(tbRepo.findByIp(potBot).isEmpty()) {
+                list.add(new Problem(severityNonsense, descriptionPotentialBot + potBot, area, solutions, solutionLinkBase + potBot));
+            }
         }
 
         return list;

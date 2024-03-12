@@ -82,7 +82,7 @@ export class SearchListRankComponent extends SearchListComponent {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListRankItemComponent, search));
       }
-      this.selectorItems.sort((a, b) => (b.data as SearchRank).foundCount - (a.data as SearchRank).foundCount);
+      this.selectorItems.sort((a, b) => (b.data as SearchRank).searchedCount - (a.data as SearchRank).searchedCount);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }

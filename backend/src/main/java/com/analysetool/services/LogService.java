@@ -1717,11 +1717,24 @@ public class LogService {
                 }
                 break;
             case "postImpressionFacebook","postImpressionTwitter","postImpressionLinkedIn","postImpressionFacebookTwitterCombo":
-                System.out.println("POST-SOCIAL" + line);
+                try{
+                long id =postRepository.getIdByName(patternMatcher.group(1));
+                socialsImpressionsService.updateSocialsImpressionsPost(whatMatched,dateLog,id);
                 break;
+                } catch(Exception e){
+                    System.out.println("POST-SOCIAL EXCEPTION" + line );
+                }
             case "userImpressionFacebook","userImpressionTwitter","userImpressionLinkedIn","userImpressionFacebookTwitterCombo":
-                System.out.println("USER-SOCIAL" + line);
-                break;
+                try {
+                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
+                        socialsImpressionsService.updateSocialsImpressionsUser(whatMatched,dateLog,userId);
+                        break;
+                    }
+                } catch (Exception e) {
+                    System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
             case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar":
 
             default:

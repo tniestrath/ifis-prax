@@ -207,6 +207,8 @@ public class LogService {
     private final String userImpressionTwitter=".*GET /user/([^/]+)/.*[Twitterbot/1.0]";
     private final String userImpressionTwitterFacebookCombo="^.*GET /user/([^/]+)/.*facebookexternalhit/1.1 Facebot Twitterbot/1.0";
 
+    private final String postImpressionLinkedin="^.*GET /(artikel|blogeintrag|news)/([^/]+).*(linkedin|LinkedIn).*";
+    private final String postImpressionTwitter="^.*GET /(artikel|blogeintrag|news)/([^/]+).*Twitterbot/1.0.*";
     private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
 
     private final String eventSSView="^.*GET /veranstaltungen/([^/]+)/.*s=([^&\"]+)\"";

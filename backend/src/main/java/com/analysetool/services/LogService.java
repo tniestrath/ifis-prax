@@ -823,13 +823,13 @@ public class LogService {
                         UniqueUser temp = uniqueUserRepo.findByIP(ip);
                         boolean wasOnlyNonsense = new JSONArray(temp.getNonsense()).length() == temp.getAmount_of_clicks() + 1;
 
-                        if ((!whatMatched.equals("") || !isNotNonsense) && wasOnlyNonsense){
+                        if ((!whatMatched.equals("") || isNotNonsense) && wasOnlyNonsense){
                             uniqueUsers++;
                         }
 
                     }
                     //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
-                    if(isUnique && (!whatMatched.equals("") || !isNotNonsense)) {
+                    if(isUnique && (!whatMatched.equals("") || isNotNonsense)) {
                         uniqueUsers++;
                     }
 
@@ -1104,7 +1104,7 @@ public class LogService {
                         }
                     }
 
-                    if(!whatMatched.equals("") || !isNotNonsense) {
+                    if(!whatMatched.equals("") || isNotNonsense) {
                         sensibleClicks++;
                     }
 

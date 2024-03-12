@@ -36,6 +36,6 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
     @Query("SELECT s.id FROM FinalSearchStat s WHERE s.searchQuery=:search")
     List<Integer> getIdsBySearch(String search);
 
-    @Query("SELECT SUM(s.foundAnbieterCount, s.foundArtikelCount, s.foundBlogCount, s.foundEventsCount, s.foundNewsCount, s.foundPodcastCount, s.foundRatgeberCount, s.foundWhitepaperCount) FROM FinalSearchStat s WHERE s.searchQuery=:query ORDER BY s.id DESC LIMIT 1")
+    @Query("SELECT (s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount+ s.foundWhitepaperCount) FROM FinalSearchStat s WHERE s.searchQuery=:query ORDER BY s.id DESC LIMIT 1")
     int getSumFoundLastSearchOfQuery(String query);
 }

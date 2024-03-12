@@ -1,5 +1,6 @@
 export default class Util {
   static formatNumbers(n : any) : string {
+    if (n == undefined) return "NaN";
     var formattedN = String(n);
     if (typeof n === "string") n = Number.parseInt(n);
     if (n > 1000){
@@ -195,6 +196,9 @@ export enum DashColors {
   BACKGROUND = "rgb(200,200,200)",
 
   GREY_50 = "rgba(200,200,200, .5)",
+
+  WHITE = "rgb(255,255,255)",
+  BASEPAINT = "rgb(255,255,255)"
 }
 
 // @ts-ignore

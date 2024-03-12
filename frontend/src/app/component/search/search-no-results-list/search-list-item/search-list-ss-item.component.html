@@ -1,4 +1,7 @@
+<!--suppress TypeScriptUnresolvedReference -->
 <div class="search-ss-list-item-box search-list-item-box">
-  <div class="snr-string">{{data.query}}</div>
-  <div class="snr-count-long">{{data.sSCount}}</div>
+  <div class="snr-string-medium">{{data.query}}</div>
+  <div class="snr-count-short"><img src="assets/bulb.png">{{Util.formatNumbers(data.foundCount)}}</div>
+  <div class="snr-count-short"><img src="assets/target-click.png">{{Util.formatNumbers(data.sSCount)}}</div>
+  <div class="snr-count-short"><img src="assets/repeat.png">{{Util.formatNumbers(data.searchedCount)}}</div>
 </div>

@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.util.Pair;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -342,28 +343,21 @@ public class SearchStatsController {
 
     //Geht auch wieder (außer die wo es noch steht) - no clue woran es lag
     @GetMapping("/getTopNSearchQueries")
-    public String getTop10SearchQueries(int number){
+    public String getTop10SearchQueries(int page, int size){
         JSONArray response = new JSONArray();
 
-        Map<FinalSearchStat,List<FinalSearchStatDLC>> allSearchStats = fSearchStatService.getAllSearchStats();
-        List<Map.Entry<String, Long>> top10 = fSearchStatService.getRankingTopNSearchedQueries(allSearchStats,number);
+            for(Pair<String, Integer> pair : finalSearchStatRepo.getQueriesAndCounts(PageRequest.of(page, size))) {
+                JSONObject obj = new JSONObject();
+                try {
+                    obj.put("query", pair.getFirst());
+                    obj.put("searchedCount", pair.getSecond());
+                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(pair.getFirst()));
+                    response.put(obj);
 
-
-        AtomicInteger rank = new AtomicInteger(1);
-        top10.forEach(entry -> {
-            JSONObject obj = new JSONObject();
-            try {
-                obj.put("rank", rank.getAndIncrement());
-                obj.put("query", entry.getKey());
-                obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery(entry.getKey()));
-                obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(entry.getKey()));
-                response.put(obj);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-
-        });
 
         return response.toString();
     }

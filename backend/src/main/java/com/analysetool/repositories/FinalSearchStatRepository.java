@@ -4,6 +4,7 @@ import com.analysetool.modells.FinalSearchStat;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -41,4 +42,7 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
 
     @Query("SELECT COUNT(s) FROM FinalSearchStat s WHERE s.searchQuery=:query")
     int getCountSearchedByQuery(String query);
+
+    @Query("SELECT s.searchQuery, COUNT(*) FROM FinalSearchStat s GROUP BY s.searchQuery")
+    List<Pair<String, Integer>> getQueriesAndCounts(Pageable pageable);
 }

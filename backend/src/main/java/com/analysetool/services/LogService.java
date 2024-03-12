@@ -554,7 +554,8 @@ public class LogService {
 
                 List<String> notNonsense = new ArrayList<>();
                 notNonsense.add("author");
-                notNonsense.add("author");
+                notNonsense.add("securitynews");
+                notNonsense.add("ifis-news");
 
                 boolean isNotNonsense = false;
 
@@ -815,9 +816,25 @@ public class LogService {
                         patternMatcher = matched_userRedirect;
                     }
 
+                    //If user existed,
+                    // but only clicked nonsense so far and now clicked something else,
+                    // add him as a UniqueUser.
+                    if(!isUnique) {
+                        UniqueUser temp = uniqueUserRepo.findByIP(ip);
+                        boolean wasOnlyNonsense = new JSONArray(temp.getNonsense()).length() == temp.getAmount_of_clicks() + 1;
+
+                        if ((!whatMatched.equals("") || !isNotNonsense) && wasOnlyNonsense){
+                            uniqueUsers++;
+                        }
+
+                    }
                     //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
-                    if(isUnique) {
+                    if(isUnique && (!whatMatched.equals("") || !isNotNonsense)) {
                         uniqueUsers++;
+                    }
+
+                    //If the user is new, initialize him.
+                    if(isUnique) {
                         initUniqueUser(ip, dateLog);
                     }
 
@@ -1143,7 +1160,7 @@ public class LogService {
             {
                 if (dateStirng.equalsIgnoreCase(uniLastDateString)) {
                     uni = uniRepo.findTop1ByOrderByDatumDesc();
-                    uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+                    uni.setBesucherAnzahl(uniHourlyRepo.getSumUsersForUniId(uni.getId()) + uniqueUsers);
                     uni.setSensibleClicks(uni.getSensibleClicks() + sensibleClicks);
                     uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
                     uni.setInternalClicks(uni.getInternalClicks() + internalClicks);
@@ -1153,7 +1170,7 @@ public class LogService {
                     uni = setAccountTypeAllUniStats(uni);
                 } else {
                     uni = new UniversalStats();
-                    uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+                    uni.setBesucherAnzahl((long) uniqueUsers);
                     uni.setSensibleClicks((long) sensibleClicks);
                     uni.setTotalClicks(totalClicks);
                     uni.setInternalClicks(internalClicks);

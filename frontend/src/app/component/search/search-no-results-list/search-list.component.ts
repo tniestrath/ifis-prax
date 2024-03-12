@@ -82,7 +82,7 @@ export class SearchListRankComponent extends SearchListComponent {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListRankItemComponent, search));
       }
-      this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
+      this.selectorItems.sort((a, b) => (b.data as SearchRank).searchedCount - (a.data as SearchRank).searchedCount);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }
@@ -100,7 +100,7 @@ export class SearchListSSComponent extends SearchListComponent {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
       }
-      this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
+      this.selectorItems.sort((a, b) => (b.data as SearchSS).foundCount - (a.data as SearchSS).foundCount);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }

@@ -1207,7 +1207,7 @@ public class PostController {
 
         List<JSONObject> stats = new ArrayList<>();
 
-        for(Integer postId : postTypeRepo.getPostsByType("cyber-risk-check")) {
+        for(Integer postId : postTypeRepo.getPostsByType("ratgeber")) {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
             stats.add(json);
         }

@@ -114,6 +114,8 @@ public class LogService {
     private OutgoingSocialsRedirectsRepository outgoingSocialsRepo;
     @Autowired
     private TrackingBlacklistRepository tbRepo;
+    @Autowired
+    private SocialsImpressionsService socialsImpressionsService;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -196,6 +198,15 @@ public class LogService {
 
     private final String outgoingRedirectTwitter =".*^GET /goto/https://(www.)?twitter.com/_securitynews*";
 
+    private final String postImpressionFacebook = "^.*GET /artikel|blogeintrag|news/([^/]+)/.*[facebookexternalhit/1.1 (\\+http://www.facebook.com/externalhit_uatext.php)]";
+    private final String postImpressionLinkedin="^.*GET /artikel|blogeintrag|news/([^/]+)/.*linkedin|LinkedIn";
+    private final String postImpressionTwitter="^.*GET /artikel|blogeintrag|news/([^/]+)/.*[Twitterbot/1.0]";
+    private final String postImpressionTwitterFacebookCombo="^.*GET /artikel|blogeintrag|news/([^/]+)/.*facebookexternalhit/1.1 Facebot Twitterbot/1.0";
+    private final String userImpressionFacebook="^.*GET /user/([^/]+)/.*[facebookexternalhit/1.1 (\\+http://www.facebook.com/externalhit_uatext.php)]";
+    private final String userImpressionLinkedin="^.*GET /user/([^/]+)/.*linkedin|LinkedIn";
+    private final String userImpressionTwitter=".*GET /user/([^/]+)/.*[Twitterbot/1.0]";
+    private final String userImpressionTwitterFacebookCombo="^.*GET /user/([^/]+)/.*facebookexternalhit/1.1 Facebot Twitterbot/1.0";
+
     private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
 
     private final String eventSSView="^.*GET /veranstaltungen/([^/]+)/.*s=([^&\"]+)\"";
@@ -237,6 +248,14 @@ public class LogService {
     final Pattern outgoingRedirectPatternTwitter = Pattern.compile(outgoingRedirectTwitter);
     final Pattern outgoingRedirectPatternFacebook = Pattern.compile(outgoingRedirectFacebook);
     final Pattern outgoingRedirectPatternYoutube = Pattern.compile(outgoingRedirectYoutube);
+    final Pattern postImpressionFacebookPattern=Pattern.compile(postImpressionFacebook);
+    final Pattern postImpressionTwitterPattern=Pattern.compile(postImpressionTwitter);
+    final Pattern postImpressionLinkedinPattern=Pattern.compile(postImpressionLinkedin);
+    final Pattern postImpressionFacebookTwitterComboPattern=Pattern.compile(postImpressionTwitterFacebookCombo);
+    final Pattern userImpressionFacebookPattern=Pattern.compile(userImpressionFacebook);
+    final Pattern userImpressionTwitterPattern=Pattern.compile(userImpressionTwitter);
+    final Pattern userImpressionLinkedInPattern=Pattern.compile(userImpressionLinkedin);
+    final Pattern userImpressionTwitterFacebookComboPattern=Pattern.compile(userImpressionTwitterFacebookCombo);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -535,7 +554,8 @@ public class LogService {
 
                 List<String> notNonsense = new ArrayList<>();
                 notNonsense.add("author");
-                notNonsense.add("author");
+                notNonsense.add("securitynews");
+                notNonsense.add("ifis-news");
 
                 boolean isNotNonsense = false;
 
@@ -649,6 +669,22 @@ public class LogService {
                     Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(request);
                     //Does it match user-redirect?
                     Matcher matched_userRedirect = userRedirectPattern.matcher(request);
+                    //Does it match a socials impression?
+                    Matcher matched_post_impression_facebook=postImpressionFacebookPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_post_impression_twitter=postImpressionTwitterPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_post_impression_LinkedIn=postImpressionLinkedinPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_post_impression_FacebookTwitterCombo=postImpressionFacebookTwitterComboPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_user_impression_facebook=userImpressionFacebookPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_user_impression_twitter=userImpressionTwitterPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_user_impression_LinkedIn=userImpressionLinkedInPattern.matcher(line);
+                    //Does it match a socials impression?
+                    Matcher matched_user_impression_FacebookTwitterCombo=userImpressionTwitterFacebookComboPattern.matcher(line);
 
                     //Find out which pattern matched
                     String whatMatched = "";
@@ -672,7 +708,31 @@ public class LogService {
                     } else if(matched_user_search_success.find()) {
                         whatMatched = "userSS";
                         patternMatcher = matched_user_search_success;
-                    } else if(matched_articleView.find()) {
+                    } else if(matched_post_impression_facebook.find()) {
+                        whatMatched = "postImpressionFacebook";
+                        patternMatcher = matched_post_impression_facebook;
+                    }else if(matched_post_impression_twitter.find()) {
+                        whatMatched = "postImpressionTwitter";
+                        patternMatcher = matched_post_impression_twitter;
+                    } else if(matched_post_impression_LinkedIn.find()) {
+                        whatMatched = "postImpressionLinkedIn";
+                        patternMatcher = matched_post_impression_LinkedIn;
+                    } else if(matched_post_impression_FacebookTwitterCombo.find()) {
+                        whatMatched = "postImpressionFacebookTwitterCombo";
+                        patternMatcher = matched_post_impression_FacebookTwitterCombo;
+                    } else if(matched_user_impression_facebook.find()) {
+                        whatMatched = "userImpressionFacebook";
+                        patternMatcher = matched_user_impression_facebook;
+                    }else if(matched_user_impression_twitter.find()) {
+                        whatMatched = "userImpressionTwitter";
+                        patternMatcher = matched_user_impression_twitter;
+                    } else if(matched_user_impression_LinkedIn.find()) {
+                        whatMatched = "userImpressionLinkedIn";
+                        patternMatcher = matched_user_impression_LinkedIn;
+                    } else if(matched_user_impression_FacebookTwitterCombo.find()) {
+                        whatMatched = "userImpressionFacebookTwitterCombo";
+                        patternMatcher = matched_user_impression_FacebookTwitterCombo;
+                    }  else if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
                     } else if(matched_blogView.find() || matched_blogCat.find()) {
@@ -756,9 +816,25 @@ public class LogService {
                         patternMatcher = matched_userRedirect;
                     }
 
+                    //If user existed,
+                    // but only clicked nonsense so far and now clicked something else,
+                    // add him as a UniqueUser.
+                    if(!isUnique) {
+                        UniqueUser temp = uniqueUserRepo.findByIP(ip);
+                        boolean wasOnlyNonsense = new JSONArray(temp.getNonsense()).length() == temp.getAmount_of_clicks() + 1;
+
+                        if ((!whatMatched.equals("") || isNotNonsense) && wasOnlyNonsense){
+                            uniqueUsers++;
+                        }
+
+                    }
                     //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
-                    if(isUnique) {
+                    if(isUnique && (!whatMatched.equals("") || isNotNonsense)) {
                         uniqueUsers++;
+                    }
+
+                    //If the user is new, initialize him.
+                    if(isUnique) {
                         initUniqueUser(ip, dateLog);
                     }
 
@@ -1028,7 +1104,7 @@ public class LogService {
                         }
                     }
 
-                    if(!whatMatched.equals("")) {
+                    if(!whatMatched.equals("") || isNotNonsense) {
                         sensibleClicks++;
                     }
 
@@ -1084,7 +1160,7 @@ public class LogService {
             {
                 if (dateStirng.equalsIgnoreCase(uniLastDateString)) {
                     uni = uniRepo.findTop1ByOrderByDatumDesc();
-                    uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+                    uni.setBesucherAnzahl(uniHourlyRepo.getSumUsersForUniId(uni.getId()) + uniqueUsers);
                     uni.setSensibleClicks(uni.getSensibleClicks() + sensibleClicks);
                     uni.setTotalClicks(uni.getTotalClicks() + totalClicks);
                     uni.setInternalClicks(uni.getInternalClicks() + internalClicks);
@@ -1094,7 +1170,7 @@ public class LogService {
                     uni = setAccountTypeAllUniStats(uni);
                 } else {
                     uni = new UniversalStats();
-                    uni.setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
+                    uni.setBesucherAnzahl((long) uniqueUsers);
                     uni.setSensibleClicks((long) sensibleClicks);
                     uni.setTotalClicks(totalClicks);
                     uni.setInternalClicks(internalClicks);
@@ -1639,6 +1715,12 @@ public class LogService {
                     System.out.println("EVENTVIEW EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
+                break;
+            case "postImpressionFacebook","postImpressionTwitter","postImpressionLinkedIn","postImpressionFacebookTwitterCombo":
+                System.out.println("POST-SOCIAL" + line);
+                break;
+            case "userImpressionFacebook","userImpressionTwitter","userImpressionLinkedIn","userImpressionFacebookTwitterCombo":
+                System.out.println("USER-SOCIAL" + line);
                 break;
             case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar":
 

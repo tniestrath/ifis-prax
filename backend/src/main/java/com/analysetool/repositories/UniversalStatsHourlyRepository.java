@@ -19,6 +19,9 @@ public interface UniversalStatsHourlyRepository extends JpaRepository<UniversalS
     @Query("SELECT u FROM UniversalStatsHourly u ORDER BY u.id DESC LIMIT 24")
     List<UniversalStatsHourly> getLast24();
 
+    @Query("SELECT SUM(u.besucherAnzahl) FROM UniversalStatsHourly u WHERE u.uniStatId=:uniStatId")
+    long getSumUsersForUniId(int uniStatId);
+
     @Query("SELECT u.stunde FROM UniversalStatsHourly u ORDER BY u.id DESC LIMIT 1")
     int getLastStunde();
 

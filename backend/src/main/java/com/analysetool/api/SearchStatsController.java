@@ -327,6 +327,8 @@ public class SearchStatsController {
                 obj.put("rank", rank.getAndIncrement());
                 obj.put("query", entry.getKey());
                 obj.put("sSCount", entry.getValue());
+                obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery(entry.getKey()));
+                obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(entry.getKey()));
                 response.put(obj);
 
             } catch (JSONException e) {
@@ -354,6 +356,7 @@ public class SearchStatsController {
                 obj.put("rank", rank.getAndIncrement());
                 obj.put("query", entry.getKey());
                 obj.put("searchedCount", entry.getValue());
+                obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(entry.getKey()));
                 response.put(obj);
 
             } catch (JSONException e) {

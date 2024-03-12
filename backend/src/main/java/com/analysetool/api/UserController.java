@@ -1467,6 +1467,21 @@ public class UserController {
         return (double) countFulfilled / countPossible;
     }
 
+    @GetMapping("/getPotentialPercentGlobal")
+    public double getPotentialPercentGlobal(){
+        List<WPUser> users = userRepository.findAll();
+        int countUsers = users.size();
+        double potentialPercentCollector = 0;
+        for(WPUser user : users) {
+            try {
+                potentialPercentCollector+= getPotentialPercent(Math.toIntExact(user.getId()));
+            } catch (JSONException ignored) {
+            }
+        }
+        return potentialPercentCollector / countUsers;
+
+    }
+
     /**
      *
      * @param userId the user you want to fetch data for.

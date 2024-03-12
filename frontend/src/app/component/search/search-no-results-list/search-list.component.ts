@@ -37,6 +37,7 @@ export class SearchListComponent extends DashBaseComponent implements OnInit{
 export class SearchListNoResultsComponent extends SearchListComponent implements OnDestroy{
   override title = "Suchanfragen ohne Ergebnis";
   override ngOnInit(): void {
+    this.setToolTip("Hier finden sie alle Suchanfragen der Hauptsuche. Unbrauchbare Anfragen können sie auch aus der Liste entfernen");
     this.selectorItems = [];
     this.db.getSearchesWithoutResults().then(res => {
       for (var search of res) {
@@ -95,6 +96,7 @@ export class SearchListRankComponent extends SearchListComponent {
 export class SearchListSSComponent extends SearchListComponent {
   override title = "Erfolgreichste Suchanfragen";
   override ngOnInit() {
+    this.setToolTip("Hier finden sie die erfolgreichsten Suchanfragen der Hauptsuche.");
     this.selectorItems = [];
     this.db.getSearchesTopNBySS(15).then(res => {
       for (var search of res) {
@@ -115,6 +117,7 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
   override title = "Anbietersuchen ohne Ergebnis";
 
   override ngOnInit(): void {
+    this.setToolTip("Hier finden sie alle Suchanfragen der Anbietersuche. Unbrauchbare Anfragen können sie auch aus der Liste entfernen");
     this.selectorItems = [];
     this.db.getSearchesAnbieterWithoutResults().then(res => {
       for (var search of res) {

@@ -16,10 +16,22 @@
   width: 85%;
   text-align: left;
 }
+.snr-string-80{
+  display: flex;
+  align-items: center;
+  width: 80%;
+  text-align: left;
+}
+.snr-string-medium{
+  display: flex;
+  align-items: center;
+  width: 76%;
+  text-align: left;
+}
 .snr-string-short{
   display: flex;
   align-items: center;
-  width: 50%;
+  width: 45%;
   text-align: left;
 }
 .snr-count{
@@ -31,8 +43,15 @@
 .snr-count-long{
   display: flex;
   align-items: center;
-  justify-content: right;
+  justify-content: left;
   width: 15%;
+  padding-left: 5px;
+  text-align: left;
+}
+.snr-count-short{
+  display: flex;
+  align-items: center;
+  width: 8%;
   text-align: right;
 }
 .snr-city{
@@ -46,8 +65,9 @@
   align-items: center;
   width: 5%;
 }
-.snr-ignore img{
-  width: 90%;
+img{
+  max-width: 90%;
+  height: 20px;
   aspect-ratio: 1;
   padding: 2px;
 }

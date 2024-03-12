@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {DbObject} from "../../../../services/DbObject";
-import Util from "../../../../util/Util";
 import {SysVars} from "../../../../services/sys-vars-service";
+import Util from "../../../../util/Util";
 
 
 export class SearchItem extends DbObject{
@@ -18,6 +18,7 @@ export class SearchAnbieterItem extends SearchItem{
 
   constructor(id : string, searchString : string, city : string, count : number) {
     super(id, searchString, count);
+    this.search = searchString;
     this.city = city;
   }
 
@@ -25,22 +26,28 @@ export class SearchAnbieterItem extends SearchItem{
 export class SearchRank extends DbObject{
   public rank : number;
   public query : string;
+  public foundCount : number;
   public searchedCount : number;
-  constructor(id : string, query : string, searchedCount : number, rank : number) {
+  constructor(id : string, query : string, searchedCount : number, foundCount : number, rank : number) {
     super(id, query);
     this.query = query;
     this.searchedCount = searchedCount;
+    this.foundCount = foundCount;
     this.rank = rank;
   }
 }
 export class SearchSS extends DbObject{
   public rank : number;
   public query : string;
+  public foundCount : number;
+  public searchedCount : number;
   public sSCount : number;
-  constructor(id : string, query : string, sSCount : number, rank : number) {
+  constructor(id : string, query : string, sSCount : number, foundCount : number, searchedCount : number, rank : number) {
     super(id, query);
     this.query = query;
     this.sSCount = sSCount;
+    this.foundCount = foundCount;
+    this.searchedCount = searchedCount;
     this.rank = rank;
   }
 }
@@ -53,12 +60,11 @@ export class SearchSS extends DbObject{
 })
 export class SearchListItemComponent {
   data : DbObject = new DbObject("","");
+  public Util = Util;
 
   protected onClick(){
     SysVars.SELECTED_SEARCH.emit({item: this.data, operation: "IGNORE"});
   }
-
-  protected readonly SearchItem = SearchItem;
 }
 @Component({
   selector: 'dash-search-no-results-list-item',
@@ -74,7 +80,7 @@ export class SearchListNoResultsItemComponent extends SearchListItemComponent{
   styleUrls: ['./search-list-item.component.css']
 })
 export class SearchListRankItemComponent extends SearchListItemComponent{
-  override data : SearchRank = new SearchRank("", "", 0, 0);
+  override data : SearchRank = new SearchRank("", "", 0, 0, 0);
 }
 @Component({
   selector: 'dash-search-ss-list-item',
@@ -82,7 +88,7 @@ export class SearchListRankItemComponent extends SearchListItemComponent{
   styleUrls: ['./search-list-item.component.css']
 })
 export class SearchListSSItemComponent extends SearchListItemComponent{
-  override data : SearchSS = new SearchSS("", "", 0, 0);
+  override data : SearchSS = new SearchSS("", "", 0, 0, 0,0);
 }
 
 @Component({
@@ -90,12 +96,10 @@ export class SearchListSSItemComponent extends SearchListItemComponent{
   templateUrl: './search-list-anbieter-item.component.html',
   styleUrls: ['./search-list-item.component.css']
 })
-export class SearchListAnbieterItemComponent {
-  data : SearchAnbieterItem = new SearchAnbieterItem("","", "", 0);
+export class SearchListAnbieterItemComponent extends SearchListItemComponent{
+  override data : SearchAnbieterItem = new SearchAnbieterItem("","", "", 0);
 
-  protected onClick(){
+  protected override onClick(){
     SysVars.SELECTED_SEARCH.emit({item: this.data, operation: "DELETE"});
   }
-
-  protected readonly SearchItem = SearchItem;
 }

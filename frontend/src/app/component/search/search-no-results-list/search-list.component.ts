@@ -40,7 +40,7 @@ export class SearchListNoResultsComponent extends SearchListComponent implements
     this.selectorItems = [];
     this.db.getSearchesWithoutResults().then(res => {
       for (var search of res) {
-        this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, new SearchItem(search.id, search.search, search.count)));
+        this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, search));
       }
       this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
@@ -53,7 +53,7 @@ export class SearchListNoResultsComponent extends SearchListComponent implements
             this.selectorItems = [];
             this.db.getSearchesWithoutResults().then(res => {
               for (var search of res) {
-                this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, new SearchItem(search.id, search.search, search.count)));
+                this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, search));
               }
               this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
               this.selectorItemsLoaded.next(this.selectorItems);
@@ -80,7 +80,7 @@ export class SearchListRankComponent extends SearchListComponent {
     this.selectorItems = [];
     this.db.getSearchesTopN(15).then(res => {
       for (var search of res) {
-        this.selectorItems.push(new SelectorItem(SearchListRankItemComponent, new SearchRank(search.id, search.query, search.searchedCount, search.rank)));
+        this.selectorItems.push(new SelectorItem(SearchListRankItemComponent, search));
       }
       this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
@@ -98,7 +98,7 @@ export class SearchListSSComponent extends SearchListComponent {
     this.selectorItems = [];
     this.db.getSearchesTopNBySS(15).then(res => {
       for (var search of res) {
-        this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, new SearchSS(search.id, search.query, search.sSCount, search.rank)));
+        this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
       }
       this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
@@ -118,7 +118,7 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
     this.selectorItems = [];
     this.db.getSearchesAnbieterWithoutResults().then(res => {
       for (var search of res) {
-        this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, new SearchAnbieterItem(search.id, search.search, search.city, search.count)));
+        this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
       }
       this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
@@ -131,7 +131,7 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
             this.selectorItems = [];
             this.db.getSearchesAnbieterWithoutResults().then(res => {
               for (var search of res) {
-                this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, new SearchAnbieterItem(search.id, search.search, search.city, search.count)));
+                this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
               }
               this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
               this.selectorItemsLoaded.next(this.selectorItems);

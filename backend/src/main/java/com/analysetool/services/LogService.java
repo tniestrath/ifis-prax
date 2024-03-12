@@ -708,7 +708,8 @@ public class LogService {
                     } else if(matched_user_search_success.find()) {
                         whatMatched = "userSS";
                         patternMatcher = matched_user_search_success;
-                    } else if(matched_post_impression_facebook.find()) {
+                    }
+                    /*else if(matched_post_impression_facebook.find()) {
                         whatMatched = "postImpressionFacebook";
                         patternMatcher = matched_post_impression_facebook;
                     }else if(matched_post_impression_twitter.find()) {
@@ -732,7 +733,8 @@ public class LogService {
                     } else if(matched_user_impression_FacebookTwitterCombo.find()) {
                         whatMatched = "userImpressionFacebookTwitterCombo";
                         patternMatcher = matched_user_impression_FacebookTwitterCombo;
-                    }  else if(matched_articleView.find()) {
+                    }  */
+                    else if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
                     } else if(matched_blogView.find() || matched_blogCat.find()) {

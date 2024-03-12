@@ -1700,8 +1700,10 @@ public class LogService {
                 }
                 break;
             case "postImpressionFacebook","postImpressionTwitter","postImpressionLinkedIn","postImpressionFacebookTwitterCombo":
+                System.out.println("POST-SOCIAL" + line);
                 break;
             case "userImpressionFacebook","userImpressionTwitter","userImpressionLinkedIn","userImpressionFacebookTwitterCombo":
+                System.out.println("USER-SOCIAL" + line);
                 break;
             case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar":
 

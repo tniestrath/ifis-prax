@@ -116,6 +116,12 @@ public class LogService {
     private TrackingBlacklistRepository tbRepo;
     @Autowired
     private SocialsImpressionsService socialsImpressionsService;
+    @Autowired
+    private AnbieterSearchRepository anbieterSearchRepo;
+    @Autowired
+    private AnbieterFailedSearchBufferRepository anbieterSearchFailRepo;
+    @Autowired
+    private GeoNamesPostalRepository geoNamesRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -448,6 +454,7 @@ public class LogService {
         } catch (JSONException e) {
             System.out.println("JSON EXCEPTION BEI UPDATEPOSTTYPES");
         }
+        updateAnbieterFailedSearchBuffer();
 
         if(LocalDateTime.now().getHour() == 5) {
             endDay();
@@ -3069,5 +3076,40 @@ public class LogService {
         }
         //System.out.println("UPPPPDAAAATEEE REEEEDDIRREEEEEECCCCTTTTT----------------------------->>>>> "+redirects);
         return redirects;
+    }
+
+    public void updateAnbieterFailedSearchBuffer() {
+        removeNoLongerFails();
+        addNewFails();
+    }
+
+    private void addNewFails() {
+        for(AnbieterSearch a : anbieterSearchRepo.findAllNoneFound()) {
+            if(anbieterSearchFailRepo.getByData(a.getSearch(), a.getCity_name(), a.getPlz(), a.getUmkreis()).isEmpty()) {
+                AnbieterFailedSearchBuffer b = new AnbieterFailedSearchBuffer();
+                b.setSearch(a.getSearch());
+                if(a.getCity_name().equals("") && a.getPlz() != 0) {
+                    b.setCity(geoNamesRepo.getCityByPlz(a.getPlz()));
+                } else {
+                    b.setCity(a.getCity_name());
+                }
+                b.setPlz(a.getPlz());
+                b.setUmkreis(a.getUmkreis());
+                b.setCount(anbieterSearchRepo.getCountForData(a.getSearch(), a.getCity_name(), a.getPlz(), a.getUmkreis()));
+                anbieterSearchFailRepo.save(b);
+            } else {
+                AnbieterFailedSearchBuffer b = anbieterSearchFailRepo.getByData(a.getSearch(), a.getCity_name(), a.getPlz(), a.getUmkreis()).get();
+                b.setCount(anbieterSearchRepo.getCountForData(a.getSearch(), a.getCity_name(), a.getPlz(), a.getUmkreis()));
+                anbieterSearchFailRepo.save(b);
+            }
+        }
+    }
+
+    private void removeNoLongerFails() {
+        for(AnbieterFailedSearchBuffer a : anbieterSearchFailRepo.findAll()) {
+            if(!anbieterSearchRepo.findCountNotZeroForData(a.getSearch(), a.getCity(), a.getPlz(), a.getUmkreis()).isEmpty()) {
+                anbieterSearchFailRepo.delete(a);
+            }
+        }
     }
 }

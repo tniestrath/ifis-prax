@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @RestController
@@ -47,6 +46,8 @@ public class SearchStatsController {
     private BlockedSearchesRepository blockedRepo;
     @Autowired
     private GeoNamesPostalRepository geoNamesRepo;
+    @Autowired
+    private AnbieterFailedSearchBufferRepository anbieterFailRepo;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -314,34 +315,26 @@ public class SearchStatsController {
     }
 
     @GetMapping("/getTopNSearchQueriesBySS")
-    public String getTop10SearchQueriesBySS(int number){
+    public String getTop10SearchQueriesBySS(int page, int size){
         JSONArray response = new JSONArray();
 
-        Map<FinalSearchStat,List<FinalSearchStatDLC>> allSearchStats = fSearchStatService.getAllSearchStats();
-        List<Map.Entry<String, Integer>> top10 = fSearchStatService.getRankingTopNSearchQueriesInMapBySS(allSearchStats,number);
+            for(Pair<String, Integer> pair :  finalSearchStatRepo.getQueriesAndCountsSS(PageRequest.of(page, size))) {
+                JSONObject obj = new JSONObject();
+                try {
+                    obj.put("query", pair.getFirst());
+                    obj.put("sSCount", pair.getSecond());
+                    obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery(pair.getFirst()));
+                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(pair.getFirst()));
+                    response.put(obj);
 
-
-        AtomicInteger rank = new AtomicInteger(1);
-        top10.forEach(entry -> {
-            JSONObject obj = new JSONObject();
-            try {
-                obj.put("rank", rank.getAndIncrement());
-                obj.put("query", entry.getKey());
-                obj.put("sSCount", entry.getValue());
-                obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery(entry.getKey()));
-                obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(entry.getKey()));
-                response.put(obj);
-
-            } catch (JSONException e) {
-                 e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-
-        });
 
         return response.toString();
     }
 
-    //Geht auch wieder (außer die wo es noch steht) - no clue woran es lag
     @GetMapping("/getTopNSearchQueries")
     public String getTop10SearchQueries(int page, int size){
         JSONArray response = new JSONArray();
@@ -411,20 +404,14 @@ public class SearchStatsController {
      * @return a JSONArray-String, containing JSON-Objects with 'search' and 'count'
      */
     @GetMapping("/getAllUnfixedSearches")
-    public String getAllUnfixedZeroCountSearches() throws JSONException {
-        Map<String, Integer> searchesAndCounts = new HashMap<>();
+    public String getAllUnfixedZeroCountSearches(int page, int size) throws JSONException {
         JSONArray array = new JSONArray();
-        for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
-            if(finalSearchStatRepo.hasFoundForSearch(f.getSearchQuery()) == null && !isHack(f.getSearchQuery()) && blockedRepo.getByBlocked_search_id(f.getId()).isEmpty()) {
-                searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
-            }
-        }
 
-        for(String key : searchesAndCounts.keySet()) {
+        for(Pair<String, Integer> pair : finalSearchStatRepo.getAllUnfixedSearchesWithZeroFound("%&%;%", PageRequest.of(page, size))) {
             JSONObject json = new JSONObject();
-            json.put("search", key);
-            json.put("id", finalSearchStatRepo.getIdsBySearch(key).get(0));
-            json.put("count", searchesAndCounts.get(key));
+            json.put("search", pair.getFirst());
+            json.put("id", finalSearchStatRepo.getIdsBySearch(pair.getFirst()).get(0));
+            json.put("count", pair.getSecond());
             array.put(json);
         }
 
@@ -515,46 +502,16 @@ public class SearchStatsController {
 
 
     @GetMapping("/getAnbieterNoneFound")
-    public String getAnbieterNoneFound() throws JSONException {
+    public String getAnbieterNoneFound(int page, int size) throws JSONException {
         JSONArray array = new JSONArray();
 
-        int count = 0;
-        String lastCity = null;
-        String lastSearch = null;
-
-        for(AnbieterSearch search : anbieterSearchRepo.findAllCount0()) {
+        for(AnbieterFailedSearchBuffer a : anbieterFailRepo.getPageable(PageRequest.of(page, size))) {
             JSONObject json = new JSONObject();
-            String city;
-            if (search.getCity_name().isBlank()) {
-                if(search.getPlz() != 0) {
-                    city = geoNamesRepo.getCityByPlz(search.getPlz());
-                } else {
-                    city = "none";
-                }
-            }
-            else {
-                city = search.getCity_name();
-            }
-
-            String suche = search.getSearch().isBlank() ? "none" : search.getSearch();
-
-            //If new city or new suche, reset count.
-            if(lastCity!=null && lastSearch!=null && (!lastCity.equals(city) || !lastSearch.equals(suche))) {
-                json.put("city", city);
-                json.put("search", suche);
-                json.put("count", count);
-                array.put(json);
-                count = 0;
-            } else if((lastCity!=null && lastSearch!=null)) {
-                count++;
-            }
-
-            if(count == 0) {
-                count = 1;
-            }
-
-            lastCity = city;
-            lastSearch = suche;
+            json.put("search", a.getSearch());
+            json.put("count", a.getCount());
+            json.put("city", a.getCity().equals("") ? "none" : a.getCity());
+            json.put("id", a.getId());
+            array.put(json);
         }
 
         return array.toString();
@@ -562,40 +519,10 @@ public class SearchStatsController {
 
     @PostMapping("/deleteAnbieterSearch")
     @Modifying
-    public boolean deleteAnbieterSearchById(String search, String city) {
-        if((city.isBlank() || city.equals("none")) && (search.isBlank() || search.equals("none"))) {
-            deleteAnbieterEmpty();
-            return true;
-        } else if(search.equals("none") || search.isBlank()) {
-            deleteAnbieterSearchByCity(city);
-            return true;
-        } else {
-            deleteAnbieterSearchBySearch(search);
-            return true;
-        }
+    public boolean deleteAnbieterSearchById(long id) {
+        anbieterFailRepo.deleteById(id);
+        return true;
     }
-
-    @Modifying
-    public void deleteAnbieterEmpty() {
-        if(!anbieterSearchRepo.findAllEmpty().isEmpty()) {
-            anbieterSearchRepo.deleteAll(anbieterSearchRepo.findAllEmpty());
-        }
-    }
-
-    @Modifying
-    public void deleteAnbieterSearchByCity(String city) {
-        if(!anbieterSearchRepo.findByCity(city).isEmpty()) {
-            anbieterSearchRepo.deleteAll(anbieterSearchRepo.findByCity(city));
-        }
-    }
-
-    @Modifying
-    public void deleteAnbieterSearchBySearch(String search) {
-        if(!anbieterSearchRepo.findBySearch(search).isEmpty()) {
-            anbieterSearchRepo.deleteAll(anbieterSearchRepo.findBySearch(search));
-        }
-    }
-
 
     boolean isHack(String text) {
         return text.contains("&") && text.contains(";");

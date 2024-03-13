@@ -45,4 +45,16 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
 
     @Query("SELECT s.searchQuery, COUNT(*) FROM FinalSearchStat s GROUP BY s.searchQuery")
     List<Pair<String, Integer>> getQueriesAndCounts(Pageable pageable);
+
+    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s LEFT JOIN FinalSearchStatDLC dlc ON s.id=dlc.finalSearchId GROUP BY s.searchQuery ORDER BY count DESC")
+    List<Pair<String, Integer>> getQueriesAndCountsSS(Pageable pageable);
+
+    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s " +
+            "WHERE (s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount+ s.foundWhitepaperCount) = 0 " +
+            "AND s.searchQuery NOT IN (SELECT f.searchQuery FROM FinalSearchStat f WHERE (s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount+ s.foundWhitepaperCount) > 0) " +
+            "AND s.searchQuery NOT LIKE :hackPattern " +
+            "AND s.searchQuery NOT IN (SELECT b.search FROM BlockedSearches b) " +
+            "GROUP BY s.searchQuery " +
+            "ORDER BY count DESC")
+    List<Pair<String, Integer>> getAllUnfixedSearchesWithZeroFound(String hackPattern, Pageable pageable);
 }

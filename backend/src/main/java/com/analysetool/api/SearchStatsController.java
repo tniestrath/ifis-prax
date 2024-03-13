@@ -5,6 +5,7 @@ import com.analysetool.repositories.*;
 import com.analysetool.services.FinalSearchStatService;
 import com.analysetool.services.PostService;
 import com.analysetool.util.MathHelper;
+import com.analysetool.util.Pair;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.util.Pair;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -318,13 +318,13 @@ public class SearchStatsController {
     public String getTop10SearchQueriesBySS(int page, int size){
         JSONArray response = new JSONArray();
 
-            for(Pair<String, Integer> pair :  finalSearchStatRepo.getQueriesAndCountsSS(PageRequest.of(page, size))) {
+            for(Pair pair :  finalSearchStatRepo.getQueriesAndCountsSS(PageRequest.of(page, size))) {
                 JSONObject obj = new JSONObject();
                 try {
-                    obj.put("query", pair.getFirst());
-                    obj.put("sSCount", pair.getSecond());
-                    obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery(pair.getFirst()));
-                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(pair.getFirst()));
+                    obj.put("query", pair.getText());
+                    obj.put("sSCount", pair.getCount());
+                    obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery(pair.getText()));
+                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(pair.getText()));
                     response.put(obj);
 
                 } catch (JSONException e) {
@@ -339,12 +339,12 @@ public class SearchStatsController {
     public String getTop10SearchQueries(int page, int size){
         JSONArray response = new JSONArray();
 
-            for(Pair<String, Integer> pair : finalSearchStatRepo.getQueriesAndCounts(PageRequest.of(page, size))) {
+            for(Pair pair : finalSearchStatRepo.getQueriesAndCounts(PageRequest.of(page, size))) {
                 JSONObject obj = new JSONObject();
                 try {
-                    obj.put("query", pair.getFirst());
-                    obj.put("searchedCount", pair.getSecond());
-                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(pair.getFirst()));
+                    obj.put("query", pair.getText());
+                    obj.put("searchedCount", pair.getCount());
+                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(pair.getText()));
                     response.put(obj);
 
                 } catch (JSONException e) {
@@ -407,11 +407,11 @@ public class SearchStatsController {
     public String getAllUnfixedZeroCountSearches(int page, int size) throws JSONException {
         JSONArray array = new JSONArray();
 
-        for(Pair<String, Integer> pair : finalSearchStatRepo.getAllUnfixedSearchesWithZeroFound("%&%;%", PageRequest.of(page, size))) {
+        for(Pair pair : finalSearchStatRepo.getAllUnfixedSearchesWithZeroFound("%&%;%", PageRequest.of(page, size))) {
             JSONObject json = new JSONObject();
-            json.put("search", pair.getFirst());
-            json.put("id", finalSearchStatRepo.getIdsBySearch(pair.getFirst()).get(0));
-            json.put("count", pair.getSecond());
+            json.put("search", pair.getText());
+            json.put("id", finalSearchStatRepo.getIdsBySearch(pair.getText()).get(0));
+            json.put("count", pair.getCount());
             array.put(json);
         }
 

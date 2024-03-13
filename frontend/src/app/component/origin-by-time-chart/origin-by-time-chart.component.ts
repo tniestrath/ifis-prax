@@ -27,18 +27,7 @@ export class OriginByTimeChartComponent extends DashBaseComponent implements OnI
 
   timeSpan : string = "all_time";
 
-  data : OriginByTime[] =
-    [ new OriginByTime(0,0, "2023-06-06"),
-      new OriginByTime(1,1, "2023-06-07"),
-      new OriginByTime(2,1, "2023-06-08"),
-      new OriginByTime(80, 70, "2023-09-05"),
-      new OriginByTime(900,800, "2023-09-06"),
-      new OriginByTime(1000, 850, "2023-09-07"),
-      new OriginByTime(69, 66, "2023-07-07"),
-      new OriginByTime(75, 55, "2023-07-08"),
-      new OriginByTime(3, 2, "2023-07-05"),
-      new OriginByTime(4, 4, "2023-07-06")
-    ];
+  data : OriginByTime[] = [];
 
   timeSpanMap = new Map<string, number>([
     ["all_time", 365*2],

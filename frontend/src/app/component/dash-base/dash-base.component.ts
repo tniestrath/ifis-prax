@@ -50,12 +50,12 @@ export class DashBaseComponent implements OnDestroy{
     this.tooltip = document.createElement("span");
     this.tooltip.setAttribute("style",
       "visibility: hidden;\n" +
-      "  background-color: #fff;\n" +
-      "  color: #000;\n" +
-      "  border: 1px solid #A0A0A0;\n" +
+      "  background-color: rgba(0, 0, 0, 0.75);\n" +
+      "  color: #fff;\n" +
+      "  border: none;\n" +
       "  box-sizing: border-box;\n" +
       "  text-align: left;\n" +
-      "  font-size: 1.5vh;\n" +
+      "  font-size: 1.6vh;\n" +
       "  padding: 5px;\n" +
       "  border-radius: 5px;\n" +
       "  position: absolute;\n" +
@@ -63,7 +63,8 @@ export class DashBaseComponent implements OnDestroy{
       "  right: -8px;\n" +
       "  min-height: 30px;\n" +
       "  width: 15.5vw;\n" +
-      "  z-index: 100;");
+      "  z-index: 100;" +
+      "  box-shadow: 5px 5px 5px rgba(0,0,0,.2);");
     tooltipContainer.appendChild(this.tooltip);
     this.helpButton.addEventListener("mouseenter", () => {this.tooltip.style.visibility = "visible"; this.cdr.detectChanges()});
     this.helpButton.addEventListener("mouseleave", () => {this.tooltip.style.visibility = "hidden"; this.cdr.detectChanges()});
@@ -71,7 +72,7 @@ export class DashBaseComponent implements OnDestroy{
 
   protected setToolTip(text?: string, enabled = true){
     if (typeof text === "string") {
-      this.tooltip.innerText = text;
+      this.tooltip.innerHTML = text;
     }
     if (!enabled){
       this.helpButton.style.display = "none";

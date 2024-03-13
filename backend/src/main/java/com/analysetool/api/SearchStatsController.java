@@ -322,7 +322,7 @@ public class SearchStatsController {
                 JSONObject obj = new JSONObject();
                 try {
                     obj.put("query", (String) pair.get(0));
-                    obj.put("sSCount", (int) pair.get(1));
+                    obj.put("sSCount", (long) pair.get(1));
                     obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery((String) pair.get(0)));
                     obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
                     response.put(obj);
@@ -343,7 +343,7 @@ public class SearchStatsController {
                 JSONObject obj = new JSONObject();
                 try {
                     obj.put("query", (String) pair.get(0));
-                    obj.put("searchedCount", (int) pair.get(1));
+                    obj.put("searchedCount", (long) pair.get(1));
                     obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
                     response.put(obj);
 
@@ -411,7 +411,7 @@ public class SearchStatsController {
             JSONObject json = new JSONObject();
             json.put("search", (String) pair.get(0));
             json.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
-            json.put("count", (int) pair.get(1));
+            json.put("count", (long) pair.get(1));
             array.put(json);
         }
 

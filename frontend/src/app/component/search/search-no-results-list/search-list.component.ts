@@ -25,8 +25,14 @@ export class SearchListComponent extends DashBaseComponent implements OnInit{
   selectedSearchObserver : Subscription = new Subscription();
 
   title : string = "Suchanfragen";
+  pagesComplete: boolean = false;
+  lastScroll: number = 0;
+  pageIndex: number = 0;
+  pageSize: number = 15;
 
   ngOnInit(): void {
+  }
+  onScrollEnd() {
   }
 }
 @Component({
@@ -37,33 +43,59 @@ export class SearchListComponent extends DashBaseComponent implements OnInit{
 export class SearchListNoResultsComponent extends SearchListComponent implements OnDestroy{
   override title = "Suchanfragen ohne Ergebnis";
   override ngOnInit(): void {
+    this.setToolTip("Hier finden sie alle Suchanfragen der Hauptsuche. Unbrauchbare Anfragen können sie auch aus der Liste entfernen");
     this.selectorItems = [];
-    this.db.getSearchesWithoutResults().then(res => {
+    this.pageIndex = 0;
+    this.db.getSearchesWithoutResults(this.pageIndex, this.pageSize).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, search));
       }
       this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
+    this.pageIndex++;
+
     this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection => {
       if (selection.operation == "IGNORE") {
         this.db.ignoreSearch(selection.item.id).then(r => {
           console.log((selection.item as SearchItem).search + " : Successfully set to ignore: " + r)
           if (r) {
             this.selectorItems = [];
-            this.db.getSearchesWithoutResults().then(res => {
+            this.db.getSearchesWithoutResults(0, this.pageSize).then(res => {
               for (var search of res) {
                 this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, search));
               }
               this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
               this.selectorItemsLoaded.next(this.selectorItems);
             });
+            this.pageIndex++;
           }
         });
 
       }
     });
   }
+  override onScrollEnd() {
+    if (!this.pagesComplete){
+      let scroll = Date.now();
+      if (scroll >= (this.lastScroll + 100)){
+        console.log(this.pageIndex)
+        this.db.getSearchesWithoutResults(this.pageIndex, this.pageSize).then(res => {
+          for (var search of res) {
+            this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, search));
+          }
+          if (res.length <= 0){
+            this.pagesComplete = true;
+          }
+          this.selectorItemsLoaded.next(this.selectorItems);
+        });
+        this.pageIndex++;
+      }
+      else {}
+      this.lastScroll = scroll;
+    }
+  }
+
   override ngOnDestroy() {
     this.selectedSearchObserver.unsubscribe();
   }
@@ -78,13 +110,36 @@ export class SearchListRankComponent extends SearchListComponent {
   override title = "Häufigste Suchanfragen";
   override ngOnInit() {
     this.selectorItems = [];
-    this.db.getSearchesTopN(15).then(res => {
+    this.pageIndex = 0;
+    this.db.getSearchesTopN(this.pageIndex, this.pageSize).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListRankItemComponent, search));
       }
       this.selectorItems.sort((a, b) => (b.data as SearchRank).searchedCount - (a.data as SearchRank).searchedCount);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
+    this.pageIndex++;
+  }
+
+  override onScrollEnd() {
+    if (!this.pagesComplete){
+      let scroll = Date.now();
+      if (scroll >= (this.lastScroll + 100)){
+        console.log(this.pageIndex)
+        this.db.getSearchesTopN(this.pageIndex, this.pageSize).then(res => {
+          for (var search of res) {
+            this.selectorItems.push(new SelectorItem(SearchListRankItemComponent, search));
+          }
+          if (res.length <= 0){
+            this.pagesComplete = true;
+          }
+          this.selectorItemsLoaded.next(this.selectorItems);
+        });
+        this.pageIndex++;
+      }
+      else {}
+      this.lastScroll = scroll;
+    }
   }
 }
 @Component({
@@ -95,14 +150,38 @@ export class SearchListRankComponent extends SearchListComponent {
 export class SearchListSSComponent extends SearchListComponent {
   override title = "Erfolgreichste Suchanfragen";
   override ngOnInit() {
+    this.setToolTip("Hier finden sie die erfolgreichsten Suchanfragen der Hauptsuche.");
     this.selectorItems = [];
-    this.db.getSearchesTopNBySS(15).then(res => {
+    this.pageIndex = 0;
+    this.db.getSearchesTopNBySS(this.pageIndex, this.pageSize).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
       }
       this.selectorItems.sort((a, b) => (b.data as SearchSS).foundCount - (a.data as SearchSS).foundCount);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
+    this.pageIndex++;
+  }
+
+  override onScrollEnd() {
+    if (!this.pagesComplete){
+      let scroll = Date.now();
+      if (scroll >= (this.lastScroll + 100)){
+        console.log(this.pageIndex)
+        this.db.getSearchesTopNBySS(this.pageIndex, this.pageSize).then(res => {
+          for (var search of res) {
+            this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
+          }
+          if (res.length <= 0){
+            this.pagesComplete = true;
+          }
+          this.selectorItemsLoaded.next(this.selectorItems);
+        });
+        this.pageIndex++;
+      }
+      else {}
+      this.lastScroll = scroll;
+    }
   }
 }
 
@@ -115,33 +194,60 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
   override title = "Anbietersuchen ohne Ergebnis";
 
   override ngOnInit(): void {
+    this.setToolTip("Hier finden sie alle Suchanfragen der Anbietersuche. Unbrauchbare Anfragen können sie auch aus der Liste entfernen");
     this.selectorItems = [];
-    this.db.getSearchesAnbieterWithoutResults().then(res => {
+    this.pageIndex = 0;
+    this.db.getSearchesAnbieterWithoutResults(this.pageIndex, this.pageSize).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
       }
       this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
+    this.pageIndex++;
+
     this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection  => {
       if (selection.operation == "DELETE") {
         this.db.ignoreAnbieterSearch((selection.item as SearchAnbieterItem).search, (selection.item as SearchAnbieterItem).city).then(r => {
           console.log((selection.item as SearchAnbieterItem).search + " : " + (selection.item as SearchAnbieterItem).city + " : Successfully set deleted: " + r)
           if (r) {
             this.selectorItems = [];
-            this.db.getSearchesAnbieterWithoutResults().then(res => {
+            this.db.getSearchesAnbieterWithoutResults(0, this.pageSize).then(res => {
               for (var search of res) {
                 this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
               }
               this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
               this.selectorItemsLoaded.next(this.selectorItems);
             });
+            this.pageIndex++;
           }
         });
 
       }
     });
   }
+
+  override onScrollEnd() {
+    if (!this.pagesComplete){
+      let scroll = Date.now();
+      if (scroll >= (this.lastScroll + 100)){
+        console.log(this.pageIndex)
+        this.db.getSearchesAnbieterWithoutResults(this.pageIndex, this.pageSize).then(res => {
+          for (var search of res) {
+            this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
+          }
+          if (res.length <= 0){
+            this.pagesComplete = true;
+          }
+          this.selectorItemsLoaded.next(this.selectorItems);
+        });
+        this.pageIndex++;
+      }
+      else {}
+      this.lastScroll = scroll;
+    }
+  }
+
   override ngOnDestroy() {
     this.selectedSearchObserver.unsubscribe();
   }

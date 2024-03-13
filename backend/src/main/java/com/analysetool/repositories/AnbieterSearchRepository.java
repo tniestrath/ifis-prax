@@ -28,6 +28,9 @@ public interface AnbieterSearchRepository extends JpaRepository<AnbieterSearch, 
     @Query("SELECT COUNT(c) FROM AnbieterSearch c WHERE c.search=:search AND c.city_name=:cityName AND c.plz=:plz AND c.umkreis=:umkreis")
     int getCountForData(String search, String cityName, int plz, int umkreis);
 
+    @Query("SELECT c FROM AnbieterSearch c WHERE c.search=:search AND c.city_name=:cityName AND c.plz=:plz AND c.umkreis=:umkreis")
+    List<AnbieterSearch> getByData(String search, String cityName, int plz, int umkreis);
+
     @Query("SELECT c FROM AnbieterSearch c WHERE c.city_name=:city")
     List<AnbieterSearch> findByCity(String city);
 

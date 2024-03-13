@@ -520,6 +520,8 @@ public class SearchStatsController {
     @PostMapping("/deleteAnbieterSearch")
     @Modifying
     public boolean deleteAnbieterSearchById(long id) {
+        AnbieterFailedSearchBuffer fail = anbieterFailRepo.findById(id).get();
+        anbieterSearchRepo.deleteAll(anbieterSearchRepo.getByData(fail.getSearch(), fail.getCity(), fail.getPlz(), fail.getUmkreis()));
         anbieterFailRepo.deleteById(id);
         return true;
     }

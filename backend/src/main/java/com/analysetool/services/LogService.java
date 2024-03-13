@@ -571,6 +571,7 @@ public class LogService {
                 notNonsense.add("author");
                 notNonsense.add("securitynews");
                 notNonsense.add("ifis-news");
+                notNonsense.add("/veranstaltungen/");
 
                 boolean isNotNonsense = false;
 
@@ -3130,7 +3131,7 @@ public class LogService {
 
     private void removeNoLongerFails() {
         for(AnbieterFailedSearchBuffer a : anbieterSearchFailRepo.findAll()) {
-            if(!anbieterSearchRepo.findCountNotZeroForData(a.getSearch(), a.getCity(), a.getPlz(), a.getUmkreis()).isEmpty()) {
+            if(!(anbieterSearchRepo.findCountNotZeroForData(a.getSearch(), a.getCity(), a.getPlz(), a.getUmkreis()).isEmpty())) {
                 anbieterSearchFailRepo.delete(a);
             }
         }

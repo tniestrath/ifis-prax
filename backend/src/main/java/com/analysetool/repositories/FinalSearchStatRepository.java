@@ -1,10 +1,10 @@
 package com.analysetool.repositories;
 
 import com.analysetool.modells.FinalSearchStat;
+import jakarta.persistence.Tuple;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -43,11 +43,11 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
     @Query("SELECT COUNT(s) FROM FinalSearchStat s WHERE s.searchQuery=:query")
     int getCountSearchedByQuery(String query);
 
-    @Query("SELECT s.searchQuery, COUNT(*) FROM FinalSearchStat s GROUP BY s.searchQuery")
-    List<Pair<String, Integer>> getQueriesAndCounts(Pageable pageable);
+    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s GROUP BY s.searchQuery ORDER BY count DESC")
+    List<Tuple> getQueriesAndCounts(Pageable pageable);
 
-    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s LEFT JOIN FinalSearchStatDLC dlc ON s.id=dlc.finalSearchId GROUP BY s.searchQuery ORDER BY count DESC")
-    List<Pair<String, Integer>> getQueriesAndCountsSS(Pageable pageable);
+    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s INNER JOIN FinalSearchStatDLC dlc ON s.id=dlc.finalSearchId GROUP BY s.searchQuery ORDER BY count DESC")
+    List<Tuple> getQueriesAndCountsSS(Pageable pageable);
 
     @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s " +
             "WHERE (s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount+ s.foundWhitepaperCount) = 0 " +
@@ -56,5 +56,5 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
             "AND s.searchQuery NOT IN (SELECT b.search FROM BlockedSearches b) " +
             "GROUP BY s.searchQuery " +
             "ORDER BY count DESC")
-    List<Pair<String, Integer>> getAllUnfixedSearchesWithZeroFound(String hackPattern, Pageable pageable);
+    List<Tuple> getAllUnfixedSearchesWithZeroFound(String hackPattern, Pageable pageable);
 }

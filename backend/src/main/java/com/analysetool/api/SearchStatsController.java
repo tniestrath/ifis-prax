@@ -6,6 +6,7 @@ import com.analysetool.services.FinalSearchStatService;
 import com.analysetool.services.PostService;
 import com.analysetool.util.MathHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.Tuple;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.util.Pair;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -318,13 +318,13 @@ public class SearchStatsController {
     public String getTop10SearchQueriesBySS(int page, int size){
         JSONArray response = new JSONArray();
 
-            for(Pair<String, Integer> pair :  finalSearchStatRepo.getQueriesAndCountsSS(PageRequest.of(page, size))) {
+            for(Tuple pair :  finalSearchStatRepo.getQueriesAndCountsSS(PageRequest.of(page, size))) {
                 JSONObject obj = new JSONObject();
                 try {
-                    obj.put("query", pair.getFirst());
-                    obj.put("sSCount", pair.getSecond());
-                    obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery(pair.getFirst()));
-                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(pair.getFirst()));
+                    obj.put("query", (String) pair.get(0));
+                    obj.put("sSCount", (long) pair.get(1));
+                    obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery((String) pair.get(0)));
+                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
                     response.put(obj);
 
                 } catch (JSONException e) {
@@ -339,12 +339,12 @@ public class SearchStatsController {
     public String getTop10SearchQueries(int page, int size){
         JSONArray response = new JSONArray();
 
-            for(Pair<String, Integer> pair : finalSearchStatRepo.getQueriesAndCounts(PageRequest.of(page, size))) {
+            for(Tuple pair : finalSearchStatRepo.getQueriesAndCounts(PageRequest.of(page, size))) {
                 JSONObject obj = new JSONObject();
                 try {
-                    obj.put("query", pair.getFirst());
-                    obj.put("searchedCount", pair.getSecond());
-                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery(pair.getFirst()));
+                    obj.put("query", (String) pair.get(0));
+                    obj.put("searchedCount", (long) pair.get(1));
+                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
                     response.put(obj);
 
                 } catch (JSONException e) {
@@ -407,11 +407,11 @@ public class SearchStatsController {
     public String getAllUnfixedZeroCountSearches(int page, int size) throws JSONException {
         JSONArray array = new JSONArray();
 
-        for(Pair<String, Integer> pair : finalSearchStatRepo.getAllUnfixedSearchesWithZeroFound("%&%;%", PageRequest.of(page, size))) {
+        for(Tuple pair : finalSearchStatRepo.getAllUnfixedSearchesWithZeroFound("%&%;%", PageRequest.of(page, size))) {
             JSONObject json = new JSONObject();
-            json.put("search", pair.getFirst());
-            json.put("id", finalSearchStatRepo.getIdsBySearch(pair.getFirst()).get(0));
-            json.put("count", pair.getSecond());
+            json.put("search", (String) pair.get(0));
+            json.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
+            json.put("count", (long) pair.get(1));
             array.put(json);
         }
 
@@ -520,6 +520,8 @@ public class SearchStatsController {
     @PostMapping("/deleteAnbieterSearch")
     @Modifying
     public boolean deleteAnbieterSearchById(long id) {
+        AnbieterFailedSearchBuffer fail = anbieterFailRepo.findById(id).get();
+        anbieterSearchRepo.deleteAll(anbieterSearchRepo.getByData(fail.getSearch(), fail.getCity(), fail.getPlz(), fail.getUmkreis()));
         anbieterFailRepo.deleteById(id);
         return true;
     }

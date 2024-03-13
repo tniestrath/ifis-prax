@@ -28,6 +28,9 @@ public interface AnbieterSearchRepository extends JpaRepository<AnbieterSearch, 
     @Query("SELECT COUNT(c) FROM AnbieterSearch c WHERE c.search=:search AND c.city_name=:cityName AND c.plz=:plz AND c.umkreis=:umkreis")
     int getCountForData(String search, String cityName, int plz, int umkreis);
 
+    @Query("SELECT c FROM AnbieterSearch c WHERE c.search=:search AND c.city_name=:cityName AND c.plz=:plz AND c.umkreis=:umkreis")
+    List<AnbieterSearch> getByData(String search, String cityName, int plz, int umkreis);
+
     @Query("SELECT c FROM AnbieterSearch c WHERE c.city_name=:city")
     List<AnbieterSearch> findByCity(String city);
 
@@ -39,6 +42,6 @@ public interface AnbieterSearchRepository extends JpaRepository<AnbieterSearch, 
 
     Page<AnbieterSearch> findAllByOrderByIdDesc(Pageable pageable);
 
-    @Query("SELECT COUNT(c) FROM AnbieterSearch c WHERE c.search=:search AND c.city_name=:cityName AND c.plz=:plz AND c.umkreis=:umkreis AND c.count_found>0")
+    @Query("SELECT c FROM AnbieterSearch c WHERE c.search=:search AND c.city_name=:cityName AND c.plz=:plz AND c.umkreis=:umkreis AND c.count_found>0")
     List<AnbieterSearch> findCountNotZeroForData(String search, String cityName, int plz, int umkreis);
 }

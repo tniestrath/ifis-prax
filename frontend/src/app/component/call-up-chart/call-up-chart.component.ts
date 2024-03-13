@@ -246,7 +246,8 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           backgroundColor: DashColors.GREY,
           borderColor: DashColors.GREY,
           borderJoinStyle: 'round',
-          borderWidth: 3
+          borderWidth: 3,
+          hidden: true
         },{
           label: "Aufrufe",
           data: clicksData,

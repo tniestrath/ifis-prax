@@ -198,15 +198,23 @@ public class LogService {
 
     private final String outgoingRedirectTwitter =".*^GET /goto/https://(www.)?twitter.com/_securitynews*";
 
-    private final String postImpressionFacebook = "^.*GET /artikel|blogeintrag|news/([^/]+)/.*[facebookexternalhit/1.1 (\\+http://www.facebook.com/externalhit_uatext.php)]";
+    /*private final String postImpressionFacebook = "^.*GET /artikel|blogeintrag|news/([^/]+)/.*[facebookexternalhit/1.1 (\\+http://www.facebook.com/externalhit_uatext.php)]";
     private final String postImpressionLinkedin="^.*GET /artikel|blogeintrag|news/([^/]+)/.*linkedin|LinkedIn";
     private final String postImpressionTwitter="^.*GET /artikel|blogeintrag|news/([^/]+)/.*[Twitterbot/1.0]";
     private final String postImpressionTwitterFacebookCombo="^.*GET /artikel|blogeintrag|news/([^/]+)/.*facebookexternalhit/1.1 Facebot Twitterbot/1.0";
     private final String userImpressionFacebook="^.*GET /user/([^/]+)/.*[facebookexternalhit/1.1 (\\+http://www.facebook.com/externalhit_uatext.php)]";
     private final String userImpressionLinkedin="^.*GET /user/([^/]+)/.*linkedin|LinkedIn";
     private final String userImpressionTwitter=".*GET /user/([^/]+)/.*[Twitterbot/1.0]";
-    private final String userImpressionTwitterFacebookCombo="^.*GET /user/([^/]+)/.*facebookexternalhit/1.1 Facebot Twitterbot/1.0";
+    private final String userImpressionTwitterFacebookCombo="^.*GET /user/([^/]+)/.*facebookexternalhit/1.1 Facebot Twitterbot/1.0";*/
 
+    private final String postImpressionFacebook = "^.*GET /(artikel|blogeintrag|news)/([^/]+).*facebookexternalhit.*";
+    private final String postImpressionLinkedin="^.*GET /(artikel|blogeintrag|news)/([^/]+).*(linkedin|LinkedIn|LinkedInBot).*";
+    private final String postImpressionTwitter="^.*GET /(artikel|blogeintrag|news)/([^/]+).*Twitterbot/1.0.*";
+    private final String postImpressionTwitterFacebookCombo="^.*GET /(artikel|blogeintrag|news)/([^/]+).*(?=.*facebookexternalhit)(?=.*Twitterbot).*";
+    private final String userImpressionFacebook="^.*GET /user/([^/]+).*facebookexternalhit.*";
+    private final String userImpressionLinkedin="^.*GET /user/([^/]+).*(linkedin|LinkedIn|LinkedInBot).*";
+    private final String userImpressionTwitter=".*GET /user/([^/]+).*Twitterbot.*";
+    private final String userImpressionTwitterFacebookCombo="^.*GET /user/([^/]+).*(?=.*facebookexternalhit)(?=.*Twitterbot).*";
     private final String eventView="^.*GET /veranstaltungen/(\\S+)/";
 
     private final String eventSSView="^.*GET /veranstaltungen/([^/]+)/.*s=([^&\"]+)\"";
@@ -708,7 +716,8 @@ public class LogService {
                     } else if(matched_user_search_success.find()) {
                         whatMatched = "userSS";
                         patternMatcher = matched_user_search_success;
-                    } else if(matched_post_impression_facebook.find()) {
+                    }
+                    else if(matched_post_impression_facebook.find()) {
                         whatMatched = "postImpressionFacebook";
                         patternMatcher = matched_post_impression_facebook;
                     }else if(matched_post_impression_twitter.find()) {
@@ -732,7 +741,8 @@ public class LogService {
                     } else if(matched_user_impression_FacebookTwitterCombo.find()) {
                         whatMatched = "userImpressionFacebookTwitterCombo";
                         patternMatcher = matched_user_impression_FacebookTwitterCombo;
-                    }  else if(matched_articleView.find()) {
+                    }
+                    else if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
                     } else if(matched_blogView.find() || matched_blogCat.find()) {
@@ -1717,11 +1727,24 @@ public class LogService {
                 }
                 break;
             case "postImpressionFacebook","postImpressionTwitter","postImpressionLinkedIn","postImpressionFacebookTwitterCombo":
-                System.out.println("POST-SOCIAL" + line);
+                try{
+                long id =postRepository.getIdByName(patternMatcher.group(2));
+                socialsImpressionsService.updateSocialsImpressionsPost(whatMatched,dateLog,id);
                 break;
+                } catch(Exception e){
+                    System.out.println("POST-SOCIAL EXCEPTION" + line );
+                }
             case "userImpressionFacebook","userImpressionTwitter","userImpressionLinkedIn","userImpressionFacebookTwitterCombo":
-                System.out.println("USER-SOCIAL" + line);
-                break;
+                try {
+                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
+                        socialsImpressionsService.updateSocialsImpressionsUser(whatMatched,dateLog,userId);
+                        break;
+                    }
+                } catch (Exception e) {
+                    System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
             case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar":
 
             default:

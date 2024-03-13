@@ -3131,7 +3131,7 @@ public class LogService {
 
     private void removeNoLongerFails() {
         for(AnbieterFailedSearchBuffer a : anbieterSearchFailRepo.findAll()) {
-            if(!anbieterSearchRepo.findCountNotZeroForData(a.getSearch(), a.getCity(), a.getPlz(), a.getUmkreis()).isEmpty()) {
+            if(!(anbieterSearchRepo.findCountNotZeroForData(a.getSearch(), a.getCity(), a.getPlz(), a.getUmkreis()).isEmpty())) {
                 anbieterSearchFailRepo.delete(a);
             }
         }

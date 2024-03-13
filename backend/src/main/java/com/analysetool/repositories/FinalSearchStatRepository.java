@@ -46,7 +46,7 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
     @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s GROUP BY s.searchQuery ORDER BY count DESC")
     List<Tuple> getQueriesAndCounts(Pageable pageable);
 
-    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s LEFT JOIN FinalSearchStatDLC dlc ON s.id=dlc.finalSearchId GROUP BY s.searchQuery ORDER BY count DESC")
+    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s INNER JOIN FinalSearchStatDLC dlc ON s.id=dlc.finalSearchId GROUP BY s.searchQuery ORDER BY count DESC")
     List<Tuple> getQueriesAndCountsSS(Pageable pageable);
 
     @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s " +

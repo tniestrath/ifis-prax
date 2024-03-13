@@ -43,14 +43,15 @@ export class SearchListComponent extends DashBaseComponent implements OnInit{
 export class SearchListNoResultsComponent extends SearchListComponent implements OnDestroy{
   override title = "Suchanfragen ohne Ergebnis";
   override ngOnInit(): void {
-    this.setToolTip("Hier finden sie alle Suchanfragen der Hauptsuche. Unbrauchbare Anfragen können sie auch aus der Liste entfernen");
+    this.setToolTip("Hier finden sie alle Suchanfragen der Hauptsuche.<br><br>Unbrauchbare Anfragen können sie auch aus der Liste entfernen.<br><br>"
+      + "<img src=\"assets/repeat.png\" style=\"height: 15px; filter:invert(1)\"> Häufigkeit<br>"
+      + "<img src=\"assets/trash-can.png\" style=\"height: 15px; filter:invert(1)\"> Klicken zum entfernen<br>");
     this.selectorItems = [];
     this.pageIndex = 0;
     this.db.getSearchesWithoutResults(this.pageIndex, this.pageSize).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, search));
       }
-      this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
     this.pageIndex++;
@@ -65,7 +66,6 @@ export class SearchListNoResultsComponent extends SearchListComponent implements
               for (var search of res) {
                 this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, search));
               }
-              this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
               this.selectorItemsLoaded.next(this.selectorItems);
             });
             this.pageIndex++;
@@ -109,13 +109,15 @@ export class SearchListNoResultsComponent extends SearchListComponent implements
 export class SearchListRankComponent extends SearchListComponent {
   override title = "Häufigste Suchanfragen";
   override ngOnInit() {
+    this.setToolTip("Hier werden die Begriffe aufgelistet nach denen am meisten gesucht wurde und wie viele Ergebnisse diese erzielten.<br><br>"
+                    + "<img src=\"assets/repeat.png\" style=\"height: 15px; filter:invert(1)\"> Häufigkeit<br>"
+                    + "<img src=\"assets/bulb.png\" style=\"height: 15px; filter:invert(1)\"> Gefundene Ergebnisse<br>");
     this.selectorItems = [];
     this.pageIndex = 0;
     this.db.getSearchesTopN(this.pageIndex, this.pageSize).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListRankItemComponent, search));
       }
-      this.selectorItems.sort((a, b) => (b.data as SearchRank).searchedCount - (a.data as SearchRank).searchedCount);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
     this.pageIndex++;
@@ -150,14 +152,16 @@ export class SearchListRankComponent extends SearchListComponent {
 export class SearchListSSComponent extends SearchListComponent {
   override title = "Erfolgreichste Suchanfragen";
   override ngOnInit() {
-    this.setToolTip("Hier finden sie die erfolgreichsten Suchanfragen der Hauptsuche.");
+    this.setToolTip("Hier finden sie die erfolgreichsten Suchanfragen der Hauptsuche.<br><br>"
+      + "<img src=\"assets/repeat.png\" style=\"height: 15px; filter:invert(1)\"> Häufigkeit<br>"
+      + "<img src=\"assets/bulb.png\" style=\"height: 15px; filter:invert(1)\"> Gefundene Ergebnisse<br>"
+      + "<img src=\"assets/target-click.png\" style=\"height: 15px; filter:invert(1)\"> Geklickte Ergebnisse<br>");
     this.selectorItems = [];
     this.pageIndex = 0;
     this.db.getSearchesTopNBySS(this.pageIndex, this.pageSize).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
       }
-      this.selectorItems.sort((a, b) => (b.data as SearchSS).foundCount - (a.data as SearchSS).foundCount);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
     this.pageIndex++;
@@ -194,21 +198,22 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
   override title = "Anbietersuchen ohne Ergebnis";
 
   override ngOnInit(): void {
-    this.setToolTip("Hier finden sie alle Suchanfragen der Anbietersuche. Unbrauchbare Anfragen können sie auch aus der Liste entfernen");
+    this.setToolTip("Hier finden sie alle Suchanfragen der Anbietersuche.<br><br>Unbrauchbare Anfragen können sie auch aus der Liste entfernen.<br><br>"
+      + "<img src=\"assets/repeat.png\" style=\"height: 15px; filter:invert(1)\"> Häufigkeit<br>"
+      + "<img src=\"assets/trash-can.png\" style=\"height: 15px; filter:invert(1)\"> Klicken zum entfernen<br>");
     this.selectorItems = [];
     this.pageIndex = 0;
     this.db.getSearchesAnbieterWithoutResults(this.pageIndex, this.pageSize).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
       }
-      this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
       this.selectorItemsLoaded.next(this.selectorItems);
     });
     this.pageIndex++;
 
     this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection  => {
       if (selection.operation == "DELETE") {
-        this.db.ignoreAnbieterSearch((selection.item as SearchAnbieterItem).search, (selection.item as SearchAnbieterItem).city).then(r => {
+        this.db.ignoreAnbieterSearch((selection.item as SearchAnbieterItem).id).then(r => {
           console.log((selection.item as SearchAnbieterItem).search + " : " + (selection.item as SearchAnbieterItem).city + " : Successfully set deleted: " + r)
           if (r) {
             this.selectorItems = [];
@@ -216,7 +221,6 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
               for (var search of res) {
                 this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
               }
-              this.selectorItems.sort((a, b) => (b.data as SearchItem).count - (a.data as SearchItem).count);
               this.selectorItemsLoaded.next(this.selectorItems);
             });
             this.pageIndex++;

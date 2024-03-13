@@ -17,6 +17,7 @@ export class NewsletterListComponent extends DashBaseComponent implements OnInit
 
   title : string = "Alle Newsletter";
   ngOnInit(): void {
+    this.setToolTip("Hier sehen sie alle bisherigen Newsletter");
     this.selectorItems = [];
     this.db.getNewsletters(0, 20).then((res : Newsletter[]) => {
       for (var newsletter of res) {

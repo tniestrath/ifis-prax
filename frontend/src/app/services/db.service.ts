@@ -113,7 +113,7 @@ export enum dbUrl {
   GET_SEARCHES_TOP_N = "/search-stats/getTopNSearchQueries?page=PAGE&size=SIZE",
   GET_SEARCHES_TOP_N_BY_SS = "/search-stats/getTopNSearchQueriesBySS?page=PAGE&size=SIZE",
   POST_SEARCH_IGNORE = "/search-stats/blockSearch?id=SEARCH",
-  ANBIETER_SEARCH_IGNORE = "/search-stats/deleteAnbieterSearch?search=SEARCH&city=CITY",
+  ANBIETER_SEARCH_IGNORE = "/search-stats/deleteAnbieterSearch?id=ID",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -772,9 +772,9 @@ export class DbService {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_IGNORE).replace("SEARCH", searchID)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async ignoreAnbieterSearch(search : string, city : string) : Promise<boolean> {
+  async ignoreAnbieterSearch(id : string) : Promise<boolean> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.ANBIETER_SEARCH_IGNORE).replace("SEARCH", search).replace("CITY", city)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.ANBIETER_SEARCH_IGNORE).replace("ID", id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
 }

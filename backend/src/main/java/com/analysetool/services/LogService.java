@@ -571,6 +571,7 @@ public class LogService {
                 notNonsense.add("author");
                 notNonsense.add("securitynews");
                 notNonsense.add("ifis-news");
+                notNonsense.add("/veranstaltungen/");
 
                 boolean isNotNonsense = false;
 

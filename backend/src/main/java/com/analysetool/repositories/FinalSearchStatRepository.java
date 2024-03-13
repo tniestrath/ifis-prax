@@ -1,7 +1,7 @@
 package com.analysetool.repositories;
 
 import com.analysetool.modells.FinalSearchStat;
-import com.analysetool.util.Pair;
+import jakarta.persistence.Tuple;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -43,11 +43,11 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
     @Query("SELECT COUNT(s) FROM FinalSearchStat s WHERE s.searchQuery=:query")
     int getCountSearchedByQuery(String query);
 
-    @Query("SELECT s.searchQuery, COUNT(*) FROM FinalSearchStat s GROUP BY s.searchQuery")
-    List<Pair> getQueriesAndCounts(Pageable pageable);
+    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) FROM FinalSearchStat s GROUP BY s.searchQuery")
+    List<Tuple> getQueriesAndCounts(Pageable pageable);
 
     @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s LEFT JOIN FinalSearchStatDLC dlc ON s.id=dlc.finalSearchId GROUP BY s.searchQuery ORDER BY count DESC")
-    List<Pair> getQueriesAndCountsSS(Pageable pageable);
+    List<Tuple> getQueriesAndCountsSS(Pageable pageable);
 
     @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s " +
             "WHERE (s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount+ s.foundWhitepaperCount) = 0 " +
@@ -56,5 +56,5 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
             "AND s.searchQuery NOT IN (SELECT b.search FROM BlockedSearches b) " +
             "GROUP BY s.searchQuery " +
             "ORDER BY count DESC")
-    List<Pair> getAllUnfixedSearchesWithZeroFound(String hackPattern, Pageable pageable);
+    List<Tuple> getAllUnfixedSearchesWithZeroFound(String hackPattern, Pageable pageable);
 }

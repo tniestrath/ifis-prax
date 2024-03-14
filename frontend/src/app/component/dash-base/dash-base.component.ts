@@ -70,10 +70,9 @@ export class DashBaseComponent implements OnDestroy{
     this.helpButton.addEventListener("mouseleave", () => {this.tooltip.style.visibility = "hidden"; this.cdr.detectChanges()});
   }
 
-  protected setToolTip(text?: string, enabled = true){
-    if (typeof text === "string") {
-      this.tooltip.innerHTML = text;
-    }
+  protected setToolTip(text: string = "PLACEHOLDER", width: number = 1, enabled = true){
+    this.tooltip.innerHTML = text;
+    this.tooltip.style.width = 15.5 * width + "vw";
     if (!enabled){
       this.helpButton.style.display = "none";
     }

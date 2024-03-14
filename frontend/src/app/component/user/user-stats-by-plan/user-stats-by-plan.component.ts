@@ -13,7 +13,7 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
   protected datasetLabels : string[] = ["Profile ohne Beiträge", "Alle Profile", "Profile mit Beiträgen"]
 
   ngOnInit(): void {
-    this.setToolTip("", false);
+    this.setToolTip("", 1,false);
     this.getData();
   }
 

@@ -26,7 +26,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
   private abortController: AbortController[] = [];
 
   ngOnInit(): void {
-    this.setToolTip("", false);
+    this.setToolTip("", 1,false);
     if (this.parentListItems.length <= 0){
       this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, new AbortController().signal).then(res => {
         this.pageIndex++;

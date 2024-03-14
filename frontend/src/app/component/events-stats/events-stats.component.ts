@@ -58,7 +58,7 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
       this.current_today = this.current - this.current_yesterday;
     });
 
-    this.setToolTip("Hier sind die aktuellen Veranstaltungen angezeigt. Mit Hover über die Zahlen werden genauere Daten angezeigt.");
+    this.setToolTip("Hier sind die aktuellen Veranstaltungen angezeigt.<br><br> Mit Hover über die Zahlen werden genauere Daten angezeigt.");
   }
 
   createEventTooltip(event : string, type: string) {
@@ -79,17 +79,17 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
 
   getEventToolTip(type : string){
     if (type == "u") {
-      return  "Kongresse: " + this.u_congresses + "\n" +
-              "Messen: " + this.u_messes + "\n" +
-              "Seminare: " + this.u_seminars + "\n" +
-              "Workshops: " + this.u_workshops + "\n" +
-              "Sonstige: " + this.u_rest + "\n";
+      return  "Kongresse: " + this.u_congresses + "<br>" +
+              "Messen: " + this.u_messes + "<br>" +
+              "Seminare: " + this.u_seminars + "<br>" +
+              "Workshops: " + this.u_workshops + "<br>" +
+              "Sonstige: " + this.u_rest;
     } else {
-      return  "Kongresse: " + this.c_congresses + "\n" +
-              "Messen: " + this.c_messes + "\n" +
-              "Seminare: " + this.c_seminars + "\n" +
-              "Workshops: " + this.c_workshops + "\n" +
-              "Sonstige: " + this.c_rest + "\n";
+      return  "Kongresse: " + this.c_congresses + "<br>" +
+              "Messen: " + this.c_messes + "<br>" +
+              "Seminare: " + this.c_seminars + "<br>" +
+              "Workshops: " + this.c_workshops + "<br>" +
+              "Sonstige: " + this.c_rest;
     }
   }
 }
@@ -124,6 +124,6 @@ export class UserEventsStatsComponent extends EventsStatsComponent{
       this.current_today = this.current - this.current_yesterday;
     });
 
-    this.setToolTip("Hier sind die aktuellen Veranstaltungen angezeigt. Mit Hover über die Zahlen werden genauere Daten angezeigt.");
+    this.setToolTip("Hier sind die aktuellen Veranstaltungen des Anbieters angezeigt.<br><br> Mit Hover über die Zahlen werden genauere Daten angezeigt.");
   }
 }

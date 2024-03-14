@@ -399,7 +399,7 @@ export class OriginMapNewsletterComponent extends OriginMapComponent{
 
   override ngOnInit() {
     this.setToolTip("Dies ist eine Karte, die durch Färbung die Orte angibt, von denen am meisten auf den Newsletter zugegriffen wird. " +
-      "Mit einem Click auf eine Region werden genauere Informationen angezeigt.", false);
+      "Mit einem Click auf eine Region werden genauere Informationen angezeigt.", 1, false);
     this.isRegionSelected = "none";
     this.showCharts = "none";
 

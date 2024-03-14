@@ -109,7 +109,7 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
 })
 export class ClicksByTimeNewsletterComponent extends ClicksByTimeComponent{
   override ngOnInit() {
-    this.setToolTip("Hier wird angezeigt, zu welcher Zeit wie oft der Newsletter im Durchschnitt pro Stunde geöffnet wird");
+    this.setToolTip("Hier wird angezeigt, zu welcher Zeit der Newsletter wie oft im Durchschnitt pro Stunde geöffnet wird");
     this.tooltipString = "Interaktionen";
     this.db.getNewslettersOpenTimes().then(res => {
       this.chart = this.createChart("time_clicks", this.labels, res, undefined);

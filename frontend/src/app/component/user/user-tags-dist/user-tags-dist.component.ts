@@ -18,7 +18,7 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
   selectorItemsLoaded = new Subject<SelectorItem[]>();
 
   ngOnInit(): void {
-    this.setToolTip("", false);
+    this.setToolTip("", 1,false);
     this.db.getUserTagsDistributionPercentage().then((res : {name: string, count: number}[])  => {
       let totalIndex = res.findIndex((value, index) => {return value.name.includes("countTotal");})
       // @ts-ignore
@@ -41,7 +41,7 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
 export class SingleUserTagsDistComponent extends UserTagsDistComponent implements OnInit{
 
   override ngOnInit(): void {
-    this.setToolTip("", SysVars.CURRENT_PAGE != "PRINT");
+    this.setToolTip("", 1,SysVars.CURRENT_PAGE != "PRINT");
     this.element.nativeElement.getElementsByClassName("component-box")[0].classList.add("no-margin-top");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].classList.add("no-full-width");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].children[0].innerText = "Platzierung innerhalb der gewählten Themen";

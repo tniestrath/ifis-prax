@@ -1112,27 +1112,31 @@ public class UserController {
     public String getAccountTypeAll(){
         HashMap<String, Integer> counts = new HashMap<>();
 
-        wpUserMetaRepository.getWpCapabilities().forEach(s -> {
-                if (s.contains("administrator")) {
+        for(WPUser user : userRepository.findAll()) {
+            switch(this.getType(Math.toIntExact(user.getId()))) {
+                case "admin" -> {
                     counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
-                } else
-                if (s.contains(Constants.getInstance().getPlusAnbieter())) {
-                    counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
-                } else
-                if (!s.contains("sponsoren") && s.contains(Constants.getInstance().getPremiumAnbieter())) {
-                    counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
-                } else
-                if (s.contains("sponsor")) {
-                    counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
-                } else
-                if (s.contains(Constants.getInstance().getBasisPlusAnbieter()) || s.contains("um_basis-anbieter-plus")) {
-                    counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
-                } else if ((s.contains(Constants.getInstance().getBasisAnbieter()) ) && !s.contains("plus")) {
+                }
+                case "basis" -> {
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
-                } else {
+                }
+                case "basis-plus" -> {
+                    counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);
+                }
+                case "plus" -> {
+                    counts.put("Plus", counts.get("Plus") == null ? 1 : counts.get("Plus") + 1);
+                }
+                case "premium" -> {
+                    counts.put("Premium", counts.get("Premium") == null ? 1 : counts.get("Premium") + 1);
+                }
+                case "sponsor" -> {
+                    counts.put("Sponsor", counts.get("Sponsor") == null ? 1 : counts.get("Sponsor") + 1);
+                }
+                case "none" -> {
                     counts.put("Anbieter", counts.get("Anbieter") == null ? 1 : counts.get("Anbieter") + 1);
                 }
-    });
+            }
+        }
         return new JSONObject(counts).toString();
     }
 

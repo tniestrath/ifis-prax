@@ -1113,7 +1113,7 @@ public class UserController {
         HashMap<String, Integer> counts = new HashMap<>();
 
         wpUserMetaRepository.getWpCapabilities().forEach(s -> {
-                if (s.contains("administrator") || s.contains("organizer")) {
+                if (s.contains("administrator")) {
                     counts.put("Administrator", counts.get("Administrator") == null ? 1 : counts.get("Administrator") + 1);
                 } else
                 if (s.contains(Constants.getInstance().getPlusAnbieter())) {

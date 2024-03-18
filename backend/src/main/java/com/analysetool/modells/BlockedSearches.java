@@ -12,9 +12,6 @@ public class BlockedSearches implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="final_search_stats_id")
-    private Long blocked_search_id;
-
     @Column(name="search")
     private String search;
 
@@ -24,14 +21,6 @@ public class BlockedSearches implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getBlocked_search_id() {
-        return blocked_search_id;
-    }
-
-    public void setBlocked_search_id(Long blocked_search_id) {
-        this.blocked_search_id = blocked_search_id;
     }
 
     public String getSearch() {

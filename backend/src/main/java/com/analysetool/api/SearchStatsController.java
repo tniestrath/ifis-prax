@@ -314,36 +314,100 @@ public class SearchStatsController {
         }
     }
 
-    @GetMapping("/getTopNSearchQueriesBySS")
-    public String getTop10SearchQueriesBySS(int page, int size){
-        JSONArray response = new JSONArray();
-
-            for(Tuple pair :  finalSearchStatRepo.getQueriesAndCountsSS(PageRequest.of(page, size))) {
-                JSONObject obj = new JSONObject();
-                try {
-                    obj.put("query", (String) pair.get(0));
-                    obj.put("sSCount", (long) pair.get(1));
-                    obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery((String) pair.get(0)));
-                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
-                    response.put(obj);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+    /**
+     *
+     * @param page the page of the given size to load. (Page 2 of size 5 loads 5-10).
+     * @param size the number of results to load.
+     * @param sorter the entry you want to sort by (count | found | ss)
+     * @param dir the direction you want to sort. (ASC for Ascending, anything else for DESCENDING)
+     * @return a collection of Search-Stats-Data-Entries.
+     */
+    @GetMapping("/getCoolSearchList")
+    public String getCoolSearchList(int page, int size, String sorter, String dir) {
+        switch (sorter) {
+            case "count" -> {
+                return getTopSearchQueriesBySearchedCount(page, size, dir);
             }
+            case "found" -> {
+                return getSearchQueriesByFoundCount(page, size, dir);
+            }
+            case "ss" -> {
+                return getTopSearchQueriesBySS(page, size, dir);
+            }
+            default -> {
+                return "Du banause musst n sorter angeben sonst setzt es was";
+            }
+        }
+    }
+
+    private String getSearchQueriesByFoundCount(int page, int size, String dir) {
+        JSONArray response = new JSONArray();
+        List<Tuple> pairs;
+        if(dir != null && dir.equals("ASC")) {
+            pairs = finalSearchStatRepo.getQueryAndFoundCountAverageASC(PageRequest.of(page, size));
+        } else {
+            pairs = finalSearchStatRepo.getQueryAndFoundCountAverageDESC(PageRequest.of(page, size));
+        }
+
+        for(Tuple pair : pairs) {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("query", (String) pair.get(0));
+                obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery((String) pair.get(0)));
+                obj.put("sSCount", finalSearchStatRepo.getCountSearchSuccessForQuery((String) pair.get(0)));
+                obj.put("foundCount", (int) pair.get(1));
+                response.put(obj);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         return response.toString();
     }
 
-    @GetMapping("/getTopNSearchQueries")
-    public String getTop10SearchQueries(int page, int size){
-        JSONArray response = new JSONArray();
 
-            for(Tuple pair : finalSearchStatRepo.getQueriesAndCounts(PageRequest.of(page, size))) {
+    private String getTopSearchQueriesBySS(int page, int size, String dir){
+        JSONArray response = new JSONArray();
+        List<Tuple> pairs;
+        if(dir != null && dir.equals("ASC")) {
+            pairs = finalSearchStatRepo.getQueriesAndCountsSSASC(PageRequest.of(page, size));
+        } else {
+            pairs = finalSearchStatRepo.getQueriesAndCountsSSDESC(PageRequest.of(page, size));
+        }
+
+        for(Tuple pair :  pairs) {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("query", (String) pair.get(0));
+                obj.put("sSCount", (long) pair.get(1));
+                obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery((String) pair.get(0)));
+                obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
+                response.put(obj);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return response.toString();
+    }
+
+    private String getTopSearchQueriesBySearchedCount(int page, int size, String dir){
+        JSONArray response = new JSONArray();
+        List<Tuple> pairs;
+        if(dir != null && dir.equals("ASC")) {
+            pairs = finalSearchStatRepo.getQueriesAndCountsASC(PageRequest.of(page, size));
+        } else {
+            pairs = finalSearchStatRepo.getQueriesAndCountsDESC(PageRequest.of(page, size));
+        }
+
+            for(Tuple pair : pairs) {
                 JSONObject obj = new JSONObject();
                 try {
                     obj.put("query", (String) pair.get(0));
                     obj.put("searchedCount", (long) pair.get(1));
+                    obj.put("sSCount", finalSearchStatRepo.getCountSearchSuccessForQuery((String) pair.get(0)));
                     obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
                     response.put(obj);
 

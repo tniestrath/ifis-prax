@@ -524,6 +524,22 @@ public class SearchStatsController {
         return deleted;
     }
 
+    @PostMapping("/blockSearch")
+    @Modifying
+    public boolean blockSearch(String search) {
+        boolean deleted = false;
+        for(Integer currentId : finalSearchStatRepo.getIdsBySearch(search)) {
+            if(blockedRepo.getByBlocked_search_id(currentId.longValue()).isEmpty()) {
+                BlockedSearches block = new BlockedSearches();
+                block.setBlocked_search_id(Long.valueOf(currentId));
+                block.setSearch(search);
+                blockedRepo.save(block);
+                deleted = true;
+            }
+        }
+        return deleted;
+    }
+
     @PostMapping("/unblockSearch")
     @Modifying
     public boolean unblockSearch(Long id) {

@@ -463,6 +463,7 @@ public class LogService {
             System.out.println("JSON EXCEPTION BEI UPDATEPOSTTYPES");
         }
         updateAnbieterFailedSearchBuffer();
+        deleteStandardSearch();
 
         if(LocalDateTime.now().getHour() == 5) {
             endDay();
@@ -3135,5 +3136,9 @@ public class LogService {
                 anbieterSearchFailRepo.delete(a);
             }
         }
+    }
+
+    private void deleteStandardSearch() {
+        anbieterSearchRepo.deleteAll(anbieterSearchRepo.findAllSchmutzSearch());
     }
 }

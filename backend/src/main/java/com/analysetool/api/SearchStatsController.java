@@ -491,7 +491,7 @@ public class SearchStatsController {
         Map<String, Integer> searchesAndCounts = new HashMap<>();
         JSONArray array = new JSONArray();
         for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
-            if(isHack(f.getSearchQuery()) && blockedRepo.getByBlocked_search_id(f.getId()).isEmpty()) {
+            if(isHack(f.getSearchQuery()) && blockedRepo.getBySearch(f.getSearchQuery()).isEmpty()) {
                 searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
             }
         }
@@ -506,67 +506,24 @@ public class SearchStatsController {
         return array.toString();
     }
 
-
-    @PostMapping("/blockSearch")
-    @Modifying
-    public boolean blockSearch(Long id) {
-        boolean deleted = false;
-        String search = finalSearchStatRepo.findById(id).get().getSearchQuery();
-        for(Integer currentId : finalSearchStatRepo.getIdsBySearch(search)) {
-            if(blockedRepo.getByBlocked_search_id(currentId.longValue()).isEmpty()) {
-                BlockedSearches block = new BlockedSearches();
-                block.setBlocked_search_id(Long.valueOf(currentId));
-                block.setSearch(search);
-                blockedRepo.save(block);
-                deleted = true;
-            }
-        }
-        return deleted;
-    }
-
     @PostMapping("/blockSearch")
     @Modifying
     public boolean blockSearch(String search) {
         boolean deleted = false;
-        for(Integer currentId : finalSearchStatRepo.getIdsBySearch(search)) {
-            if(blockedRepo.getByBlocked_search_id(currentId.longValue()).isEmpty()) {
-                BlockedSearches block = new BlockedSearches();
-                block.setBlocked_search_id(Long.valueOf(currentId));
-                block.setSearch(search);
-                blockedRepo.save(block);
-                deleted = true;
-            }
+        if(blockedRepo.getBySearch(search).isEmpty()) {
+            BlockedSearches b = new BlockedSearches();
+            b.setSearch(search);
+            blockedRepo.save(b);
         }
-        return deleted;
-    }
 
-    @PostMapping("/unblockSearch")
-    @Modifying
-    public boolean unblockSearch(Long id) {
-        boolean deleted = false;
-        String search = finalSearchStatRepo.findById(id).get().getSearchQuery();
-        for(BlockedSearches blocked : blockedRepo.getBySearch(search)) {
-            blockedRepo.delete(blocked);
-            deleted = true;
-        }
         return deleted;
     }
 
     @GetMapping("/getAllBlocked")
     public String getAllBlocked() throws JSONException {
-        Map<String, Integer> searchesAndCounts = new HashMap<>();
         JSONArray array = new JSONArray();
-        for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
-            if(blockedRepo.getByBlocked_search_id(f.getId()).isPresent()) {
-                searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
-            }
-        }
-
-        for(String key : searchesAndCounts.keySet()) {
-            JSONObject json = new JSONObject();
-            json.put("search", key);
-            json.put("count", searchesAndCounts.get(key));
-            array.put(json);
+        for(BlockedSearches blocked : blockedRepo.findAll()) {
+            array.put(blocked.getSearch());
         }
 
         return array.toString();

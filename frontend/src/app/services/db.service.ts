@@ -11,7 +11,7 @@ import {Subject} from "rxjs";
 import {ProfileState} from "../component/user/profile-completion/profile-completion.component";
 import {
   SearchAnbieterItem,
-  SearchItem, SearchRank, SearchSS
+  SearchItem, SearchSS
 } from "../component/search/search-no-results-list/search-list-item/search-list-item.component";
 import {Newsletter} from "../component/newsletter/Newsletter";
 
@@ -110,9 +110,8 @@ export enum dbUrl {
 
   GET_SEARCHES_NO_RESULTS = "/search-stats/getAllUnfixedSearches?page=PAGE&size=SIZE",
   GET_SEARCHES_ANBIETER_NO_RESULT = "/search-stats/getAnbieterNoneFound?page=PAGE&size=SIZE",
-  GET_SEARCHES_TOP_N = "/search-stats/getTopNSearchQueries?page=PAGE&size=SIZE",
-  GET_SEARCHES_TOP_N_BY_SS = "/search-stats/getTopNSearchQueriesBySS?page=PAGE&size=SIZE",
-  POST_SEARCH_IGNORE = "/search-stats/blockSearch?id=SEARCH",
+  GET_SEARCHES_COOL = "/search-stats/getCoolSearchList?page=PAGE&size=SIZE&sorter=SORTER&dir=DIR",
+  POST_SEARCH_IGNORE = "/search-stats/blockSearch?search=SEARCH",
   ANBIETER_SEARCH_IGNORE = "/search-stats/deleteAnbieterSearch?id=ID",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
@@ -759,18 +758,14 @@ export class DbService {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_ANBIETER_NO_RESULT).replace("PAGE", String(page)).replace("SIZE", String(size))) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async getSearchesTopN(page : number, size : number) : Promise<SearchRank[]> {
+  async getSearchesCool(page : number, size : number, sorter : string, dir : string) : Promise<SearchSS[]> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_TOP_N).replace("PAGE", String(page)).replace("SIZE", String(size))) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
-  }
-  async getSearchesTopNBySS(page : number, size : number) : Promise<SearchSS[]> {
-    this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_TOP_N_BY_SS).replace("PAGE", String(page)).replace("SIZE", String(size))) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.GET_SEARCHES_COOL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("DIR", dir)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async ignoreSearch(searchID : string) : Promise<boolean> {
+  async ignoreSearch(search : string) : Promise<boolean> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_IGNORE).replace("SEARCH", searchID)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_IGNORE).replace("SEARCH", search)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async ignoreAnbieterSearch(id : string) : Promise<boolean> {
     this.setLoading();

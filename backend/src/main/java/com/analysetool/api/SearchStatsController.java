@@ -506,6 +506,18 @@ public class SearchStatsController {
         return array.toString();
     }
 
+    @PostMapping("/unblockSearch")
+    @Modifying
+    public boolean unblockSearch(String search) {
+        boolean unblocked = false;
+        if(blockedRepo.getBySearch(search).isPresent()) {
+            blockedRepo.delete(blockedRepo.getBySearch(search).get());
+            unblocked = true;
+        }
+
+        return unblocked;
+    }
+
     @PostMapping("/blockSearch")
     @Modifying
     public boolean blockSearch(String search) {
@@ -514,6 +526,7 @@ public class SearchStatsController {
             BlockedSearches b = new BlockedSearches();
             b.setSearch(search);
             blockedRepo.save(b);
+            deleted = true;
         }
 
         return deleted;

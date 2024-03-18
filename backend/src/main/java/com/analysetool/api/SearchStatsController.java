@@ -353,6 +353,7 @@ public class SearchStatsController {
             JSONObject obj = new JSONObject();
             try {
                 obj.put("query", (String) pair.get(0));
+                obj.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
                 obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery((String) pair.get(0)));
                 obj.put("sSCount", finalSearchStatRepo.getCountSearchSuccessForQuery((String) pair.get(0)));
                 obj.put("foundCount", (int) pair.get(1));
@@ -380,6 +381,7 @@ public class SearchStatsController {
             JSONObject obj = new JSONObject();
             try {
                 obj.put("query", (String) pair.get(0));
+                obj.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
                 obj.put("sSCount", (long) pair.get(1));
                 obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery((String) pair.get(0)));
                 obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
@@ -407,6 +409,7 @@ public class SearchStatsController {
                 try {
                     obj.put("query", (String) pair.get(0));
                     obj.put("searchedCount", (long) pair.get(1));
+                    obj.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
                     obj.put("sSCount", finalSearchStatRepo.getCountSearchSuccessForQuery((String) pair.get(0)));
                     obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
                     response.put(obj);
@@ -508,10 +511,10 @@ public class SearchStatsController {
 
     @PostMapping("/unblockSearch")
     @Modifying
-    public boolean unblockSearch(String search) {
+    public boolean unblockSearch(long search) {
         boolean unblocked = false;
-        if(blockedRepo.getBySearch(search).isPresent()) {
-            blockedRepo.delete(blockedRepo.getBySearch(search).get());
+        if(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isPresent()) {
+            blockedRepo.delete(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).get());
             unblocked = true;
         }
 
@@ -520,11 +523,11 @@ public class SearchStatsController {
 
     @PostMapping("/blockSearch")
     @Modifying
-    public boolean blockSearch(String search) {
+    public boolean blockSearch(long search) {
         boolean deleted = false;
-        if(blockedRepo.getBySearch(search).isEmpty()) {
+        if(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isEmpty()) {
             BlockedSearches b = new BlockedSearches();
-            b.setSearch(search);
+            b.setSearch(finalSearchStatRepo.findById(search).get().getSearchQuery());
             blockedRepo.save(b);
             deleted = true;
         }
@@ -536,7 +539,10 @@ public class SearchStatsController {
     public String getAllBlocked() throws JSONException {
         JSONArray array = new JSONArray();
         for(BlockedSearches blocked : blockedRepo.findAll()) {
-            array.put(blocked.getSearch());
+            JSONObject json = new JSONObject();
+            json.put("search", blocked.getSearch());
+            json.put("id", finalSearchStatRepo.getIdsBySearch(blocked.getSearch()).get(0));
+            array.put(json);
         }
 
         return array.toString();

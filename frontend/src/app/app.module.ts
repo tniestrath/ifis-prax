@@ -81,15 +81,12 @@ import { UserTagDistItemComponent } from './component/user/user-tags-dist/user-t
 import {
   SearchListAnbieterNoResultsComponent,
   SearchListComponent,
-  SearchListNoResultsComponent,
-  SearchListRankComponent,
-  SearchListSSComponent
+  SearchListCombinedComponent
 } from './component/search/search-no-results-list/search-list.component';
 import {
   SearchListAnbieterItemComponent,
   SearchListItemComponent,
   SearchListNoResultsItemComponent,
-  SearchListRankItemComponent,
   SearchListSSItemComponent
 } from './component/search/search-no-results-list/search-list-item/search-list-item.component';
 import { NewsletterListComponent } from './component/newsletter/newsletter-list/newsletter-list.component';
@@ -163,13 +160,10 @@ import { NewsletterComponent } from './component/newsletter/newsletter/newslette
     SeoKeywordListItemComponent,
     UserTagDistItemComponent,
     SearchListComponent,
-    SearchListNoResultsComponent,
-    SearchListRankComponent,
-    SearchListSSComponent,
+    SearchListCombinedComponent,
     SearchListAnbieterNoResultsComponent,
     SearchListItemComponent,
     SearchListAnbieterItemComponent,
-    SearchListRankItemComponent,
     SearchListNoResultsItemComponent,
     SearchListSSItemComponent,
     NewsletterListComponent,

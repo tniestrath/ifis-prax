@@ -337,13 +337,20 @@ public class PostController {
         type = getType(id);
 
         JSONObject obj = new JSONObject();
+        String formattedDate;
         DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = onlyDate.parse(post.getDate().toString());
-        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        Date date;
+        if(!type.startsWith("Event")) {
+            date = onlyDate.parse(post.getDate().toString());
+        } else {
+            date = onlyDate.parse(eventsRepo.findByPostID(id).get().getEventStartDate().toString());
+        }
+        formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
         obj.put("id", post.getId());
         obj.put("title", post.getTitle());
         obj.put("date", formattedDate);
+
         obj.put("tags", tags);
         obj.put("type", type);
         if(PostStats != null){

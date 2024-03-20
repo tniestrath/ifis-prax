@@ -340,10 +340,10 @@ public class PostController {
         String formattedDate;
         DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
         Date date;
-        if(!type.startsWith("Event")) {
-            date = onlyDate.parse(post.getDate().toString());
-        } else {
+        if (type.startsWith("Event") && eventsRepo.findByPostID(id).isPresent()) {
             date = onlyDate.parse(eventsRepo.findByPostID(id).get().getEventStartDate().toString());
+        } else {
+            date = onlyDate.parse(post.getDate().toString());
         }
         formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 

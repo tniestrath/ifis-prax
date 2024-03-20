@@ -50,7 +50,8 @@
     <p>{{Util.formatNumbers(data.postViews)}}</p>
   </div>
   <div class="user-views-daily-box">
-    <p>TA: {{+parseFloat(data.viewsPerDay.toFixed(2))}}</p>
+    <img alt="Tägliche Aufrufe" src="../../../assets/24-hours.png">
+    <p>{{+parseFloat(data.viewsPerDay.toFixed(2))}}</p>
   </div>
   <div class="user-tendency-box">
     <img *ngIf="this.data.tendency" alt="Tendenz steigend" src="../../../assets/trend_up.png">

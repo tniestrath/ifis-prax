@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {SelectorItem} from "../../../page/selector/selector.component";
 import {Subject} from "rxjs";
-import {TagListItemComponent} from "../../tag/tag-list/tag-list-item/tag-list-item.component";
 import {TagRanking} from "../../tag/Tag";
 import {SEOKeyword, SeoKeywordListItemComponent} from "./seo-keyword-list-item/seo-keyword-list-item.component";
 
@@ -18,6 +17,12 @@ export class SeoKeywordListComponent extends DashBaseComponent implements OnInit
 
   ngOnInit(): void {
     this.db.getSeoKeywordsNow().then(value => {
+      this.setToolTip("Hier werden die Keywords aus dem SEO-Cockpit angezeigt.<br>" +
+                           "Mit hovern über die Einträge werden die zugeordneten Unterseiten und die Klickrate angezeigt<br>" +
+                           "<br>" +
+                           "<img src=\"assets/eye.png\" style=\"height: 15px; filter:invert(1)\"> Impressionen<br>" +
+                           "<img src=\"assets/target-click.png\" style=\"height: 15px; filter:invert(1)\"> Klicks<br>" +
+                           "<img src=\"assets/target-ctr.png\" style=\"height: 15px; filter:invert(1)\"> Klickrate (CTR)")
       for (let element of value) {
         this.selectorItems.push(new SelectorItem(SeoKeywordListItemComponent,
           new SEOKeyword(element.clicks, element.impressions, element.keys.at(1), element.keys.at(0), element.ctr)));

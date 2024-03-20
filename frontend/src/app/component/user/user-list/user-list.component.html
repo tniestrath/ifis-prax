@@ -1,6 +1,6 @@
 <div class="component-box user-list-box comparator-child">
   <div class="user-list-selector-container">
-    <dash-selector class="selector" [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="false" [dataLoaded]="selectorItemsLoaded" (scrollEnd)="onScrollEnd()"></dash-selector>
+    <dash-selector class="selector" [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="false" [dataLoaded]="selectorItemsLoaded" (scrollEnd)="onScrollEnd()" (freeSpace)="onFreeSpace($event)"></dash-selector>
   </div>
   <div id="shadow"></div>
 </div>

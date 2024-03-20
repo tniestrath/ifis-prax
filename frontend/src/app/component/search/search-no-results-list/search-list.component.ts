@@ -69,7 +69,7 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
     this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection => {
       if (selection.operation == "IGNORE") {
         console.log(selection.item)
-        this.db.ignoreSearch((selection.item as SearchSS).query).then(r => {
+        this.db.ignoreSearch(selection.item.id).then(r => {
           console.log((selection.item as SearchSS).query + " : Successfully set to ignore: " + r)
           if (r) {
             this.selectorItems = [];
@@ -118,7 +118,6 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
     if (!this.pagesComplete){
       let scroll = Date.now();
       if (scroll >= (this.lastScroll + 100)){
-        console.log(this.pageIndex)
         this.db.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
           for (var search of res) {
             this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
@@ -136,7 +135,6 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
   }
 
   override onFreeSpace(space: number) {
-    console.log(space + " : " + this.title)
     if (space >= -100){
       if (!this.pagesComplete){
         console.log(this.pageIndex)
@@ -229,7 +227,7 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
         console.log(this.pageIndex)
         this.db.getSearchesAnbieterWithoutResults(this.pageIndex, this.pageSize).then(res => {
           for (var search of res) {
-            this.selectorItems.push(new SelectorItem(SearchListNoResultsItemComponent, search));
+            this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
           }
           if (res.length <= 0){
             this.pagesComplete = true;

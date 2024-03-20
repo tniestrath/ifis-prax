@@ -130,10 +130,10 @@ input[value="ss"]::after{
   color: #951D40;
 }
 input[value="count"]::before{
-  content: "Gesucht";
+  content: "Häufigkeit";
 }
 input[value="count"]::after{
-  content: "Gesucht";
+  content: "Häufigkeit";
   color: #951D40;
 }
 input[value="count"]{

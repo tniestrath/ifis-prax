@@ -12,6 +12,7 @@ export class PostListItemComponent implements OnInit{
   data: Post = new Post();
   formattedDate = "DATUM FEHLT";
   formattedTags = "KEINE TAGS";
+  formattedAuthors = "KEINE AUTOREN";
   typeColor = DashColors.GREY;
   bgColor: string = "#FFFFFF";
 
@@ -20,6 +21,7 @@ export class PostListItemComponent implements OnInit{
     this.formattedDate = new Date(this.data.date).toLocaleDateString();
     if (this.data.tags != null && this.data.tags.length > 0){
       this.formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");
+      this.formattedAuthors = this.data.authors?.toString().replace("[", "").replace("]", "");
     }
   }
 

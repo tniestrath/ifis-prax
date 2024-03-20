@@ -46,3 +46,4 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+/src/assets/target-click.ai

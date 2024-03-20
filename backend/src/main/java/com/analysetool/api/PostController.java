@@ -371,7 +371,7 @@ public class PostController {
             }
         }
 
-        obj.put("authors", postMetaRepo.getAuthorsByPostId(id));
+        obj.put("authors", new JSONArray(postMetaRepo.getAuthorsList(id)));
 
         return obj.toString();
     }

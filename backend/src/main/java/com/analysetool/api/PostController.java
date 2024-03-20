@@ -371,7 +371,7 @@ public class PostController {
             }
         }
 
-        obj.put("authors", postMetaRepo.getAuthorsByPostId(id));
+        obj.put("authors", new JSONArray(postMetaRepo.getAuthorsList(id)));
 
         return obj.toString();
     }
@@ -1556,7 +1556,7 @@ public class PostController {
             relevanceList.add((float) obj.getDouble("relevance"));
         }
 
-        // 3. Die Ausreißer basierend auf den Relevanzwerten mit Hilfe der getOutliersFloat Methode ermitteln
+        // 3. Die Ausreißer basierend auf den Relevanzwerten mithilfe der getOutliersFloat Methode ermitteln
         List<Float> outliersValues = MathHelper.getOutliersFloat(relevanceList);
 
         JSONArray postsArray = new JSONArray();
@@ -1601,7 +1601,7 @@ public class PostController {
             clicksList.add((float) obj.getDouble("totalClicks"));
         }
 
-        // 3. Die Ausreißer basierend auf den Gesamt-Klickwerten mit Hilfe der getOutliersFloat Methode ermitteln
+        // 3. Die Ausreißer basierend auf den Gesamt-Klickwerten mithilfe der getOutliersFloat Methode ermitteln
         List<Float> outliersValues = MathHelper.getOutliersFloat(clicksList);
 
         JSONArray postsArray = new JSONArray();
@@ -1654,7 +1654,7 @@ public class PostController {
             clicksList.add(obj.getLong("clicks"));
         }
 
-        // 3. Die Ausreißer basierend auf den Klicks mit Hilfe einer geeigneten Methode ermitteln.
+        // 3. Die Ausreißer basierend auf den Klicks mithilfe einer geeigneten Methode ermitteln.
         List<Long> outliersValues = MathHelper.getOutliersLong(clicksList);
 
         JSONArray postsArray = new JSONArray();

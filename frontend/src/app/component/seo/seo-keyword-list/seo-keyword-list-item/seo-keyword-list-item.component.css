@@ -11,6 +11,7 @@
 }
 
 .seo-keywords-imp{
+  display: flex;
   width: 20%;
   text-align: left;
 }
@@ -19,6 +20,7 @@
   text-align: center;
 }
 .seo-keywords-clicks{
+  display: flex;
   width: 20%;
   text-align: right;
 }
@@ -29,4 +31,23 @@
   padding: 5px;
   box-sizing: border-box;
   border: 1px solid #ffffff00;
+}
+.seo-keywords-url{
+  display: flex;
+  width: 80%;
+  text-align: left;
+}
+.seo-keywords-ctr{
+  display: flex;
+  width: 20%;
+  text-align: right;
+}
+img {
+  height: 20px;
+  aspect-ratio: 1;
+  margin-right: 2px;
+}
+p{
+  padding-top: 2px;
+  margin: 0;
 }

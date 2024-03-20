@@ -14,7 +14,7 @@ export class Post extends DbObject{
               public articleReferringRate: number = 0,
               public lettercount: number = 0,
               public duration: number = 0,
-              public authors: string = "",
+              public authors: string[] = [""],
               public downloads: number = 0,
               public override id : string = "-1") {
     super(id, title);

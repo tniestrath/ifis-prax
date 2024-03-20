@@ -35,13 +35,13 @@
       </div>
       <div *ngIf="data.type.startsWith('Event')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Autoren</div>
-        <p>{{data.authors}}</p>
+        <p>{{formattedAuthors}}</p>
       </div>
     </div>
     <div *ngIf="!data.type.startsWith('ratgeber')" class="post-detail-group-2">
       <div *ngIf="!data.type.startsWith('Event')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Autoren</div>
-        <p>{{data.authors}}</p>
+        <p>{{formattedAuthors}}</p>
       </div>
       <div *ngIf="!data.type.startsWith('Event')" class="post-detail">
         <div class="post-label" [style]="{'background': bgColor}">Themen</div>

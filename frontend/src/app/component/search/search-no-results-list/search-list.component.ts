@@ -72,17 +72,15 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
         this.db.ignoreSearch(selection.item.id).then(r => {
           console.log((selection.item as SearchSS).query + " : Successfully set to ignore: " + r)
           if (r) {
-            this.selectorItems = [];
-            this.db.getSearchesCool(0, this.pageSize, this.sorter, this.dir).then(res => {
-              for (var search of res) {
-                this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
-              }
-              this.selectorItemsLoaded.next(this.selectorItems);
-            });
-            this.pageIndex++;
+            let index = -1;
+            let fakeItem = new SelectorItem(SearchListSSItemComponent, new SearchSS("-2", "GELÖSCHT", 0,0,0,0));
+            for (let i = 0; i < this.selectorItems.length; i++) {
+              if (this.selectorItems[i].data.id == selection.item.id){ index = i; break;}
+            }
+            this.selectorItems.splice(index, 1, fakeItem);
+            this.selectorItemsLoaded.next(this.selectorItems);
           }
         });
-
       }
     });
   }

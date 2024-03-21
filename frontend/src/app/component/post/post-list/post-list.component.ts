@@ -348,6 +348,7 @@ export class EventListComponent extends PostListComponent{
       }
       this.pageIndex++;
       this.selectorItemsLoaded.next(this.selectorItems);
+      // @ts-ignore
     });
 
     this.input_search_cb = (event: { target: { value: string; }; }) => {

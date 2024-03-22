@@ -1,9 +1,20 @@
 <div class="component-box search-no-results-list-box">
-  <div class="search-no-results-title">
-    <p>{{title}}</p>
+  <div class="search-no-results-header-alone" *ngIf="title.includes('Anbieter')">
+    <div class="search-no-results-title-alone">
+      <p>{{title}}</p>
+    </div>
+  </div>
+  <div class="search-no-results-header" *ngIf="!title.includes('Anbieter')">
+    <div class="search-no-results-title">
+      <p>{{title}}</p>
+    </div>
+    <input type="checkbox" name="search-list-dir" value="DESC" (change)="onDirSwitched($event)">
+    <input type="radio" name="search-list-sorter" value="found" (change)="onSorterSwitched($event)">
+    <input type="radio" name="search-list-sorter" value="ss" (change)="onSorterSwitched($event)">
+    <input type="radio" name="search-list-sorter" value="count" checked (change)="onSorterSwitched($event)">
   </div>
   <div class="search-no-results-list-selector-container">
-    <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded" (scrollEnd)="onScrollEnd()"></dash-selector>
+    <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded" (scrollEnd)="onScrollEnd()" (freeSpace)="onFreeSpace($event)"></dash-selector>
   </div>
   <div id="shadow"></div>
 </div>

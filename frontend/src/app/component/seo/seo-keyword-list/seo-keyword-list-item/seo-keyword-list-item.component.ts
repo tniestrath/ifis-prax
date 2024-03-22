@@ -28,4 +28,5 @@ export class SeoKeywordListItemComponent {
   }
 
   protected readonly Util = Util;
+  protected readonly parseFloat = parseFloat;
 }

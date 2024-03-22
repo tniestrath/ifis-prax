@@ -23,19 +23,6 @@ export class SearchAnbieterItem extends SearchItem{
   }
 
 }
-export class SearchRank extends DbObject{
-  public rank : number;
-  public query : string;
-  public foundCount : number;
-  public searchedCount : number;
-  constructor(id : string, query : string, searchedCount : number, foundCount : number, rank : number) {
-    super(id, query);
-    this.query = query;
-    this.searchedCount = searchedCount;
-    this.foundCount = foundCount;
-    this.rank = rank;
-  }
-}
 export class SearchSS extends DbObject{
   public rank : number;
   public query : string;
@@ -73,14 +60,6 @@ export class SearchListItemComponent {
 })
 export class SearchListNoResultsItemComponent extends SearchListItemComponent{
   override data : SearchItem = new SearchItem("", "", 0);
-}
-@Component({
-  selector: 'dash-search-rank-list-item',
-  templateUrl: './search-list-rank-item.component.html',
-  styleUrls: ['./search-list-item.component.css']
-})
-export class SearchListRankItemComponent extends SearchListItemComponent{
-  override data : SearchRank = new SearchRank("", "", 0, 0, 0);
 }
 @Component({
   selector: 'dash-search-ss-list-item',

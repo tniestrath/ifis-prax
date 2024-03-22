@@ -44,4 +44,7 @@ public interface AnbieterSearchRepository extends JpaRepository<AnbieterSearch, 
 
     @Query("SELECT c FROM AnbieterSearch c WHERE c.search=:search AND c.city_name=:cityName AND c.plz=:plz AND c.umkreis=:umkreis AND c.count_found>0")
     List<AnbieterSearch> findCountNotZeroForData(String search, String cityName, int plz, int umkreis);
+
+    @Query("SELECT c FROM AnbieterSearch c WHERE c.umkreis=0 AND c.plz=0 AND c.search='' AND c.city_name='' AND c.cbDe=0 AND c.cbEu=0 AND c.orgType=''")
+    List<AnbieterSearch> findAllSchmutzSearch();
 }

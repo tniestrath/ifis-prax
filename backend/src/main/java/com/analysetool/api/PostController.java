@@ -337,13 +337,20 @@ public class PostController {
         type = getType(id);
 
         JSONObject obj = new JSONObject();
+        String formattedDate;
         DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = onlyDate.parse(post.getDate().toString());
-        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        Date date;
+        if (type.startsWith("Event") && eventsRepo.findByPostID(id).isPresent()) {
+            date = onlyDate.parse(eventsRepo.findByPostID(id).get().getEventStartDate().toString());
+        } else {
+            date = onlyDate.parse(post.getDate().toString());
+        }
+        formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
         obj.put("id", post.getId());
         obj.put("title", post.getTitle());
         obj.put("date", formattedDate);
+
         obj.put("tags", tags);
         obj.put("type", type);
         if(PostStats != null){
@@ -371,7 +378,7 @@ public class PostController {
             }
         }
 
-        obj.put("authors", postMetaRepo.getAuthorsByPostId(id));
+        obj.put("authors", new JSONArray(postMetaRepo.getAuthorsList(id)));
 
         return obj.toString();
     }
@@ -1556,7 +1563,7 @@ public class PostController {
             relevanceList.add((float) obj.getDouble("relevance"));
         }
 
-        // 3. Die Ausreißer basierend auf den Relevanzwerten mit Hilfe der getOutliersFloat Methode ermitteln
+        // 3. Die Ausreißer basierend auf den Relevanzwerten mithilfe der getOutliersFloat Methode ermitteln
         List<Float> outliersValues = MathHelper.getOutliersFloat(relevanceList);
 
         JSONArray postsArray = new JSONArray();
@@ -1601,7 +1608,7 @@ public class PostController {
             clicksList.add((float) obj.getDouble("totalClicks"));
         }
 
-        // 3. Die Ausreißer basierend auf den Gesamt-Klickwerten mit Hilfe der getOutliersFloat Methode ermitteln
+        // 3. Die Ausreißer basierend auf den Gesamt-Klickwerten mithilfe der getOutliersFloat Methode ermitteln
         List<Float> outliersValues = MathHelper.getOutliersFloat(clicksList);
 
         JSONArray postsArray = new JSONArray();
@@ -1654,7 +1661,7 @@ public class PostController {
             clicksList.add(obj.getLong("clicks"));
         }
 
-        // 3. Die Ausreißer basierend auf den Klicks mit Hilfe einer geeigneten Methode ermitteln.
+        // 3. Die Ausreißer basierend auf den Klicks mithilfe einer geeigneten Methode ermitteln.
         List<Long> outliersValues = MathHelper.getOutliersLong(clicksList);
 
         JSONArray postsArray = new JSONArray();

@@ -48,7 +48,7 @@ import {SeoCtrComponent} from "../../component/seo/seo-ctr/seo-ctr.component";
 import {SeoKeywordListComponent} from "../../component/seo/seo-keyword-list/seo-keyword-list.component";
 import {
   SearchListAnbieterNoResultsComponent,
-  SearchListComponent, SearchListNoResultsComponent, SearchListRankComponent, SearchListSSComponent
+  SearchListComponent, SearchListCombinedComponent
 } from "../../component/search/search-no-results-list/search-list.component";
 import {NewsletterListComponent} from "../../component/newsletter/newsletter-list/newsletter-list.component";
 import {NewsletterComponent} from "../../component/newsletter/newsletter/newsletter.component";
@@ -166,10 +166,8 @@ export class PageComponent implements OnInit {
 
   getSearchPageCards() {
     return [
-      {type: SearchListNoResultsComponent, row: 1, col: 1, height: 2, width: 2},
-      {type: SearchListRankComponent, row: 1, col: 3, height: 2, width: 4},
-      {type: SearchListSSComponent, row: 3, col: 3, height: 2, width: 4},
-      {type: SearchListAnbieterNoResultsComponent, row: 3, col: 1, height: 2, width: 2},
+      {type: SearchListCombinedComponent, row: 1, col: 3, height: 4, width: 4},
+      {type: SearchListAnbieterNoResultsComponent, row: 1, col: 1, height: 4, width: 2},
     ];
   }
 

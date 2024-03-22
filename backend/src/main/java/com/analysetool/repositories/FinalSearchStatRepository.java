@@ -43,11 +43,26 @@ public interface FinalSearchStatRepository extends JpaRepository<FinalSearchStat
     @Query("SELECT COUNT(s) FROM FinalSearchStat s WHERE s.searchQuery=:query")
     int getCountSearchedByQuery(String query);
 
-    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s GROUP BY s.searchQuery ORDER BY count DESC")
-    List<Tuple> getQueriesAndCounts(Pageable pageable);
+    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s WHERE s.searchQuery NOT IN (SELECT DISTINCT b.search FROM BlockedSearches b) GROUP BY s.searchQuery ORDER BY count DESC, s.searchQuery DESC")
+    List<Tuple> getQueriesAndCountsDESC(Pageable pageable);
 
-    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s INNER JOIN FinalSearchStatDLC dlc ON s.id=dlc.finalSearchId GROUP BY s.searchQuery ORDER BY count DESC")
-    List<Tuple> getQueriesAndCountsSS(Pageable pageable);
+    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s WHERE s.searchQuery NOT IN (SELECT DISTINCT b.search FROM BlockedSearches b) GROUP BY s.searchQuery ORDER BY count ASC, s.searchQuery ASC")
+    List<Tuple> getQueriesAndCountsASC(Pageable pageable);
+
+    @Query("SELECT s.searchQuery, MAX(s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount+ s.foundWhitepaperCount) AS count FROM FinalSearchStat s WHERE s.searchQuery NOT IN (SELECT DISTINCT b.search FROM BlockedSearches b) GROUP BY s.searchQuery ORDER BY count ASC, s.searchQuery ASC")
+    List<Tuple> getQueryAndFoundCountAverageASC(Pageable pageable);
+
+    @Query("SELECT s.searchQuery, MAX(s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount+ s.foundWhitepaperCount) AS count FROM FinalSearchStat s WHERE s.searchQuery NOT IN (SELECT DISTINCT b.search FROM BlockedSearches b) GROUP BY s.searchQuery ORDER BY count DESC, s.searchQuery DESC")
+    List<Tuple> getQueryAndFoundCountAverageDESC(Pageable pageable);
+
+    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s INNER JOIN FinalSearchStatDLC dlc ON s.id=dlc.finalSearchId WHERE s.searchQuery NOT IN (SELECT DISTINCT b.search FROM BlockedSearches b) GROUP BY s.searchQuery ORDER BY count DESC,s.searchQuery DESC")
+    List<Tuple> getQueriesAndCountsSSDESC(Pageable pageable);
+
+    @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s INNER JOIN FinalSearchStatDLC dlc ON s.id=dlc.finalSearchId WHERE s.searchQuery NOT IN (SELECT DISTINCT b.search FROM BlockedSearches b) GROUP BY s.searchQuery ORDER BY count ASC, s.searchQuery ASC")
+    List<Tuple> getQueriesAndCountsSSASC(Pageable pageable);
+
+    @Query("SELECT COUNT(s) FROM FinalSearchStat s INNER JOIN FinalSearchStatDLC f ON s.id=f.finalSearchId WHERE s.searchQuery=:query")
+    int getCountSearchSuccessForQuery(String query);
 
     @Query("SELECT s.searchQuery, COUNT(s.searchQuery) AS count FROM FinalSearchStat s " +
             "WHERE (s.foundAnbieterCount + s.foundArtikelCount + s.foundBlogCount + s.foundEventsCount + s.foundNewsCount + s.foundPodcastCount + s.foundRatgeberCount+ s.foundWhitepaperCount) = 0 " +

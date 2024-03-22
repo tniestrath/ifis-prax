@@ -3,6 +3,9 @@ import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Subject} from "rxjs";
 import {SelectorItem} from "../../../page/selector/selector.component";
 import {UserComponent} from "../user.component";
+import {
+  SearchListSSItemComponent
+} from "../../search/search-no-results-list/search-list-item/search-list-item.component";
 
 
 @Component({
@@ -18,7 +21,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
   pageIndex: number = 0;
   private pagesComplete: boolean = false;
   private lastScroll: number = 0;
-  private pageSize: number = 20;
+  private pageSize: number = 5;
 
   private searchText: string = "";
   private selectedFilter = {accType : "", usrType : " ", sort : "userId"};
@@ -97,4 +100,20 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
     });
   }
 
+  onFreeSpace(space: number) {
+    if (space >0){
+      if (!this.pagesComplete){
+        let abort = new AbortController();
+        this.abortController.push(abort)
+        this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then((res : {users:  any[], count : number}) => {
+          this.listItems.push(...res.users.map(value => new SelectorItem(UserComponent, value)));
+          this.selectorItemsLoaded.next(this.listItems);
+          if (res.count <= 0){
+            this.pagesComplete = true;
+          }
+        });
+        this.pageIndex++;
+      }
+    }
+  }
 }

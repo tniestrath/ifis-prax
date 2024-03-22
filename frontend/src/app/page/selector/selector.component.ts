@@ -28,22 +28,25 @@ export class SelectorComponent implements OnInit{
   @Input() zebraColorMode: boolean = false;
 
   @Output() scrollEnd = new EventEmitter<void>();
+  @Output() freeSpace = new EventEmitter<number>;
 
   @ViewChild(SelectableDirective, {static: true}) dashSelectable!: SelectableDirective;
   @ViewChild(SelectorComponent, {static: true}) scrollable!: SelectorComponent;
 
   private sub = new Subscription();
+  private availableSpace : number = 0;
 
   constructor(protected element : ElementRef) {
   }
 
   ngOnInit(): void {
-    console.log("Selector Component loaded");
     this.sub = (this.dataLoaded.subscribe(s =>{
       this.loadItems(s, !(typeof TagListItemComponent == typeof s[0]?.component));
       console.log("Selector Items loaded " + s.length);
     }
     ));
+    let container = this.element.nativeElement as HTMLDivElement;
+    this.availableSpace = container.clientHeight;
   }
 
   private loadItems(s : SelectorItem[], sort : boolean) {
@@ -64,6 +67,10 @@ export class SelectorComponent implements OnInit{
       }
       index++;
     }
+    let container = this.element.nativeElement as HTMLDivElement;
+    // @ts-ignore
+    let itemHeight = (container.firstChild.firstChild as HTMLElement).clientHeight;
+    this.freeSpace.next(container.clientHeight - (itemHeight * s.length));
   }
 
   onScroll($event: Event) {

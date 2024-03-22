@@ -1,12 +1,21 @@
 <div class="seo-keywords-list-item-box" (mouseenter)="onOver(true, more)" (mouseleave)="onOver(false, more)">
   <div class="seo-keywords-list-item-box-nohover">
-    <div class="seo-keywords-imp">{{data.impressions}}</div>
+    <div class="seo-keywords-imp">
+      <img src="assets/eye.png">
+      <p>{{Util.formatNumbers(data.impressions)}}</p>
+    </div>
     <div class="seo-keywords-name">{{data.name}}</div>
-    <div class="seo-keywords-clicks">{{data.clicks}}</div>
+    <div class="seo-keywords-clicks">
+      <img src="assets/target-click.png">
+      <p>{{Util.formatNumbers(data.clicks)}}</p>
+    </div>
   </div>
   <div #more class="seo-keywords-more">
-    <div class="seo-keywords-url">{{data.url.substring(0,55)}}</div>
-    <div class="seo-keywords-ctr">{{data.ctr}}</div>
+    <div class="seo-keywords-url">{{data.url.substring(data.url.indexOf(".de")+3,65)}}</div>
+    <div class="seo-keywords-ctr">
+      <img src="assets/target-ctr.png">
+      <p>{{+parseFloat(data.ctr.toFixed(2))}}</p>
+    </div>
   </div>
 </div>
 

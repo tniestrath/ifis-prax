@@ -1204,15 +1204,15 @@ public class UserController {
     }
 
     private void listAddByType(String type, List<String> list, WPMemberships member) {
-        if(type.equals("basis-plus") &&  member.getMembership_id() == 7) {
+        if(type.equals("basis-plus")) {
             listAdd(list, member);
-        } else if(type.equals("sponsor") && member.getMembership_id() == 6) {
+        } else if(type.equals("sponsor")) {
             listAdd(list, member);
-        } else if(type.equals("premium") && member.getMembership_id() == 5) {
+        } else if(type.equals("premium")) {
             listAdd(list, member);
-        } else if(type.equals("plus") && member.getMembership_id() == 3) {
+        } else if(type.equals("plus")) {
             listAdd(list, member);
-        } else if(type.equals("basis") && member.getMembership_id() == 1) {
+        } else if(type.equals("basis")) {
             listAdd(list, member);
         }
     }

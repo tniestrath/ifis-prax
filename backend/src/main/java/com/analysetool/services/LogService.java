@@ -122,6 +122,8 @@ public class LogService {
     private AnbieterFailedSearchBufferRepository anbieterSearchFailRepo;
     @Autowired
     private GeoNamesPostalRepository geoNamesRepo;
+    @Autowired
+    private FinalSearchStatDLCRepository fDLCRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -462,8 +464,8 @@ public class LogService {
         } catch (JSONException e) {
             System.out.println("JSON EXCEPTION BEI UPDATEPOSTTYPES");
         }
-        updateAnbieterFailedSearchBuffer();
-        deleteStandardSearch();
+
+        doAutoClean();
 
         if(LocalDateTime.now().getHour() == 5) {
             endDay();
@@ -3140,5 +3142,23 @@ public class LogService {
 
     private void deleteStandardSearch() {
         anbieterSearchRepo.deleteAll(anbieterSearchRepo.findAllSchmutzSearch());
+    }
+
+    private void cleanFinalSearchStatDLC() {
+        for(FinalSearchStatDLC f : fDLCRepo.findAll()) {
+            if(f.getFinalSearchId() == null || (f.getPostId() == null && f.getUserId() == null)) {
+                fDLCRepo.delete(f);
+            }
+        }
+    }
+
+    /**
+     * Does a routine of cleaning and updating tables.
+     * Currently, cleans: AnbieterFailedSearchBuffer, AnbieterSearch, and FinalSearchStatDLC
+     */
+    private void doAutoClean() {
+        updateAnbieterFailedSearchBuffer();
+        deleteStandardSearch();
+        cleanFinalSearchStatDLC();
     }
 }

@@ -50,7 +50,7 @@ public class FeatureWishController {
 
     @GetMapping("/feedbackSite")
     public String getAllAndFeedbackOption() throws IOException {
-        String html = Files.readString(Path.of("feedback.html"));
+        String html = Files.readString(Path.of("../resources/feedback.html"));
         StringBuilder tableContent = new StringBuilder();
         for(FeatureWishes f : featureRepo.findAll()) {
             tableContent.append("<tr>");
@@ -67,7 +67,7 @@ public class FeatureWishController {
 
     @GetMapping("/testSite")
     public String getTestForSite() throws IOException {
-        return Files.readString(Path.of("feedback.html"));
+        return Files.readString(Path.of("../resources/feedback.html"));
     }
 
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback</title>
+    <style rel="feedback.css"></style>
+</head>
+<body>
+    <h1>Feedback zum Dashboard: </h1>
+    <form name="feedback" onsubmit="">
+        <input id="isNew" type="checkbox" name="isNew" value="isNew">
+        <label for="isNew">Soll eine Kachel angelegt werden? (wenn eine bestehende Kachel überarbeitet werden soll bitte leer lassen)</label>
+        <input id="desc" type="text" name="desc" placeholder="Bitte beschreiben sie ihr gewünschtes Feature kurz" required>
+        <label for="team">Welcher Abteilung gehören sie an: </label><select id="team" name="team" required>
+            <option value="website">Website Dev</option>
+            <option value="admin">Owner</option>
+            <option value="editor">Redaktion</option>
+            <option value="finance">Finance</option>
+            <option value="marketing">Marketing</option>
+        </select>
+        <input id="email" type="email" name="email" placeholder="Ihre Email adresse für rückfragen">
+        <input type="submit" value="Absenden">
+    </form>
+</body>
+</html>

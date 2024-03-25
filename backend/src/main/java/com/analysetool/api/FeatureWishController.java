@@ -63,7 +63,7 @@ public class FeatureWishController {
             tableContent.append("<td>").append(f.getFeature()).append("</td>");
             tableContent.append("<td>").append(f.isFixed()).append("</td>");
 
-            tableContent.append(tableContent.append("</tr>"));
+            tableContent.append("</tr>");
         }
         html = html.replace("REPLACEREPLACEREPLACE", tableContent);
         return html;

@@ -19,12 +19,12 @@ public class FeatureWishController {
     FeatureWishesRepository featureRepo;
 
     @Modifying
-    @PostMapping("/addWish")
-    public boolean addWish(Boolean isNew, String feature, String team, String email) {
-        if(featureRepo.getByAllExceptId(email, feature, team, isNew).isEmpty()) {
+    @GetMapping("/addWish")
+    public boolean addWish(Boolean isNew, String desc, String team, String email) {
+        if(featureRepo.getByAllExceptId(email, desc, team, isNew).isEmpty()) {
             FeatureWishes f = new FeatureWishes();
             f.setEmail(email);
-            f.setFeature(feature);
+            f.setFeature(desc);
             f.setFixed(false);
             f.setNew(isNew);
             f.setTeam(team);
@@ -36,7 +36,7 @@ public class FeatureWishController {
     }
 
     @Modifying
-    @PostMapping("/setFixed")
+    @GetMapping("/setFixed")
     public boolean setFixed(long id) {
         if(featureRepo.findById(id).isPresent()) {
             FeatureWishes f = featureRepo.findById(id).get();

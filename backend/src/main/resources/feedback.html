@@ -7,8 +7,8 @@
 </head>
 <body>
     <h1>Feedback zum Dashboard: </h1>
-    <form name="feedback" onsubmit="">
-        <input id="isNew" type="checkbox" name="isNew" value="isNew">
+    <form name="feedback" action="/addWish" method="get">
+        <input id="isNew" type="checkbox" name="isNew" value="true">
         <label for="isNew">Soll eine Kachel angelegt werden? (wenn eine bestehende Kachel überarbeitet werden soll bitte leer lassen)</label>
         <input id="desc" type="text" name="desc" placeholder="Bitte beschreiben sie ihr gewünschtes Feature kurz" required>
         <label for="team">Welcher Abteilung gehören sie an: </label><select id="team" name="team" required>

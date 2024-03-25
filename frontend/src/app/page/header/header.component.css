@@ -10,8 +10,8 @@
   right: 0;
   position: relative;
   margin: 0;
-  box-shadow: 0 5px 5px rgba(0,0,0,.2);
   z-index: 10;
+  box-shadow: 0 5px 5px rgba(0,0,0,.2);
 }
 .page-header > img{
   width: 50px;
@@ -45,6 +45,9 @@
   color: #FFFFFF;
   display: flex;
   justify-content: center;
+  position: relative;
+  z-index: 11;
+  box-shadow: 0 5px 5px rgba(0,0,0,.2);
 }
 #feedback-panel > p{
   margin: 0;

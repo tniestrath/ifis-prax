@@ -61,7 +61,7 @@ public class FeatureWishController {
 
             tableContent.append(tableContent.append("</tr>"));
         }
-
+        html = html.replace("REPLACEREPLACEREPLACE", tableContent);
         return html;
     }
 

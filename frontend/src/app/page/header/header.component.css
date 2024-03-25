@@ -39,6 +39,20 @@
   background-color: #EFEFEF;
 }
 
+#feedback-panel{
+  height: 20px;
+  background-color: #951D40;
+  color: #FFFFFF;
+  display: flex;
+  justify-content: center;
+}
+#feedback-panel > p{
+  margin: 0;
+  margin-top: 2px;
+  pointer-events: none;
+}
+
+
 #loading-bar{
   position: absolute;
   width: 100%;

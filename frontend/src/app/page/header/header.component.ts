@@ -133,4 +133,8 @@ export class HeaderComponent implements AfterViewInit{
   protected readonly SysVars = SysVars;
   protected readonly print = print;
   protected readonly window = window;
+
+  onFeedbackClick() {
+      window.open("http://analyse.it-sicherheit.de/api/diagnosis/doCheckUpSite", "_feedBack");
+  }
 }

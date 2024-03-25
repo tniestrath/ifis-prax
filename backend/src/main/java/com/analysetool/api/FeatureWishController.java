@@ -4,12 +4,14 @@ import com.analysetool.modells.FeatureWishes;
 import com.analysetool.repositories.FeatureWishesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -51,7 +53,7 @@ public class FeatureWishController {
 
     @GetMapping("/feedbackSite")
     public String getAllAndFeedbackOption() throws IOException {
-        String html = Files.readString(Path.of(Objects.requireNonNull(getClass().getResource("feedback.html")).getFile()));
+        String html = Files.readString(Path.of("/../../../../backend/src/main/resources/feedback.html"));
         StringBuilder tableContent = new StringBuilder();
         for(FeatureWishes f : featureRepo.findAll()) {
             tableContent.append("<tr>");
@@ -68,7 +70,7 @@ public class FeatureWishController {
 
     @GetMapping("/testSite")
     public String getTestForSite() throws IOException {
-        return Files.readString(Path.of(Objects.requireNonNull(getClass().getResource("feedback.html")).getFile()));
+        return Files.readString(Path.of("/../../../../backend/src/main/resources/feedback.html"));
     }
 
 }

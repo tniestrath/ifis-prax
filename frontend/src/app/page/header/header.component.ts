@@ -135,6 +135,6 @@ export class HeaderComponent implements AfterViewInit{
   protected readonly window = window;
 
   onFeedbackClick() {
-      window.open("http://analyse.it-sicherheit.de/api/diagnosis/doCheckUpSite", "_feedBack");
+      window.open("http://analyse.it-sicherheit.de/api/feature/testSite", "_feedBack");
   }
 }

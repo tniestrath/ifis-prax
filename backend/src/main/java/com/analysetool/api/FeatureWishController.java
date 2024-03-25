@@ -29,7 +29,7 @@ public class FeatureWishController {
             f.setEmail(email);
             f.setFeature(desc);
             f.setFixed(false);
-            f.setNew(isNew);
+            f.setNew(isNew != null);
             f.setTeam(team);
             featureRepo.save(f);
             return true;

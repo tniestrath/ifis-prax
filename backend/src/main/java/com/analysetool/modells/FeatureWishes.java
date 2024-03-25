@@ -12,7 +12,7 @@ public class FeatureWishes implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="isNew")
+    @Column(name="is_new")
     private boolean isNew;
 
     @Column(name = "feature")

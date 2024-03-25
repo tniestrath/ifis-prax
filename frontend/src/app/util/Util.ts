@@ -89,6 +89,7 @@ export default class Util {
    * @param type
    */
   static getColor(option: string, type : string){
+    if (type.startsWith("Event")) return DashColors.EVENT;
     switch (option) {
       case "plan":
         switch (type) {
@@ -191,6 +192,8 @@ export enum DashColors {
   RATGEBER = "rgb(130,106,34)",
   NEWSLETTER = "rgb(130,106,34)",
 
+  EVENT = "rgb(130,34,106)",
+
   GREY = "rgb(200,200,200)",
   PLAN_WITHOUT = "rgb(200,200,200)",
   BACKGROUND = "rgb(200,200,200)",
@@ -198,7 +201,8 @@ export enum DashColors {
   GREY_50 = "rgba(200,200,200, .5)",
 
   WHITE = "rgb(255,255,255)",
-  BASEPAINT = "rgb(255,255,255)"
+  BASEPAINT = "rgb(255,255,255)",
+
 }
 
 // @ts-ignore

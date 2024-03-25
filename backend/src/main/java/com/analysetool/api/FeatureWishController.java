@@ -23,6 +23,7 @@ public class FeatureWishController {
     @Modifying
     @GetMapping("/addWish")
     public boolean addWish(Boolean isNew, String desc, String team, String email) {
+        System.out.println("Wunsch ausgefüllt und gestartet");
         try {
             FeatureWishes f = new FeatureWishes();
             f.setEmail(email);

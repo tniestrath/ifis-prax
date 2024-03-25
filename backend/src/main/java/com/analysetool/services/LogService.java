@@ -348,6 +348,13 @@ public class LogService {
         this.config = config;
         Pfad = config.getAccess();
     }
+
+    /**
+     * returns a LocalDateTime representation of the creation date for the given file.
+     * common use is for the access.log
+     * @param filePath the path to the file.
+     * @return the creation DateTime of the file as a LocalDateTime Object.
+     */
     public LocalDateTime getCreationDateOfAccessLog(String filePath) {
         try {
             Path file = Paths.get(filePath);
@@ -361,8 +368,13 @@ public class LogService {
         }
     }
 
+    /**
+     * Initializes and starts a "run" - which is the process of reading the new entries in access.log.
+     * Otherwise, an exact duplicate of runScheduled.
+     * @throws ParseException
+     */
     @PostConstruct
-    public void init() throws IOException, ParseException {
+    public void init() throws ParseException {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
 
@@ -398,9 +410,14 @@ public class LogService {
         updateLetterCountForAll();
 
     }
+
+    /**
+     * A Scheduled CRON-Job that starts reading all new lines in access.log and calculates data out from them.
+     * @throws ParseException if parsing th access.log fails.
+     */
     @Scheduled(cron = "0 0 * * * *") //einmal die Stunde
     //@Scheduled(cron = "0 */2 * * * *") //alle 2min
-    public void runScheduled() throws IOException, ParseException {
+    public void runScheduled() throws ParseException {
         SysVar SystemVariabeln = new SysVar();
         if(sysVarRepo.findAll().isEmpty()){
 
@@ -433,6 +450,14 @@ public class LogService {
         updateLetterCountForAll();
     }
 
+    /**
+     * Prepares for the actual reading of lines, then reads lines.
+     * Additionally, after the reading is finished, different types of clean-up duties are performed.
+     * @param liveScanning sets whether the current reading is happening on the live-log, or not.
+     * @param path the filePath to the access.log that should be read.
+     * @param SystemVariabeln a collection of internal data used in determining where to start reading.
+     * @throws ParseException if parsing the given file fails.
+     */
     public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws ParseException {
         this.liveScanning = liveScanning;
         this.path = path;
@@ -465,6 +490,13 @@ public class LogService {
     }
 
 
+    /**
+     * Reads through all eligible lines, filters out the unusable, then prepares and continues evaluating data from each line.
+     * @param sysVar a collection of internal data used in determining where to start reading.
+     * @throws IOException .
+     * @throws ParseException .
+     * @throws JSONException .
+     */
     public void findAMatch(SysVar sysVar) throws IOException, ParseException, JSONException {
         String line;
 
@@ -1153,6 +1185,53 @@ public class LogService {
         updateFinalSearchStatsAndTemporarySearchStats();
     }
 
+    /**
+     * Updates the table UniversalStats and its DLCs with the parameters being representations of this hours values for the given column.
+     * @param totalClicks .
+     * @param internalClicks .
+     * @param sensibleClicks .
+     * @param viewsArticle .
+     * @param viewsNews .
+     * @param viewsBlog .
+     * @param viewsPodcast .
+     * @param viewsWhitepaper .
+     * @param viewsRatgeber .
+     * @param viewsRatgeberPost .
+     * @param viewsRatgeberGlossar .
+     * @param viewsRatgeberBuch .
+     * @param viewsRatgeberSelf .
+     * @param viewsMain .
+     * @param viewsUeber .
+     * @param viewsAGBS .
+     * @param viewsImpressum .
+     * @param viewsPreisliste .
+     * @param viewsPartner .
+     * @param viewsDatenschutz .
+     * @param viewsNewsletter .
+     * @param viewsImage .
+     * @param uniqueUsers .
+     * @param userArticle .
+     * @param userNews .
+     * @param userBlog .
+     * @param userPodcast .
+     * @param userWhitepaper .
+     * @param userRatgeber .
+     * @param userRatgeberPost .
+     * @param userRatgeberGlossar .
+     * @param userRatgeberBuch .
+     * @param userRatgeberSelf .
+     * @param userMain .
+     * @param userUeber .
+     * @param userAGBS .
+     * @param userImpressum .
+     * @param userPreisliste .
+     * @param userPartner .
+     * @param userDatenschutz .
+     * @param userNewsletter .
+     * @param userImage .
+     * @param serverErrors .
+     * @throws ParseException .
+     */
     private void updateUniStats(int totalClicks, int internalClicks, int sensibleClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsWhitepaper, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userWhitepaper, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
@@ -1455,6 +1534,10 @@ public class LogService {
 
     }
 
+    /**
+     * Set all values of universalStats for how many users of each account-type are currently subscribed.
+     * @param uniHourly the object to update for.
+     */
     @SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
     private void setAccountTypeAllUniStats(UniversalStatsHourly uniHourly) {
         HashMap<String, Integer> counts = new HashMap<>();

@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -21,6 +19,7 @@ public class FeatureWishController {
     @Autowired
     FeatureWishesRepository featureRepo;
 
+    private final String hardcodedHTML = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Feedback</title><style>h1 { display: flex; height: 80px; width: 100%; text-align: center; } form { display: flex; height: 100%; width: 100%; }</style></head><body><h1>Feedback zum Dashboard: </h1><form name=\"feedback\" action=\"/addWish\" method=\"get\"><input id=\"isNew\" type=\"checkbox\" name=\"isNew\" value=\"true\"><label for=\"isNew\">Soll eine Kachel angelegt werden? (wenn eine bestehende Kachel überarbeitet werden soll bitte leer lassen)</label><input id=\"desc\" type=\"text\" name=\"desc\" placeholder=\"Bitte beschreiben sie ihr gewünschtes Feature kurz\" required><label for=\"team\">Welcher Abteilung gehören sie an: </label><select id=\"team\" name=\"team\" required><option value=\"website\">Website Dev</option><option value=\"admin\">Owner</option><option value=\"editor\">Redaktion</option><option value=\"finance\">Finance</option><option value=\"marketing\">Marketing</option></select><input id=\"email\" type=\"email\" name=\"email\" placeholder=\"Ihre Email adresse für rückfragen\"><input type=\"submit\" value=\"Absenden\"></form><table><tr><th>Team</th><th>Feature</th><th>Fertig?</th></tr>REPLACEREPLACEREPLACE</table></body></html>";
     @Modifying
     @GetMapping("/addWish")
     public boolean addWish(Boolean isNew, String desc, String team, String email) {
@@ -53,7 +52,7 @@ public class FeatureWishController {
 
     @GetMapping("/feedbackSite")
     public String getAllAndFeedbackOption() throws IOException {
-        String html = Files.readString(Path.of("com/analysetool/api/feedback.html"));
+        String html = hardcodedHTML;
         StringBuilder tableContent = new StringBuilder();
         for(FeatureWishes f : featureRepo.findAll()) {
             tableContent.append("<tr>");
@@ -70,7 +69,7 @@ public class FeatureWishController {
 
     @GetMapping("/testSite")
     public String getTestForSite() throws IOException {
-        return Files.readString(Path.of("com/analysetool/api/feedback.html"));
+        return hardcodedHTML;
     }
 
 }

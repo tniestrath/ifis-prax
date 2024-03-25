@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -50,7 +51,7 @@ public class FeatureWishController {
 
     @GetMapping("/feedbackSite")
     public String getAllAndFeedbackOption() throws IOException {
-        String html = Files.readString(Path.of("../resources/feedback.html"));
+        String html = Files.readString(Path.of(Objects.requireNonNull(getClass().getResource("feedback.html")).getFile()));
         StringBuilder tableContent = new StringBuilder();
         for(FeatureWishes f : featureRepo.findAll()) {
             tableContent.append("<tr>");
@@ -67,7 +68,7 @@ public class FeatureWishController {
 
     @GetMapping("/testSite")
     public String getTestForSite() throws IOException {
-        return Files.readString(Path.of("../resources/feedback.html"));
+        return Files.readString(Path.of(Objects.requireNonNull(getClass().getResource("feedback.html")).getFile()));
     }
 
 }

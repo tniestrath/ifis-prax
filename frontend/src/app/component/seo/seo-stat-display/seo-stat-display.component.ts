@@ -18,6 +18,7 @@ export class SeoStatDisplayComponent extends DashBaseComponent implements OnInit
   public seoChangeMobile : number = 0;
 
   ngOnInit(): void {
+    this.setToolTip("Her sehen sie den Sichtbarkeitsindex des Marktplatzes, die kleinere Zahl beschreibt den Unterschied zur Messung der letzten Woche")
     SysVars.SEO_DATA.subscribe( value => {
       this.seoNowDesktop = value.desktop.now;
       this.seoChangeDesktop = value.desktop.now - value.desktop.last;

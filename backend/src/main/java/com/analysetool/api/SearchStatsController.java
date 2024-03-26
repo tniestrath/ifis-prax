@@ -535,6 +535,20 @@ public class SearchStatsController {
         return deleted;
     }
 
+    @GetMapping("/flipSearch")
+    @Modifying
+    public String flipSearch(long search) {
+        if(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isPresent()) {
+            blockedRepo.delete(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).get());
+            return finalSearchStatRepo.findById(search).get().getSearchQuery();
+        } else {
+            BlockedSearches bs = new BlockedSearches();
+            bs.setSearch(finalSearchStatRepo.findById(search).get().getSearchQuery());
+            blockedRepo.save(bs);
+            return "DELETED";
+        }
+    }
+
     @GetMapping("/getAllBlocked")
     public String getAllBlocked() throws JSONException {
         JSONArray array = new JSONArray();

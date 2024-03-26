@@ -57,6 +57,7 @@ import {
   ClicksByTimeNewsletterComponent
 } from "../../component/clicks-by-time/clicks-by-time.component";
 import {PostComponent} from "../../component/post/post.component";
+import {PostDisplayComponent} from "../../component/post/post-display/post-display.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -124,6 +125,7 @@ export class PageComponent implements OnInit {
     return [
       {type: PostListComponent, row: 1, col: 1, height: 4, width: 2},
       {type: PostComponent, row: 1, col: 3, height: 2, width: 4},
+      {type: PostDisplayComponent, row: 3, col: 3, height: 2, width: 4},
 
       {type: Top5ArticleComponent, row: 5, col: 3, height: 1, width: 4},
       {type: Top5BlogComponent, row: 6, col: 3, height: 1, width: 4},

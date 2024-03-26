@@ -56,6 +56,7 @@ export enum dbUrl {
 
 
   GET_POST = "/posts/getPostStatsByIdWithAuthor?id=ID",
+  GET_POST_WITH_CONTENT = "/posts/getPostStatsWithContent?id=ID",
   GET_POST_NEWEST = "/posts/getNewestPost",
   GET_POST_BY_USERS_BEST = "/posts/bestPost?id=ID&type=TYPE",
   GET_POST_PERFORMANCE = "/posts/getPerformanceByArtId?id=",
@@ -374,6 +375,10 @@ export class DbService {
   async getPostById(id: number) : Promise<Post> {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_POST).replace("ID", String(id)), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getPostByIdWithContent(id: number) : Promise<Post> {
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_POST_WITH_CONTENT).replace("ID", String(id)), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewestPost() : Promise<Post> {
     this.setLoading();

@@ -95,5 +95,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p.parentId FROM Post p WHERE p.type='attachment' AND p.status='inherit' AND p.id IN :postIds AND p.guid LIKE %:filename")
    Optional<Long> getParentFromListAnd(List<Long> postIds, String filename);
 
+   @Query("SELECT p FROM Post p WHERE p.type='post' AND p.status='publish' ORDER BY p.date DESC LIMIT 1")
+   Post getNewestPost();
+
 }
 

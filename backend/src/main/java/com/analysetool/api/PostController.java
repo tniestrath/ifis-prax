@@ -383,6 +383,11 @@ public class PostController {
         return obj.toString();
     }
 
+    @GetMapping("/getNewestPost")
+    public String getNewestPost() throws JSONException, ParseException {
+        return PostStatsByIdForFrontend(postRepo.getNewestPost().getId());
+    }
+
 
     @GetMapping("/getBestPostByTagClicks")
     public Long getBestPostClicks(long tagId) {

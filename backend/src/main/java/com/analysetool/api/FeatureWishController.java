@@ -80,7 +80,7 @@ public class FeatureWishController {
     }
 
     private void makeTableRow(StringBuilder previousContent, FeatureWishes addRowFrom) {
-        String link = "<a href= /api/feature/flipFixed?id=" + addRowFrom.getId() + "target='feet'>" + (addRowFrom.isFixed() ? "Auf ungelöst setzen" : "Auf gelöst setzen") + "</a>";
+        String link = "<a href= /api/feature/flipFixed?id=" + addRowFrom.getId() + " target='feet'>" + (addRowFrom.isFixed() ? "Auf ungelöst setzen" : "Auf gelöst setzen") + "</a>";
         previousContent.append("<tr>");
 
         previousContent.append("<td>").append(addRowFrom.getTeam()).append("</td>");

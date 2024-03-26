@@ -66,7 +66,7 @@ export class PostComponent extends DashBaseComponent implements OnInit{
     this.formattedSSR = res.searchSuccessRate * 100;
 
     // @ts-ignore
-    this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, res.performance, res.relevance, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate, res.lettercount, res.authors);
+    this.post = res;
   }
 
   protected readonly Util = Util;

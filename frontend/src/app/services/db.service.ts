@@ -780,7 +780,7 @@ export class DbService {
   }
   async flipSearch(id : string) : Promise<string> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_FLIP).replace("SEARCH", id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_FLIP).replace("SEARCH", id)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.text()});
   }
   async ignoreAnbieterSearch(id : string) : Promise<boolean> {
     this.setLoading();

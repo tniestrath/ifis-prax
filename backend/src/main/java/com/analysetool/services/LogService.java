@@ -646,7 +646,7 @@ public class LogService {
 
                     //Does it match a blog-type?
                     Matcher matched_blogView = blogViewPattern.matcher(request);
-                    Matcher matched_blogCat = blogViewPattern.matcher(request);
+                    Matcher matched_blogCat = blogCategory.matcher(request);
                     Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
 
                     //Does it match a news-type?

@@ -89,7 +89,9 @@ export default class Util {
    * @param type
    */
   static getColor(option: string, type : string){
-    if (type.startsWith("Event")) return DashColors.EVENT;
+    option = option.toLowerCase();
+    type = type.toLowerCase();
+    if (type.startsWith("event")) return DashColors.EVENT;
     switch (option) {
       case "plan":
         switch (type) {
@@ -123,6 +125,8 @@ export default class Util {
             return DashColors.RATGEBER;
           case "newsletter":
             return DashColors.NEWSLETTER;
+          case "videos":
+            return DashColors.VIDEO;
           default:
             return DashColors.GREY;
         }
@@ -193,6 +197,8 @@ export enum DashColors {
   NEWSLETTER = "rgb(130,106,34)",
 
   EVENT = "rgb(130,34,106)",
+
+  VIDEO = "rgb(106,34,130)",
 
   GREY = "rgb(200,200,200)",
   PLAN_WITHOUT = "rgb(200,200,200)",

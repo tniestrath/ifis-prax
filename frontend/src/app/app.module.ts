@@ -92,6 +92,7 @@ import {
 import { NewsletterListComponent } from './component/newsletter/newsletter-list/newsletter-list.component';
 import { NewsletterListItemComponent } from './component/newsletter/newsletter-list/newsletter-list-item/newsletter-list-item.component';
 import { NewsletterComponent } from './component/newsletter/newsletter/newsletter.component';
+import { PostDisplayComponent } from './component/post/post-display/post-display.component';
 
 @NgModule({
   declarations: [
@@ -168,7 +169,8 @@ import { NewsletterComponent } from './component/newsletter/newsletter/newslette
     SearchListSSItemComponent,
     NewsletterListComponent,
     NewsletterListItemComponent,
-    NewsletterComponent
+    NewsletterComponent,
+    PostDisplayComponent
   ],
     imports: [
         BrowserModule,

@@ -17,15 +17,14 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   formattedSSR: number = 0;
 
   ngOnInit(): void {
-    this.setToolTip("Hier werden Ihnen Einzelheiten zu einem Post angezeigt. " +
-      "Diesen können Sie links im Graphen anklicken um hier Details anzeigen zu lassen.");
-    this.db.getUserNewestPost(SysVars.USER_ID).then(res => {
-        this.formatPost(res, false)
+    this.setToolTip("Hier werden Ihnen Einzelheiten zu einem Beitrag angezeigt.<br><br>" +
+      "Sie können links in der Liste einen Beitrag auswählen, um hier Details anzeigen zu lassen.", 2);
+    this.db.getNewestPost().then(res => {
+        this.formatPost(res, false);
     });
 
-    SysVars.SELECTED_POST_ID.subscribe(id => {
-      this.db.getPostById(id).then(res => {
-          this.formatPost(res, true)})
+    SysVars.SELECTED_POST.subscribe(post => {
+          this.formatPost(post, true);
       });
   }
 
@@ -38,15 +37,23 @@ export class PostComponent extends DashBaseComponent implements OnInit{
           break;
         case "news": res.type = "Ausgewählter News Beitrag";
           break;
+        case "podcast": res.type = "Ausgewählter Podcast";
+          break;
+        case "whitepaper": res.type = "Ausgewähltes Whitepaper";
+          break;
       }
     } else {
       switch (res.type) {
-        case "artikel": res.type = "Ihr aktuellster Artikel";
+        default: res.type = "Der neueste Beitrag auf dem Marktplatz";
           break;
-        case "blog": res.type = "Ihr aktuellster Blog Eintrag";
+        /*case "blog": res.type = "Der aktuellste Blog Eintrag";
           break;
-        case "news": res.type = "Ihr aktuellster News Beitrag";
+        case "news": res.type = "Der aktuellste News Beitrag";
           break;
+        case "podcast": res.type = "Der aktuellste Podcast";
+          break;
+        case "whitepaper": res.type = "Das aktuellste Whitepaper";
+          break;*/
       }
     }
     this.formattedDate = new Date(res.date).toLocaleDateString();

@@ -11,7 +11,7 @@
   position: relative;
   box-sizing: border-box;
   border-radius: 5px;
-  border: 1px solid #A0A0A0;
+  border: 1px solid #808080;
   top: 5px;
   left: 5px;
 }
@@ -51,7 +51,7 @@
 }
 
 .newsletter-detail{
-  border: 1px solid #A0A0A0;
+  border: 1px solid #808080;
   box-sizing: border-box;
   border-radius: 5px;
   margin-bottom: 10px;
@@ -66,7 +66,7 @@
   font-size: 1.2vh;
   padding-left: 5px;
   padding-right: 5px;
-  color: #A0A0A0;
+  color: #808080;
 }
 
 .newsletter-stats-container{

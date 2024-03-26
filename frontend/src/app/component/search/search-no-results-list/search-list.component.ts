@@ -69,15 +69,23 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
     this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection => {
       if (selection.operation == "IGNORE") {
         console.log(selection.item)
-        this.db.ignoreSearch(selection.item.id).then(r => {
+        this.db.flipSearch(selection.item.id).then(r => {
           console.log((selection.item as SearchSS).query + " : Successfully set to ignore: " + r)
-          if (r) {
+          if (r == "DELETED") {
             let index = -1;
-            let fakeItem = new SelectorItem(SearchListSSItemComponent, new SearchSS("-2", "GELÖSCHT", 0,0,0,0));
             for (let i = 0; i < this.selectorItems.length; i++) {
               if (this.selectorItems[i].data.id == selection.item.id){ index = i; break;}
             }
-            this.selectorItems.splice(index, 1, fakeItem);
+            // @ts-ignore
+            (this.selectorItems.at(index).data as SearchSS).query = "GELÖSCHT";
+            this.selectorItemsLoaded.next(this.selectorItems);
+          } else {
+            let index = -1;
+            for (let i = 0; i < this.selectorItems.length; i++) {
+              if (this.selectorItems[i].data.id == selection.item.id){ index = i; break;}
+            }
+            // @ts-ignore
+            (this.selectorItems.at(index).data as SearchSS).query = r;
             this.selectorItemsLoaded.next(this.selectorItems);
           }
         });
@@ -176,7 +184,7 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
       this.selectorItemsLoaded.next(this.selectorItems);
     });
     this.pageIndex++;
-
+    //TODO: IMPLEMENT UNDO LIKE ABOVE
     this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection  => {
       if (selection.operation == "DELETE") {
         this.db.ignoreAnbieterSearch((selection.item as SearchAnbieterItem).id).then(r => {

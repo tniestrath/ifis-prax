@@ -65,7 +65,7 @@
   grid-column: 3;
   font-style: italic;
   font-weight: lighter;
-  color: #A0A0A0;
+  color: #808080;
   text-align: end;
   font-size: .8vw;
 }
@@ -74,7 +74,7 @@
   grid-column: 4 / span 2;
   font-style: italic;
   font-weight: lighter;
-  color: #A0A0A0;
+  color: #808080;
   text-align: start;
   font-size: .8vw;
 }

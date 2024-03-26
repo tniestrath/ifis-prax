@@ -114,6 +114,7 @@ export enum dbUrl {
   GET_SEARCHES_ANBIETER_NO_RESULT = "/search-stats/getAnbieterNoneFound?page=PAGE&size=SIZE",
   GET_SEARCHES_COOL = "/search-stats/getCoolSearchList?page=PAGE&size=SIZE&sorter=SORTER&dir=DIR",
   POST_SEARCH_IGNORE = "/search-stats/blockSearch?search=SEARCH",
+  POST_SEARCH_FLIP = "/search-stats/flipSearch?search=SEARCH",
   ANBIETER_SEARCH_IGNORE = "/search-stats/deleteAnbieterSearch?id=ID",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
@@ -776,6 +777,10 @@ export class DbService {
   async ignoreSearch(search : string) : Promise<boolean> {
     this.setLoading();
     return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_IGNORE).replace("SEARCH", search)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async flipSearch(id : string) : Promise<string> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_FLIP).replace("SEARCH", id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async ignoreAnbieterSearch(id : string) : Promise<boolean> {
     this.setLoading();

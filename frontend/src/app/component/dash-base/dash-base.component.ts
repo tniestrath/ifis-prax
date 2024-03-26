@@ -27,13 +27,13 @@ export class DashBaseComponent implements OnDestroy{
               protected pdf : PdfService,
               protected cdr : ChangeDetectorRef) {
     this.helpButton = document.createElement("div");
-    this.helpButton.style.color = "#A0A0A0";
+    this.helpButton.style.color = "#808080";
     this.helpButton.innerText = "?";
     this.helpButton.style.height = "30px";
     this.helpButton.style.width = "30px";
     this.helpButton.style.textAlign = "center";
     this.helpButton.style.fontSize = "25px";
-    this.helpButton.style.border = "1px solid #A0A0A0";
+    this.helpButton.style.border = "1px solid #808080";
     this.helpButton.style.borderRadius = "5px";
     this.helpButton.style.position = "absolute";
     this.helpButton.style.top = "5px";

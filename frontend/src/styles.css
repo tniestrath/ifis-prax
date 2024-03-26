@@ -20,7 +20,7 @@ h1{
   display: grid;
   height: calc(100% - 10px);
   box-sizing: border-box;
-  grid-template-rows: repeat(6, calc(calc(100% - 10px) / 4));
+  grid-template-rows: repeat(8, calc(calc(100% - 10px) / 4));
   grid-template-columns: repeat(6, calc(calc(100% - 25px) / 6));
   grid-gap: 5px;
 }

@@ -25,14 +25,23 @@ public class UniversalTimeSpentDLC {
     @Column(name="podcast")
     private float podcast;
 
+    @Column(name="video")
+    private float video;
+
     @Column(name="whitepaper")
     private float whitepaper;
+
+    @Column(name="events")
+    private float events;
 
     @Column(name="ratgeber")
     private float ratgeber;
 
     @Column(name="main")
     private float main;
+
+    @Column(name="anbieter")
+    private float anbieter;
 
     @Column(name="footer")
     private float footer;
@@ -140,5 +149,29 @@ public class UniversalTimeSpentDLC {
 
     public void setTotal_time(int average_total) {
         this.total_time = average_total;
+    }
+
+    public float getVideo() {
+        return video;
+    }
+
+    public void setVideo(float video) {
+        this.video = video;
+    }
+
+    public float getEvents() {
+        return events;
+    }
+
+    public void setEvents(float events) {
+        this.events = events;
+    }
+
+    public float getAnbieter() {
+        return anbieter;
+    }
+
+    public void setAnbieter(float anbieter) {
+        this.anbieter = anbieter;
     }
 }

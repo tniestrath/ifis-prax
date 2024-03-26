@@ -264,11 +264,14 @@ public class uniStatController {
         List<String> labelsForCategory = new ArrayList<>();
 
         labelsForCategory.add("Main");
+        labelsForCategory.add("Anbieterverzeichnis");
         labelsForCategory.add("Article");
         labelsForCategory.add("News");
         labelsForCategory.add("Blog");
         labelsForCategory.add("Podcast");
+        labelsForCategory.add("Videos");
         labelsForCategory.add("Whitepaper");
+        labelsForCategory.add("Events");
         labelsForCategory.add("Ratgeber");
         labelsForCategory.add("Ratgeber-Post");
         labelsForCategory.add("Ratgeber-Buch");
@@ -289,12 +292,15 @@ public class uniStatController {
         int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
         //Main Page
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsMainByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsAnbieterByUniStatId(id));
         //Posts
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsArticleByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsBlogByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPodcastByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsVideosByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsEventsByUniStatId(id));
         //Ratgeber
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberPostByUniStatId(id));
@@ -315,12 +321,15 @@ public class uniStatController {
 
         //Main Page
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserMainByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserAnbieterByUniStatId(id));
         //Posts
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserArticleByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNewsByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserBlogByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPodcastByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserVideosByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserEventsByUniStatId(id));
         //Ratgeber
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberPostByUniStatId(id));
@@ -350,11 +359,14 @@ public class uniStatController {
         List<String> labelsForCategory = new ArrayList<>();
 
         labelsForCategory.add("Main");
+        labelsForCategory.add("Anbieterverzeichnis");
         labelsForCategory.add("Article");
         labelsForCategory.add("News");
         labelsForCategory.add("Blog");
         labelsForCategory.add("Podcast");
+        labelsForCategory.add("Videos");
         labelsForCategory.add("Whitepaper");
+        labelsForCategory.add("Events");
         labelsForCategory.add("Ratgeber");
         labelsForCategory.add("Ratgeber-Post");
         labelsForCategory.add("Ratgeber-Buch");
@@ -374,12 +386,15 @@ public class uniStatController {
 
         //Main Page
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsMainAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsAnbieterAllTime());
         //Posts
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsArticleAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsBlogAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPodcastAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsVideosAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsEventsAllTime());
         //Ratgeber
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberPostAllTime());
@@ -400,12 +415,15 @@ public class uniStatController {
 
         //Main Page
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserMainAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserAnbieterAllTime());
         //Posts
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserArticleAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNewsAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserBlogAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPodcastAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserVideosAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserEventsAllTime());
         //Ratgeber
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberPostAllTime());

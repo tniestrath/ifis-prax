@@ -895,7 +895,7 @@ public class LogService {
 
                     //If user existed,
                     // but only clicked nonsense so far and now clicked something else,
-                    // add him as a UniqueUser.
+                    // add them as a UniqueUser.
                     if(!isUnique) {
                         UniqueUser temp = uniqueUserRepo.findByIP(ip);
                         boolean wasOnlyNonsense = new JSONArray(temp.getNonsense()).length() == temp.getAmount_of_clicks() + 1;
@@ -905,12 +905,12 @@ public class LogService {
                         }
 
                     }
-                    //If the user is unique, AND has made a sensible request, mark him as unique and add him as a unique user.
+                    //If the user is unique, AND has made a sensible request, mark him as unique and add them as a unique user.
                     if(isUnique && (!whatMatched.equals("") || isNotNonsense)) {
                         uniqueUsers++;
                     }
 
-                    //If the user is new, initialize him.
+                    //If the user is new, initialize them.
                     if(isUnique) {
                         initUniqueUser(ip, dateLog);
                     }
@@ -1175,19 +1175,25 @@ public class LogService {
                             viewsEvents++;
                             if (isUnique) {
                                 userEvents++;
-                            } //ToDo: Add Events to UniqueUsers and add behavior here
+                            } else if (new JSONArray(uniqueUserRepo.findByIP(ip).getEvents()).length() < 2) {
+                                userEvents++;
+                            }
                         }
                         case "videoView" -> {
                             viewsVideos++;
                             if (isUnique) {
                                 userVideos++;
-                            }  //ToDo: Add Videos to UniqueUsers and add behavior here
+                            }  else if (new JSONArray(uniqueUserRepo.findByIP(ip).getVideo()).length() < 2) {
+                                userVideos++;
+                            }
                         }
                         case "anbieterCat" -> {
                             viewsAnbieter++;
                             if (isUnique) {
                                 userAnbieter++;
-                            }  //ToDo: Add Videos to UniqueUsers and add behavior here
+                            } else if (new JSONArray(uniqueUserRepo.findByIP(ip).getAnbieter()).length() < 2) {
+                                userAnbieter++;
+                            }
                         }
                         default -> {
                             if(!isNotNonsense) {
@@ -2925,9 +2931,12 @@ public class LogService {
         user.setBlog(new JSONArray().put(0).toString());
         user.setNews(new JSONArray().put(0).toString());
         user.setWhitepaper(new JSONArray().put(0).toString());
+        user.setEvents(new JSONArray().put(0).toString());
         user.setPodcast(new JSONArray().put(0).toString());
+        user.setVideo(new JSONArray().put(0).toString());
         user.setRatgeber(new JSONArray().put(0).toString());
         user.setMain(new JSONArray().put(0).toString());
+        user.setAnbieter(new JSONArray().put(0).toString());
         user.setUeber(new JSONArray().put(0).toString());
         user.setImpressum(new JSONArray().put(0).toString());
         user.setPreisliste(new JSONArray().put(0).toString());
@@ -2957,9 +2966,12 @@ public class LogService {
             int newsLength = new JSONArray(user.getNews()).length() - 1;
             int blogLength = new JSONArray(user.getBlog()).length() - 1;
             int podcastLength = new JSONArray(user.getPodcast()).length() - 1;
+            int videoLength = new JSONArray(user.getMain()).length() - 1;
             int wpLength = new JSONArray(user.getWhitepaper()).length() - 1;
+            int eventLength = new JSONArray(user.getMain()).length() - 1;
             int ratgeberLength = new JSONArray(user.getRatgeber()).length() - 1;
             int mainLength = new JSONArray(user.getMain()).length() - 1;
+            int anbieterLength = new JSONArray(user.getAnbieter()).length() - 1;
             int amountOfFooters = 8;
             int footerLength = new JSONArray(user.getUeber()).length() + new JSONArray(user.getImpressum()).length() + new JSONArray(user.getPreisliste()).length() + new JSONArray(user.getPartner()).length() + new JSONArray(user.getDatenschutz()).length() + new JSONArray(user.getNewsletter()).length() + new JSONArray(user.getImage()).length() + new JSONArray(user.getAgb()).length() - amountOfFooters;
 
@@ -2980,9 +2992,12 @@ public class LogService {
                 uniAvg.setNews(((uniAvg.getNews() * oldClicks) + newsLength) / clicks);
                 uniAvg.setBlog(((uniAvg.getBlog() * oldClicks) + blogLength) / clicks);
                 uniAvg.setPodcast(((uniAvg.getPodcast() * oldClicks) + podcastLength) / clicks);
+                uniAvg.setVideo(((uniAvg.getVideo() * oldClicks) + videoLength) / clicks);
                 uniAvg.setWhitepaper(((uniAvg.getWhitepaper() * oldClicks) + wpLength) / clicks);
+                uniAvg.setEvents(((uniAvg.getEvents() * oldClicks) + eventLength) / clicks);
                 uniAvg.setRatgeber(((uniAvg.getRatgeber() * oldClicks) + ratgeberLength) / clicks);
                 uniAvg.setMain(((uniAvg.getMain() * oldClicks) + mainLength) / clicks);
+                uniAvg.setAnbieter(((uniAvg.getAnbieter() * oldClicks) + anbieterLength) / clicks);
                 uniAvg.setFooter(((uniAvg.getFooter() * oldClicks) + footerLength) / clicks);
 
                 uniAverageClicksRepo.save(uniAvg);
@@ -3001,9 +3016,12 @@ public class LogService {
                     uniTime.setNews(user.getTime_spent() * ((float) newsLength / clicks));
                     uniTime.setBlog(user.getTime_spent() * ((float) blogLength / clicks));
                     uniTime.setPodcast(user.getTime_spent() * ((float) podcastLength / clicks));
+                    uniTime.setVideo(user.getTime_spent() * ((float) videoLength / clicks));
                     uniTime.setWhitepaper(user.getTime_spent() * ((float) wpLength / clicks));
+                    uniTime.setEvents(user.getTime_spent() * ((float) eventLength / clicks));
                     uniTime.setRatgeber(user.getTime_spent() * ((float) ratgeberLength / clicks));
                     uniTime.setMain(user.getTime_spent() * ((float) mainLength / clicks));
+                    uniTime.setAnbieter(user.getTime_spent() * ((float) anbieterLength / clicks));
                     uniTime.setFooter(user.getTime_spent() * ((float) footerLength / clicks));
 
                     uniTimeSpentRepo.save(uniTime);
@@ -3025,11 +3043,14 @@ public class LogService {
         uniAverage.setArticle(0);
         uniAverage.setBlog(0);
         uniAverage.setMain(0);
+        uniAverage.setAnbieter(0);
         uniAverage.setPodcast(0);
+        uniAverage.setVideo(0);
         uniAverage.setFooter(0);
         uniAverage.setNews(0);
         uniAverage.setRatgeber(0);
         uniAverage.setWhitepaper(0);
+        uniAverage.setEvents(0);
         uniAverage.setAmount_clicks(0);
         uniAverage.setAmount_users(0);
         uniAverage.setUni_stat_id(uniRepo.getLatestUniStat().getId());
@@ -3041,11 +3062,14 @@ public class LogService {
         uniTime.setArticle(0);
         uniTime.setBlog(0);
         uniTime.setMain(0);
+        uniTime.setAnbieter(0);
         uniTime.setPodcast(0);
+        uniTime.setVideo(0);
         uniTime.setFooter(0);
         uniTime.setNews(0);
         uniTime.setRatgeber(0);
         uniTime.setWhitepaper(0);
+        uniTime.setEvents(0);
         uniTime.setAmount_clicks(0);
         uniTime.setAmount_users(0);
         uniTime.setTotal_time(0);

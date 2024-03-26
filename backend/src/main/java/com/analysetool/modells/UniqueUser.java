@@ -28,14 +28,23 @@ public class UniqueUser {
     @Column(name = "whitepaper")
     private String whitepaper;
 
+    @Column(name ="events")
+    private String events;
+
     @Column(name = "podcast")
     private String podcast;
+
+    @Column(name = "video")
+    private String video;
 
     @Column(name = "ratgeber")
     private String ratgeber;
 
     @Column(name = "main")
     private String main;
+
+    @Column(name = "anbieter")
+    private String anbieter;
 
     @Column(name = "ueber")
     private String ueber;
@@ -238,5 +247,29 @@ public class UniqueUser {
 
     public void setAmount_of_clicks(int amount_of_clicks) {
         this.amount_of_clicks = amount_of_clicks;
+    }
+
+    public String getEvents() {
+        return events;
+    }
+
+    public void setEvents(String events) {
+        this.events = events;
+    }
+
+    public String getVideo() {
+        return video;
+    }
+
+    public void setVideo(String video) {
+        this.video = video;
+    }
+
+    public String getAnbieter() {
+        return anbieter;
+    }
+
+    public void setAnbieter(String anbieter) {
+        this.anbieter = anbieter;
     }
 }

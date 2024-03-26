@@ -31,8 +31,14 @@ public class UniversalCategoriesDLC {
     @Column(name="besucher_podcast")
     private int besucherPodcast;
 
+    @Column(name = "besucher_videos")
+    private int besucherVideos;
+
     @Column(name="besucher_whitepaper")
     private int besucherWhitepaper;
+
+    @Column(name ="besucher_events")
+    private int besucherEvents;
 
     @Column(name="besucher_ratgeber")
     private int besucherRatgeber;
@@ -51,6 +57,9 @@ public class UniversalCategoriesDLC {
 
     @Column(name="besucher_main")
     private int besucherMain;
+
+    @Column(name = "besucher_anbieter")
+    private int besucherAnbieter;
 
     @Column(name="besucher_ueber")
     private int besucherUeber;
@@ -91,8 +100,14 @@ public class UniversalCategoriesDLC {
     @Column(name="views_podcast")
     private int viewsPodcast;
 
+    @Column(name = "views_videos")
+    private int viewsVideos;
+
     @Column(name="views_whitepaper")
     private int viewsWhitepaper;
+
+    @Column(name = "views_events")
+    private int viewsEvents;
 
     @Column(name="views_ratgeber")
     private int viewsRatgeber;
@@ -111,6 +126,9 @@ public class UniversalCategoriesDLC {
 
     @Column(name="views_main")
     private int viewsMain;
+
+    @Column(name = "views_anbieter")
+    private int viewsAnbieter;
 
     @Column(name="views_ueber")
     private int viewsUeber;
@@ -478,6 +496,54 @@ public class UniversalCategoriesDLC {
 
     public void setViewsRatgeberSelf(int viewsRatgeberSelf) {
         this.viewsRatgeberSelf = viewsRatgeberSelf;
+    }
+
+    public int getBesucherVideos() {
+        return besucherVideos;
+    }
+
+    public void setBesucherVideos(int besucherVideos) {
+        this.besucherVideos = besucherVideos;
+    }
+
+    public int getBesucherEvents() {
+        return besucherEvents;
+    }
+
+    public void setBesucherEvents(int besucherEvents) {
+        this.besucherEvents = besucherEvents;
+    }
+
+    public int getBesucherAnbieter() {
+        return besucherAnbieter;
+    }
+
+    public void setBesucherAnbieter(int besucherAnbieter) {
+        this.besucherAnbieter = besucherAnbieter;
+    }
+
+    public int getViewsVideos() {
+        return viewsVideos;
+    }
+
+    public void setViewsVideos(int viewsVideos) {
+        this.viewsVideos = viewsVideos;
+    }
+
+    public int getViewsEvents() {
+        return viewsEvents;
+    }
+
+    public void setViewsEvents(int viewsEvents) {
+        this.viewsEvents = viewsEvents;
+    }
+
+    public int getViewsAnbieter() {
+        return viewsAnbieter;
+    }
+
+    public void setViewsAnbieter(int viewsAnbieter) {
+        this.viewsAnbieter = viewsAnbieter;
     }
 }
 

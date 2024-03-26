@@ -383,9 +383,16 @@ public class PostController {
         return obj.toString();
     }
 
+    @GetMapping("/getPostStatsWithContent")
+    public String getPostStatsWithContent(long id) throws JSONException, ParseException {
+        JSONObject json = new JSONObject(PostStatsByIdForFrontend(id));
+        json.put("content", postRepo.findById(id).get().getContent());
+        return json.toString();
+    }
+
     @GetMapping("/getNewestPost")
     public String getNewestPost() throws JSONException, ParseException {
-        return PostStatsByIdForFrontend(postRepo.getNewestPost().getId());
+        return getPostStatsWithContent(postRepo.getNewestPost().getId());
     }
 
 

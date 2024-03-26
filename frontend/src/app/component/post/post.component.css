@@ -18,11 +18,11 @@
   margin: 0;
   width: 100%;
   line-height: 30px;
-  font-size: .8vw;
+  font-size: 1vw;
   text-align: center;
   height: 30px;
   padding-left: 5px;
-  border: 1px solid #A0A0A0;
+  border: 2px solid #A0A0A0;
   border-radius: 5px;
   box-sizing: border-box;
 }

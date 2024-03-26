@@ -1,6 +1,6 @@
 <div class="component-box post-box">
   <div class="post-select-info">
-    <p id="selected-post-identifier">{{post.type}}</p>
+    <p id="selected-post-identifier" [style.color]="Util.getColor('post', post.type)" [style.border-color]="Util.getColor('post', post.type)">{{identifier}}</p>
   </div>
   <div class="post-details">
     <div class="post-detail">

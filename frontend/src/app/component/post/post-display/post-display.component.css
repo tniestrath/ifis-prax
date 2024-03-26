@@ -1,1 +1,7 @@
+.component-box{
+  overflow-y: auto;
+}
 
+#post-display-box{
+  padding: 15px 10px;
+}

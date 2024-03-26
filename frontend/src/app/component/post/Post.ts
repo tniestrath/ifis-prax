@@ -16,7 +16,7 @@ export class Post extends DbObject{
               public duration: number = 0,
               public authors: string[] = [""],
               public downloads: number = 0,
-              public content: HTMLElement | null = null,
+              public content: string = "",
               public override id : string = "-1") {
     super(id, title);
   }

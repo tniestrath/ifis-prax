@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {Post} from "./Post";
 import {SysVars} from "../../services/sys-vars-service";
+import Util from "../../util/Util";
 
 @Component({
   selector: 'dash-post',
@@ -15,6 +16,7 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   formattedPerformance: number = 0;
   formattedRelevanz: number = 0;
   formattedSSR: number = 0;
+  identifier: string = "";
 
   ngOnInit(): void {
     this.setToolTip("Hier werden Ihnen Einzelheiten zu einem Beitrag angezeigt.<br><br>" +
@@ -31,20 +33,20 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   formatPost(res : Post, isSelected : boolean){
     if (isSelected){
       switch (res.type) {
-        case "artikel": res.type = "Ausgewählter Artikel";
+        case "artikel": this.identifier = "Ausgewählter Artikel";
           break;
-        case "blog": res.type = "Ausgewählter Blog Eintrag";
+        case "blog": this.identifier = "Ausgewählter Blog Eintrag";
           break;
-        case "news": res.type = "Ausgewählter News Beitrag";
+        case "news": this.identifier = "Ausgewählter News Beitrag";
           break;
-        case "podcast": res.type = "Ausgewählter Podcast";
+        case "podcast": this.identifier = "Ausgewählter Podcast";
           break;
-        case "whitepaper": res.type = "Ausgewähltes Whitepaper";
+        case "whitepaper": this.identifier = "Ausgewähltes Whitepaper";
           break;
       }
     } else {
       switch (res.type) {
-        default: res.type = "Der neueste Beitrag auf dem Marktplatz";
+        default: this.identifier = "Der neueste Beitrag auf dem Marktplatz";
           break;
         /*case "blog": res.type = "Der aktuellste Blog Eintrag";
           break;
@@ -66,4 +68,6 @@ export class PostComponent extends DashBaseComponent implements OnInit{
     // @ts-ignore
     this.post = new Post(res.title, res.date, res.type, res.clicks, res.tags, res.performance, res.relevance, res.searchSuccesses, res.searchSuccessRate, res.referrings, res.articleReferringRate, res.lettercount, res.authors);
   }
+
+  protected readonly Util = Util;
 }

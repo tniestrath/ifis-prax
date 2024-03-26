@@ -376,7 +376,7 @@ export class DbService {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_POST).replace("ID", String(id)), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async getPostByIdWithContent(id: number) : Promise<Post> {
+  async getPostByIdWithContent(id: string) : Promise<Post> {
     this.setLoading();
     return await fetch(DbService.getUrl(dbUrl.GET_POST_WITH_CONTENT).replace("ID", String(id)), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }

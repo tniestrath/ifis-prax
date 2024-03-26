@@ -194,11 +194,16 @@ export enum DashColors {
   BLACK_50 = "rgba(0,0,0, .5)",
 
   RATGEBER = "rgb(130,106,34)",
-  NEWSLETTER = "rgb(130,106,34)",
+
+  NEWSLETTER = "rgb(34,106,130)",
 
   EVENT = "rgb(130,34,106)",
 
   VIDEO = "rgb(106,34,130)",
+
+  MAINPAGE = "rgb(17,65,53)",
+
+  FOOTER = "rgb(34,130,106)",
 
   GREY = "rgb(200,200,200)",
   PLAN_WITHOUT = "rgb(200,200,200)",

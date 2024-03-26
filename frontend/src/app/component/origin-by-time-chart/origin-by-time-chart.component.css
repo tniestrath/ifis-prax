@@ -20,7 +20,7 @@ select{
   max-width: 35%;
   min-width: 25%;
   border-radius: 5px 0 0 5px;
-  border: 1px solid #A0A0A0;
+  border: 1px solid #808080;
 }
 
 select:focus-visible{
@@ -36,7 +36,7 @@ input[type="radio"]{
   -webkit-appearance: none;
   background-color: white;
   margin: 0;
-  border: 1px solid #A0A0A0;
+  border: 1px solid #808080;
   width: 20%;
   height: 100%;
   display: grid;
@@ -47,7 +47,7 @@ input[type="radio"]:hover{
 }
 input[type="radio"]::before{
   content: "Immer";
-  color: #A0A0A0;
+  color: #808080;
   transform: scale(1);
   transition: 120ms transform ease-in-out;
 }
@@ -103,7 +103,7 @@ input[type="radio"]::after{
   bottom: 0;
 }
 input[type="radio"]:checked::before{
-  color: #A0A0A0;
+  color: #808080;
   transform: scale(0);
   transition: 120ms transform ease-in-out;
   position: fixed;

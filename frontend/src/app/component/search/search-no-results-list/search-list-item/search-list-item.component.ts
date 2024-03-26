@@ -52,6 +52,8 @@ export class SearchListItemComponent {
   protected onClick(){
     SysVars.SELECTED_SEARCH.emit({item: this.data, operation: "IGNORE"});
   }
+
+  protected readonly SearchSS = SearchSS;
 }
 @Component({
   selector: 'dash-search-no-results-list-item',

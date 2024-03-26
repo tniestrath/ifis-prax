@@ -12,7 +12,7 @@ input[type="text"]{
   min-width: 35%;
   max-width: 65%;
   border-radius: 5px 0 0 5px;
-  border: 1px solid #A0A0A0;
+  border: 1px solid #808080;
 }
 input[type="text"]:focus-visible{
   outline-style: none;
@@ -26,7 +26,7 @@ input[type="radio"]{
   -webkit-appearance: none;
   background-color: white;
   margin: 0;
-  border: 1px solid #A0A0A0;
+  border: 1px solid #808080;
   width: 100%;
   height: 100%;
   display: grid;
@@ -37,7 +37,7 @@ input[type="radio"]:hover{
 }
 input[type="radio"]::before{
   content: "Alle";
-  color: #A0A0A0;
+  color: #808080;
   transform: scale(1);
   transition: 120ms transform ease-in-out;
 }
@@ -85,7 +85,7 @@ input[type="radio"]::after{
 }
 
 input[type="radio"]:checked::before{
-  color: #A0A0A0;
+  color: #808080;
   transform: scale(0);
   transition: 120ms transform ease-in-out;
   position: fixed;

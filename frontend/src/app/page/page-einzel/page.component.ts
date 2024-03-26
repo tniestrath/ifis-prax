@@ -127,10 +127,10 @@ export class PageComponent implements OnInit {
       {type: PostComponent, row: 1, col: 3, height: 2, width: 4},
       {type: PostDisplayComponent, row: 3, col: 3, height: 2, width: 4},
 
-      {type: Top5ArticleComponent, row: 5, col: 3, height: 1, width: 4},
-      {type: Top5BlogComponent, row: 6, col: 3, height: 1, width: 4},
-      {type: Top5NewsComponent, row: 7, col: 3, height: 1, width: 4},
-      {type: Top5WhitepaperComponent, row: 8, col: 3, height: 1, width: 4}
+      {type: Top5ArticleComponent, row: 5, col: 1, height: 1, width: 6},
+      {type: Top5BlogComponent, row: 6, col: 1, height: 1, width: 6},
+      {type: Top5NewsComponent, row: 7, col: 1, height: 1, width: 6},
+      {type: Top5WhitepaperComponent, row: 8, col: 1, height: 1, width: 6}
     ];
   }
 

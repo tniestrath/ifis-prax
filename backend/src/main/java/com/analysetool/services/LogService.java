@@ -9,8 +9,6 @@ import com.analysetool.util.DashConfig;
 import com.analysetool.util.IPHelper;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
@@ -1603,6 +1601,10 @@ public class LogService {
 
     }
 
+    /**
+     * Sets counts of posts for each post-type for the given object.
+     * @param uniHourly the universalstats-hourly object to set stats for.
+     */
     private void setNewsArticelBlogCountForUniversalStats(UniversalStatsHourly uniHourly) {
 
         List<Post> posts = postRepository.findAllUserPosts();
@@ -1641,6 +1643,10 @@ public class LogService {
 
     }
 
+    /**
+     * Aggregate function for all behaviors that occur at the end of a day.
+     * Mostly used for clean-up functions, IP-Deletions and to persist daily-type data.
+     */
     public void endDay() {
         try {
             System.out.println("UPDATE CLICKS AUSGEFÜHRT HIER!");
@@ -1689,7 +1695,14 @@ public class LogService {
         }
     }
 
-
+    /**
+     * Converts a single line of the access.log into usable data and writes them into the database.
+     * @param line the line of the access.log to scan.
+     * @param ip the ip that accessed the server.
+     * @param whatMatched a String representation of what type the access the line represented.
+     * @param dateLog the dateTime of the access.log line.
+     * @param patternMatcher the regex-matcher that has found the "best" result.
+     */
     public void processLine(String line, String ip, String whatMatched, LocalDateTime dateLog, Matcher patternMatcher) {
         lastLine = line;
 
@@ -1867,173 +1880,12 @@ public class LogService {
 
     }
 
-    public String hashIp(String ip){
-        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
-        byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
-        return Hex.toHexString(hashBytes);
-    }
-
-    public void updateSearchStats(LocalDateTime dateLog, long id, String ip, String searchString) {
-        if (id != 0){
-            SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
-            byte[] hashBytes = digestSHA3.digest(ip.getBytes(StandardCharsets.UTF_8));
-            String hashedIp = Hex.toHexString(hashBytes);
-
-            LocalDate date = dateLog.toLocalDate();  // Replace with the date you want to search for
-            System.out.println("GRUPPE 1: "+ ip);
-            List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
-            for(SearchStats s : searchStatsForDate) {
-                //hier weiter searchstring equals nicht so viel sinn mit klicked post
-                if(hashedIp.equals(s.getIpHashed()) && !s.getSearchSuccessFlag() && s.getSearchString().equals(searchString)) {
-                    s.setSearchSuccessFlag(true);
-                    s.setClickedPost(String.valueOf(id));
-                    s.setSearch_success_time(dateLog);
-                    searchStatRepo.save(s);}
-            }
-        }
-    }
-
-    public void updateSearchStats(Matcher preMatcher,Matcher patternMatcher) {
-        if (!patternMatcher.group(1).matches("\\d+")){
-        SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512(); // 512-bit output
-        byte[] hashBytes = digestSHA3.digest(patternMatcher.group(1).getBytes(StandardCharsets.UTF_8));
-        String hashedIp = Hex.toHexString(hashBytes);
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
-            LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
-
-            LocalDate date = dateLog.toLocalDate();  // Replace with the date you want to search for
-        System.out.println("GRUPPE 1: "+patternMatcher.group(1));
-        List<SearchStats> searchStatsForDate = searchStatRepo.findAllBySearchDate(date);
-        long id = postRepository.getIdByName(patternMatcher.group(1));
-        for(SearchStats s : searchStatsForDate) {
-            //hier weiter searchstring equals nicht so viel sinn mit klicked post
-            if(hashedIp.equals(s.getIpHashed()) && !s.getSearchSuccessFlag() && s.getSearchString().equals(patternMatcher.group(7))) {
-                s.setSearchSuccessFlag(true);
-
-                s.setClickedPost(String.valueOf(id));
-
-
-
-                s.setSearch_success_time(dateLog);
-
-                searchStatRepo.save(s);}
-            }
-        }
-    }
-    public LocalTime getLocalTimeFromMatcher(Matcher matcher){
-        String logHourMinuteSecond = matcher.group(2);
-        // Trenne Stunden, Minuten und Sekunden
-        String[] timeParts = logHourMinuteSecond.split(":");
-        String logHour = timeParts[0];
-        String logMinute = timeParts[1];
-        String logSecond = timeParts[2];
-
-        return LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
-    }
-
-    public void updatePerformanceViewsSearchSuccess(LocalDateTime dateLog, long id) {
-        if (id != 0){
-            // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
-            String logDay = String.valueOf(dateLog.getDayOfMonth());
-            String logYear = String.valueOf(dateLog.getYear());
-
-            String logHour = String.valueOf(dateLog.getHour());
-            String logMinute = String.valueOf(dateLog.getMinute());
-            String logSecond = String.valueOf(dateLog.getSecond());
-
-
-            // Erstelle LocalDate und LocalTime Objekte
-            LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), dateLog.getMonth().getValue(), Integer.parseInt(logDay));
-            LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
-
-            try {
-                checkTheTag(id, true);
-
-                if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
-                    PostStats stats = statsRepo.findByArtIdAndAndYear(id, aktuellesJahr);
-                    long views = stats.getClicks();
-                    views++;
-                    long searchSuccess = stats.getSearchSuccess();
-                    searchSuccess++;
-
-
-
-                    LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-                    LocalDateTime Now =  LocalDateTime.now();
-                    Duration duration = Duration.between(PostTimestamp, Now);
-                    long diffInDays = duration.toDays();
-                    float performance = views;
-                    if (diffInDays>0&&views > 0){
-                        performance = (float)views/diffInDays;
-                    }
-                    statsRepo.updateClicksSearchSuccessRateAndPerformance(id, views, searchSuccess, performance);
-
-                    // Rufe die angepasste Methode mit dem extrahierten Datum und der Uhrzeit auf
-                    erhoeheWertFuerLogDatum(id, logDate, logTime);
-                } else {
-                    statsRepo.save(new PostStats(id, (float) 0, (float) 0, 1, 1, 0, (float) 0));
-                    //erhoeheWertFuerHeutigesDatum(id);
-                    erhoeheWertFuerLogDatum(id, logDate, logTime);
-                }
-            } catch (Exception e) {
-                System.out.println("updatePerformanceViewsSearchSuccess Exception");
-            }
-        }
-    }
-
-    public void updatePerformanceViewsSearchSuccess(Matcher preMatcher, Matcher patternMatcher) {
-        if (!patternMatcher.group(1).matches("\\d+")){
-        // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
-            LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
-        String logDay = String.valueOf(dateLog.getDayOfMonth());
-        String logYear = String.valueOf(dateLog.getYear());
-
-        String logHour = String.valueOf(dateLog.getHour());
-        String logMinute = String.valueOf(dateLog.getMinute());
-        String logSecond = String.valueOf(dateLog.getSecond());
-
-
-        // Erstelle LocalDate und LocalTime Objekte
-        LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), dateLog.getMonth().getValue(), Integer.parseInt(logDay));
-        LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
-
-        try {
-            long id = postRepository.getIdByName(patternMatcher.group(1));
-            checkTheTag(id, true);
-
-            if (statsRepo.existsByArtIdAndYear(id, aktuellesJahr)) {
-                PostStats stats = statsRepo.findByArtIdAndAndYear(id, aktuellesJahr);
-                long views = stats.getClicks();
-                views++;
-                long searchSuccess = stats.getSearchSuccess();
-                searchSuccess++;
-
-
-
-                LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-                LocalDateTime Now =  LocalDateTime.now();
-                Duration duration = Duration.between(PostTimestamp, Now);
-                long diffInDays = duration.toDays();
-                float performance = views;
-                if (diffInDays>0&&views > 0){
-                    performance = (float)views/diffInDays;
-                }
-                statsRepo.updateClicksSearchSuccessRateAndPerformance(id, views, searchSuccess, performance);
-
-                // Rufe die angepasste Methode mit dem extrahierten Datum und der Uhrzeit auf
-                erhoeheWertFuerLogDatum(id, logDate, logTime);
-            } else {
-                statsRepo.save(new PostStats(id, (float) 0, (float) 0, 1, 1, 0, (float) 0));
-                //erhoeheWertFuerHeutigesDatum(id);
-                erhoeheWertFuerLogDatum(id, logDate, logTime);
-            }
-        } catch (Exception e) {
-            System.out.println("updatePerformanceViewsSearchSuccess Exception");
-        }
-        }
-    }
-
+    /**
+     * Increases values for a specific date.
+     * @param id the postId to update for.
+     * @param logDatum the date to update for.
+     * @param logUhrzeit the time to update for.
+     */
     @Transactional
     public void erhoeheWertFuerLogDatum(long id, LocalDate logDatum, LocalTime logUhrzeit) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
@@ -2054,6 +1906,12 @@ public class LogService {
         statsRepo.save(postStats);
     }
 
+    /**
+     * Updates a field representing the views of each hour.
+     * @param stats the stats to update for.
+     * @param logUhrzeit the time to update with.
+     * @return the new and increased map.
+     */
     public  Map<String, Long> erhoeheViewsPerHour2(PostStats stats, LocalTime logUhrzeit) {
         Map<String, Long> viewsPerHour = stats.getViewsPerHour();
         int stunde = logUhrzeit.getHour();
@@ -2063,15 +1921,12 @@ public class LogService {
 
         return viewsPerHour;
     }
-    public static Map<String, Long> erhoeheViewsPerHour2(Map<String, Long> viewsPerHour, LocalTime logUhrzeit) {
-        int stunde = logUhrzeit.getHour();
-        long views = viewsPerHour.getOrDefault(Integer.toString(stunde), 0L);
-        views++;
-        viewsPerHour.put(Integer.toString(stunde), views);
 
-        return viewsPerHour;
-    }
-
+    /**
+     * Updates performance and views for a post.
+     * @param dateLog the date to update with.
+     * @param id the id of the post to update the stats for.
+     */
     public void UpdatePerformanceAndViews(LocalDateTime dateLog, long id) {
         if(id != 0) {
             String logDay = String.valueOf(dateLog.getDayOfMonth());
@@ -2120,56 +1975,11 @@ public class LogService {
 
     }
 
-   public void UpdatePerformanceAndViews(Matcher preMatcher,Matcher patternMatcher) {
-       if (!patternMatcher.group(1).matches("\\d+")){
-       // Extrahiere Datum und Uhrzeit aus dem Log mit dem neuen Matcher
-           DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/LLL/yyyy:HH:mm:ss");
-           LocalDateTime dateLog = LocalDateTime.from(dateFormatter.parse(preMatcher.group(2)));
-           String logDay = String.valueOf(dateLog.getDayOfMonth());
-           String logYear = String.valueOf(dateLog.getYear());
-
-       String logHour = String.valueOf(dateLog.getHour());
-       String logMinute = String.valueOf(dateLog.getMinute());
-       String logSecond = String.valueOf(dateLog.getSecond());
-
-       // Erstelle LocalDate und LocalTime Objekte
-       LocalDate logDate = LocalDate.of(Integer.parseInt(logYear), dateLog.getMonth().getValue(), Integer.parseInt(logDay));
-       LocalTime logTime = LocalTime.of(Integer.parseInt(logHour), Integer.parseInt(logMinute), Integer.parseInt(logSecond));
-
-       try {
-           long id = postRepository.getIdByName(patternMatcher.group(1));
-           checkTheTag(id, false);
-
-           if (statsRepo.existsByArtId(id)) {
-               long views = statsRepo.getClicksByArtId(id);
-               views++;
-
-
-
-               LocalDateTime PostTimestamp = postRepository.getPostDateById(id);
-               LocalDateTime Now =  LocalDateTime.now();
-               Duration duration = Duration.between(PostTimestamp, Now);
-               long diffInDays = duration.toDays();
-               float performance = views;
-               if (diffInDays>0&&views > 0){
-                   performance = (float)views/diffInDays;
-               }
-
-               statsRepo.updateClicksAndPerformanceByArtId(views, id, performance);
-
-               // Rufe die angepasste Methode mit dem extrahierten Datum und der Uhrzeit auf
-               erhoeheWertFuerLogDatum(id, logDate, logTime);
-           } else {
-               statsRepo.save(new PostStats(id, (float) 0, (float) 0, 1, 0, 0, (float) 0));
-               //erhoeheWertFuerHeutigesDatum(id);
-               erhoeheWertFuerLogDatum(id, logDate, logTime);
-           }
-       } catch (Exception e) {
-           System.out.println("IGNORE " + patternMatcher.group(1) + " BECAUSE: " + e.getMessage());
-       }
-       }
-   }
-
+    /**
+     * Updates the stats of a user.
+     * @param id the id of the user to update.
+     * @param dateLog the date of access to update stats with.
+     */
     @Transactional
     public void updateUserStats(long id,LocalDateTime dateLog){
         if(userStatsRepo.existsByUserId(id)) {
@@ -2184,7 +1994,12 @@ public class LogService {
         updateUserViewsByHourDLCList(id,dateLog);
     }
 
-    public void updateUserViewsByHourDLCList(long userId,LocalDateTime dateLog){
+    /**
+     * Updates UserViewsByHourDLC, a table representing the views a user has received for each hour.
+     * @param userId the id of the user to update for.
+     * @param dateLog the date of access to update with.
+     */
+    private void updateUserViewsByHourDLCList(long userId,LocalDateTime dateLog){
         int uniId = uniRepo.getLatestUniStat().getId();
         String key = uniId + "_" + userId;
 
@@ -2203,25 +2018,12 @@ public class LogService {
 
     }
 
-    public void updateContentDownloadMap(Long postId,LocalDateTime dateLog){
-        int uniId = uniRepo.getLatestUniStat().getId();
-        String key = uniId + "_" + postId;
-
-        ContentDownloadsHourly contentDownloads = contentDownloadsMap.get(key);
-        if (contentDownloads != null) {
-
-            contentDownloads.setDownloads(contentDownloads.getDownloads() + 1);
-
-        } else {
-
-            ContentDownloadsHourly newContentDownload = new ContentDownloadsHourly(uniId,postId,dateLog.getHour(),1L);
-
-            contentDownloadsMap.put(key, newContentDownload);
-        }
-
-    }
-
-    public void updatePostClicksMap(Long postId,LocalDateTime dateLog){
+    /**
+     * Updates an internal map that contains posts and their clicks (hourly).
+     * @param postId the post to update the map for.
+     * @param dateLog the date of access to update with.
+     */
+    private void updatePostClicksMap(Long postId,LocalDateTime dateLog){
         int uniId = uniRepo.getLatestUniStat().getId();
         String key = uniId + "_" + postId;
 
@@ -2239,28 +2041,23 @@ public class LogService {
 
     }
 
-    public void updateUserRedirectsMap(Long userId, LocalDateTime dateLog) {
-        int uniId = uniRepo.getLatestUniStat().getId();
-        String key = uniId + "_" + userId;
-
-        UserRedirectsHourly userRedirects = userRedirectsMap.get(key);
-        if (userRedirects != null) {
-            userRedirects.setRedirects(userRedirects.getRedirects() + 1);
-        } else {
-            UserRedirectsHourly newUserRedirects = new UserRedirectsHourly(uniId, userId, dateLog.getHour(), 1L);
-            userRedirectsMap.put(key, newUserRedirects);
-        }
-    }
-
-    public void cleanMaps(){
+    /**
+     * Cleans internal maps to ensure persistance.
+     */
+    private void cleanMaps(){
         userRedirectsMap.clear();
         postClicksMap.clear();
         contentDownloadsMap.clear();
         userViewsHourDLCMap.clear();
     }
 
-
-
+    /**
+     * Fetches relevance from a posts data.
+     * @param viewsLastYear a posts views during a year.
+     * @param currentDateString a String representation of the current date.
+     * @param time the current hour.
+     * @return a decimal float containing the "relevance" for the given Parameters.
+     */
     public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd.MM");
 
@@ -2278,6 +2075,13 @@ public class LogService {
         return (float) views / time;
     }
 
+    /**
+     * Fetches relevance from a posts data.
+     * @param viewsLastYear a posts views during a year.
+     * @param currentDayOfYear the current day of year.
+     * @param time the current hour.
+     * @return a decimal float containing the "relevance" for the given Parameters.
+     */
     public float getRelevance(HashMap<String,Long>viewsLastYear,int currentDayOfYear,int time){
         int counter =currentDayOfYear-time;
         long views=0;
@@ -2288,6 +2092,11 @@ public class LogService {
         return (float)views/time;
     }
 
+    /**
+     * Updates tag/term data in tagstat table.
+     * @param id the id of tag-stats to update.
+     * @param searchSuccess whether a search has succeeded.
+     */
     @Transactional
     public void updateTagStats(long id,boolean searchSuccess){
         TagStat Stats;
@@ -2319,6 +2128,11 @@ public class LogService {
         }
     }
 
+    /**
+     * ??? i dont even know
+     * @param id a tag-stats id.
+     * @param searchSuccess whether a search has succeeded.
+     */
     public void checkTheTag(long id,boolean searchSuccess){
         List<Long> tagTaxIds= termRelRepo.getTaxIdByObject(id);
         List<Long> tagIds= termTaxRepo.getTermIdByTaxId(tagTaxIds);
@@ -2334,12 +2148,19 @@ public class LogService {
         }
     }
 
+    /**
+     * Updates the letter-count for a single post.
+     * @param id the id of the post to update for.
+     */
     public void updateLetterCount(long id) {
 
         int lettercount = Jsoup.clean(postRepository.getContentById(id), Safelist.none()).length();
         statsRepo.updateLetterCount(lettercount, id);
     }
 
+    /**
+     * Updates letter-count for all posts.
+     */
     public void updateLetterCountForAll () {
         for(Post p : postRepository.findAllUserPosts()) {
             if (statsRepo.existsByArtId(p.getId())) {
@@ -2351,7 +2172,11 @@ public class LogService {
         }
     }
 
-    public void countWordsInPost(long id) {
+    /**
+     * Counts words in a post and updates stats for it.
+     * @param id the id of the post to update for.
+     */
+    public void updateCountWordsForPost(long id) {
         // Hole den Inhalt des Posts und bereinige ihn
         String content = Jsoup.clean(postRepository.getContentById(id), Safelist.none());
 
@@ -2364,7 +2189,7 @@ public class LogService {
 
     public void updateWordCountForAll () {
         for(Post p : postRepository.findAllUserPosts()) {
-            countWordsInPost(p.getId());
+            updateCountWordsForPost(p.getId());
         }
     }
 

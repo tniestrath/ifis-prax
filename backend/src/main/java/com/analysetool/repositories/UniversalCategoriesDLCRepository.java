@@ -34,8 +34,14 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.viewsPodcast) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumViewsPodcastByUniStatId(int uniID);
 
+     @Query("SELECT SUM(u.viewsVideos) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsVideosByUniStatId(int uniID);
+
      @Query("SELECT SUM(u.viewsWhitepaper) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumViewsWhitepaperByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsEvents) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsEventsByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsRatgeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumViewsRatgeberByUniStatId(int uniID);
@@ -54,6 +60,9 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      @Query("SELECT SUM(u.viewsMain) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumViewsMainByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsAnbieter) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumViewsAnbieterByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsUeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumViewsUeberByUniStatId(int uniID);
@@ -94,8 +103,14 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.besucherPodcast) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserPodcastByUniStatId(int uniID);
 
+     @Query("SELECT SUM(u.besucherVideos) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserVideosByUniStatId(int uniID);
+
      @Query("SELECT SUM(u.besucherWhitepaper) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserWhitepaperByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherEvents) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserEventsByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherRatgeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserRatgeberByUniStatId(int uniID);
@@ -114,6 +129,9 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      @Query("SELECT SUM(u.besucherMain) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserMainByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherAnbieter) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     public int getSumUserAnbieterByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherUeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      public int getSumUserUeberByUniStatId(int uniID);
@@ -158,8 +176,14 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.viewsPodcast) FROM UniversalCategoriesDLC u")
      public int getSumViewsPodcastAllTime();
 
+     @Query("SELECT SUM(u.viewsVideos) FROM UniversalCategoriesDLC u")
+     public int getSumViewsVideosAllTime();
+
      @Query("SELECT SUM(u.viewsWhitepaper) FROM UniversalCategoriesDLC u")
      public int getSumViewsWhitepaperAllTime();
+
+     @Query("SELECT SUM(u.viewsEvents) FROM UniversalCategoriesDLC u")
+     public int getSumViewsEventsAllTime();
 
      @Query("SELECT SUM(u.viewsRatgeber) FROM UniversalCategoriesDLC u")
      public int getSumViewsRatgeberAllTime();
@@ -178,6 +202,9 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      @Query("SELECT SUM(u.viewsMain) FROM UniversalCategoriesDLC u")
      public int getSumViewsMainAllTime();
+
+     @Query("SELECT SUM(u.viewsAnbieter) FROM UniversalCategoriesDLC u")
+     public int getSumViewsAnbieterAllTime();
 
      @Query("SELECT SUM(u.viewsUeber) FROM UniversalCategoriesDLC u")
      public int getSumViewsUeberAllTime();
@@ -220,8 +247,14 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.besucherPodcast) FROM UniversalCategoriesDLC u")
      public int getSumUserPodcastAllTime();
 
+     @Query("SELECT SUM(u.besucherVideos) FROM UniversalCategoriesDLC u")
+     public int getSumUserVideosAllTime();
+
      @Query("SELECT SUM(u.besucherWhitepaper) FROM UniversalCategoriesDLC u")
      public int getSumUserWhitepaperAllTime();
+
+     @Query("SELECT SUM(u.besucherEvents) FROM UniversalCategoriesDLC u")
+     public int getSumUserEventsAllTime();
 
      @Query("SELECT SUM(u.besucherRatgeber) FROM UniversalCategoriesDLC u ")
      public int getSumUserRatgeberAllTime();
@@ -240,6 +273,9 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      @Query("SELECT SUM(u.besucherMain) FROM UniversalCategoriesDLC u")
      public int getSumUserMainAllTime();
+
+     @Query("SELECT SUM(u.besucherAnbieter) FROM UniversalCategoriesDLC u")
+     public int getSumUserAnbieterAllTime();
 
      @Query("SELECT SUM(u.besucherUeber) FROM UniversalCategoriesDLC u")
      public int getSumUserUeberAllTime();

@@ -646,7 +646,7 @@ public class LogService {
 
                     //Does it match a blog-type?
                     Matcher matched_blogView = blogViewPattern.matcher(request);
-                    Matcher matched_blogCat = blogViewPattern.matcher(request);
+                    Matcher matched_blogCat = blogCategory.matcher(request);
                     Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
 
                     //Does it match a news-type?
@@ -1178,6 +1178,7 @@ public class LogService {
                             } else if (new JSONArray(uniqueUserRepo.findByIP(ip).getEvents()).length() < 2) {
                                 userEvents++;
                             }
+                            updateUniqueUser(ip, "events", dateLog);
                         }
                         case "videoView" -> {
                             viewsVideos++;
@@ -1186,6 +1187,7 @@ public class LogService {
                             }  else if (new JSONArray(uniqueUserRepo.findByIP(ip).getVideo()).length() < 2) {
                                 userVideos++;
                             }
+                            updateUniqueUser(ip, "video", dateLog);
                         }
                         case "anbieterCat" -> {
                             viewsAnbieter++;
@@ -1194,6 +1196,7 @@ public class LogService {
                             } else if (new JSONArray(uniqueUserRepo.findByIP(ip).getAnbieter()).length() < 2) {
                                 userAnbieter++;
                             }
+                            updateUniqueUser(ip, "anbieter", dateLog);
                         }
                         default -> {
                             if(!isNotNonsense) {
@@ -2914,6 +2917,15 @@ public class LogService {
             }
             case "agb" -> {
                 user.setAgb(new JSONArray(user.getAgb()).put(clicks).toString());
+            }
+            case "anbieter" -> {
+                user.setAnbieter(new JSONArray(user.getAnbieter()).put(clicks).toString());
+            }
+            case "video" -> {
+                user.setVideo(new JSONArray(user.getVideo()).put(clicks).toString());
+            }
+            case "events" -> {
+                user.setEvents(new JSONArray(user.getEvents()).put(clicks).toString());
             }
             case "nonsense" -> {
                 user.setNonsense(new JSONArray(user.getNonsense()).put(clicks).toString());

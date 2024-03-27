@@ -16,6 +16,9 @@ public class Constants {
     private final String plusAnbieter = "um_plus";
     private final String premiumAnbieter = "um_premium";
 
+    private final String thumbnailLocationStart = "https://it-sicherheit.de/wp-content/uploads/";
+    private final String profilePhotoStart = "https://it-sicherheit.de/wp-content/uploads/ultimatemember/";
+
     // Private constructor to prevent external instantiation
     private Constants() {
     }
@@ -66,5 +69,13 @@ public class Constants {
 
     public String getPremiumAnbieter() {
         return premiumAnbieter;
+    }
+
+    public String getThumbnailLocationStart() {
+        return thumbnailLocationStart;
+    }
+
+    public String getProfilePhotoStart() {
+        return profilePhotoStart;
     }
 }

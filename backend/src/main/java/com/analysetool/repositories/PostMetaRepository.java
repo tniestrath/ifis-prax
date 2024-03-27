@@ -22,4 +22,7 @@ public interface PostMetaRepository extends JpaRepository<PostMeta, Long> {
     @Query("SELECT DISTINCT p.meta_value FROM PostMeta p WHERE p.post_id=:postId AND p.meta_key='ppma_authors_name'")
     List<String> getAuthorsList(long postId);
 
+    @Query("SELECT p.meta_value FROM PostMeta p WHERE p.post_id = (SELECT CAST(pm.meta_value as int) FROM PostMeta pm WHERE pm.meta_key='_thumbnail_id' AND pm.post_id=:id) AND p.meta_key='_wp_attached_file'")
+    String getThumbnail(long id);
+
 }

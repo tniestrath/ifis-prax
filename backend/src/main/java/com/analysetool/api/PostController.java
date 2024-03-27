@@ -387,6 +387,7 @@ public class PostController {
     public String getPostStatsWithContent(long id) throws JSONException, ParseException {
         JSONObject json = new JSONObject(PostStatsByIdForFrontend(id));
         json.put("content", postRepo.findById(id).get().getContent());
+        json.put("thumbnail", Constants.getInstance().getThumbnailLocationStart() + postMetaRepo.getThumbnail(id));
         return json.toString();
     }
 

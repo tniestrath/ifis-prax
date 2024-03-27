@@ -416,7 +416,7 @@ public class UserController {
             String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.png"));
             String path2 = String.valueOf(Paths.get(config.getProfilephotos() + "/" + user.getId() + "/profile_photo.jpg"));
 
-            String srcUrl = "https://it-sicherheit.de/wp-content/uploads/ultimatemember/" + user.getId() + "/profile_photo";
+            String srcUrl = Constants.getInstance().getProfilePhotoStart() + user.getId() + "/profile_photo";
 
             if (new File(path).exists()) {
                 obj.put("img", srcUrl + ".png");

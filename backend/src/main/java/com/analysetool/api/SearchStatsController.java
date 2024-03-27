@@ -354,6 +354,7 @@ public class SearchStatsController {
         for(Tuple pair : pairs) {
             JSONObject obj = new JSONObject();
             try {
+                //noinspection RedundantCast
                 obj.put("query", (String) pair.get(0));
                 obj.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
                 obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery((String) pair.get(0)));
@@ -382,6 +383,7 @@ public class SearchStatsController {
         for(Tuple pair :  pairs) {
             JSONObject obj = new JSONObject();
             try {
+                //noinspection RedundantCast
                 obj.put("query", (String) pair.get(0));
                 obj.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
                 obj.put("sSCount", (long) pair.get(1));
@@ -409,6 +411,7 @@ public class SearchStatsController {
             for(Tuple pair : pairs) {
                 JSONObject obj = new JSONObject();
                 try {
+                    //noinspection RedundantCast
                     obj.put("query", (String) pair.get(0));
                     obj.put("searchedCount", (long) pair.get(1));
                     obj.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
@@ -478,6 +481,7 @@ public class SearchStatsController {
 
         for(Tuple pair : finalSearchStatRepo.getAllUnfixedSearchesWithZeroFound("%&%;%", PageRequest.of(page, size))) {
             JSONObject json = new JSONObject();
+            //noinspection RedundantCast
             json.put("search", (String) pair.get(0));
             json.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
             json.put("count", (long) pair.get(1));
@@ -515,7 +519,9 @@ public class SearchStatsController {
     @Modifying
     public boolean unblockSearch(long search) {
         boolean unblocked = false;
+        //noinspection OptionalGetWithoutIsPresent
         if(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isPresent()) {
+            //noinspection OptionalGetWithoutIsPresent
             blockedRepo.delete(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).get());
             unblocked = true;
         }
@@ -527,8 +533,10 @@ public class SearchStatsController {
     @Modifying
     public boolean blockSearch(long search) {
         boolean deleted = false;
+        //noinspection OptionalGetWithoutIsPresent
         if(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isEmpty()) {
             BlockedSearches b = new BlockedSearches();
+            //noinspection OptionalGetWithoutIsPresent
             b.setSearch(finalSearchStatRepo.findById(search).get().getSearchQuery());
             blockedRepo.save(b);
             deleted = true;
@@ -540,11 +548,15 @@ public class SearchStatsController {
     @GetMapping("/flipSearch")
     @Modifying
     public String flipSearch(long search) {
+        //noinspection OptionalGetWithoutIsPresent
         if(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isPresent()) {
+            //noinspection OptionalGetWithoutIsPresent
             blockedRepo.delete(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).get());
+            //noinspection OptionalGetWithoutIsPresent
             return finalSearchStatRepo.findById(search).get().getSearchQuery();
         } else {
             BlockedSearches bs = new BlockedSearches();
+            //noinspection OptionalGetWithoutIsPresent
             bs.setSearch(finalSearchStatRepo.findById(search).get().getSearchQuery());
             blockedRepo.save(bs);
             return "DELETED";
@@ -554,7 +566,7 @@ public class SearchStatsController {
     @GetMapping("/flipAnbieterSearch")
     @Modifying
     public String flipAnbieterSearch(long search) throws JSONException {
-        AnbieterFailedSearchBuffer afb = anbieterFailRepo.findById(search).get();
+        @SuppressWarnings("OptionalGetWithoutIsPresent") AnbieterFailedSearchBuffer afb = anbieterFailRepo.findById(search).get();
         JSONObject json = new JSONObject();
         if(baSearchRepo.getBySearchAndPlace(afb.getSearch(), afb.getCity()).isPresent()) {
             baSearchRepo.delete(baSearchRepo.getBySearchAndPlace(afb.getSearch(), afb.getCity()).get());
@@ -573,7 +585,7 @@ public class SearchStatsController {
     @GetMapping("/flipAnbieterSearchByData")
     @Modifying
     public String flipAnbieterSearch(String search, String place) throws JSONException {
-        AnbieterFailedSearchBuffer afb = anbieterFailRepo.findByCityAndSearch(place, search).get();
+        @SuppressWarnings("OptionalGetWithoutIsPresent") AnbieterFailedSearchBuffer afb = anbieterFailRepo.findByCityAndSearch(place, search).get();
         JSONObject json = new JSONObject();
         if(baSearchRepo.getBySearchAndPlace(afb.getSearch(), afb.getCity()).isPresent()) {
             baSearchRepo.delete(baSearchRepo.getBySearchAndPlace(afb.getSearch(), afb.getCity()).get());

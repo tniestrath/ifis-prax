@@ -77,53 +77,31 @@ public class DiagnosisController {
     @GetMapping("/doCheckUpSite")
     public String doCheckUpHTML() throws JSONException {
 
-        StringBuilder html = new StringBuilder("<!DOCTYPE html>" +
-                "<html lang=\"en\">" +
-                "<head>" +
-                "    <meta charset=\"UTF-8\">" +
-                "    <title>Selbstdiagnose</title>" +
-                "    <style>" +
-                "       table {\n" +
-                "    border: 1px solid black;\n" +
-                "    width: 100%;\n" +
-                "    border-collapse: collapse;\n" +
-                "}\n" +
-                "\n" +
-                "th, td {\n" +
-                "    border-bottom: 2px solid black;\n" +
-                "    padding: 8px;\n" +
-                "    text-align: left;\n" +
-                "}\n" +
-                "\n" +
-                "th {\n" +
-                "    background-color: #f2f2f2;\n" +
-                "}\n" +
-                "\n" +
-                "tr:nth-child(even) {\n" +
-                "    background-color: #f2f2f2;\n" +
-                "}\n" +
-                "\n" +
-                "tr:hover {\n" +
-                "    background-color: #ddd;\n" +
-                "}\n" +
-                "       tr{" +
-                "           border-bottom: 2px solid black;" +
-                "           height: 20px;" +
-                "       }" +
-                "    </style>" +
-                "</head>" +
-                "<body>" +
-                "<table>" +
-                "<thead>" +
-                "<tr>" +
-                "<th>Severity</th>" +
-                "<th>Description</th>" +
-                "<th>Area</th>" +
-                "<th>Suggested Solution</th>" +
-                "<th>Solution Link</th>" +
-                "</tr>" +
-                "</thead>" +
-                "<tbody>");
+        StringBuilder html = new StringBuilder("""
+                <!DOCTYPE html><html lang="en"><head>    <meta charset="UTF-8">    <title>Selbstdiagnose</title>    <style>       table {
+                    border: 1px solid black;
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+
+                th, td {
+                    border-bottom: 2px solid black;
+                    padding: 8px;
+                    text-align: left;
+                }
+
+                th {
+                    background-color: #f2f2f2;
+                }
+
+                tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+
+                tr:hover {
+                    background-color: #ddd;
+                }
+                       tr{           border-bottom: 2px solid black;           height: 20px;       }    </style></head><body><table><thead><tr><th>Severity</th><th>Description</th><th>Area</th><th>Suggested Solution</th><th>Solution Link</th></tr></thead><tbody>""");
 
 
 
@@ -157,7 +135,7 @@ public class DiagnosisController {
     }
 
 
-    private List<Problem> allCheckups() throws JSONException {
+    private List<Problem> allCheckups() {
         List<Problem> largeList  = new ArrayList<>();
 
         //Add new lines for new categories of checkups. If any of these are applicable, please add new routines in the respective subroutine.
@@ -367,8 +345,7 @@ public class DiagnosisController {
     }
 
     private List<Problem> findSearchStatProblems() {
-        List<Problem> list = new ArrayList<>();
-        list.addAll(successErrorCheck());
+        List<Problem> list = new ArrayList<>(successErrorCheck());
         return list;
     }
 

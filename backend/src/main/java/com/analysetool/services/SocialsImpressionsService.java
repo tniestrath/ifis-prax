@@ -31,30 +31,30 @@ public class SocialsImpressionsService {
             impression.setLinkedIn(0L);
         }
         Long counter;
-        switch (whatMatched){
-            case "postImpressionFacebook":
-                counter= impression.getFacebook();
+        switch (whatMatched) {
+            case "postImpressionFacebook" -> {
+                counter = impression.getFacebook();
                 counter++;
                 impression.setFacebook(counter);
-                break;
-            case "postImpressionTwitter":
-                counter= impression.getTwitter();
+            }
+            case "postImpressionTwitter" -> {
+                counter = impression.getTwitter();
                 counter++;
                 impression.setTwitter(counter);
-                break;
-            case "postImpressionLinkedIn":
-                counter= impression.getLinkedIn();
+            }
+            case "postImpressionLinkedIn" -> {
+                counter = impression.getLinkedIn();
                 counter++;
                 impression.setLinkedIn(counter);
-                break;
-            case "postImpressionFacebookTwitterCombo":
-                counter= impression.getFacebook();
+            }
+            case "postImpressionFacebookTwitterCombo" -> {
+                counter = impression.getFacebook();
                 counter++;
                 impression.setFacebook(counter);
-                counter= impression.getTwitter();
+                counter = impression.getTwitter();
                 counter++;
                 impression.setTwitter(counter);
-                break;
+            }
         }
         socialsImpressionsRepo.save(impression);
     }
@@ -74,30 +74,31 @@ public class SocialsImpressionsService {
             impression.setLinkedIn(0L);
         }
         Long counter;
-        switch (whatMatched){
-            case "postImpressionFacebook":
-                counter= impression.getFacebook();
+        switch (whatMatched) {
+            case "postImpressionFacebook" -> {
+                counter = impression.getFacebook();
                 counter++;
                 impression.setFacebook(counter);
-                break;
-            case "postImpressionTwitter":
-                counter= impression.getTwitter();
+            }
+            case "postImpressionTwitter" -> {
+                counter = impression.getTwitter();
                 counter++;
                 impression.setTwitter(counter);
-                break;
-            case "postImpressionLinkedIn":
-                counter= impression.getLinkedIn();
+            }
+            case "postImpressionLinkedIn" -> {
+                counter = impression.getLinkedIn();
                 counter++;
                 impression.setLinkedIn(counter);
-                break;
-            case "postImpressionFacebookTwitterCombo":
-                counter= impression.getFacebook();
+            }
+            case "postImpressionFacebookTwitterCombo" -> {
+                counter = impression.getFacebook();
                 counter++;
                 impression.setFacebook(counter);
-                counter= impression.getTwitter();
+                counter = impression.getTwitter();
                 counter++;
                 impression.setTwitter(counter);
-                break;
-        }        socialsImpressionsRepo.save(impression);
+            }
+        }
+        socialsImpressionsRepo.save(impression);
     }
 }

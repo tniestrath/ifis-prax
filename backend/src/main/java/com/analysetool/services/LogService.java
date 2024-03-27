@@ -379,7 +379,7 @@ public class LogService {
     /**
      * Initializes and starts a "run" - which is the process of reading the new entries in access.log.
      * Otherwise, an exact duplicate of runScheduled.
-     * @throws ParseException
+     * @throws ParseException .
      */
     @PostConstruct
     public void init() throws ParseException {
@@ -483,11 +483,7 @@ public class LogService {
         SystemVariabeln.setLastLine(lastLine);
         updateWordCountForAll();
 
-        try {
-            updatePostTypes();
-        } catch (JSONException e) {
-            System.out.println("JSON EXCEPTION BEI UPDATEPOSTTYPES");
-        }
+        updatePostTypes();
 
         doAutoClean();
 
@@ -2655,10 +2651,8 @@ public class LogService {
 
     /**
      * Updates a auxiliary table used to determine posts types quicker.
-     * @throws JSONException no.
-     * @throws ParseException no.
      */
-    private void updatePostTypes() throws JSONException, ParseException {
+    private void updatePostTypes() {
         postTypeRepo.deleteAll(postTypeRepo.getDefault());
         for(Integer id : postRepository.getIdsOfUntyped()) {
             PostTypes type = new PostTypes();
@@ -2877,7 +2871,7 @@ public class LogService {
 
     /**
      * Persists all UniqueUsers by converting their data into permanent data and deleting the old rows.
-     * @throws JSONException
+     * @throws JSONException .
      */
     private void permanentifyAllUsers() throws JSONException {
         for(UniqueUser user : uniqueUserRepo.findAll()) {

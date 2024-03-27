@@ -26,7 +26,7 @@ public class DashUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        WPUser user= userRepository.findByLogin(username).get();
+        @SuppressWarnings("OptionalGetWithoutIsPresent") WPUser user= userRepository.findByLogin(username).get();
         return new User(user.getLogin(), user.getPassword(), mapIdsToAuthorities(user.getId()));
     }
 

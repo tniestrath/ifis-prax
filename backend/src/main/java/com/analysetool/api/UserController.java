@@ -461,7 +461,7 @@ public class UserController {
     }
 
     @GetMapping("/getUserClicksChartData")
-    public String getUserClicksChartData(long id, String start, String end) throws JSONException, ParseException {
+    public String getUserClicksChartData(long id, String start, String end) throws JSONException {
         Date startDate = Date.valueOf(start);
         Date endDate  = Date.valueOf(end);
 
@@ -569,7 +569,7 @@ public class UserController {
     }
 
     @GetMapping("/getPostCountByType")
-    public String getPostCountByType(long id) throws JSONException, ParseException {
+    public String getPostCountByType(long id) throws JSONException {
         List<Post> posts = postRepository.findByAuthorPageable(id, "", PageRequest.of(0, postController.getCountTotalPosts()));
 
         int countArtikel = 0;
@@ -1204,16 +1204,12 @@ public class UserController {
     }
 
     private void listAddByType(String type, List<String> list, WPMemberships member) {
-        if(type.equals("basis-plus")) {
-            listAdd(list, member);
-        } else if(type.equals("sponsor")) {
-            listAdd(list, member);
-        } else if(type.equals("premium")) {
-            listAdd(list, member);
-        } else if(type.equals("plus")) {
-            listAdd(list, member);
-        } else if(type.equals("basis")) {
-            listAdd(list, member);
+        switch (type) {
+            case "basis-plus" -> listAdd(list, member);
+            case "sponsor" -> listAdd(list, member);
+            case "premium" -> listAdd(list, member);
+            case "plus" -> listAdd(list, member);
+            case "basis" -> listAdd(list, member);
         }
     }
 
@@ -1303,7 +1299,7 @@ public class UserController {
     }
 
     @GetMapping("/hasPostByType")
-    public String hasPostByType(int id) throws JSONException, ParseException {
+    public String hasPostByType(int id) throws JSONException {
         JSONObject jsonTypes = new JSONObject();
         boolean news = false, artikel = false, blog = false, podcast = false, whitepaper= false;
         for(Post p : postRepository.findByAuthor(id)) {
@@ -1322,10 +1318,6 @@ public class UserController {
         jsonTypes.put("whitepaper", whitepaper);
 
         return jsonTypes.toString();
-    }
-
-    private boolean hasPostByType(String type) {
-        return false;
     }
 
     /**

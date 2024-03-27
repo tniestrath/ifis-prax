@@ -1,7 +1,7 @@
 package com.analysetool.services;
+
 import com.analysetool.modells.ContentDownloadsHourly;
 import com.analysetool.modells.Post;
-import com.analysetool.modells.UserViewsByHourDLC;
 import com.analysetool.repositories.ContentDownloadsHourlyRepository;
 import com.analysetool.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,7 +146,7 @@ public class ContentDownloadsHourlyService {
      * @return map with postId as key and download count as value.
      */
     public Map<Long, Long> getAllDownloadsOfUserContentBrokenDownByUserIdAsMap(Long userId){
-        Long downloadCount=0L;
+        Long downloadCount;
         //postId:DownloadCount
         Map<Long,Long> downloadsOfPost= new HashMap<>();
         for(Long postId:postRepo.findPostIdsByUserId(userId)){
@@ -164,7 +164,7 @@ public class ContentDownloadsHourlyService {
      * @return String representation of a map with postId as key and download count as value.
      */
     public String getAllDownloadsOfUserContentBrokenDownByUserIdAsString(Long userId){
-        Long downloadCount=0L;
+        Long downloadCount;
         //postId:DownloadCount
         Map<Long,Long> downloadsOfPost= new HashMap<>();
         for(Long postId:postRepo.findPostIdsByUserId(userId)){
@@ -190,8 +190,9 @@ public class ContentDownloadsHourlyService {
     }
 
     public Post getPostByContent(ContentDownloadsHourly contentDownload){
-       Post content= postRepo.findById(contentDownload.getPostId()).get();
-       return postRepo.findById(content.getParentId()).get();
+       @SuppressWarnings("OptionalGetWithoutIsPresent") Post content= postRepo.findById(contentDownload.getPostId()).get();
+        //noinspection OptionalGetWithoutIsPresent
+        return postRepo.findById(content.getParentId()).get();
     }
 
 }

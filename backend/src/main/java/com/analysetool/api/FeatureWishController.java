@@ -53,7 +53,7 @@ public class FeatureWishController {
     }
 
     @GetMapping("/feedbackSite")
-    public String getAllAndFeedbackOption() throws IOException {
+    public String getAllAndFeedbackOption() {
         String html = hardcodedHTML;
 
         html = html.replace("REPLACEREPLACEREPLACE", getHTMLUnfixed());
@@ -91,7 +91,7 @@ public class FeatureWishController {
     }
 
     @GetMapping("/testSite")
-    public String getTestForSite() throws IOException {
+    public String getTestForSite() {
         return hardcodedHTML;
     }
 

@@ -9,10 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import oshi.SystemInfo;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.util.tuples.Pair;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -62,9 +58,7 @@ public class SystemLoadController {
         if (allSystemLoads.isEmpty()) return "{}";
 
         SystemLoad peakLoad = allSystemLoads.stream()
-                .max((load1, load2) -> Double.compare(
-                        (load1.getCpuLoad() + load1.getMemoryLoad()) / 2,
-                        (load2.getCpuLoad() + load2.getMemoryLoad()) / 2))
+                .max(Comparator.comparingDouble(load -> (load.getCpuLoad() + load.getMemoryLoad()) / 2))
                 .orElseThrow();
 
         return String.format("{\"cpu\": %f, \"memory\": %f, \"timestamp\": %d}",

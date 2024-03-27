@@ -35,7 +35,7 @@ public class UserViewsByHourDLCService {
 
         List<Integer> uniIds = new ArrayList<>(page.getContent());
         List<Integer> availableUniIds = new ArrayList<>(userViewHourDLCRepo.getAvailableUniIdIn(uniIds));
-        Long actualDaysBack= (long)availableUniIds.size();
+        long actualDaysBack= availableUniIds.size();
 
         Long[] Ergebnis = new Long[]{userViewHourDLCRepo.sumViewsByUserIdAndUniIdIn(userId,availableUniIds),actualDaysBack};
 

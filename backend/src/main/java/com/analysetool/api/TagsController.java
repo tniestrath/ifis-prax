@@ -52,7 +52,7 @@ public class TagsController {
     @GetMapping("/getPostTags")
     List<WPTerm>getPostTags(){
         List<Long> li = termTaxonomyRepository.getAllPostTags();
-        List<WPTerm> list = new ArrayList<WPTerm>();
+        List<WPTerm> list = new ArrayList<>();
         for (Long l:li){
             Optional <WPTerm> optTerm =termRepository.findById(l);
              if(optTerm.isPresent()){
@@ -93,7 +93,8 @@ public class TagsController {
        for (WpTermTaxonomy i:list){
            JSONObject jsonObject=new JSONObject();
           jsonObject.put( "id",i.getTermId());
-          jsonObject.put("name", termRepository.findById(i.getTermId()).get().getName());
+           //noinspection OptionalGetWithoutIsPresent
+           jsonObject.put("name", termRepository.findById(i.getTermId()).get().getName());
           jsonObject.put("count",i.getCount());
           Antwort.put(jsonObject);
        }
@@ -119,6 +120,7 @@ public class TagsController {
         for(WpTermTaxonomy tax:termTaxs){
             JSONObject obj = new JSONObject();
             if(tax.getTaxonomy().equals("post_tag")){
+                //noinspection OptionalGetWithoutIsPresent
                 obj.put("name",termRepository.findById(tax.getTermId()).get().getName());
                 obj.put("id", tax.getTermId());
                 if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) { obj.put("relevance", tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance());}
@@ -139,6 +141,7 @@ public class TagsController {
         for(WpTermTaxonomy tax : termTaxs){
             JSONObject obj = new JSONObject();
             if(tax.getTaxonomy().equals("post_tag")){
+                //noinspection OptionalGetWithoutIsPresent
                 obj.put("name",termRepository.findById(tax.getTermId()).get().getName());
                 if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) {
                     obj.put("relevance", tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance());
@@ -205,6 +208,7 @@ public class TagsController {
         for(WpTermTaxonomy tax : termTaxs){
             JSONObject obj = new JSONObject();
             if(tax.getTaxonomy().equals("post_tag")){
+                //noinspection OptionalGetWithoutIsPresent
                 obj.put("name",termRepository.findById(tax.getTermId()).get().getName());
                 obj.put("id", tax.getTermId());
                 obj.put("count", getCount(tax.getTermId().intValue(), new Date()));
@@ -268,7 +272,7 @@ public class TagsController {
         List<wp_term_relationships> termRel = termRelRepo.findByTermTaxonomyId(termTaxId);
         ArrayList<Post> posts = new ArrayList<>();
         for(wp_term_relationships t: termRel){
-            Post post = postRepo.findById(t.getObjectId()).get();
+            @SuppressWarnings("OptionalGetWithoutIsPresent") Post post = postRepo.findById(t.getObjectId()).get();
             Date datePost =Date.from( post.getDate().atZone(ZoneId.systemDefault()).toInstant());
             if(datePost.before(dateLimit)){
                 posts.add(post);

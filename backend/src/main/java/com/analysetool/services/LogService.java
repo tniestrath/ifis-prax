@@ -2187,12 +2187,19 @@ public class LogService {
         statsRepo.updateWordCount(wordCount,id);
     }
 
+    /**
+     * Updates Word-Count statistic for all posts.
+     */
     public void updateWordCountForAll () {
         for(Post p : postRepository.findAllUserPosts()) {
             updateCountWordsForPost(p.getId());
         }
     }
 
+    /**
+     * Fetch the date for yesterday.
+     * @return a string representation of the date in yyyyMMdd format.
+     */
     public static String getLastDay(){
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1); // Vortag
@@ -2202,71 +2209,12 @@ public class LogService {
         return dateFormat.format(vortag);
     }
 
-    public static String getDay(int zuruek){
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, -zuruek); // Vortag
-        Date vortag = calendar.getTime();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        return dateFormat.format(vortag);
-    }
-
-    public static String generateLogFileNameLastDay() {
-       return "access.log-" + getLastDay() + ".gz";
-    }
-
-    public UniversalStats setNewsArticelBlogCountForUniversalStats(UniversalStats uniStats){
-
-        List<Post> posts = postRepository.findAllUserPosts();
-
-        long artikelCounter = 0 ;
-        long newsCounter =0;
-        long blogCounter = 0;
-        long whitepaperCounter = 0;
-        long podcastCounter = 0;
-
-        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
-        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
-        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
-        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
-
-        for (Post post : posts) {
-                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
-                    for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
-
-                        if (termTax.getTermId() == tagIdBlog) {
-                            blogCounter++ ;
-                        }
-
-                        if (termTax.getTermId() == tagIdArtikel) {
-                            artikelCounter++ ;
-                        }
-
-                        if (termTax.getTermId() == tagIdPresse) {
-                            newsCounter++ ;
-                        }
-
-                        if (termTax.getTermId() == tagIdWhitepaper) {
-                            whitepaperCounter++ ;
-                        }
-
-                        if (termTax.getTermId() == tagIdPodcast) {
-                            podcastCounter++ ;
-                        }
-                    }
-
-
-                }
-            }
-
-        uniStats.setAnzahlArtikel(artikelCounter);
-        uniStats.setAnzahlNews(newsCounter);
-        uniStats.setAnzahlBlog(blogCounter);
-
-        return uniStats ;
-    }
-
+    /**
+     * Sets counts for different types of posts in a universal-stats row.
+     * @param dateStr the date to update for.
+     * @param uniStats the id for the uni-row to update.
+     * @return the updated UniStats (usage not recommended).
+     */
     public UniversalStats setNewsArticelBlogCountForUniversalStats(Date dateStr, UniversalStats uniStats) {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -2328,6 +2276,11 @@ public class LogService {
         return uniStats;
     }
 
+    /**
+     * Counts all types of users and updates universal-stats for them.
+     * @param uniStats the uni-stats to update.
+     * @return the updated UniStats (usage not recommended).
+     */
     @SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
     public UniversalStats setAccountTypeAllUniStats(UniversalStats uniStats){
         HashMap<String, Integer> counts = new HashMap<>();
@@ -2372,6 +2325,12 @@ public class LogService {
         return uniStats;
     }
 
+    /**
+     * Updates the IPs by Post table, containing IPs that have accessed a post.
+     * @param ip the ip to update with.
+     * @param id the id of the post to update for.
+     * @throws JSONException no.
+     */
     private void updateIPsByPost(String ip, long id) throws JSONException {
         if(postRepository.findById(id).isPresent()) {
             if(iPsByPostRepository.getByID(id) != null) {
@@ -2391,6 +2350,12 @@ public class LogService {
         }
     }
 
+    /**
+     * Updates the IPs by User table, containing IPs that have accessed a users page.
+     * @param ip the ip to update with.
+     * @param id the id of the user to update for.
+     * @throws JSONException no.
+     */
     private void updateIPsByUser(String ip, long id) throws JSONException {
         if(userStatsRepo.findByUserId(id) != null) {
             if(iPsByUserRepository.getByUserID(id) != null) {
@@ -2410,6 +2375,10 @@ public class LogService {
         }
     }
 
+    /**
+     * Updates different geolocation tables for the current states of other tables.
+     * Also deletes old values from temporary, daily-type tables.
+     */
     private void updateClicksBy() {
         int uniId = uniRepo.getSecondLastUniStats().get(1).getId();
         String ip;
@@ -2483,6 +2452,10 @@ public class LogService {
         }
     }
 
+    /**
+     * Updates different geolocation tables, for a single user.
+     * @param ip the ip to update Geolocation with.
+     */
     private void updateClicksByIpLiveDay(String ip) {
         int uniId = uniRepo.getLatestUniStat().getId();
         ClicksByCountry clicksByCountry;
@@ -2550,11 +2523,17 @@ public class LogService {
         }
     }
 
+    /**
+     * Updates Geolocation-Stats.
+     */
     private void updateGeo() {
         updatePostGeo();
         updateUserGeo();
     }
 
+    /**
+     * Updates Geolocation-Stats for Posts, uses temporary tables.
+     */
     private void updatePostGeo() {
         PostGeo postGeo;
         System.out.println("POST GEO UPDATE");
@@ -2621,6 +2600,9 @@ public class LogService {
         }
     }
 
+    /**
+     * Updates Geolocation-Stats for User, uses temporary tables.
+     */
     private void updateUserGeo() {
         UserGeo userGeo;
         System.out.println("USER GEO UPDATE");
@@ -2662,12 +2644,20 @@ public class LogService {
         }
     }
 
+    /**
+     * Deletes all old IPs that were used in Geolocation.
+     */
     private void deleteOldIPs() {
         iPsByUserRepository.deleteAll();
         iPsByPostRepository.deleteAll();
         uniqueUserRepo.deleteAll();
     }
 
+    /**
+     * Updates a auxiliary table used to determine posts types quicker.
+     * @throws JSONException no.
+     * @throws ParseException no.
+     */
     private void updatePostTypes() throws JSONException, ParseException {
         postTypeRepo.deleteAll(postTypeRepo.getDefault());
         for(Integer id : postRepository.getIdsOfUntyped()) {
@@ -2678,6 +2668,13 @@ public class LogService {
         }
     }
 
+    /**
+     * Updates a UniqueUser row.
+     * @param ip the ip of the user to update.
+     * @param category the category that was clicked.
+     * @param clickTime the time that the click happened at.
+     * @throws JSONException no.
+     */
     @SuppressWarnings("RedundantLabeledSwitchRuleCodeBlock")
     private void updateUniqueUser(String ip, String category, LocalDateTime clickTime) throws JSONException {
         UniqueUser user = uniqueUserRepo.findByIP(ip);
@@ -2761,6 +2758,11 @@ public class LogService {
 
     }
 
+    /**
+     * Initializes a UniqueUser-row with rudimentary values.
+     * @param ip the ip to create a row for.
+     * @param clickTime the time that the click happened at.
+     */
     private void initUniqueUser(String ip, LocalDateTime clickTime) {
         UniqueUser user = new UniqueUser();
         user.setIp(ip);
@@ -2790,6 +2792,11 @@ public class LogService {
         uniqueUserRepo.save(user);
     }
 
+    /**
+     * Persists a UniqueUser-row's data by writing it into other tables and deleting the row in UniqueUser.
+     * @param ip the ip to permanentify stats for.
+     * @throws JSONException no.
+     */
     private void permanentifyUser(String ip) throws JSONException {
         if(uniAverageClicksRepo.findById(uniRepo.getLatestUniStat().getId()).isEmpty()) {
             initUniAverages();
@@ -2868,6 +2875,10 @@ public class LogService {
         }
     }
 
+    /**
+     * Persists all UniqueUsers by converting their data into permanent data and deleting the old rows.
+     * @throws JSONException
+     */
     private void permanentifyAllUsers() throws JSONException {
         for(UniqueUser user : uniqueUserRepo.findAll()) {
             String ip = user.getIp();
@@ -2875,6 +2886,9 @@ public class LogService {
         }
     }
 
+    /**
+     * Initializes a row for UniAverages.
+     */
     private void initUniAverages() {
         UniversalAverageClicksDLC uniAverage = new UniversalAverageClicksDLC();
         uniAverage.setArticle(0);
@@ -2894,6 +2908,9 @@ public class LogService {
         uniAverageClicksRepo.save(uniAverage);
     }
 
+    /**
+     * Initializes a row for UniTime.
+     */
     private void initUniTime() {
         UniversalTimeSpentDLC uniTime = new UniversalTimeSpentDLC();
         uniTime.setArticle(0);
@@ -2914,8 +2931,14 @@ public class LogService {
         uniTimeSpentRepo.save(uniTime);
     }
 
-
-
+    /**
+     * Updates a SearchDLC-row.
+     * @param ip the ip to update with.
+     * @param searchQuery the search to update for.
+     * @param Id the id to update for.
+     * @param dateLog the date to update with.
+     * @param matchCase no clue.
+     */
     public void updateSearchDLCMap(String ip, String searchQuery, Long Id, LocalDateTime dateLog, String matchCase) {
 
         int uniId = uniRepo.getLatestUniStat().getId();
@@ -2947,8 +2970,11 @@ public class LogService {
         searchDLCMap.put(key, searchDLCList);
     }
 
-
-
+    /**
+     * Attempts to find matches between searches and search successes, linking their table entries.
+     * @param tempSearches .
+     * @param finalSearches .
+     */
     public void linkSearchSuccessesWithSearches(List<TemporarySearchStat> tempSearches, List<FinalSearchStat> finalSearches) {
         // Erstelle zuerst eine Map für die Zuordnung von TempID zu FinalSearchStat
         System.out.println(searchDLCMap);
@@ -2983,8 +3009,9 @@ public class LogService {
         System.out.println("SearchDLC save success: " + saveSuccess);
     }
 
-
-
+    /**
+     * Updates Search-Stat Tables.
+     */
     private void updateFinalSearchStatsAndTemporarySearchStats(){
         //List<TemporarySearchStat> alleTempSearches= temporarySearchService.getAllSearchStat();
         CopyOnWriteArrayList<TemporarySearchStat> alleTempSearches= temporarySearchService.getAllSearchStatConcurrent();
@@ -3024,7 +3051,12 @@ public class LogService {
         }
     }
 
-
+    /**
+     * Updates social-media redirects.
+     * @param whatMatched what social-media redirect happened, as a String representation.
+     * @param redirects the row of SocialsRedirects to update.
+     * @return the OutgoingSocialRedirects-Row after the update (usage not recommended).
+     */
     private OutgoingSocialsRedirects updateSocialsRedirects(String whatMatched ,  OutgoingSocialsRedirects redirects){
         Long counter;
 
@@ -3060,11 +3092,17 @@ public class LogService {
         return redirects;
     }
 
+    /**
+     * Updates an auxiliary table to ease access to Anbieter-Search data.
+     */
     public void updateAnbieterFailedSearchBuffer() {
         removeNoLongerFails();
         addNewFails();
     }
 
+    /**
+     * Adds newly failed searches to Anbieter-Search-Table.
+     */
     private void addNewFails() {
         for(AnbieterSearch a : anbieterSearchRepo.findAllNoneFound()) {
             if(anbieterSearchFailRepo.getByData(a.getSearch(), a.getCity_name(), a.getPlz(), a.getUmkreis()).isEmpty()) {
@@ -3087,6 +3125,9 @@ public class LogService {
         }
     }
 
+    /**
+     * Removes searches that no longer fail from Anbieter-Search-Table.
+     */
     private void removeNoLongerFails() {
         for(AnbieterFailedSearchBuffer a : anbieterSearchFailRepo.findAll()) {
             if(!(anbieterSearchRepo.findCountNotZeroForData(a.getSearch(), a.getCity(), a.getPlz(), a.getUmkreis()).isEmpty())) {
@@ -3095,10 +3136,16 @@ public class LogService {
         }
     }
 
+    /**
+     * Deletes all rows that are a standard search with no filters set from table.
+     */
     private void deleteStandardSearch() {
         anbieterSearchRepo.deleteAll(anbieterSearchRepo.findAllSchmutzSearch());
     }
 
+    /**
+     * Cleans FinalSearchStatDLC table from entries that couldnt be matched correctly.
+     */
     private void cleanFinalSearchStatDLC() {
         for(FinalSearchStatDLC f : fDLCRepo.findAll()) {
             if(f.getFinalSearchId() == null || (f.getPostId() == null && f.getUserId() == null)) {

@@ -17,4 +17,7 @@ public interface AnbieterFailedSearchBufferRepository extends JpaRepository<Anbi
 
     @Query("SELECT a FROM AnbieterFailedSearchBuffer a ORDER BY a.count DESC")
     List<AnbieterFailedSearchBuffer> getPageable(Pageable pageable);
+
+    @Query("SELECT c FROM AnbieterFailedSearchBuffer c WHERE c.city=:city AND c.search=:search")
+    Optional<AnbieterFailedSearchBuffer> findByCityAndSearch(String city, String search);
 }

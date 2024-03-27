@@ -15,6 +15,9 @@ public class BlockedSearchesAnbieter implements Serializable {
     @Column(name="search")
     private String search;
 
+    @Column(name="place")
+    private String place;
+
     public Long getId() {
         return id;
     }
@@ -29,5 +32,13 @@ public class BlockedSearchesAnbieter implements Serializable {
 
     public void setSearch(String search) {
         this.search = search;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
     }
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface BlockedSearchesAnbieterRepository extends JpaRepository<BlockedSearchesAnbieter, Long> {
 
-    @Query("SELECT b FROM BlockedSearchesAnbieter b WHERE b.search=:search")
-    Optional<BlockedSearchesAnbieter> getBySearch(String search);
+    @Query("SELECT b FROM BlockedSearchesAnbieter b WHERE b.search=:search AND b.place=:place")
+    Optional<BlockedSearchesAnbieter> getBySearchAndPlace(String search, String place);
 
 }

@@ -553,22 +553,39 @@ public class SearchStatsController {
 
     @GetMapping("/flipAnbieterSearch")
     @Modifying
-    public String flipAnbieterSearch(long search) {
-        if(baSearchRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isPresent()) {
-            baSearchRepo.delete(baSearchRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).get());
-            return finalSearchStatRepo.findById(search).get().getSearchQuery();
+    public String flipAnbieterSearch(long search) throws JSONException {
+        AnbieterFailedSearchBuffer afb = anbieterFailRepo.findById(search).get();
+        JSONObject json = new JSONObject();
+        if(baSearchRepo.getBySearchAndPlace(afb.getSearch(), afb.getCity()).isPresent()) {
+            baSearchRepo.delete(baSearchRepo.getBySearchAndPlace(afb.getSearch(), afb.getCity()).get());
+            json.put("city", afb.getCity());
+            json.put("query", afb.getSearch());
         } else {
             BlockedSearchesAnbieter bs = new BlockedSearchesAnbieter();
             bs.setSearch(finalSearchStatRepo.findById(search).get().getSearchQuery());
             baSearchRepo.save(bs);
-            return "DELETED";
+            json.put("query", "DELETED");
         }
+        return json.toString();
     }
 
     @GetMapping("/getAllBlocked")
     public String getAllBlocked() throws JSONException {
         JSONArray array = new JSONArray();
         for(BlockedSearches blocked : blockedRepo.findAll()) {
+            JSONObject json = new JSONObject();
+            json.put("search", blocked.getSearch());
+            json.put("id", finalSearchStatRepo.getIdsBySearch(blocked.getSearch()).get(0));
+            array.put(json);
+        }
+
+        return array.toString();
+    }
+
+    @GetMapping("/getAllAnbieterBlocked")
+    public String getAllAnbieterBlocked() throws JSONException {
+        JSONArray array = new JSONArray();
+        for(BlockedSearchesAnbieter blocked : baSearchRepo.findAll()) {
             JSONObject json = new JSONObject();
             json.put("search", blocked.getSearch());
             json.put("id", finalSearchStatRepo.getIdsBySearch(blocked.getSearch()).get(0));

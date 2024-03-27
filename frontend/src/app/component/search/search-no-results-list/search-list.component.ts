@@ -187,18 +187,30 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
     //TODO: IMPLEMENT UNDO LIKE ABOVE
     this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection  => {
       if (selection.operation == "DELETE") {
-        this.db.ignoreAnbieterSearch((selection.item as SearchAnbieterItem).id).then(r => {
+        this.db.flipAnbieterSearch((selection.item as SearchAnbieterItem).id).then(r => {
           console.log((selection.item as SearchAnbieterItem).search + " : " + (selection.item as SearchAnbieterItem).city + " : Successfully set deleted: " + r)
-          if (r) {
-            this.selectorItems = [];
-            this.db.getSearchesAnbieterWithoutResults(0, this.pageSize).then(res => {
-              for (var search of res) {
-                this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
-              }
-              this.selectorItemsLoaded.next(this.selectorItems);
-            });
-            this.pageIndex++;
+          if ((r as { city: string, query : string }).query == "DELETED") {
+            let index = -1;
+            for (let i = 0; i < this.selectorItems.length; i++) {
+              if (this.selectorItems[i].data.id == selection.item.id){ index = i; break;}
+            }
+            // @ts-ignore
+            (this.selectorItems.at(index).data as SearchAnbieterItem).search = " - - - ";
+            // @ts-ignore
+            (this.selectorItems.at(index).data as SearchAnbieterItem).city = "GELÖSCHT";
+            this.selectorItemsLoaded.next(this.selectorItems);
+          } else {
+            let index = -1;
+            for (let i = 0; i < this.selectorItems.length; i++) {
+              if (this.selectorItems[i].data.id == selection.item.id){ index = i; break;}
+            }
+            // @ts-ignore
+            (this.selectorItems.at(index).data as SearchAnbieterItem).search = (r as { city: string, query : string }).query;
+            // @ts-ignore
+            (this.selectorItems.at(index).data as SearchAnbieterItem).search = (r as { city: string, query : string }).city;
+            this.selectorItemsLoaded.next(this.selectorItems);
           }
+
         });
 
       }

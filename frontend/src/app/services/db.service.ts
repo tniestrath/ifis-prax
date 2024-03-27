@@ -113,9 +113,10 @@ export enum dbUrl {
   GET_SEARCHES_NO_RESULTS = "/search-stats/getAllUnfixedSearches?page=PAGE&size=SIZE",
   GET_SEARCHES_ANBIETER_NO_RESULT = "/search-stats/getAnbieterNoneFound?page=PAGE&size=SIZE",
   GET_SEARCHES_COOL = "/search-stats/getCoolSearchList?page=PAGE&size=SIZE&sorter=SORTER&dir=DIR",
-  POST_SEARCH_IGNORE = "/search-stats/blockSearch?search=SEARCH",
-  POST_SEARCH_FLIP = "/search-stats/flipSearch?search=SEARCH",
-  ANBIETER_SEARCH_IGNORE = "/search-stats/deleteAnbieterSearch?id=ID",
+  SEARCH_IGNORE = "/search-stats/blockSearch?search=SEARCH",
+  SEARCH_FLIP = "/search-stats/flipSearch?search=SEARCH",
+  SEARCH_USER_IGNORE = "/search-stats/deleteAnbieterSearch?id=ID",
+  SEARCH_USER_FLIP = "/search-stats/flipAnbieterSearch?id=ID",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -776,15 +777,19 @@ export class DbService {
 
   async ignoreSearch(search : string) : Promise<boolean> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_IGNORE).replace("SEARCH", search)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.SEARCH_IGNORE).replace("SEARCH", search)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async flipSearch(id : string) : Promise<string> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.POST_SEARCH_FLIP).replace("SEARCH", id)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.text()});
+    return await fetch((DbService.getUrl(dbUrl.SEARCH_FLIP).replace("SEARCH", id)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.text()});
   }
   async ignoreAnbieterSearch(id : string) : Promise<boolean> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.ANBIETER_SEARCH_IGNORE).replace("ID", id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.SEARCH_USER_IGNORE).replace("ID", id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async flipAnbieterSearch(id : string) : Promise<{ city: string, query : string }> {
+    this.setLoading();
+    return await fetch((DbService.getUrl(dbUrl.SEARCH_USER_FLIP).replace("ID", id)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
 }

@@ -106,7 +106,7 @@ public class PostController {
         List<Post> posts = postRepository.findByAuthor(id);
         DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
 
-        String type = "";
+        String type;
         float maxPerformance =   statsRepo.getMaxPerformance();
         float maxRelevance = statsRepo.getMaxRelevance();
         if (!posts.isEmpty()) {
@@ -142,8 +142,8 @@ public class PostController {
                     obj.put("date", formattedDate);
                     obj.put("type", type);
                     if (PostStats != null) {
-                        obj.put("performance", ((float)PostStats.getPerformance()/maxPerformance));
-                        obj.put("relevance", ((float)PostStats.getRelevance()/maxRelevance));
+                        obj.put("performance", (PostStats.getPerformance() /maxPerformance));
+                        obj.put("relevance", (PostStats.getRelevance() /maxRelevance));
                     } else {
                         obj.put("performance", 0);
                         obj.put("relevance", 0);
@@ -165,13 +165,13 @@ public class PostController {
      * @param filter the EXACT slug of a term the post is supposed to have.
      * @param search a String you want to search the db for, searches content AND title of posts.
      * @return a JSONObject containing a JSONArray of JSONObjects that contain PostStats, and the count of Posts originally found.
-     * @throws JSONException
-     * @throws ParseException
+     * @throws JSONException .
+     * @throws ParseException .
      */
     @GetMapping("/getPostsByAuthor")
     public String postsByAuthorPageable(long authorId, int page, int size, String filter, String search) throws JSONException, ParseException {
         List<JSONObject> stats = new ArrayList<>();
-        List<Post> list = null;
+        List<Post> list;
         if(filter.isBlank()) {
             list = postRepo.findByAuthorPageable(authorId, search, PageRequest.of(page, size));
         } else {
@@ -201,12 +201,12 @@ public class PostController {
     }
 
     @GetMapping("/getViewsOfPostDirstributedByHour")
-    public String getViewsOfPostDistributedByHour(@RequestParam Long id)throws JSONException,ParseException{
+    public String getViewsOfPostDistributedByHour(@RequestParam Long id) {
         //wip
         String leViews="";
         if(statsRepo.existsByArtId(id)){
             PostStats stats = statsRepo.getStatByArtID(id);
-            leViews=stats.getViewsPerDay().toString();
+            leViews= stats.getViewsPerDay();
 
         }
         return leViews;
@@ -220,10 +220,10 @@ public class PostController {
     //ToDo Rename
     @GetMapping("/getPostWithStatsById")
     public String PostsById2(@RequestParam long id) throws JSONException, ParseException {
-        if(!postRepository.findById(id).isPresent()) {return null;}
+        if(postRepository.findById(id).isEmpty()) {return null;}
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
-        String type = "default";
+        String type;
 
         PostStats PostStats = null;
         if(statsRepo.existsByArtId(post.getId())){
@@ -248,6 +248,7 @@ public class PostController {
                 if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
                     WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
                     if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
+                        //noinspection OptionalGetWithoutIsPresent
                         tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
                     }
                 }
@@ -269,8 +270,8 @@ public class PostController {
         if(PostStats != null){
             float maxPerformance =   statsRepo.getMaxPerformance();
             float maxRelevance = statsRepo.getMaxRelevance();
-            obj.put("performance", ((float)PostStats.getPerformance()/maxPerformance));
-            obj.put("relevance", ((float)PostStats.getRelevance()/maxRelevance));
+            obj.put("performance", (PostStats.getPerformance() /maxPerformance));
+            obj.put("relevance", (PostStats.getRelevance() /maxRelevance));
             obj.put("clicks", PostStats.getClicks().toString());
             obj.put("searchSuccesses", PostStats.getSearchSuccess());
             obj.put("searchSuccessRate", PostStats.getSearchSuccessRate());
@@ -300,10 +301,10 @@ public class PostController {
      */
     @GetMapping("/getPostStatsByIdWithAuthor")
     public String PostStatsByIdForFrontend(@RequestParam long id) throws JSONException, ParseException {
-        if(!postRepository.findById(id).isPresent()) {return null;}
+        if(postRepository.findById(id).isEmpty()) {return null;}
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
-        String type = "default";
+        String type;
 
         PostStats PostStats = null;
         if(statsRepo.existsByArtId(post.getId())){
@@ -328,6 +329,7 @@ public class PostController {
                 if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
                     WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
                     if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
+                        //noinspection OptionalGetWithoutIsPresent
                         tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
                     }
                 }
@@ -356,8 +358,8 @@ public class PostController {
         if(PostStats != null){
             float maxPerformance =   statsRepo.getMaxPerformance();
             float maxRelevance = statsRepo.getMaxRelevance();
-            obj.put("performance", ((float)PostStats.getPerformance()/maxPerformance));
-            obj.put("relevance", ((float)PostStats.getRelevance()/maxRelevance));
+            obj.put("performance", (PostStats.getPerformance() /maxPerformance));
+            obj.put("relevance", (PostStats.getRelevance() /maxRelevance));
             obj.put("clicks", PostStats.getClicks().toString());
             obj.put("lettercount", PostStats.getLettercount());
         }else {
@@ -386,7 +388,9 @@ public class PostController {
     @GetMapping("/getPostStatsWithContent")
     public String getPostStatsWithContent(long id) throws JSONException, ParseException {
         JSONObject json = new JSONObject(PostStatsByIdForFrontend(id));
+        //noinspection OptionalGetWithoutIsPresent
         json.put("content", postRepo.findById(id).get().getContent());
+        json.put("img", Constants.getInstance().getThumbnailLocationStart() + postMetaRepo.getThumbnail(id));
         return json.toString();
     }
 
@@ -423,11 +427,7 @@ public class PostController {
     @GetMapping("/getPostsByTag")
     public List<Post> getPostsByTag(long tagId) {
         return postRepo.findAllUserPosts().stream().filter(post -> {
-            try {
-                return getTagsById(post.getId()).contains(tagId);
-            } catch (JSONException e) {
-                return false;
-            }
+            return getTagsById(post.getId()).contains(tagId);
         }).toList();
     }
 
@@ -435,10 +435,9 @@ public class PostController {
      * Utility Function to get all Tag-Ids for a specific post.
      * @param id the id of the post you want to get tags for.
      * @return a List of Ids, corresponding to Tags (Terms in the database)
-     * @throws JSONException .
      */
-    public List<Long> getTagsById(long id) throws JSONException {
-        if(!postRepository.findById(id).isPresent()) {return null;}
+    public List<Long> getTagsById(long id) {
+        if(postRepository.findById(id).isEmpty()) {return null;}
         Post post = postRepository.findById(id).get();
         List<Long> tags = new ArrayList<>();
 
@@ -554,7 +553,7 @@ public class PostController {
         if (Posts.size() == 0) {
             return null;
         }
-        PostStats PostStats = null;
+        PostStats PostStats;
         float max = 0;
         long PostId = 0;
 
@@ -566,14 +565,14 @@ public class PostController {
                 if (type.equals("relevance")) {
                     if (PostStats.getRelevance() > max) {
                         float maxRelevance = statsRepo.getMaxRelevance();
-                        max = ((float)PostStats.getRelevance()/maxRelevance);
+                        max = (PostStats.getRelevance() /maxRelevance);
                         PostId = PostStats.getArtId();
                     }
                 }
                 if (type.equals("performance")) {
                     if (PostStats.getPerformance() > max) {
                         float maxPerformance =   statsRepo.getMaxPerformance();
-                        max = ((float)PostStats.getPerformance()/maxPerformance);
+                        max = (PostStats.getPerformance() /maxPerformance);
                         PostId = PostStats.getArtId();
                     }
                 }
@@ -583,6 +582,7 @@ public class PostController {
         JSONObject obj = new JSONObject();
         obj.put("ID", PostId);
         obj.put(type, max);
+        //noinspection OptionalGetWithoutIsPresent
         obj.put("title", postRepo.findById(PostId).get().getTitle());
         return obj.toString();
     }
@@ -595,8 +595,8 @@ public class PostController {
         obj.put("Post-Id",Stat.getArtId());
         float maxPerformance =   statsRepo.getMaxPerformance();
         float maxRelevance = statsRepo.getMaxRelevance();
-        obj.put("performance", ((float)Stat.getPerformance()/maxPerformance));
-        obj.put("relevanz", ((float)Stat.getRelevance()/maxRelevance));
+        obj.put("performance", (Stat.getPerformance() /maxPerformance));
+        obj.put("relevanz", (Stat.getRelevance() /maxRelevance));
         obj.put("Views",Stat.getClicks());
         obj.put("Refferings",Stat.getReferrings());
         obj.put("Article Reffering Rate",Stat.getArticleReferringRate());
@@ -634,8 +634,8 @@ public class PostController {
             refrate = PostStats.getArticleReferringRate();
             float maxPerformance =   statsRepo.getMaxPerformance();
             float maxRelevance = statsRepo.getMaxRelevance();
-            relevanz = ((float)PostStats.getRelevance()/maxRelevance);
-            performance = ((float)PostStats.getPerformance()/maxPerformance);
+            relevanz = (PostStats.getRelevance() /maxRelevance);
+            performance = (PostStats.getPerformance() /maxPerformance);
         }
         JSONObject obj = new JSONObject();
         obj.put("ID",newestId);
@@ -655,7 +655,7 @@ public class PostController {
     @GetMapping("/getNewestStatsByAuthorSessionId")
     public String getNewestStatsByAuthorSessionId(@RequestParam String SessionId) throws JSONException{
         if(userRepo.existsByActivationKey(SessionId)){
-            Long id = userRepo.findByActivationKey(SessionId).get().getId();
+            @SuppressWarnings("OptionalGetWithoutIsPresent") Long id = userRepo.findByActivationKey(SessionId).get().getId();
             List<Post> posts =postRepo.findByAuthor(id.intValue()) ;
             long newestId = 0 ;
             LocalDateTime newestTime = null ;
@@ -682,8 +682,8 @@ public class PostController {
                 refrate = PostStats.getArticleReferringRate();
                 float maxPerformance =   statsRepo.getMaxPerformance();
                 float maxRelevance = statsRepo.getMaxRelevance();
-                relevanz = ((float)PostStats.getRelevance()/maxRelevance);
-                performance = ((float)PostStats.getPerformance()/maxPerformance);
+                relevanz = (PostStats.getRelevance() /maxRelevance);
+                performance = (PostStats.getPerformance() /maxPerformance);
             }
             JSONObject obj = new JSONObject();
             obj.put("ID",newestId);
@@ -711,8 +711,6 @@ public class PostController {
      *
      * @param id the id of the post you want the type of.
      * @return the type of Post "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber" | "video"
-     * @throws JSONException .
-     * @throws ParseException .
      */
     public String getType(@RequestParam long id) {
         if(postRepository.findById(id).isEmpty()) {return "error";}
@@ -790,6 +788,7 @@ public class PostController {
 
         } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("event")){
             String type = "Event: ";
+            //noinspection OptionalGetWithoutIsPresent
             switch(eventsController.getEventType(eventsRepo.findByPostID(id).get())) {
                 case "o", "r" ->  type += "Sonstige";
                 case "k" -> type += "Kongress";
@@ -828,11 +827,9 @@ public class PostController {
      *  Endpoint for retrieval for the amount of posts on the website of a certain type.
      * @param type ("news" | "artikel" | "blog" | "whitepaper")
      * @return count of all posts with the type given.
-     * @throws JSONException .
-     * @throws ParseException .
      */
     @GetMapping("/getCountPostByType")
-    public int getCountPostByType(String type) throws JSONException, ParseException {
+    public int getCountPostByType(String type) {
         int count = 0;
 
         for(Post post : postRepo.findAllUserPosts()) {
@@ -842,7 +839,7 @@ public class PostController {
     }
 
     @GetMapping("/getAveragesByTypesAll")
-    public String getAverageByTypesAll() throws JSONException, ParseException {
+    public String getAverageByTypesAll() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();
         JSONObject averages = new JSONObject();
@@ -930,7 +927,7 @@ public class PostController {
         JSONArray views = new JSONArray();
 
         LocalDate now = LocalDate.now();
-        java.sql.Date oldest = new java.sql.Date(uniRepo.findById(Math.toIntExact(postClicksByHourRepo.findOldestUni())).get().getDatum().getTime());
+        @SuppressWarnings("OptionalGetWithoutIsPresent") java.sql.Date oldest = new java.sql.Date(uniRepo.findById(Math.toIntExact(postClicksByHourRepo.findOldestUni())).get().getDatum().getTime());
 
        for(LocalDate date : oldest.toLocalDate().datesUntil(now.plusDays(1)).toList()) {
            int uniId = 0;
@@ -940,6 +937,7 @@ public class PostController {
                uniId = uniRepo.findByDatum(java.sql.Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
            }
            if(uniId != 0) {
+               //noinspection OptionalGetWithoutIsPresent
                dates.put(uniRepo.findById(Math.toIntExact(uniId)).get().getDatum().toString().substring(0, 10));
                if(postClicksByHourRepo.getSumForDayForPost(uniId, id).isPresent()) {
                    views.put(postClicksByHourRepo.getSumForDayForPost(uniId, id).get());
@@ -1023,7 +1021,7 @@ public class PostController {
         if(sorter.equalsIgnoreCase("performance")) {
             top = statsRepo.getTop5Performance();
         }
-        String jsonString = null;
+        String jsonString;
         JSONArray array = new JSONArray();
 
         if(top == null) {
@@ -1267,7 +1265,6 @@ public class PostController {
      *           It uses Jackson's {@code ObjectMapper} to convert the list of {@code PostStats} to JSON.
      * @apiNote The term ID must be a valid identifier existing in the database. The method does not
      *          handle cases where the term ID does not exist or is null.
-     * @exception Exception A generic exception is caught and a simple error message is returned.
      *            This is a placeholder for more specific exception handling based on the application's requirements.
      */
     @GetMapping("/getOutliersByViewsAndTags")
@@ -1319,6 +1316,7 @@ public class PostController {
                     .filter(postStat -> outliers.contains(postStat.getClicks()))
                     .map(postStat -> {
                         Map<String, Object> map = new HashMap<>();
+                        //noinspection OptionalGetWithoutIsPresent
                         map.put("postName", postRepository.findById(postStat.getArtId()).get().getTitle());
                         map.put("views", postStat.getClicks());
                         return map;
@@ -1334,6 +1332,7 @@ public class PostController {
                     .filter(postStat -> outliers.contains(postStat.getRelevance()))
                     .map(postStat -> {
                         Map<String, Object> map = new HashMap<>();
+                        //noinspection OptionalGetWithoutIsPresent
                         map.put("postName", postRepository.findById(postStat.getArtId()).get().getTitle());
                         map.put("relevanz", postStat.getRelevance());
                         return map;
@@ -1398,7 +1397,7 @@ public class PostController {
             List<Long> tagIdsForOtherPost = taxTermRepo.getTermIdByTaxId(termTaxonomyIdsForOtherPost);
 
             // Ähnlichkeit der Tags berechnen
-            int commonTagsCount = (int) tagIdsForPostGiven.stream().filter(tag -> tagIdsForOtherPost.contains(tag)).count();
+            int commonTagsCount = (int) tagIdsForPostGiven.stream().filter(tagIdsForOtherPost::contains).count();
             float currentSimilarityPercentage = (commonTagsCount * 1.0f / tagIdsForPostGiven.size()) * 100;
 
             if (currentSimilarityPercentage >= similarityPercentage) {
@@ -1451,7 +1450,7 @@ public class PostController {
             List<Long> tagIdsForOtherPost = taxTermRepo.getTermIdByTaxId(termTaxonomyIdsForOtherPost);
 
             // Ähnlichkeit der Tags berechnen
-            int commonTagsCount = (int) tagIdsForPostGiven.stream().filter(tag -> tagIdsForOtherPost.contains(tag)).count();
+            int commonTagsCount = (int) tagIdsForPostGiven.stream().filter(tagIdsForOtherPost::contains).count();
             float currentSimilarityPercentage = (commonTagsCount * 1.0f / tagIdsForPostGiven.size()) * 100;
 
             if (currentSimilarityPercentage >= similarityPercentage) {
@@ -1509,7 +1508,7 @@ public class PostController {
             List<Long> tagIdsForOtherPost = taxTermRepo.getTermIdByTaxId(termTaxonomyIdsForOtherPost);
 
             // Ähnlichkeit der Tags berechnen
-            int commonTagsCount = (int) tagIdsForPostGiven.stream().filter(tag -> tagIdsForOtherPost.contains(tag)).count();
+            int commonTagsCount = (int) tagIdsForPostGiven.stream().filter(tagIdsForOtherPost::contains).count();
             float currentSimilarityPercentage = (commonTagsCount * 1.0f / tagIdsForPostGiven.size()) * 100;
 
             if (currentSimilarityPercentage >= similarityPercentage) {

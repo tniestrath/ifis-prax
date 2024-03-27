@@ -1,8 +1,8 @@
 package com.analysetool.util;
 
 public class Pair {
-    private String text = "none";
-    private int count = 0;
+    private String text;
+    private int count;
 
     public Pair(String text, int count) {
         this.text = text;

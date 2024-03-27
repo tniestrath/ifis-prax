@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -40,7 +39,7 @@ public class FinalSearchStatService {
 
     @Transactional
     public Boolean saveAllBooleanNotBatch(List<FinalSearchStat> stats) {
-        Boolean savedAll = false;
+        boolean savedAll = false;
         for(FinalSearchStat stat:stats){
           try{
               repository.save(stat);
@@ -54,7 +53,7 @@ public class FinalSearchStatService {
 
     @Transactional
     public Boolean saveAllDLCBooleanNotBatch(List<FinalSearchStatDLC> stats) {
-        Boolean savedAll = false;
+        boolean savedAll = false;
         for(FinalSearchStatDLC stat:stats){
             try{
                 DLCRepo.save(stat);
@@ -115,21 +114,14 @@ public class FinalSearchStatService {
 
     public Map<FinalSearchStat,List<FinalSearchStatDLC>> getSearchStatsByLocation(String location, String locationType){
         Map<FinalSearchStat,List<FinalSearchStatDLC>> response = new HashMap<>();
-        List<FinalSearchStat> allSearchesOfLocation = new ArrayList<>();
+        List<FinalSearchStat> allSearchesOfLocation = switch (locationType) {
+            case "city" -> repository.findAllByCity(location);
+            case "state" -> repository.findAllByState(location);
+            case "country" -> repository.findAllByCountry(location);
+            default -> new ArrayList<>();
+        };
 
-        switch(locationType){
-            case "city":
-                allSearchesOfLocation = repository.findAllByCity(location);
-                break;
-            case "state":
-                allSearchesOfLocation = repository.findAllByState(location);
-                break;
-            case "country":
-                allSearchesOfLocation = repository.findAllByCountry(location);
-                break;
-        }
-
-        List<FinalSearchStatDLC> allSearchSuccessesOfSearch = new ArrayList<>();
+        List<FinalSearchStatDLC> allSearchSuccessesOfSearch;
 
         for(FinalSearchStat stat:allSearchesOfLocation){
             allSearchSuccessesOfSearch = DLCRepo.findAllByFinalSearchId(stat.getId());
@@ -488,13 +480,13 @@ public class FinalSearchStatService {
         return response;
     }
     public String toStringList(List<FinalSearchStat>stats){
-        String response = "";
+        StringBuilder response = new StringBuilder();
 
         for(FinalSearchStat stat:stats){
-            response=response+toString(stat);
+            response.append(toString(stat));
         }
 
-        return response;
+        return response.toString();
     }
 
     public String toString(FinalSearchStat stat){

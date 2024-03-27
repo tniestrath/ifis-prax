@@ -1,7 +1,6 @@
 package com.analysetool.util;
 
 public class Constants {
-    private static Constants instance;
 
     // Define your constants here
     private final String blogSlug = "blogeintrag";
@@ -16,20 +15,20 @@ public class Constants {
     private final String plusAnbieter = "um_plus";
     private final String premiumAnbieter = "um_premium";
 
+    private final String thumbnailLocationStart = "https://it-sicherheit.de/wp-content/uploads/";
+    private final String profilePhotoStart = "https://it-sicherheit.de/wp-content/uploads/ultimatemember/";
+
     // Private constructor to prevent external instantiation
     private Constants() {
     }
 
+    private static final class InstanceHolder {
+        private static final Constants instance = new Constants();
+    }
+
     // Lazy initialization of the singleton instance
     public static Constants getInstance() {
-        if (instance == null) {
-            synchronized (Constants.class) {
-                if (instance == null) {
-                    instance = new Constants();
-                }
-            }
-        }
-        return instance;
+        return InstanceHolder.instance;
     }
 
     public String getBlogSlug() {
@@ -66,5 +65,13 @@ public class Constants {
 
     public String getPremiumAnbieter() {
         return premiumAnbieter;
+    }
+
+    public String getThumbnailLocationStart() {
+        return thumbnailLocationStart;
+    }
+
+    public String getProfilePhotoStart() {
+        return profilePhotoStart;
     }
 }

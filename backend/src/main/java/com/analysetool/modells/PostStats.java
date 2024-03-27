@@ -92,7 +92,6 @@ public class PostStats {
     public int getLettercount() { return lettercount; }
 
     public PostStats(Long artId, Float searchSuccessRate, Float articleReferringRate, long clicks, long searchSuccess, long refferings, float performance) {
-        this.id = id;
         this.artId = artId;
         this.searchSuccessRate = searchSuccessRate;
         this.articleReferringRate = articleReferringRate;
@@ -107,7 +106,6 @@ public class PostStats {
         Calendar kalender = Calendar.getInstance();
         int aktuellesJahr = kalender.get(Calendar.YEAR);
         this.year=aktuellesJahr;
-        this.lettercount = lettercount;
     }
 
     public Map<String,Long> setViewsLastYearJson(){
@@ -125,11 +123,11 @@ public class PostStats {
         // Durch alle Tage des Jahres iterieren
         while (datum.getYear() == 2023) {
             // Datum formatieren und in die HashMap mit dem Wert 0 einfügen
-            tageDesJahres.put(datum.format(formatter).toString(), (long)0);
+            tageDesJahres.put(datum.format(formatter), (long)0);
             // Datum um einen Tag erhöhen
             datum = datum.plusDays(1);
         }
-        return (Map)tageDesJahres;
+        return tageDesJahres;
     }
     public Map<String, Long> createYearlyViewsMap(int year) {
         // Erstellen einer HashMap mit dem Schlüssel als Datum (z.B. 01.01) und dem Wert 0
@@ -153,7 +151,7 @@ public class PostStats {
     }
 
     public Map<String,Long> setJson(){
-        String temp ="";
+        String temp;
         //temp = viewsPerDay.substring(1, viewsPerDay.length() - 1);
         temp = viewsPerHourString.substring(1, viewsPerHourString.length() - 1);
         // Teile den String an den Kommas auf, um die einzelnen Schlüssel-Wert-Paare zu erhalten
@@ -174,7 +172,7 @@ public class PostStats {
             // Füge das Schlüssel-Wert-Paar der HashMap hinzu
             map.put(key, value);
         }
-        return (Map) map;
+        return map;
     }
     public Long getId() {
         return id;

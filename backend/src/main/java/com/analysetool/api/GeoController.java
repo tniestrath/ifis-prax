@@ -59,7 +59,7 @@ public class GeoController {
      */
     @GetMapping("/getClicksByDayAndBundesland")
     public int getClicksByDayAndBundesland(String date, String bundesland) throws ParseException {
-        int id = uniStatRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
+        @SuppressWarnings("OptionalGetWithoutIsPresent") int id = uniStatRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
         return clicksByBundeslandRepo.getByUniIDAndBundesland(id, bundesland).getClicks();
     }
 
@@ -71,7 +71,7 @@ public class GeoController {
      */
     @GetMapping("/getClicksByDayAndCountry")
     public int getClicksByDayAndCountry(String date, String country) throws ParseException {
-        int id = uniStatRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
+        @SuppressWarnings("OptionalGetWithoutIsPresent") int id = uniStatRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
         return clicksByCountryRepo.getByUniIDAndCountry(id, country).getClicks();
     }
 
@@ -88,7 +88,7 @@ public class GeoController {
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
 
-        PostGeo geo = postGeoRepo.findByPostIdAndUniStatId(id, uniStatRepo.findByDatum(dateStart).get().getId());
+        @SuppressWarnings("OptionalGetWithoutIsPresent") PostGeo geo = postGeoRepo.findByPostIdAndUniStatId(id, uniStatRepo.findByDatum(dateStart).get().getId());
         if (geo != null) {
             liste.add(geo.getHh());
             liste.add(geo.getHb());
@@ -151,7 +151,7 @@ public class GeoController {
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
 
-        UserGeo geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.findByDatum(dateStart).get().getId());
+        @SuppressWarnings("OptionalGetWithoutIsPresent") UserGeo geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.findByDatum(dateStart).get().getId());
         if (geo != null) {
             liste.add(geo.getHh());
             liste.add(geo.getHb());
@@ -312,8 +312,8 @@ public class GeoController {
     @GetMapping("/getTotalGermanGeoAllTime")
     public String getTotalGermanGeoAllTime() throws JSONException {
         JSONObject json = new JSONObject();
-        Date dateStart = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().getTime());
-        Date dateEnd = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().getTime());
+        @SuppressWarnings("OptionalGetWithoutIsPresent") Date dateStart = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().getTime());
+        @SuppressWarnings("OptionalGetWithoutIsPresent") Date dateEnd = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().getTime());
         if (dateStart.after(dateEnd)) {
             Date datePuffer = dateEnd;
             dateEnd = dateStart;
@@ -502,6 +502,7 @@ public class GeoController {
     @GetMapping("/geoRange")
     public String[] getDateRange() {
         String[] string;
+        //noinspection OptionalGetWithoutIsPresent
         string = new String[]{uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().toInstant().plusSeconds(8000).toString(), uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().toInstant().plusSeconds(8000).toString()};
         return string;
     }
@@ -592,8 +593,8 @@ public class GeoController {
     @GetMapping("/getUserGeoWithPostsAllTime")
     public String getUserGeoTotalAllTime(int userId) throws JSONException {
         JSONObject json = new JSONObject();
-        Date dateStart = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().getTime());
-        Date dateEnd = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().getTime());
+        @SuppressWarnings("OptionalGetWithoutIsPresent") Date dateStart = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getFirstEntry()).get().getDatum().getTime());
+        @SuppressWarnings("OptionalGetWithoutIsPresent") Date dateEnd = new Date(uniStatRepo.findById(clicksByBundeslandCitiesDLCRepo.getLastEntry()).get().getDatum().getTime());
 
         int total = 0;
 

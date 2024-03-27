@@ -59,9 +59,9 @@ public class uniStatController {
     /**
      *
      * @param days  if 1, get hourly stats (for the last 24 hours) - if higher get Daily.
-     * @return
-     * @throws JSONException
-     * @throws ParseException
+     * @return a JSON-String containing a lot of universal-stat data.
+     * @throws JSONException .
+     * @throws ParseException .
      */
     @GetMapping(value = "/callups")
     public String getCallupsByTime(@RequestParam() int days) throws JSONException, ParseException {
@@ -203,7 +203,7 @@ public class uniStatController {
 
         List<Integer> clicksByCategory = new ArrayList<>();
 
-        int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
+        @SuppressWarnings("OptionalGetWithoutIsPresent") int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
 
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsMain());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsArticle());
@@ -289,7 +289,7 @@ public class uniStatController {
 
         List<Integer> clicksByCategory = new ArrayList<>();
 
-        int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
+        @SuppressWarnings("OptionalGetWithoutIsPresent") int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
         //Main Page
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsMainByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsAnbieterByUniStatId(id));
@@ -355,7 +355,7 @@ public class uniStatController {
 
 
     @GetMapping("getCallupByCategoryAllTime")
-    public String getCallupByCategoryAllTime() throws ParseException, JSONException {
+    public String getCallupByCategoryAllTime() throws JSONException {
         List<String> labelsForCategory = new ArrayList<>();
 
         labelsForCategory.add("Main");
@@ -460,7 +460,7 @@ public class uniStatController {
         List<Integer> clicksByCategory = new ArrayList<>();
         List<Integer> besucherByCategory = new ArrayList<>();
 
-        int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
+        @SuppressWarnings("OptionalGetWithoutIsPresent") int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
 
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberPostByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberGlossarByUniStatId(id));
@@ -505,7 +505,7 @@ public class uniStatController {
     /**
      *
      * @return eine HTML-Seite, die den Bericht wie in der Methode getLetzte, nur für die letzten 7 Tage erstellt.
-     * @throws JSONException
+     * @throws JSONException .
      */
     @GetMapping(value = "/letzte7Tage", produces = MediaType.TEXT_HTML_VALUE)
     public String getLast7Days() throws JSONException {
@@ -599,13 +599,13 @@ public class uniStatController {
      * @param id  die ID des Posts, für den die Clicks ermittelt werden sollen.
      * @param daysBack wie viele Tage zurückgeschaut werden soll.
      * @return  JSONObject, dass die ID des Posts, den Namen und die Clicks des gewünschten Tages enthält.
-     * @throws JSONException
+     * @throws JSONException .
      */
     public JSONObject getClickOfDayAsJson(long id,int daysBack) throws JSONException {
 
         JSONObject obj = new JSONObject();
         PostStats stats =postStatsRepo.getStatByArtID(id);
-        long clicks = 0;
+        long clicks;
         HashMap<String,Long> allClicks = (HashMap<String, Long>) stats.getViewsLastYear();
         LocalDate heute = LocalDate.now();
         // Datum, das n Tage zurückliegt
@@ -617,6 +617,7 @@ public class uniStatController {
         clicks=allClicks.get(formatiertesDatum);
 
         obj.put("iD",id);
+        //noinspection OptionalGetWithoutIsPresent
         obj.put("name",postRepository.findById(id).get().getTitle());
         obj.put("clicks of day",clicks);
         return obj;
@@ -625,9 +626,9 @@ public class uniStatController {
     /**
      *
      * @param type der Typ Post, für den eine Top5 erstellt werden soll ("blog" | "artikel" | "news")
-     * @param daysBack
-     * @return
-     * @throws JSONException
+     * @param daysBack how many days to look back.
+     * @return a JSON String.
+     * @throws JSONException .
      */
     @GetMapping("/getTop5ByClicksAndDaysBackAndType")
     public String getTop5ByClicks(@RequestParam String type, @RequestParam int daysBack) throws JSONException {
@@ -688,16 +689,13 @@ public class uniStatController {
         }
 
 
-        Collections.sort(jsonObjects, new Comparator<JSONObject>() {
-            @Override
-            public int compare(JSONObject o1, JSONObject o2) {
-                try {
-                    long clicks1 = o1.getLong("clicks of day");
-                    long clicks2 = o2.getLong("clicks of day");
-                    return Long.compare(clicks2, clicks1);  // für absteigende Sortierung
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+        jsonObjects.sort((o1, o2) -> {
+            try {
+                long clicks1 = o1.getLong("clicks of day");
+                long clicks2 = o2.getLong("clicks of day");
+                return Long.compare(clicks2, clicks1);  // für absteigende Sortierung
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         });
 

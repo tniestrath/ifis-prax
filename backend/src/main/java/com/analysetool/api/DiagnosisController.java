@@ -77,53 +77,31 @@ public class DiagnosisController {
     @GetMapping("/doCheckUpSite")
     public String doCheckUpHTML() throws JSONException {
 
-        StringBuilder html = new StringBuilder("<!DOCTYPE html>" +
-                "<html lang=\"en\">" +
-                "<head>" +
-                "    <meta charset=\"UTF-8\">" +
-                "    <title>Selbstdiagnose</title>" +
-                "    <style>" +
-                "       table {\n" +
-                "    border: 1px solid black;\n" +
-                "    width: 100%;\n" +
-                "    border-collapse: collapse;\n" +
-                "}\n" +
-                "\n" +
-                "th, td {\n" +
-                "    border-bottom: 2px solid black;\n" +
-                "    padding: 8px;\n" +
-                "    text-align: left;\n" +
-                "}\n" +
-                "\n" +
-                "th {\n" +
-                "    background-color: #f2f2f2;\n" +
-                "}\n" +
-                "\n" +
-                "tr:nth-child(even) {\n" +
-                "    background-color: #f2f2f2;\n" +
-                "}\n" +
-                "\n" +
-                "tr:hover {\n" +
-                "    background-color: #ddd;\n" +
-                "}\n" +
-                "       tr{" +
-                "           border-bottom: 2px solid black;" +
-                "           height: 20px;" +
-                "       }" +
-                "    </style>" +
-                "</head>" +
-                "<body>" +
-                "<table>" +
-                "<thead>" +
-                "<tr>" +
-                "<th>Severity</th>" +
-                "<th>Description</th>" +
-                "<th>Area</th>" +
-                "<th>Suggested Solution</th>" +
-                "<th>Solution Link</th>" +
-                "</tr>" +
-                "</thead>" +
-                "<tbody>");
+        StringBuilder html = new StringBuilder("""
+                <!DOCTYPE html><html lang="en"><head>    <meta charset="UTF-8">    <title>Selbstdiagnose</title>    <style>       table {
+                    border: 1px solid black;
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+
+                th, td {
+                    border-bottom: 2px solid black;
+                    padding: 8px;
+                    text-align: left;
+                }
+
+                th {
+                    background-color: #f2f2f2;
+                }
+
+                tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+
+                tr:hover {
+                    background-color: #ddd;
+                }
+                       tr{           border-bottom: 2px solid black;           height: 20px;       }    </style></head><body><table><thead><tr><th>Severity</th><th>Description</th><th>Area</th><th>Suggested Solution</th><th>Solution Link</th></tr></thead><tbody>""");
 
 
 
@@ -156,8 +134,11 @@ public class DiagnosisController {
         return html.toString();
     }
 
-
-    private List<Problem> allCheckups() throws JSONException {
+    /**
+     * An aggregate that funnels all Checkups that are currently to be used and returns all of their problems sorted.
+     * @return a sorted List of Problems with descending severity.
+     */
+    private List<Problem> allCheckups() {
         List<Problem> largeList  = new ArrayList<>();
 
         //Add new lines for new categories of checkups. If any of these are applicable, please add new routines in the respective subroutine.
@@ -178,6 +159,10 @@ public class DiagnosisController {
         return largeList;
     }
 
+    /**
+     * Finds Problems in UniversalStats.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findUniStatProblems() {
         List<Problem> list = new ArrayList<>();
         list.addAll(uniDateConsistencyCheckup());
@@ -185,6 +170,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in UniversalStats, specifically its values.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> uniValuesCheckup() {
         List<Problem> list  = new ArrayList<>();
         int severityNegative = 5;
@@ -209,6 +198,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in UniversalStats, specifically its dates.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> uniDateConsistencyCheckup() {
         List<Problem> list  = new ArrayList<>();
 
@@ -247,6 +240,10 @@ public class DiagnosisController {
 
     }
 
+    /**
+     * Finds Problems in UniversalStats-DLCS.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findUniDLCProblems() {
         List<Problem> list = new ArrayList<>();
         list.addAll(uniDLCWrongReferenceCheckup());
@@ -255,6 +252,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in UniversalStats-DLCS, specifically references that point to nothing.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> uniDLCWrongReferenceCheckup() {
         List<Problem> list  = new ArrayList<>();
 
@@ -277,6 +278,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in UniversalStats-DLCS, specifically missing Dates.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> uniDLCMissingHourCheckup() {
         List<Problem> list  = new ArrayList<>();
 
@@ -302,6 +307,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in UniversalStats-DLCS, specifically bad data.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> uniDLCValuesCheckup() {
         List<Problem> list  = new ArrayList<>();
 
@@ -361,14 +370,21 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in Geolocation.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findGeoProblems() {
         List<Problem> list = new ArrayList<>();
         return list;
     }
 
+    /**
+     * Finds Problems in Search-Stats.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findSearchStatProblems() {
-        List<Problem> list = new ArrayList<>();
-        list.addAll(successErrorCheck());
+        List<Problem> list = new ArrayList<>(successErrorCheck());
         return list;
     }
 
@@ -397,6 +413,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in Post-Types.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findTypeProblems() {
         List<Problem> list = new ArrayList<>();
         list.addAll(newTypeFoundCheck());
@@ -404,6 +424,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in Post-Types, specifically new Types.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> newTypeFoundCheck() {
         List<Problem> list  = new ArrayList<>();
 
@@ -433,6 +457,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in Post-Types, specifically changed Types.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> changedTypeCheck() {
         List<Problem> list  = new ArrayList<>();
 
@@ -452,12 +480,19 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in Website.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findWebsiteProblems() {
         List<Problem> list = new ArrayList<>();
         return list;
     }
 
-
+    /**
+     * Finds potential bots by their behavior in clicking nonsense.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findPotentialBotsByNonsense() throws JSONException {
         List<Problem> list  = new ArrayList<>();
 
@@ -477,6 +512,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds potential bots by their general behavior.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findPotentialBots(int repeatedClicksLimit){
         List<Problem> list  = new ArrayList<>();
 

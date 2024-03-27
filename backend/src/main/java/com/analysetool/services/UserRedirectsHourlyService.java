@@ -93,7 +93,7 @@ public class UserRedirectsHourlyService {
         } else {
             return null;
         }
-        Double avg = ((double) redirects / count);
+        double avg = ((double) redirects / count);
         return avg > getRedirectsPerDay(userId);
     }
 

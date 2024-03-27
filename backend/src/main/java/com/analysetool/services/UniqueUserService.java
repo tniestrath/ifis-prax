@@ -28,8 +28,7 @@ public class UniqueUserService {
         }
         catch (Exception e){System.out.println("computer sagt nein");}
 
-        return clickMap.values().stream()
-                .collect(Collectors.joining(","));
+        return String.join(",", clickMap.values());
     }
 
     private void processAllCategoryClicks(UniqueUser user, Map<Integer, String> clickMap) throws JSONException {
@@ -183,6 +182,7 @@ public class UniqueUserService {
     public String getCategoryOfClicks(Map<String, Long> clickMap) {
         Set<String> uniqueCategories = new HashSet<>(clickMap.keySet());
 
+        //noinspection OptionalGetWithoutIsPresent
         return uniqueCategories.stream().findFirst().get();
 
     }

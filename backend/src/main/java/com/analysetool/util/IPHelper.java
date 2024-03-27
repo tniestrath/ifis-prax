@@ -37,8 +37,7 @@ public final class IPHelper {
         CityResponse response = null;
         try {
             response = cityReader.city(InetAddress.getByName(ip));
-        } catch (IOException e) {
-        } catch (GeoIp2Exception e) {
+        } catch (IOException | GeoIp2Exception ignored) {
         }
         return response;
     }

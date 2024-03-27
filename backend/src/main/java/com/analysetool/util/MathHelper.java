@@ -95,6 +95,7 @@ public class MathHelper {
                 maxEntry = entry;
             }
         }
+        assert maxEntry != null;
         return maxEntry.getKey();
     }
 
@@ -277,6 +278,7 @@ public class MathHelper {
                 maxEntry = entry;
             }
         }
+        assert maxEntry != null;
         return maxEntry.getKey();
     }
     /**
@@ -506,6 +508,7 @@ public class MathHelper {
                 maxEntry = entry;
             }
         }
+        assert maxEntry != null;
         return maxEntry.getKey();
     }
 
@@ -742,6 +745,7 @@ public class MathHelper {
                 maxEntry = entry;
             }
         }
+        assert maxEntry != null;
         return maxEntry.getKey();
     }
 

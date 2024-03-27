@@ -21,7 +21,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -123,14 +122,13 @@ public class LoginController {
 
     /**
      *
-     * @param user
-     * @param pass
+     * @param user username.
+     * @param pass password.
      * @return String representation of the WordPress-login-cookie value
-     * @throws IOException
      */
 
     @GetMapping("/login")
-    public String login(@RequestParam String user, String pass) throws IOException {
+    public String login(@RequestParam String user, String pass) {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getWplogin());
 
@@ -257,7 +255,7 @@ public class LoginController {
 
         String responseBody = "INVALID";
         try {
-            String cookieValue = "";
+            String cookieValue;
             cookieValue = java.net.URLDecoder.decode(cookie, StandardCharsets.UTF_8);
             System.out.println(cookieValue);
 

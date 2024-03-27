@@ -76,7 +76,6 @@ public class NewsletterController {
      * @return A long value representing the number of subscriptions between the fromDate and toDate, inclusive.
      *
      * @throws IllegalArgumentException (if applicable)
-     *
      * Example usage:
      * <pre>{@code
      *   long numberOfSubs = getAmountofSubsByDateRange(10, 1);
@@ -299,7 +298,7 @@ public class NewsletterController {
     }
 
     @GetMapping("/getGlobalOR")
-    public double getGlobalOR() throws JSONException {
+    public double getGlobalOR() {
         if(newsSentRepo.getAmountOpenedTotal().isPresent() && newsSentRepo.getAmountOpenedTotal().get() > 0 && newsSentRepo.getAmountSent().isPresent()) {
             return newsSentRepo.getAmountOpenedTotal().get() / newsSentRepo.getAmountSent().get();
         } else {

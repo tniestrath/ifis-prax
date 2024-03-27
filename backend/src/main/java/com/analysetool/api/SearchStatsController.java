@@ -48,6 +48,8 @@ public class SearchStatsController {
     private GeoNamesPostalRepository geoNamesRepo;
     @Autowired
     private AnbieterFailedSearchBufferRepository anbieterFailRepo;
+    @Autowired
+    private BlockedSearchesAnbieterRepository baSearchRepo;
 
     @Autowired
     public SearchStatsController(SearchStatsRepository searchStatsRepository) {
@@ -549,6 +551,20 @@ public class SearchStatsController {
         }
     }
 
+    @GetMapping("/flipAnbieterSearch")
+    @Modifying
+    public String flipAnbieterSearch(long search) {
+        if(baSearchRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isPresent()) {
+            baSearchRepo.delete(baSearchRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).get());
+            return finalSearchStatRepo.findById(search).get().getSearchQuery();
+        } else {
+            BlockedSearchesAnbieter bs = new BlockedSearchesAnbieter();
+            bs.setSearch(finalSearchStatRepo.findById(search).get().getSearchQuery());
+            baSearchRepo.save(bs);
+            return "DELETED";
+        }
+    }
+
     @GetMapping("/getAllBlocked")
     public String getAllBlocked() throws JSONException {
         JSONArray array = new JSONArray();
@@ -585,15 +601,6 @@ public class SearchStatsController {
         }
 
         return array.toString();
-    }
-
-    @PostMapping("/deleteAnbieterSearch")
-    @Modifying
-    public boolean deleteAnbieterSearchById(long id) {
-        AnbieterFailedSearchBuffer fail = anbieterFailRepo.findById(id).get();
-        anbieterSearchRepo.deleteAll(anbieterSearchRepo.getByData(fail.getSearch(), fail.getCity(), fail.getPlz(), fail.getUmkreis()));
-        anbieterFailRepo.deleteById(id);
-        return true;
     }
 
     boolean isHack(String text) {

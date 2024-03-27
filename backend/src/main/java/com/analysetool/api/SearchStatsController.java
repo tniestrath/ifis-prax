@@ -562,7 +562,8 @@ public class SearchStatsController {
             json.put("query", afb.getSearch());
         } else {
             BlockedSearchesAnbieter bs = new BlockedSearchesAnbieter();
-            bs.setSearch(finalSearchStatRepo.findById(search).get().getSearchQuery());
+            bs.setSearch(afb.getSearch());
+            bs.setPlace(afb.getCity());
             baSearchRepo.save(bs);
             json.put("query", "DELETED");
         }
@@ -581,6 +582,7 @@ public class SearchStatsController {
         } else {
             BlockedSearchesAnbieter bs = new BlockedSearchesAnbieter();
             bs.setSearch(search);
+            bs.setPlace(afb.getCity());
             baSearchRepo.save(bs);
             json.put("query", "DELETED");
         }

@@ -390,7 +390,7 @@ public class PostController {
         JSONObject json = new JSONObject(PostStatsByIdForFrontend(id));
         //noinspection OptionalGetWithoutIsPresent
         json.put("content", postRepo.findById(id).get().getContent());
-        json.put("thumbnail", Constants.getInstance().getThumbnailLocationStart() + postMetaRepo.getThumbnail(id));
+        json.put("img", Constants.getInstance().getThumbnailLocationStart() + postMetaRepo.getThumbnail(id));
         return json.toString();
     }
 

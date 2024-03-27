@@ -569,7 +569,7 @@ public class SearchStatsController {
         return json.toString();
     }
 
-    @GetMapping("/flipAnbieterSearch")
+    @GetMapping("/flipAnbieterSearchByData")
     @Modifying
     public String flipAnbieterSearch(String search, String place) throws JSONException {
         AnbieterFailedSearchBuffer afb = anbieterFailRepo.findByCityAndSearch(place, search).get();

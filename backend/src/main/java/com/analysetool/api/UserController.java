@@ -679,35 +679,24 @@ public class UserController {
         long viewsNews = 0;
         long viewsWP = 0;
         long viewsPodcast = 0;
+        long viewsVideo = 0;
         try {
             viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
         } catch (NullPointerException ignored) {
         }
-        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
-        int tagIdNews = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
-        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
-        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
 
         List<Post> posts = postRepository.findByAuthor(id.intValue());
 
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
-                PostStats Stat = statRepository.getStatByArtID(post.getId());
-                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
-                    for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
-                        if (termTax.getTermId() == tagIdBlog) {
-                            viewsBlog = viewsBlog + Stat.getClicks();
-                        } else if (termTax.getTermId() == tagIdArtikel) {
-                            viewsArtikel = viewsArtikel + Stat.getClicks();
-                        } else if (termTax.getTermId() == tagIdNews) {
-                            viewsNews = viewsNews + Stat.getClicks();
-                        } else if(termTax.getTermId() == tagIdWhitepaper) {
-                            viewsWP += Stat.getClicks();
-                        } else if(termTax.getTermId() == tagIdPodcast) {
-                            viewsPodcast += Stat.getClicks();
-                        }
-                    }
+                PostStats stat = statRepository.getStatByArtID(post.getId());
+                switch(postController.getType(post.getId())) {
+                    case "blog" -> viewsBlog += stat.getClicks();
+                    case "artikel" -> viewsArtikel += stat.getClicks();
+                    case "news" -> viewsNews += stat.getClicks();
+                    case "whitepaper" -> viewsWP += stat.getClicks();
+                    case "podcast" -> viewsPodcast += stat.getClicks();
+                    case "video" -> viewsVideo += stat.getClicks();
                 }
             }
         }
@@ -717,6 +706,7 @@ public class UserController {
         obj.put("viewsNews", viewsNews);
         obj.put("viewsWhitepaper", viewsWP);
         obj.put("viewsPodcast", viewsPodcast);
+        obj.put("viewsVideo", viewsVideo);
         obj.put("viewsProfile", viewsProfile);
         return obj.toString();
 

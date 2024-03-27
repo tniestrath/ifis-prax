@@ -134,7 +134,10 @@ public class DiagnosisController {
         return html.toString();
     }
 
-
+    /**
+     * An aggregate that funnels all Checkups that are currently to be used and returns all of their problems sorted.
+     * @return a sorted List of Problems with descending severity.
+     */
     private List<Problem> allCheckups() {
         List<Problem> largeList  = new ArrayList<>();
 
@@ -156,6 +159,10 @@ public class DiagnosisController {
         return largeList;
     }
 
+    /**
+     * Finds Problems in UniversalStats.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findUniStatProblems() {
         List<Problem> list = new ArrayList<>();
         list.addAll(uniDateConsistencyCheckup());
@@ -163,6 +170,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in UniversalStats, specifically its values.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> uniValuesCheckup() {
         List<Problem> list  = new ArrayList<>();
         int severityNegative = 5;
@@ -187,6 +198,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in UniversalStats, specifically its dates.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> uniDateConsistencyCheckup() {
         List<Problem> list  = new ArrayList<>();
 
@@ -225,6 +240,10 @@ public class DiagnosisController {
 
     }
 
+    /**
+     * Finds Problems in UniversalStats-DLCS.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findUniDLCProblems() {
         List<Problem> list = new ArrayList<>();
         list.addAll(uniDLCWrongReferenceCheckup());
@@ -233,6 +252,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in UniversalStats-DLCS, specifically references that point to nothing.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> uniDLCWrongReferenceCheckup() {
         List<Problem> list  = new ArrayList<>();
 
@@ -255,6 +278,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in UniversalStats-DLCS, specifically missing Dates.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> uniDLCMissingHourCheckup() {
         List<Problem> list  = new ArrayList<>();
 
@@ -280,6 +307,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in UniversalStats-DLCS, specifically bad data.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> uniDLCValuesCheckup() {
         List<Problem> list  = new ArrayList<>();
 
@@ -339,11 +370,19 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in Geolocation.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findGeoProblems() {
         List<Problem> list = new ArrayList<>();
         return list;
     }
 
+    /**
+     * Finds Problems in Search-Stats.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findSearchStatProblems() {
         List<Problem> list = new ArrayList<>(successErrorCheck());
         return list;
@@ -374,6 +413,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in Post-Types.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findTypeProblems() {
         List<Problem> list = new ArrayList<>();
         list.addAll(newTypeFoundCheck());
@@ -381,6 +424,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in Post-Types, specifically new Types.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> newTypeFoundCheck() {
         List<Problem> list  = new ArrayList<>();
 
@@ -410,6 +457,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in Post-Types, specifically changed Types.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> changedTypeCheck() {
         List<Problem> list  = new ArrayList<>();
 
@@ -429,12 +480,19 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds Problems in Website.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findWebsiteProblems() {
         List<Problem> list = new ArrayList<>();
         return list;
     }
 
-
+    /**
+     * Finds potential bots by their behavior in clicking nonsense.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findPotentialBotsByNonsense() throws JSONException {
         List<Problem> list  = new ArrayList<>();
 
@@ -454,6 +512,10 @@ public class DiagnosisController {
         return list;
     }
 
+    /**
+     * Finds potential bots by their general behavior.
+     * @return a List of Problem-Items.
+     */
     private List<Problem> findPotentialBots(int repeatedClicksLimit){
         List<Problem> list  = new ArrayList<>();
 

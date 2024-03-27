@@ -3,5 +3,5 @@
   <div class="snr-city">{{data.city}}</div>
   <div class="snr-string-short">{{data.search}}</div>
   <div class="snr-count-long"><img src="assets/repeat.png">{{Util.formatNumbers(data.count)}}</div>
-  <div class="snr-ignore" (click)="onClick()"><img *ngIf="data.search!='GELÖSCHT'" src="assets/trash-can-red.png"><img *ngIf="data.search=='GELÖSCHT'" src="assets/undo.png"></div>
+  <div class="snr-ignore" (click)="onClick()"><img *ngIf="data.city!='GELÖSCHT'" src="assets/trash-can-red.png"><img *ngIf="data.city=='GELÖSCHT'" src="assets/undo.png"></div>
 </div>

@@ -124,8 +124,7 @@ export class PageComponent implements OnInit {
   getPostsPageCards() {
     return [
       {type: PostListComponent, row: 1, col: 1, height: 4, width: 2},
-      {type: PostComponent, row: 1, col: 3, height: 2, width: 4},
-      {type: PostDisplayComponent, row: 3, col: 3, height: 2, width: 4},
+      {type: PostDisplayComponent, row: 1, col: 3, height: 3, width: 2},
 
       {type: Top5ArticleComponent, row: 5, col: 1, height: 1, width: 6},
       {type: Top5BlogComponent, row: 6, col: 1, height: 1, width: 6},

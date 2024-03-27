@@ -207,7 +207,7 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
             // @ts-ignore
             (this.selectorItems.at(index).data as SearchAnbieterItem).search = (r as { city: string, query : string }).query;
             // @ts-ignore
-            (this.selectorItems.at(index).data as SearchAnbieterItem).search = (r as { city: string, query : string }).city;
+            (this.selectorItems.at(index).data as SearchAnbieterItem).city = (r as { city: string, query : string }).city;
             this.selectorItemsLoaded.next(this.selectorItems);
           }
 

@@ -116,7 +116,7 @@ export enum dbUrl {
   SEARCH_IGNORE = "/search-stats/blockSearch?search=SEARCH",
   SEARCH_FLIP = "/search-stats/flipSearch?search=SEARCH",
   SEARCH_USER_IGNORE = "/search-stats/deleteAnbieterSearch?id=ID",
-  SEARCH_USER_FLIP = "/search-stats/flipAnbieterSearch?id=ID",
+  SEARCH_USER_FLIP = "/search-stats/flipAnbieterSearch?search=SEARCH",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -789,7 +789,7 @@ export class DbService {
   }
   async flipAnbieterSearch(id : string) : Promise<{ city: string, query : string }> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.SEARCH_USER_FLIP).replace("ID", id)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.SEARCH_USER_FLIP).replace("SEARCH", id)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
 }

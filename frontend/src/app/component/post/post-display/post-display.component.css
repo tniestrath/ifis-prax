@@ -1,7 +1,32 @@
-.component-box{
-  overflow-y: auto;
-}
-
 #post-display-box{
-  padding: 15px 10px;
+  display: grid;
+  grid-template-rows: 2fr 4fr 1fr;
+  grid-template-columns: auto auto;
+}
+#post-display-img{
+  grid-row: 1;
+  grid-column: 1/ span 2;
+  background-position: 50% 50%;
+  background-size: cover;
+  border-radius: 5px 5px 0 0;
+}
+#post-display-content{
+  grid-row: 2;
+  grid-column: 1 / span 2;
+}
+#post-display-author{
+  grid-row: 3;
+  grid-column: 1;
+}
+#post-display-date{
+  grid-row: 3;
+  grid-column: 2;
+}
+#post-display-tags{
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  border-radius: 0 5px 0 5px;
+  color: #FFFFFF;
 }

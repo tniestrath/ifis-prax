@@ -3,6 +3,8 @@ package com.analysetool.services;
 import com.analysetool.modells.SocialsImpressions;
 import com.analysetool.repositories.SocialsImpressionsRepository;
 import com.analysetool.repositories.universalStatsRepository;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -108,6 +110,35 @@ public class SocialsImpressionsService {
     public List<SocialsImpressions> getSocialsImpressionsByPostId(Long postId){
         List<SocialsImpressions> imp = socialsImpressionsRepo.findByPostId(postId);
         return imp;
+    }
+
+    public String getImpressionsAccumulatedAllTimeByPostId(Long postId) throws JSONException {
+        List<SocialsImpressions> imp = getSocialsImpressionsByPostId(postId);
+        return accumulateImpressionsByListIntoJSON(imp);
+    }
+
+    public String getImpressionsAccumulatedAllTimeByUserId(Long userId) throws JSONException {
+        List<SocialsImpressions> imp = getSocialsImpressionsByUserId(userId);
+        return accumulateImpressionsByListIntoJSON(imp);
+    }
+
+
+    public String accumulateImpressionsByListIntoJSON(List<SocialsImpressions> imp) throws JSONException {
+        Long twitter = 0L;
+        Long facebook = 0L;
+        Long linkedIn=0L;
+
+        for(SocialsImpressions soc:imp){
+            twitter = twitter+ soc.getTwitter();
+            facebook = facebook+ soc.getFacebook();
+            linkedIn = linkedIn+ soc.getLinkedIn();
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("Twitter",twitter);
+        obj.put("facebook",facebook);
+        obj.put("LinkedIn",linkedIn);
+
+        return obj.toString();
     }
 
     public List<SocialsImpressions> getSocialsImpressionsByUserId(Long userId){

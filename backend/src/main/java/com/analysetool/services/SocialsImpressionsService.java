@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SocialsImpressionsService {
@@ -30,6 +32,7 @@ public class SocialsImpressionsService {
             impression.setTwitter(0L);
             impression.setLinkedIn(0L);
         }
+        System.out.println(whatMatched);
         Long counter;
         switch (whatMatched) {
             case "postImpressionFacebook" -> {
@@ -100,5 +103,15 @@ public class SocialsImpressionsService {
             }
         }
         socialsImpressionsRepo.save(impression);
+    }
+
+    public List<SocialsImpressions> getSocialsImpressionsByPostId(Long postId){
+        List<SocialsImpressions> imp = socialsImpressionsRepo.findByPostId(postId);
+        return imp;
+    }
+
+    public List<SocialsImpressions> getSocialsImpressionsByUserId(Long userId){
+        List<SocialsImpressions> imp = socialsImpressionsRepo.findByUserId(userId);
+        return imp;
     }
 }

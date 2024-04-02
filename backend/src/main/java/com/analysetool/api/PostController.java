@@ -4,6 +4,7 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.ContentDownloadsHourlyService;
 import com.analysetool.services.PostClicksByHourDLCService;
+import com.analysetool.services.SocialsImpressionsService;
 import com.analysetool.util.Constants;
 import com.analysetool.util.MathHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,6 +69,8 @@ public class PostController {
     private universalStatsRepository uniRepo;
     @Autowired
     private ContentDownloadsHourlyRepository contentDownloadsRepo;
+    @Autowired
+    private SocialsImpressionsService soziImp;
 
     PostRepository postRepository;
     PostStatsRepository statsRepo;
@@ -1725,6 +1728,12 @@ public class PostController {
             return "blogeintrag";
         }
         return uncoolType;
+    }
+
+    public String getPostImpressions(Long postId){
+        String response="";
+
+        return response;
     }
 }
 

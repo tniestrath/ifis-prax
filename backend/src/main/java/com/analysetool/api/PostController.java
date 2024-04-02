@@ -1730,10 +1730,12 @@ public class PostController {
         return uncoolType;
     }
 
-    public String getPostImpressions(Long postId){
-        String response="";
+    public String getAccumulatedPostImpressionsAllTime(Long postId){
+        return soziImp.getImpressionsAccumulatedAllTimeByPostId(postId);
+    }
 
-        return response;
+    public String getAccumulatedUserImpressionsAllTime(Long userId){
+        return soziImp.getImpressionsAccumulatedAllTimeByUserId(userId);
     }
 }
 

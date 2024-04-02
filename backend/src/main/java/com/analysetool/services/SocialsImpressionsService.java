@@ -112,14 +112,24 @@ public class SocialsImpressionsService {
         return imp;
     }
 
-    public String getImpressionsAccumulatedAllTimeByPostId(Long postId) throws JSONException {
+    public String getImpressionsAccumulatedAllTimeByPostId(Long postId)  {
+        try{
         List<SocialsImpressions> imp = getSocialsImpressionsByPostId(postId);
-        return accumulateImpressionsByListIntoJSON(imp);
+            return accumulateImpressionsByListIntoJSON(imp);
+        }
+        catch (Exception e){e.printStackTrace();
+            return "";
+        }
+
     }
 
-    public String getImpressionsAccumulatedAllTimeByUserId(Long userId) throws JSONException {
+    public String getImpressionsAccumulatedAllTimeByUserId(Long userId) {
+        try{
         List<SocialsImpressions> imp = getSocialsImpressionsByUserId(userId);
-        return accumulateImpressionsByListIntoJSON(imp);
+        return accumulateImpressionsByListIntoJSON(imp);}
+        catch (Exception e){e.printStackTrace();
+        return "";
+        }
     }
 
 

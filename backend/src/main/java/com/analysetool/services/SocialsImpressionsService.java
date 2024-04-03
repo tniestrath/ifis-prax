@@ -151,8 +151,42 @@ public class SocialsImpressionsService {
         return obj.toString();
     }
 
+    public String impToJSON(SocialsImpressions imp){
+
+        JSONObject obj = new JSONObject();
+        try{
+        obj.put("Twitter",imp.getTwitter());
+        obj.put("facebook",imp.getFacebook());
+        obj.put("LinkedIn",imp.getLinkedIn());
+        obj.put("Datum",uniRepo.getDateByUniId(imp.getUniId()));
+        obj.put("Hour",imp.getHour());
+        if(imp.getPostId()!=null){
+            obj.put("postId",imp.getPostId());
+        } else if (imp.getUserId()!=null) {
+            obj.put("userId",imp.getUserId());
+        }
+
+            return obj.toString();
+        }catch(Exception e){return "Weird JSON Error";}
+
+    }
+
     public List<SocialsImpressions> getSocialsImpressionsByUserId(Long userId){
         List<SocialsImpressions> imp = socialsImpressionsRepo.findByUserId(userId);
         return imp;
     }
+
+    public SocialsImpressions getMostImpressionsFromList(List<SocialsImpressions> allImps){
+        SocialsImpressions topImp=null;
+        Long bestImpCount=0L;
+        for(SocialsImpressions imp:allImps){
+            Long impCount= imp.getFacebook()+imp.getLinkedIn()+imp.getTwitter();
+            if(impCount>bestImpCount){
+                topImp = imp;
+            }
+        }
+        return topImp;
+    }
+
+
 }

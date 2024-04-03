@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -170,6 +171,29 @@ public class SocialsImpressionsService {
         }catch(Exception e){return "Weird JSON Error";}
 
     }
+    public List<SocialsImpressions> filterOutUserImpressions(List<SocialsImpressions> unfilteredImps){
+        List<SocialsImpressions> filteredImps=new ArrayList<>();
+
+        for(SocialsImpressions imp: unfilteredImps){
+            if(imp.getPostId()!=null){
+                filteredImps.add(imp);
+            }
+        }
+
+        return filteredImps;
+    }
+
+    public List<SocialsImpressions> filterOutPostImpressions(List<SocialsImpressions> unfilteredImps){
+        List<SocialsImpressions> filteredImps=new ArrayList<>();
+
+        for(SocialsImpressions imp: unfilteredImps){
+            if(imp.getUserId()!=null){
+                filteredImps.add(imp);
+            }
+        }
+
+        return filteredImps;
+    }
 
     public List<SocialsImpressions> getSocialsImpressionsByUserId(Long userId){
         List<SocialsImpressions> imp = socialsImpressionsRepo.findByUserId(userId);
@@ -177,7 +201,7 @@ public class SocialsImpressionsService {
     }
 
     public SocialsImpressions getMostImpressionsFromList(List<SocialsImpressions> allImps){
-        SocialsImpressions topImp=null;
+        SocialsImpressions topImp=new SocialsImpressions();
         Long bestImpCount=0L;
         for(SocialsImpressions imp:allImps){
             Long impCount= imp.getFacebook()+imp.getLinkedIn()+imp.getTwitter();

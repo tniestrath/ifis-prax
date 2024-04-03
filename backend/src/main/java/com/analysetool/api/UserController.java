@@ -2032,4 +2032,10 @@ public class UserController {
         return soziImp.getImpressionsAccumulatedAllTimeByUserId(userId);
     }
 
+    @GetMapping("/getBestUserImpression")
+    public String getBestUserImpressionAllTime(){
+        List<SocialsImpressions>imps = soziImp.filterOutPostImpressions(soziImp.findAll());
+        return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
+    }
+
 }

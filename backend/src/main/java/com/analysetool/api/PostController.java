@@ -1735,6 +1735,10 @@ public class PostController {
         return soziImp.getImpressionsAccumulatedAllTimeByPostId(postId);
     }
 
-
+    @GetMapping("/getBestPostImpression")
+    public String getBestPostImpressionAllTime(){
+        List<SocialsImpressions>imps = soziImp.filterOutUserImpressions(soziImp.findAll());
+        return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
+    }
 }
 

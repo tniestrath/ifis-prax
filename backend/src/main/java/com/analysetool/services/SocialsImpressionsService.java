@@ -212,5 +212,8 @@ public class SocialsImpressionsService {
         return topImp;
     }
 
+    public List<SocialsImpressions> findAll(){
+        return socialsImpressionsRepo.findAll();
+    }
 
 }

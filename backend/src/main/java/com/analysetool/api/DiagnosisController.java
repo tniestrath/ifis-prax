@@ -582,8 +582,8 @@ public class DiagnosisController {
         int i = 1;
         JSONObject json = new JSONObject();
         while(matcher.find()) {
-            if(matcher.group(0).equalsIgnoreCase("ip_address")) {
-                if(!buffer.isBlank()) array.put(json);
+            if(matcher.group(0).equalsIgnoreCase("date")) {
+                array.put(json);
                 json = new JSONObject();
             }
 

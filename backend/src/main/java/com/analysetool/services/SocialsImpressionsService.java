@@ -251,6 +251,11 @@ public class SocialsImpressionsService {
         return socialsImpressionsRepo.findAll();
     }
 
+    /**
+     * Gets the greatest SocialImpressionsRow by Twitter Impressions from a list.
+     * @param allImps the list to fetch from.
+     * @return a SocialsImpressions-Object representing the table-row.
+     */
     public SocialsImpressions getMostTwitterImpressionsFromList(List<SocialsImpressions> allImps){
 
         SocialsImpressions topImp=new SocialsImpressions();
@@ -265,6 +270,11 @@ public class SocialsImpressionsService {
 
     }
 
+    /**
+     * Gets the greatest SocialImpressionsRow by LinkedIn Impressions from a list.
+     * @param allImps the list to fetch from.
+     * @return a SocialsImpressions-Object representing the table-row.
+     */
     public SocialsImpressions getMostLinkedInImpressionsFromList(List<SocialsImpressions> allImps){
 
         SocialsImpressions topImp=new SocialsImpressions();
@@ -279,6 +289,11 @@ public class SocialsImpressionsService {
 
     }
 
+    /**
+     * Gets the greatest SocialImpressionsRow by Facebook Impressions from a list.
+     * @param allImps the list to fetch from.
+     * @return a SocialsImpressions-Object representing the table-row.
+     */
     public SocialsImpressions getMostFacebookImpressionsFromList(List<SocialsImpressions> allImps){
 
         SocialsImpressions topImp=new SocialsImpressions();

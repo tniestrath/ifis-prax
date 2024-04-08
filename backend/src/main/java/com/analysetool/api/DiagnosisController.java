@@ -594,6 +594,7 @@ public class DiagnosisController {
                 i = 1;
             }
         }
+        array.put(json);
 
         return array.toString();
     }

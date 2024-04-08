@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -39,6 +41,8 @@ public class DiagnosisController {
     TrackingBlacklistRepository tbRepo;
     @Autowired
     PostController postController;
+    @Autowired
+    WPOptionsRepository wpOpRepo;
 
     int MAX_CLICKS_IN_CAT_UNTIL_BOT = 5;
     final int MAX_NONSENSE_UNTIL_BOT = 10;
@@ -564,4 +568,26 @@ public class DiagnosisController {
         return findPotentialBots(repeatedClicksLimit).toString();
     }
 
+    @GetMapping("/getBlackHoleData")
+    public String getAllBlockedBotsBlackHole() throws JSONException {
+        Matcher matcher = Pattern.compile("(?<=\")[^\"]+(?=\";s:\\d+:\"[^\"]+\";)").matcher(wpOpRepo.getAllBlockedBots());
+        JSONArray array = new JSONArray();
+
+        String buffer = "lol";
+        int i = 1;
+
+        while(matcher.find()) {
+            JSONObject json = new JSONObject();
+            if(i == 1) {
+                buffer = matcher.group(0);
+                i++;
+            } else if(i == 2) {
+                json.put(buffer, matcher.group(0));
+                array.put(json);
+                i = 1;
+            }
+        }
+
+        return array.toString();
+    }
 }

@@ -575,9 +575,10 @@ public class DiagnosisController {
 
         String buffer = "lol";
         int i = 1;
-
+        JSONObject json = new JSONObject();
         while(matcher.find()) {
-            JSONObject json = new JSONObject();
+            if(matcher.group(0).equalsIgnoreCase("ip_address")) json = new JSONObject();
+
             if(i == 1) {
                 buffer = matcher.group(0);
                 i++;

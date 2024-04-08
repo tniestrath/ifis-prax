@@ -251,4 +251,46 @@ public class SocialsImpressionsService {
         return socialsImpressionsRepo.findAll();
     }
 
+    public SocialsImpressions getMostTwitterImpressionsFromList(List<SocialsImpressions> allImps){
+
+        SocialsImpressions topImp=new SocialsImpressions();
+        Long bestImpCount=0L;
+        for(SocialsImpressions imp:allImps){
+            if(imp.getTwitter()>bestImpCount){
+                topImp = imp;
+                bestImpCount = imp.getTwitter();
+            }
+        }
+        return topImp;
+
+    }
+
+    public SocialsImpressions getMostLinkedInImpressionsFromList(List<SocialsImpressions> allImps){
+
+        SocialsImpressions topImp=new SocialsImpressions();
+        Long bestImpCount=0L;
+        for(SocialsImpressions imp:allImps){
+            if(imp.getLinkedIn()>bestImpCount){
+                topImp = imp;
+                bestImpCount = imp.getLinkedIn();
+            }
+        }
+        return topImp;
+
+    }
+
+    public SocialsImpressions getMostFacebookImpressionsFromList(List<SocialsImpressions> allImps){
+
+        SocialsImpressions topImp=new SocialsImpressions();
+        Long bestImpCount=0L;
+        for(SocialsImpressions imp:allImps){
+            if(imp.getFacebook()>bestImpCount){
+                topImp = imp;
+                bestImpCount =imp.getFacebook();
+            }
+        }
+        return topImp;
+
+    }
+
 }

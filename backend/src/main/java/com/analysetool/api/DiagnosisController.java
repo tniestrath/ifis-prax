@@ -570,7 +570,7 @@ public class DiagnosisController {
 
     @GetMapping("/getBlackHoleData")
     public String getAllBlockedBotsBlackHole() throws JSONException {
-        Matcher matcher = Pattern.compile("(?<=\")[^\"]+(?=\";s:\\d+:\"[^\"]+\";)").matcher(wpOpRepo.getAllBlockedBots());
+        Matcher matcher = Pattern.compile("(?<=\")[^\"]+(?=\";s:\\d+:\"[^\"]+\";)|\\d{4}/\\d{2}/\\d{2} @ \\d{2}:\\d{2}:\\d{2} (?:am|pm)").matcher(wpOpRepo.getAllBlockedBots());
         JSONArray array = new JSONArray();
 
         String buffer = "lol";

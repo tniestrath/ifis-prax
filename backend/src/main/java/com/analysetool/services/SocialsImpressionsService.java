@@ -237,6 +237,7 @@ public class SocialsImpressionsService {
             Long impCount= imp.getFacebook()+imp.getLinkedIn()+imp.getTwitter();
             if(impCount>bestImpCount){
                 topImp = imp;
+                bestImpCount = impCount;
             }
         }
         return topImp;

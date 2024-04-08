@@ -2027,7 +2027,7 @@ public class UserController {
         return json;
     }
 
-    @GetMapping("/accumulatedUserImpressions")
+    @GetMapping("/getAccumulatedUserImpressions")
     public String getAccumulatedUserImpressionsAllTime(@RequestParam Long userId){
         return soziImp.getImpressionsAccumulatedAllTimeByUserId(userId);
     }

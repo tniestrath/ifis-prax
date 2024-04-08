@@ -1730,7 +1730,7 @@ public class PostController {
         return uncoolType;
     }
 
-    @GetMapping("/accumulatedPostImpressions")
+    @GetMapping("/getAccumulatedPostImpressions")
     public String getAccumulatedPostImpressionsAllTime(@RequestParam Long postId){
         return soziImp.getImpressionsAccumulatedAllTimeByPostId(postId);
     }

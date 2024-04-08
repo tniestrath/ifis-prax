@@ -568,6 +568,11 @@ public class DiagnosisController {
         return findPotentialBots(repeatedClicksLimit).toString();
     }
 
+    /**
+     * Fetches all Data for blocked Bots by the Black Hole Plugin.
+     * @return a JSON-Array of JSON-Objects representing their data as a String.
+     * @throws JSONException .
+     */
     @GetMapping("/getBlackHoleData")
     public String getAllBlockedBotsBlackHole() throws JSONException {
         Matcher matcher = Pattern.compile("(?<=\")[^\"]+(?=\";s:\\d+:\"[^\"]+\";)|\\d{4}/\\d{2}/\\d{2} @ \\d{2}:\\d{2}:\\d{2} (?:am|pm)").matcher(wpOpRepo.getAllBlockedBots());

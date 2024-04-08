@@ -1,0 +1,30 @@
+.bad-bo-item-box{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ffffff00;
+}
+.bad-bot-item-box:hover{
+  border: 1px solid black;
+}
+
+.bad-bot-date{
+  display: flex;
+  align-items: center;
+  width: 33%;
+  text-align: left;
+}
+.bad-bot-ip{
+  display: flex;
+  align-items: center;
+  width: 33%;
+  text-align: left;
+}
+.bad-bot-agent{
+  display: flex;
+  align-items: center;
+  width: 33%;
+  text-align: left;
+}

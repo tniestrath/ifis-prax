@@ -14,6 +14,7 @@ import {
   SearchItem, SearchSS
 } from "../component/search/search-no-results-list/search-list-item/search-list-item.component";
 import {Newsletter} from "../component/newsletter/Newsletter";
+import {BadBot} from "../component/system/black-hole-list/bad-bot-item/bad-bot-item.component";
 
 export enum dbUrl {
   HOST = "http://analyse.it-sicherheit.de/api",
@@ -121,6 +122,7 @@ export enum dbUrl {
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
   GET_SYSTEM_TIME_HOUR = "/systemLoad/getHour",
+  GET_SYSTEM_BAD_BOTS = "/diagnosis/getBlackHoleData",
 
   LOGIN = "/login?user=USERNAME&pass=PASSWORD",
   LOGIN_WITH_BODY = "/login2",
@@ -572,6 +574,10 @@ export class DbService {
 
       return res.json()
     });
+  }
+  async getBlackHoleData() : Promise<BadBot[]>{
+    this.setLoading();
+    return await fetch(DbService.getUrl(dbUrl.GET_SYSTEM_BAD_BOTS), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getEvents() : Promise<string[]> {

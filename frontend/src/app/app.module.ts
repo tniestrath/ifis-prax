@@ -93,6 +93,8 @@ import { NewsletterListComponent } from './component/newsletter/newsletter-list/
 import { NewsletterListItemComponent } from './component/newsletter/newsletter-list/newsletter-list-item/newsletter-list-item.component';
 import { NewsletterComponent } from './component/newsletter/newsletter/newsletter.component';
 import { PostDisplayComponent } from './component/post/post-display/post-display.component';
+import { BlackHoleListComponent } from './component/system/black-hole-list/black-hole-list.component';
+import { BadBotItemComponent } from './component/system/black-hole-list/bad-bot-item/bad-bot-item.component';
 
 @NgModule({
   declarations: [
@@ -170,7 +172,9 @@ import { PostDisplayComponent } from './component/post/post-display/post-display
     NewsletterListComponent,
     NewsletterListItemComponent,
     NewsletterComponent,
-    PostDisplayComponent
+    PostDisplayComponent,
+    BlackHoleListComponent,
+    BadBotItemComponent
   ],
     imports: [
         BrowserModule,

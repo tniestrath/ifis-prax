@@ -58,6 +58,7 @@ import {
 } from "../../component/clicks-by-time/clicks-by-time.component";
 import {PostComponent} from "../../component/post/post.component";
 import {PostDisplayComponent} from "../../component/post/post-display/post-display.component";
+import {BlackHoleListComponent} from "../../component/system/black-hole-list/black-hole-list.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -165,6 +166,7 @@ export class PageComponent implements OnInit {
   getSystemPageCards() {
     return [
       {type: SystemloadComponent, row: 1, col: 1, height: 2, width: 2},
+      {type: BlackHoleListComponent, row: 1, col: 3, height: 2, width: 2},
     ];
   }
 

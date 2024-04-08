@@ -166,7 +166,7 @@ export class PageComponent implements OnInit {
   getSystemPageCards() {
     return [
       {type: SystemloadComponent, row: 1, col: 1, height: 2, width: 2},
-      {type: BlackHoleListComponent, row: 1, col: 3, height: 2, width: 2},
+      {type: BlackHoleListComponent, row: 1, col: 3, height: 2, width: 3},
     ];
   }
 

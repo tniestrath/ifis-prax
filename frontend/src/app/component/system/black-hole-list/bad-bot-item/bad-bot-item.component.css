@@ -1,4 +1,4 @@
-.bad-bo-item-box{
+.bad-bot-item-box{
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -13,18 +13,18 @@
 .bad-bot-date{
   display: flex;
   align-items: center;
-  width: 33%;
+  width: 25%;
   text-align: left;
 }
 .bad-bot-ip{
   display: flex;
   align-items: center;
-  width: 33%;
+  width: 25%;
   text-align: left;
 }
 .bad-bot-agent{
   display: flex;
   align-items: center;
-  width: 33%;
+  width: 50%;
   text-align: left;
 }

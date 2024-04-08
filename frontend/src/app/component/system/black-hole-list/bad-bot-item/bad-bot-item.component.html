@@ -1,5 +1,5 @@
-<div class="bad-bot-list-item-box">
-  <div class="bad-bot-date">{{data.date}}</div>
-  <div class="bad-bot-ip">{{data.ip}}</div>
-  <div class="bad-bot-agent">{{data.agent}}</div>
+<div class="bad-bot-item-box">
+  <div class="bad-bot-date">{{data.date.substring(0, data.date.indexOf("@"))}}</div>
+  <div class="bad-bot-ip">{{data.ip_address}}</div>
+  <div class="bad-bot-agent">{{data.user_agent}}</div>
 </div>

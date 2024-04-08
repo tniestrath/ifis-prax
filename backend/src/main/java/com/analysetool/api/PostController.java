@@ -4,6 +4,7 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.ContentDownloadsHourlyService;
 import com.analysetool.services.PostClicksByHourDLCService;
+import com.analysetool.services.SocialsImpressionsService;
 import com.analysetool.util.Constants;
 import com.analysetool.util.MathHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,6 +69,8 @@ public class PostController {
     private universalStatsRepository uniRepo;
     @Autowired
     private ContentDownloadsHourlyRepository contentDownloadsRepo;
+    @Autowired
+    private SocialsImpressionsService soziImp;
 
     PostRepository postRepository;
     PostStatsRepository statsRepo;
@@ -1725,6 +1728,17 @@ public class PostController {
             return "blogeintrag";
         }
         return uncoolType;
+    }
+
+    @GetMapping("/getAccumulatedPostImpressions")
+    public String getAccumulatedPostImpressionsAllTime(@RequestParam Long postId){
+        return soziImp.getImpressionsAccumulatedAllTimeByPostId(postId);
+    }
+
+    @GetMapping("/getBestPostImpression")
+    public String getBestPostImpressionAllTime(){
+        List<SocialsImpressions>imps = soziImp.filterOutUserImpressions(soziImp.findAll());
+        return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
     }
 }
 

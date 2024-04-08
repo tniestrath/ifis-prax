@@ -43,6 +43,7 @@ public interface universalStatsRepository extends JpaRepository<UniversalStats, 
     @Query("SELECT u.id FROM UniversalStats u")
     List<Integer> getAllUniIds();
 
-
+    @Query("SELECT u.datum FROM UniversalStats u WHERE u.id=:uniId")
+    Date getDateByUniId(Integer uniId);
 }
 

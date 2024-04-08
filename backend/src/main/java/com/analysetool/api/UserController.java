@@ -3,6 +3,7 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.PostClicksByHourDLCService;
+import com.analysetool.services.SocialsImpressionsService;
 import com.analysetool.services.UserViewsByHourDLCService;
 import com.analysetool.util.Constants;
 import com.analysetool.util.DashConfig;
@@ -70,7 +71,8 @@ public class UserController {
     private EventsController eventsController;
     @Autowired
     private EventsRepository eventsRepo;
-
+    @Autowired
+    private SocialsImpressionsService soziImp;
     private final DashConfig config;
 
     public UserController(DashConfig config) {
@@ -2023,6 +2025,17 @@ public class UserController {
         }
 
         return json;
+    }
+
+    @GetMapping("/getAccumulatedUserImpressions")
+    public String getAccumulatedUserImpressionsAllTime(@RequestParam Long userId){
+        return soziImp.getImpressionsAccumulatedAllTimeByUserId(userId);
+    }
+
+    @GetMapping("/getBestUserImpression")
+    public String getBestUserImpressionAllTime(){
+        List<SocialsImpressions>imps = soziImp.filterOutPostImpressions(soziImp.findAll());
+        return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
     }
 
 }

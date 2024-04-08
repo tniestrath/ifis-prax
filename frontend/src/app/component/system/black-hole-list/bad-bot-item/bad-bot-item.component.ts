@@ -6,11 +6,11 @@ export class BadBot extends DbObject{
   public ip_address : string;
   public date : string;
   public user_agent : string;
-  constructor(ip : string, date : string, agent : string) {
-    super(ip, agent);
-    this.ip_address = ip;
+  constructor(ip_address : string, date : string, user_agent : string) {
+    super(ip_address, user_agent);
+    this.ip_address = ip_address;
     this.date = date;
-    this.user_agent = agent;
+    this.user_agent = user_agent;
   }
 
 }

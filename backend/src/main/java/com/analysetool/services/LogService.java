@@ -131,6 +131,8 @@ public class LogService {
     //^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) regex für ip matching
     //private final String BlogSSPattern = "^.*GET /blog/(\\S+)/.*s=(\\S+)\".*"; //search +1, view +1,(bei match) vor blog view pattern
     private final String ArtikelSSPattern = "^.*GET /artikel/([^/]+)/.*s=([^&\"]+)\"";
+
+    private final String BlackHolePattern = "^.*GET /?blackhole";
     private final String PresseSSViewPatter = "^.*GET /news/([^/]+)/.*s=([^&\"]+)\"";
     private final String BlogSSPattern = "^.*GET /blog/([^/]+)/.*s=([^&\"]+)\"";
     private final String WhitepaperSSPattern = "^.*GET /whitepaper/([^/]+)/.*s=([^&\"]+)\"";//search +1, view +1,(bei match) vor artikel view pattern
@@ -223,6 +225,8 @@ public class LogService {
     private final String anbieterVerzeichnisPatter = "^.*GET /anbieterverzeichnis/";
 
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
+
+    final Pattern blackHoleTrapPattern = Pattern.compile(BlackHolePattern);
     final Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
     final Pattern blogCategory = Pattern.compile(blogCategoryPattern);
     final Pattern blogViewPattern = Pattern.compile(BlogViewPattern);
@@ -638,6 +642,9 @@ public class LogService {
                     Matcher matched_articleView = articleViewPattern.matcher(request);
                     Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
 
+                    //You activated my Trap
+                    Matcher matched_blackHole = blackHoleTrapPattern.matcher(request);
+
                     //Does it match a blog-type?
                     Matcher matched_blogView = blogViewPattern.matcher(request);
                     Matcher matched_blogCat = blogCategory.matcher(request);
@@ -885,6 +892,9 @@ public class LogService {
                     } else if(matched_anbieterverzeichnis_view.find()) {
                         whatMatched = "anbieterCat";
                         patternMatcher = matched_anbieterverzeichnis_view;
+                    } else if(matched_blackHole.find()) {
+                        whatMatched = "bLaCkHoLe";
+                        patternMatcher = matched_blackHole;
                     }
 
                     //If user existed,

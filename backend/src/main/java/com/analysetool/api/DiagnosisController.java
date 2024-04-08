@@ -582,14 +582,16 @@ public class DiagnosisController {
         int i = 1;
         JSONObject json = new JSONObject();
         while(matcher.find()) {
-            if(matcher.group(0).equalsIgnoreCase("ip_address")) json = new JSONObject();
+            if(matcher.group(0).equalsIgnoreCase("ip_address")) {
+                if(!buffer.isBlank()) array.put(json);
+                json = new JSONObject();
+            }
 
             if(i == 1) {
                 buffer = matcher.group(0);
                 i++;
             } else if(i == 2) {
                 json.put(buffer, matcher.group(0));
-                array.put(json);
                 i = 1;
             }
         }

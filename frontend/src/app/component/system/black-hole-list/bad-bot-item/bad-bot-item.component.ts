@@ -3,14 +3,14 @@ import {DbObject} from "../../../../services/DbObject";
 
 
 export class BadBot extends DbObject{
-  public ip : string;
+  public ip_address : string;
   public date : string;
-  public agent : string;
+  public user_agent : string;
   constructor(ip : string, date : string, agent : string) {
     super(ip, agent);
-    this.ip = ip;
+    this.ip_address = ip;
     this.date = date;
-    this.agent = agent;
+    this.user_agent = agent;
   }
 
 }

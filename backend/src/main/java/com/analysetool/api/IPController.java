@@ -30,7 +30,13 @@ public class IPController {
         this.config = config;
     }
 
-
+    /**
+     * Fetches a single ips origin.
+     * @param ip the ip to fetch for.
+     * @return a JSON-String containing detailed geolocation data.<br>
+     * Keys are: country, countryISO, district, districtISO, city, cityID.
+     * @throws JSONException .
+     */
     @GetMapping("/origin")
     public String getOrigin(String ip) throws JSONException {
         JSONObject origin = new JSONObject();
@@ -44,6 +50,10 @@ public class IPController {
         return origin.toString();
     }
 
+    /**
+     * Fetches a count of all Unique-Ips found in the access-log.
+     * @return a String containing a numeric value.
+     */
     @GetMapping("/countUnique")
     public String countIPsInAccessLog() {
         String line;
@@ -63,6 +73,10 @@ public class IPController {
         return String.valueOf(set.size());
     }
 
+    /**
+     * Blocks an IP from tracking, will no longer be analyzed in any category.
+     * @param ip the ip to block.
+     */
     @PostMapping("/blockIp")
     public void blockIp(String ip) {
         if(tbRepo.findByIp(ip).isEmpty()) {

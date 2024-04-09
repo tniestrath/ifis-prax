@@ -66,6 +66,10 @@ public class EventsController {
         return count;
     }
 
+    /**
+     * Fetches the amount of registered Events that have already passed.
+     * @return a positive integer.
+     */
     @GetMapping("/getCountPastEvents")
     public int getCountPastEvents() {
         LocalDateTime now = LocalDateTime.now();
@@ -126,11 +130,23 @@ public class EventsController {
         return events;
     }
 
+    /**
+     * Utility function to assess whether an Event is currently being held.
+     * (Starting Point has been passed, End Point has not been.)
+     * @param e the event-row to assess for.
+     * @return true, if current - otherwise false.
+     */
     public boolean isCurrent(Events e) {
         LocalDateTime now = LocalDateTime.now();
         return e.getEventStart().isBefore(now) && e.getEventEnd().isAfter(now);
     }
 
+    /**
+     * Utility function to assess whether an Event is in the future.
+     * (Starting Point has not been passed, End Point has not been passed.)
+     * @param e the event-row to assess for.
+     * @return true, if upcoming - otherwise false.
+     */
     public boolean isUpcoming(Events e) {
         LocalDateTime now = LocalDateTime.now();
         return e.getEventStart().isAfter(now);
@@ -170,6 +186,10 @@ public class EventsController {
         return "o";
     }
 
+    /**
+     * Fetches all Events that were created during the current day.
+     * @return a JSON-Array String containing the EventNames.
+     */
     @GetMapping("/getNewEvents")
     public String getNewEvents() {
         List<Events> listEvents = eventsRepo.findAll();
@@ -182,6 +202,11 @@ public class EventsController {
         return new JSONArray(listNewEvents).toString();
     }
 
+    /**
+     * Fetches whether an Event is set to be active.
+     * @param e the Event to fetch for.
+     * @return true, if active - otherwise false.
+     */
     public boolean isActive(Events e) {
         return e.getEventStatus() == 1;
     }

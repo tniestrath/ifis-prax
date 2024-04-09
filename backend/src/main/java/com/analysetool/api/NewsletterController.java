@@ -36,26 +36,49 @@ public class NewsletterController {
     @Autowired
     NewsletterSentRepository newsSentRepo;
 
+    /**
+     * Gets a Users status.
+     * @param id the user's id.
+     * @return the user's status, represented with a char.
+     */
     @GetMapping("/getStatusById")
     public char getStatusById(Long id) {
         return newsRepo.getStatusById(id);
     }
 
+    /**
+     * Gets a Users status.
+     * @param mail the user's mail-address.
+     * @return the user's status, represented with a char.
+     */
     @GetMapping("/getStatusByMail")
     public char getStatusByMail(String mail){
         return newsRepo.getStatusByMail(mail);
     }
 
+    /**
+     * Fetches all User-Status chars.
+     * @return a list of chars.
+     */
     @GetMapping("/getStatusAll")
     public List<Character> getStatusAll () {
         return newsRepo.getStatusAll();
     }
 
+    /**
+     * Fetches all mails that match a certain status.
+     * @param c a char representing the status.
+     * @return a List of email-addresses.
+     */
     @GetMapping("/getMailByStatus")
     public List<String> getMailbyStatus(char c) {
         return newsRepo.getMailsByStatus(c);
     }
 
+    /**
+     * Fetches all Email-Addresses with their respective status.
+     * @return a Map of String (email) to character (status).
+     */
     @GetMapping("/getAllMailsWithStatus")
     public Map<String, Character> getAllMailsWithStatus() {
         return newsRepo.getMailAndStatusAll();
@@ -123,11 +146,22 @@ public class NewsletterController {
         return subs;
     }
 
+    /**
+     * Fetches a detailed JSON-String containing a lot of data for the latest newsletter.
+     * @return a JSON-String with keys: totalOpens, OR, subject, interactions, problems, interactionTimes, id, date.
+     * @throws JSONException .
+     */
     @GetMapping("/getLatestNewsletterCallup")
     public String getLatestNewsletterCallup() throws JSONException {
         return getNewsletterCallup(Math.toIntExact(newsEmailsRepo.getLatestNewsletter().getId()));
     }
 
+    /**
+     * Fetches a detailed JSON-String containing a lot of data for the chosen newsletter.
+     * @param emailId the id of the chosen, sent newsletter.
+     * @return a JSON-String with keys: totalOpens, OR, subject, interactions, problems, interactionTimes, id, date.
+     * @throws JSONException .
+     */
     @GetMapping("/getNewsletterCallup")
     public String getNewsletterCallup(int emailId) throws JSONException {
         if(newsEmailsRepo.findById((long) emailId).isPresent()) {
@@ -161,6 +195,12 @@ public class NewsletterController {
 
     }
 
+    /**
+     * Fetches Geolocation-Data for a single Newsletter.
+     * @param emailId id of the newsletter to fetch for.
+     * @return a JSON-String with regional ISO-Codes as keys and their clicks as values.
+     * @throws JSONException .
+     */
     @GetMapping("/getNewsletterGeoSingle")
     public String getNewsletterGeo(int emailId) throws JSONException {
        JSONObject json = new JSONObject();
@@ -217,6 +257,11 @@ public class NewsletterController {
 
     }
 
+    /**
+     * Fetches Geolocation-Data for all Newsletters combined.
+     * @return a JSON-String with regional ISO-Codes as keys and their clicks as values.
+     * @throws JSONException .
+     */
     @GetMapping("/getNewsletterGeo")
     public String getNewsletterGeoTotal() throws JSONException {
         JSONObject json = new JSONObject();

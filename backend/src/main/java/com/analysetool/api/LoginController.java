@@ -121,7 +121,7 @@ public class LoginController {
     }
 
     /**
-     *
+     * Attempts to login a user.
      * @param user username.
      * @param pass password.
      * @return String representation of the WordPress-login-cookie value

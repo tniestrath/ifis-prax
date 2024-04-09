@@ -237,6 +237,7 @@ public class SocialsImpressionsService {
             Long impCount= imp.getFacebook()+imp.getLinkedIn()+imp.getTwitter();
             if(impCount>bestImpCount){
                 topImp = imp;
+                bestImpCount = impCount;
             }
         }
         return topImp;
@@ -248,6 +249,63 @@ public class SocialsImpressionsService {
      */
     public List<SocialsImpressions> findAll(){
         return socialsImpressionsRepo.findAll();
+    }
+
+    /**
+     * Gets the greatest SocialImpressionsRow by Twitter Impressions from a list.
+     * @param allImps the list to fetch from.
+     * @return a SocialsImpressions-Object representing the table-row.
+     */
+    public SocialsImpressions getMostTwitterImpressionsFromList(List<SocialsImpressions> allImps){
+
+        SocialsImpressions topImp=new SocialsImpressions();
+        Long bestImpCount=0L;
+        for(SocialsImpressions imp:allImps){
+            if(imp.getTwitter()>bestImpCount){
+                topImp = imp;
+                bestImpCount = imp.getTwitter();
+            }
+        }
+        return topImp;
+
+    }
+
+    /**
+     * Gets the greatest SocialImpressionsRow by LinkedIn Impressions from a list.
+     * @param allImps the list to fetch from.
+     * @return a SocialsImpressions-Object representing the table-row.
+     */
+    public SocialsImpressions getMostLinkedInImpressionsFromList(List<SocialsImpressions> allImps){
+
+        SocialsImpressions topImp=new SocialsImpressions();
+        Long bestImpCount=0L;
+        for(SocialsImpressions imp:allImps){
+            if(imp.getLinkedIn()>bestImpCount){
+                topImp = imp;
+                bestImpCount = imp.getLinkedIn();
+            }
+        }
+        return topImp;
+
+    }
+
+    /**
+     * Gets the greatest SocialImpressionsRow by Facebook Impressions from a list.
+     * @param allImps the list to fetch from.
+     * @return a SocialsImpressions-Object representing the table-row.
+     */
+    public SocialsImpressions getMostFacebookImpressionsFromList(List<SocialsImpressions> allImps){
+
+        SocialsImpressions topImp=new SocialsImpressions();
+        Long bestImpCount=0L;
+        for(SocialsImpressions imp:allImps){
+            if(imp.getFacebook()>bestImpCount){
+                topImp = imp;
+                bestImpCount =imp.getFacebook();
+            }
+        }
+        return topImp;
+
     }
 
 }

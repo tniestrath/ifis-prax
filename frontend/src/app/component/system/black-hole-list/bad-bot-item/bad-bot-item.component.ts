@@ -11,7 +11,7 @@ export class BadBot extends DbObject{
     super(ip_address, user_agent);
     this.ip_address = ip_address;
     this.date = date;
-    this.user_agent = user_agent;
+    this.user_agent = user_agent.substring(0, 180);
   }
 
 }

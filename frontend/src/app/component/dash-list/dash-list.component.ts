@@ -36,6 +36,18 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }
+  reload(response : Promise<T[]>, component : Type<C>): void {
+    this.response = response;
+    this.component = component;
+    this.selectorItems = [];
+    response.then((value : T[]) => {
+      for (const valueElement of value) {
+        this.selectorItems.push(new SelectorItem(component, valueElement));
+      }
+      this.pagesComplete = value.length <= 0;
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+  }
 
   onScrollEnd() {
     if (!this.pagesComplete){
@@ -61,6 +73,16 @@ export class DashListPageableComponent<T extends DbObject, C extends DashListIte
 
 
   override load<T extends DbObject, C extends DashListItemComponent>(response : Promise<T[]> ,component : Type<C>): void {
+    response.then((value : T[]) => {
+      for (const valueElement of value) {
+        this.selectorItems.push(new SelectorItem(component, valueElement));
+      }
+      this.pageIndex++;
+      this.selectorItemsLoaded.next(this.selectorItems);
+    });
+  }
+  override reload<T extends DbObject, C extends DashListItemComponent>(response : Promise<T[]> ,component : Type<C>): void {
+    this.selectorItems = [];
     response.then((value : T[]) => {
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(component, valueElement));

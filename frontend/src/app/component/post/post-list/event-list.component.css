@@ -1,0 +1,46 @@
+input[type="radio"]{
+  display: grid;
+}
+#post-type-all::before{
+  content: "Alle";
+
+}
+#post-type-all::after{
+  content: "Alle";
+
+}
+#post-type-article::before{
+  content: "KG";
+}
+#post-type-article::after{
+  content: "KG";
+  color: #951D40;
+}
+#post-type-blog::before{
+  content: "ME";
+}
+#post-type-blog::after{
+  content: "ME";
+  color: #951D40;
+}
+#post-type-news::before{
+  content: "SE";
+}
+#post-type-news::after{
+  content: "SE";
+  color: #951D40;
+}
+#post-type-podcast::before{
+  content: "WS";
+}
+#post-type-podcast::after{
+  content: "WS";
+  color: #951D40;
+}
+#post-type-whitepaper::before{
+  content: "SO";
+}
+#post-type-whitepaper::after{
+  content: "SO";
+  color: #951D40;
+}

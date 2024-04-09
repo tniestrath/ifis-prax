@@ -197,7 +197,7 @@ export class UserPostListComponent extends PostListComponent{
 @Component({
   selector: 'dash-list-user-post',
   templateUrl: './post-list.component.html',
-  styleUrls: ['./post-list.component.css', "../../dash-base/dash-base.component.css"]
+  styleUrls: ['./post-list.component.css', "../../dash-base/dash-base.component.css", "./event-list.component.css"]
 })
 export class EventListComponent extends PostListComponent{
   override placeholder = "Event suchen";
@@ -207,18 +207,32 @@ export class EventListComponent extends PostListComponent{
     this.load(this.db.getEventsLikePostsPaged( 0, 20, " ", ""), PostListItemComponent);
 
     this.input_search_cb = (event: { target: { value: string; }; }) => {
-      this.selectorItems = this.selectorItemsBackup.filter((item) => {
-        return (item.data as Post).title.toUpperCase().includes(event.target.value.toUpperCase());
-      });
-      this.selectorItemsLoaded.next(this.selectorItems);
+      this.search_text = event.target.value;
+      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.filter, this.search_text), PostListItemComponent);
     }
     this.input_all_cb = () => {
-      this.selectorItems = this.selectorItemsBackup.sort((a, b) => Number(b.data.id) - Number(a.data.id));
-      this.selectorItemsLoaded.next(this.selectorItems);
+      this.filter = " ";
+      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.filter, this.search_text), PostListItemComponent);
+    }
+    this.input_article_cb = () => {
+      this.filter = "KG";
+      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.filter, this.search_text), PostListItemComponent);
+    }
+    this.input_blog_cb = () => {
+      this.filter = "ME";
+      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.filter, this.search_text), PostListItemComponent);
+    }
+    this.input_news_cb = () => {
+      this.filter = "SE";
+      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.filter, this.search_text), PostListItemComponent);
+    }
+    this.input_podcast_cb = () => {
+      this.filter = "WS";
+      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.filter, this.search_text), PostListItemComponent);
     }
     this.input_whitepaper_cb = () => {
-      this.selectorItems.sort((a, b) => Number((b.data as Post).clicks) - Number((a.data as Post).clicks));
-      this.selectorItemsLoaded.next(this.selectorItems);
+      this.filter = "SO";
+      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.filter, this.search_text), PostListItemComponent);
     }
   }
 }

@@ -11,9 +11,10 @@ import {SelectableComponent} from "./selectable.component";
 import {Observable, Subscription} from "rxjs";
 import {DbObject} from "../../services/DbObject";
 import {TagListItemComponent} from "../../component/tag/tag-list/tag-list-item/tag-list-item.component";
+import {DashListItemComponent} from "../../component/dash-list/dash-list-item/dash-list-item.component";
 
 export class SelectorItem {
-  constructor(public component: Type<any>, public data: DbObject){}
+  constructor(public component: Type<DashListItemComponent>, public data: DbObject){}
 }
 
 @Component({

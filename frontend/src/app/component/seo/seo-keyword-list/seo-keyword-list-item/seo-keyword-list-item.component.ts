@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import Util from "../../../../util/Util";
 import {DbObject} from "../../../../services/DbObject";
+import {DashListItemComponent} from "../../../dash-list/dash-list-item/dash-list-item.component";
 
 
 export class SEOKeyword extends DbObject{
@@ -14,8 +15,8 @@ export class SEOKeyword extends DbObject{
   templateUrl: './seo-keyword-list-item.component.html',
   styleUrls: ['./seo-keyword-list-item.component.css']
 })
-export class SeoKeywordListItemComponent {
-  data = new SEOKeyword();
+export class SeoKeywordListItemComponent extends DashListItemComponent{
+  override data = new SEOKeyword();
 
   onOver(isOver: boolean, more?: HTMLDivElement){
       if (isOver){

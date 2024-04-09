@@ -3,7 +3,6 @@ import {CookieService} from "ngx-cookie-service";
 import {DbService} from "../../services/db.service";
 import {Observable, Subject} from "rxjs";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
-import {PostChartComponent} from "../../component/post/post-chart/post-chart.component";
 import {GaugeComponent} from "../../component/gauge/gauge.component";
 import {GridCard} from "../../grid/GridCard";
 import {RelevanceComponent} from "../../component/gauge/relevance/relevance.component";
@@ -12,7 +11,6 @@ import {UserPlanComponent} from "../../component/user/user-plan/user-plan.compon
 import {LoginComponent} from "../../component/login/login.component";
 import {
   OriginMapComponent,
-  OriginMapNewsletterComponent,
   OriginMapNewsletterGlobalComponent
 } from "../../component/origin-map/origin-map.component";
 import {TagListComponent} from "../../component/tag/tag-list/tag-list.component";
@@ -33,30 +31,19 @@ import {EventsStatsComponent, UserEventsStatsComponent} from "../../component/ev
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
 import {ProfileCompletionComponent} from "../../component/user/profile-completion/profile-completion.component";
 import {UserComparatorComponent} from "../../component/user/user-comparator/user-comparator.component";
-import {
-  UserStatsByPlanComponent,
-  UserStatsByPlanViewTypeCompareComponent
-} from "../../component/user/user-stats-by-plan/user-stats-by-plan.component";
+import {UserStatsByPlanComponent, UserStatsByPlanViewTypeCompareComponent} from "../../component/user/user-stats-by-plan/user-stats-by-plan.component";
 import {UserDisplayComponentComponent} from "../../component/user/user-display-component/user-display-component.component";
 import {UserClicksChartComponent} from "../../component/user/user-clicks-chart/user-clicks-chart.component";
 import {SingleUserTagsDistComponent, UserTagsDistComponent} from "../../component/user/user-tags-dist/user-tags-dist.component";
 import {PdfService} from "../../services/pdf.service";
-import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
 import {SeoOverTimeComponent} from "../../component/seo/seo-over-time/seo-over-time.component";
 import {SeoStatDisplayComponent} from "../../component/seo/seo-stat-display/seo-stat-display.component";
 import {SeoCtrComponent} from "../../component/seo/seo-ctr/seo-ctr.component";
 import {SeoKeywordListComponent} from "../../component/seo/seo-keyword-list/seo-keyword-list.component";
-import {
-  SearchListAnbieterNoResultsComponent,
-  SearchListComponent, SearchListCombinedComponent
-} from "../../component/search/search-no-results-list/search-list.component";
+import {SearchListAnbieterNoResultsComponent, SearchListCombinedComponent} from "../../component/search/search-no-results-list/search-list.component";
 import {NewsletterListComponent} from "../../component/newsletter/newsletter-list/newsletter-list.component";
 import {NewsletterComponent} from "../../component/newsletter/newsletter/newsletter.component";
-import {
-  ClicksByTimeComponent,
-  ClicksByTimeNewsletterComponent
-} from "../../component/clicks-by-time/clicks-by-time.component";
-import {PostComponent} from "../../component/post/post.component";
+import {ClicksByTimeNewsletterComponent} from "../../component/clicks-by-time/clicks-by-time.component";
 import {PostDisplayComponent} from "../../component/post/post-display/post-display.component";
 import {BlackHoleListComponent} from "../../component/system/black-hole-list/black-hole-list.component";
 @Component({

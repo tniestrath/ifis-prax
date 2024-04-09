@@ -24,8 +24,7 @@ export class SeoKeywordListComponent extends DashBaseComponent implements OnInit
                            "<img src=\"assets/target-click.png\" style=\"height: 15px; filter:invert(1)\"> Klicks<br>" +
                            "<img src=\"assets/target-ctr.png\" style=\"height: 15px; filter:invert(1)\"> Klickrate (CTR)")
       for (let element of value) {
-        this.selectorItems.push(new SelectorItem(SeoKeywordListItemComponent,
-          new SEOKeyword(element.clicks, element.impressions, element.keys.at(1), element.keys.at(0), element.ctr)));
+        this.selectorItems.push(new SelectorItem(SeoKeywordListItemComponent, new SEOKeyword(element.clicks, element.impressions, element.keys.at(1), element.keys.at(0), element.ctr)));
       }
       this.selectorItems.sort((a, b) => Number((b.data as TagRanking).relevance) - Number((a.data as TagRanking).relevance));
       this.selectorItemsLoaded.next(this.selectorItems);

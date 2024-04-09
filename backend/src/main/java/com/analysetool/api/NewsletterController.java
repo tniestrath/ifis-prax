@@ -166,6 +166,14 @@ public class NewsletterController {
         return subs.size();
     }
 
+    /**
+     * Berechnet die Konversionsrate für Newsletter-Abonnements am aktuellen Tag.
+     * Die Konversionsrate wird als Verhältnis der Anzahl der Abonnements heute
+     * zur Anzahl der einzigartigen Benutzer (nach Entfernung blockierter IPs) definiert.
+     *
+     * @return Die Konversionsrate für Newsletter-Abonnements heute in Prozent
+     */
+    @GetMapping("/getNewsletterKonversionRateToday")
     public double getConversionRateTodayForNewsletter(){
         Integer subsToday = getAmountofSubsToday();
         List<String> blockedIps = trackBlackRepo.getAllIps();

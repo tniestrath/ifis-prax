@@ -399,6 +399,12 @@ public class GeoController {
         return json.toString();
     }
 
+    /**
+     * Endpoint for retrieval of all German Geolocation Data gathered in detail.
+     * @param region the region to fetch detailed data for.
+     * @return a JSON-String containing cities as labels and their clicks as values.
+     * @throws JSONException .
+     */
     @GetMapping("/getRegionGermanGeoAllTime")
     public String getRegionGermanGeoAllTime(String region) throws JSONException {
         JSONObject json = new JSONObject();
@@ -412,6 +418,14 @@ public class GeoController {
         return json.toString();
     }
 
+    /**
+     * Endpoint for retrieval of all German Geolocation Data gathered in detail, for a specific timespan.
+     * @param region the region to fetch detailed data for.
+     * @param start the inclusive start of the timespan to fetch data for as a String. In Format yyyy-MM-dd.
+     * @param end the inclusive end of the timespan to fetch data for as a String. In Format yyyy-MM-dd.
+     * @return a JSON-String containing cities as labels and their clicks as values.
+     * @throws JSONException .
+     */
     @GetMapping("/getRegionGermanGeoByDate")
     public String getRegionGermanGeoByDate(String region, String start, String end) throws JSONException {
         JSONObject json = new JSONObject();
@@ -446,6 +460,12 @@ public class GeoController {
         return json.toString();
     }
 
+    /**
+     * Fetches average clicks per city for a specific region of germany of all time.
+     * @param region the region to fetch for.
+     * @return a JSON-String containing cities as labels and their average clicks per day as values.
+     * @throws JSONException .
+     */
     @GetMapping("/getRegionGermanGeoAllTimeAverages")
     public String getRegionGermanGeoAllTimeAverage(String region) throws JSONException {
         JSONObject json = new JSONObject();
@@ -461,6 +481,14 @@ public class GeoController {
         return json.toString();
     }
 
+    /**
+     * Fetches average clicks per city for a specific region of germany of a specific timespan.
+     * @param region the region to fetch for.
+     * @param start the inclusive start of the timespan to fetch data for as a String. In Format yyyy-MM-dd.
+     * @param end the inclusive end of the timespan to fetch data for as a String. In Format yyyy-MM-dd.
+     * @return a JSON-String containing cities as labels and their average clicks per day as values.
+     * @throws JSONException .
+     */
     @GetMapping("/getRegionGermanGeoByDaysAverages")
     public String getRegionGermanGeoByDaysAverages(String region, String start, String end) throws JSONException {
         JSONObject json = new JSONObject();
@@ -497,8 +525,10 @@ public class GeoController {
         return json.toString();
     }
 
-
-
+    /**
+     * Fetches the beginning and end of our geolocation tracking.
+     * @return a String-Array containing dates.
+     */
     @GetMapping("/geoRange")
     public String[] getDateRange() {
         String[] string;
@@ -510,8 +540,8 @@ public class GeoController {
     /**
      * Endpoint for retrieval of a regions Geolocation Data with dates.
      * @param region the region or DACH country you want stats for.
-     * @param start the Date to start gathering Geo-Data (inclusive).
-     * @param end the Date to end gathering Geo-Data (inclusive).
+     * @param start the Date to start gathering Geo-Data (inclusive). In Format yyyy-MM-dd.
+     * @param end the Date to end gathering Geo-Data (inclusive). In Format yyyy-MM-dd.
      * @return a JSON String with "dates" on containing the dates data was gathered for, a matching List in "data" containing the respective stats.
      * @throws JSONException .
      */
@@ -590,6 +620,12 @@ public class GeoController {
 
     }
 
+    /**
+     * Fetches Geolocation-Data for a user of all time.
+     * @param userId the id of the user to fetch for.
+     * @return a JSON-String containing ISO-Codes of german Region Codes as labels and clicks as values.
+     * @throws JSONException .
+     */
     @GetMapping("/getUserGeoWithPostsAllTime")
     public String getUserGeoTotalAllTime(int userId) throws JSONException {
         JSONObject json = new JSONObject();
@@ -630,12 +666,12 @@ public class GeoController {
             if (uniId != 0) {
                 UserGeo user = userGeoRepo.findByUserIdAndUniStatId(userId, uniId);
                 if(user != null) {
-                    setRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());
+                    updateRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());
 
                     for (Post post : postRepo.findByAuthor(userId)) {
                         PostGeo postGeo = postGeoRepo.findByPostIdAndUniStatId(post.getId(), uniId);
                         if (postGeo != null) {
-                            setRegionals(json, postGeo.getHh(), postGeo.getHb(), postGeo.getBe(), postGeo.getMv(), postGeo.getBb(), postGeo.getSn(), postGeo.getSt(), postGeo.getBye(), postGeo.getSl(), postGeo.getRp(), postGeo.getSh(), postGeo.getTh(), postGeo.getNb(), postGeo.getHe(), postGeo.getBW(), postGeo.getNW(), postGeo.getAusland());
+                            updateRegionals(json, postGeo.getHh(), postGeo.getHb(), postGeo.getBe(), postGeo.getMv(), postGeo.getBb(), postGeo.getSn(), postGeo.getSt(), postGeo.getBye(), postGeo.getSl(), postGeo.getRp(), postGeo.getSh(), postGeo.getTh(), postGeo.getNb(), postGeo.getHe(), postGeo.getBW(), postGeo.getNW(), postGeo.getAusland());
                         }
                     }
                 }
@@ -646,6 +682,14 @@ public class GeoController {
         return json.toString();
     }
 
+    /**
+     * Fetches Geolocation-Data for a user in a specific timespan.
+     * @param userId the id of the user to fetch for.
+     * @param start the inclusive start of the timespan. In Format yyyy-MM-dd.
+     * @param end the inclusive end of the timespan. In Format yyyy-MM-dd.
+     * @return a JSON-String containing ISO-Codes of german Region Codes as labels and clicks as values.
+     * @throws JSONException .
+     */
     @GetMapping("/getUserGeoWithPostsByDays")
     public String getUserGeoTotalByDays(int userId, String start, String end) throws JSONException {
         JSONObject json = new JSONObject();
@@ -691,12 +735,12 @@ public class GeoController {
             if (uniId != 0) {
                 UserGeo user = userGeoRepo.findByUserIdAndUniStatId(userId, uniId);
                 if (user != null) {
-                    setRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());
+                    updateRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());
 
                     for (Post post : postRepo.findByAuthor(userId)) {
                         PostGeo postGeo = postGeoRepo.findByPostIdAndUniStatId(post.getId(), uniId);
                         if (postGeo != null) {
-                            setRegionals(json, postGeo.getHh(), postGeo.getHb(), postGeo.getBe(), postGeo.getMv(), postGeo.getBb(), postGeo.getSn(), postGeo.getSt(), postGeo.getBye(), postGeo.getSl(), postGeo.getRp(), postGeo.getSh(), postGeo.getTh(), postGeo.getNb(), postGeo.getHe(), postGeo.getBW(), postGeo.getNW(), postGeo.getAusland());
+                            updateRegionals(json, postGeo.getHh(), postGeo.getHb(), postGeo.getBe(), postGeo.getMv(), postGeo.getBb(), postGeo.getSn(), postGeo.getSt(), postGeo.getBye(), postGeo.getSl(), postGeo.getRp(), postGeo.getSh(), postGeo.getTh(), postGeo.getNb(), postGeo.getHe(), postGeo.getBW(), postGeo.getNW(), postGeo.getAusland());
                         }
                     }
                 }
@@ -705,8 +749,29 @@ public class GeoController {
         return json.toString();
     }
 
-
-    private void setRegionals(JSONObject json, int hh, int hb, int be, int mv, int bb, int sn, int st, int bye, int sl, int rp, int sh, int th, int nb, int he, int bw, int nw, int ausland) throws JSONException {
+    /**
+     * Increases all regional data in a JSON File by other values.
+     * @param json the current json to add values onto.
+     * @param hh the value to add to the key hh.
+     * @param hb the value to add to the key hb.
+     * @param be the value to add to the key be.
+     * @param mv the value to add to the key mw.
+     * @param bb the value to add to the key bb.
+     * @param sn the value to add to the key sn.
+     * @param st the value to add to the key st.
+     * @param bye the value to add to the key bye.
+     * @param sl the value to add to the key sl.
+     * @param rp the value to add to the key rp.
+     * @param sh the value to add to the key sh.
+     * @param th the value to add to the key th.
+     * @param nb the value to add to the key nb.
+     * @param he the value to add to the key he.
+     * @param bw the value to add to the key bw.
+     * @param nw the value to add to the key nw.
+     * @param ausland the value to add to the key ausland.
+     * @throws JSONException .
+     */
+    private void updateRegionals(JSONObject json, int hh, int hb, int be, int mv, int bb, int sn, int st, int bye, int sl, int rp, int sh, int th, int nb, int he, int bw, int nw, int ausland) throws JSONException {
         json.put("HH", hh + json.getInt("HH"));
         json.put("HB", hb + json.getInt("HB"));
         json.put("BE", be + json.getInt("BE"));

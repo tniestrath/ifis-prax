@@ -167,7 +167,7 @@ public class PostController {
      * @param size the amount of results you want to receive at most.
      * @param filter the EXACT slug of a term the post is supposed to have.
      * @param search a String you want to search the db for, searches content AND title of posts.
-     * @return a JSONObject containing a JSONArray of JSONObjects that contain PostStats, and the count of Posts originally found.
+     * @return a JSONArray of JSONObjects that contain PostStats, and the count of Posts originally found.
      * @throws JSONException .
      * @throws ParseException .
      */

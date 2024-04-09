@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {DbObject} from "../../../../services/DbObject";
 import {SysVars} from "../../../../services/sys-vars-service";
 import Util from "../../../../util/Util";
+import {DashListItemComponent} from "../../../dash-list/dash-list-item/dash-list-item.component";
 
 
 export class SearchItem extends DbObject{
@@ -45,11 +46,11 @@ export class SearchSS extends DbObject{
   templateUrl: './search-list-item.component.html',
   styleUrls: ['./search-list-item.component.css']
 })
-export class SearchListItemComponent {
-  data : DbObject = new DbObject("","");
+export class SearchListItemComponent extends DashListItemComponent{
+  override data : DbObject = new DbObject("","");
   public Util = Util;
 
-  protected onClick(){
+  override onClick(){
     SysVars.SELECTED_SEARCH.emit({item: this.data, operation: "IGNORE"});
   }
 
@@ -80,7 +81,7 @@ export class SearchListSSItemComponent extends SearchListItemComponent{
 export class SearchListAnbieterItemComponent extends SearchListItemComponent{
   override data : SearchAnbieterItem = new SearchAnbieterItem("","", "", 0);
 
-  protected override onClick(){
+  override onClick(){
     SysVars.SELECTED_SEARCH.emit({item: this.data, operation: "DELETE"});
   }
 }

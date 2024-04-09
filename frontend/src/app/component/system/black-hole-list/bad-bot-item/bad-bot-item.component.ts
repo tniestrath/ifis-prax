@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {DbObject} from "../../../../services/DbObject";
+import {DashListItemComponent} from "../../../dash-list/dash-list-item/dash-list-item.component";
 
 
 export class BadBot extends DbObject{
@@ -20,7 +21,7 @@ export class BadBot extends DbObject{
   templateUrl: './bad-bot-item.component.html',
   styleUrls: ['./bad-bot-item.component.css']
 })
-export class BadBotItemComponent {
-  data : BadBot = new BadBot("","", "");
+export class BadBotItemComponent extends DashListItemComponent{
+  override data : BadBot = new BadBot("","", "");
 
 }

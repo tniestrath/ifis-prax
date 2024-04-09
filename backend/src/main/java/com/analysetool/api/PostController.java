@@ -1132,6 +1132,7 @@ public class PostController {
     @GetMapping("/getEventsWithStats")
     public String getEventsWithStats(Integer page, Integer size,  String filter, String search) throws JSONException, ParseException {
         List<Post> list;
+        //ToDo: Re-add filter for Event-Types
         if(search.isBlank()) {
             list = postRepo.findByStatusIsAndTypeIsOrderByModifiedDesc("publish", "event", PageRequest.of(page, size));
         } else {
@@ -1141,14 +1142,10 @@ public class PostController {
 
         for(Post post : list) {
             long id = post.getId();
-            if((eventsRepo.findByPostID(post.getId()).isPresent())) {
-                if(filter.isBlank() || eventsController.getEventType(eventsRepo.findByPostID(post.getId()).get()).equalsIgnoreCase(filter)) {
-                    stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
-                }
-            }
+            stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
         }
 
-        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
+        return new JSONObject().put("posts", new JSONArray(stats)).toString();
     }
 
 

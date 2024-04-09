@@ -651,7 +651,7 @@ public class UserController {
            stats.add(new JSONObject(postController.PostStatsByIdForFrontend(post.getId())));
         }
 
-        return new JSONObject().put("posts", new JSONArray(stats)).toString();
+        return new JSONArray(stats).toString();
     }
 
 

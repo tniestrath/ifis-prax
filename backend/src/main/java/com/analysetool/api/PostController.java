@@ -184,7 +184,7 @@ public class PostController {
         for(Post post : list) {
             stats.add(new JSONObject(PostStatsByIdForFrontend(post.getId())));
         }
-        return new JSONObject().put("posts", new JSONArray(stats)).toString();
+        return new JSONArray(stats).toString();
     }
 
     @GetMapping("/getNewestPostWithStatsByAuthor")
@@ -1125,7 +1125,7 @@ public class PostController {
             long id = post.getId();
             stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
         }
-        return new JSONObject().put("posts", new JSONArray(stats)).toString();
+        return new JSONArray(stats).toString();
     }
 
 
@@ -1145,7 +1145,7 @@ public class PostController {
             stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
         }
 
-        return new JSONObject().put("posts", new JSONArray(stats)).toString();
+        return new JSONArray(stats).toString();
     }
 
 

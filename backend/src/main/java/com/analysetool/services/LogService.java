@@ -500,6 +500,7 @@ public class LogService {
 
     /**
      * Reads through all eligible lines, filters out the unusable, then prepares and continues evaluating data from each line.
+     * Behaves as an identifier and distributor of more specific tasks.
      * @param sysVar a collection of internal data used in determining where to start reading.
      * @throws IOException .
      * @throws ParseException .
@@ -1247,6 +1248,244 @@ public class LogService {
         updateFinalSearchStatsAndTemporarySearchStats();
     }
 
+    /**
+     * Converts a single line of the access.log into usable data and writes them into the database.
+     * @param line the line of the access.log to scan.
+     * @param ip the ip that accessed the server.
+     * @param whatMatched a String representation of what type the access the line represented.
+     * @param dateLog the dateTime of the access.log line.
+     * @param patternMatcher the regex-matcher that has found the "best" result.
+     */
+    public void processLine(String line, String ip, String whatMatched, LocalDateTime dateLog, Matcher patternMatcher) {
+        lastLine = line;
+
+        switch(whatMatched) {
+            case "articleView", "blogView", "newsView", "wpView", "ratgeberPost", "podView", "videoView":
+                try {
+                    UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                    updateIPsByPost(ip, postRepository.getIdByName(patternMatcher.group(1)));
+                    updatePostClicksMap(postRepository.getIdByName(patternMatcher.group(1)),dateLog);
+                } catch (Exception e) {
+                    System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
+                }
+                break;
+            case "articleSS", "blogSS", "newsSS", "wpSS":
+                try {
+                    Long postId = postRepository.getIdByName(patternMatcher.group(1));
+                    updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
+                    updatePostClicksMap(postId,dateLog);
+                    UpdatePerformanceAndViews(dateLog, postId);
+                } catch(Exception e) {
+                    System.out.println("SS PROCESS LINE EXCEPTION " +line);
+                }
+                break;
+            case "eventSS":
+                try {
+                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
+                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
+                        updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
+                        updateIPsByPost(ip, postId);
+                        updatePostClicksMap(postId,dateLog);
+                        UpdatePerformanceAndViews(dateLog, postId);
+                    }
+                }   catch (Exception e) {
+                    System.out.println("EVENTSS EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+                break;
+            case "userSS":
+                try {
+                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
+                        updateSearchDLCMap(ip,patternMatcher.group(2),userId,dateLog,"user");
+                        updateUserStats(userId,dateLog);
+                        updateIPsByUser(ip, userId);
+                    }
+                } catch (Exception e) {
+                    System.out.println("USERSS EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+                break;
+            case "userView":
+                try {
+                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
+                        updateUserStats(userId,dateLog);
+                        updateIPsByUser(ip, userId);
+                    }
+                } catch (Exception e) {
+                    System.out.println("USERVIEW EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+                break;
+            case "contentDownload":
+                try {
+                    System.out.println("FOUND CONTENT DOWNLOAD \n\n");
+                    //Edit Filename to make sure very similar files still work as intended
+                    String filename = "/" + patternMatcher.group(1) + ".pdf";
+                    if(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).isPresent()) {
+                        long id = postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).get();
+                        ContentDownloadsHourly download;
+                        if(contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).isEmpty()) {
+                            download = new ContentDownloadsHourly();
+                            download.setUniId(uniRepo.getLatestUniStat().getId());
+                            download.setHour(LocalDateTime.now().getHour());
+                            download.setPostId(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).get());
+                            download.setDownloads(1L);
+                        } else {
+                            download = contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).get();
+                            download.setDownloads(download.getDownloads() + 1);
+                        }
+                        contentDownloadsHourlyRepo.save(download);
+                    }
+                }
+                catch (Exception e){
+                    System.out.println("CONTENT DOWNLOAD EXCEPTION BEI: "+ line);
+                }
+                break;
+            case "userRedirect":
+                try {
+                    if(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)) != null) {
+                        UserRedirectsHourly redirects;
+                        if(userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).isPresent()) {
+                            redirects = userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).get();
+                        } else {
+                            redirects = new UserRedirectsHourly();
+                            redirects.setHour(dateLog.getHour());
+                            redirects.setUniId(uniRepo.getLatestUniStat().getId());
+                            redirects.setUserId(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)));
+                            redirects.setRedirects(0L);
+                        }
+                        redirects.setRedirects(redirects.getRedirects() + 1);
+                        userRedirectRepo.save(redirects);
+                    }
+                }
+                catch (Exception e) {
+                    System.out.println("USERREDIRECT EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+                break;
+            case "socialsLinkedInRedirect","socialsTwitterRedirect","socialsYouTubeRedirect","socialsFacebookRedirect":
+                try {
+                    Integer latestUniId= uniRepo.getLatestUniStat().getId();
+                    Integer hour = dateLog.getHour();
+                    OutgoingSocialsRedirects redirects;
+
+                    if(outgoingSocialsRepo.findByUniIdAndHour(latestUniId,hour).isPresent()) {
+                        redirects = outgoingSocialsRepo.findByUniIdAndHour(latestUniId,hour).get();
+                    } else {
+                        redirects = new OutgoingSocialsRedirects();
+                        redirects.setHour(dateLog.getHour());
+                        redirects.setUniId(uniRepo.getLatestUniStat().getId());
+                        redirects.setLinkedin(0L);
+                        redirects.setFacebook(0L);
+                        redirects.setTwitter(0L);
+                        redirects.setYoutube(0L);
+
+                    }
+
+                    outgoingSocialsRepo.save( updateSocialsRedirects(whatMatched , redirects));
+
+                }
+                catch (Exception e) {
+                    System.out.println("SOCIALSREDIRECT EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+                break;
+            case "eventView":
+                try {
+                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
+                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
+                        UpdatePerformanceAndViews(dateLog, postId);
+                        updateIPsByPost(ip, postId);
+                        updatePostClicksMap(postId,dateLog);
+                    }
+                }
+                catch (Exception e) {
+                    System.out.println("EVENTVIEW EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+                break;
+            case "postImpressionFacebook","postImpressionTwitter","postImpressionLinkedIn","postImpressionFacebookTwitterCombo":
+                try{
+                    long id =postRepository.getIdByName(patternMatcher.group(2));
+                    socialsImpressionsService.updateSocialsImpressionsPost(whatMatched,dateLog,id);
+                    break;
+                } catch(Exception e){
+                    System.out.println("POST-SOCIAL EXCEPTION" + line );
+                }
+            case "userImpressionFacebook","userImpressionTwitter","userImpressionLinkedIn","userImpressionFacebookTwitterCombo":
+                try {
+                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
+                        socialsImpressionsService.updateSocialsImpressionsUser(whatMatched,dateLog,userId);
+                        break;
+                    }
+                } catch (Exception e) {
+                    System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+            case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar":
+
+            default:
+                break;
+        }
+
+    }
+
+    /**
+     * Updates respective data from UniversalStats.
+     * @param totalClicks
+     * @param internalClicks
+     * @param sensibleClicks
+     * @param viewsArticle
+     * @param viewsNews
+     * @param viewsBlog
+     * @param viewsPodcast
+     * @param viewsVideos
+     * @param viewsWhitepaper
+     * @param viewsEvents
+     * @param viewsRatgeber
+     * @param viewsRatgeberPost
+     * @param viewsRatgeberGlossar
+     * @param viewsRatgeberBuch
+     * @param viewsRatgeberSelf
+     * @param viewsMain
+     * @param viewsAnbieter
+     * @param viewsUeber
+     * @param viewsAGBS
+     * @param viewsImpressum
+     * @param viewsPreisliste
+     * @param viewsPartner
+     * @param viewsDatenschutz
+     * @param viewsNewsletter
+     * @param viewsImage
+     * @param uniqueUsers
+     * @param userArticle
+     * @param userNews
+     * @param userBlog
+     * @param userPodcast
+     * @param userVideos
+     * @param userWhitepaper
+     * @param userEvents
+     * @param userRatgeber
+     * @param userRatgeberPost
+     * @param userRatgeberGlossar
+     * @param userRatgeberBuch
+     * @param userRatgeberSelf
+     * @param userMain
+     * @param userAnbieter
+     * @param userUeber
+     * @param userAGBS
+     * @param userImpressum
+     * @param userPreisliste
+     * @param userPartner
+     * @param userDatenschutz
+     * @param userNewsletter
+     * @param userImage
+     * @param serverErrors
+     * @throws ParseException
+     */
     private void updateUniStats(int totalClicks, int internalClicks, int sensibleClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsVideos, int viewsWhitepaper, int viewsEvents, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsAnbieter, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userVideos, int userWhitepaper, int userEvents, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userAnbieter, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
@@ -1699,191 +1938,6 @@ public class LogService {
                 postTypeRepo.delete(type);
             }
         }
-    }
-
-    /**
-     * Converts a single line of the access.log into usable data and writes them into the database.
-     * @param line the line of the access.log to scan.
-     * @param ip the ip that accessed the server.
-     * @param whatMatched a String representation of what type the access the line represented.
-     * @param dateLog the dateTime of the access.log line.
-     * @param patternMatcher the regex-matcher that has found the "best" result.
-     */
-    public void processLine(String line, String ip, String whatMatched, LocalDateTime dateLog, Matcher patternMatcher) {
-        lastLine = line;
-
-        switch(whatMatched) {
-            case "articleView", "blogView", "newsView", "wpView", "ratgeberPost", "podView", "videoView":
-                try {
-                    UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
-                    updateIPsByPost(ip, postRepository.getIdByName(patternMatcher.group(1)));
-                    updatePostClicksMap(postRepository.getIdByName(patternMatcher.group(1)),dateLog);
-                } catch (Exception e) {
-                    System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
-                }
-                break;
-            case "articleSS", "blogSS", "newsSS", "wpSS":
-                try {
-                    Long postId = postRepository.getIdByName(patternMatcher.group(1));
-                    updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
-                    updatePostClicksMap(postId,dateLog);
-                    UpdatePerformanceAndViews(dateLog, postId);
-                } catch(Exception e) {
-                    System.out.println("SS PROCESS LINE EXCEPTION " +line);
-                }
-                break;
-            case "eventSS":
-                try {
-                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
-                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
-                        updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
-                        updateIPsByPost(ip, postId);
-                        updatePostClicksMap(postId,dateLog);
-                        UpdatePerformanceAndViews(dateLog, postId);
-                    }
-                }   catch (Exception e) {
-                    System.out.println("EVENTSS EXCEPTION BEI: " + line);
-                    e.printStackTrace();
-                }
-                break;
-            case "userSS":
-                try {
-                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
-                        updateSearchDLCMap(ip,patternMatcher.group(2),userId,dateLog,"user");
-                        updateUserStats(userId,dateLog);
-                        updateIPsByUser(ip, userId);
-                    }
-                } catch (Exception e) {
-                    System.out.println("USERSS EXCEPTION BEI: " + line);
-                    e.printStackTrace();
-                }
-                break;
-            case "userView":
-                try {
-                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
-                        updateUserStats(userId,dateLog);
-                        updateIPsByUser(ip, userId);
-                    }
-                } catch (Exception e) {
-                    System.out.println("USERVIEW EXCEPTION BEI: " + line);
-                    e.printStackTrace();
-                }
-                break;
-            case "contentDownload":
-                try {
-                    System.out.println("FOUND CONTENT DOWNLOAD \n\n");
-                    //Edit Filename to make sure very similar files still work as intended
-                    String filename = "/" + patternMatcher.group(1) + ".pdf";
-                    if(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).isPresent()) {
-                        long id = postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).get();
-                        ContentDownloadsHourly download;
-                        if(contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).isEmpty()) {
-                            download = new ContentDownloadsHourly();
-                            download.setUniId(uniRepo.getLatestUniStat().getId());
-                            download.setHour(LocalDateTime.now().getHour());
-                            download.setPostId(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).get());
-                            download.setDownloads(1L);
-                        } else {
-                            download = contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).get();
-                            download.setDownloads(download.getDownloads() + 1);
-                        }
-                        contentDownloadsHourlyRepo.save(download);
-                    }
-                }
-                catch (Exception e){
-                    System.out.println("CONTENT DOWNLOAD EXCEPTION BEI: "+ line);
-                }
-                break;
-            case "userRedirect":
-                try {
-                    if(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)) != null) {
-                        UserRedirectsHourly redirects;
-                        if(userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).isPresent()) {
-                           redirects = userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).get();
-                       } else {
-                           redirects = new UserRedirectsHourly();
-                           redirects.setHour(dateLog.getHour());
-                           redirects.setUniId(uniRepo.getLatestUniStat().getId());
-                           redirects.setUserId(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)));
-                           redirects.setRedirects(0L);
-                       }
-                        redirects.setRedirects(redirects.getRedirects() + 1);
-                        userRedirectRepo.save(redirects);
-                    }
-                }
-                catch (Exception e) {
-                    System.out.println("USERREDIRECT EXCEPTION BEI: " + line);
-                    e.printStackTrace();
-                }
-                break;
-            case "socialsLinkedInRedirect","socialsTwitterRedirect","socialsYouTubeRedirect","socialsFacebookRedirect":
-                try {
-                        Integer latestUniId= uniRepo.getLatestUniStat().getId();
-                        Integer hour = dateLog.getHour();
-                        OutgoingSocialsRedirects redirects;
-
-                        if(outgoingSocialsRepo.findByUniIdAndHour(latestUniId,hour).isPresent()) {
-                            redirects = outgoingSocialsRepo.findByUniIdAndHour(latestUniId,hour).get();
-                        } else {
-                            redirects = new OutgoingSocialsRedirects();
-                            redirects.setHour(dateLog.getHour());
-                            redirects.setUniId(uniRepo.getLatestUniStat().getId());
-                            redirects.setLinkedin(0L);
-                            redirects.setFacebook(0L);
-                            redirects.setTwitter(0L);
-                            redirects.setYoutube(0L);
-
-                        }
-
-                        outgoingSocialsRepo.save( updateSocialsRedirects(whatMatched , redirects));
-
-                }
-                catch (Exception e) {
-                    System.out.println("SOCIALSREDIRECT EXCEPTION BEI: " + line);
-                    e.printStackTrace();
-                }
-                break;
-            case "eventView":
-                try {
-                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
-                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
-                        UpdatePerformanceAndViews(dateLog, postId);
-                        updateIPsByPost(ip, postId);
-                        updatePostClicksMap(postId,dateLog);
-                    }
-                }
-                catch (Exception e) {
-                    System.out.println("EVENTVIEW EXCEPTION BEI: " + line);
-                    e.printStackTrace();
-                }
-                break;
-            case "postImpressionFacebook","postImpressionTwitter","postImpressionLinkedIn","postImpressionFacebookTwitterCombo":
-                try{
-                long id =postRepository.getIdByName(patternMatcher.group(2));
-                socialsImpressionsService.updateSocialsImpressionsPost(whatMatched,dateLog,id);
-                break;
-                } catch(Exception e){
-                    System.out.println("POST-SOCIAL EXCEPTION" + line );
-                }
-            case "userImpressionFacebook","userImpressionTwitter","userImpressionLinkedIn","userImpressionFacebookTwitterCombo":
-                try {
-                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
-                        socialsImpressionsService.updateSocialsImpressionsUser(whatMatched,dateLog,userId);
-                        break;
-                    }
-                } catch (Exception e) {
-                    System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
-                    e.printStackTrace();
-                }
-            case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar":
-
-            default:
-                break;
-        }
-
     }
 
     /**

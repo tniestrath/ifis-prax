@@ -42,4 +42,6 @@ public interface UniqueUserRepository extends JpaRepository<UniqueUser, Long> {
     @Query("SELECT count(u) FROM UniqueUser u ")
     Long getCountOfAllUser();
 
+    @Query("select u.ip from UniqueUser u")
+    List<String> getAllIps();
 }

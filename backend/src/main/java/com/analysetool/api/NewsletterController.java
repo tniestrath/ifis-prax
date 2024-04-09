@@ -3,10 +3,8 @@ package com.analysetool.api;
 import com.analysetool.modells.Newsletter;
 import com.analysetool.modells.NewsletterEmails;
 import com.analysetool.modells.NewsletterStats;
-import com.analysetool.repositories.NewsletterEmailsRepository;
-import com.analysetool.repositories.NewsletterRepository;
-import com.analysetool.repositories.NewsletterSentRepository;
-import com.analysetool.repositories.NewsletterStatsRepository;
+import com.analysetool.repositories.*;
+import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.IPHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +33,12 @@ public class NewsletterController {
     NewsletterStatsRepository newsStatsRepo;
     @Autowired
     NewsletterSentRepository newsSentRepo;
-
+    @Autowired
+    universalStatsRepository uniRepo;
+    @Autowired
+    UniqueUserService uniqueUserService;
+    @Autowired
+    TrackingBlacklistRepository trackBlackRepo;
     /**
      * Gets a Users status.
      * @param id the user's id.
@@ -144,6 +147,32 @@ public class NewsletterController {
             }
         }
         return subs;
+    }
+
+    @GetMapping("/getAmountOfSubsToday")
+    public Integer getAmountofSubsToday() {
+        List<Character> subs = new ArrayList<>();
+        List<Newsletter> allSubs = newsRepo.findAll();
+        LocalDate today = LocalDate.now();
+
+        for (Newsletter n : allSubs) {
+            LocalDate createdDate = n.getCreated().toLocalDate();
+
+            if (!createdDate.isBefore(today)) {
+                subs.add(n.getStatus());
+
+            }
+        }
+        return subs.size();
+    }
+
+    public double getConversionRateTodayForNewsletter(){
+        Integer subsToday = getAmountofSubsToday();
+        List<String> blockedIps = trackBlackRepo.getAllIps();
+        List<String> uniqueUsersIpsToday = uniqueUserService.getIpsToday();
+        uniqueUsersIpsToday.removeAll(blockedIps);
+
+        return (double)subsToday/uniqueUsersIpsToday.size();
     }
 
     /**

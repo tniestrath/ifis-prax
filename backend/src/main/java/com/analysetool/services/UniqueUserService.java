@@ -1,6 +1,7 @@
 package com.analysetool.services;
 
 import com.analysetool.modells.UniqueUser;
+import com.analysetool.repositories.TrackingBlacklistRepository;
 import com.analysetool.repositories.UniqueUserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +22,9 @@ public class UniqueUserService {
 
     @Autowired
     UniqueUserRepository uniqueUserRepo;
+
+
+
     public String reconstructClickPath(UniqueUser user) {
         Map<Integer, String> clickMap = new TreeMap<>();
         try{
@@ -196,4 +200,7 @@ public class UniqueUserService {
         return (double)zeroClicksUserCount/allUserCount;
     }
 
+    public List<String> getIpsToday(){
+       return uniqueUserRepo.getAllIps();
+    }
 }

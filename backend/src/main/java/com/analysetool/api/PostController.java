@@ -1125,7 +1125,7 @@ public class PostController {
             long id = post.getId();
             stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
         }
-        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
+        return new JSONObject().put("posts", new JSONArray(stats)).toString();
     }
 
 

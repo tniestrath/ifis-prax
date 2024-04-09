@@ -1394,8 +1394,8 @@ public class LogService {
                 break;
             case "eventView":
                 try {
-                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
-                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
+                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1)).isPresent()){
+                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1)).get().getPostID();
                         UpdatePerformanceAndViews(dateLog, postId);
                         updateIPsByPost(ip, postId);
                         updatePostClicksMap(postId,dateLog);

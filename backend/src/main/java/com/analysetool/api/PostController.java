@@ -184,7 +184,7 @@ public class PostController {
         for(Post post : list) {
             stats.add(new JSONObject(PostStatsByIdForFrontend(post.getId())));
         }
-        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
+        return new JSONObject().put("posts", new JSONArray(stats)).toString();
     }
 
     @GetMapping("/getNewestPostWithStatsByAuthor")

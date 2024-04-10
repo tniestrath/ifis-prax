@@ -844,6 +844,11 @@ public class uniStatController {
         return (double)noSubDiffTodayYesterday/uniqueIps.size();
     }
 
+    @GetMapping("/getTotalConversionRateMembership")
+    public double getTotalConversionRateMembership() {
+        return (getConversionRateNoSub() + getConversionRateBasicSub() + getConversionRateBasicPlusSub() +
+                getConversionRatePlusSub() + getConversionRatePremiumSub() + getConversionRatePremiumSponsorSub()) / 6;
+    }
     ///////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     //////////////////////////////AB HIER UNIVERSAL STATS HOURLY \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 

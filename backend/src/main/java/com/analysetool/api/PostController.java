@@ -733,11 +733,13 @@ public class PostController {
                     }
                 }
             }
+            terms.sort((o1, o2) -> Math.toIntExact(o1.getId() - o2.getId()));
+
             for (WPTerm t : terms) {
                 if (wpTermTaxonomyRepo.existsById(t.getId())) {
                     if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()) {
                         WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
-                        if (Objects.equals(tt.getTaxonomy(), "category")) {
+                        if (tt.getTaxonomy().equalsIgnoreCase("category") && tt.getParent() == 0) {
                             if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
                                 type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
                             }
@@ -1087,7 +1089,15 @@ public class PostController {
         return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
 
-
+    /**
+     * Fetches size amount of Post-Stats from only those that MATCH the filter and include the search in their title.
+     * @param sortBy what criteria the result should be listed in.
+     * @param filter the type of post to look for.
+     * @param search what titles to look for.
+     * @return a JSON-String containing several PostStatsByIdForFrontend entries.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/pageByTitle")
     public String pageTitleFinder(Integer page, Integer size, String sortBy, String filter, String search) throws JSONException, ParseException {
         List<Post> list;
@@ -1167,41 +1177,41 @@ public class PostController {
     }
 
     /**
-     * Endpoint to retrieve all podcast-posts-stats.
-     * @return a JSON String of all "podcast" posts with their respective stats.
+     * Fetches Stats for all posts of the given type. Values include all getType() can return.
+     * @param type the type of post to list.
+     * @return a JSON-String containing a List of Post-Stats.
      * @throws JSONException .
      * @throws ParseException .
      */
-    @GetMapping("/getAllPodcastsWithStats")
-    public String getAllPodcasts() throws JSONException, ParseException {
-
+    @GetMapping("/getAllTypeWithStats")
+    public String getAllByTypeWithStats(String type) throws JSONException, ParseException {
         List<JSONObject> stats = new ArrayList<>();
 
-        for(Integer postId : postTypeRepo.getPostsByType("podcast")) {
+        for(Integer postId : postTypeRepo.getPostsByType(type)) {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
             stats.add(json);
         }
         return new JSONArray(stats).toString();
-
     }
 
     /**
-     * Endpoint to retrieve all ratgeber-posts-stats.
-     * @return a JSON String of all "ratgeber" posts with their respective stats.
+     * Fetches Stats for all posts of the given type. Values include all getType() can return.
+     * @param type the type of post to list.
+     * @param page the page of results.
+     * @param size the number of results per page.
+     * @return a JSON-String containing a List of Post-Stats.
      * @throws JSONException .
      * @throws ParseException .
      */
-    @GetMapping("/getAllRatgeberWithStats")
-    public String getAllRatgeber() throws JSONException, ParseException {
-
+    @GetMapping("/getAllTypeWithStatsPageable")
+    public String getAllByTypeWithStats(String type, int page, int size) throws JSONException, ParseException {
         List<JSONObject> stats = new ArrayList<>();
 
-        for(Integer postId : postTypeRepo.getPostsByType("ratgeber")) {
+        for(Integer postId : postTypeRepo.getPostsByTypePageable(type, PageRequest.of(page, size))) {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
             stats.add(json);
         }
         return new JSONArray(stats).toString();
-
     }
 
 

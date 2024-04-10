@@ -1176,15 +1176,7 @@ public class PostController {
      */
     @GetMapping("/getAllPodcastsWithStats")
     public String getAllPodcasts() throws JSONException, ParseException {
-
-        List<JSONObject> stats = new ArrayList<>();
-
-        for(Integer postId : postTypeRepo.getPostsByType("podcast")) {
-            JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
-            stats.add(json);
-        }
-        return new JSONArray(stats).toString();
-
+        return getAllByTypeWithStats("podcast");
     }
 
     /**
@@ -1195,15 +1187,29 @@ public class PostController {
      */
     @GetMapping("/getAllRatgeberWithStats")
     public String getAllRatgeber() throws JSONException, ParseException {
+        return getAllByTypeWithStats("ratgeber");
+    }
 
+    @GetMapping("/getAllTypeWithStats")
+    public String getAllByTypeWithStats(String type) throws JSONException, ParseException {
         List<JSONObject> stats = new ArrayList<>();
 
-        for(Integer postId : postTypeRepo.getPostsByType("ratgeber")) {
+        for(Integer postId : postTypeRepo.getPostsByType(type)) {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
             stats.add(json);
         }
         return new JSONArray(stats).toString();
+    }
 
+    @GetMapping("/getAllTypeWithStatsPageable")
+    public String getAllByTypeWithStats(String type, int page, int size) throws JSONException, ParseException {
+        List<JSONObject> stats = new ArrayList<>();
+
+        for(Integer postId : postTypeRepo.getPostsByTypePageable(type, PageRequest.of(page, size))) {
+            JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
+            stats.add(json);
+        }
+        return new JSONArray(stats).toString();
     }
 
 

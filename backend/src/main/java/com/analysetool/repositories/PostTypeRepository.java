@@ -1,6 +1,7 @@
 package com.analysetool.repositories;
 
 import com.analysetool.modells.PostTypes;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,8 @@ public interface PostTypeRepository extends JpaRepository<PostTypes, Long> {
 
     @Query("SELECT p.post_id FROM PostTypes p WHERE p.type =:type")
     List<Integer> getPostsByType(String type);
+
+    List<Integer> getPostsByTypePageable(String type, Pageable pageable);
 
     @Query("SELECT p.post_id FROM PostTypes p WHERE p.type =:type")
     List<Long> getPostsByTypeLong(String type);

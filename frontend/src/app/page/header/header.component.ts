@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Subject} from "rxjs";
-import {DbService} from "../../services/db.service";
+import {ApiService} from "../../services/api.service";
 import {SysVars} from "../../services/sys-vars-service";
 import {CookieService} from "ngx-cookie-service";
 
@@ -19,7 +19,7 @@ export class HeaderComponent implements AfterViewInit{
   loadingBar_process : any = null;
   html_err_code : string = "";
 
-  constructor(private cs : CookieService, private db : DbService) {
+  constructor(private cs : CookieService, private db : ApiService) {
     this.navElements = [];
     // COOKIE VALIDATION //
     this.db.validate().then(res  => {

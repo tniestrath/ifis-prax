@@ -19,7 +19,7 @@ export class PostListPageableComponent extends DashListPageableComponent<Post, P
    */
   placeholder : string = "Post suchen";
   /**
-   * `input_search_cb` callback function to get input data
+   * `input_search_cb` callback function to get the current search string
    */
   input_search_cb : any;
   input_all_cb : any;

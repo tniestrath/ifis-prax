@@ -7,6 +7,11 @@ import {PostListItemComponent} from "../post/post-list/post-list-item/post-list-
 import {DbObject} from "../../services/DbObject";
 import {DashListItemComponent} from "./dash-list-item/dash-list-item.component";
 
+/**
+ * root for List-Type-Components
+ * @param T Object to display a list of (extends {@link DbObject})
+ *
+ */
 @Component({
   selector: 'dash-dash-list',
   templateUrl: './dash-list.component.html',

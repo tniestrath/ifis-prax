@@ -18,10 +18,10 @@ import {TagPieComponent} from "../../component/tag/tag-pie/tag-pie.component";
 import {
   EventListComponent,
   PodcastListComponent,
-  PostListComponent,
+  PostListPageableComponent,
   RatgeberListComponent, UserEventListComponent,
   UserPostListComponent
-} from "../../component/post/post-list/post-list.component";
+} from "../../component/post/post-list/post-list-pageable.component";
 import {TagChartComponent} from "../../component/tag/tag-chart/tag-chart.component";
 import {CallUpChartComponent} from "../../component/call-up-chart/call-up-chart.component";
 import {Top5ArticleComponent, Top5BlogComponent, Top5NewsComponent, Top5WhitepaperComponent} from "../../component/post/top5-posts/top5-posts.component";
@@ -111,7 +111,7 @@ export class PageComponent implements OnInit {
   }
   getPostsPageCards() {
     return [
-      {type: PostListComponent, row: 1, col: 1, height: 4, width: 2},
+      {type: PostListPageableComponent, row: 1, col: 1, height: 4, width: 2},
       {type: PostDisplayComponent, row: 1, col: 3, height: 3, width: 2},
 
       {type: Top5ArticleComponent, row: 5, col: 1, height: 1, width: 6},

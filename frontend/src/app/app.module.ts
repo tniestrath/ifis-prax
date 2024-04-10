@@ -43,12 +43,12 @@ import {
 import { TagPieComponent } from './component/tag/tag-pie/tag-pie.component';
 import { ImgFallbackDirective } from './img-fallback.directive';
 import {
-  PostListComponent,
+  PostListPageableComponent,
   PodcastListComponent,
   RatgeberListComponent,
   UserPostListComponent,
   EventListComponent, UserEventListComponent
-} from './component/post/post-list/post-list.component';
+} from './component/post/post-list/post-list-pageable.component';
 import {
   PostListItemComponent
 } from './component/post/post-list/post-list-item/post-list-item.component';
@@ -130,7 +130,7 @@ import { DashListItemComponent } from './component/dash-list/dash-list-item/dash
     ClicksByTimeNewsletterComponent,
     TagPieComponent,
     ImgFallbackDirective,
-    PostListComponent,
+    PostListPageableComponent,
     PodcastListComponent,
     RatgeberListComponent,
     UserPostListComponent,

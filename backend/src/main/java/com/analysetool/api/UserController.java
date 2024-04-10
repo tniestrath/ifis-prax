@@ -639,11 +639,12 @@ public class UserController {
     public String getEventsWithStats(Integer page, Integer size,  String filter, String search, long id) throws JSONException, ParseException {
         List<Post> list;
 
-        if(search.isBlank()) {
-            list = postRepository.getAllEventsWithTypeAndSearch(eventsController.getTermIdFromFrontendType(filter), "", PageRequest.of(page, size));
+        if(filter.isBlank()) {
+            list = postRepository.getAllEventsWithSearchAndAuthor(search, id, PageRequest.of(page, size));
         } else {
-            list = postRepository.getAllEventsWithTypeAndSearch(eventsController.getTermIdFromFrontendType(filter), search, PageRequest.of(page, size));
+            list = postRepository.getAllEventsWithTypeAndSearchAndAuthor(eventsController.getTermIdFromFrontendType(filter), search, id, PageRequest.of(page, size));
         }
+
         List<JSONObject> stats = new ArrayList<>();
 
         for(Post post : list) {

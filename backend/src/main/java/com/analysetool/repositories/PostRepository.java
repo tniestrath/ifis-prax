@@ -97,5 +97,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p JOIN wp_term_relationships wtr ON p.id= wtr.objectId JOIN WpTermTaxonomy wpt ON wtr.termTaxonomyId=wpt.termTaxonomyId WHERE p.type='event' AND p.status='publish' AND wpt.termId=:typeId AND p.title LIKE %:search%")
    List<Post> getAllEventsWithTypeAndSearch(long typeId, String search, Pageable pageable);
 
+   @Query("SELECT p FROM Post p WHERE p.type='event' AND p.status='publish' AND p.title LIKE %:search%")
+   List<Post> getAllEventsWithSearch(String search, Pageable pageable);
+
+   @Query("SELECT p FROM Post p JOIN wp_term_relationships wtr ON p.id= wtr.objectId JOIN WpTermTaxonomy wpt ON wtr.termTaxonomyId=wpt.termTaxonomyId WHERE p.type='event' AND p.status='publish' AND wpt.termId=:typeId AND p.title LIKE %:search% AND p.authorId=:authorId")
+   List<Post> getAllEventsWithTypeAndSearchAndAuthor(long typeId, String search, long authorId, Pageable pageable);
+
+   @Query("SELECT p FROM Post p WHERE p.type='event' AND p.status='publish' AND p.title LIKE %:search% AND p.authorId=:authorId")
+   List<Post> getAllEventsWithSearchAndAuthor(String search, long authorId, Pageable pageable);
+
 }
 

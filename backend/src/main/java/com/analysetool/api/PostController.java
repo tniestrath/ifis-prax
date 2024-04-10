@@ -1104,8 +1104,8 @@ public class PostController {
     @GetMapping("/getEventsWithStats")
     public String getEventsWithStats(Integer page, Integer size,  String filter, String search) throws JSONException, ParseException {
         List<Post> list;
-        if(search.isBlank()) {
-            list = postRepo.getAllEventsWithTypeAndSearch(eventsController.getTermIdFromFrontendType(filter), "", PageRequest.of(page, size));
+        if(filter.isBlank()) {
+            list = postRepo.getAllEventsWithSearch(search, PageRequest.of(page, size));
         } else {
             list = postRepo.getAllEventsWithTypeAndSearch(eventsController.getTermIdFromFrontendType(filter), search, PageRequest.of(page, size));
         }

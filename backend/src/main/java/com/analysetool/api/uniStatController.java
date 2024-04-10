@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -853,6 +854,45 @@ public class uniStatController {
     public double getTotalConversionRateMembership() {
         return (getConversionRateNoSub() + getConversionRateBasicSub() + getConversionRateBasicPlusSub() +
                 getConversionRatePlusSub() + getConversionRatePremiumSub() + getConversionRatePremiumSponsorSub()) / 6;
+    }
+    /**
+     * Returns a JSON string representing the ranking of subscription types by their conversion rates.
+     * Each subscription type is represented as a JSON object with its name, rate, and rank.
+     * These objects are added to a JSON array, which is then converted to a string.
+     *
+     * @return A JSON string that represents the conversion rate ranking of subscription types.
+     */
+    @GetMapping("/getSubscriptionRateRanking")
+    public String getSubscriptionRateRanking() throws JSONException {
+        Map<String, Double> rates = new LinkedHashMap<>();
+        rates.put("Non-Subscriber", getConversionRateNoSub());
+        rates.put("Basic Subscriber", getConversionRateBasicSub());
+        rates.put("Basic Plus Subscriber", getConversionRateBasicPlusSub());
+        rates.put("Plus Subscriber", getConversionRatePlusSub());
+        rates.put("Premium Subscriber", getConversionRatePremiumSub());
+        rates.put("Premium Sponsor Subscriber", getConversionRatePremiumSponsorSub());
+
+        // Sortieren der Map nach Konversionsraten
+        Map<String, Double> sortedRates = rates.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e2,
+                        LinkedHashMap::new));
+
+        // Erstellung des JSON-Arrays
+        JSONArray jsonArray = new JSONArray();
+        int rank = 1;
+        for (Map.Entry<String, Double> entry : sortedRates.entrySet()) {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put("Membership", entry.getKey());
+            jsonObj.put("Rate", entry.getValue());
+            jsonObj.put("Rank", rank++);
+            jsonArray.put(jsonObj);
+        }
+
+        return jsonArray.toString();
     }
     ///////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     //////////////////////////////AB HIER UNIVERSAL STATS HOURLY \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\

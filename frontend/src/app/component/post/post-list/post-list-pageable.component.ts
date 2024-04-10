@@ -39,37 +39,37 @@ export class PostListPageableComponent extends DashListPageableComponent<Post, P
     this.input_search_cb = (event: { target: { value: string; }; }) => {
       this.pageIndex = 0;
       this.search_text = event.target.value;
-      this.reload(this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     };
     this.input_all_cb = () => {
       this.pageIndex = 0;
       this.active_filter = " ";
-      this.reload(this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     };
     this.input_filter_1_cb = () => {
       this.pageIndex = 0;
       this.active_filter = "artikel";
-      this.reload(this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     };
     this.input_filter_2_cb = () => {
       this.pageIndex = 0;
       this.active_filter = "blog";
-      this.reload(this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_3_cb = () => {
       this.pageIndex = 0;
       this.active_filter = "news";
-      this.reload(this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_4_cb = () => {
       this.pageIndex = 0;
       this.active_filter = "podcast";
-      this.reload(this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_5_cb = () => {
       this.pageIndex = 0;
       this.active_filter = "whitepaper";
-      this.reload(this.db.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     }
   }
 }
@@ -104,7 +104,7 @@ export class PodcastListComponent extends PostListPageableComponent{
 
   override ngOnInit() {
     this.setToolTip("Auflistung aller Podcasts, sie können nach Datum oder Clicks sortieren oder nach Schlagwörtern in Titel oder Tags suchen");
-    this.load(this.db.getPodcastsAll(), PostListItemComponent);
+    this.load(this.db.getPodcastsAll(0,this.pageSize), PostListItemComponent);
 
     this.input_search_cb = (event: { target: { value: string; }; }) => {
       this.selectorItems = this.selectorItemsBackup.filter((item) => {
@@ -176,31 +176,31 @@ export class UserPostListComponent extends PostListPageableComponent{
 
     this.input_search_cb = (event: { target: { value: string; }; }) => {
       this.search_text = event.target.value;
-      this.load(this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_all_cb = () => {
       this.active_filter = " ";
-      this.load(this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_5_cb = () => {
       this.active_filter = "whitepaper";
-      this.load(this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_3_cb = () => {
       this.active_filter = "news";
-      this.load(this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_2_cb = () => {
       this.active_filter = "blog";
-      this.load(this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_1_cb = () => {
       this.active_filter = "artikel";
-      this.load(this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_4_cb = () => {
       this.active_filter = "podcast";
-      this.load(this.db.getUserPostsPaged(SysVars.USER_ID, 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
   }
 
@@ -216,35 +216,35 @@ export class EventListComponent extends PostListPageableComponent{
 
   override ngOnInit() {
     this.setToolTip("Auflistung aller Events, sie können nach Datum oder Clicks sortieren oder nach Schlagwörtern in Titel oder Tags suchen");
-    this.load(this.db.getEventsLikePostsPaged( 0, 20, " ", ""), PostListItemComponent);
+    this.load(this.db.getEventsLikePostsPaged( 0, this.pageSize, " ", ""), PostListItemComponent);
 
     this.input_search_cb = (event: { target: { value: string; }; }) => {
       this.search_text = event.target.value;
-      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getEventsLikePostsPaged( 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_all_cb = () => {
       this.active_filter = " ";
-      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getEventsLikePostsPaged( 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_1_cb = () => {
       this.active_filter = "KG";
-      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getEventsLikePostsPaged( 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_2_cb = () => {
       this.active_filter = "ME";
-      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getEventsLikePostsPaged( 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_3_cb = () => {
       this.active_filter = "SE";
-      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getEventsLikePostsPaged( 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_4_cb = () => {
       this.active_filter = "WS";
-      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getEventsLikePostsPaged( 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_5_cb = () => {
       this.active_filter = "SO";
-      this.reload(this.db.getEventsLikePostsPaged( 0, 20, this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.db.getEventsLikePostsPaged( 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
   }
 }

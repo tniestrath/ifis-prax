@@ -108,8 +108,8 @@ export enum dbUrl {
   GET_GEO_FIRST_TIMESTAMP = "/geo/firstEntry",
   GET_GEO_TIMESPAN = "/geo/geoRange",
 
-  GET_PODCAST_ALL = "/posts/getAllPodcastsWithStats",
-  GET_RATGEBER_ALL = "/posts/getAllRatgeberWithStats",
+  GET_PODCAST_ALL = "/posts/getAllTypeWithStatsPageable?type=podcast&page=PAGE&size=SIZE",
+  GET_RATGEBER_ALL = "/posts/getAllTypeWithStats?type=ratgeber",
 
   GET_SEARCHES_NO_RESULTS = "/search-stats/getAllUnfixedSearches?page=PAGE&size=SIZE",
   GET_SEARCHES_ANBIETER_NO_RESULT = "/search-stats/getAnbieterNoneFound?page=PAGE&size=SIZE",
@@ -437,9 +437,9 @@ export class DbService {
     return await fetch((DbService.getUrl(dbUrl.GET_GEO_TIMESPAN)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getPodcastsAll() : Promise<Post[]> {
+  async getPodcastsAll(page : number, size : number) : Promise<Post[]> {
     this.setLoading();
-    return await fetch((DbService.getUrl(dbUrl.GET_PODCAST_ALL)) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((DbService.getUrl(dbUrl.GET_PODCAST_ALL).replace("PAGE", String(page)).replace("SIZE", String(size))) , {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getRatgeberAll() : Promise<Post[]> {

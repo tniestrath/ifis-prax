@@ -9,7 +9,8 @@ import {DashListItemComponent} from "./dash-list-item/dash-list-item.component";
 
 /**
  * root for List-Type-Components
- * @param T Object to display a list of (extends {@link DbObject})
+ * @param T Object to create a list of (extends {@link DbObject})
+ * @param C Component used to display each Object (extends {@link DashListItemComponent})
  *
  */
 @Component({
@@ -67,6 +68,12 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
   }
 }
 
+/**
+ * root for List-Type-Components
+ * @param T Object to create a list of (extends {@link DbObject})
+ * @param C Component used to display each Object (extends {@link DashListItemComponent})
+ *
+ */
 @Component({
   selector: 'dash-dash-list',
   templateUrl: './dash-list.component.html',
@@ -88,6 +95,7 @@ export class DashListPageableComponent<T extends DbObject, C extends DashListIte
   }
   override reload<T extends DbObject, C extends DashListItemComponent>(response : Promise<T[]> ,component : Type<C>): void {
     this.selectorItems = [];
+    this.pageIndex = 0;
     response.then((value : T[]) => {
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(component, valueElement));

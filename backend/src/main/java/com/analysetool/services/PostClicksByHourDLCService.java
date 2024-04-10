@@ -56,23 +56,7 @@ public class PostClicksByHourDLCService {
         return hourlyClicks;
     }
 
-    //Index 0 = Summe , Index 1 = Anzahl der tatsächlichen Tage
-
-    /*
-    * Query used for this method throws an error and makes code entirely unusable.
-    public Long[] getSumByDaysbackWithActualDaysBack(List<Long> postIds,int daysBack){
-        Pageable pageable = PageRequest.of(0, daysBack);
-        Page<Integer> page = uniRepo.getLastIdsByPageable(pageable);
-
-        List<Integer> uniIds = new ArrayList<>(page.getContent());
-        List<Integer> availableUniIds = new ArrayList<>(clicksRepo.getAvailableUniIdIn(uniIds));
-        Long actualDaysBack= (long)availableUniIds.size();
-
-        Long[] Ergebnis = new Long[]{clicksRepo.sumClicksByPostIdInAndUniIdIn(postIds,availableUniIds),actualDaysBack};
-
-        return Ergebnis;
-    }
-    */
+    //Index 0 = Summe, Index 1 = Anzahl der tatsächlichen Tage
 
 
 }

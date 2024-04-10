@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("DuplicatedCode")
 @Service
 public class FinalSearchStatService {
 
@@ -242,7 +243,7 @@ public class FinalSearchStatService {
      * Finds frequent searches with few search successes based on the given thresholds.
      *
      * @param searchStatsMap         A map containing search statistics mapped to their respective search DLCs.
-     * @param searchThreshold        The threshold for the number of occurrences of a search query.
+     * @param searchThreshold        The threshold for the number of occurrences for a search query.
      * @param searchSuccessThreshold The threshold for the search success count.
      * @return A map containing frequent searches with few search successes based on the given thresholds.
      */

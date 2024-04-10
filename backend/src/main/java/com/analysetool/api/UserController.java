@@ -101,7 +101,7 @@ public class UserController {
 
     /**
      *
-     * @param page which page of results of the given size you want to fetch.
+     * @param page which page of results in the given size you want to fetch.
      * @param size the amount of results you want per page.
      * @param search the search-term you want results for, give empty string for none.
      * @param filterAbo "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
@@ -1467,7 +1467,7 @@ public class UserController {
     /**
      *
      * @param userId the user you want to fetch data for.
-     * @return a double representing the amount of clicks a user had for each day of tracking (arithmetic average) or 0, if user has not been tracked.
+     * @return a double representing the amount of clicks a user had for each day of tracking (arithmetic average) or zero if user has not been tracked.
      */
     @GetMapping("/getUserClicksPerDay")
     public double getUserClicksPerDay(long userId) {

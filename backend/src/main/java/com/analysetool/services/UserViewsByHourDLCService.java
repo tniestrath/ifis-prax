@@ -28,7 +28,7 @@ public class UserViewsByHourDLCService {
         }
     }
 
-    //Index 0 = Summe , Index 1 = Anzahl der tatsächlichen Tage
+    //Index 0 = Summe, Index 1 = Anzahl der tatsächlichen Tage
     public Long[] getSumByDaysbackWithActualDaysBack(Long userId,int daysBack){
         Pageable pageable = PageRequest.of(0, daysBack);
         Page<Integer> page = uniRepo.getLastIdsByPageable(pageable);

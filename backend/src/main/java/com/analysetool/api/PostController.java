@@ -733,11 +733,13 @@ public class PostController {
                     }
                 }
             }
+            terms.sort((o1, o2) -> Math.toIntExact(o1.getId() - o2.getId()));
+
             for (WPTerm t : terms) {
                 if (wpTermTaxonomyRepo.existsById(t.getId())) {
                     if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()) {
                         WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
-                        if (Objects.equals(tt.getTaxonomy(), "category")) {
+                        if (tt.getTaxonomy().equalsIgnoreCase("category") && tt.getParent() == 0) {
                             if (wpTermRepo.findById(tt.getTermId()).isPresent() && tt.getTermId() != 1 && tt.getTermId() != 552) {
                                 type = wpTermRepo.findById(tt.getTermId()).get().getSlug();
                             }

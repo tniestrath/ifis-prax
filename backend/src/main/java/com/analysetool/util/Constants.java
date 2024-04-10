@@ -18,6 +18,13 @@ public class Constants {
     private final String thumbnailLocationStart = "https://it-sicherheit.de/wp-content/uploads/";
     private final String profilePhotoStart = "https://it-sicherheit.de/wp-content/uploads/ultimatemember/";
 
+
+    private final long sonstigeEventsTermId = 312L;
+    private final long messenTermId = 313L;
+    private final long kongressTermId = 314L;
+    private final long schulungTermId = 315L;
+    private final long workshopTermId = 316L;
+
     // Private constructor to prevent external instantiation
     private Constants() {
     }
@@ -73,5 +80,25 @@ public class Constants {
 
     public String getProfilePhotoStart() {
         return profilePhotoStart;
+    }
+
+    public long getSonstigeEventsTermId() {
+        return sonstigeEventsTermId;
+    }
+
+    public long getMessenTermId() {
+        return messenTermId;
+    }
+
+    public long getKongressTermId() {
+        return kongressTermId;
+    }
+
+    public long getSchulungTermId() {
+        return schulungTermId;
+    }
+
+    public long getWorkshopTermId() {
+        return workshopTermId;
     }
 }

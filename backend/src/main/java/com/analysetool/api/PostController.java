@@ -1124,16 +1124,15 @@ public class PostController {
     @GetMapping("/getEventsWithStats")
     public String getEventsWithStats(Integer page, Integer size,  String filter, String search) throws JSONException, ParseException {
         List<Post> list;
-        //ToDo: Re-add filter for Event-Types
         if(search.isBlank()) {
-            list = postRepo.findByStatusIsAndTypeIsOrderByModifiedDesc("publish", "event", PageRequest.of(page, size));
+            list = postRepo.getAllEventsWithTypeAndSearch(eventsController.getTermIdFromFrontendType(filter), "", PageRequest.of(page, size));
         } else {
-            list = postRepo.findByTitleContainingAndStatusIsAndTypeIsOrderByModifiedDesc(search, "publish", "event", PageRequest.of(page, size));
+            list = postRepo.getAllEventsWithTypeAndSearch(eventsController.getTermIdFromFrontendType(filter), search, PageRequest.of(page, size));
         }
         List<JSONObject> stats = new ArrayList<>();
 
-        for(Post post : list) {
-            long id = post.getId();
+        for(Post p : list) {
+            long id = p.getId();
             stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
         }
 

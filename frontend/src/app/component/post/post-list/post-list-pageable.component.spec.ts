@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PostListComponent } from './post-list.component';
+import { PostListPageableComponent } from './post-list-pageable.component';
 
 describe('PostListComponent', () => {
-  let component: PostListComponent;
-  let fixture: ComponentFixture<PostListComponent>;
+  let component: PostListPageableComponent;
+  let fixture: ComponentFixture<PostListPageableComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [PostListComponent]
+      declarations: [PostListPageableComponent]
     });
-    fixture = TestBed.createComponent(PostListComponent);
+    fixture = TestBed.createComponent(PostListPageableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

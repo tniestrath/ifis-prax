@@ -90,23 +90,23 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     boolean existsByArtId(Long artId);
 
     @Query("SELECT s.searchSuccessRate FROM PostStats s WHERE s.artId = :artId")
-    public Float getSearchSuccessRateByArtId( Long artId);
+    Float getSearchSuccessRateByArtId(Long artId);
 
     // Get the article referring rate for a given article ID
     @Query("SELECT s.articleReferringRate FROM PostStats s WHERE s.artId = :artId")
-    public Float getArticleReferringRateByArtId( Long artId);
+    Float getArticleReferringRateByArtId(Long artId);
 
     // Get the number of clicks for a given article ID
     @Query("SELECT s.clicks FROM PostStats s WHERE s.artId = :artId")
-    public Long getClicksByArtId(Long artId);
+    Long getClicksByArtId(Long artId);
 
     // Get the number of successful searches for a given article ID
     @Query("SELECT s.searchSuccess FROM PostStats s WHERE s.artId = :artId")
-    public Long getSearchSuccesByArtId( Long artId);
+    Long getSearchSuccesByArtId(Long artId);
 
     // Get the number of referrings for a given article ID
     @Query("SELECT s.refferings FROM PostStats s WHERE s.artId = :artId")
-    public Long getReferringsByArtId( Long artId);
+    Long getReferringsByArtId(Long artId);
     @Transactional
     @Modifying
     @Query("UPDATE PostStats s SET s.clicks = :clicks , s.searchSuccess =:searchSuccess WHERE s.artId = :artId")
@@ -143,33 +143,33 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     }
 
     @Query("select s.performance from PostStats s where s.artId=:artId")
-    public float getPerformanceByArtID(int artId);
+    float getPerformanceByArtID(int artId);
 
     @Query("SELECT MAX(s.performance) FROM PostStats s")
-    public float getMaxPerformance();
+    float getMaxPerformance();
 
     @Query("SELECT MAX(s.relevance) FROM PostStats s")
-    public float getMaxRelevance();
+    float getMaxRelevance();
     @Query("SELECT s FROM PostStats s ORDER BY s.performance DESC LIMIT 5")
-    public List<PostStats> getTop5Relevance();
+    List<PostStats> getTop5Relevance();
 
     @Query("SELECT s FROM PostStats s ORDER BY s.performance DESC LIMIT 5")
-    public List<PostStats> getTop5Performance();
+    List<PostStats> getTop5Performance();
 
     @Query("SELECT s.artId FROM PostStats s ORDER BY s.relevance DESC")
-    public List<Long> getTopRelevanceID(int limit);
+    List<Long> getTopRelevanceID(int limit);
 
     @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC")
-    public List<Long> getTopPerformanceID(int limit);
+    List<Long> getTopPerformanceID(int limit);
 
     @Query("SELECT s.lettercount FROM PostStats s WHERE s.artId=:artId")
-    public Integer getLetterCount(long artId);
+    Integer getLetterCount(long artId);
 
     @Query("SELECT s.relevance FROM PostStats s WHERE s.artId=:artId")
-    public float getRelevanceById(long artId);
+    float getRelevanceById(long artId);
 
     @Query("SELECT s.wordcount FROM PostStats s WHERE s.artId =:artId")
-    public int getWordCount(int artId);
+    int getWordCount(int artId);
 
     @Query("SELECT s.artId FROM PostStats s WHERE s.artId NOT IN (SELECT u.post_id FROM PostTypes u)")
     List<Integer> getIdsOfUntyped();
@@ -180,9 +180,9 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     void updateWordCount(int wordcount, long artId);
 
 
-    public List<PostStats> findAllByOrderByPerformanceDesc();
+    List<PostStats> findAllByOrderByPerformanceDesc();
 
-    public List<PostStats> findAllByOrderByRelevanceDesc();
+    List<PostStats> findAllByOrderByRelevanceDesc();
 
     List<PostStats> findAllByOrderByClicksDesc();
 

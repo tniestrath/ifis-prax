@@ -11,7 +11,7 @@ import java.util.List;
 public interface ClicksByBundeslandRepository extends JpaRepository<ClicksByBundesland, Long> {
 
     @Query("SELECT u FROM ClicksByBundesland u WHERE u.uniStatId =:uniStatId AND u.bundesland=:bundesland")
-    public ClicksByBundesland getByUniIDAndBundesland(int uniStatId, String bundesland);
+    ClicksByBundesland getByUniIDAndBundesland(int uniStatId, String bundesland);
 
     @Query("SELECT u FROM ClicksByBundesland u WHERE u.uniStatId =:uniStatId")
     List<ClicksByBundesland> getByUniID(int uniStatId);

@@ -2,7 +2,7 @@ package com.analysetool.util;
 
 public class Problem {
 
-    //A number representing the severity of a Problem. Higher Number -> More urgent Problem
+    //A number representing the severity of the Problem. Higher Number -> More urgent Problem
     private int severity;
     //A description of the problem.
     private String description;

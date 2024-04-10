@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 public class AuthenticationFilter extends GenericFilterBean {
 

@@ -15,7 +15,7 @@ public interface AnbieterSearchRepository extends JpaRepository<AnbieterSearch, 
 
     List<AnbieterSearch>findTop15ById(Long id);
 
-    //Limit funktioniert in Queries so nicht, ChatGPT lügt. Limit lässt sich nicht als Variable angeben.-> pages gleicher schmutz (Lüge Pages gut)
+    //Limit funktioniert in Queries so nicht, ChatGPT lügt. Limit lässt sich nicht als Variable angeben.→ pages gleicher schmutz (Lüge Pages gut)
     @Query(value = "SELECT u FROM AnbieterSearch u ORDER BY u.id DESC LIMIT 10")
     List<AnbieterSearch> findLast10();
 

@@ -250,7 +250,7 @@ public class SearchStatsController {
      * @param postId The ID of the reference post for which similar posts are sought.
      * @param similarityPercentage The minimum threshold of tag similarity (in percentage)
      *        to consider a post similar to the given post. !!60% = 60 ; 0,6% = 0,6 ...!!<--------------------------
-     * @return A JSON string representing an array of objects. Each object contains the post ID,
+     * @return A JSON string representing an array of objects. Each object contains the post's ID,
      *         its similarity score to the given post, and its search statistics.
      * @throws JSONException If an issue occurs during JSON processing.
      */
@@ -276,7 +276,7 @@ public class SearchStatsController {
     }
 
     /**
-     * Retrieves demand data based on location and analysis type.
+     * Retrieves demand data based on a location and analysis type.
      *
      * @param location         The location to analyze.
      * @param locationType     The type of location (e.g., city, country, state).

@@ -8,297 +8,297 @@ import java.util.List;
 
 public interface UniversalCategoriesDLCRepository extends JpaRepository<UniversalCategoriesDLC, Integer> {
 
-     public List<UniversalCategoriesDLC> getByUniStatId(int id);
+     List<UniversalCategoriesDLC> getByUniStatId(int id);
 
      @Query("SELECT u.stunde FROM UniversalCategoriesDLC u ORDER BY u.id DESC LIMIT 1")
-     public int getLastStunde();
+     int getLastStunde();
 
      @Query("SELECT u FROM UniversalCategoriesDLC u ORDER BY u.id DESC LIMIT 1")
-     public UniversalCategoriesDLC getLast();
+     UniversalCategoriesDLC getLast();
 
      @Query("SELECT u FROM UniversalCategoriesDLC  u WHERE u.uniStatId=:uniID AND u.stunde=:hour")
-     public UniversalCategoriesDLC getByUniStatIdAndStunde(int uniID, int hour);
+     UniversalCategoriesDLC getByUniStatIdAndStunde(int uniID, int hour);
 
      @Query("SELECT SUM(u.viewsGlobal) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsGlobalByUniStatId(int uniID);
+     int getSumViewsGlobalByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsArticle) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsArticleByUniStatId(int uniID);
+     int getSumViewsArticleByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsNews) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsNewsByUniStatId(int uniID);
+     int getSumViewsNewsByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsBlog) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsBlogByUniStatId(int uniID);
+     int getSumViewsBlogByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsPodcast) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsPodcastByUniStatId(int uniID);
+     int getSumViewsPodcastByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsVideos) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsVideosByUniStatId(int uniID);
+     int getSumViewsVideosByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsWhitepaper) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsWhitepaperByUniStatId(int uniID);
+     int getSumViewsWhitepaperByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsEvents) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsEventsByUniStatId(int uniID);
+     int getSumViewsEventsByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsRatgeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsRatgeberByUniStatId(int uniID);
+     int getSumViewsRatgeberByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsRatgeberPost) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsRatgeberPostByUniStatId(int uniID);
+     int getSumViewsRatgeberPostByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsRatgeberGlossar) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsRatgeberGlossarByUniStatId(int uniID);
+     int getSumViewsRatgeberGlossarByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsRatgeberBuch) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsRatgeberBuchByUniStatId(int uniID);
+     int getSumViewsRatgeberBuchByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsRatgeberSelf) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsRatgeberSelfByUniStatId(int uniID);
+     int getSumViewsRatgeberSelfByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsMain) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsMainByUniStatId(int uniID);
+     int getSumViewsMainByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsAnbieter) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsAnbieterByUniStatId(int uniID);
+     int getSumViewsAnbieterByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsUeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsUeberByUniStatId(int uniID);
+     int getSumViewsUeberByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsImpressum) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsImpressumByUniStatId(int uniID);
+     int getSumViewsImpressumByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsPreisliste) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsPreislisteByUniStatId(int uniID);
+     int getSumViewsPreislisteByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsPartner) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsPartnerByUniStatId(int uniID);
+     int getSumViewsPartnerByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsDatenschutz) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsDatenschutzByUniStatId(int uniID);
+     int getSumViewsDatenschutzByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsNewsletter) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsNewsletterByUniStatId(int uniID);
+     int getSumViewsNewsletterByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsImage) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsImageByUniStatId(int uniID);
+     int getSumViewsImageByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsAGBS) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumViewsAGBSByUniStatId(int uniID);
+     int getSumViewsAGBSByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherGlobal) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserGlobalByUniStatId(int uniID);
+     int getSumUserGlobalByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherArticle) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserArticleByUniStatId(int uniID);
+     int getSumUserArticleByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherNews) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserNewsByUniStatId(int uniID);
+     int getSumUserNewsByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherBlog) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserBlogByUniStatId(int uniID);
+     int getSumUserBlogByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherPodcast) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserPodcastByUniStatId(int uniID);
+     int getSumUserPodcastByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherVideos) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserVideosByUniStatId(int uniID);
+     int getSumUserVideosByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherWhitepaper) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserWhitepaperByUniStatId(int uniID);
+     int getSumUserWhitepaperByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherEvents) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserEventsByUniStatId(int uniID);
+     int getSumUserEventsByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherRatgeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserRatgeberByUniStatId(int uniID);
+     int getSumUserRatgeberByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherRatgeberPost) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserRatgeberPostByUniStatId(int uniID);
+     int getSumUserRatgeberPostByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherRatgeberGlossar) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserRatgeberGlossarByUniStatId(int uniID);
+     int getSumUserRatgeberGlossarByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherRatgeberBuch) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserRatgeberBuchByUniStatId(int uniID);
+     int getSumUserRatgeberBuchByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherRatgeberSelf) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserRatgeberSelfByUniStatId(int uniID);
+     int getSumUserRatgeberSelfByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherMain) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserMainByUniStatId(int uniID);
+     int getSumUserMainByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherAnbieter) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserAnbieterByUniStatId(int uniID);
+     int getSumUserAnbieterByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherUeber) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserUeberByUniStatId(int uniID);
+     int getSumUserUeberByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherImpressum) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserImpressumByUniStatId(int uniID);
+     int getSumUserImpressumByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherPreisliste) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserPreislisteByUniStatId(int uniID);
+     int getSumUserPreislisteByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherPartner) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserPartnerByUniStatId(int uniID);
+     int getSumUserPartnerByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherDatenschutz) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserDatenschutzByUniStatId(int uniID);
+     int getSumUserDatenschutzByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherNewsletter) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserNewsletterByUniStatId(int uniID);
+     int getSumUserNewsletterByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherImage) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserImageByUniStatId(int uniID);
+     int getSumUserImageByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherAGBS) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     public int getSumUserAGBSByUniStatId(int uniID);
+     int getSumUserAGBSByUniStatId(int uniID);
 
 
 
 
 
      @Query("SELECT SUM(u.viewsGlobal) FROM UniversalCategoriesDLC u")
-     public int getSumViewsGlobalAllTime();
+     int getSumViewsGlobalAllTime();
 
      @Query("SELECT SUM(u.viewsArticle) FROM UniversalCategoriesDLC u")
-     public int getSumViewsArticleAllTime();
+     int getSumViewsArticleAllTime();
 
      @Query("SELECT SUM(u.viewsNews) FROM UniversalCategoriesDLC u")
-     public int getSumViewsNewsAllTime();
+     int getSumViewsNewsAllTime();
 
      @Query("SELECT SUM(u.viewsBlog) FROM UniversalCategoriesDLC u")
-     public int getSumViewsBlogAllTime();
+     int getSumViewsBlogAllTime();
 
      @Query("SELECT SUM(u.viewsPodcast) FROM UniversalCategoriesDLC u")
-     public int getSumViewsPodcastAllTime();
+     int getSumViewsPodcastAllTime();
 
      @Query("SELECT SUM(u.viewsVideos) FROM UniversalCategoriesDLC u")
-     public int getSumViewsVideosAllTime();
+     int getSumViewsVideosAllTime();
 
      @Query("SELECT SUM(u.viewsWhitepaper) FROM UniversalCategoriesDLC u")
-     public int getSumViewsWhitepaperAllTime();
+     int getSumViewsWhitepaperAllTime();
 
      @Query("SELECT SUM(u.viewsEvents) FROM UniversalCategoriesDLC u")
-     public int getSumViewsEventsAllTime();
+     int getSumViewsEventsAllTime();
 
      @Query("SELECT SUM(u.viewsRatgeber) FROM UniversalCategoriesDLC u")
-     public int getSumViewsRatgeberAllTime();
+     int getSumViewsRatgeberAllTime();
 
      @Query("SELECT SUM(u.viewsRatgeberPost) FROM UniversalCategoriesDLC u")
-     public int getSumViewsRatgeberPostAllTime();
+     int getSumViewsRatgeberPostAllTime();
 
      @Query("SELECT SUM(u.viewsRatgeberGlossar) FROM UniversalCategoriesDLC u")
-     public int getSumViewsRatgeberGlossarAllTime();
+     int getSumViewsRatgeberGlossarAllTime();
 
      @Query("SELECT SUM(u.viewsRatgeberBuch) FROM UniversalCategoriesDLC u")
-     public int getSumViewsRatgeberBuchAllTime();
+     int getSumViewsRatgeberBuchAllTime();
 
      @Query("SELECT SUM(u.viewsRatgeberSelf) FROM UniversalCategoriesDLC u")
-     public int getSumViewsRatgeberSelfAllTime();
+     int getSumViewsRatgeberSelfAllTime();
 
      @Query("SELECT SUM(u.viewsMain) FROM UniversalCategoriesDLC u")
-     public int getSumViewsMainAllTime();
+     int getSumViewsMainAllTime();
 
      @Query("SELECT SUM(u.viewsAnbieter) FROM UniversalCategoriesDLC u")
-     public int getSumViewsAnbieterAllTime();
+     int getSumViewsAnbieterAllTime();
 
      @Query("SELECT SUM(u.viewsUeber) FROM UniversalCategoriesDLC u")
-     public int getSumViewsUeberAllTime();
+     int getSumViewsUeberAllTime();
 
      @Query("SELECT SUM(u.viewsImpressum) FROM UniversalCategoriesDLC u")
-     public int getSumViewsImpressumAllTime();
+     int getSumViewsImpressumAllTime();
 
      @Query("SELECT SUM(u.viewsPreisliste) FROM UniversalCategoriesDLC u")
-     public int getSumViewsPreislisteAllTime();
+     int getSumViewsPreislisteAllTime();
 
      @Query("SELECT SUM(u.viewsPartner) FROM UniversalCategoriesDLC u")
-     public int getSumViewsPartnerAllTime();
+     int getSumViewsPartnerAllTime();
 
      @Query("SELECT SUM(u.viewsDatenschutz) FROM UniversalCategoriesDLC u")
-     public int getSumViewsDatenschutzAllTime();
+     int getSumViewsDatenschutzAllTime();
 
      @Query("SELECT SUM(u.viewsNewsletter) FROM UniversalCategoriesDLC u")
-     public int getSumViewsNewsletterAllTime();
+     int getSumViewsNewsletterAllTime();
 
      @Query("SELECT SUM(u.viewsImage) FROM UniversalCategoriesDLC u")
-     public int getSumViewsImageAllTime();
+     int getSumViewsImageAllTime();
 
      @Query("SELECT SUM(u.viewsAGBS) FROM UniversalCategoriesDLC u")
-     public int getSumViewsAGBSAllTime();
+     int getSumViewsAGBSAllTime();
 
 
 
      @Query("SELECT SUM(u.besucherGlobal) FROM UniversalCategoriesDLC u")
-     public int getSumUserGlobalAllTime();
+     int getSumUserGlobalAllTime();
 
      @Query("SELECT SUM(u.besucherArticle) FROM UniversalCategoriesDLC u")
-     public int getSumUserArticleAllTime();
+     int getSumUserArticleAllTime();
 
      @Query("SELECT SUM(u.besucherNews) FROM UniversalCategoriesDLC u")
-     public int getSumUserNewsAllTime();
+     int getSumUserNewsAllTime();
 
      @Query("SELECT SUM(u.besucherBlog) FROM UniversalCategoriesDLC u")
-     public int getSumUserBlogAllTime();
+     int getSumUserBlogAllTime();
 
      @Query("SELECT SUM(u.besucherPodcast) FROM UniversalCategoriesDLC u")
-     public int getSumUserPodcastAllTime();
+     int getSumUserPodcastAllTime();
 
      @Query("SELECT SUM(u.besucherVideos) FROM UniversalCategoriesDLC u")
-     public int getSumUserVideosAllTime();
+     int getSumUserVideosAllTime();
 
      @Query("SELECT SUM(u.besucherWhitepaper) FROM UniversalCategoriesDLC u")
-     public int getSumUserWhitepaperAllTime();
+     int getSumUserWhitepaperAllTime();
 
      @Query("SELECT SUM(u.besucherEvents) FROM UniversalCategoriesDLC u")
-     public int getSumUserEventsAllTime();
+     int getSumUserEventsAllTime();
 
      @Query("SELECT SUM(u.besucherRatgeber) FROM UniversalCategoriesDLC u ")
-     public int getSumUserRatgeberAllTime();
+     int getSumUserRatgeberAllTime();
 
      @Query("SELECT SUM(u.besucherRatgeberPost) FROM UniversalCategoriesDLC u")
-     public int getSumUserRatgeberPostAllTime();
+     int getSumUserRatgeberPostAllTime();
 
      @Query("SELECT SUM(u.besucherRatgeberGlossar) FROM UniversalCategoriesDLC u")
-     public int getSumUserRatgeberGlossarAllTime();
+     int getSumUserRatgeberGlossarAllTime();
 
      @Query("SELECT SUM(u.besucherRatgeberBuch) FROM UniversalCategoriesDLC u")
-     public int getSumUserRatgeberBuchAllTime();
+     int getSumUserRatgeberBuchAllTime();
 
      @Query("SELECT SUM(u.besucherRatgeberSelf) FROM UniversalCategoriesDLC u")
-     public int getSumUserRatgeberSelfAllTime();
+     int getSumUserRatgeberSelfAllTime();
 
      @Query("SELECT SUM(u.besucherMain) FROM UniversalCategoriesDLC u")
-     public int getSumUserMainAllTime();
+     int getSumUserMainAllTime();
 
      @Query("SELECT SUM(u.besucherAnbieter) FROM UniversalCategoriesDLC u")
-     public int getSumUserAnbieterAllTime();
+     int getSumUserAnbieterAllTime();
 
      @Query("SELECT SUM(u.besucherUeber) FROM UniversalCategoriesDLC u")
-     public int getSumUserUeberAllTime();
+     int getSumUserUeberAllTime();
 
      @Query("SELECT SUM(u.besucherImpressum) FROM UniversalCategoriesDLC u")
-     public int getSumUserImpressumAllTime();
+     int getSumUserImpressumAllTime();
 
      @Query("SELECT SUM(u.besucherPreisliste) FROM UniversalCategoriesDLC u")
-     public int getSumUserPreislisteAllTime();
+     int getSumUserPreislisteAllTime();
 
      @Query("SELECT SUM(u.besucherPartner) FROM UniversalCategoriesDLC u")
-     public int getSumUserPartnerAllTime();
+     int getSumUserPartnerAllTime();
 
      @Query("SELECT SUM(u.besucherDatenschutz) FROM UniversalCategoriesDLC u")
-     public int getSumUserDatenschutzAllTime();
+     int getSumUserDatenschutzAllTime();
 
      @Query("SELECT SUM(u.besucherNewsletter) FROM UniversalCategoriesDLC u")
-     public int getSumUserNewsletterAllTime();
+     int getSumUserNewsletterAllTime();
 
      @Query("SELECT SUM(u.besucherImage) FROM UniversalCategoriesDLC u")
-     public int getSumUserImageAllTime();
+     int getSumUserImageAllTime();
 
      @Query("SELECT SUM(u.besucherAGBS) FROM UniversalCategoriesDLC u")
-     public int getSumUserAGBSAllTime();
+     int getSumUserAGBSAllTime();
 
 }

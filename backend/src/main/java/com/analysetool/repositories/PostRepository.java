@@ -47,7 +47,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    LocalDateTime getPostDateById(long Id);
 
    @Query("SELECT p.content FROM Post p WHERE p.id =:pId AND p.type='post'")
-   public String getContentById(long pId);
+   String getContentById(long pId);
 
 
    @Query("SELECT p FROM Post p WHERE p.status = 'publish' AND p.type = 'post' ORDER BY p.date DESC")

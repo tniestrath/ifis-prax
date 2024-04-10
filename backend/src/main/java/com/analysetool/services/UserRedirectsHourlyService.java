@@ -132,7 +132,7 @@ public class UserRedirectsHourlyService {
     /**
      * Generates a map of total redirects for each user across the site.
      *
-     * @return A map where each key is a user ID and the corresponding value is the sum of redirects for that user.
+     * @return A map where each key is a user ID, and the corresponding value is the sum of redirects for that user.
      */
     public Map<Long, Long> getTotalRedirectsOfSiteBrokenDownAsMap(){
         List<Object[]> results = userRedirectRepo.getUserIdAndRedirectsSum();

@@ -23,23 +23,23 @@ public interface TagStatRepository extends JpaRepository<TagStat, Long> {
     void updateClicksAndPerformanceByArtId( Long clicks,  Long tagId, float performance);
 
     @Query("select s.performance from TagStat s where s.tagId=:tagId")
-    public float getPerformanceByArtID(int tagId);
+    float getPerformanceByArtID(int tagId);
 
     @Query("SELECT MAX(s.performance) FROM TagStat s")
-    public float getMaxPerformance();
+    float getMaxPerformance();
 
     @Query("SELECT s FROM TagStat s WHERE s.tagId =:id")
-    public TagStat getStatById(int id);
+    TagStat getStatById(int id);
 
-    public boolean existsByTagId(int tagId);
+    boolean existsByTagId(int tagId);
 
     @Query("SELECT s.tagId FROM TagStat s ORDER BY s.relevance DESC LIMIT 3")
-    public List<Long> getTop3Relevance();
+    List<Long> getTop3Relevance();
 
     @Query("SELECT s.tagId FROM TagStat s ORDER BY s.performance DESC LIMIT 3")
-    public List<Long> getTop3Performance();
+    List<Long> getTop3Performance();
 
     @Query("SELECT MAX(t.relevance) FROM TagStat t")
-    public int getMaxRelevance();
+    int getMaxRelevance();
 }
 

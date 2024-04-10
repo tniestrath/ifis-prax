@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface WpTermRelationshipsRepository extends JpaRepository<wp_term_relationships, Long> {
     @Query("Select s.termTaxonomyId from wp_term_relationships s where s.objectId=:id")
-    public List<Long> getTaxIdByObject(long id);
+    List<Long> getTaxIdByObject(long id);
 
 
     boolean existsByObjectId(Long id);

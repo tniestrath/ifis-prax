@@ -1,7 +1,6 @@
 package com.analysetool.services;
 
 import com.analysetool.modells.UniqueUser;
-import com.analysetool.repositories.TrackingBlacklistRepository;
 import com.analysetool.repositories.UniqueUserRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -150,7 +149,7 @@ public class UniqueUserService {
      * This method scans through all users in the database and applies a filtering logic to identify
      * potential bots. A user is considered a potential bot if their click behavior shows a pattern of
      * repeatedly clicking on the same category in a short sequence, e.g., 'main, main, main...'.
-     * The method uses a threshold of three consecutive clicks on the same category as a criterion for
+     * The method uses a threshold of three consecutive clicks in the same category as a criterion for
      * suspicious behavior, which can be adjusted as per requirements.
      *
      * @return List<UniqueUser> containing users who are identified as potential bots based on the defined criteria.

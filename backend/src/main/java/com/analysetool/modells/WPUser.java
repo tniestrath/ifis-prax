@@ -2,7 +2,6 @@ package com.analysetool.modells;
 
 import jakarta.persistence.*;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Objects;
 

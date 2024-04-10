@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface UserGeoRepository extends JpaRepository<UserGeo, Long> {
 
     @Query("SELECT u FROM UserGeo  u WHERE u.user_id=:userId AND u.uniStatId=:uniStatId")
-    public UserGeo findByUserIdAndUniStatId(long userId, int uniStatId);
+    UserGeo findByUserIdAndUniStatId(long userId, int uniStatId);
 }

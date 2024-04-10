@@ -40,9 +40,9 @@ public class MatomoController {
     /**
      * Fetches a custom summary of visits based on provided parameters.
      *
-     * @param siteId  The ID of the site for which to fetch the visits summary.
+     * @param siteId  The ID of the site for which to fetch the visit summary.
      * @param period  The period for which to fetch the visits summary (e.g., day, week, month, year, or range).
-     * @param date    The specific date or date range (for the 'range' period) for which to fetch the visits summary.
+     * @param date    The specific date or date range (for the 'range' period) for which to fetch the visit summary.
      * @return A JSON string containing a custom summary of visits.
      */
     @GetMapping("/getCustomVisitsSummary")

@@ -102,11 +102,11 @@ public class UserController {
     /**
      *
      * @param page which page of results in the given size you want to fetch.
-     * @param size the amount of results you want per page.
+     * @param size the number of results you want per page.
      * @param search the search-term you want results for, give empty string for none.
      * @param filterAbo "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
      * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
-     * @return a JSON String containing information about all users in the specified page, and the amount of users loaded.
+     * @return a JSON String containing information about all users in the specified page, and the number of users loaded.
      * @throws JSONException .
      */
     @GetMapping("/getAll")
@@ -360,7 +360,7 @@ public class UserController {
                 obj.put("employees", wpUserMetaRepository.getCompanyEmployees(user.getId()).get());
             }
 
-            //Checks how many times website has redirected to a users homepage
+            //Checks how many times website has redirected to a user's homepage
             if(userRedirectsRepo.existsByUserId(user.getId())) {
                 obj.put("redirects", userRedirectsRepo.getAllRedirectsOfUserIdSummed(user.getId()));
             } else {
@@ -848,7 +848,7 @@ public class UserController {
 
 
     /**
-     * This accounts for ONLY users that have posts, counting ONLY their post views.
+     * This accounts for ONLY users that have posts, counting ONLY their post's views.
      * @return a JSON-String containing averages of profile-views keyed by their Account-Type. With a debug-label.
      * @throws JSONException .
      */
@@ -879,7 +879,7 @@ public class UserController {
     }
 
     /**
-     * This accounts for ONLY users that have posts, counting ONLY their post views.
+     * This accounts for ONLY users that have posts, counting ONLY their post's views.
      * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
      * @throws JSONException .
      */
@@ -1211,7 +1211,7 @@ public class UserController {
 
     /**
      *
-     * @param id user id to fetch account type for.
+     * @param id user id to fetch an account type for.
      * @return "basis" "plus" "premium" "sponsor" "basis-plus" "admin" "none"
      */
     @GetMapping("/getTypeById")
@@ -1233,7 +1233,7 @@ public class UserController {
 
     /**
      *
-     * @param id user id to fetch account type for.
+     * @param id user id to fetch an account type for.
      * @return "um_basis" "um_plus" "um_premium" "um_basis-plus" "admin" "none"
      */
     private String getTypeDirty(int id) {
@@ -1309,7 +1309,7 @@ public class UserController {
     /**
      *
      * @param userId  id des users.
-     * @return a collection of maximum and actual values for a users completion status of their profile.
+     * @return a collection of maximum and actual values for a user's completion status of their profile.
      */
     @GetMapping("/getPotentialById")
     public String getPotentialByID(int userId) throws JSONException {
@@ -1743,7 +1743,7 @@ public class UserController {
         int countForTag = countUsersByTag(tag);
 
         if (totalUsersWithTag == 0) {
-            return 0; // Vermeidung der Division durch Null
+            return 0; // Vermeidung der Division durch null
         }
 
         return (double) countForTag / totalUsersWithTag * 100;
@@ -1821,7 +1821,7 @@ public class UserController {
      * Endpunkt, um eine String-Darstellung der Konkurrenz für Tags zu erhalten, die einem bestimmten Benutzer zugeordnet sind.
      * Diese Methode ruft getCompetitionByTags auf, um die Zuordnung zu erhalten, und konvertiert sie dann in eine Zeichenkette.
      *
-     * @param userId Die ID des Benutzers, für den die Konkurrenz nach Themenfelder angefordert werden.
+     * @param userId Die ID des Benutzers, für den die Konkurrenz nach Themenfeldern angefordert werden.
      * @return Eine Zeichenketten-Darstellung der Map, die von getCompetitionByTags zurückgegeben wird.
      */
     @GetMapping("/getCompetitionForTagsByUserId")

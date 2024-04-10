@@ -1,21 +1,11 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.UniqueUser;
 import com.analysetool.repositories.UniqueUserRepository;
 import com.analysetool.services.UniqueUserService;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController

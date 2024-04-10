@@ -76,7 +76,7 @@ public class GeoController {
     }
 
     /**
-     * Endpoint for retrieval of a Posts Geolocation-stats by their id, only using data gathered between Date start and Date end.
+     * Endpoint for retrieval of a Post Geolocation-stats by their id, only using data gathered between Date-start and Date-end.
      * @param id the posts id you want stats for.
      * @param start a String containing an ISO-Format Date, marking the starting date (inclusive).
      * @param end a String containing an ISO-Format Date, marking the ending date. (inclusive)
@@ -139,7 +139,7 @@ public class GeoController {
     }
 
     /**
-     * Endpoint for retrieval of a Users Geolocation Data gathered between two Dates.
+     * Endpoint for retrieval of a User's Geolocation Data gathered between two Dates.
      * @param id the users' id.
      * @param start the starting date as a string in iso-format (inclusive).
      * @param end the ending date as a string in iso-format. (inclusive)
@@ -542,7 +542,8 @@ public class GeoController {
      * @param region the region or DACH country you want stats for.
      * @param start the Date to start gathering Geo-Data (inclusive). In Format yyyy-MM-dd.
      * @param end the Date to end gathering Geo-Data (inclusive). In Format yyyy-MM-dd.
-     * @return a JSON String with "dates" on containing the dates data was gathered for, a matching List in "data" containing the respective stats.
+     * @return a JSON String with "dates" on containing the date data was gathered for, a matching List in "data"
+     * containing the respective stats.
      * @throws JSONException .
      */
     @GetMapping("/getRegionGermanGeoByDateAsList")

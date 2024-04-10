@@ -103,7 +103,7 @@ public class uniStatController {
     /**
      *
      * @return ein HTML Code, der eine Tabelle mit Statistiken enthält.
-     * @throws JSONException
+     * @throws JSONException .
      */
     @GetMapping(value = "/today", produces = MediaType.TEXT_HTML_VALUE)
     public String getLetzte() throws JSONException {
@@ -654,32 +654,32 @@ public class uniStatController {
                     for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
 
                         if (termTax.getTermId() == tagIdBlog && type.equals("blog")) {
-                            JSONObject obj = new JSONObject();
+                            JSONObject obj;
 
                             obj = getClickOfDayAsJson(post.getId(),daysBack);
                             ergebnis.put(obj);
                         }
 
                         if (termTax.getTermId() == tagIdArtikel && type.equals("artikel") ) {
-                            JSONObject obj = new JSONObject();
+                            JSONObject obj;
                             obj = getClickOfDayAsJson(post.getId(),daysBack);
                             ergebnis.put(obj);
                         }
 
                         if (termTax.getTermId() == tagIdNews && type.equals("news")) {
-                            JSONObject obj = new JSONObject();
+                            JSONObject obj;
                             obj = getClickOfDayAsJson(post.getId(),daysBack);
                             ergebnis.put(obj);
                         }
 
                         if (termTax.getTermId() == tagIdWhitepaper && type.equals("whitepaper")) {
-                            JSONObject obj = new JSONObject();
+                            JSONObject obj;
                             obj = getClickOfDayAsJson(post.getId(),daysBack);
                             ergebnis.put(obj);
                         }
 
                         if (termTax.getTermId() == tagIdPodcast && type.equals("podcast")) {
-                            JSONObject obj = new JSONObject();
+                            JSONObject obj;
                             obj = getClickOfDayAsJson(post.getId(),daysBack);
                             ergebnis.put(obj);
                         }
@@ -741,7 +741,7 @@ public class uniStatController {
     @GetMapping("/getConversionRateNoSub")
     public double getConversionRateNoSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
-        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieter_abolos_anzahl() - lastTwoDays.get(1).getAnbieter_abolos_anzahl();
+        long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieter_abolos_anzahl() - lastTwoDays.get(1).getAnbieter_abolos_anzahl();
 
         List<String> uniqueIps= uniqueService.getIpsToday();
         List<String> blockedIps= trackBlackRepo.getAllIps();
@@ -753,7 +753,7 @@ public class uniStatController {
     @GetMapping("/getConversionRateBasicSub")
     public double getConversionRateBasicSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
-        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterBasicAnzahl() - lastTwoDays.get(1).getAnbieterBasicAnzahl();
+        long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterBasicAnzahl() - lastTwoDays.get(1).getAnbieterBasicAnzahl();
 
         List<String> uniqueIps= uniqueService.getIpsToday();
         List<String> blockedIps= trackBlackRepo.getAllIps();
@@ -765,7 +765,7 @@ public class uniStatController {
     @GetMapping("/getConversionRateBasicPlusSub")
     public double getConversionRateBasicPlusSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
-        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterBasicPlusAnzahl() - lastTwoDays.get(1).getAnbieterBasicPlusAnzahl();
+        long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterBasicPlusAnzahl() - lastTwoDays.get(1).getAnbieterBasicPlusAnzahl();
 
         List<String> uniqueIps= uniqueService.getIpsToday();
         List<String> blockedIps= trackBlackRepo.getAllIps();
@@ -777,7 +777,7 @@ public class uniStatController {
     @GetMapping("/getConversionRatePlusSub")
     public double getConversionRatePlusSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
-        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPlusAnzahl() - lastTwoDays.get(1).getAnbieterPlusAnzahl();
+        long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPlusAnzahl() - lastTwoDays.get(1).getAnbieterPlusAnzahl();
 
         List<String> uniqueIps= uniqueService.getIpsToday();
         List<String> blockedIps= trackBlackRepo.getAllIps();
@@ -789,7 +789,7 @@ public class uniStatController {
     @GetMapping("/getConversionRatePremiumSub")
     public double getConversionRatePremiumSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
-        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPremiumAnzahl() - lastTwoDays.get(1).getAnbieterPremiumAnzahl();
+        long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPremiumAnzahl() - lastTwoDays.get(1).getAnbieterPremiumAnzahl();
 
         List<String> uniqueIps= uniqueService.getIpsToday();
         List<String> blockedIps= trackBlackRepo.getAllIps();
@@ -801,7 +801,7 @@ public class uniStatController {
     @GetMapping("/getConversionRatePremiumSponsorSub")
     public double getConversionRatePremiumSponsorSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
-        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPremiumSponsorenAnzahl() - lastTwoDays.get(1).getAnbieterPremiumSponsorenAnzahl();
+        long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPremiumSponsorenAnzahl() - lastTwoDays.get(1).getAnbieterPremiumSponsorenAnzahl();
 
         List<String> uniqueIps= uniqueService.getIpsToday();
         List<String> blockedIps= trackBlackRepo.getAllIps();

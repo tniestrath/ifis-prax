@@ -133,20 +133,6 @@ public class PostController {
                     if (statsRepo.existsByArtId(i.getId())) {
                         PostStats = statsRepo.getStatByArtID(i.getId());
                     }
-                    List<Long> tagIDs = null;
-                    if (termRelationRepo.existsByObjectId(i.getId())) {
-                        tagIDs = termRelationRepo.getTaxIdByObject(i.getId());
-                    }
-                    List<WPTerm> terms = new ArrayList<>();
-                    if (tagIDs != null) {
-                        for (long l : tagIDs) {
-                            if (wpTermRepo.existsById(l)) {
-                                if (wpTermRepo.findById(l).isPresent()) {
-                                    terms.add(wpTermRepo.findById(l).get());
-                                }
-                            }
-                        }
-                    }
 
                     type = getType(i.getId()) == null ? "default" : getType(i.getId());
 
@@ -178,7 +164,7 @@ public class PostController {
      *
      * @param authorId the user_id of the author you want posts from.
      * @param page the page of results you want to receive.
-     * @param size the amount of results you want to receive at most.
+     * @param size the number of results you want to receive at most.
      * @param filter the EXACT slug of a term the post is supposed to have.
      * @param search a String you want to search the db for, searches content AND title of posts.
      * @return a JSONArray of JSONObjects that contain enriched PostStats (See PostStatsByIdForFrontend).
@@ -255,7 +241,7 @@ public class PostController {
     /**
      * Endpoint for retrieval of a single posts full-statistics, identified by its id.
      * @param id the id of the post you want to fetch stats for.
-     * @return a JSON String containing keys and values for each of a posts statistics, identifiers and adjacent information such as its type. <br>
+     * @return a JSON String containing keys and values for each of a post's statistics, identifiers and adjacent information such as its type. <br>
      * Keys are: id, title, date, tags, type, performance, relevance, clicks, lettercount, searchSuccesses (optional),
      * SearchSuccessRate (optional), referrings, lettercount, articleReferringRate, downloads, authors.
      * @throws JSONException .
@@ -421,9 +407,7 @@ public class PostController {
      */
     @GetMapping("/getPostsByTag")
     public List<Post> getPostsByTag(long tagId) {
-        return postRepo.findAllUserPosts().stream().filter(post -> {
-            return getTagsById(post.getId()).contains(tagId);
-        }).toList();
+        return postRepo.findAllUserPosts().stream().filter(post -> getTagsById(post.getId()).contains(tagId)).toList();
     }
 
     /**
@@ -761,10 +745,6 @@ public class PostController {
                 return "podcast";
             }
 
-            if (type == null) {
-                System.out.println(id + "\n");
-            }
-
             return type;
 
         } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("event")){
@@ -796,7 +776,7 @@ public class PostController {
     }
 
     /**
-     * Endpoint for retrieval for the amount of total posts on the website.
+     * Endpoint for retrieval for the number of total posts on the website.
      * @return count of all user posts.
      */
     @GetMapping("/getCountTotalPosts")
@@ -805,7 +785,7 @@ public class PostController {
     }
 
     /**
-     *  Endpoint for retrieval for the amount of posts on the website of a certain type.
+     *  Endpoint for retrieval for the number of posts on the website of a certain type.
      * @param type ("news" | "artikel" | "blog" | "whitepaper")
      * @return count of all posts with the type given.
      */
@@ -937,7 +917,7 @@ public class PostController {
      *
      * @param sorter sorter "relevance" | "performance" | "clicks" - chooses what statistic you want to sort by.
      * @param type "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber"
-     * @return a JSON String of the Top Posts (as many as Limit) with post-type being type and sorted by sorter.
+     * @return a JSON String of the Top Posts (as many as Limit) with a post-type being type and sorted by sorter.
      */
     @GetMapping("/getTopWithType")
     public String getTopWithType(@RequestParam String sorter, String type, int limit) throws JSONException, ParseException {
@@ -988,7 +968,7 @@ public class PostController {
     /**
      * Endpoint for retrieval of the top 5 posts sorted by a specific sorter.
      * @param sorter "relevance" or "performance".
-     * @return a JSON String containing the stats, identifiers etc. of the top5 posts compared by given metric.
+     * @return a JSON String containing the stats, identifiers, etc. of the top5 posts compared by given metric.
      * @throws JSONException .
      * @throws ParseException .
      */
@@ -1028,7 +1008,7 @@ public class PostController {
     }
 
     /**
-     * Endpoint for retrieval of a posts creation date.
+     * Endpoint for retrieval of a post's creation date.
      * @param id the id of the post you want the creation date for.
      * @return the Creation-Date of the post as a String.
      */
@@ -1235,9 +1215,9 @@ public class PostController {
 
     /**
      * Retrieves a list of {@code PostStats} objects that are considered outliers based on their views (clicks)
-     * for a given term ID. Outliers are determined using the {@code MathHelper.getOutliersLong} method.
+     * for a given term ID. Outliers are determined by using the {@code MathHelper.getOutliersLong} method.
      *
-     * @param termId The term ID used to filter the post statistics. This is typically an identifier
+     * @param termId The term ID used to filter the post's statistics. This is typically an identifier
      *               for a specific category or tag in a blog or article system.
      * @return A JSON string representing a list of {@code PostStats} objects that are outliers.
      *         In case of an exception during JSON processing, a simple error message is returned.
@@ -1275,9 +1255,9 @@ public class PostController {
      *
      * @param termId The term ID used to find related post statistics. It refers to the ID of the term (e.g., a tag) in a blog or content system.
      * @param type   The type of metric to consider for finding outliers. It can be either "views" or "relevance".
-     *               If "views" is specified, the method looks for outliers in post views (clicks).
+     *               If "views" is specified, the method looks for outliers in post's views (clicks).
      *               If "relevance" is specified, the method looks for outliers in the relevance score of the posts.
-     * @return       A JSON string representing a list of maps, each map containing the post name (title) and its corresponding outlier value (either views or relevance).
+     * @return       A JSON string representing a list of maps, each map containing the post's name (title) and its corresponding outlier value (either views or relevance).
      *               Returns a simple error message if any exception occurs during JSON processing.
      * @implNote This method uses {@link MathHelper#getOutliersLong(List)} or {@link MathHelper#getOutliersFloat(List)} (based on the 'type' parameter)
      *           to determine outliers and then fetches the corresponding post names using the {@code PostRepository}.

@@ -73,7 +73,7 @@ public class ContentDownloadsHourlyService {
     /**
      * Aggregates the total downloads for a list of posts.
      *
-     * @param postIds A list of post IDs.
+     * @param postIds A list of post-IDs.
      * @return Combined total downloads for all specified posts.
      */
     public Long getAllContentDownloadsByPostIds(List<Long> postIds){
@@ -83,7 +83,7 @@ public class ContentDownloadsHourlyService {
     /**
      * Computes the total number of downloads for a list of posts, filtered by a specific university ID.
      *
-     * @param postIds A list of post IDs to calculate downloads for.
+     * @param postIds A list of post-IDs to calculate downloads for.
      * @param uniId The uniId to filter the downloads.
      * @return The sum of downloads for all specified posts from the given uniId.
      */
@@ -144,7 +144,7 @@ public class ContentDownloadsHourlyService {
      * Generates a string map of download counts for each post by a given user.
      *
      * @param userId The ID of the user.
-     * @return map with postId as key and download count as value.
+     * @return map with postId as the key and download count as value.
      */
     public Map<Long, Long> getAllDownloadsOfUserContentBrokenDownByUserIdAsMap(Long userId){
         Long downloadCount;
@@ -162,7 +162,7 @@ public class ContentDownloadsHourlyService {
      * Generates a string map of download counts for each post by a given user.
      *
      * @param userId The ID of the user.
-     * @return String representation of a map with postId as key and download count as value.
+     * @return String representation of a map with postId as the key and download count as value.
      */
     public String getAllDownloadsOfUserContentBrokenDownByUserIdAsString(Long userId){
         Long downloadCount;
@@ -179,7 +179,7 @@ public class ContentDownloadsHourlyService {
     /**
      * Retrieves a map of total downloads for each post on the site.
      *
-     * @return A map where each key is a post ID and the corresponding value is the sum of downloads for that post.
+     * @return A map where each key is a post-ID, the corresponding value is the sum of downloads for that post.
      */
     public Map<Long, Long> getTotalDownloadsOfSiteBrokenDownAsMap(){
         List<Object[]> results = contentDownloadsHourlyRepo.getPostIdAndDownloadsSum();

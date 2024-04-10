@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface IPsByPostRepository extends JpaRepository<IPsByPost, Long> {
 
     @Query("SELECT u FROM IPsByPost u WHERE u.post_id=:id")
-    public IPsByPost getByID(long id);
+    IPsByPost getByID(long id);
 
 }

@@ -25,10 +25,10 @@ public interface universalStatsRepository extends JpaRepository<UniversalStats, 
     UniversalStats findTop1ByOrderByDatumDesc();
 
     @Query("SELECT u FROM UniversalStats u ORDER BY u.id DESC LIMIT 2")
-    public List <UniversalStats> getSecondLastUniStats();
+    List <UniversalStats> getSecondLastUniStats();
 
     @Query("SELECT u FROM UniversalStats u ORDER BY u.id DESC LIMIT 1")
-    public UniversalStats getLatestUniStat();
+    UniversalStats getLatestUniStat();
 
     @Query("SELECT u FROM UniversalStats u ORDER BY u.id ASC LIMIT 1")
     UniversalStats getEarliestUniStat();

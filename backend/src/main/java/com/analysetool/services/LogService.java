@@ -506,6 +506,7 @@ public class LogService {
      * @throws ParseException .
      * @throws JSONException .
      */
+    @SuppressWarnings("GrazieInspection")
     public void findAMatch(SysVar sysVar) throws IOException, ParseException, JSONException {
         String line;
 
@@ -691,22 +692,22 @@ public class LogService {
 
 
 
-                    //Does it match a ratgeber-subpost-view
+                    //Does it match a ratgeber-subpost-view?
                     Matcher matched_ratgeber_post = ratgeberPostViewPattern.matcher(request);
 
-                    //Does it match a ratgeber-glossar view
+                    //Does it match a ratgeber-glossar view?
                     Matcher matched_ratgeber_glossar = ratgeberGlossarViewPattern.matcher(request);
 
-                    //Does it match a ratgeber-buch view
+                    //Does it match a ratgeber-buch view?
                     Matcher matched_ratgeber_buch = ratgeberBuchViewPattern.matcher(request);
 
-                    //Does it match a ratgeber-self-help view
+                    //Does it match a ratgeber-self-help view?
                     Matcher matched_ratgeber_self = ratgeberSelfViewPattern.matcher(request);
 
-                    //Does it match a podcast-view
+                    //Does it match a podcast-view?
                     Matcher matched_podcast_view = podcastViewPattern.matcher(request);
 
-                    //Does it match a content-download
+                    //Does it match a content-download?
                     //Matcher matched_content_download= contentDownloadPattern.matcher(line);
                     matched_content_download= contentDownloadPattern.matcher(line);
                     //Does it match an event-View?
@@ -716,7 +717,7 @@ public class LogService {
                     //Does it match an event Search Success?
                     Matcher matched_event_search_success= eventSSPattern.matcher(line);
 
-                    //Does it match an user Search Success?
+                    //Does it match a user Search Success?
                     Matcher matched_user_search_success= anbieterSSPattern.matcher(line);
 
                     //Does it match an outgoing socials redirect?
@@ -730,7 +731,7 @@ public class LogService {
                     Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(request);
                     //Does it match user-redirect?
                     Matcher matched_userRedirect = userRedirectPattern.matcher(request);
-                    //Does it match a video-view
+                    //Does it match a video-view?
                     Matcher matched_videoView = videoViewPattern.matcher(request);
                     //Does it match a socials impression?
                     Matcher matched_post_impression_facebook=postImpressionFacebookPattern.matcher(line);
@@ -749,7 +750,7 @@ public class LogService {
                     //Does it match a socials impression?
                     Matcher matched_user_impression_FacebookTwitterCombo=userImpressionTwitterFacebookComboPattern.matcher(line);
 
-                    //Does it match a anbieterverzeichnis-view
+                    //Does it match a anbieterverzeichnis-view?
                     Matcher matched_anbieterverzeichnis_view = anbieterCatPattern.matcher(request);
 
                     //Find out which pattern matched
@@ -1435,56 +1436,7 @@ public class LogService {
 
     /**
      * Updates respective data from UniversalStats.
-     * @param totalClicks
-     * @param internalClicks
-     * @param sensibleClicks
-     * @param viewsArticle
-     * @param viewsNews
-     * @param viewsBlog
-     * @param viewsPodcast
-     * @param viewsVideos
-     * @param viewsWhitepaper
-     * @param viewsEvents
-     * @param viewsRatgeber
-     * @param viewsRatgeberPost
-     * @param viewsRatgeberGlossar
-     * @param viewsRatgeberBuch
-     * @param viewsRatgeberSelf
-     * @param viewsMain
-     * @param viewsAnbieter
-     * @param viewsUeber
-     * @param viewsAGBS
-     * @param viewsImpressum
-     * @param viewsPreisliste
-     * @param viewsPartner
-     * @param viewsDatenschutz
-     * @param viewsNewsletter
-     * @param viewsImage
-     * @param uniqueUsers
-     * @param userArticle
-     * @param userNews
-     * @param userBlog
-     * @param userPodcast
-     * @param userVideos
-     * @param userWhitepaper
-     * @param userEvents
-     * @param userRatgeber
-     * @param userRatgeberPost
-     * @param userRatgeberGlossar
-     * @param userRatgeberBuch
-     * @param userRatgeberSelf
-     * @param userMain
-     * @param userAnbieter
-     * @param userUeber
-     * @param userAGBS
-     * @param userImpressum
-     * @param userPreisliste
-     * @param userPartner
-     * @param userDatenschutz
-     * @param userNewsletter
-     * @param userImage
-     * @param serverErrors
-     * @throws ParseException
+     * @throws ParseException .
      */
     private void updateUniStats(int totalClicks, int internalClicks, int sensibleClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsVideos, int viewsWhitepaper, int viewsEvents, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsAnbieter, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userVideos, int userWhitepaper, int userEvents, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userAnbieter, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
@@ -2112,7 +2064,7 @@ public class LogService {
     }
 
     /**
-     * Fetches relevance from a posts data.
+     * Fetches relevance from a post's data.
      * @param viewsLastYear a posts views during a year.
      * @param currentDateString a String representation of the current date.
      * @param time the current hour.
@@ -2136,7 +2088,7 @@ public class LogService {
     }
 
     /**
-     * Fetches relevance from a posts data.
+     * Fetches relevance from a post's data.
      * @param viewsLastYear a posts views during a year.
      * @param currentDayOfYear the current day of year.
      * @param time the current hour.
@@ -2411,7 +2363,7 @@ public class LogService {
     }
 
     /**
-     * Updates the IPs by User table, containing IPs that have accessed a users page.
+     * Updates the IPs by User table, containing IPs that have accessed a user's page.
      * @param ip the ip to update with.
      * @param id the id of the user to update for.
      * @throws JSONException no.
@@ -2851,7 +2803,7 @@ public class LogService {
     }
 
     /**
-     * Persists a UniqueUser-row's data by writing it into other tables and deleting the row in UniqueUser.
+     * Persists UniqueUser-row's data by writing it into other tables and deleting the row in UniqueUser.
      * @param ip the ip to permanentify stats for.
      * @throws JSONException no.
      */
@@ -3111,7 +3063,7 @@ public class LogService {
 
     /**
      * Updates social-media redirects.
-     * @param whatMatched what social-media redirect happened, as a String representation.
+     * @param whatMatched what social-media redirect happened? In String representation.
      * @param redirects the row of SocialsRedirects to update.
      * @return the OutgoingSocialRedirects-Row after the update (usage not recommended).
      */
@@ -3202,7 +3154,7 @@ public class LogService {
     }
 
     /**
-     * Cleans FinalSearchStatDLC table from entries that couldnt be matched correctly.
+     * Cleans FinalSearchStatDLC table from entries that couldn't be matched correctly.
      */
     private void cleanFinalSearchStatDLC() {
         for(FinalSearchStatDLC f : fDLCRepo.findAll()) {

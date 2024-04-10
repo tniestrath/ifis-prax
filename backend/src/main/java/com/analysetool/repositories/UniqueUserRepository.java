@@ -17,10 +17,10 @@ public interface UniqueUserRepository extends JpaRepository<UniqueUser, Long> {
             "(u.newsletter!='[0]' OR u.news!='[0]' OR u.datenschutz!='[0]' OR u.partner!='[0]' " +
             "OR u.preisliste!='[0]' OR u.ratgeber!='[0]' OR u.podcast!='[0]' OR u.whitepaper!='[0]'  " +
             "OR u.article!='[0]' OR u.agb!='[0]' OR u.blog!='[0]' OR u.image!='[0]' OR u.impressum!='[0]' OR u.ueber!='[0]')")
-    public int getUserCountGlobal();
+    int getUserCountGlobal();
 
     @Query("SELECT u FROM UniqueUser u WHERE u.ip = :ip")
-    public UniqueUser findByIP(String ip);
+    UniqueUser findByIP(String ip);
 
     // Methode, um die durchschnittliche Verweildauer aller Nutzer zurückzugeben
     @Query("SELECT AVG(u.time_spent) FROM UniqueUser u")

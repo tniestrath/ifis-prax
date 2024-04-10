@@ -367,11 +367,11 @@ public class FinalSearchStatService {
                         entry -> {
                             Long totalClicks = totalClicksPerQuery.getOrDefault(entry.getKey(), 0L);
                             Long totalSearches = entry.getValue();
-                            // Verhindern der Division durch Null
+                            // Verhindern der Division durch null
                             if (totalSearches > 0) {
                                 return (totalClicks.doubleValue() / totalSearches) * 100; // Multipliziert mit 100, um Prozentwerte zu erhalten
                             } else {
-                                return 0.0; // Keine Suchanfragen entspricht einer Erfolgsrate von 0%
+                                return 0.0; // Keine Suchanfragen entspricht einer Erfolgsrate von 0 %
                             }
                         }));
     }
@@ -392,7 +392,7 @@ public class FinalSearchStatService {
 
     public double getAverageSearchSuccess(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap) {
         if (searchStatsMap.isEmpty()) {
-            return 0.0; // Verhindert Division durch Null, falls keine Daten vorhanden sind.
+            return 0.0; // Verhindert Division durch null, falls keine Daten vorhanden sind.
         }
 
         // Berechnen der Gesamtanzahl von Klicks über alle Suchanfragen.
@@ -441,7 +441,7 @@ public class FinalSearchStatService {
 
     public Map<Long, Long> getMostFoundPosts(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap) {
         return searchStatsMap.values().stream()
-                .flatMap(List::stream) // Erstellen einer Stream aus allen DLC-Objekten
+                .flatMap(List::stream) // Erstellen eines Streams aus allen DLC-Objekten
                 .map(FinalSearchStatDLC::getPostId) // Extrahieren der postId
                 .filter(Objects::nonNull) // Sicherstellen, dass die postId nicht null ist
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())) // Zählen der Vorkommen jeder postId
@@ -456,7 +456,7 @@ public class FinalSearchStatService {
 
     public Map<Long, Long> getMostFoundUsers(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap) {
         return searchStatsMap.values().stream()
-                .flatMap(List::stream) // Erstellen einer Stream aus allen DLC-Objekten
+                .flatMap(List::stream) // Erstellen eines Streams aus allen DLC-Objekten
                 .map(FinalSearchStatDLC::getUserId) // Extrahieren der userId
                 .filter(Objects::nonNull) // Sicherstellen, dass die userId nicht null ist
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())) // Zählen der Vorkommen jeder userId

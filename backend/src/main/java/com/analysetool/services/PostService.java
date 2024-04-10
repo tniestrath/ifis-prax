@@ -28,23 +28,6 @@ public class PostService {
         return taxTermRepo.getTermIdByTaxId(termTaxonomyIds);
     }
 
-/*    private Map<Long, Float> getSimilarPosts(long postId, List<Long> tagIdsForPostGiven, float similarityPercentage) {
-        Map<Long, Float> postAndSimilarityMap = new HashMap<>();
-        List<wp_term_relationships> allPostsRelationships = termRelRepo.findAll();
-
-        for (wp_term_relationships otherPostRel : allPostsRelationships) {
-            Long otherPostId = otherPostRel.getObjectId();
-            if (otherPostId.equals(postId)) continue;  // Ignore the given post
-
-            List<Long> tagIdsForOtherPost = getTagsForPost(otherPostId);
-            float currentSimilarityPercentage = calculateTagSimilarity(tagIdsForPostGiven, tagIdsForOtherPost);
-
-            if (currentSimilarityPercentage >= similarityPercentage) {
-                postAndSimilarityMap.put(otherPostId, currentSimilarityPercentage);
-            }
-        }
-        return postAndSimilarityMap;
-    }*/
 
     public Map<Long, Float> getSimilarPosts(long postId, float similarityPercentage) {
         // Retrieve tags for the given post

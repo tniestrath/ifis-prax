@@ -232,9 +232,9 @@ public class SocialsImpressionsService {
      */
     public SocialsImpressions getMostImpressionsFromList(List<SocialsImpressions> allImps){
         SocialsImpressions topImp=new SocialsImpressions();
-        Long bestImpCount=0L;
+        long bestImpCount=0L;
         for(SocialsImpressions imp:allImps){
-            Long impCount= imp.getFacebook()+imp.getLinkedIn()+imp.getTwitter();
+            long impCount= imp.getFacebook()+imp.getLinkedIn()+imp.getTwitter();
             if(impCount>bestImpCount){
                 topImp = imp;
                 bestImpCount = impCount;

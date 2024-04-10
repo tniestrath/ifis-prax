@@ -1190,6 +1190,13 @@ public class PostController {
         return getAllByTypeWithStats("ratgeber");
     }
 
+    /**
+     * Fetches Stats for all posts of the given type. Values include all getType() can return.
+     * @param type the type of post to list.
+     * @return a JSON-String containing a List of Post-Stats.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getAllTypeWithStats")
     public String getAllByTypeWithStats(String type) throws JSONException, ParseException {
         List<JSONObject> stats = new ArrayList<>();
@@ -1201,6 +1208,15 @@ public class PostController {
         return new JSONArray(stats).toString();
     }
 
+    /**
+     * Fetches Stats for all posts of the given type. Values include all getType() can return.
+     * @param type the type of post to list.
+     * @param page the page of results.
+     * @param size the number of results per page.
+     * @return a JSON-String containing a List of Post-Stats.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getAllTypeWithStatsPageable")
     public String getAllByTypeWithStats(String type, int page, int size) throws JSONException, ParseException {
         List<JSONObject> stats = new ArrayList<>();

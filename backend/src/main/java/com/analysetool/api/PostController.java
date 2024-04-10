@@ -1169,28 +1169,6 @@ public class PostController {
     }
 
     /**
-     * Endpoint to retrieve all podcast-posts-stats.
-     * @return a JSON String of all "podcast" posts with their respective stats.
-     * @throws JSONException .
-     * @throws ParseException .
-     */
-    @GetMapping("/getAllPodcastsWithStats")
-    public String getAllPodcasts() throws JSONException, ParseException {
-        return getAllByTypeWithStats("podcast");
-    }
-
-    /**
-     * Endpoint to retrieve all ratgeber-posts-stats.
-     * @return a JSON String of all "ratgeber" posts with their respective stats.
-     * @throws JSONException .
-     * @throws ParseException .
-     */
-    @GetMapping("/getAllRatgeberWithStats")
-    public String getAllRatgeber() throws JSONException, ParseException {
-        return getAllByTypeWithStats("ratgeber");
-    }
-
-    /**
      * Fetches Stats for all posts of the given type. Values include all getType() can return.
      * @param type the type of post to list.
      * @return a JSON-String containing a List of Post-Stats.

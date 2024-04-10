@@ -591,7 +591,7 @@ public class UserController {
                 case "news" -> {
                     countNews++;
                 }
-                case "podcast", "podcast_first_series" -> {
+                case "podcast" -> {
                     countPodcasts++;
                 }
                 case "whitepaper" -> {

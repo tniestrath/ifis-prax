@@ -25,6 +25,8 @@ public class Constants {
     private final long schulungTermId = 315L;
     private final long workshopTermId = 316L;
 
+    private final long podcastTermId = 386L;
+
     // Private constructor to prevent external instantiation
     private Constants() {
     }
@@ -100,5 +102,9 @@ public class Constants {
 
     public long getWorkshopTermId() {
         return workshopTermId;
+    }
+
+    public long getPodcastTermId() {
+        return podcastTermId;
     }
 }

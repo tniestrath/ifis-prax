@@ -447,7 +447,7 @@ public class DiagnosisController {
                     && !type.equalsIgnoreCase("whitepaper")
                     && !type.equalsIgnoreCase("Event: Kongress")
                     && !type.equalsIgnoreCase("Event: Schulung/Seminar")
-                    && !type.equalsIgnoreCase("podcast_first_series")
+                    && !type.equalsIgnoreCase("podcast")
                     && !type.equalsIgnoreCase("Event: Workshop")
                     && !type.equalsIgnoreCase("Event: Messe")
                     && !type.equalsIgnoreCase("videos")) {

@@ -755,6 +755,10 @@ public class PostController {
                return "ratgeber";
             }
 
+            if(type.contains("podcast")) {
+                return "podcast";
+            }
+
             if (type == null) {
                 System.out.println(id + "\n");
             }
@@ -947,7 +951,7 @@ public class PostController {
             }
             case "podcast", "ratgeber" -> {
                 if(type.equalsIgnoreCase("podcast")) {
-                    top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("podcast_first_series"));
+                    top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("podcast"));
                 } else {
                     top = statsRepo.findAllByArtIdIn(postTypeRepo.getPostsByTypeLong("cyber-risk-check"));
                 }
@@ -1173,9 +1177,7 @@ public class PostController {
 
         List<JSONObject> stats = new ArrayList<>();
 
-
-
-        for(Integer postId : postTypeRepo.getPostsByType("podcast_first_series")) {
+        for(Integer postId : postTypeRepo.getPostsByType("podcast")) {
             JSONObject json = new JSONObject(PostStatsByIdForFrontend(postId));
             stats.add(json);
         }
@@ -1191,7 +1193,6 @@ public class PostController {
      */
     @GetMapping("/getAllRatgeberWithStats")
     public String getAllRatgeber() throws JSONException, ParseException {
-        List<Post> posts = postRepo.findAllUserPosts();
 
         List<JSONObject> stats = new ArrayList<>();
 

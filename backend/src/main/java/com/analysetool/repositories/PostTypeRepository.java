@@ -18,6 +18,7 @@ public interface PostTypeRepository extends JpaRepository<PostTypes, Long> {
     @Query("SELECT p.post_id FROM PostTypes p WHERE p.type =:type")
     List<Integer> getPostsByType(String type);
 
+    @Query("SELECT p.post_id FROM PostTypes p WHERE p.type=:type")
     List<Integer> getPostsByTypePageable(String type, Pageable pageable);
 
     @Query("SELECT p.post_id FROM PostTypes p WHERE p.type =:type")

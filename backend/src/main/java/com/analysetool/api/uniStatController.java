@@ -844,6 +844,11 @@ public class uniStatController {
         return (double)noSubDiffTodayYesterday/uniqueIps.size();
     }
 
+    /**
+     * Calculates and returns the overall conversion rate across all subscription types.
+     *
+     * @return the overall conversion rate as a double.
+     */
     @GetMapping("/getTotalConversionRateMembership")
     public double getTotalConversionRateMembership() {
         return (getConversionRateNoSub() + getConversionRateBasicSub() + getConversionRateBasicPlusSub() +

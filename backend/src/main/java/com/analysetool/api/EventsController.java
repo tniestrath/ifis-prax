@@ -4,6 +4,7 @@ import com.analysetool.modells.Events;
 import com.analysetool.repositories.EventsRepository;
 import com.analysetool.repositories.WPTermRepository;
 import com.analysetool.repositories.WpTermRelationshipsRepository;
+import com.analysetool.util.Constants;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -159,31 +160,47 @@ public class EventsController {
      */
     public String getEventType(Events e) {
         List<Long> termIds = relRepo.existsByObjectId(e.getPostID()) ? relRepo.getTaxIdByObject(e.getPostID()) : null;
+
+        Constants c = Constants.getInstance();
         if(termIds != null && isActive(e)) {
             //sonstige
-            if(termIds.contains(312L)) {
+            if(termIds.contains(c.getSonstigeEventsTermId())) {
                 return "r";
             }
             //Messen
-            if(termIds.contains(313L)) {
+            if(termIds.contains(c.getMessenTermId())) {
                 return "m";
             }
             //Kongresse
-            if(termIds.contains(314L)) {
+            if(termIds.contains(c.getKongressTermId())) {
                 return "k";
             }
             //Seminare/Schulungen
-            if(termIds.contains(315L)) {
+            if(termIds.contains(c.getSchulungTermId())) {
                 return "s";
             }
             //Workshops
-            if(termIds.contains(316L)) {
+            if(termIds.contains(c.getWorkshopTermId())) {
                 return "w";
             }
         } else {
             return "o";
         }
         return "o";
+    }
+
+    public long getTermIdFromFrontendType(String type) {
+        long returnal = -1;
+        Constants c = Constants.getInstance();
+        switch(type) {
+            case " " -> returnal = 0;
+            case "KG" -> returnal = c.getKongressTermId();
+            case "ME" -> returnal = c.getMessenTermId();
+            case "SE" -> returnal = c.getSchulungTermId();
+            case "WS" -> returnal = c.getWorkshopTermId();
+            case "SO" -> returnal = c.getSonstigeEventsTermId();
+        }
+        return returnal;
     }
 
     /**

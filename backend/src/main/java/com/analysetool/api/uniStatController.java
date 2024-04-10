@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +43,10 @@ public class uniStatController {
     private WpTermTaxonomyRepository termTaxRepo;
     @Autowired
     private UniversalStatsHourlyRepository universalStatsHourlyRepo;
-
+    @Autowired
+    TrackingBlacklistRepository trackBlackRepo;
+    @Autowired
+    UniqueUserService uniqueService;
 
     /**
      *
@@ -732,7 +736,80 @@ public class uniStatController {
         return new JSONObject(map).toString();
     }
 
+    //Konversionsraten der jeweiligen Mitgliedschaften
 
+    @GetMapping("/getConversionRateNoSub")
+    public double getConversionRateNoSub(){
+        List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
+        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieter_abolos_anzahl() - lastTwoDays.get(1).getAnbieter_abolos_anzahl();
+
+        List<String> uniqueIps= uniqueService.getIpsToday();
+        List<String> blockedIps= trackBlackRepo.getAllIps();
+        uniqueIps.removeAll(blockedIps);
+
+        return (double)noSubDiffTodayYesterday/uniqueIps.size();
+    }
+
+    @GetMapping("/getConversionRateBasicSub")
+    public double getConversionRateBasicSub(){
+        List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
+        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterBasicAnzahl() - lastTwoDays.get(1).getAnbieterBasicAnzahl();
+
+        List<String> uniqueIps= uniqueService.getIpsToday();
+        List<String> blockedIps= trackBlackRepo.getAllIps();
+        uniqueIps.removeAll(blockedIps);
+
+        return (double)noSubDiffTodayYesterday/uniqueIps.size();
+    }
+
+    @GetMapping("/getConversionRateBasicPlusSub")
+    public double getConversionRateBasicPlusSub(){
+        List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
+        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterBasicPlusAnzahl() - lastTwoDays.get(1).getAnbieterBasicPlusAnzahl();
+
+        List<String> uniqueIps= uniqueService.getIpsToday();
+        List<String> blockedIps= trackBlackRepo.getAllIps();
+        uniqueIps.removeAll(blockedIps);
+
+        return (double)noSubDiffTodayYesterday/uniqueIps.size();
+    }
+
+    @GetMapping("/getConversionRatePlusSub")
+    public double getConversionRatePlusSub(){
+        List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
+        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPlusAnzahl() - lastTwoDays.get(1).getAnbieterPlusAnzahl();
+
+        List<String> uniqueIps= uniqueService.getIpsToday();
+        List<String> blockedIps= trackBlackRepo.getAllIps();
+        uniqueIps.removeAll(blockedIps);
+
+        return (double)noSubDiffTodayYesterday/uniqueIps.size();
+    }
+
+    @GetMapping("/getConversionRatePremiumSub")
+    public double getConversionRatePremiumSub(){
+        List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
+        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPremiumAnzahl() - lastTwoDays.get(1).getAnbieterPremiumAnzahl();
+
+        List<String> uniqueIps= uniqueService.getIpsToday();
+        List<String> blockedIps= trackBlackRepo.getAllIps();
+        uniqueIps.removeAll(blockedIps);
+
+        return (double)noSubDiffTodayYesterday/uniqueIps.size();
+    }
+
+    @GetMapping("/getConversionRatePremiumSponsorSub")
+    public double getConversionRatePremiumSponsorSub(){
+        List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
+        Long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPremiumSponsorenAnzahl() - lastTwoDays.get(1).getAnbieterPremiumSponsorenAnzahl();
+
+        List<String> uniqueIps= uniqueService.getIpsToday();
+        List<String> blockedIps= trackBlackRepo.getAllIps();
+        uniqueIps.removeAll(blockedIps);
+
+        return (double)noSubDiffTodayYesterday/uniqueIps.size();
+    }
+    
     ///////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     //////////////////////////////AB HIER UNIVERSAL STATS HOURLY \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 

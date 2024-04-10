@@ -47,9 +47,6 @@ public class DiagnosisController {
     int MAX_CLICKS_IN_CAT_UNTIL_BOT = 5;
     final int MAX_NONSENSE_UNTIL_BOT = 10;
 
-    //ToDo: Offer more solutionLinks
-
-
 
     /**
      * An aggregate methods to find Problems in all parts of the database.
@@ -450,7 +447,7 @@ public class DiagnosisController {
                     && !type.equalsIgnoreCase("whitepaper")
                     && !type.equalsIgnoreCase("Event: Kongress")
                     && !type.equalsIgnoreCase("Event: Schulung/Seminar")
-                    && !type.equalsIgnoreCase("podcast_first_series")
+                    && !type.equalsIgnoreCase("podcast")
                     && !type.equalsIgnoreCase("Event: Workshop")
                     && !type.equalsIgnoreCase("Event: Messe")
                     && !type.equalsIgnoreCase("videos")) {

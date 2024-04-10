@@ -75,10 +75,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter%")
    List<Post> pageByTitleWithTypeQueryWithFilter(String title, String status, String type, String filter, Pageable pageable);
 
-   List<Post> findByTitleContainingAndStatusIsAndTypeIsOrderByModifiedDesc(String title, String status, String type, Pageable pageable);
-
-   List<Post> findByStatusIsAndTypeIsOrderByModifiedDesc(String status, String type, Pageable pageable);
-
    List<Post> findByAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(long authorId, String status, String type, Pageable pageable);
 
    List<Post> findByTitleContainingAndAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(String title, long authorId, String status, String type, Pageable pageable);
@@ -97,6 +93,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    @Query("SELECT p FROM Post p WHERE p.type='post' AND p.status='publish' ORDER BY p.date DESC LIMIT 1")
    Post getNewestPost();
+
+   @Query("SELECT p FROM Post p JOIN wp_term_relationships wtr ON p.id= wtr.objectId JOIN WpTermTaxonomy wpt ON wtr.termTaxonomyId=wpt.termTaxonomyId WHERE p.type='event' AND p.status='publish' AND wpt.termId=:typeId AND p.title LIKE %:search%")
+   List<Post> getAllEventsWithTypeAndSearch(long typeId, String search, Pageable pageable);
+
+   @Query("SELECT p FROM Post p WHERE p.type='event' AND p.status='publish' AND p.title LIKE %:search%")
+   List<Post> getAllEventsWithSearch(String search, Pageable pageable);
+
+   @Query("SELECT p FROM Post p JOIN wp_term_relationships wtr ON p.id= wtr.objectId JOIN WpTermTaxonomy wpt ON wtr.termTaxonomyId=wpt.termTaxonomyId WHERE p.type='event' AND p.status='publish' AND wpt.termId=:typeId AND p.title LIKE %:search% AND p.authorId=:authorId")
+   List<Post> getAllEventsWithTypeAndSearchAndAuthor(long typeId, String search, long authorId, Pageable pageable);
+
+   @Query("SELECT p FROM Post p WHERE p.type='event' AND p.status='publish' AND p.title LIKE %:search% AND p.authorId=:authorId")
+   List<Post> getAllEventsWithSearchAndAuthor(String search, long authorId, Pageable pageable);
 
 }
 

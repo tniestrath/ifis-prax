@@ -591,7 +591,7 @@ public class UserController {
                 case "news" -> {
                     countNews++;
                 }
-                case "podcast", "podcast_first_series" -> {
+                case "podcast" -> {
                     countPodcasts++;
                 }
                 case "whitepaper" -> {
@@ -639,12 +639,12 @@ public class UserController {
     public String getEventsWithStats(Integer page, Integer size,  String filter, String search, long id) throws JSONException, ParseException {
         List<Post> list;
 
-        //ToDo: Re-add filter for Event-Type
-        if(search.isBlank()) {
-            list = postRepository.findByAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(id, "publish", "event", PageRequest.of(page, size));
+        if(filter.isBlank()) {
+            list = postRepository.getAllEventsWithSearchAndAuthor(search, id, PageRequest.of(page, size));
         } else {
-            list = postRepository.findByTitleContainingAndAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(search, id, "publish", "event", PageRequest.of(page, size));
+            list = postRepository.getAllEventsWithTypeAndSearchAndAuthor(eventsController.getTermIdFromFrontendType(filter), search, id, PageRequest.of(page, size));
         }
+
         List<JSONObject> stats = new ArrayList<>();
 
         for(Post post : list) {
@@ -654,10 +654,6 @@ public class UserController {
         return new JSONArray(stats).toString();
     }
 
-
-    //STATS
-
-    //ToDo Clean
     @GetMapping("/{userId}")
     public UserStats getUserStats(@PathVariable("userId") Long userId) {
         return userStatsRepository.findByUserId(userId);

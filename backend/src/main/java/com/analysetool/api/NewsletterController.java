@@ -3,10 +3,8 @@ package com.analysetool.api;
 import com.analysetool.modells.Newsletter;
 import com.analysetool.modells.NewsletterEmails;
 import com.analysetool.modells.NewsletterStats;
-import com.analysetool.repositories.NewsletterEmailsRepository;
-import com.analysetool.repositories.NewsletterRepository;
-import com.analysetool.repositories.NewsletterSentRepository;
-import com.analysetool.repositories.NewsletterStatsRepository;
+import com.analysetool.repositories.*;
+import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.IPHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +33,12 @@ public class NewsletterController {
     NewsletterStatsRepository newsStatsRepo;
     @Autowired
     NewsletterSentRepository newsSentRepo;
-
+    @Autowired
+    universalStatsRepository uniRepo;
+    @Autowired
+    UniqueUserService uniqueUserService;
+    @Autowired
+    TrackingBlacklistRepository trackBlackRepo;
     /**
      * Gets a Users status.
      * @param id the user's id.
@@ -144,6 +147,40 @@ public class NewsletterController {
             }
         }
         return subs;
+    }
+
+    @GetMapping("/getAmountOfSubsToday")
+    public Integer getAmountofSubsToday() {
+        List<Character> subs = new ArrayList<>();
+        List<Newsletter> allSubs = newsRepo.findAll();
+        LocalDate today = LocalDate.now();
+
+        for (Newsletter n : allSubs) {
+            LocalDate createdDate = n.getCreated().toLocalDate();
+
+            if (!createdDate.isBefore(today)) {
+                subs.add(n.getStatus());
+
+            }
+        }
+        return subs.size();
+    }
+
+    /**
+     * Berechnet die Konversionsrate für Newsletter-Abonnements am aktuellen Tag.
+     * Die Konversionsrate wird als Verhältnis der Anzahl der Abonnements heute
+     * zur Anzahl der einzigartigen Benutzer (nach Entfernung blockierter IPs) definiert.
+     *
+     * @return Die Konversionsrate für Newsletter-Abonnements heute in Prozent
+     */
+    @GetMapping("/getNewsletterKonversionRateToday")
+    public double getConversionRateTodayForNewsletter(){
+        Integer subsToday = getAmountofSubsToday();
+        List<String> blockedIps = trackBlackRepo.getAllIps();
+        List<String> uniqueUsersIpsToday = uniqueUserService.getIpsToday();
+        uniqueUsersIpsToday.removeAll(blockedIps);
+
+        return (double)subsToday/uniqueUsersIpsToday.size();
     }
 
     /**
@@ -316,6 +353,12 @@ public class NewsletterController {
         return json.toString();
     }
 
+    /**
+     * Fetches detailed, standard data of all Newsletters.
+     * @return a JSON-String containing totalOpens, OR (OpenRate), problems, interactions and interactionTimes as keys.
+     * Their respective values are calculated from ALL Newsletters.
+     * @throws JSONException .
+     */
     @GetMapping("/getNewsletterCallupGlobal")
     public String getNewsletterCallupGlobal() throws JSONException {
         JSONObject json = new JSONObject();
@@ -326,6 +369,18 @@ public class NewsletterController {
             json.put("OR", 0);
         }
 
+        json.put("problems", newsSentRepo.getAmountErrors());
+        json.put("interactions", newsStatsRepo.getCountInteractions());
+        json.put("interactionTimes", buildHourlyInteractions());
+
+        return json.toString();
+    }
+
+    /**
+     * Builds a List for ALL Newsletters, containing their Interaction in each hour in the day.
+     * @return a 24-size list containing the number of interactions during the respective hour.
+     */
+    private List<Integer> buildHourlyInteractions() {
         List<Integer> hourlyInteractions = new ArrayList<>(Collections.nCopies(24, 0));
         for(NewsletterStats n : newsStatsRepo.findAll()) {
             int hour = n.getCreated().toLocalDateTime().getHour();
@@ -335,13 +390,13 @@ public class NewsletterController {
                 hourlyInteractions.set(hour, 1);
             }
         }
-        json.put("problems", newsSentRepo.getAmountErrors());
-        json.put("interactions", newsStatsRepo.getCountInteractions());
-        json.put("interactionTimes", hourlyInteractions);
-
-        return json.toString();
+        return hourlyInteractions;
     }
 
+    /**
+     * Fetches the percentage of ALL Newsletter-Mails that have been opened, compared to how many were sent.
+     * @return a double, to be used as a percentage.
+     */
     @GetMapping("/getGlobalOR")
     public double getGlobalOR() {
         if(newsSentRepo.getAmountOpenedTotal().isPresent() && newsSentRepo.getAmountOpenedTotal().get() > 0 && newsSentRepo.getAmountSent().isPresent()) {
@@ -351,21 +406,23 @@ public class NewsletterController {
         }
     }
 
-
+    /**
+     * Fetches hourly Interactions of ALL Newsletters.
+     * @return a JSON-String containing a 24-size JSON-Array.
+     */
     @GetMapping("/getGlobalHourly")
     public String getGlobalHourly() {
-        List<Integer> hourlyInteractions = new ArrayList<>(Collections.nCopies(24, 0));
-        for(NewsletterStats n : newsStatsRepo.findAll()) {
-            int hour = n.getCreated().toLocalDateTime().getHour();
-            if(hourlyInteractions.size() >= hour) {
-                hourlyInteractions.set(hour, hourlyInteractions.get(hour) + 1);
-            } else {
-                hourlyInteractions.set(hour, 1);
-            }
-        }
-        return new JSONArray(hourlyInteractions).toString();
+        return new JSONArray(buildHourlyInteractions()).toString();
     }
 
+    /**
+     * Fetches a page of Newsletters with their respective data.
+     * @param page the page of the size you want
+     * @param size the size of the page.
+     * @return a JSON-String containing a JSON-Array of JSON-Objects.
+     * Page 0 of size 5 would be 1-5, Page 1 of size 5 would be 6-10 and so on.
+     * @throws JSONException .
+     */
     @GetMapping("/getAll")
     public String getNewsletterList(Integer page, Integer size) throws JSONException {
         JSONArray array = new JSONArray();

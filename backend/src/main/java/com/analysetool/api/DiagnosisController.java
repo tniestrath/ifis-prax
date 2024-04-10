@@ -47,9 +47,6 @@ public class DiagnosisController {
     int MAX_CLICKS_IN_CAT_UNTIL_BOT = 5;
     final int MAX_NONSENSE_UNTIL_BOT = 10;
 
-    //ToDo: Offer more solutionLinks
-
-
 
     /**
      * An aggregate methods to find Problems in all parts of the database.

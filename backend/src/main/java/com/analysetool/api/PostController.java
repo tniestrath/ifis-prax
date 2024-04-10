@@ -485,7 +485,6 @@ public class PostController {
         return statRepository.getPerformanceByArtID(id);
     }
 
-    //ToDo Move -> Views eines Users sollten nicht im PostController sein.
     @GetMapping("/getViewsOfUser")
     public long getViewsOfUserById(@RequestParam Long id){
         List<Post> posts = postRepo.findByAuthor(id.intValue());
@@ -579,25 +578,6 @@ public class PostController {
         obj.put(type, max);
         //noinspection OptionalGetWithoutIsPresent
         obj.put("title", postRepo.findById(PostId).get().getTitle());
-        return obj.toString();
-    }
-
-    //ToDo Rename
-    @GetMapping("/getPostStat")
-    public String getStat2(@RequestParam Long id) throws JSONException {
-        PostStats Stat = statRepository.getStatByArtID(id);
-        JSONObject obj = new JSONObject();
-        obj.put("Post-Id",Stat.getArtId());
-        float maxPerformance =   statsRepo.getMaxPerformance();
-        float maxRelevance = statsRepo.getMaxRelevance();
-        obj.put("performance", (Stat.getPerformance() /maxPerformance));
-        obj.put("relevanz", (Stat.getRelevance() /maxRelevance));
-        obj.put("Views",Stat.getClicks());
-        obj.put("Refferings",Stat.getReferrings());
-        obj.put("Article Reffering Rate",Stat.getArticleReferringRate());
-        obj.put("Search Successes",Stat.getSearchSucces());
-        obj.put("Search Success Rate",Stat.getSearchSuccessRate());
-
         return obj.toString();
     }
 

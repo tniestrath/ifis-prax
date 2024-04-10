@@ -736,8 +736,16 @@ public class uniStatController {
         return new JSONObject(map).toString();
     }
 
-    //Konversionsraten der jeweiligen Mitgliedschaften
+/**
+ * Provides conversion rate calculation APIs for different subscription types without including blocked IPs in the count.
+ * Each method calculates the conversion rate based on the difference in subscription counts (of various types) between today and yesterday, divided by the count of unique IPs accessed today after excluding blocked IPs.
+ */
 
+    /**
+     * Calculates and returns the conversion rate for non-subscribers.
+     *
+     * @return the conversion rate for non-subscribers as a double. It's calculated by subtracting the number of non-subscribers yesterday from today, divided by today's unique, non-blocked IP count.
+     */
     @GetMapping("/getConversionRateNoSub")
     public double getConversionRateNoSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
@@ -750,6 +758,11 @@ public class uniStatController {
         return (double)noSubDiffTodayYesterday/uniqueIps.size();
     }
 
+    /**
+     * Calculates and returns the conversion rate for basic subscribers.
+     *
+     * @return the conversion rate for basic subscribers as a double. It's determined by the difference in basic subscriber counts between today and yesterday, divided by today's unique, non-blocked IP count.
+     */
     @GetMapping("/getConversionRateBasicSub")
     public double getConversionRateBasicSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
@@ -762,6 +775,11 @@ public class uniStatController {
         return (double)noSubDiffTodayYesterday/uniqueIps.size();
     }
 
+    /**
+     * Calculates and returns the conversion rate for basic plus subscribers.
+     *
+     * @return the conversion rate for basic plus subscribers as a double. It's computed by the difference in basic plus subscriber counts between today and yesterday, divided by today's unique, non-blocked IP count.
+     */
     @GetMapping("/getConversionRateBasicPlusSub")
     public double getConversionRateBasicPlusSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
@@ -774,6 +792,12 @@ public class uniStatController {
         return (double)noSubDiffTodayYesterday/uniqueIps.size();
     }
 
+
+    /**
+     * Calculates and returns the conversion rate for plus subscribers.
+     *
+     * @return the conversion rate for plus subscribers as a double. This rate is calculated by subtracting yesterday's plus subscriber count from today's, divided by the count of today's unique, non-blocked IPs.
+     */
     @GetMapping("/getConversionRatePlusSub")
     public double getConversionRatePlusSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
@@ -786,6 +810,11 @@ public class uniStatController {
         return (double)noSubDiffTodayYesterday/uniqueIps.size();
     }
 
+    /**
+     * Calculates and returns the conversion rate for premium subscribers.
+     *
+     * @return the conversion rate for premium subscribers as a double. It's the difference in premium subscriber counts between today and yesterday, divided by today's unique, non-blocked IP count.
+     */
     @GetMapping("/getConversionRatePremiumSub")
     public double getConversionRatePremiumSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
@@ -798,6 +827,11 @@ public class uniStatController {
         return (double)noSubDiffTodayYesterday/uniqueIps.size();
     }
 
+    /**
+     * Calculates and returns the conversion rate for premium sponsor subscribers.
+     *
+     * @return the conversion rate for premium sponsor subscribers as a double. This is based on the difference in premium sponsor subscriber counts between today and yesterday, divided by today's unique, non-blocked IP count.
+     */
     @GetMapping("/getConversionRatePremiumSponsorSub")
     public double getConversionRatePremiumSponsorSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
@@ -809,7 +843,7 @@ public class uniStatController {
 
         return (double)noSubDiffTodayYesterday/uniqueIps.size();
     }
-    
+
     ///////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     //////////////////////////////AB HIER UNIVERSAL STATS HOURLY \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 

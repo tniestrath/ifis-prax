@@ -92,18 +92,32 @@ public class PostController {
        this.wpTermTaxonomyRepo = wpTermTaxonomyRepo;
     }
 
+    /**
+     * Fetches all Posts from Database.
+     * @return an unordered List of Posts.
+     */
     @GetMapping("/getall")
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
 
+    /**
+     * Fetches all Posts that have been published.
+     * @return an unordered List of Posts.
+     */
     @GetMapping("/publishedPosts")
     public List<Post> getPublishedPosts(){return postRepository.findPublishedPosts();}
 
 
-    //ToDo Rename
+    /**
+     * Fetches all Posts of a specified user and enriches it with data.
+     * @param id the user_id of the user to fetch for.
+     * @return a JSON-String containing ONLY enriched data of posts (See PostStatsByIdForFrontend).
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getPostsByAuthorLine2")
-    public String PostsByAuthor2(@RequestParam int id) throws JSONException, ParseException {
+    public String PostsByAuthorOld(@RequestParam int id) throws JSONException, ParseException {
 
         JSONArray list = new JSONArray();
         List<Post> posts = postRepository.findByAuthor(id);
@@ -167,7 +181,7 @@ public class PostController {
      * @param size the amount of results you want to receive at most.
      * @param filter the EXACT slug of a term the post is supposed to have.
      * @param search a String you want to search the db for, searches content AND title of posts.
-     * @return a JSONArray of JSONObjects that contain PostStats, and the count of Posts originally found.
+     * @return a JSONArray of JSONObjects that contain enriched PostStats (See PostStatsByIdForFrontend).
      * @throws JSONException .
      * @throws ParseException .
      */
@@ -187,6 +201,13 @@ public class PostController {
         return new JSONArray(stats).toString();
     }
 
+    /**
+     * Fetches the latest post of the specified author.
+     * @param id the user_id to fetch for.
+     * @return a JSON-String containing Data from PostStatsByIdForFrontend.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getNewestPostWithStatsByAuthor")
     public String getNewestPostWithStatsByAuthor(@RequestParam Long id) throws JSONException, ParseException {
         List<Post> posts = postRepository.findByAuthor(id.intValue());
@@ -200,10 +221,15 @@ public class PostController {
                 }
             }
         }
-        return PostsById2(newestId);
+        return PostStatsByIdForFrontend(newestId);
     }
 
-    @GetMapping("/getViewsOfPostDirstributedByHour")
+    /**
+     * Calculates the times a post has been interacted with.
+     * @param id the post_id to calc for.
+     * @return a JSON-String.
+     */
+    @GetMapping("/getViewsOfPostDistributedByHour")
     public String getViewsOfPostDistributedByHour(@RequestParam Long id) {
         //wip
         String leViews="";
@@ -215,90 +241,23 @@ public class PostController {
         return leViews;
     }
 
+    /**
+     * Calculates the times a post has been interacted with, counting only specified days.
+     * @param postId the post_id to calc for.
+     * @param daysback the amount of days in the past (until now) that should be used to calculate.
+     * @return a JSON-String.
+     */
     @GetMapping("/postClicksDistributedByHours")
     public String getPostClicksOfLast24HourByPostIdAndDaysBackDistributedByHour(Long postId, Integer daysback){
        return postClicksService.getPostClicksOfLast24HourByPostIdAndDaysBackDistributedByHour(postId,daysback).toString();//banger Name
     }
 
-    //ToDo Rename
-    @GetMapping("/getPostWithStatsById")
-    public String PostsById2(@RequestParam long id) throws JSONException, ParseException {
-        if(postRepository.findById(id).isEmpty()) {return null;}
-        Post post = postRepository.findById(id).get();
-        List<String> tags = new ArrayList<>();
-        String type;
-
-        PostStats PostStats = null;
-        if(statsRepo.existsByArtId(post.getId())){
-            PostStats = statsRepo.getStatByArtID(post.getId());
-        }
-        List<Long> tagIDs = null;
-        if(termRelationRepo.existsByObjectId(post.getId())){
-            tagIDs = termRelationRepo.getTaxIdByObject(post.getId());
-        }
-        List<WPTerm> terms = new ArrayList<>();
-        if (tagIDs != null) {
-            for (long l : tagIDs) {
-                if (wpTermRepo.existsById(l)) {
-                    if (wpTermRepo.findById(l).isPresent()) {
-                        terms.add(wpTermRepo.findById(l).get());
-                    }
-                }
-            }
-        }
-        for (WPTerm t: terms) {
-            if (wpTermTaxonomyRepo.existsById(t.getId())){
-                if (wpTermTaxonomyRepo.findById(t.getId()).isPresent()){
-                    WpTermTaxonomy tt = wpTermTaxonomyRepo.findById(t.getId()).get();
-                    if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
-                        //noinspection OptionalGetWithoutIsPresent
-                        tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
-                    }
-                }
-            }
-        }
-
-        type = getType(id);
-
-        JSONObject obj = new JSONObject();
-        DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = onlyDate.parse(post.getDate().toString());
-        String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-        obj.put("id", post.getId());
-        obj.put("title", post.getTitle());
-        obj.put("date", formattedDate);
-        obj.put("tags", tags);
-        obj.put("type", type);
-        if(PostStats != null){
-            float maxPerformance =   statsRepo.getMaxPerformance();
-            float maxRelevance = statsRepo.getMaxRelevance();
-            obj.put("performance", (PostStats.getPerformance() /maxPerformance));
-            obj.put("relevance", (PostStats.getRelevance() /maxRelevance));
-            obj.put("clicks", PostStats.getClicks().toString());
-            obj.put("searchSuccesses", PostStats.getSearchSuccess());
-            obj.put("searchSuccessRate", PostStats.getSearchSuccessRate());
-            obj.put("referrings", PostStats.getRefferings());
-            obj.put("lettercount", PostStats.getLettercount());
-            obj.put("articleReferringRate", PostStats.getArticleReferringRate());
-        }else {
-            obj.put("performance",0);
-            obj.put("relevance",0);
-            obj.put("clicks", "0");
-            obj.put("searchSuccesses",0);
-            obj.put("searchSuccessRate",0);
-            obj.put("referrings",0);
-            obj.put("lettercount", 0);
-            obj.put("articleReferringRate",0);}
-
-        return obj.toString();
-    }
-
-
     /**
      * Endpoint for retrieval of a single posts full-statistics, identified by its id.
      * @param id the id of the post you want to fetch stats for.
-     * @return a JSON String containing keys and values for each of a posts statistics, identifiers and adjacent information such as its type.
+     * @return a JSON String containing keys and values for each of a posts statistics, identifiers and adjacent information such as its type. <br>
+     * Keys are: id, title, date, tags, type, performance, relevance, clicks, lettercount, searchSuccesses (optional),
+     * SearchSuccessRate (optional), referrings, lettercount, articleReferringRate, downloads, authors.
      * @throws JSONException .
      * @throws ParseException .
      */
@@ -388,6 +347,14 @@ public class PostController {
         return obj.toString();
     }
 
+    /**
+     * Further enriched data from PostStatsByIdForFrontend, not to be used in bulk.
+     * @param id the post_id of the post to fetch data for.
+     * @return a JSON-String (JSONObject). <br>
+     * Adds keys "content" and "img" to PostStatsByIdForFrontend.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getPostStatsWithContent")
     public String getPostStatsWithContent(long id) throws JSONException, ParseException {
         JSONObject json = new JSONObject(PostStatsByIdForFrontend(id));
@@ -397,17 +364,32 @@ public class PostController {
         return json.toString();
     }
 
+    /**
+     * Fetches the latest published post.
+     * @return JSON-String (see getPostStatsWithContent)
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getNewestPost")
     public String getNewestPost() throws JSONException, ParseException {
         return getPostStatsWithContent(postRepo.getNewestPost().getId());
     }
 
-
+    /**
+     * Fetches the number of clicks the best post of the given tag has.
+     * @param tagId the tag to fetch for.
+     * @return numeric value.
+     */
     @GetMapping("/getBestPostByTagClicks")
     public Long getBestPostClicks(long tagId) {
         return statsRepo.getClicksByArtId(getBestPostByTag(tagId));
     }
 
+    /**
+     * Fetches the id of the best post for the given tag.
+     * @param tagId the tag to fetch for.
+     * @return the post_id of the "best" post in that tag.
+     */
     @GetMapping("/getBestPostByTag")
     public Long getBestPostByTag(long tagId) {
         Long bestPost = null;
@@ -418,6 +400,11 @@ public class PostController {
         return bestPost;
     }
 
+    /**
+     * Fetches the average clicks of posts in the given tag.
+     * @param tagId the tag to fetch for.
+     * @return the average clicks on a post of this kind.
+     */
     @GetMapping("/getAverageClicksByTag")
     public double getAverageClicksByTag(long tagId) {
         int value = 0;
@@ -427,6 +414,11 @@ public class PostController {
         return (double) value / getPostsByTag(tagId).size();
     }
 
+    /**
+     * Fetches all Posts with the given tag.
+     * @param tagId the tag to fetch for.
+     * @return a List of Posts.
+     */
     @GetMapping("/getPostsByTag")
     public List<Post> getPostsByTag(long tagId) {
         return postRepo.findAllUserPosts().stream().filter(post -> {

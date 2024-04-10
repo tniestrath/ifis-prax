@@ -692,7 +692,7 @@ public class UserController {
                     case "news" -> viewsNews += stat.getClicks();
                     case "whitepaper" -> viewsWP += stat.getClicks();
                     case "podcast" -> viewsPodcast += stat.getClicks();
-                    case "video" -> viewsVideo += stat.getClicks();
+                    case "videos" -> viewsVideo += stat.getClicks();
                 }
             }
         }

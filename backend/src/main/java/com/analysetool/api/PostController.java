@@ -1089,7 +1089,15 @@ public class PostController {
         return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
     }
 
-
+    /**
+     * Fetches size amount of Post-Stats from only those that MATCH the filter and include the search in their title.
+     * @param sortBy what criteria the result should be listed in.
+     * @param filter the type of post to look for.
+     * @param search what titles to look for.
+     * @return a JSON-String containing several PostStatsByIdForFrontend entries.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/pageByTitle")
     public String pageTitleFinder(Integer page, Integer size, String sortBy, String filter, String search) throws JSONException, ParseException {
         List<Post> list;

@@ -488,12 +488,12 @@ public class PostController {
     }
 
     /**
-     *
-     * @param id
-     * @return
+     * Fetches number of views on posts made by the specified user.
+     * @param id the id of the user to fetch for.
+     * @return a positive long.
      */
     @GetMapping("/getViewsOfUser")
-    public long getViewsOfUserById(@RequestParam Long id){
+    public long getPostViewsOfUserById(@RequestParam Long id){
         List<Post> posts = postRepo.findByAuthor(id.intValue());
         long views = 0 ;
 
@@ -514,6 +514,11 @@ public class PostController {
         return views ;
     }
 
+    /**
+     * Fetches the number of posts made by the specified user.
+     * @param id the id of the user to fetch for.
+     * @return a positive long.
+     */
     @GetMapping("/getPostCountOfUser")
     public long getPostCountOfUserById(@RequestParam Long id){
         List<Post> posts = postRepo.findByAuthor(id.intValue());
@@ -536,9 +541,13 @@ public class PostController {
         return PostCount ;
     }
 
-
-
-
+    /**
+     * Fetches the name, id and type for a post by the given author - that has the highest value in type
+     * @param id the id of the user to fetch for.
+     * @param type the type to use as value ("relevance" | "performance").
+     * @return a JSON-String containing keys id, the given value of (type) and title.
+     * @throws JSONException
+     */
     @GetMapping("/bestPost")
     public String getBestPost(@RequestParam Long id, @RequestParam String type) throws JSONException {
         List<Post> Posts = postRepo.findByAuthor(id.intValue());
@@ -579,100 +588,6 @@ public class PostController {
         return obj.toString();
     }
 
-    @GetMapping("/getNewestStatsByAuthor")
-    public String getNewestStatsByAuthor(@RequestParam Long id) throws JSONException{
-        List<Post> posts =postRepo.findByAuthor(id.intValue()) ;
-        long newestId = 0 ;
-        LocalDateTime newestTime = null ;
-        for(Post post : posts){
-            if(newestTime == null || newestTime.isBefore(post.getDate())){
-                newestTime = post.getDate();
-                newestId = post.getId();
-            }
-        }
-        long views = 0;
-        long searchSuccesses = 0;
-        float SearchSuccessRate = 0 ;
-        long refferings = 0;
-        float refrate = 0;
-        float relevanz = 0;
-        float performance = 0 ;
-
-        if(statRepository.existsByArtId(newestId)){
-            PostStats PostStats = statRepository.getStatByArtID(newestId);
-            views = PostStats.getClicks();
-            searchSuccesses = PostStats.getSearchSuccess();
-            SearchSuccessRate = PostStats.getSearchSuccessRate();
-            refferings = PostStats.getRefferings();
-            refrate = PostStats.getArticleReferringRate();
-            float maxPerformance =   statsRepo.getMaxPerformance();
-            float maxRelevance = statsRepo.getMaxRelevance();
-            relevanz = (PostStats.getRelevance() /maxRelevance);
-            performance = (PostStats.getPerformance() /maxPerformance);
-        }
-        JSONObject obj = new JSONObject();
-        obj.put("ID",newestId);
-        obj.put("views",views);
-        obj.put("Search Successes",searchSuccesses);
-        obj.put("Search Success Rate",SearchSuccessRate);
-        obj.put("refferings",refferings);
-        obj.put("article reffering rate",refrate);
-        obj.put("relevanz",relevanz);
-        obj.put("performance",performance);
-
-
-        return obj.toString();
-
-    }
-
-    @GetMapping("/getNewestStatsByAuthorSessionId")
-    public String getNewestStatsByAuthorSessionId(@RequestParam String SessionId) throws JSONException{
-        if(userRepo.existsByActivationKey(SessionId)){
-            @SuppressWarnings("OptionalGetWithoutIsPresent") Long id = userRepo.findByActivationKey(SessionId).get().getId();
-            List<Post> posts =postRepo.findByAuthor(id.intValue()) ;
-            long newestId = 0 ;
-            LocalDateTime newestTime = null ;
-            for(Post post : posts){
-                if(newestTime == null || newestTime.isBefore(post.getDate())){
-                    newestTime = post.getDate();
-                    newestId = post.getId();
-                }
-            }
-            long views = 0;
-            long searchSuccesses = 0;
-            float SearchSuccessRate = 0 ;
-            long refferings = 0;
-            float refrate = 0;
-            float relevanz = 0;
-            float performance = 0 ;
-
-            if(statRepository.existsByArtId(newestId)){
-                PostStats PostStats = statRepository.getStatByArtID(newestId);
-                views = PostStats.getClicks();
-                searchSuccesses = PostStats.getSearchSuccess();
-                SearchSuccessRate = PostStats.getSearchSuccessRate();
-                refferings = PostStats.getRefferings();
-                refrate = PostStats.getArticleReferringRate();
-                float maxPerformance =   statsRepo.getMaxPerformance();
-                float maxRelevance = statsRepo.getMaxRelevance();
-                relevanz = (PostStats.getRelevance() /maxRelevance);
-                performance = (PostStats.getPerformance() /maxPerformance);
-            }
-            JSONObject obj = new JSONObject();
-            obj.put("ID",newestId);
-            obj.put("views",views);
-            obj.put("Search Successes",searchSuccesses);
-            obj.put("Search Success Rate",SearchSuccessRate);
-            obj.put("refferings",refferings);
-            obj.put("article reffering rate",refrate);
-            obj.put("relevanz",relevanz);
-            obj.put("performance",performance);
-
-
-            return obj.toString();}
-        else{return "SESSION ID WRONG";}
-
-    }
     @GetMapping("/getViewsOfPostDistributedByHours")
     public Map<String,Long>getViewsDistributedByHour(@RequestParam Long PostId){
         PostStats postStats= statsRepo.findByArtIdAndAndYear(PostId,aktuellesJahr);
@@ -778,7 +693,13 @@ public class PostController {
         return "error";
     }
 
-
+    /**
+     * Fetches stats for all posts present in the String representation of the given list.
+     * @param list a list of postIds, split with a '-'.
+     * @return see PostStatsByIdForFrontend.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getPostStatsForList")
     public String getStatsForPostsArray(String list) throws JSONException, ParseException {
         String[] postIds = list.split("-");

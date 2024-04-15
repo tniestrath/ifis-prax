@@ -316,7 +316,7 @@ public class UserController {
             if (userStatsRepository.existsByUserId(user.getId())) {
                 UserStats statsUser = userStatsRepository.findByUserId(user.getId());
                 obj.put("profileViews", statsUser.getProfileView());
-                obj.put("postViews", postController.getViewsOfUserById(user.getId()));
+                obj.put("postViews", postController.getPostViewsOfUserById(user.getId()));
                 obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
             } else {
                 obj.put("profileViews", 0);
@@ -1540,7 +1540,7 @@ public class UserController {
 
                 List<WPUser> users = userRepository.getByAboType(type);
 
-                users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o2.getId()) - postController.getViewsOfUserById(o1.getId())));
+                users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
 
                 return users.indexOf(userRepository.findById(id).get()) + 1;
         } else {
@@ -1568,7 +1568,7 @@ public class UserController {
 
             List<WPUser> users = userRepository.findAll();
 
-            users.sort((o1, o2) -> Math.toIntExact(postController.getViewsOfUserById(o2.getId()) - postController.getViewsOfUserById(o1.getId()))
+            users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId()))
             );
 
             return users.indexOf(userRepository.findById(id).get()) + 1;
@@ -1935,9 +1935,9 @@ public class UserController {
         }
         try {
         allCompaniesList.sort((o1, o2) -> Math.toIntExact((int)(userRepository.findByDisplayName(o2).isPresent() ?
-                postController.getViewsOfUserById(userRepository.findByDisplayName(o2).get().getId()) : 0)
+                postController.getPostViewsOfUserById(userRepository.findByDisplayName(o2).get().getId()) : 0)
                 - (userRepository.findByDisplayName(o1).isPresent() ?
-                postController.getViewsOfUserById(userRepository.findByDisplayName(o1).get().getId()) : 0)));
+                postController.getPostViewsOfUserById(userRepository.findByDisplayName(o1).get().getId()) : 0)));
 
         return allCompaniesList.indexOf(companyName) + 1;
         } catch (Exception e) {

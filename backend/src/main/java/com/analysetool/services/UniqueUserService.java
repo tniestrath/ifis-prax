@@ -5,6 +5,7 @@ import com.analysetool.modells.UniqueUser;
 import com.analysetool.repositories.*;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -214,7 +215,7 @@ public class UniqueUserService {
         for (TrackingBlacklist b : blocked) {
             blockedIPs.add(b.getIp());
         }
-        
+
         List<UniqueUser> filtered = new ArrayList<>();
         for (UniqueUser u : uniques) {
             if (!blockedIPs.contains(u.getIp())) {
@@ -224,11 +225,37 @@ public class UniqueUserService {
 
         return filtered;
     }
-    public String getSessionTimeInSegments(){
+    public String getSessionTimeInTimeSegments() throws JSONException {
         List<UniqueUser> allUniques = uniqueUserRepo.findAll();
-        List<TrackingBlacklist> allBlocked =trackBlackRepo.findAll();
+        List<TrackingBlacklist> allBlocked = trackBlackRepo.findAll();
+
+        List<UniqueUser> filteredUniques = filterOutBlocked(allUniques, allBlocked);
+        JSONObject obj = new JSONObject();
+
+        // Segmentierung der Verweildauer in Sekunden
+        int[] segments = {0, 11, 31, 61, 181, 601, 1801}; // Die oberen Grenzen für jedes Segment (exclusive das letzte Element)
+        int[] counts = new int[segments.length];
+
+        for (UniqueUser user : filteredUniques) {
+            int timeSpent = user.getTime_spent();
+
+            // Segment finden und Zähler inkrementieren
+            for (int i = 0; i < segments.length; i++) {
+                if (timeSpent < segments[i]) {
+                    counts[i]++;
+                    break;
+                } else if (i == segments.length - 1 && timeSpent >= segments[i]) {
+                    counts[i]++;
+                }
+            }
+        }
 
 
-        return "";
+        String[] segmentLabels = {"0-10 Sekunden", "11-30 Sekunden", "31-60 Sekunden", "61-180 Sekunden", "181-600 Sekunden", "601-1800 Sekunden", "1800+ Sekunden"};
+        for (int i = 0; i < segmentLabels.length; i++) {
+            obj.put(segmentLabels[i], counts[i]);
+        }
+
+        return obj.toString();
     }
 }

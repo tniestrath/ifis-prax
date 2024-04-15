@@ -3,14 +3,15 @@ package com.analysetool.util;
 import com.analysetool.repositories.PostTypeRepository;
 import com.analysetool.repositories.WPTermRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Scope("singleton")
 public class Constants {
-
 
     @Autowired
     private PostTypeRepository ptRepo;
@@ -45,17 +46,19 @@ public class Constants {
 
     private final long podcastTermId = 386L;
 
-    // Private constructor to prevent external instantiation
-    private Constants() {
+    private static Constants instance;
+
+    @Autowired
+    public Constants(PostTypeRepository ptRepo, WPTermRepository termRepo) {
+        this.ptRepo = ptRepo;
+        this.termRepo = termRepo;
+        instance = this;
     }
 
-    private static final class InstanceHolder {
-        private static final Constants instance = new Constants();
-    }
 
     // Lazy initialization of the singleton instance
     public static Constants getInstance() {
-        return InstanceHolder.instance;
+        return instance;
     }
 
     public String getBlogSlug() {

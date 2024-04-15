@@ -140,7 +140,17 @@ public class Constants {
     public List<Integer> getListOfPostTypesInteger() {
         List<Integer> ids = new ArrayList<>();
         for(String type : getListOfPostTypesSlug()) {
-            ids.add(termRepo.findBySlug(type).getId().intValue());
+            if(!type.equals("podcast") && !type.startsWith("Event")) {
+                ids.add(termRepo.findBySlug(type).getId().intValue());
+            } else if (type.equals("podcast")){
+                ids.add((int) podcastTermId);
+            } else {
+                if(type.contains("Messe")) ids.add((int) messenTermId);
+                if(type.contains("Kongress")) ids.add((int) kongressTermId);
+                if(type.contains("Schulung")) ids.add((int) schulungTermId);
+                if(type.contains("Workshop")) ids.add((int) workshopTermId);
+                if(type.contains("Sonstige")) ids.add((int) sonstigeEventsTermId);
+            }
         }
         return ids;
     }

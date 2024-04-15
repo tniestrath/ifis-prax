@@ -166,7 +166,6 @@ export class ApiService {
   constructor(private sanitizer : DomSanitizer) { }
 
   private static setupRequest( prompt : string){
-    ApiService.abortController.set(prompt, new AbortController());
     return apiUrl.HOST + apiUrl.PORT + prompt;
   }
 
@@ -205,6 +204,18 @@ export class ApiService {
   public resetStatus(){
     this.requestCount = 0;
     this.setStatus(0);
+  }
+
+  public static cancelRequest(prompt : string, reason? : string){
+    // @ts-ignore
+    ApiService.abortController.get(prompt).abort(reason);
+    ApiService.abortController.delete(prompt);
+  }
+
+  public static cancelAllRequests(){
+    console.log("CaNcElCuLtUrE")
+    ApiService.abortController.forEach(value => value.abort());
+    ApiService.abortController.clear();
   }
 
   async login(username : string, userpass : string) {

@@ -19,7 +19,7 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit(): void {
     this.setToolTip("", 1,false);
-    this.db.getUserTagsDistributionPercentage().then((res : {name: string, count: number}[])  => {
+    this.api.getUserTagsDistributionPercentage().then((res : {name: string, count: number}[])  => {
       let totalIndex = res.findIndex((value, index) => {return value.name.includes("countTotal");})
       // @ts-ignore
       let total = res.at(totalIndex).count;
@@ -46,7 +46,7 @@ export class SingleUserTagsDistComponent extends UserTagsDistComponent implement
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].classList.add("no-full-width");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].children[0].innerText = "Platzierung innerhalb der gewählten Themen";
 
-    this.db.getUserTagsRanking(SysVars.USER_ID, "profile").then((res : {name : string, percentage : number, ranking : number, count : number}[])  => {
+    this.api.getUserTagsRanking(SysVars.USER_ID, "profile").then((res : {name : string, percentage : number, ranking : number, count : number}[])  => {
       for (let tag of res) {
         this.selectorItems.push(new SelectorItem(UserTagDistItemComponent, new UserTagDist("", tag.name, -1, '#' + tag.ranking + " / " + tag.count, tag.percentage)));
       }

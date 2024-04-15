@@ -86,7 +86,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
   }
 
   getImgSrc(id: string) {
-    this.db.getUserImgSrc(id).then(dataUrl => {
+    this.api.getUserImgSrc(id).then(dataUrl => {
       this.imgSrc = dataUrl;
     });
   }

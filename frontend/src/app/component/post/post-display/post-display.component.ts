@@ -14,11 +14,11 @@ export class PostDisplayComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit(): void {
     this.setToolTip("", 1,false);
-    this.db.getNewestPost().then(res => {
+    this.api.getNewestPost().then(res => {
       this.formatPost(res);
     });
     SysVars.SELECTED_POST.subscribe(post => {
-      this.db.getPostByIdWithContent(post.id).then(res => {
+      this.api.getPostByIdWithContent(post.id).then(res => {
         this.formatPost(res);
       });
     })

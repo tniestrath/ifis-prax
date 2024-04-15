@@ -14,10 +14,10 @@ export class UserDisplayComponentComponent extends DashBaseComponent implements 
 
   ngOnInit(): void {
     this.setToolTip("", 1,false);
-    this.db.getUserAllStatsById(SysVars.USER_ID).then(res => {
+    this.api.getUserAllStatsById(SysVars.USER_ID).then(res => {
       this.user = res;
     });
-    this.db.getUserRankings(SysVars.USER_ID).then(res => {
+    this.api.getUserRankings(SysVars.USER_ID).then(res => {
       this.user.rankingContent = res.rankingContent;
       this.user.rankingContentByGroup = res.rankingContentByGroup;
       this.user.rankingProfile = res.rankingProfile;

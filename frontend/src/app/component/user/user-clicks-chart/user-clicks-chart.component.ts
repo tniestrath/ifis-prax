@@ -48,7 +48,7 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
     let end = Util.getFormattedNow();
 
     if (!this.isPostSelected){
-      this.db.getUserClicksChartData(SysVars.USER_ID, start, end).then(res => {
+      this.api.getUserClicksChartData(SysVars.USER_ID, start, end).then(res => {
         let data = this.collectData(res);
         this.createChart(data.dates, data.profileClicks, data.biggestPost, data.posts, (posts) => {
           let list  = posts.map(value => value.id).reduce((previousValue, currentValue) => previousValue + "-" + currentValue);
@@ -56,7 +56,7 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
         });
       });
     }else {
-      this.db.getPostViewsByTime(this.selectedPost.id).then(value => {
+      this.api.getPostViewsByTime(this.selectedPost.id).then(value => {
         this.createPostChart(value.dates, value.views, this.selectedPost.title + " : " + this.selectedPost.date, Util.getColor("post" ,this.selectedPost.type));
       })
     }

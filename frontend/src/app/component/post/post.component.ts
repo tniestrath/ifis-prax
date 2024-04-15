@@ -21,7 +21,7 @@ export class PostComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.setToolTip("Hier werden Ihnen Einzelheiten zu einem Beitrag angezeigt.<br><br>" +
       "Sie können links in der Liste einen Beitrag auswählen, um hier Details anzeigen zu lassen.", 2);
-    this.db.getNewestPost().then(res => {
+    this.api.getNewestPost().then(res => {
         this.formatPost(res, false);
     });
 

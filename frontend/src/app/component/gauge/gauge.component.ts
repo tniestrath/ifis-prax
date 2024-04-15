@@ -126,7 +126,7 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.setToolTip("Ihr Beitrag mit der höchsten berechneten Performance (aufg. Aufrufe der ersten 7 Tage)");
 
-      this.db.getUserBestPost(SysVars.USER_ID, "performance").then(data => {
+      this.api.getUserBestPost(SysVars.USER_ID, "performance").then(data => {
         let post : Post = data;
         this.createChart(["Score", "Grey"],[(post.performance || 0)*100 , 100-((post.performance || 0)*100)],null);
 

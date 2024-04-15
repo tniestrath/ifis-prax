@@ -14,7 +14,7 @@ export class TagPieComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit(): void {
     this.setToolTip("Hier wird die Verteilung der Posts auf die Top 5 Tags als absolutes angezeigt.");
-    this.db.getAllTagsPostCount(2).then(res => {
+    this.api.getAllTagsPostCount(2).then(res => {
       let map : Map<string, number> = new Map(Object.entries(res).sort(([tag1, count1], [tag2, count2]) => count2 -count1));
       let labels :string[] = Array.from(map.keys());
       let data : number[] = Array.from(map.values());

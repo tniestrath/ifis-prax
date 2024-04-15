@@ -20,7 +20,7 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
   ngOnInit(): void {
     this.setToolTip("Auflistung aller #Tags, sortierbar nach Relevanz oder Views")
 
-    this.db.getAllTagsWithRelevanceAndViews().then(res => {
+    this.api.getAllTagsWithRelevanceAndViews().then(res => {
       for (var tag of res) {
         this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.relevance, tag.views, tag.count)));
         this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRelevance((b.data as TagRanking)));

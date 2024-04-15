@@ -33,14 +33,14 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     }
 
 
-    this.db.getUserAccountTypes().then(res => {
+    this.api.getUserAccountTypes().then(res => {
       let map : Map<string, number> = new Map(Object.entries(res));
       this.readMap(map, this.data);
       this.chart = this.createChart("user_plan_chart", this.labels, this.data);
       this.chart_total = this.data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
       this.cdr.detectChanges();
     }).finally(() => {
-      this.db.getUserAccountTypesYesterday().then(res => {
+      this.api.getUserAccountTypesYesterday().then(res => {
         let map : Map<string, number> = new Map(Object.entries(res));
         this.readMap(map, this.prev_data);
         for (var i = 0; i < this.data.length; i++) {
@@ -50,7 +50,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
         this.cdr.detectChanges();
       }).finally(() => {
-        this.db.getUserAccountTypesAllNew().then(res => {
+        this.api.getUserAccountTypesAllNew().then(res => {
           // @ts-ignore
           document.getElementById("oaList").append(...this.formatArray(res.ohne));
           // @ts-ignore

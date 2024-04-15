@@ -76,8 +76,8 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
     var system_time: number;
-    this.db.getSystemTimeHour().then(res => system_time = res).then(() => {
-      this.db.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365 * 2)).then((res: Callup[]) => {
+    this.api.getSystemTimeHour().then(res => system_time = res).then(() => {
+      this.api.getCallupsByTime((this.timeSpanMap.get(this.timeSpan) ?? 365 * 2)).then((res: Callup[]) => {
         this.data = res;
 
         this.time_filtered = this.data;
@@ -99,14 +99,14 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       });
     });
     if (this.timeSpan == "all_time") {
-      this.db.getCallpusByCategoriesAllTime().then(res => {
+      this.api.getCallpusByCategoriesAllTime().then(res => {
         this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
         this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, "Immer");
       });
     } else {
-      this.db.getCallupsByCategoriesNewest().then(res => {
+      this.api.getCallupsByCategoriesNewest().then(res => {
         this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
@@ -371,18 +371,18 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
 
   public getCategoriesData(date : string, timespan : string){
     if (timespan != "day"){
-      this.db.getCallupsByCategoriesByDate(date).then(res => {
+      this.api.getCallupsByCategoriesByDate(date).then(res => {
         this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;
         this.createCategoriesChart(this.categories, this.categoriesViews, this.categoriesVisitors, date);
       });
     } else if (timespan == "day"){
-      this.db.getSystemTimeHour().then(currHour => {
+      this.api.getSystemTimeHour().then(currHour => {
         let requestDate;
         if (Number(date) > currHour) requestDate = Util.getFormattedNow(-1);
         else requestDate = Util.getFormattedNow();
-        this.db.getCallupsByCategoriesByDateTime(requestDate, Number(date)).then(res => {
+        this.api.getCallupsByCategoriesByDateTime(requestDate, Number(date)).then(res => {
           this.categories = res.labels;
           this.categoriesViews = res.clicks;
           this.categoriesVisitors = res.besucher;
@@ -391,7 +391,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       });
     }
     else if (timespan == "all_time"){
-      this.db.getCallpusByCategoriesAllTime().then(res => {
+      this.api.getCallpusByCategoriesAllTime().then(res => {
         this.categories = res.labels;
         this.categoriesViews = res.clicks;
         this.categoriesVisitors = res.besucher;

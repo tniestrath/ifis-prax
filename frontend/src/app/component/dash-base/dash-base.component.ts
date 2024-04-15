@@ -30,7 +30,7 @@ export class DashBaseComponent implements OnDestroy{
   protected chart: any;
 
   constructor(protected element : ElementRef,
-              protected db : ApiService,
+              protected api : ApiService,
               protected us : SysVars,
               protected cs : CookieService,
               protected pdf : PdfService,
@@ -92,5 +92,6 @@ export class DashBaseComponent implements OnDestroy{
       this.chart?.destroy();
     }
     this.cdr.detectChanges();
+    ApiService.cancelAllRequests();
   }
 }

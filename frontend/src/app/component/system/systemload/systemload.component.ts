@@ -20,13 +20,13 @@ export class SystemloadComponent extends DashBaseComponent implements OnInit{
 
 
   ngOnInit(): void {
-    this.db.getSystemUsage().then(res => {
+    this.api.getSystemUsage().then(res => {
       this.createCpuChart(res.cpu_record);
       this.createMemoryChart(res.memory_record);
     })
     setInterval(() => {
       if (SysVars.CURRENT_PAGE == "Übersicht"){
-        this.db.getSystemUsageNow().then(res => {
+        this.api.getSystemUsageNow().then(res => {
           this.addData(this.chart, String(res.cpu), res.cpu);
           this.addData(this.chart_memory, String(res.memory), res.memory);
         });

@@ -46,6 +46,10 @@ public class Constants {
 
     private final long podcastTermId = 386L;
 
+    private final String ratgeberSlug = "ratgeber";
+
+    private final String cyberRiskSlug = "cyber-risk-check";
+
     private static Constants instance;
 
     @Autowired
@@ -137,19 +141,40 @@ public class Constants {
         return ptRepo.getDistinctTypes();
     }
 
+    public PostTypeRepository getPtRepo() {
+        return ptRepo;
+    }
+
+    public WPTermRepository getTermRepo() {
+        return termRepo;
+    }
+
+    public String getRatgeberSlug() {
+        return ratgeberSlug;
+    }
+
+    public String getCyberRiskSlug() {
+        return cyberRiskSlug;
+    }
+
     public List<Integer> getListOfPostTypesInteger() {
         List<Integer> ids = new ArrayList<>();
         for(String type : getListOfPostTypesSlug()) {
-            if(!type.equals("podcast") && !type.startsWith("Event")) {
+            if(!type.equals("podcast") && !type.startsWith("Event") && !type.equals("blog") && !type.equals("ratgeber")) {
+                if(termRepo.findBySlug(type) == null) continue;
                 ids.add(termRepo.findBySlug(type).getId().intValue());
             } else if (type.equals("podcast")){
                 ids.add((int) podcastTermId);
-            } else {
+            } else if(type.startsWith("Event")){
                 if(type.contains("Messe")) ids.add((int) messenTermId);
                 if(type.contains("Kongress")) ids.add((int) kongressTermId);
                 if(type.contains("Schulung")) ids.add((int) schulungTermId);
                 if(type.contains("Workshop")) ids.add((int) workshopTermId);
                 if(type.contains("Sonstige")) ids.add((int) sonstigeEventsTermId);
+            } else if(type.equals("blog")){
+                ids.add(termRepo.findBySlug(blogSlug).getId().intValue());
+            } else {
+                ids.add(termRepo.findBySlug(cyberRiskSlug).getId().intValue());
             }
         }
         return ids;

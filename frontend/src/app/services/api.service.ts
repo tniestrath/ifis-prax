@@ -390,65 +390,65 @@ export class ApiService {
 
   async getPostsPerType() : Promise<Map<string,number>> {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_PER_TYPE), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_PER_TYPE), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_PER_TYPE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getPostsPerTypeYesterday() : Promise<Map<string,number>> {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_PER_TYPE_YESTERDAY), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_PER_TYPE_YESTERDAY), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_PER_TYPE_YESTERDAY)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getOriginMapByUser(id : number, start : string, end : string){
     this.setLoading();
-    return await  fetch(ApiService.setupRequest(apiUrl.GET_GEO_USER_BY_DATES).replace("USRID", String(id)).replace("START", start).replace("END", end), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await  fetch(ApiService.setupRequest(apiUrl.GET_GEO_USER_BY_DATES).replace("USRID", String(id)).replace("START", start).replace("END", end), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_GEO_USER_BY_DATES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getGeoAll() : Promise<Map<string,number>> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_ALL_TIME)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_ALL_TIME)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_GEO_GERMANY_ALL_TIME)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getGeoByDates(start : string, end : string) : Promise<Map<string,number>> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_BY_DATES).replace("START", start).replace("END", end)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_BY_DATES).replace("START", start).replace("END", end)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_GEO_GERMANY_BY_DATES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getGeoByRegion(region : string) : Promise<Map<string,number>> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION).replace("REGION", region)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION).replace("REGION", region)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getGeoByRegionByDates(region : string, start? : string, end? : string) : Promise<Map<string,number>> {
     this.setLoading();
-    if (start && end) return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES).replace("REGION", region).replace("START", start).replace("END", end)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
-    else return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION).replace("REGION", region)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    if (start && end) return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES).replace("REGION", region).replace("START", start).replace("END", end)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    else return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION).replace("REGION", region)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getGeoByRegionByDatesListed(region : string, start : string, end : string) : Promise<{ data: number[], dates : string[] }> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES_LISTED).replace("REGION", region).replace("START", start).replace("END", end)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES_LISTED).replace("REGION", region).replace("START", start).replace("END", end)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_GEO_GERMANY_ALL_TIME_BY_REGION_BY_DATES_LISTED)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getGeoStart() : Promise<string> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_FIRST_TIMESTAMP)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_FIRST_TIMESTAMP)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_GEO_FIRST_TIMESTAMP)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getGeoEnd() : Promise<string> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_LAST_TIMESTAMP)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_LAST_TIMESTAMP)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_GEO_LAST_TIMESTAMP)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getGeoTimespan() : Promise<string[]> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_TIMESPAN)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_GEO_TIMESPAN)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_GEO_TIMESPAN)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getPodcastsAll(page : number, size : number) : Promise<Post[]> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_PODCAST_ALL).replace("PAGE", String(page)).replace("SIZE", String(size))) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_PODCAST_ALL).replace("PAGE", String(page)).replace("SIZE", String(size))) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_PODCAST_ALL)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getRatgeberAll() : Promise<Post[]> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_RATGEBER_ALL)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_RATGEBER_ALL)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_RATGEBER_ALL)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getClicksByTime(id : number){
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USER_VIEWS_PER_HOUR)+ id, {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USER_VIEWS_PER_HOUR)+ id, {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USER_VIEWS_PER_HOUR)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getUserRankings(id: string) : Promise<{
     rankingContent: number;
@@ -457,110 +457,110 @@ export class ApiService {
     rankingProfileByGroup: number
   }>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USER_RANKINGS).replace("ID", id), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USER_RANKINGS).replace("ID", id), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USER_RANKINGS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getClicksByTimeAll() : Promise<number[]>{
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_USERS_ALL_VIEWS_PER_HOUR)), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_USERS_ALL_VIEWS_PER_HOUR)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ALL_VIEWS_PER_HOUR)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getTagStatsByID(id: number, timeSpan: number, dataType: string) : Promise<TagStats[]> {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_TAGSTATS_BY_ID).replace("ID", String(id)).replace("DAYS", String(timeSpan)).replace("TYPE", dataType), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_TAGSTATS_BY_ID).replace("ID", String(id)).replace("DAYS", String(timeSpan)).replace("TYPE", dataType), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGSTATS_BY_ID)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getCallupsByTime(days: number) : Promise<Callup[]> {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUPS_BY_TIME.replace("DAYS", String(days))), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUPS_BY_TIME.replace("DAYS", String(days))), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_CALLUPS_BY_TIME)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getCallupsByCategoriesNewest() : Promise<CategoriesData>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", Util.getFormattedNow()), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", Util.getFormattedNow()), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_CALLUP_CATEGORIES_BY_DATE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getCallupsByCategoriesByDateTime(date : string, hour : number) :Promise<CategoriesData>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_BY_DATETIME).replace("DATE", date).replace("HOUR", String(hour)), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_BY_DATETIME).replace("DATE", date).replace("HOUR", String(hour)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_CALLUP_CATEGORIES_BY_DATETIME)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getCallupsByCategoriesByDate(date : string) :Promise<CategoriesData>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", date), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", date), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_CALLUP_CATEGORIES_BY_DATE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getCallpusByCategoriesAllTime() : Promise<CategoriesData> {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_ALL_TIME), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_ALL_TIME), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_CALLUP_CATEGORIES_ALL_TIME)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserAccountTypesYesterday() {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserAccountTypesAllNew() : Promise<{ohne: string[], basis: string[], "basis-plus": string[], plus: string[], premium: string[], sponsor: string[]}>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_ALL_NEW), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_ALL_NEW), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ACCOUNTTYPES_ALL_NEW)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getTopPostsBySorterWithType(sorter: string, type: string, limit: number) : Promise<Post[]>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_TOP_BY_SORTER).replace("SORTER", sorter).replace("TYPE", type).replace("LIMIT", String(limit)), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_TOP_BY_SORTER).replace("SORTER", sorter).replace("TYPE", type).replace("LIMIT", String(limit)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_TOP_BY_SORTER)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getNewsletterSubs(){
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_SUBS), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_SUBS), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTER_SUBS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewsletterSubsByDateRange(daysBackTo : number, daysBackFrom : number){
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_SUBS_BY_DATERANGE).replace("DAYSBACKTO", String(daysBackTo)).replace("DAYSBACKFROM", String(daysBackFrom)), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_SUBS_BY_DATERANGE).replace("DAYSBACKTO", String(daysBackTo)).replace("DAYSBACKFROM", String(daysBackFrom)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTER_SUBS_BY_DATERANGE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewsletterSubsYesterday(){
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_SUBS_YESTERDAY), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_SUBS_YESTERDAY), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTER_SUBS_YESTERDAY)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewsletterSubsAsMailByStatus(c : string) : Promise<string[]>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS).replace("STATUS", c), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS).replace("STATUS", c), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTER_SUBS_AS_MAIL_BY_STATUS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewsletters(page : number, size : number) : Promise<Newsletter[]>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTERS_ALL)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewslettersGeo() : Promise<Map<string,number>>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTERS_ALL_GEO), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTERS_ALL_GEO), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTERS_ALL_GEO)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewsletter(id : number) : Promise<Newsletter>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER).replace("ID", String(id)), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER).replace("ID", String(id)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTER)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getLatestNewsletter() : Promise<Newsletter>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_LATEST), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_LATEST), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTER_LATEST)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewsletterGeo(id : number) : Promise<Map<string,number>>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_GEO).replace("ID", String(id)), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTER_GEO).replace("ID", String(id)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTER_GEO)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewslettersOpenTimes() : Promise<number[]>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTERS_ALL_OPENTIMES), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTERS_ALL_OPENTIMES), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTERS_ALL_OPENTIMES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getNewslettersOR() : Promise<number>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTERS_ALL_OPENRATE), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_NEWSLETTERS_ALL_OPENRATE), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_NEWSLETTERS_ALL_OPENRATE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getSystemTimeHour() : Promise<number>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_SYSTEM_TIME_HOUR), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_SYSTEM_TIME_HOUR), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_SYSTEM_TIME_HOUR)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getSystemUsage() : Promise<SystemUsage>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_SYSTEM_USAGE), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_SYSTEM_USAGE), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_SYSTEM_USAGE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getSystemUsageNow() : Promise<{cpu : number, memory : number, networkSent : number, networkRecv : number}>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_SYSTEM_USAGE_NOW), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {
+    return await fetch(ApiService.setupRequest(apiUrl.GET_SYSTEM_USAGE_NOW), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_SYSTEM_USAGE_NOW)}).then(res => {
       this.setFinished(res.status, res.url);
 
       if (res.status < 200 || res.status >= 400){
@@ -576,43 +576,43 @@ export class ApiService {
   }
   async getBlackHoleData() : Promise<BadBot[]>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_SYSTEM_BAD_BOTS), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_SYSTEM_BAD_BOTS), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_SYSTEM_BAD_BOTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getEvents() : Promise<string[]> {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_EVENTS), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_EVENTS), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_EVENTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getEventsYesterday() : Promise<string[]> {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_EVENTS_YESTERDAY), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_EVENTS_YESTERDAY), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_EVENTS_YESTERDAY)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getEventsLikePostsPaged(page : number, size : number,filter : string, search: string){
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_EVENTS_LIKE_POSTS).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_EVENTS_LIKE_POSTS).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_EVENTS_LIKE_POSTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getUserEventsLikePostsPaged(id : string, page : number, size : number,filter : string, search: string){
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USER_EVENTS_LIKE_POSTS).replace("ID", id).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USER_EVENTS_LIKE_POSTS).replace("ID", id).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USER_EVENTS_LIKE_POSTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserProfileViewsAverageByType() {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserTagsDistributionPercentage() {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_TAG_DISTRIBUTION_PRECENTAGE), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_TAG_DISTRIBUTION_PRECENTAGE), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_TAG_DISTRIBUTION_PRECENTAGE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getUserTagsRanking(id : string, sorter: string){
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USER_TAG_DISTRIBUTION_PRECENTAGE).replace("ID", id).replace("SORTER", sorter), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USER_TAG_DISTRIBUTION_PRECENTAGE).replace("ID", id).replace("SORTER", sorter), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USER_TAG_DISTRIBUTION_PRECENTAGE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserClicksAverageByViewType() {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE), {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async loginSeo() {
@@ -638,7 +638,8 @@ export class ApiService {
       "body": "{\"username\":\"AnalyseITSicherheit\",\"password\":\"EnTUFpSbRt83EM3\"}",
       "method": "POST",
       "mode": "cors",
-      "credentials": "omit"
+      "credentials": "omit",
+      signal : ApiService.setupController("SEO_LOGIN")
     }).then(res => {this.setFinished(res.status, res.url); return res.json()}).then((value : {token : string} ) => {this.seoToken = value.token})
     }
   }
@@ -666,7 +667,8 @@ export class ApiService {
         "body": null,
         "method": "GET",
         "mode": "cors",
-        "credentials": "omit"
+        "credentials": "omit",
+        signal : ApiService.setupController("SEO_INDEX")
     }).then(res => {
       this.setFinished(res.status, res.url);
       return res.json();
@@ -697,7 +699,8 @@ export class ApiService {
         "body": null,
         "method": "GET",
         "mode": "cors",
-        "credentials": "omit"
+        "credentials": "omit",
+        signal : ApiService.setupController("SEO_NOW")
     }).then(res => {
       this.setFinished(res.status, res.url);
       return res.json();
@@ -728,7 +731,8 @@ export class ApiService {
         "body": null,
         "method": "GET",
         "mode": "cors",
-        "credentials": "omit"
+        "credentials": "omit",
+        signal : ApiService.setupController("SEO_CTR")
     }).then(res => {
       this.setFinished(res.status, res.url);
       return res.json();
@@ -759,7 +763,8 @@ export class ApiService {
         "body": null,
         "method": "GET",
         "mode": "cors",
-        "credentials": "omit"
+        "credentials": "omit",
+        signal : ApiService.setupController("SEO_KEYWORDS")
     }).then(res => {
       this.setFinished(res.status, res.url);
       return res.json();
@@ -769,15 +774,15 @@ export class ApiService {
 
   async getSearchesWithoutResults(page : number, size : number) : Promise<SearchItem[]> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_SEARCHES_NO_RESULTS).replace("PAGE", String(page)).replace("SIZE", String(size))) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_SEARCHES_NO_RESULTS).replace("PAGE", String(page)).replace("SIZE", String(size))) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_SEARCHES_NO_RESULTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getSearchesAnbieterWithoutResults(page : number, size : number) : Promise<SearchAnbieterItem[]> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_SEARCHES_ANBIETER_NO_RESULT).replace("PAGE", String(page)).replace("SIZE", String(size))) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_SEARCHES_ANBIETER_NO_RESULT).replace("PAGE", String(page)).replace("SIZE", String(size))) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_SEARCHES_ANBIETER_NO_RESULT)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getSearchesCool(page : number, size : number, sorter : string, dir : string) : Promise<SearchSS[]> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_SEARCHES_COOL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("DIR", dir)) , {credentials: "include", signal: ApiService.setupController(apiUrl.)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_SEARCHES_COOL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("DIR", dir)) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_SEARCHES_COOL)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async ignoreSearch(search : string) : Promise<boolean> {

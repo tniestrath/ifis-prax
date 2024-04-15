@@ -630,7 +630,7 @@ public class uniStatController {
 
     /**
      *
-     * @param type der Typ Post, für den eine Top5 erstellt werden soll ("blog" | "artikel" | "news")
+     * @param type der Typ Post, für den eine Top5 erstellt werden soll ("blog" | "artikel" | "news" | "whitepaper" | "podcast" | "videos")
      * @param daysBack how many days to look back.
      * @return a JSON String.
      * @throws JSONException .
@@ -646,6 +646,7 @@ public class uniStatController {
         int tagIdNews = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
         int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
         int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
+        int tagIdVideos = termRepo.findBySlug(Constants.getInstance().getVideoSlug()).getId().intValue();
 
         for (Post post : posts) {
 
@@ -680,6 +681,12 @@ public class uniStatController {
                         }
 
                         if (termTax.getTermId() == tagIdPodcast && type.equals("podcast")) {
+                            JSONObject obj;
+                            obj = getClickOfDayAsJson(post.getId(),daysBack);
+                            ergebnis.put(obj);
+                        }
+
+                        if (termTax.getTermId() == tagIdVideos && type.equals("videos")) {
                             JSONObject obj;
                             obj = getClickOfDayAsJson(post.getId(),daysBack);
                             ergebnis.put(obj);

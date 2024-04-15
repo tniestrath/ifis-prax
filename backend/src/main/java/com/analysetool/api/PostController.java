@@ -450,40 +450,59 @@ public class PostController {
 
     //STATS
 
+    /**
+     * Fetches all entries of the stats table.
+     * @return a List of PostStats.
+     */
     @GetMapping
     public List<PostStats> getAllStats() {
         return statRepository.findAll();
     }
 
+    /**
+     * Fetches the highest value in the performance column of stats.
+     * @return positive float.
+     */
     @GetMapping("/maxPerformance")
     public float getMaxPerformance(){
         return statRepository.getMaxPerformance();
     }
 
+    /**
+     * Fetches the highest value in the relevance column of stats.
+     * @return positive float.
+     */
     @GetMapping("/maxRelevance")
     public float getMaxRelevance(){
         return statRepository.getMaxRelevance();
     }
+
+    /**
+     * Fetches performance for a specific Post.
+     * @param id the id of the post to fetch for.
+     * @return positive float.
+     */
     @GetMapping("/getPerformanceByArtId")
     public float getPerformanceByArtId(@RequestParam int id){
         return statRepository.getPerformanceByArtID(id);
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/getViewsOfUser")
     public long getViewsOfUserById(@RequestParam Long id){
         List<Post> posts = postRepo.findByAuthor(id.intValue());
         long views = 0 ;
-        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
-        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
-        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
-        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
+
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 PostStats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
-                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse || termTax.getTermId() == tagIdPodcast || termTax.getTermId() == tagIdWhitepaper) {
+                        if (Constants.getInstance().getListOfPostTypesInteger().contains(termTax.getTermId().intValue())) {
                             views = views + Stat.getClicks();
                         }
                     }
@@ -499,18 +518,13 @@ public class PostController {
     public long getPostCountOfUserById(@RequestParam Long id){
         List<Post> posts = postRepo.findByAuthor(id.intValue());
         long PostCount = 0 ;
-        int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
-        int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
-        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
-        int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
-        int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 PostStats Stat = statRepository.getStatByArtID(post.getId());
                 for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
                     for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
-                        if (termTax.getTermId() == tagIdBlog||termTax.getTermId() == tagIdArtikel||termTax.getTermId() == tagIdPresse || termTax.getTermId() == tagIdWhitepaper || termTax.getTermId() == tagIdPodcast) {
+                        if (Constants.getInstance().getListOfPostTypesInteger().contains(termTax.getTermId().intValue())) {
                             PostCount++ ;
                         }
                     }

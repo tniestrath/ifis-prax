@@ -1,6 +1,22 @@
 package com.analysetool.util;
 
+import com.analysetool.repositories.PostTypeRepository;
+import com.analysetool.repositories.WPTermRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
 public class Constants {
+
+
+    @Autowired
+    private PostTypeRepository ptRepo;
+
+    @Autowired
+    private WPTermRepository termRepo;
 
     // Define your constants here
     private final String blogSlug = "blogeintrag";
@@ -8,6 +24,8 @@ public class Constants {
     private final String whitepaperSlug = "whitepaper";
     private final String podastSlug = "podcast";
     private final String newsSlug = "news";
+
+    private final String videoSlug = "videos";
 
 
     private final String basisAnbieter = "um_basis";
@@ -106,5 +124,21 @@ public class Constants {
 
     public long getPodcastTermId() {
         return podcastTermId;
+    }
+
+    public String getVideoSlug() {
+        return videoSlug;
+    }
+
+    public List<String> getListOfPostTypesSlug() {
+        return ptRepo.getDistinctTypes();
+    }
+
+    public List<Integer> getListOfPostTypesInteger() {
+        List<Integer> ids = new ArrayList<>();
+        for(String type : getListOfPostTypesSlug()) {
+            ids.add(termRepo.findBySlug(type).getId().intValue());
+        }
+        return ids;
     }
 }

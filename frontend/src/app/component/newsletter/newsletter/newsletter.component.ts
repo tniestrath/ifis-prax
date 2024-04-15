@@ -19,7 +19,7 @@ export class NewsletterComponent extends DashBaseComponent implements OnInit{
   labels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
 
   ngOnInit(): void {
-    this.db.getLatestNewsletter().then(res => {
+    this.api.getLatestNewsletter().then(res => {
       this.data = res;
       this.interactionTimeMax = this.data.interactionTimes.indexOf(Math.max(...this.data.interactionTimes, 1));
       this.createChart("newsletter-stats-chart", this.labels, this.data.interactionTimes, undefined);

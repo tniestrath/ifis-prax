@@ -212,14 +212,14 @@ export class ClicksComponent extends DashBaseComponent implements OnInit, AfterV
     }
     this.c_chart_total = 0;
     this.p_chart_total = 0;
-    this.db.getUserPostCountByType(SysVars.USER_ID).then((res : {Whitepaper: number, Blogs: number, Artikel: number, News: number, Podcasts: number}) => {
+    this.api.getUserPostCountByType(SysVars.USER_ID).then((res : {Whitepaper: number, Blogs: number, Artikel: number, News: number, Podcasts: number}) => {
       var realData2 = res;
-      this.db.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsNews: number, viewsPodcast: number, viewsWhitepaper: number} | string) => {
+      this.api.getUserClicks(SysVars.USER_ID).then((res : {viewsBlog : number, viewsArtikel : number, viewsProfile: number, viewsNews: number, viewsPodcast: number, viewsWhitepaper: number} | string) => {
         if (typeof res !== "string"){
           this.isError = false;
           this.c_chart = this.createChart("c_clicks", ["Artikel", "Blogeintrag", "News", "Podcast", "Whitepaper"], [res.viewsArtikel,res.viewsBlog, res.viewsNews, res.viewsPodcast, res.viewsWhitepaper],
                                 [realData2.Artikel,realData2.Blogs,realData2.News,realData2.Podcasts,realData2.Whitepaper]);
-          this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsNews)]);
+          this.p_chart = this.createChart("p_clicks", ["Profilaufrufe", "Inhalte"], [res.viewsProfile,(res.viewsBlog + res.viewsArtikel + res.viewsNews + res.viewsPodcast + res.viewsWhitepaper)]);
           this.createLegend("clicks-content-box", this.c_chart);
           this.createLegend("clicks-profile-box", this.p_chart);
           this.c_chart_total = res.viewsArtikel + res.viewsBlog + res.viewsNews + res.viewsPodcast + res.viewsWhitepaper;

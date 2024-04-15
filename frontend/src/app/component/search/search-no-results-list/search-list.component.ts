@@ -58,7 +58,7 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
       + "<img src=\"assets/target-click.png\" style=\"height: 15px; filter:invert(1)\"> Geklickte Ergebnisse<br>");
     this.selectorItems = [];
     this.pageIndex = 0;
-    this.db.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
+    this.api.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
       }
@@ -69,7 +69,7 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
     this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection => {
       if (selection.operation == "IGNORE") {
         console.log(selection.item)
-        this.db.flipSearch(selection.item.id).then(r => {
+        this.api.flipSearch(selection.item.id).then(r => {
           console.log((selection.item as SearchSS).query + " : Successfully set to ignore: " + r)
           if (r == "DELETED") {
             let index = -1;
@@ -96,7 +96,7 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
     this.sorter = (sorter.target as HTMLInputElement).value;
     this.selectorItems = [];
     this.pageIndex = 0;
-    this.db.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
+    this.api.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
       }
@@ -111,7 +111,7 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
 
     this.selectorItems = [];
     this.pageIndex = 0;
-    this.db.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
+    this.api.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
       }
@@ -124,7 +124,7 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
     if (!this.pagesComplete){
       let scroll = Date.now();
       if (scroll >= (this.lastScroll + 100)){
-        this.db.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
+        this.api.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
           for (var search of res) {
             this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
           }
@@ -144,7 +144,7 @@ export class SearchListCombinedComponent extends SearchListComponent implements 
     if (space >= -100){
       if (!this.pagesComplete){
         console.log(this.pageIndex)
-        this.db.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
+        this.api.getSearchesCool(this.pageIndex, this.pageSize, this.sorter, this.dir).then(res => {
           for (var search of res) {
             this.selectorItems.push(new SelectorItem(SearchListSSItemComponent, search));
           }
@@ -177,7 +177,7 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
       + "<img src=\"assets/trash-can.png\" style=\"height: 15px; filter:invert(1)\"> Klicken zum entfernen<br>");
     this.selectorItems = [];
     this.pageIndex = 0;
-    this.db.getSearchesAnbieterWithoutResults(this.pageIndex, this.pageSize).then(res => {
+    this.api.getSearchesAnbieterWithoutResults(this.pageIndex, this.pageSize).then(res => {
       for (var search of res) {
         this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
       }
@@ -187,7 +187,7 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
     //TODO: IMPLEMENT UNDO LIKE ABOVE
     this.selectedSearchObserver = SysVars.SELECTED_SEARCH.asObservable().subscribe(selection  => {
       if (selection.operation == "DELETE") {
-        this.db.flipAnbieterSearch((selection.item as SearchAnbieterItem).id).then(r => {
+        this.api.flipAnbieterSearch((selection.item as SearchAnbieterItem).id).then(r => {
           console.log((selection.item as SearchAnbieterItem).search + " : " + (selection.item as SearchAnbieterItem).city + " : Successfully set deleted: " + r)
           if ((r as { city: string, query : string }).query == "DELETED") {
             let index = -1;
@@ -222,7 +222,7 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
       let scroll = Date.now();
       if (scroll >= (this.lastScroll + 100)){
         console.log(this.pageIndex)
-        this.db.getSearchesAnbieterWithoutResults(this.pageIndex, this.pageSize).then(res => {
+        this.api.getSearchesAnbieterWithoutResults(this.pageIndex, this.pageSize).then(res => {
           for (var search of res) {
             this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
           }
@@ -243,7 +243,7 @@ export class SearchListAnbieterNoResultsComponent extends SearchListComponent im
     if (space >= -100){
       if (!this.pagesComplete){
         console.log(this.pageIndex)
-        this.db.getSearchesAnbieterWithoutResults(this.pageIndex, this.pageSize).then(res => {
+        this.api.getSearchesAnbieterWithoutResults(this.pageIndex, this.pageSize).then(res => {
           for (var search of res) {
             this.selectorItems.push(new SelectorItem(SearchListAnbieterItemComponent, search));
           }

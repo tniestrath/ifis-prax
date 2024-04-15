@@ -26,7 +26,7 @@ export class Top5PostsComponent extends DashBaseComponent implements OnInit{
     if (event !== undefined) {
       this.sorter = (event?.target as HTMLInputElement).value;
     }
-    this.db.getTopPostsBySorterWithType(this.sorter.toLowerCase(), this.postType.toLowerCase(), 5).then(res => {
+    this.api.getTopPostsBySorterWithType(this.sorter.toLowerCase(), this.postType.toLowerCase(), 5).then(res => {
       this.dataArray = res;
       this.cdr.detectChanges();
     });

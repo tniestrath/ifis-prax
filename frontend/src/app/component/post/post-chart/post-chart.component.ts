@@ -185,10 +185,10 @@ export class PostChartComponent extends DashBaseComponent implements OnInit{
       if ((event?.target as HTMLInputElement).type == "select-one") this.postType = (event?.target as HTMLInputElement).value;
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
-    this.db.hasUserPostTypes(SysVars.USER_ID).then(value => {
+    this.api.hasUserPostTypes(SysVars.USER_ID).then(value => {
       this.postTypes = { blog : value.blog, news : value.news, artikel : value.artikel, podcast : value.podcast, whitepaper : value.whitepaper }
     });
-    if (this.data == undefined){this.data = this.db.getUserPostsWithStats(SysVars.USER_ID)}
+    if (this.data == undefined){this.data = this.api.getUserPostsWithStats(SysVars.USER_ID)}
     this.data.then((res : Post[]) => {
       var postLabel : string[] = [];
       var postData : number[] = [];

@@ -29,14 +29,14 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
       this.chart.destroy();
     }
 
-    this.db.getPostsPerType().then(res => {
+    this.api.getPostsPerType().then(res => {
       let map : Map<string, number> = new Map(Object.entries(res));
       this.readMap(map, this.data);
       this.chart = this.createChart("post_type_chart", this.labels, this.data, undefined);
       this.chart_total = this.data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
       this.cdr.detectChanges();
     }).finally(()=> {
-      this.db.getPostsPerTypeYesterday().then(res => {
+      this.api.getPostsPerTypeYesterday().then(res => {
         let map : Map<string, number> = new Map(Object.entries(res));
         this.readMap(map, this.prev_data);
         for (var i = 0; i < this.data.length; i++) {

@@ -35,7 +35,7 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
   c_rest = 0;
 
   ngOnInit(): void {
-    this.db.getEvents().then(res => {
+    this.api.getEvents().then(res => {
       for (let event of res) {
         let eventSplits = event.split("|");
         if (eventSplits[0].startsWith("u")) {
@@ -48,7 +48,7 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
         }
       }
     }).then( () =>
-      this.db.getEventsYesterday().then(res => {
+      this.api.getEventsYesterday().then(res => {
         for (let event of res) {
           if (event.startsWith("u")) this.upcoming_yesterday++;
           if (event.startsWith("c")) this.current_yesterday++;
@@ -101,7 +101,7 @@ export class EventsStatsComponent extends DashBaseComponent implements OnInit{
 export class UserEventsStatsComponent extends EventsStatsComponent{
 
   override ngOnInit(): void {
-    this.db.getUserEventCount(SysVars.USER_ID).then((res : {newEvents: string[], countTotal: number, countOld: number}) => {
+    this.api.getUserEventCount(SysVars.USER_ID).then((res : {newEvents: string[], countTotal: number, countOld: number}) => {
       for (let event of res.newEvents) {
         let eventSplits = event.split("|");
         if (eventSplits[0].startsWith("u")) {
@@ -114,7 +114,7 @@ export class UserEventsStatsComponent extends EventsStatsComponent{
         }
       }
     }).then( () =>
-      this.db.getUserEventCountYesterday(SysVars.USER_ID).then(res => {
+      this.api.getUserEventCountYesterday(SysVars.USER_ID).then(res => {
         for (let event of res) {
           if (event.startsWith("u")) this.upcoming_yesterday++;
           if (event.startsWith("c")) this.current_yesterday++;

@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {DbObject} from "../../services/DbObject";
-import {DbService} from "../../services/db.service";
+import {ApiService} from "../../services/api.service";
 import {SafeUrl} from "@angular/platform-browser";
 import {SysVars} from "../../services/sys-vars-service";
 import {Subject} from "rxjs";
@@ -86,7 +86,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
   }
 
   getImgSrc(id: string) {
-    this.db.getUserImgSrc(id).then(dataUrl => {
+    this.api.getUserImgSrc(id).then(dataUrl => {
       this.imgSrc = dataUrl;
     });
   }

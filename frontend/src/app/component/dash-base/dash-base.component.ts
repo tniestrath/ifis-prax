@@ -8,7 +8,7 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
-import {DbService} from "../../services/db.service";
+import {ApiService} from "../../services/api.service";
 import {GridComponent} from "../../grid/grid.component";
 import {SysVars} from "../../services/sys-vars-service";
 import {CookieService} from "ngx-cookie-service";
@@ -30,7 +30,7 @@ export class DashBaseComponent implements OnDestroy{
   protected chart: any;
 
   constructor(protected element : ElementRef,
-              protected db : DbService,
+              protected api : ApiService,
               protected us : SysVars,
               protected cs : CookieService,
               protected pdf : PdfService,
@@ -92,5 +92,6 @@ export class DashBaseComponent implements OnDestroy{
       this.chart?.destroy();
     }
     this.cdr.detectChanges();
+    ApiService.cancelAllRequests();
   }
 }

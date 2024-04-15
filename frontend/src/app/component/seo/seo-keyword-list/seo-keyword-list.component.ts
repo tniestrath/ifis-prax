@@ -16,7 +16,7 @@ export class SeoKeywordListComponent extends DashBaseComponent implements OnInit
   selectorItemsLoaded = new Subject<SelectorItem[]>();
 
   ngOnInit(): void {
-    this.db.getSeoKeywordsNow().then(value => {
+    this.api.getSeoKeywordsNow().then(value => {
       this.setToolTip("Hier werden die Keywords aus dem SEO-Cockpit angezeigt.<br>" +
                            "Mit hovern über die Einträge werden die zugeordneten Unterseiten und die Klickrate angezeigt<br>" +
                            "<br>" +

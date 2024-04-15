@@ -137,7 +137,7 @@ export class RelevanceComponent extends DashBaseComponent {
   ngOnInit(): void {
     this.setToolTip("Ihr Beitrag mit der höchsten berechneten Relevanz (aufg. Aufrufe der letzten 7 Tage)");
 
-      this.db.getUserBestPost(SysVars.USER_ID, "relevance").then(data => {
+      this.api.getUserBestPost(SysVars.USER_ID, "relevance").then(data => {
         let post : Post = data;
         this.createChart(post.relevance || 0);
 

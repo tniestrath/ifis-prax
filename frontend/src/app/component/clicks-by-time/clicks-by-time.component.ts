@@ -19,11 +19,11 @@ export class ClicksByTimeComponent extends DashBaseComponent implements OnInit{
     this.setToolTip("Hier wird angezeigt, zu welcher Zeit wie viele Zugriffe auf den Marktplatz " +
       "stattgefunden haben. Durch hovern der Maus über den Graphen erhalten Sie mehr Informationen.");
     if (SysVars.CURRENT_PAGE == "Users") {
-      this.db.getClicksByTime(Number(SysVars.USER_ID)).then(res => {
+      this.api.getClicksByTime(Number(SysVars.USER_ID)).then(res => {
         this.chart = this.createChart("time_clicks", this.labels, res, undefined);
       });
     } else if (SysVars.CURRENT_PAGE == "Overview") {
-      this.db.getClicksByTimeAll().then(res => {
+      this.api.getClicksByTimeAll().then(res => {
         this.chart = this.createChart("time_clicks", this.labels, res, undefined);
       });
     }
@@ -111,7 +111,7 @@ export class ClicksByTimeNewsletterComponent extends ClicksByTimeComponent{
   override ngOnInit() {
     this.setToolTip("Hier wird angezeigt, zu welcher Zeit der Newsletter wie oft im Durchschnitt pro Stunde geöffnet wird");
     this.tooltipString = "Interaktionen";
-    this.db.getNewslettersOpenTimes().then(res => {
+    this.api.getNewslettersOpenTimes().then(res => {
       this.chart = this.createChart("time_clicks", this.labels, res, undefined);
     });
   }

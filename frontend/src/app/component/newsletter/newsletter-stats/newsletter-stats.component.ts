@@ -18,19 +18,19 @@ export class NewsletterStatsComponent extends DashBaseComponent implements OnIni
   openRate : number = 0;
 
   ngOnInit(): void {
-    this.db.getNewsletterSubs().then(res => {
+    this.api.getNewsletterSubs().then(res => {
       for (let char of res) {
         if (char == "C") this.verified++;
       }
     }).then( () =>
-      this.db.getNewsletterSubsYesterday().then(res => {
+      this.api.getNewsletterSubsYesterday().then(res => {
       for (let char of res) {
         if (char == "C") this.verified_yesterday++;
       }
     })).then(() => {
       this.verified_today = this.verified - this.verified_yesterday;
     }).then( () =>
-      this.db.getNewslettersOR().then(res => {
+      this.api.getNewslettersOR().then(res => {
         this.openRate = res;
       })
     )

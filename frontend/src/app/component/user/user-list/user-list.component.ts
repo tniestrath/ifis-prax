@@ -31,7 +31,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.setToolTip("", 1,false);
     if (this.parentListItems.length <= 0){
-      this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, new AbortController().signal).then(res => {
+      this.api.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, new AbortController().signal).then(res => {
         this.pageIndex++;
         this.listItems = res.users.map(value => new SelectorItem(UserComponent, value));
         this.selectorItemsLoaded.next(this.listItems);
@@ -47,7 +47,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
         console.log(this.pageIndex)
         let abort = new AbortController();
         this.abortController.push(abort)
-        this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then((res : {users:  any[], count : number}) => {
+        this.api.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then((res : {users:  any[], count : number}) => {
           this.listItems.push(...res.users.map(value => new SelectorItem(UserComponent, value)));
           this.selectorItemsLoaded.next(this.listItems);
           if (res.count <= 0){
@@ -71,7 +71,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
     }
     let abort = new AbortController();
     this.abortController.push(abort);
-    this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then(res => {
+    this.api.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then(res => {
       this.pageIndex++;
       this.listItems = res.users.map(value => new SelectorItem(UserComponent, value));
       this.selectorItemsLoaded.next(this.listItems);
@@ -90,7 +90,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
     }
     let abort = new AbortController();
     this.abortController.push(abort);
-    this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then(res => {
+    this.api.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then(res => {
       this.pageIndex++;
       this.listItems = res.users.map(value => new SelectorItem(UserComponent, value));
       this.selectorItemsLoaded.next(this.listItems);
@@ -105,7 +105,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
       if (!this.pagesComplete){
         let abort = new AbortController();
         this.abortController.push(abort)
-        this.db.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then((res : {users:  any[], count : number}) => {
+        this.api.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then((res : {users:  any[], count : number}) => {
           this.listItems.push(...res.users.map(value => new SelectorItem(UserComponent, value)));
           this.selectorItemsLoaded.next(this.listItems);
           if (res.count <= 0){

@@ -6,6 +6,7 @@ import {Post} from "../post/Post";
 import {PostListItemComponent} from "../post/post-list/post-list-item/post-list-item.component";
 import {DbObject} from "../../services/DbObject";
 import {DashListItemComponent} from "./dash-list-item/dash-list-item.component";
+import {UserComponent} from "../user/user.component";
 
 /**
  * root for List-Type-Components
@@ -79,13 +80,13 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
   templateUrl: './dash-list.component.html',
   styleUrls: ['./dash-list.component.css', "../dash-base/dash-base.component.css"]
 })
-export class DashListPageableComponent<T extends DbObject, C extends DashListItemComponent> extends DashListComponent<any, any>{
+export class DashListPageableComponent<T extends DbObject, C extends DashListItemComponent> extends DashListComponent<any, any> {
   pageIndex = 0;
   pageSize = 20;
 
 
-  override load<T extends DbObject, C extends DashListItemComponent>(response : Promise<T[]> ,component : Type<C>): void {
-    response.then((value : T[]) => {
+  override load<T extends DbObject, C extends DashListItemComponent>(response: Promise<T[]>, component: Type<C>): void {
+    response.then((value: T[]) => {
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(component, valueElement));
       }
@@ -93,10 +94,11 @@ export class DashListPageableComponent<T extends DbObject, C extends DashListIte
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }
-  override reload<T extends DbObject, C extends DashListItemComponent>(response : Promise<T[]> ,component : Type<C>): void {
+
+  override reload<T extends DbObject, C extends DashListItemComponent>(response: Promise<T[]>, component: Type<C>): void {
     this.selectorItems = [];
     this.pageIndex = 0;
-    response.then((value : T[]) => {
+    response.then((value: T[]) => {
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(component, valueElement));
       }
@@ -106,14 +108,14 @@ export class DashListPageableComponent<T extends DbObject, C extends DashListIte
   }
 
   override onScrollEnd() {
-    if (!this.pagesComplete){
+    if (!this.pagesComplete) {
       let scroll = Date.now();
-      if (scroll >= (this.lastScroll + 100)){
+      if (scroll >= (this.lastScroll + 100)) {
         // @ts-ignore
         this.load(this.response, this.component);
         this.pageIndex++;
+      } else {
       }
-      else {}
       this.lastScroll = scroll;
     }
   }

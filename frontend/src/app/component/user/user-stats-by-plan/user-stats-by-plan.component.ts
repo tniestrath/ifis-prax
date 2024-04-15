@@ -46,7 +46,7 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
   }
 
   protected getData(){
-    this.db.getUserProfileViewsAverageByType().then(res => {
+    this.api.getUserProfileViewsAverageByType().then(res => {
       let map : Map<string, number> = new Map(Object.entries<number>(res[0]).sort((a ,b) => this.sorter(a, b)));
       let map1 : Map<string, number> = new Map(Object.entries<number>(res[1]).sort((a,b) => this.sorter(a, b)));
       let map2 : Map<string, number> = new Map(Object.entries<number>(res[2]).sort((a,b) => this.sorter(a, b)));
@@ -153,7 +153,7 @@ export class UserStatsByPlanViewTypeCompareComponent extends UserStatsByPlanComp
   override datasetLabels : string[] = ["Profilaufrufe", "Inhaltsaufrufe"]
 
   override getData(){
-    this.db.getUserClicksAverageByViewType().then(res => {
+    this.api.getUserClicksAverageByViewType().then(res => {
       let map : Map<string, number> = new Map(Object.entries<number>(res[0]).sort((a ,b) => this.sorter(a, b)));
       let map1 : Map<string, number> = new Map(Object.entries<number>(res[1]).sort((a,b) => this.sorter(a, b)));
       this.createChart(map, map1);

@@ -1,6 +1,6 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
-import {DbService} from "../../services/db.service";
+import {ApiService} from "../../services/api.service";
 import {Observable, Subject} from "rxjs";
 import {ClicksComponent} from "../../component/clicks/clicks.component";
 import {GaugeComponent} from "../../component/gauge/gauge.component";
@@ -58,7 +58,7 @@ export class PageComponent implements OnInit {
   @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
 
-  constructor(private cookieService : CookieService, private db : DbService, private pdf : PdfService, private element : ElementRef) {
+  constructor(private cookieService : CookieService, private db : ApiService, private pdf : PdfService, private element : ElementRef) {
   }
 
   getLandingPageCards(){

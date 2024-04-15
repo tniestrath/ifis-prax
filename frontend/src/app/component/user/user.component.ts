@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit} from '@angular/core';
 import {SelectableComponent} from "../../page/selector/selectable.component";
 import {SafeUrl} from "@angular/platform-browser";
-import {DbService} from "../../services/db.service";
+import {ApiService} from "../../services/api.service";
 import {User} from "./user";
 import Util from "../../util/Util";
 import {SysVars} from "../../services/sys-vars-service";
@@ -19,7 +19,7 @@ export class UserComponent implements SelectableComponent, OnInit {
 
   tendency: string = "stagniert";
 
-  constructor(private db: DbService) {
+  constructor(private db: ApiService) {
   }
 
   onClick(): void {

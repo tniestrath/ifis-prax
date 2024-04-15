@@ -10,12 +10,12 @@ import {Newsletter} from "../component/newsletter/Newsletter";
 
 export class PAGE {
   id: number = 0;
-  eng: string = "Login";
+  en: string = "Login";
   de: string = "Login";
 
-  constructor(id: number, eng: string, de: string) {
+  constructor(id: number, en: string, de: string) {
     this.id = id;
-    this.eng = eng;
+    this.en = en;
     this.de = de;
   }
 }

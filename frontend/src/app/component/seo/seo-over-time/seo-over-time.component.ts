@@ -19,13 +19,13 @@ export class SeoOverTimeComponent extends DashBaseComponent implements OnInit{
     this.label_desktop = [];
     this.data_desktop = [];
     this.data_mobile = [];
-    this.db.getSeoIndexOverTime("false").then(value => {
+    this.api.getSeoIndexOverTime("false").then(value => {
       this.label_desktop = value.map((r) => {
         let result = new Date(r.date).toLocaleDateString();
         return result.substring(0, result.lastIndexOf("."))});
       this.data_desktop = value.map(value1 => {return value1.sichtbarkeitsindex});
     }).then(() => {
-      this.db.getSeoIndexOverTime("true").then(value2 => {
+      this.api.getSeoIndexOverTime("true").then(value2 => {
         this.data_mobile = value2.map(value3 => {return value3.sichtbarkeitsindex});
       }).then(() => {
         // @ts-ignore

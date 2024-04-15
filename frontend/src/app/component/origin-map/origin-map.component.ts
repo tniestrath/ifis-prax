@@ -95,7 +95,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
     startDatePicker.onchange = ev => {
       // @ts-ignore
-      this.db.getGeoByDates(ev.target.value, endDatePicker.value).then(res => {
+      this.api.getGeoByDates(ev.target.value, endDatePicker.value).then(res => {
         // @ts-ignore
         this.startDate = ev.target.value;
         // @ts-ignore
@@ -105,7 +105,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       };
     endDatePicker.onchange = ev => {
       // @ts-ignore
-      this.db.getGeoByDates(startDatePicker.value, ev.target.value).then(res => {
+      this.api.getGeoByDates(startDatePicker.value, ev.target.value).then(res => {
         // @ts-ignore
         this.endDate = ev.target.value;
         // @ts-ignore
@@ -114,7 +114,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       });
     };
 
-    this.db.getGeoTimespan().then(res => {
+    this.api.getGeoTimespan().then(res => {
       let startDatePicker = document.getElementById("geoStartDate") as HTMLInputElement;
       let endDatePicker = document.getElementById("geoEndDate") as HTMLInputElement;
       if (res == undefined){
@@ -149,12 +149,12 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       if (svgElement) {
         // @ts-ignore
         if (SysVars.CURRENT_PAGE == "Anbieter") {
-          this.db.getOriginMapByUser(Number.parseInt(SysVars.USER_ID), this.startDate, this.endDate).then(res => {
+          this.api.getOriginMapByUser(Number.parseInt(SysVars.USER_ID), this.startDate, this.endDate).then(res => {
             this.readData(res, svgElement);
             this.cdr.detectChanges();
           });
         } else {
-          this.db.getGeoAll().then(res => {
+          this.api.getGeoAll().then(res => {
             this.readData(res, svgElement);
             this.cdr.detectChanges();
           });
@@ -265,7 +265,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     // @ts-ignore
     let gesamt = region_clicks.find(value => value.identifier == region).clicks;
 
-    this.db.getGeoByRegionByDates(region, this.startDate, this.endDate).then((res: Map<string,number>) => {
+    this.api.getGeoByRegionByDates(region, this.startDate, this.endDate).then((res: Map<string,number>) => {
       let data : Map<string, number> = new Map(Object.entries(res));
       this.tooltipHeader.style.paddingBottom = "5px";
       this.tooltipHeader.innerText = this.getRegionFullName(region);
@@ -328,7 +328,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   }
 
   setupHistoryChart(region: string) {
-    this.db.getGeoByRegionByDatesListed(region, this.startDate, this.endDate).then(res => {
+    this.api.getGeoByRegionByDatesListed(region, this.startDate, this.endDate).then(res => {
       this.createChart(res.data, res.dates);
     });
   }
@@ -417,7 +417,7 @@ export class OriginMapNewsletterComponent extends OriginMapComponent{
     setTimeout(() => {
       this.isScaled = true;
       if (svgElement) {
-        this.db.getNewsletterGeo(Number.parseInt(this.emailId)).then(res => {
+        this.api.getNewsletterGeo(Number.parseInt(this.emailId)).then(res => {
           this.readData(res, svgElement);
           this.cdr.detectChanges();
         });
@@ -425,7 +425,7 @@ export class OriginMapNewsletterComponent extends OriginMapComponent{
     }, 100);
 
     SysVars.SELECTED_NEWSLETTER.subscribe(nl => {
-      this.db.getNewsletterGeo(Number.parseInt(nl.id)).then(res => {
+      this.api.getNewsletterGeo(Number.parseInt(nl.id)).then(res => {
         this.readData(res, svgElement);
         this.cdr.detectChanges();
       });
@@ -485,7 +485,7 @@ export class OriginMapNewsletterGlobalComponent extends OriginMapComponent{
     setTimeout(() => {
       this.isScaled = true;
       if (svgElement) {
-        this.db.getNewslettersGeo().then(res => {
+        this.api.getNewslettersGeo().then(res => {
           this.readData(res, svgElement);
           this.cdr.detectChanges();
         });

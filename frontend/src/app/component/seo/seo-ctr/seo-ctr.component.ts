@@ -16,7 +16,7 @@ export class SeoCtrComponent extends DashBaseComponent implements OnInit{
   data_ctr : number[] = [];
 
   ngOnInit(): void {
-    this.db.getSeoImpCtrNow().then(res => {
+    this.api.getSeoImpCtrNow().then(res => {
       this.labels = res.map((r) => {
         let result = new Date(r.keys[0]).toLocaleDateString();
         return result.substring(0, result.lastIndexOf("."))});

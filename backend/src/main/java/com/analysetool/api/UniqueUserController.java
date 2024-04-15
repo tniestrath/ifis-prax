@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.repositories.UniqueUserRepository;
 import com.analysetool.services.UniqueUserService;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,7 +65,16 @@ public class UniqueUserController {
         return String.valueOf(uniqueUserService.getBounceRateToday());
     }
 
-
+    
+    @GetMapping("/getTimeSpendInSegments")
+    public String getTimeSpendInSegments(){
+        try {
+            return uniqueUserService.getSessionTimeInTimeSegments();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Fehler Mehler";
+        }
+    }
 
 
 

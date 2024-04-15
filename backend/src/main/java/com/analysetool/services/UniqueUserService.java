@@ -209,6 +209,13 @@ public class UniqueUserService {
        return uniqueUserRepo.getAllIps();
     }
 
+    /**
+     * Filtert die Liste aller UniqueUser um diejenigen auszuschließen, die in der TrackingBlacklist enthalten sind.
+     *
+     * @param uniques Die vollständige Liste von UniqueUser Objekten.
+     * @param blocked Die vollständige Liste von TrackingBlacklist Objekten.
+     * @return Eine gefilterte Liste von UniqueUser Objekten, die nicht in der TrackingBlacklist enthalten sind.
+     */
     public List<UniqueUser> filterOutBlocked(List<UniqueUser> uniques, List<TrackingBlacklist> blocked) {
 
         Set<String> blockedIPs = new HashSet<>();
@@ -225,6 +232,14 @@ public class UniqueUserService {
 
         return filtered;
     }
+
+    /**
+     * Gliedert die Verweildauer aller nicht blockierten UniqueUser in definierte Zeitsegmente
+     * und zählt die Anzahl der Benutzer in jedem Segment. Die Ergebnisse werden in einem JSON-Objekt gespeichert.
+     *
+     * @return Ein String im JSON-Format, der die Zeitsegmente als Schlüssel und die Anzahl der Benutzer als Werte enthält.
+     *         Beispiel: {"0-10 Sekunden": 5, "11-30 Sekunden": 15, "31-60 Sekunden": 20, "61-180 Sekunden": 7, "181-600 Sekunden": 2, "601-1800 Sekunden": 1, "1800+ Sekunden": 0}
+     */
     public String getSessionTimeInTimeSegments() throws JSONException {
         List<UniqueUser> allUniques = uniqueUserRepo.findAll();
         List<TrackingBlacklist> allBlocked = trackBlackRepo.findAll();

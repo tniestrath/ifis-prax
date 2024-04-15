@@ -416,7 +416,6 @@ public class LogService {
 
         }
 
-
         run(liveScanning,Pfad, SystemVariabeln);
 
         updateLetterCountForAll();
@@ -476,6 +475,7 @@ public class LogService {
         lastLineCounter=SystemVariabeln.getLastLineCount();
         lastLine = SystemVariabeln.getLastLine();
         lineCounter = 0;
+        new Constants(postTypeRepo, termRepo);
         try  {
             br = new BufferedReader(new FileReader(path));
             findAMatch(SystemVariabeln);

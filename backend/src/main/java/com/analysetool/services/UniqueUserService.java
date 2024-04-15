@@ -1,7 +1,8 @@
 package com.analysetool.services;
 
+import com.analysetool.modells.TrackingBlacklist;
 import com.analysetool.modells.UniqueUser;
-import com.analysetool.repositories.UniqueUserRepository;
+import com.analysetool.repositories.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,11 @@ public class UniqueUserService {
     @Autowired
     UniqueUserRepository uniqueUserRepo;
 
+    @Autowired
+    universalStatsRepository uniRepo;
 
+    @Autowired
+    TrackingBlacklistRepository trackBlackRepo;
 
     public String reconstructClickPath(UniqueUser user) {
         Map<Integer, String> clickMap = new TreeMap<>();
@@ -201,5 +206,29 @@ public class UniqueUserService {
 
     public List<String> getIpsToday(){
        return uniqueUserRepo.getAllIps();
+    }
+
+    public List<UniqueUser> filterOutBlocked(List<UniqueUser> uniques, List<TrackingBlacklist> blocked) {
+
+        Set<String> blockedIPs = new HashSet<>();
+        for (TrackingBlacklist b : blocked) {
+            blockedIPs.add(b.getIp());
+        }
+        
+        List<UniqueUser> filtered = new ArrayList<>();
+        for (UniqueUser u : uniques) {
+            if (!blockedIPs.contains(u.getIp())) {
+                filtered.add(u);
+            }
+        }
+
+        return filtered;
+    }
+    public String getSessionTimeInSegments(){
+        List<UniqueUser> allUniques = uniqueUserRepo.findAll();
+        List<TrackingBlacklist> allBlocked =trackBlackRepo.findAll();
+
+
+        return "";
     }
 }

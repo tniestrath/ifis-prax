@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface TagStatRepository extends JpaRepository<TagStat, Long> {
 
     @Query("SELECT s FROM TagStat s WHERE s.tagId =:id")
-    TagStat getStatById(int id);
+    List<TagStat> getStatById(int id);
 
     boolean existsByTagId(int tagId);
 

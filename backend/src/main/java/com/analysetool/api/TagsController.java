@@ -104,7 +104,7 @@ public class TagsController {
 
     @GetMapping("/getTagStat")
     public String getTagStat(@RequestParam Long id)throws JSONException{
-        TagStat tagStat = tagStatRepo.getStatById(id.intValue());
+        TagStat tagStat = tagStatRepo.getStatById(id.intValue()).get(0);
         JSONObject obj = new JSONObject();
         obj.put("Tag-Id",tagStat.getTagId());
         obj.put("Relevance",tagStatRepo.getRelevance(tagStat.getTagId()));
@@ -210,7 +210,7 @@ public class TagsController {
                 obj.put("count", getCount(tax.getTermId().intValue(), new Date()));
                 if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) {
                     obj.put("relevance", (tagStatRepo.getRelevance(tax.getTermId().intValue()) / tagStatRepo.getMaxRelevance()) * 100);
-                    obj.put("views", tagStatRepo.getStatById(tax.getTermId().intValue()).getViews());
+                    obj.put("views", tagStatRepo.getStatById(tax.getTermId().intValue()).get(0).getViews());
                 }
                 else {
                     obj.put("relevance", 0);
@@ -284,7 +284,7 @@ public class TagsController {
         int dayOfYear = getDayOfYear();
         TagStat tagStat = new TagStat();
         if (tagStatRepo.existsByTagId(tagId)){
-            tagStat = tagStatRepo.getStatById(tagId);
+            tagStat = tagStatRepo.getStatById(tagId).get(0);
         }
         for(int i=limitDaysBack;i>0;i--){
             JSONObject obj =new JSONObject();

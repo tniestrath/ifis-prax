@@ -29,7 +29,7 @@ public interface TagStatRepository extends JpaRepository<TagStat, Long> {
     @Query("SELECT SUM(t.views) FROM TagStat t WHERE t.uniId + 7 >= (SELECT u.id FROM UniversalStats u ORDER BY u.id DESC LIMIT 1)")
     double getRelevance(int tagId);
 
-    @Query("SELECT t FROM TagStat t WHERE t.uniId + :daysBack >= (SELECT u.id FROM UniversalStats u ORDER BY u.id DESC LIMIT 1)")
+    @Query("SELECT SUM(t.views) FROM TagStat t WHERE t.uniId + :daysBack >= (SELECT u.id FROM UniversalStats u ORDER BY u.id DESC LIMIT 1)")
     int getViewsDaysBack(int daysBack);
 
 }

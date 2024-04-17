@@ -302,6 +302,15 @@ public class TagsController {
         return response.toString();
     }
 
+    @GetMapping("/getRelevance")
+    public double getRelevance(int id) {
+        return tagStatRepo.getRelevance(id);
+    }
+
+    @GetMapping("/getMaxRelevance")
+    public double getMaxRelevance() {
+        return tagStatRepo.getMaxRelevance();
+    }
 }
 
 

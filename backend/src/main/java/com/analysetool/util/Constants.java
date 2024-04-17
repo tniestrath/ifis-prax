@@ -179,4 +179,13 @@ public class Constants {
         }
         return ids;
     }
+
+    public List<String> getListOfUserTypesDirty() {
+        List<String> list = new ArrayList<>();
+        list.add(basisAnbieter);
+        list.add(basisPlusAnbieter);
+        list.add(plusAnbieter);
+        list.add(premiumAnbieter);
+        return list;
+    }
 }

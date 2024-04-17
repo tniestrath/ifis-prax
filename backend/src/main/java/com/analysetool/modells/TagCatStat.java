@@ -19,7 +19,7 @@ public class TagCatStat {
     @Column(name = "views")
     private long views;
 
-    @Column(name = "views")
+    @Column(name = "hour")
     private int hour;
 
     @Column(name = "uni_id")

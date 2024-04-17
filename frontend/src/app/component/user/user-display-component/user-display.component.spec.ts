@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserDisplayComponentComponent } from './user-display-component.component';
+import { UserDisplayComponent } from './user-display.component';
 
 describe('UserDisplayComponentComponent', () => {
-  let component: UserDisplayComponentComponent;
-  let fixture: ComponentFixture<UserDisplayComponentComponent>;
+  let component: UserDisplayComponent;
+  let fixture: ComponentFixture<UserDisplayComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [UserDisplayComponentComponent]
+      declarations: [UserDisplayComponent]
     });
-    fixture = TestBed.createComponent(UserDisplayComponentComponent);
+    fixture = TestBed.createComponent(UserDisplayComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

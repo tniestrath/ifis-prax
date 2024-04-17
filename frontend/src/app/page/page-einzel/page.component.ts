@@ -32,7 +32,7 @@ import {PostTypeComponent} from "../../component/post/post-type/post-type.compon
 import {ProfileCompletionComponent} from "../../component/user/profile-completion/profile-completion.component";
 import {UserComparatorComponent} from "../../component/user/user-comparator/user-comparator.component";
 import {UserStatsByPlanComponent, UserStatsByPlanViewTypeCompareComponent} from "../../component/user/user-stats-by-plan/user-stats-by-plan.component";
-import {UserDisplayComponentComponent} from "../../component/user/user-display-component/user-display-component.component";
+import {UserDisplayComponent} from "../../component/user/user-display-component/user-display.component";
 import {UserClicksChartComponent} from "../../component/user/user-clicks-chart/user-clicks-chart.component";
 import {SingleUserTagsDistComponent, UserTagsDistComponent} from "../../component/user/user-tags-dist/user-tags-dist.component";
 import {PdfService} from "../../services/pdf.service";
@@ -82,8 +82,8 @@ export class PageComponent implements OnInit {
       {type: UserClicksChartComponent, row: 1, col: 2, height: 2, width: 3},
       {type: ProfileCompletionComponent, row: 3, col: 2, height: 2, width: 2},
       {type: UserEventsStatsComponent, row: 3, col: 4, height: 2, width: 1},
-      {type: OriginMapComponent, row: 5, col: 2, height: 2, width: 2},
-      {type: UserDisplayComponentComponent, row: 1, col: 5, height: 1, width: 2},
+      {type: OriginMapComponent, row: 5, col: 2, height: 2, width: 3},
+      {type: UserDisplayComponent, row: 1, col: 5, height: 1, width: 2},
       {type: SingleUserTagsDistComponent, row: 2, col: 5, height: 1, width: 2},
       {type: UserPostListComponent, row: 3, col: 5, height: 2, width: 2},
       {type: UserEventListComponent, row: 5, col: 5, height: 2, width: 2},
@@ -95,7 +95,7 @@ export class PageComponent implements OnInit {
     return [
       {type: ClicksComponent, row: 1, col: 1, height: 4, width: 2},
       {type: ProfileCompletionComponent, row: 5, col: 1, height: 2, width: 2},
-      {type: UserDisplayComponentComponent, row: 1, col: 3, height: 1, width: 4},
+      {type: UserDisplayComponent, row: 1, col: 3, height: 1, width: 4},
       {type: SingleUserTagsDistComponent, row: 2, col: 3, height: 2, width: 4},
       {type: UserClicksChartComponent, row: 4, col: 3, height: 2, width: 4},
       {type: EventListComponent, row: 6, col: 3, height: 1, width: 4}

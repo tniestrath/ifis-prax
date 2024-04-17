@@ -66,7 +66,7 @@ import {
   UserStatsByPlanComponent,
   UserStatsByPlanViewTypeCompareComponent
 } from './component/user/user-stats-by-plan/user-stats-by-plan.component';
-import { UserDisplayComponentComponent } from './component/user/user-display-component/user-display-component.component';
+import { UserDisplayComponent } from './component/user/user-display-component/user-display.component';
 import { UserClicksChartComponent } from './component/user/user-clicks-chart/user-clicks-chart.component';
 import {
   SingleUserTagsDistComponent,
@@ -96,7 +96,6 @@ import { PostDisplayComponent } from './component/post/post-display/post-display
 import { BlackHoleListComponent } from './component/system/black-hole-list/black-hole-list.component';
 import { BadBotItemComponent } from './component/system/black-hole-list/bad-bot-item/bad-bot-item.component';
 import { DashListComponent } from './component/dash-list/dash-list.component';
-import { DashListItemComponent } from './component/dash-list/dash-list-item/dash-list-item.component';
 
 @NgModule({
   declarations: [
@@ -154,7 +153,7 @@ import { DashListItemComponent } from './component/dash-list/dash-list-item/dash
     UserComparatorComponent,
     UserStatsByPlanComponent,
     UserStatsByPlanViewTypeCompareComponent,
-    UserDisplayComponentComponent,
+    UserDisplayComponent,
     UserClicksChartComponent,
     UserTagsDistComponent,
     SingleUserTagsDistComponent,

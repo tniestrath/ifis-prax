@@ -3,14 +3,15 @@ package com.analysetool.util;
 import com.analysetool.repositories.PostTypeRepository;
 import com.analysetool.repositories.WPTermRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Scope("singleton")
 public class Constants {
-
 
     @Autowired
     private PostTypeRepository ptRepo;
@@ -45,17 +46,23 @@ public class Constants {
 
     private final long podcastTermId = 386L;
 
-    // Private constructor to prevent external instantiation
-    private Constants() {
+    private final String ratgeberSlug = "ratgeber";
+
+    private final String cyberRiskSlug = "cyber-risk-check";
+
+    private static Constants instance;
+
+    @Autowired
+    public Constants(PostTypeRepository ptRepo, WPTermRepository termRepo) {
+        this.ptRepo = ptRepo;
+        this.termRepo = termRepo;
+        instance = this;
     }
 
-    private static final class InstanceHolder {
-        private static final Constants instance = new Constants();
-    }
 
     // Lazy initialization of the singleton instance
     public static Constants getInstance() {
-        return InstanceHolder.instance;
+        return instance;
     }
 
     public String getBlogSlug() {
@@ -134,11 +141,51 @@ public class Constants {
         return ptRepo.getDistinctTypes();
     }
 
+    public PostTypeRepository getPtRepo() {
+        return ptRepo;
+    }
+
+    public WPTermRepository getTermRepo() {
+        return termRepo;
+    }
+
+    public String getRatgeberSlug() {
+        return ratgeberSlug;
+    }
+
+    public String getCyberRiskSlug() {
+        return cyberRiskSlug;
+    }
+
     public List<Integer> getListOfPostTypesInteger() {
         List<Integer> ids = new ArrayList<>();
         for(String type : getListOfPostTypesSlug()) {
-            ids.add(termRepo.findBySlug(type).getId().intValue());
+            if(!type.equals("podcast") && !type.startsWith("Event") && !type.equals("blog") && !type.equals("ratgeber")) {
+                if(termRepo.findBySlug(type) == null) continue;
+                ids.add(termRepo.findBySlug(type).getId().intValue());
+            } else if (type.equals("podcast")){
+                ids.add((int) podcastTermId);
+            } else if(type.startsWith("Event")){
+                if(type.contains("Messe")) ids.add((int) messenTermId);
+                if(type.contains("Kongress")) ids.add((int) kongressTermId);
+                if(type.contains("Schulung")) ids.add((int) schulungTermId);
+                if(type.contains("Workshop")) ids.add((int) workshopTermId);
+                if(type.contains("Sonstige")) ids.add((int) sonstigeEventsTermId);
+            } else if(type.equals("blog")){
+                ids.add(termRepo.findBySlug(blogSlug).getId().intValue());
+            } else {
+                ids.add(termRepo.findBySlug(cyberRiskSlug).getId().intValue());
+            }
         }
         return ids;
+    }
+
+    public List<String> getListOfUserTypesDirty() {
+        List<String> list = new ArrayList<>();
+        list.add(basisAnbieter);
+        list.add(basisPlusAnbieter);
+        list.add(plusAnbieter);
+        list.add(premiumAnbieter);
+        return list;
     }
 }

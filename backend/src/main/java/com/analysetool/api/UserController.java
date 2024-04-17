@@ -1236,7 +1236,7 @@ public class UserController {
      * @param id user id to fetch an account type for.
      * @return "um_basis" "um_plus" "um_premium" "um_basis-plus" "admin" "none"
      */
-    private String getTypeDirty(int id) {
+    public String getTypeDirty(int id) {
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "customer";

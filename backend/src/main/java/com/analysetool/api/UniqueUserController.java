@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.repositories.UniqueUserRepository;
 import com.analysetool.services.UniqueUserService;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,7 +65,22 @@ public class UniqueUserController {
         return String.valueOf(uniqueUserService.getBounceRateToday());
     }
 
-
+    /**
+     * Gliedert die Verweildauer aller nicht blockierten UniqueUser in definierte Zeitsegmente
+     * und zählt die Anzahl der Benutzer in jedem Segment. Die Ergebnisse werden in einem JSON-Objekt gespeichert.
+     *
+     * @return Ein String im JSON-Format, der die Zeitsegmente als Schlüssel und die Anzahl der Benutzer als Werte enthält.
+     *         Beispiel: {"0-10 Sekunden": 5, "11-30 Sekunden": 15, "31-60 Sekunden": 20, "61-180 Sekunden": 7, "181-600 Sekunden": 2, "601-1800 Sekunden": 1, "1800+ Sekunden": 0}
+     */
+    @GetMapping("/getTimeSpendInSegments")
+    public String getTimeSpendInSegments(){
+        try {
+            return uniqueUserService.getSessionTimeInTimeSegments();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Fehler Mehler";
+        }
+    }
 
 
 

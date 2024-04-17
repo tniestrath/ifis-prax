@@ -122,6 +122,17 @@ public class LogService {
     private GeoNamesPostalRepository geoNamesRepo;
     @Autowired
     private FinalSearchStatDLCRepository fDLCRepo;
+    @Autowired
+    private TagCatStatRepository tagCatRepo;
+
+    @Autowired
+    private RankingTotalProfileRepository rankingTotalProfileRepo;
+    @Autowired
+    private RankingTotalContentRepository rankingTotalContentRepo;
+    @Autowired
+    private RankingGroupProfileRepository rankingGroupProfileRepo;
+    @Autowired
+    private RankingGroupContentRepository rankingGroupContentRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -224,6 +235,8 @@ public class LogService {
 
     private final String anbieterVerzeichnisPatter = "^.*GET /anbieterverzeichnis/";
 
+    private final String tagCatPatter = "GET \\/themenfeld\\/([^\\/]+)\\/";
+
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
 
     final Pattern blackHoleTrapPattern = Pattern.compile(BlackHolePattern);
@@ -274,6 +287,7 @@ public class LogService {
     final Pattern videoViewPattern = Pattern.compile(videoViewPatter);
     final Pattern eventCatPattern = Pattern.compile(eventCatView);
     final Pattern anbieterCatPattern = Pattern.compile(anbieterVerzeichnisPatter);
+    final Pattern tagCatPattern = Pattern.compile(tagCatPatter);
 
     private String lastLine = "";
     private int lineCounter = 0;
@@ -416,7 +430,6 @@ public class LogService {
 
         }
 
-
         run(liveScanning,Pfad, SystemVariabeln);
 
         updateLetterCountForAll();
@@ -476,6 +489,7 @@ public class LogService {
         lastLineCounter=SystemVariabeln.getLastLineCount();
         lastLine = SystemVariabeln.getLastLine();
         lineCounter = 0;
+        new Constants(postTypeRepo, termRepo);
         try  {
             br = new BufferedReader(new FileReader(path));
             findAMatch(SystemVariabeln);
@@ -753,6 +767,9 @@ public class LogService {
                     //Does it match a anbieterverzeichnis-view?
                     Matcher matched_anbieterverzeichnis_view = anbieterCatPattern.matcher(request);
 
+                    //Does it match a tag-category view? (/themenfeld/)
+                    Matcher matched_tagcat_view = tagCatPattern.matcher(request);
+
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
@@ -897,6 +914,9 @@ public class LogService {
                     } else if(matched_blackHole.find()) {
                         whatMatched = "bLaCkHoLe";
                         patternMatcher = matched_blackHole;
+                    } else if(matched_tagcat_view.find()) {
+                        whatMatched = "tagCat";
+                        patternMatcher = matched_tagcat_view;
                     }
 
                     //If user existed,
@@ -1261,73 +1281,73 @@ public class LogService {
         lastLine = line;
 
         switch(whatMatched) {
-            case "articleView", "blogView", "newsView", "wpView", "ratgeberPost", "podView", "videoView":
+            case "articleView", "blogView", "newsView", "wpView", "ratgeberPost", "podView", "videoView" -> {
                 try {
                     UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
                     updateIPsByPost(ip, postRepository.getIdByName(patternMatcher.group(1)));
-                    updatePostClicksMap(postRepository.getIdByName(patternMatcher.group(1)),dateLog);
+                    updatePostClicksMap(postRepository.getIdByName(patternMatcher.group(1)), dateLog);
                 } catch (Exception e) {
                     System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
                 }
-                break;
-            case "articleSS", "blogSS", "newsSS", "wpSS":
+            }
+            case "articleSS", "blogSS", "newsSS", "wpSS" -> {
                 try {
                     Long postId = postRepository.getIdByName(patternMatcher.group(1));
-                    updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
-                    updatePostClicksMap(postId,dateLog);
+                    updateSearchDLCMap(ip, patternMatcher.group(2), postId, dateLog, "post");
+                    updatePostClicksMap(postId, dateLog);
                     UpdatePerformanceAndViews(dateLog, postId);
-                } catch(Exception e) {
-                    System.out.println("SS PROCESS LINE EXCEPTION " +line);
+                } catch (Exception e) {
+                    System.out.println("SS PROCESS LINE EXCEPTION " + line);
                 }
-                break;
-            case "eventSS":
+            }
+            case "eventSS" -> {
                 try {
-                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).isPresent()){
-                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+","-")).get().getPostID();
-                        updateSearchDLCMap(ip,patternMatcher.group(2),postId,dateLog,"post");
+                    if (eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+", "-")).isPresent()) {
+                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1).replace("+", "-")).get().getPostID();
+                        updateSearchDLCMap(ip, patternMatcher.group(2), postId, dateLog, "post");
                         updateIPsByPost(ip, postId);
-                        updatePostClicksMap(postId,dateLog);
+                        updatePostClicksMap(postId, dateLog);
                         UpdatePerformanceAndViews(dateLog, postId);
                     }
-                }   catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println("EVENTSS EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
-                break;
-            case "userSS":
+            }
+            case "userSS" -> {
                 try {
-                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
-                        updateSearchDLCMap(ip,patternMatcher.group(2),userId,dateLog,"user");
-                        updateUserStats(userId,dateLog);
+                    if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).get().getId();
+                        updateSearchDLCMap(ip, patternMatcher.group(2), userId, dateLog, "user");
+                        updateUserStats(userId, dateLog);
                         updateIPsByUser(ip, userId);
                     }
                 } catch (Exception e) {
                     System.out.println("USERSS EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
-                break;
-            case "userView":
+            }
+            case "userView" -> {
                 try {
-                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
-                        updateUserStats(userId,dateLog);
+                    if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).get().getId();
+                        updateUserStats(userId, dateLog);
                         updateIPsByUser(ip, userId);
                     }
                 } catch (Exception e) {
                     System.out.println("USERVIEW EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
-                break;
-            case "contentDownload":
+            }
+            case "contentDownload" -> {
                 try {
                     System.out.println("FOUND CONTENT DOWNLOAD \n\n");
                     //Edit Filename to make sure very similar files still work as intended
                     String filename = "/" + patternMatcher.group(1) + ".pdf";
-                    if(postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).isPresent()) {
+                    if (postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).isPresent()) {
                         long id = postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).get();
                         ContentDownloadsHourly download;
-                        if(contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).isEmpty()) {
+                        if (contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).isEmpty()) {
                             download = new ContentDownloadsHourly();
                             download.setUniId(uniRepo.getLatestUniStat().getId());
                             download.setHour(LocalDateTime.now().getHour());
@@ -1339,16 +1359,15 @@ public class LogService {
                         }
                         contentDownloadsHourlyRepo.save(download);
                     }
+                } catch (Exception e) {
+                    System.out.println("CONTENT DOWNLOAD EXCEPTION BEI: " + line);
                 }
-                catch (Exception e){
-                    System.out.println("CONTENT DOWNLOAD EXCEPTION BEI: "+ line);
-                }
-                break;
-            case "userRedirect":
+            }
+            case "userRedirect" -> {
                 try {
-                    if(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)) != null) {
+                    if (wpUserMetaRepository.getUserByURL(patternMatcher.group(1)) != null) {
                         UserRedirectsHourly redirects;
-                        if(userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).isPresent()) {
+                        if (userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).isPresent()) {
                             redirects = userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).get();
                         } else {
                             redirects = new UserRedirectsHourly();
@@ -1360,20 +1379,19 @@ public class LogService {
                         redirects.setRedirects(redirects.getRedirects() + 1);
                         userRedirectRepo.save(redirects);
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println("USERREDIRECT EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
-                break;
-            case "socialsLinkedInRedirect","socialsTwitterRedirect","socialsYouTubeRedirect","socialsFacebookRedirect":
+            }
+            case "socialsLinkedInRedirect", "socialsTwitterRedirect", "socialsYouTubeRedirect", "socialsFacebookRedirect" -> {
                 try {
-                    Integer latestUniId= uniRepo.getLatestUniStat().getId();
+                    Integer latestUniId = uniRepo.getLatestUniStat().getId();
                     Integer hour = dateLog.getHour();
                     OutgoingSocialsRedirects redirects;
 
-                    if(outgoingSocialsRepo.findByUniIdAndHour(latestUniId,hour).isPresent()) {
-                        redirects = outgoingSocialsRepo.findByUniIdAndHour(latestUniId,hour).get();
+                    if (outgoingSocialsRepo.findByUniIdAndHour(latestUniId, hour).isPresent()) {
+                        redirects = outgoingSocialsRepo.findByUniIdAndHour(latestUniId, hour).get();
                     } else {
                         redirects = new OutgoingSocialsRedirects();
                         redirects.setHour(dateLog.getHour());
@@ -1385,51 +1403,52 @@ public class LogService {
 
                     }
 
-                    outgoingSocialsRepo.save( updateSocialsRedirects(whatMatched , redirects));
+                    outgoingSocialsRepo.save(updateSocialsRedirects(whatMatched, redirects));
 
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println("SOCIALSREDIRECT EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
-                break;
-            case "eventView":
+            }
+            case "eventView" -> {
                 try {
-                    if(eventRepo.getActiveEventBySlug(patternMatcher.group(1)).isPresent()){
+                    if (eventRepo.getActiveEventBySlug(patternMatcher.group(1)).isPresent()) {
                         long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1)).get().getPostID();
                         UpdatePerformanceAndViews(dateLog, postId);
                         updateIPsByPost(ip, postId);
-                        updatePostClicksMap(postId,dateLog);
+                        updatePostClicksMap(postId, dateLog);
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.out.println("EVENTVIEW EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
-                break;
-            case "postImpressionFacebook","postImpressionTwitter","postImpressionLinkedIn","postImpressionFacebookTwitterCombo":
-                try{
-                    long id =postRepository.getIdByName(patternMatcher.group(2));
-                    socialsImpressionsService.updateSocialsImpressionsPost(whatMatched,dateLog,id);
-                    break;
-                } catch(Exception e){
-                    System.out.println("POST-SOCIAL EXCEPTION" + line );
-                }
-            case "userImpressionFacebook","userImpressionTwitter","userImpressionLinkedIn","userImpressionFacebookTwitterCombo":
+            }
+            case "postImpressionFacebook", "postImpressionTwitter", "postImpressionLinkedIn", "postImpressionFacebookTwitterCombo" -> {
                 try {
-                    if(wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+","-")).get().getId();
-                        socialsImpressionsService.updateSocialsImpressionsUser(whatMatched,dateLog,userId);
-                        break;
-                    }
+                    long id = postRepository.getIdByName(patternMatcher.group(2));
+                    socialsImpressionsService.updateSocialsImpressionsPost(whatMatched, dateLog, id);
                 } catch (Exception e) {
-                    System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
-                    e.printStackTrace();
+                    System.out.println("POST-SOCIAL EXCEPTION" + line);
                 }
-            case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar":
+            }
+            case "userImpressionFacebook", "userImpressionTwitter", "userImpressionLinkedIn", "userImpressionFacebookTwitterCombo" -> {
+            try {
+                if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).isPresent()) {
+                    Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).get().getId();
+                    socialsImpressionsService.updateSocialsImpressionsUser(whatMatched, dateLog, userId);
+                }
+            } catch (Exception e) {
+                System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
+                e.printStackTrace();
+            }
+        }
+            case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar" -> {
 
-            default:
-                break;
+            }
+
+            case "tagCat" -> {
+                updateTagCatStat(patternMatcher.group(1));
+            }
         }
 
     }
@@ -1874,7 +1893,8 @@ public class LogService {
         List<UserStats> userStats = userStatsRepo.findAll();
         userStatsRepo.saveAll(userStats);
 
-
+        //Update the ranking-buffer
+        updateRankings();
         //Delete Post-Types for Posts, that no longer exist
         deleteNullPostTypes();
         //Just in case permanentify failed
@@ -2088,61 +2108,37 @@ public class LogService {
     }
 
     /**
-     * Fetches relevance from a post's data.
-     * @param viewsLastYear a posts views during a year.
-     * @param currentDayOfYear the current day of year.
-     * @param time the current hour.
-     * @return a decimal float containing the "relevance" for the given Parameters.
-     */
-    public float getRelevance(HashMap<String,Long>viewsLastYear,int currentDayOfYear,int time){
-        int counter =currentDayOfYear-time;
-        long views=0;
-        while(counter<=currentDayOfYear){
-            views=views+(viewsLastYear.get(Integer.toString(counter)));
-            counter++;
-        }
-        return (float)views/time;
-    }
-
-    /**
      * Updates tag/term data in tagstat table.
-     * @param id the id of tag-stats to update.
+     * @param id the id of tag to update.
      * @param searchSuccess whether a search has succeeded.
      */
     @Transactional
     public void updateTagStats(long id,boolean searchSuccess){
-        TagStat Stats;
-        try {
-            Stats = tagStatRepo.getStatById((int) id);
-        } catch (Exception e) {
-            return;
-        }
-        if(termTaxRepo.findByTermId(Stats.getTagId()).getTaxonomy().equalsIgnoreCase("post_tag")) {
-            HashMap<String, Long> daily = (HashMap<String, Long>) Stats.getViewsLastYear();
-            Calendar calendar = Calendar.getInstance();
-            int currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
-            long views = daily.get(Integer.toString(currentDayOfYear));
-            views++;
-            daily.put(Integer.toString(currentDayOfYear), views);
-            Stats.setViewsLastYear(daily);
-            views = Stats.getViews();
-            views++;
-            Stats.setViews(views);
-            Stats.setRelevance(getRelevance(daily, currentDayOfYear, 7));
-            if (searchSuccess) {
-                int searchS = Stats.getSearchSuccess();
-                searchS++;
-                Stats.setSearchSuccess(searchS);
+
+        if(termTaxRepo.findByTermId((int) id).getTaxonomy().equalsIgnoreCase("post_tag")) {
+            TagStat stats;
+            int uniId = uniRepo.getLatestUniStat().getId();
+            int hour = LocalDateTime.now().getHour();
+
+            if (tagStatRepo.getByTagIdDayAndHour(id, uniId, hour).isPresent()) {
+                stats = tagStatRepo.getByTagIdDayAndHour(id, uniId, hour).get();
+                stats.setViews(stats.getViews() + 1);
+                stats.setSearchSuccess(searchSuccess ? stats.getSearchSuccess() + 1 : stats.getSearchSuccess());
+            } else {
+                stats = new TagStat();
+                stats.setHour(hour);
+                stats.setUniId(uniId);
+                stats.setTagId((int) id);
+                stats.setSearchSuccess(searchSuccess ? 1 : 0);
+                stats.setViews(1);
             }
-            tagStatRepo.save(Stats);
-        } else {
-            tagStatRepo.delete(Stats);
+            tagStatRepo.save(stats);
         }
     }
 
     /**
-     * ??? i dont even know
-     * @param id a tag-stats id.
+     * Updates all this posts tags increasing their views by 1.
+     * @param id a posts id.
      * @param searchSuccess whether a search has succeeded.
      */
     public void checkTheTag(long id,boolean searchSuccess){
@@ -2153,7 +2149,6 @@ public class LogService {
                 updateTagStats(l.intValue(),searchSuccess);}
             else {
                 if (termTaxRepo.findByTermId(l.intValue()).getTaxonomy().equals("post_tag")) {
-                    tagStatRepo.save(new TagStat(l.intValue(), 0, 0, (float) 0, (float) 0));
                     updateTagStats(l.intValue(), searchSuccess);
                 }
             }
@@ -3172,5 +3167,111 @@ public class LogService {
         updateAnbieterFailedSearchBuffer();
         deleteStandardSearch();
         cleanFinalSearchStatDLC();
+    }
+
+    /**
+     * Increments or creates a row of TagCatStat, increasing its views.
+     * @param slug the slug of the tag to update for.
+     */
+    private void updateTagCatStat(String slug) {
+        try {
+            TagCatStat cat = tagCatRepo.getTagCatStatByTagId(termRepo.findBySlug(slug).getId().intValue());
+            if (cat == null) {
+                cat = new TagCatStat();
+                cat.setTagId(termRepo.findBySlug(slug).getId().intValue());
+                cat.setHour(LocalDateTime.now().getHour());
+                cat.setUniId(uniRepo.getLatestUniStat().getId());
+                cat.setViews(1);
+                cat.setTagName(slug);
+            } else {
+                cat.setViews(cat.getViews() + 1);
+            }
+            tagCatRepo.save(cat);
+        } catch (Exception ignored) {}
+
+    }
+
+    public void updateRankings() {
+        updateRankGroups();
+        updateRanksTotal();
+    }
+
+    private void updateRankGroups() {
+
+        //Reset all
+        if(!rankingGroupContentRepo.findAll().isEmpty()) {
+            rankingGroupContentRepo.deleteAll();
+        }
+        if(!rankingGroupProfileRepo.findAll().isEmpty()) {
+            rankingGroupProfileRepo.deleteAll();
+        }
+
+        for(String type : Constants.getInstance().getListOfUserTypesDirty()) {
+            int rank = 1;
+            List<WPUser> users = wpUserRepo.getByAboType(type);
+            //Sort for profile-view rankings
+            users.sort((o1, o2) -> Math.toIntExact((userStatsRepo.existsByUserId(o2.getId()) ? userStatsRepo.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepo.existsByUserId(o1.getId()) ? userStatsRepo.findByUserId(o1.getId()).getProfileView() : 0)));
+            //Make entries for profile-view rankings.
+            for(WPUser user : users) {
+                RankingGroupProfile profileRank = new RankingGroupProfile();
+                profileRank.setRank(rank);
+                rank++;
+                profileRank.setType(type);
+                profileRank.setUserId(Math.toIntExact(user.getId()));
+                rankingGroupProfileRepo.save(profileRank);
+            }
+            rank = 1;
+
+            //Sort for content-view rankings
+            users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
+            //Make entries for content-view rankings.
+            for(WPUser user : users) {
+                RankingGroupContent contentRank = new RankingGroupContent();
+                contentRank.setRank(rank);
+                rank++;
+                contentRank.setType(type);
+                contentRank.setUserId(Math.toIntExact(user.getId()));
+                rankingGroupContentRepo.save(contentRank);
+            }
+
+        }
+    }
+
+    private void updateRanksTotal() {
+        if(!rankingTotalContentRepo.findAll().isEmpty()) {
+            rankingTotalContentRepo.deleteAll();
+        }
+        if(!rankingTotalProfileRepo.findAll().isEmpty()) {
+            rankingTotalProfileRepo.deleteAll();
+        }
+
+        for(String type : Constants.getInstance().getListOfUserTypesDirty()) {
+            int rank = 1;
+
+            List<WPUser> users = wpUserRepo.getAllWithAbo();
+            //Sort for profile-view rankings
+            users.sort((o1, o2) -> Math.toIntExact((userStatsRepo.existsByUserId(o2.getId()) ? userStatsRepo.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepo.existsByUserId(o1.getId()) ? userStatsRepo.findByUserId(o1.getId()).getProfileView() : 0)));
+            //Make entries for profile-view rankings.
+            for(WPUser user : users) {
+                RankingTotalProfile profileRank = new RankingTotalProfile();
+                profileRank.setRank(rank);
+                rank++;
+                profileRank.setUserId(Math.toIntExact(user.getId()));
+                rankingTotalProfileRepo.save(profileRank);
+            }
+            rank = 1;
+
+            //Sort for content-view rankings
+            users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
+            //Make entries for content-view rankings.
+            for(WPUser user : users) {
+                RankingTotalContent contentRank = new RankingTotalContent();
+                contentRank.setRank(rank);
+                rank++;
+                contentRank.setUserId(Math.toIntExact(user.getId()));
+                rankingTotalContentRepo.save(contentRank);
+            }
+
+        }
     }
 }

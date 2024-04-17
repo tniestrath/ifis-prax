@@ -104,10 +104,10 @@ public class TagsController {
 
     @GetMapping("/getTagStat")
     public String getTagStat(@RequestParam Long id)throws JSONException{
-        TagStat tagStat = tagStatRepo.getStatById(id.intValue());
+        TagStat tagStat = tagStatRepo.getStatById(id.intValue()).get(0);
         JSONObject obj = new JSONObject();
         obj.put("Tag-Id",tagStat.getTagId());
-        obj.put("Relevance",tagStat.getRelevance());
+        obj.put("Relevance",tagStatRepo.getRelevance(tagStat.getTagId()));
         obj.put("Search Successes",tagStat.getSearchSuccess());
         obj.put("Views",tagStat.getViews());
         return obj.toString();
@@ -123,7 +123,7 @@ public class TagsController {
                 //noinspection OptionalGetWithoutIsPresent
                 obj.put("name",termRepository.findById(tax.getTermId()).get().getName());
                 obj.put("id", tax.getTermId());
-                if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) { obj.put("relevance", tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance());}
+                if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) { obj.put("relevance", tagStatRepo.getRelevance(tax.getTermId().intValue()));}
                 else {obj.put("relevance", 0);}
                 obj.put("count",tax.getCount());
                 response.put(obj);
@@ -144,8 +144,7 @@ public class TagsController {
                 //noinspection OptionalGetWithoutIsPresent
                 obj.put("name",termRepository.findById(tax.getTermId()).get().getName());
                 if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) {
-                    obj.put("relevance", tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance());
-                    obj.put("performance", tagStatRepo.getStatById(tax.getTermId().intValue()).getPerformance());
+                    obj.put("relevance", tagStatRepo.getRelevance(tax.getTermId().intValue()));
                 }
                 else {
                     obj.put("relevance", 0);
@@ -179,9 +178,6 @@ public class TagsController {
         if(sorter.equalsIgnoreCase("relevance")) {
             top3 = tagStatRepo.getTop3Relevance();
         }
-        if(sorter.equalsIgnoreCase("performance")) {
-            top3 = tagStatRepo.getTop3Performance();
-        }
 
         String jsonString = null;
 
@@ -213,8 +209,8 @@ public class TagsController {
                 obj.put("id", tax.getTermId());
                 obj.put("count", getCount(tax.getTermId().intValue(), new Date()));
                 if (tagStatRepo.existsByTagId(tax.getTermId().intValue())) {
-                    obj.put("relevance", (tagStatRepo.getStatById(tax.getTermId().intValue()).getRelevance() / tagStatRepo.getMaxRelevance()) * 100);
-                    obj.put("views", tagStatRepo.getStatById(tax.getTermId().intValue()).getViews());
+                    obj.put("relevance", (tagStatRepo.getRelevance(tax.getTermId().intValue()) / tagStatRepo.getMaxRelevance()) * 100);
+                    obj.put("views", tagStatRepo.getStatById(tax.getTermId().intValue()).get(0).getViews());
                 }
                 else {
                     obj.put("relevance", 0);
@@ -288,7 +284,7 @@ public class TagsController {
         int dayOfYear = getDayOfYear();
         TagStat tagStat = new TagStat();
         if (tagStatRepo.existsByTagId(tagId)){
-            tagStat = tagStatRepo.getStatById(tagId);
+            tagStat = tagStatRepo.getStatById(tagId).get(0);
         }
         for(int i=limitDaysBack;i>0;i--){
             JSONObject obj =new JSONObject();
@@ -296,9 +292,9 @@ public class TagsController {
             obj.put("name",termRepository.getNameById(tagId));
             obj.put("date", new SimpleDateFormat("yyyy-MM-dd").format(getDate(i)));
             switch (dataType) {
-                case "relevance" -> obj.put("relevance", (getRelevance((HashMap<String, Long>) tagStat.getViewsLastYear(), dayOfYear, i) / tagStatRepo.getMaxRelevance()) * 100 );
+                case "relevance" -> obj.put("relevance", (tagStatRepo.getRelevance(tagId) / tagStatRepo.getMaxRelevance()) * 100);
                 case "count" -> obj.put("count", getCount(tagId, getDate(i)));
-                case "views" -> obj.put("views", tagStat.getViewsLastYear().get(String.valueOf(dayOfYear - i)));
+                case "views" -> obj.put("views", tagStatRepo.getViewsDaysBack(tagId, limitDaysBack) == null ? 0 : tagStatRepo.getViewsDaysBack(tagId, limitDaysBack));
             }
             response.put(obj);
         }
@@ -306,6 +302,15 @@ public class TagsController {
         return response.toString();
     }
 
+    @GetMapping("/getRelevance")
+    public double getRelevance(int id) {
+        return tagStatRepo.getRelevance(id);
+    }
+
+    @GetMapping("/getMaxRelevance")
+    public double getMaxRelevance() {
+        return tagStatRepo.getMaxRelevance();
+    }
 }
 
 

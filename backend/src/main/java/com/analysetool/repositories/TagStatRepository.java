@@ -2,44 +2,35 @@ package com.analysetool.repositories;
 
 
 import com.analysetool.modells.TagStat;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TagStatRepository extends JpaRepository<TagStat, Long> {
-    @Transactional
-    @Modifying
-    @Query("UPDATE TagStat s SET s.views = :clicks , s.searchSuccess =:searchSuccess , s.performance=:performance WHERE s.tagId =:tagId")
-    void updateClicksSearchSuccessPerformance( Long tagId,  Long clicks, Long searchSuccess, float performance);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE TagStat s SET s.views = :clicks , s.performance=:performance WHERE s.tagId =:tagId")
-    void updateClicksAndPerformanceByArtId( Long clicks,  Long tagId, float performance);
-
-    @Query("select s.performance from TagStat s where s.tagId=:tagId")
-    float getPerformanceByArtID(int tagId);
-
-    @Query("SELECT MAX(s.performance) FROM TagStat s")
-    float getMaxPerformance();
 
     @Query("SELECT s FROM TagStat s WHERE s.tagId =:id")
-    TagStat getStatById(int id);
+    List<TagStat> getStatById(int id);
 
     boolean existsByTagId(int tagId);
 
-    @Query("SELECT s.tagId FROM TagStat s ORDER BY s.relevance DESC LIMIT 3")
+    @Query("SELECT t FROM TagStat t WHERE t.tagId=:tagId AND t.uniId=:uniId AND t.hour=:hour")
+    Optional<TagStat> getByTagIdDayAndHour(long tagId, int uniId, int hour);
+
+    @Query("SELECT s.tagId FROM TagStat s WHERE s.uniId + 7 >= (SELECT u.id FROM UniversalStats u ORDER BY u.id DESC LIMIT 1) ORDER BY s.views DESC LIMIT 3")
     List<Long> getTop3Relevance();
 
-    @Query("SELECT s.tagId FROM TagStat s ORDER BY s.performance DESC LIMIT 3")
-    List<Long> getTop3Performance();
-
-    @Query("SELECT MAX(t.relevance) FROM TagStat t")
+    @Query("SELECT SUM(t.views) AS relevance FROM TagStat t WHERE t.uniId + 7 >= (SELECT u.id FROM UniversalStats u ORDER BY u.id DESC LIMIT 1) ORDER BY relevance DESC LIMIT 1")
     int getMaxRelevance();
+
+    @Query("SELECT SUM(t.views) FROM TagStat t WHERE t.tagId =:tagId AND  t.uniId + 7 >= (SELECT u.id FROM UniversalStats u ORDER BY u.id DESC LIMIT 1)")
+    double getRelevance(int tagId);
+
+    @Query("SELECT SUM(t.views) FROM TagStat t WHERE t.tagId=:id AND t.uniId + :daysBack = (SELECT u.id FROM UniversalStats u ORDER BY u.id DESC LIMIT 1)")
+    Integer getViewsDaysBack(int id, int daysBack);
+
 }
 

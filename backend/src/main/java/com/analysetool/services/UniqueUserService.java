@@ -1,9 +1,11 @@
 package com.analysetool.services;
 
+import com.analysetool.modells.TrackingBlacklist;
 import com.analysetool.modells.UniqueUser;
-import com.analysetool.repositories.UniqueUserRepository;
+import com.analysetool.repositories.*;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +24,11 @@ public class UniqueUserService {
     @Autowired
     UniqueUserRepository uniqueUserRepo;
 
+    @Autowired
+    universalStatsRepository uniRepo;
 
+    @Autowired
+    TrackingBlacklistRepository trackBlackRepo;
 
     public String reconstructClickPath(UniqueUser user) {
         Map<Integer, String> clickMap = new TreeMap<>();
@@ -201,5 +207,70 @@ public class UniqueUserService {
 
     public List<String> getIpsToday(){
        return uniqueUserRepo.getAllIps();
+    }
+
+    /**
+     * Filtert die Liste aller UniqueUser um diejenigen auszuschließen, die in der TrackingBlacklist enthalten sind.
+     *
+     * @param uniques Die vollständige Liste von UniqueUser Objekten.
+     * @param blocked Die vollständige Liste von TrackingBlacklist Objekten.
+     * @return Eine gefilterte Liste von UniqueUser Objekten, die nicht in der TrackingBlacklist enthalten sind.
+     */
+    public List<UniqueUser> filterOutBlocked(List<UniqueUser> uniques, List<TrackingBlacklist> blocked) {
+
+        Set<String> blockedIPs = new HashSet<>();
+        for (TrackingBlacklist b : blocked) {
+            blockedIPs.add(b.getIp());
+        }
+
+        List<UniqueUser> filtered = new ArrayList<>();
+        for (UniqueUser u : uniques) {
+            if (!blockedIPs.contains(u.getIp())) {
+                filtered.add(u);
+            }
+        }
+
+        return filtered;
+    }
+
+    /**
+     * Gliedert die Verweildauer aller nicht blockierten UniqueUser in definierte Zeitsegmente
+     * und zählt die Anzahl der Benutzer in jedem Segment. Die Ergebnisse werden in einem JSON-Objekt gespeichert.
+     *
+     * @return Ein String im JSON-Format, der die Zeitsegmente als Schlüssel und die Anzahl der Benutzer als Werte enthält.
+     *         Beispiel: {"0-10 Sekunden": 5, "11-30 Sekunden": 15, "31-60 Sekunden": 20, "61-180 Sekunden": 7, "181-600 Sekunden": 2, "601-1800 Sekunden": 1, "1800+ Sekunden": 0}
+     */
+    public String getSessionTimeInTimeSegments() throws JSONException {
+        List<UniqueUser> allUniques = uniqueUserRepo.findAll();
+        List<TrackingBlacklist> allBlocked = trackBlackRepo.findAll();
+
+        List<UniqueUser> filteredUniques = filterOutBlocked(allUniques, allBlocked);
+        JSONObject obj = new JSONObject();
+
+        // Segmentierung der Verweildauer in Sekunden
+        int[] segments = {0, 11, 31, 61, 181, 601, 1801}; // Die oberen Grenzen für jedes Segment (exclusive das letzte Element)
+        int[] counts = new int[segments.length];
+
+        for (UniqueUser user : filteredUniques) {
+            int timeSpent = user.getTime_spent();
+
+            // Segment finden und Zähler inkrementieren
+            for (int i = 0; i < segments.length; i++) {
+                if (timeSpent < segments[i]) {
+                    counts[i]++;
+                    break;
+                } else if (i == segments.length - 1 && timeSpent >= segments[i]) {
+                    counts[i]++;
+                }
+            }
+        }
+
+
+        String[] segmentLabels = {"0-10 Sekunden", "11-30 Sekunden", "31-60 Sekunden", "61-180 Sekunden", "181-600 Sekunden", "601-1800 Sekunden", "1800+ Sekunden"};
+        for (int i = 0; i < segmentLabels.length; i++) {
+            obj.put(segmentLabels[i], counts[i]);
+        }
+
+        return obj.toString();
     }
 }

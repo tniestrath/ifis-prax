@@ -2098,55 +2098,31 @@ public class LogService {
     }
 
     /**
-     * Fetches relevance from a post's data.
-     * @param viewsLastYear a posts views during a year.
-     * @param currentDayOfYear the current day of year.
-     * @param time the current hour.
-     * @return a decimal float containing the "relevance" for the given Parameters.
-     */
-    public float getRelevance(HashMap<String,Long>viewsLastYear,int currentDayOfYear,int time){
-        int counter =currentDayOfYear-time;
-        long views=0;
-        while(counter<=currentDayOfYear){
-            views=views+(viewsLastYear.get(Integer.toString(counter)));
-            counter++;
-        }
-        return (float)views/time;
-    }
-
-    /**
      * Updates tag/term data in tagstat table.
-     * @param id the id of tag-stats to update.
+     * @param id the id of tag to update.
      * @param searchSuccess whether a search has succeeded.
      */
     @Transactional
     public void updateTagStats(long id,boolean searchSuccess){
-        TagStat Stats;
-        try {
-            Stats = tagStatRepo.getStatById((int) id);
-        } catch (Exception e) {
-            return;
-        }
-        if(termTaxRepo.findByTermId(Stats.getTagId()).getTaxonomy().equalsIgnoreCase("post_tag")) {
-            HashMap<String, Long> daily = (HashMap<String, Long>) Stats.getViewsLastYear();
-            Calendar calendar = Calendar.getInstance();
-            int currentDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
-            long views = daily.get(Integer.toString(currentDayOfYear));
-            views++;
-            daily.put(Integer.toString(currentDayOfYear), views);
-            Stats.setViewsLastYear(daily);
-            views = Stats.getViews();
-            views++;
-            Stats.setViews(views);
-            Stats.setRelevance(getRelevance(daily, currentDayOfYear, 7));
-            if (searchSuccess) {
-                int searchS = Stats.getSearchSuccess();
-                searchS++;
-                Stats.setSearchSuccess(searchS);
+
+        if(termTaxRepo.findByTermId((int) id).getTaxonomy().equalsIgnoreCase("post_tag")) {
+            TagStat stats;
+            int uniId = uniRepo.getLatestUniStat().getId();
+            int hour = LocalDateTime.now().getHour();
+
+            if (tagStatRepo.getByTagIdDayAndHour(id, uniId, hour).isPresent()) {
+                stats = tagStatRepo.getByTagIdDayAndHour(id, uniId, hour).get();
+                stats.setViews(stats.getViews() + 1);
+                stats.setSearchSuccess(searchSuccess ? stats.getSearchSuccess() + 1 : stats.getSearchSuccess());
+            } else {
+                stats = new TagStat();
+                stats.setHour(hour);
+                stats.setUniId(uniId);
+                stats.setTagId((int) id);
+                stats.setSearchSuccess(searchSuccess ? 1 : 0);
+                stats.setViews(1);
             }
-            tagStatRepo.save(Stats);
-        } else {
-            tagStatRepo.delete(Stats);
+            tagStatRepo.save(stats);
         }
     }
 
@@ -2163,7 +2139,7 @@ public class LogService {
                 updateTagStats(l.intValue(),searchSuccess);}
             else {
                 if (termTaxRepo.findByTermId(l.intValue()).getTaxonomy().equals("post_tag")) {
-                    tagStatRepo.save(new TagStat(l.intValue(), 0, 0, (float) 0, (float) 0));
+                    tagStatRepo.save(new TagStat(l.intValue(), 0, 0, (float) 0));
                     updateTagStats(l.intValue(), searchSuccess);
                 }
             }

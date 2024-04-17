@@ -224,6 +224,8 @@ public class LogService {
 
     private final String anbieterVerzeichnisPatter = "^.*GET /anbieterverzeichnis/";
 
+    private final String tagCatPatter = "GET \\/themenfeld\\/([^\\/]+)\\/";
+
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
 
     final Pattern blackHoleTrapPattern = Pattern.compile(BlackHolePattern);
@@ -274,6 +276,7 @@ public class LogService {
     final Pattern videoViewPattern = Pattern.compile(videoViewPatter);
     final Pattern eventCatPattern = Pattern.compile(eventCatView);
     final Pattern anbieterCatPattern = Pattern.compile(anbieterVerzeichnisPatter);
+    final Pattern tagCatPattern = Pattern.compile(tagCatPatter);
 
     private String lastLine = "";
     private int lineCounter = 0;
@@ -753,6 +756,9 @@ public class LogService {
                     //Does it match a anbieterverzeichnis-view?
                     Matcher matched_anbieterverzeichnis_view = anbieterCatPattern.matcher(request);
 
+                    //Does it match a tag-category view? (/themenfeld/)
+                    Matcher matched_tagcat_view = tagCatPattern.matcher(request);
+
                     //Find out which pattern matched
                     String whatMatched = "";
                     Matcher patternMatcher = null;
@@ -897,6 +903,9 @@ public class LogService {
                     } else if(matched_blackHole.find()) {
                         whatMatched = "bLaCkHoLe";
                         patternMatcher = matched_blackHole;
+                    } else if(matched_tagcat_view.find()) {
+                        whatMatched = "tagCat";
+                        patternMatcher = matched_tagcat_view;
                     }
 
                     //If user existed,
@@ -2141,8 +2150,8 @@ public class LogService {
     }
 
     /**
-     * ??? i dont even know
-     * @param id a tag-stats id.
+     * Updates all this posts tags increasing their views by 1.
+     * @param id a posts id.
      * @param searchSuccess whether a search has succeeded.
      */
     public void checkTheTag(long id,boolean searchSuccess){

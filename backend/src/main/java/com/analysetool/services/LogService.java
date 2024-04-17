@@ -3165,18 +3165,20 @@ public class LogService {
      * @param slug the slug of the tag to update for.
      */
     private void updateTagCatStat(String slug) {
-        TagCatStat cat = tagCatRepo.getTagCatStatByTagId(termRepo.findBySlug(slug).getId().intValue());
-        if(cat == null) {
-            cat = new TagCatStat();
-            cat.setTagId(termRepo.findBySlug(slug).getId().intValue());
-            cat.setHour(LocalDateTime.now().getHour());
-            cat.setUniId(uniRepo.getLatestUniStat().getId());
-            cat.setViews(1);
-            cat.setTagName(slug);
-        } else {
-            cat.setViews(cat.getViews() + 1);
-        }
-        tagCatRepo.save(cat);
+        try {
+            TagCatStat cat = tagCatRepo.getTagCatStatByTagId(termRepo.findBySlug(slug).getId().intValue());
+            if (cat == null) {
+                cat = new TagCatStat();
+                cat.setTagId(termRepo.findBySlug(slug).getId().intValue());
+                cat.setHour(LocalDateTime.now().getHour());
+                cat.setUniId(uniRepo.getLatestUniStat().getId());
+                cat.setViews(1);
+                cat.setTagName(slug);
+            } else {
+                cat.setViews(cat.getViews() + 1);
+            }
+            tagCatRepo.save(cat);
+        } catch (Exception ignored) {}
 
     }
 }

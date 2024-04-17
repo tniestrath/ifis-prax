@@ -294,7 +294,7 @@ public class TagsController {
             switch (dataType) {
                 case "relevance" -> obj.put("relevance", (tagStatRepo.getRelevance(tagId) / tagStatRepo.getMaxRelevance()) * 100);
                 case "count" -> obj.put("count", getCount(tagId, getDate(i)));
-                case "views" -> obj.put("views", tagStatRepo.getViewsDaysBack(limitDaysBack));
+                case "views" -> obj.put("views", tagStatRepo.getViewsDaysBack(tagId, limitDaysBack));
             }
             response.put(obj);
         }

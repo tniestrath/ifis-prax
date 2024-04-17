@@ -6,10 +6,10 @@ import {SysVars} from "../../../services/sys-vars-service";
 
 @Component({
   selector: 'dash-user-display-component',
-  templateUrl: './user-display-component.component.html',
-  styleUrls: ['./user-display-component.component.css']
+  templateUrl: './user-display.component.html',
+  styleUrls: ['./user-display.component.css']
 })
-export class UserDisplayComponentComponent extends DashBaseComponent implements OnInit{
+export class UserDisplayComponent extends DashBaseComponent implements OnInit{
   user : User = new User();
 
   ngOnInit(): void {

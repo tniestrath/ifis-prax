@@ -30,15 +30,15 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
     ["day", 1]
   ]);
 
-  getData(event?: Event) {
+  getData(event?: Event, id? : number) {
     if (event !== undefined) {
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
       if ((event?.target as HTMLInputElement).type == "select-one") this.dataType = (event?.target as HTMLInputElement).value;
     }
+    if (this.selectedTag_id == 0 && id) this.selectedTag_id = id;
     this.api.getTagStatsByID(this.selectedTag_id,this.timeSpanMap.get(this.timeSpan) || 365*2, this.dataType).then((res : TagStats[]) => {
       var tagName : string = "";
       var tagViews : number[] = [];
-      var tagRelevance : number[] = [];
       var tagCount : number[] = [];
       var tagDate : string[] = [];
       var tagIds :number[] = [];
@@ -49,7 +49,6 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       tagName = res[0].name;
       for (var tagStats of res) {
         tagCount.push(Number(tagStats.count));
-        tagRelevance.push(Number(tagStats.relevance));
         tagViews.push(Number(tagStats.views));
         tagIds.push(Number(tagStats.id));
         tagDate.push(Util.formatDate(tagStats.date));
@@ -57,9 +56,6 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       switch (this.dataType) {
         case "views":
           this.createChart("Views", tagViews, tagDate, DashColors.RED, tagName);
-          break;
-        case "relevance":
-          this.createChart("Relevanz", tagRelevance, tagDate, DashColors.BLUE, tagName);
           break;
         case "count":
           this.createChart("Beiträge zum Thema", tagCount, tagDate, DashColors.BLACK, tagName);
@@ -70,8 +66,9 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    this.setToolTip("Diese Grafik zeigt die Views / Relevanz / Anzahl aller Beiträge zum Thema, im angegebenen Zeitraum. " +
-      "Sie können einen Tag anwählen, um dessen Informationen hier anzuzeigen.")
+    this.setToolTip("Diese Grafik zeigt die Views und Anzahl aller Beiträge zum Thema, im angegebenen Zeitraum.<br><br>" +
+      "Sie können einen Tag anwählen, um dessen Informationen hier anzuzeigen.");
+    this.getData(undefined, 378);
     SysVars.SELECTED_TAG.subscribe((id) => {
       this.selectedTag_id = id;
       this.getData()
@@ -119,11 +116,14 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
         },
         scales: {
           y: {
-            min: 0,
-            max: max
+            min: 0
           },
           x: {
-            display: true
+            display: true,
+            ticks: {
+              autoSkip: true,
+              maxRotation: 0
+            }
           }
         },
         plugins: {

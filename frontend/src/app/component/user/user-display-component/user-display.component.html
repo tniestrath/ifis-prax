@@ -24,16 +24,16 @@
     <p>{{user.slogan}}</p>
   </div>
   <div class="user-email-box">
-    <p>{{user.email}}</p>
+    <p>Mail: {{user.email}}</p>
   </div>
   <div class="user-tel-box">
-    <p>{{user.tel}}</p>
+    <p>Tel: {{user.tel}}</p>
   </div>
   <div class="user-id-box">
     <p>{{user.id}}</p>
   </div>
   <div class="user-est-box">
-    <p>EST: {{user.creationDate}}</p>
+    <p>EST: {{Util.formatDate(user.creationDate, true)}}</p>
   </div>
   <div class="user-profile-views-box">
     <img alt="Profil Aufrufe" src="assets/profile_views.png">
@@ -44,7 +44,8 @@
     <p>{{Util.formatNumbers(user.postViews)}}</p>
   </div>
   <div class="user-views-daily-box">
-    <p>TA: {{+parseFloat(user.viewsPerDay.toFixed(2))}}</p>
+    <img alt="Tägliche Aufrufe" src="assets/24-hours_x25.png">
+    <p>{{+parseFloat(user.viewsPerDay.toFixed(2))}}</p>
   </div>
   <div class="user-tendency-box">
     <img *ngIf="this.user.tendency" alt="Tendenz steigend" src="assets/trend_up.png">

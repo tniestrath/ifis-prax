@@ -27,7 +27,7 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
 
     Optional<WPUser> findByDisplayName(String displayname);
 
-    @Query("SELECT u FROM WPUser u LEFT JOIN WPUserMeta um ON u.id = um.userId WHERE um.key='wp_capabilities' AND um.value NOT LIKE %'um_anbieter'% AND um.value NOT LIKE %'admin'%")
+    @Query("SELECT u FROM WPUser u LEFT JOIN WPUserMeta um ON u.id = um.userId WHERE um.key='wp_capabilities' AND um.value NOT LIKE '%um_anbieter%' AND um.value NOT LIKE '%admin%'")
     List<WPUser> getAllWithAbo();
 
     @Query("SELECT u.id FROM WPUser u")

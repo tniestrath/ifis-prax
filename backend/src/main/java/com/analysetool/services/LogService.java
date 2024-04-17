@@ -2139,7 +2139,6 @@ public class LogService {
                 updateTagStats(l.intValue(),searchSuccess);}
             else {
                 if (termTaxRepo.findByTermId(l.intValue()).getTaxonomy().equals("post_tag")) {
-                    tagStatRepo.save(new TagStat(l.intValue(), 0, 0, (float) 0));
                     updateTagStats(l.intValue(), searchSuccess);
                 }
             }

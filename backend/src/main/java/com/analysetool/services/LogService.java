@@ -821,13 +821,11 @@ public class LogService {
                     else if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
-                    } else if(matched_blogView.find() || matched_blogCat.find()) {
-                        if(matched_blogView.find()) {
-                            whatMatched = "blogView";
-                            patternMatcher = matched_blogView;
-                        } else {
-                            whatMatched = "blogCat";
-                        }
+                    } else if(matched_blogView.find()) {
+                        whatMatched = "blogView";
+                        patternMatcher = matched_blogView;
+                    } else if(matched_blogCat.find()) {
+                        whatMatched = "blogCat";
                     } else if(matched_newsView.find()) {
                         whatMatched = "newsView";
                         patternMatcher = matched_newsView;

@@ -1894,7 +1894,9 @@ public class LogService {
         userStatsRepo.saveAll(userStats);
 
         //Update the ranking-buffer
-        updateRankings();
+        try {
+            updateRankings();
+        } catch (Exception ignored) {}
         //Delete Post-Types for Posts, that no longer exist
         deleteNullPostTypes();
         //Just in case permanentify failed

@@ -83,5 +83,10 @@ public class SystemLoadController {
 
         return jsonObject.toString();
     }
+
+    @GetMapping("/getDiscUsageInPercentage")
+    public String getDiscUsageInPercentage(){
+       return String.valueOf(systemLoadService.getDiskUsagePercentage());
+    }
 }
 

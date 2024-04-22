@@ -84,7 +84,7 @@ public class SystemLoadService {
         return systemLoadRepository.getTop60ByOrderByTimestampDesc();
     }
 
-    private double getDiskUsagePercentage() {
+    public double getDiskUsagePercentage() {
 
         FileSystem fileSystem = systemInfo.getOperatingSystem().getFileSystem();
         List<OSFileStore> fsArray = fileSystem.getFileStores();

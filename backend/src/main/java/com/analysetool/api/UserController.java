@@ -435,6 +435,8 @@ public class UserController {
                 obj.put("img", srcUrl + ".jpg");
             }
 
+            putRankings(id, obj);
+
             return obj.toString();
         } else {
             return "User not found";
@@ -1537,6 +1539,13 @@ public class UserController {
 
     public int getRankingTotalContentViews(long id)  {
         return rankingTotalContentRepo.getRankById(id).isPresent() ? rankingTotalContentRepo.getRankById(id).get() : -1;
+    }
+
+    private void putRankings(long id, JSONObject obj) throws JSONException {
+        obj.put("rankingContent", getRankingTotalContentViews(id));
+        obj.put("rankingContentByGroup", getRankingInTypeContentViews(id));
+        obj.put("rankingProfile", getRankingTotalProfileViews(id));
+        obj.put("rankingProfileByGroup", getRankingInTypeProfileViews(id));
     }
 
     @GetMapping("/getRankings")

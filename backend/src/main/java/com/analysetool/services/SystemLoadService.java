@@ -84,6 +84,15 @@ public class SystemLoadService {
         return systemLoadRepository.getTop60ByOrderByTimestampDesc();
     }
 
+    /**
+     * Berechnet die Festplattennutzung in Prozent.
+     * Diese Methode summiert den Gesamtspeicherplatz und den verfügbaren Speicherplatz
+     * aller Laufwerke auf dem System und berechnet den Prozentsatz des genutzten
+     * Speicherplatzes. Dies kann nützlich sein, um einen Überblick über die
+     * Speicherauslastung des Systems zu erhalten.
+     *
+     * @return Die aktuelle Festplattennutzung in Prozent.
+     */
     public double getDiskUsagePercentage() {
 
         FileSystem fileSystem = systemInfo.getOperatingSystem().getFileSystem();

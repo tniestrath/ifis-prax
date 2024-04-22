@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class RankingTotalProfile implements Serializable {
 
     @Id
-    @Column(name = "rank")
+    @Column(name = "ranking")
     private int rank;
 
     @Column(name = "user_id")

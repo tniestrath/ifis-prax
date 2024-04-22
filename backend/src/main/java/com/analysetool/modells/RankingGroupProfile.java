@@ -14,7 +14,7 @@ public class RankingGroupProfile implements Serializable {
     private String type;
 
     @Id
-    @Column(name ="rank")
+    @Column(name ="ranking")
     private int rank;
 
     @Column(name="user_id")

@@ -9,7 +9,6 @@ import java.io.Serializable;
 public class RankingTotalContent implements Serializable {
 
     @Id
-    @GeneratedValue
     @Column(name = "rank")
     private int rank;
 

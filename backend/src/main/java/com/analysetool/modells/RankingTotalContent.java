@@ -2,9 +2,11 @@ package com.analysetool.modells;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "ranking_total_content")
-public class RankingTotalContent {
+public class RankingTotalContent implements Serializable {
 
     @Id
     @GeneratedValue

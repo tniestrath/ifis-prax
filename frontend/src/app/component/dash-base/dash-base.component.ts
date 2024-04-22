@@ -92,6 +92,6 @@ export class DashBaseComponent implements OnDestroy{
       this.chart?.destroy();
     }
     this.cdr.detectChanges();
-    ApiService.cancelAllRequests();
+    this.api.cancelAllRequests();
   }
 }

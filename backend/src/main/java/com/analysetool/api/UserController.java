@@ -1524,67 +1524,19 @@ public class UserController {
     }
 
     public int getRankingInTypeProfileViews(long id) {
-        if(userRepository.findById(id).isPresent()) {
-            if(userViewsRepo.existsByUserId(id)) {
-                String type = getTypeDirty((int) id);
-
-                List<WPUser> users = userRepository.getByAboType(type);
-
-                users.sort((o1, o2) -> Math.toIntExact((userStatsRepository.existsByUserId(o2.getId()) ? userStatsRepository.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepository.existsByUserId(o1.getId()) ? userStatsRepository.findByUserId(o1.getId()).getProfileView() : 0)));
-
-                return users.indexOf(userRepository.findById(id).get()) + 1;
-            }
-
-
-        } else {
-            return -1;
-        }
-        return -1;
+        return rankingGroupProfileRepo.getRankById(id).isPresent() ? rankingGroupProfileRepo.getRankById(id).get() : -1;
     }
 
     public int getRankingInTypeContentViews(long id) {
-        if(userRepository.findById(id).isPresent()) {
-
-                String type = getTypeDirty((int) id);
-
-                List<WPUser> users = userRepository.getByAboType(type);
-
-                users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
-
-                return users.indexOf(userRepository.findById(id).get()) + 1;
-        } else {
-            return -1;
-        }
+        return rankingGroupContentRepo.getRankById(id).isPresent() ? rankingGroupContentRepo.getRankById(id).get() : -1;
     }
 
     public int getRankingTotalProfileViews(long id) {
-        if(userRepository.findById(id).isPresent()) {
-            if(userViewsRepo.existsByUserId(id)) {
-                List<WPUser> users = userRepository.findAll();
-
-                users.sort((o1, o2) -> Math.toIntExact((userStatsRepository.existsByUserId(o2.getId()) ? userStatsRepository.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepository.existsByUserId(o1.getId()) ? userStatsRepository.findByUserId(o1.getId()).getProfileView() : 0)));
-
-                return users.indexOf(userRepository.findById(id).get()) + 1;
-            }
-        } else {
-            return -1;
-        }
-        return -1;
+        return rankingTotalProfileRepo.getRankById(id).isPresent() ? rankingTotalProfileRepo.getRankById(id).get() : -1;
     }
 
     public int getRankingTotalContentViews(long id)  {
-        if(userRepository.findById(id).isPresent()) {
-
-            List<WPUser> users = userRepository.findAll();
-
-            users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId()))
-            );
-
-            return users.indexOf(userRepository.findById(id).get()) + 1;
-
-        } else {
-            return -1;
-        }
+        return rankingTotalContentRepo.getRankById(id).isPresent() ? rankingTotalContentRepo.getRankById(id).get() : -1;
     }
 
     @GetMapping("/getRankings")

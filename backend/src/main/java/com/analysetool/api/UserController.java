@@ -2072,6 +2072,11 @@ public class UserController {
         for(String type : Constants.getInstance().getListOfUserTypesDirty()) {
             int rank = 1;
             List<WPUser> users = userRepository.getByAboType(type);
+
+            if(type.equals("um_basis")) {
+                users.removeIf(wpUser -> getType(Math.toIntExact(wpUser.getId())).contains("plus"));
+            }
+
             //Sort for profile-view rankings
             users.sort((o1, o2) -> Math.toIntExact((userStatsRepository.existsByUserId(o2.getId()) ? userStatsRepository.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepository.existsByUserId(o1.getId()) ? userStatsRepository.findByUserId(o1.getId()).getProfileView() : 0)));
             //Make entries for profile-view rankings.

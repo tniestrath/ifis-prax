@@ -182,31 +182,26 @@ export class PageComponent implements OnInit {
           this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getUserPageCards());
           this.resetSearchbar.next(true);
-          this.db.resetStatus();
           break;
         }
         case "Themen":{
           this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getTagsPageCards());
-          this.db.resetStatus();
           break;
         }
         case "Beiträge":{
           this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getPostsPageCards());
-          this.db.resetStatus();
           break;
         }
         case "Übersicht":{
           this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getOverviewPageCards());
-          this.db.resetStatus();
           break;
         }
         case "Inhalte":{
           this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getContentPageCards());
-          this.db.resetStatus();
           break;
         }
         case "Login":{

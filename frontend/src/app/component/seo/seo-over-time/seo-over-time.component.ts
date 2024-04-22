@@ -24,9 +24,11 @@ export class SeoOverTimeComponent extends DashBaseComponent implements OnInit{
         let result = new Date(r.date).toLocaleDateString();
         return result.substring(0, result.lastIndexOf("."))});
       this.data_desktop = value.map(value1 => {return value1.sichtbarkeitsindex});
+      console.log("awd")
     }).then(() => {
       this.api.getSeoIndexOverTime("true").then(value2 => {
         this.data_mobile = value2.map(value3 => {return value3.sichtbarkeitsindex});
+        console.log("ke")
       }).then(() => {
         // @ts-ignore
         SysVars.SEO_DATA.next({mobile: {now: this.data_mobile.at(this.data_mobile.length-1), last: this.data_mobile.at(this.data_mobile.length-2)}, desktop: {now: this.data_desktop.at(this.data_desktop.length-1), last: this.data_desktop.at(this.data_desktop.length-2)}})

@@ -17,14 +17,6 @@ export class UserDisplayComponent extends DashBaseComponent implements OnInit{
     this.api.getUserAllStatsById(SysVars.USER_ID).then(res => {
       this.user = res;
     });
-    this.api.getUserRankings(SysVars.USER_ID).then(res => {
-      this.user.rankingContent = res.rankingContent;
-      this.user.rankingContentByGroup = res.rankingContentByGroup;
-      this.user.rankingProfile = res.rankingProfile;
-      this.user.rankingProfileByGroup = res.rankingProfileByGroup;
-      this.cdr.detectChanges();
-
-    });
   }
 
   protected readonly Util = Util;

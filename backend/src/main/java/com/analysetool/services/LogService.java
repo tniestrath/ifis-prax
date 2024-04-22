@@ -892,14 +892,12 @@ public class LogService {
                     }else if(matched_outgoing_youtube_redirect.find()){
                         whatMatched = "socialsYouTubeRedirect";
                         patternMatcher = matched_outgoing_youtube_redirect;
-                    } else if(matched_event_view.find() || matched_event_cat.find()){
-                        if(matched_event_view.find()) {
-                            whatMatched = "eventView";
-                            patternMatcher = matched_event_view;
-                        } else {
-                            whatMatched = "eventCat";
-                            patternMatcher = matched_event_cat;
-                        }
+                    } else if(matched_event_view.find()) {
+                        whatMatched = "eventView";
+                        patternMatcher = matched_event_view;
+                    } else if(matched_event_cat.find()) {
+                        whatMatched = "eventCat";
+                        patternMatcher = matched_event_cat;
                     }else if(matched_userRedirect.find()){
                         whatMatched = "userRedirect";
                         patternMatcher = matched_userRedirect;

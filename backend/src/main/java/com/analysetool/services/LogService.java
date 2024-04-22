@@ -3175,7 +3175,7 @@ public class LogService {
      */
     private void updateTagCatStat(String slug) {
         try {
-            TagCatStat cat = tagCatRepo.getTagCatStatByTagId(termRepo.findBySlug(slug).getId().intValue());
+            TagCatStat cat = tagCatRepo.getTagCatStatByTagIdAndTime(termRepo.findBySlug(slug).getId().intValue(), uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour());
             if (cat == null) {
                 cat = new TagCatStat();
                 cat.setTagId(termRepo.findBySlug(slug).getId().intValue());

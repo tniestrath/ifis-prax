@@ -16,7 +16,9 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("Select S From PostStats S Where S.artId=:artid")
     PostStats getStatByArtID(long artid);
 
-    PostStats findByArtIdAndAndYear(long artid,int year);
+    @Query("SELECT s FROM PostStats s WHERE s.artId=:artId AND s.year=:year")
+    PostStats findByArtIdAndYear(long artId, int year);
+
     boolean existsByArtIdAndYear(long artid,int year);
 
     @Modifying

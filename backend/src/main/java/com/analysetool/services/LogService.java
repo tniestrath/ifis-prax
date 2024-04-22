@@ -1923,7 +1923,7 @@ public class LogService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
         String logDatumString = logDatum.format(formatter);
 
-        PostStats postStats = statsRepo.findByArtIdAndAndYear(id, logDatum.getYear());
+        PostStats postStats = statsRepo.findByArtIdAndYear(id, logDatum.getYear());
 
         HashMap<String, Long> daily = (HashMap<String, Long>) postStats.getViewsLastYear();
         long aktuellerWert = daily.getOrDefault(logDatumString, 0L);

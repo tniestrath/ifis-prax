@@ -11,6 +11,8 @@ import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.NetworkIF;
+import oshi.software.os.FileSystem;
+import oshi.software.os.OSFileStore;
 
 import java.util.List;
 
@@ -48,7 +50,6 @@ public class SystemLoadService {
         }
 
         double cpuLoad = processor.getSystemCpuLoadBetweenTicks(prevTicks);
-
         GlobalMemory memory = hal.getMemory();
         double totalMemory = memory.getTotal();
         double availableMemory = memory.getAvailable();
@@ -81,6 +82,27 @@ public class SystemLoadService {
 
     public List<SystemLoad> getTop60ByTimeDesc(){
         return systemLoadRepository.getTop60ByOrderByTimestampDesc();
+    }
+
+    private double getDiskUsagePercentage() {
+
+        FileSystem fileSystem = systemInfo.getOperatingSystem().getFileSystem();
+        List<OSFileStore> fsArray = fileSystem.getFileStores();
+
+        long totalSpace = 0;
+        long usableSpace = 0;
+
+
+        for (OSFileStore fs : fsArray) {
+            totalSpace += fs.getTotalSpace();
+            usableSpace += fs.getUsableSpace();
+        }
+
+
+        long usedSpace = totalSpace - usableSpace;
+
+
+        return (double) usedSpace / totalSpace * 100.0;
     }
 }
 

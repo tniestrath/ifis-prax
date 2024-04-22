@@ -97,5 +97,26 @@ public class SystemLoadController {
     public String getDiscUsageInPercentage(){
        return String.valueOf(systemLoadService.getDiskUsagePercentage());
     }
+
+    /**
+     * Diese Methode liefert Informationen über den Speicherplatz auf der Festplatte, einschließlich
+     * des gesamten Speicherplatzes, des genutzten Speicherplatzes, des freien Speicherplatzes und der
+     * prozentualen Nutzung der Festplatte. Die Daten werden im JSON-Format zurückgegeben.
+     *
+     * @return Eine JSON-String-Repräsentation der Festplattendaten oder "Error" bei Auftreten von Fehlern.
+     */
+    @GetMapping("/getDiscData")
+    public String getDiscData(){
+        try {
+        JSONObject obj = new JSONObject();
+        obj.put("total disc space",systemLoadService.getTotalDiskSpace());
+        obj.put("used disc Space", systemLoadService.getUsedDiskSpace());
+        obj.put("free disc Space",systemLoadService.getUsableDiskSpace());
+        obj.put("disc usage in percentage",systemLoadService.getDiskUsagePercentage());
+        return obj.toString();}
+        catch(Exception e){
+            return "Error";
+        }
+    }
 }
 

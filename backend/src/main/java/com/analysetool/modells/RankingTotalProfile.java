@@ -2,13 +2,14 @@ package com.analysetool.modells;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "ranking_total_profile")
-public class RankingTotalProfile {
+public class RankingTotalProfile implements Serializable {
 
     @Id
-    @GeneratedValue
-    @Column(name = "rank")
+    @Column(name = "ranking")
     private int rank;
 
     @Column(name = "user_id")

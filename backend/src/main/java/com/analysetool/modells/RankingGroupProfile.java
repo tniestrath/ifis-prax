@@ -2,17 +2,19 @@ package com.analysetool.modells;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "ranking_group_profile")
 @IdClass(RankingGroupKey.class)
-public class RankingGroupProfile {
+public class RankingGroupProfile implements Serializable {
 
     @Id
     @Column(name ="type")
     private String type;
 
     @Id
-    @Column(name ="rank")
+    @Column(name ="ranking")
     private int rank;
 
     @Column(name="user_id")

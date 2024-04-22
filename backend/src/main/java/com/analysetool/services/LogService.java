@@ -821,13 +821,11 @@ public class LogService {
                     else if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
-                    } else if(matched_blogView.find() || matched_blogCat.find()) {
-                        if(matched_blogView.find()) {
-                            whatMatched = "blogView";
-                            patternMatcher = matched_blogView;
-                        } else {
-                            whatMatched = "blogCat";
-                        }
+                    } else if(matched_blogView.find()) {
+                        whatMatched = "blogView";
+                        patternMatcher = matched_blogView;
+                    } else if(matched_blogCat.find()) {
+                        whatMatched = "blogCat";
                     } else if(matched_newsView.find()) {
                         whatMatched = "newsView";
                         patternMatcher = matched_newsView;
@@ -1894,7 +1892,9 @@ public class LogService {
         userStatsRepo.saveAll(userStats);
 
         //Update the ranking-buffer
-        updateRankings();
+        try {
+            updateRankings();
+        } catch (Exception ignored) {}
         //Delete Post-Types for Posts, that no longer exist
         deleteNullPostTypes();
         //Just in case permanentify failed
@@ -1923,7 +1923,7 @@ public class LogService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
         String logDatumString = logDatum.format(formatter);
 
-        PostStats postStats = statsRepo.findByArtIdAndAndYear(id, logDatum.getYear());
+        PostStats postStats = statsRepo.findByArtIdAndYear(id, logDatum.getYear());
 
         HashMap<String, Long> daily = (HashMap<String, Long>) postStats.getViewsLastYear();
         long aktuellerWert = daily.getOrDefault(logDatumString, 0L);
@@ -1974,7 +1974,7 @@ public class LogService {
             try {
                 checkTheTag(id, false);
 
-                if (statsRepo.existsByArtId(id)) {
+                if (statsRepo.existsByArtIdAndYear(id, logDate.getYear())) {
                     long views = statsRepo.getClicksByArtId(id);
                     views++;
 
@@ -3192,86 +3192,7 @@ public class LogService {
     }
 
     public void updateRankings() {
-        updateRankGroups();
-        updateRanksTotal();
+        userController.updateUserRankingBuffer();
     }
 
-    private void updateRankGroups() {
-
-        //Reset all
-        if(!rankingGroupContentRepo.findAll().isEmpty()) {
-            rankingGroupContentRepo.deleteAll();
-        }
-        if(!rankingGroupProfileRepo.findAll().isEmpty()) {
-            rankingGroupProfileRepo.deleteAll();
-        }
-
-        for(String type : Constants.getInstance().getListOfUserTypesDirty()) {
-            int rank = 1;
-            List<WPUser> users = wpUserRepo.getByAboType(type);
-            //Sort for profile-view rankings
-            users.sort((o1, o2) -> Math.toIntExact((userStatsRepo.existsByUserId(o2.getId()) ? userStatsRepo.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepo.existsByUserId(o1.getId()) ? userStatsRepo.findByUserId(o1.getId()).getProfileView() : 0)));
-            //Make entries for profile-view rankings.
-            for(WPUser user : users) {
-                RankingGroupProfile profileRank = new RankingGroupProfile();
-                profileRank.setRank(rank);
-                rank++;
-                profileRank.setType(type);
-                profileRank.setUserId(Math.toIntExact(user.getId()));
-                rankingGroupProfileRepo.save(profileRank);
-            }
-            rank = 1;
-
-            //Sort for content-view rankings
-            users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
-            //Make entries for content-view rankings.
-            for(WPUser user : users) {
-                RankingGroupContent contentRank = new RankingGroupContent();
-                contentRank.setRank(rank);
-                rank++;
-                contentRank.setType(type);
-                contentRank.setUserId(Math.toIntExact(user.getId()));
-                rankingGroupContentRepo.save(contentRank);
-            }
-
-        }
-    }
-
-    private void updateRanksTotal() {
-        if(!rankingTotalContentRepo.findAll().isEmpty()) {
-            rankingTotalContentRepo.deleteAll();
-        }
-        if(!rankingTotalProfileRepo.findAll().isEmpty()) {
-            rankingTotalProfileRepo.deleteAll();
-        }
-
-        for(String type : Constants.getInstance().getListOfUserTypesDirty()) {
-            int rank = 1;
-
-            List<WPUser> users = wpUserRepo.getAllWithAbo();
-            //Sort for profile-view rankings
-            users.sort((o1, o2) -> Math.toIntExact((userStatsRepo.existsByUserId(o2.getId()) ? userStatsRepo.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepo.existsByUserId(o1.getId()) ? userStatsRepo.findByUserId(o1.getId()).getProfileView() : 0)));
-            //Make entries for profile-view rankings.
-            for(WPUser user : users) {
-                RankingTotalProfile profileRank = new RankingTotalProfile();
-                profileRank.setRank(rank);
-                rank++;
-                profileRank.setUserId(Math.toIntExact(user.getId()));
-                rankingTotalProfileRepo.save(profileRank);
-            }
-            rank = 1;
-
-            //Sort for content-view rankings
-            users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
-            //Make entries for content-view rankings.
-            for(WPUser user : users) {
-                RankingTotalContent contentRank = new RankingTotalContent();
-                contentRank.setRank(rank);
-                rank++;
-                contentRank.setUserId(Math.toIntExact(user.getId()));
-                rankingTotalContentRepo.save(contentRank);
-            }
-
-        }
-    }
 }

@@ -73,6 +73,15 @@ public class UserController {
     private EventsRepository eventsRepo;
     @Autowired
     private SocialsImpressionsService soziImp;
+    @Autowired
+    private RankingTotalContentRepository rankingTotalContentRepo;
+    @Autowired
+    private RankingTotalProfileRepository rankingTotalProfileRepo;
+    @Autowired
+    private RankingGroupProfileRepository rankingGroupProfileRepo;
+    @Autowired
+    private RankingGroupContentRepository rankingGroupContentRepo;
+
     private final DashConfig config;
 
     public UserController(DashConfig config) {
@@ -425,6 +434,8 @@ public class UserController {
             } else if (new File(path2).exists()) {
                 obj.put("img", srcUrl + ".jpg");
             }
+
+            putRankings(id, obj);
 
             return obj.toString();
         } else {
@@ -1515,67 +1526,26 @@ public class UserController {
     }
 
     public int getRankingInTypeProfileViews(long id) {
-        if(userRepository.findById(id).isPresent()) {
-            if(userViewsRepo.existsByUserId(id)) {
-                String type = getTypeDirty((int) id);
-
-                List<WPUser> users = userRepository.getByAboType(type);
-
-                users.sort((o1, o2) -> Math.toIntExact((userStatsRepository.existsByUserId(o2.getId()) ? userStatsRepository.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepository.existsByUserId(o1.getId()) ? userStatsRepository.findByUserId(o1.getId()).getProfileView() : 0)));
-
-                return users.indexOf(userRepository.findById(id).get()) + 1;
-            }
-
-
-        } else {
-            return -1;
-        }
-        return -1;
+        return rankingGroupProfileRepo.getRankById(id).isPresent() ? rankingGroupProfileRepo.getRankById(id).get() : -1;
     }
 
     public int getRankingInTypeContentViews(long id) {
-        if(userRepository.findById(id).isPresent()) {
-
-                String type = getTypeDirty((int) id);
-
-                List<WPUser> users = userRepository.getByAboType(type);
-
-                users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
-
-                return users.indexOf(userRepository.findById(id).get()) + 1;
-        } else {
-            return -1;
-        }
+        return rankingGroupContentRepo.getRankById(id).isPresent() ? rankingGroupContentRepo.getRankById(id).get() : -1;
     }
 
     public int getRankingTotalProfileViews(long id) {
-        if(userRepository.findById(id).isPresent()) {
-            if(userViewsRepo.existsByUserId(id)) {
-                List<WPUser> users = userRepository.findAll();
-
-                users.sort((o1, o2) -> Math.toIntExact((userStatsRepository.existsByUserId(o2.getId()) ? userStatsRepository.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepository.existsByUserId(o1.getId()) ? userStatsRepository.findByUserId(o1.getId()).getProfileView() : 0)));
-
-                return users.indexOf(userRepository.findById(id).get()) + 1;
-            }
-        } else {
-            return -1;
-        }
-        return -1;
+        return rankingTotalProfileRepo.getRankById(id).isPresent() ? rankingTotalProfileRepo.getRankById(id).get() : -1;
     }
 
     public int getRankingTotalContentViews(long id)  {
-        if(userRepository.findById(id).isPresent()) {
+        return rankingTotalContentRepo.getRankById(id).isPresent() ? rankingTotalContentRepo.getRankById(id).get() : -1;
+    }
 
-            List<WPUser> users = userRepository.findAll();
-
-            users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId()))
-            );
-
-            return users.indexOf(userRepository.findById(id).get()) + 1;
-
-        } else {
-            return -1;
-        }
+    private void putRankings(long id, JSONObject obj) throws JSONException {
+        obj.put("rankingContent", getRankingTotalContentViews(id));
+        obj.put("rankingContentByGroup", getRankingInTypeContentViews(id));
+        obj.put("rankingProfile", getRankingTotalProfileViews(id));
+        obj.put("rankingProfileByGroup", getRankingInTypeProfileViews(id));
     }
 
     @GetMapping("/getRankings")
@@ -2030,6 +2000,100 @@ public class UserController {
     public String getBestUserImpressionAllTime(){
         List<SocialsImpressions>imps = soziImp.filterOutPostImpressions(soziImp.findAll());
         return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
+    }
+
+    @GetMapping("/updateUserRankingBuffer")
+    public boolean updateUserRankingBuffer() {
+        try {
+            updateRanksTotal();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        try {
+            updateRankGroups();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+
+    public void updateRankGroups() {
+
+        //Reset all
+        if(!rankingGroupContentRepo.findAll().isEmpty()) {
+            rankingGroupContentRepo.deleteAll();
+        }
+        if(!rankingGroupProfileRepo.findAll().isEmpty()) {
+            rankingGroupProfileRepo.deleteAll();
+        }
+
+        for(String type : Constants.getInstance().getListOfUserTypesDirty()) {
+            int rank = 1;
+            List<WPUser> users = userRepository.getByAboType(type);
+
+            //Sort for profile-view rankings
+            users.sort((o1, o2) -> Math.toIntExact((userStatsRepository.existsByUserId(o2.getId()) ? userStatsRepository.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepository.existsByUserId(o1.getId()) ? userStatsRepository.findByUserId(o1.getId()).getProfileView() : 0)));
+            //Make entries for profile-view rankings.
+            for(WPUser user : users) {
+                RankingGroupProfile profileRank = new RankingGroupProfile();
+                profileRank.setRank(rank);
+                rank++;
+                profileRank.setType(type);
+                profileRank.setUserId(Math.toIntExact(user.getId()));
+                rankingGroupProfileRepo.save(profileRank);
+            }
+            rank = 1;
+
+            //Sort for content-view rankings
+            users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
+            //Make entries for content-view rankings.
+            for(WPUser user : users) {
+                RankingGroupContent contentRank = new RankingGroupContent();
+                contentRank.setRank(rank);
+                rank++;
+                contentRank.setType(type);
+                contentRank.setUserId(Math.toIntExact(user.getId()));
+                rankingGroupContentRepo.save(contentRank);
+            }
+
+        }
+    }
+
+    public void updateRanksTotal() {
+        if(!rankingTotalContentRepo.findAll().isEmpty()) {
+            rankingTotalContentRepo.deleteAll();
+        }
+        if(!rankingTotalProfileRepo.findAll().isEmpty()) {
+            rankingTotalProfileRepo.deleteAll();
+        }
+        int rank = 1;
+
+        List<WPUser> users = userRepository.getAllWithAbo();
+        //Sort for profile-view rankings
+        users.sort((o1, o2) -> Math.toIntExact((userStatsRepository.existsByUserId(o2.getId()) ? userStatsRepository.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepository.existsByUserId(o1.getId()) ? userStatsRepository.findByUserId(o1.getId()).getProfileView() : 0)));
+        //Make entries for profile-view rankings.
+        for(WPUser user : users) {
+            RankingTotalProfile profileRank = new RankingTotalProfile();
+            profileRank.setRank(rank);
+            rank++;
+            profileRank.setUserId(Math.toIntExact(user.getId()));
+            rankingTotalProfileRepo.save(profileRank);
+        }
+        rank = 1;
+
+        //Sort for content-view rankings
+        users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
+        //Make entries for content-view rankings.
+        for(WPUser user : users) {
+            RankingTotalContent contentRank = new RankingTotalContent();
+            contentRank.setRank(rank);
+            rank++;
+            contentRank.setUserId(Math.toIntExact(user.getId()));
+            rankingTotalContentRepo.save(contentRank);
+        }
     }
 
 }

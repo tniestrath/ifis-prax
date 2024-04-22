@@ -590,7 +590,7 @@ public class PostController {
 
     @GetMapping("/getViewsOfPostDistributedByHours")
     public Map<String,Long>getViewsDistributedByHour(@RequestParam Long PostId){
-        PostStats postStats= statsRepo.findByArtIdAndAndYear(PostId,aktuellesJahr);
+        PostStats postStats= statsRepo.findByArtIdAndYear(PostId,aktuellesJahr);
         Map<String,Long>viewsPerHour=postStats.getViewsPerHour();
         return viewsPerHour;
     }
@@ -1307,7 +1307,7 @@ public class PostController {
         for (Map.Entry<Long, Float> entry : postAndSimilarityMap.entrySet()) {
             JSONObject obj = new JSONObject();
             Long otherPostId = entry.getKey();
-            PostStats postStat = statsRepo.findByArtIdAndAndYear(otherPostId, currentYear);
+            PostStats postStat = statsRepo.findByArtIdAndYear(otherPostId, currentYear);
 
             obj.put("postId", otherPostId);
             obj.put("similarity", entry.getValue());
@@ -1359,7 +1359,7 @@ public class PostController {
         for (Map.Entry<Long, Float> entry : postAndSimilarityMap.entrySet()) {
             JSONObject obj = new JSONObject();
             Long otherPostId = entry.getKey();
-            PostStats postStat = statsRepo.findByArtIdAndAndYear(otherPostId, LocalDate.now().getYear());
+            PostStats postStat = statsRepo.findByArtIdAndYear(otherPostId, LocalDate.now().getYear());
 
             obj.put("postId", otherPostId);
             obj.put("similarity", entry.getValue());
@@ -1421,7 +1421,7 @@ public class PostController {
             Long otherPostId = entry.getKey();
 
             // Abruf der Ansichten für das letzte Jahr
-            PostStats postStat = statsRepo.findByArtIdAndAndYear(otherPostId, LocalDate.now().getYear());
+            PostStats postStat = statsRepo.findByArtIdAndYear(otherPostId, LocalDate.now().getYear());
             Map<String, Long> viewsLastYear = postStat.getViewsLastYear();
 
             // Kumulieren der Ansichten im gegebenen Datumsbereich

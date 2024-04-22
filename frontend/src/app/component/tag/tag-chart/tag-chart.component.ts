@@ -6,7 +6,6 @@ import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import Util, {DashColors} from "../../../util/Util";
 
 
-
 @Component({
   selector: 'dash-tag-chart',
   templateUrl: './tag-chart.component.html',
@@ -35,13 +34,12 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
       if ((event?.target as HTMLInputElement).type == "select-one") this.dataType = (event?.target as HTMLInputElement).value;
     }
-    if (this.selectedTag_id == 0 && id) this.selectedTag_id = id;
+    if (this.selectedTag_id == 0 && id) this.selectedTag_id = id; //TODO: REMIND PHIL TO REMOVE DATATYPE
     this.api.getTagStatsByID(this.selectedTag_id,this.timeSpanMap.get(this.timeSpan) || 365*2, this.dataType).then((res : TagStats[]) => {
       var tagName : string = "";
       var tagViews : number[] = [];
       var tagCount : number[] = [];
       var tagDate : string[] = [];
-      var tagIds :number[] = [];
 
       res.sort((a, b) => {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -50,17 +48,9 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       for (var tagStats of res) {
         tagCount.push(Number(tagStats.count));
         tagViews.push(Number(tagStats.views));
-        tagIds.push(Number(tagStats.id));
         tagDate.push(Util.formatDate(tagStats.date));
       }
-      switch (this.dataType) {
-        case "views":
-          this.createChart("Views", tagViews, tagDate, DashColors.RED, tagName);
-          break;
-        case "count":
-          this.createChart("Beiträge zum Thema", tagCount, tagDate, DashColors.BLACK, tagName);
-          break;
-      }
+      this.createChart(tagViews, tagCount, tagDate, [DashColors.RED, DashColors.BLUE], tagName);
 
     }).finally(() => {this.visibility = "visible"});
   }
@@ -75,7 +65,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
     })
   }
 
-  private createChart(dataLabel: string, data: number[], dates: string[], color : string, tagName : string) {
+  private createChart(dataViews: number[], dataCount: number[], dates: string[], colors : string[], tagName : string) {
     if (this.chart){
       this.chart.destroy();
     }
@@ -89,21 +79,28 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       }
     }
 
-    const max = Math.max.apply(null, data);
-
     // @ts-ignore
     this.chart = new Chart("tag_chart", {
       type: "line",
       data: {
         labels: timestamps,
         datasets: [{
-          label: dataLabel,
-          data: data,
-          backgroundColor: color,
-          borderColor: color,
+          label: "Views",
+          data: dataViews,
+          backgroundColor: colors[0],
+          borderColor: colors[0],
           borderJoinStyle: 'round',
           borderWidth: 5
-        }]
+        },
+          {
+            label: "Beiträge zum Thema",
+            data: dataCount,
+            backgroundColor: colors[1],
+            borderColor: colors[1],
+            borderJoinStyle: 'round',
+            borderWidth: 5,
+            yAxisID: "yCount"
+          }]
       },
       options: {
         aspectRatio: 2.8,
@@ -117,6 +114,10 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
         scales: {
           y: {
             min: 0
+          },
+          yCount: {
+            min: 0,
+            position: "right"
           },
           x: {
             display: true,

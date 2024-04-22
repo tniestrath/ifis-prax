@@ -3244,34 +3244,30 @@ public class LogService {
         if(!rankingTotalProfileRepo.findAll().isEmpty()) {
             rankingTotalProfileRepo.deleteAll();
         }
+        int rank = 1;
 
-        for(String type : Constants.getInstance().getListOfUserTypesDirty()) {
-            int rank = 1;
+        List<WPUser> users = wpUserRepo.getAllWithAbo();
+        //Sort for profile-view rankings
+        users.sort((o1, o2) -> Math.toIntExact((userStatsRepo.existsByUserId(o2.getId()) ? userStatsRepo.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepo.existsByUserId(o1.getId()) ? userStatsRepo.findByUserId(o1.getId()).getProfileView() : 0)));
+        //Make entries for profile-view rankings.
+        for(WPUser user : users) {
+            RankingTotalProfile profileRank = new RankingTotalProfile();
+            profileRank.setRank(rank);
+            rank++;
+            profileRank.setUserId(Math.toIntExact(user.getId()));
+            rankingTotalProfileRepo.save(profileRank);
+        }
+        rank = 1;
 
-            List<WPUser> users = wpUserRepo.getAllWithAbo();
-            //Sort for profile-view rankings
-            users.sort((o1, o2) -> Math.toIntExact((userStatsRepo.existsByUserId(o2.getId()) ? userStatsRepo.findByUserId(o2.getId()).getProfileView() : 0) - (userStatsRepo.existsByUserId(o1.getId()) ? userStatsRepo.findByUserId(o1.getId()).getProfileView() : 0)));
-            //Make entries for profile-view rankings.
-            for(WPUser user : users) {
-                RankingTotalProfile profileRank = new RankingTotalProfile();
-                profileRank.setRank(rank);
-                rank++;
-                profileRank.setUserId(Math.toIntExact(user.getId()));
-                rankingTotalProfileRepo.save(profileRank);
-            }
-            rank = 1;
-
-            //Sort for content-view rankings
-            users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
-            //Make entries for content-view rankings.
-            for(WPUser user : users) {
-                RankingTotalContent contentRank = new RankingTotalContent();
-                contentRank.setRank(rank);
-                rank++;
-                contentRank.setUserId(Math.toIntExact(user.getId()));
-                rankingTotalContentRepo.save(contentRank);
-            }
-
+        //Sort for content-view rankings
+        users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
+        //Make entries for content-view rankings.
+        for(WPUser user : users) {
+            RankingTotalContent contentRank = new RankingTotalContent();
+            contentRank.setRank(rank);
+            rank++;
+            contentRank.setUserId(Math.toIntExact(user.getId()));
+            rankingTotalContentRepo.save(contentRank);
         }
     }
 }

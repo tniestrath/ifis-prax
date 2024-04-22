@@ -89,7 +89,7 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("UPDATE PostStats s SET s.refferings = :refferings WHERE s.artId = :artId")
     void updateRefferingsByArtId( Long refferings,  Long artId);
 
-    boolean existsByArtId(Long artId);
+    boolean existsByArtId(long artId);
 
     @Query("SELECT s.searchSuccessRate FROM PostStats s WHERE s.artId = :artId")
     Float getSearchSuccessRateByArtId(Long artId);

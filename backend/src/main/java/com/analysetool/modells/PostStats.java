@@ -104,8 +104,7 @@ public class PostStats {
         this.viewsLastYear=setViewsLastYearJson();
         this.viewsPerHour=setJson();
         Calendar kalender = Calendar.getInstance();
-        int aktuellesJahr = kalender.get(Calendar.YEAR);
-        this.year=aktuellesJahr;
+        this.year= kalender.get(Calendar.YEAR);
     }
 
     public Map<String,Long> setViewsLastYearJson(){

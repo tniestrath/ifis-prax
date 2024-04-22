@@ -1974,7 +1974,7 @@ public class LogService {
             try {
                 checkTheTag(id, false);
 
-                if (statsRepo.existsByArtId(id)) {
+                if (statsRepo.existsByArtIdAndYear(id, logDate.getYear())) {
                     long views = statsRepo.getClicksByArtId(id);
                     views++;
 

@@ -15,6 +15,7 @@ import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 
 import java.util.List;
+import java.util.function.ToLongFunction;
 
 @Service
 public class SystemLoadService {
@@ -83,35 +84,61 @@ public class SystemLoadService {
     public List<SystemLoad> getTop60ByTimeDesc(){
         return systemLoadRepository.getTop60ByOrderByTimestampDesc();
     }
+    
 
     /**
-     * Berechnet die Festplattennutzung in Prozent.
-     * Diese Methode summiert den Gesamtspeicherplatz und den verfügbaren Speicherplatz
-     * aller Laufwerke auf dem System und berechnet den Prozentsatz des genutzten
-     * Speicherplatzes. Dies kann nützlich sein, um einen Überblick über die
-     * Speicherauslastung des Systems zu erhalten.
+     * Calculates the disk usage as a percentage.
      *
-     * @return Die aktuelle Festplattennutzung in Prozent.
+     * @return the percentage of disk space used.
      */
     public double getDiskUsagePercentage() {
+        long totalSpace = getTotalDiskSpace();
+        long usableSpace = getUsableDiskSpace();
+        long usedSpace = totalSpace - usableSpace;
+        return (double) usedSpace / totalSpace ;
+    }
 
+    /**
+     * Retrieves the total disk space across all file stores.
+     *
+     * @return total disk space in bytes.
+     */
+    public long getTotalDiskSpace() {
+        return getDiskSpace(OSFileStore::getTotalSpace);
+    }
+
+    /**
+     * Retrieves the total used disk space across all file stores.
+     *
+     * @return used disk space in bytes.
+     */
+    public long getUsedDiskSpace() {
+        long totalSpace = getTotalDiskSpace();
+        long usableSpace = getUsableDiskSpace();
+        return totalSpace - usableSpace;
+    }
+
+    /**
+     * Retrieves the total usable (free) disk space across all file stores.
+     *
+     * @return usable disk space in bytes.
+     */
+    public long getUsableDiskSpace() {
+        return getDiskSpace(OSFileStore::getUsableSpace);
+    }
+
+    /**
+     * Helper method to sum disk space based on a provided space calculator function.
+     *
+     * @param spaceCalculator a function defining how to calculate disk space for a file store.
+     * @return the sum of the disk space calculated across all file stores.
+     */
+    private long getDiskSpace(ToLongFunction<OSFileStore> spaceCalculator) {
         FileSystem fileSystem = systemInfo.getOperatingSystem().getFileSystem();
         List<OSFileStore> fsArray = fileSystem.getFileStores();
-
-        long totalSpace = 0;
-        long usableSpace = 0;
-
-
-        for (OSFileStore fs : fsArray) {
-            totalSpace += fs.getTotalSpace();
-            usableSpace += fs.getUsableSpace();
-        }
-
-
-        long usedSpace = totalSpace - usableSpace;
-
-
-        return (double) usedSpace / totalSpace * 100.0;
+        return fsArray.stream()
+                .mapToLong(spaceCalculator)
+                .sum();
     }
 }
 

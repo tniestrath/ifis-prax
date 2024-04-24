@@ -2,6 +2,7 @@ import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import Util, {DashColors} from "../../../util/Util";
 import {Post} from "../Post";
+import {Tag} from "../../tag/Tag";
 
 @Component({
   selector: 'dash-top5-posts',
@@ -47,6 +48,10 @@ export class Top5PostsComponent extends DashBaseComponent implements OnInit{
       return title.slice(0, Math.min(title.lastIndexOf(" "), 50));
     }
     return title;
+  }
+
+  protected getTagsString(tags : Tag[]){
+    return Util.formatArray(tags.map(value => value.name));
   }
 
   protected readonly Util = Util;

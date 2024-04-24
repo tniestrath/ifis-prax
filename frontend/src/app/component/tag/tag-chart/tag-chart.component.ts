@@ -15,7 +15,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
   canvas_id: string = "tag-chart";
   private visibility: string = "hidden";
 
-  selectedTag : Tag = new Tag("378", "IT-Sicherheit");
+  selectedTag : Tag = SysVars.CURRENT_TAG;
 
   timeSpan : string = "month";
   data : Promise<TagStats[]> | undefined;
@@ -59,6 +59,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
     this.getData();
     SysVars.SELECTED_TAG.subscribe((tag) => {
       this.selectedTag = tag;
+      SysVars.CURRENT_TAG = tag;
       this.getData()
     })
   }

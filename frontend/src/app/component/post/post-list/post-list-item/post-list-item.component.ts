@@ -20,10 +20,8 @@ export class PostListItemComponent extends DashListItemComponent implements OnIn
   ngOnInit(): void {
     this.typeColor = Util.getColor("post", this.data.type);
     this.formattedDate = new Date(this.data.date).toLocaleDateString();
-    if (this.data.tags != null && this.data.tags.length > 0){
-      this.formattedTags = this.data.tags?.toString().replace("[", "").replace("]", "");
-      this.formattedAuthors = this.data.authors?.toString().replace("[", "").replace("]", "");
-    }
+    this.formattedTags = this.data.tags?.map(value => value.name).toString().replace("[", "").replace("]", "");
+    this.formattedAuthors = this.data.authors?.toString().replace("[", "").replace("]", "");
   }
 
 

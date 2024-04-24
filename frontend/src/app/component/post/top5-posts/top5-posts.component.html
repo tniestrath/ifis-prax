@@ -39,7 +39,7 @@
           </div>
           <div class="post-detail">
             <div class="post-label">Themen</div>
-            <p>{{String(data["tags"]).replace("[", "").replace("]", "")}}</p>
+            <p>{{getTagsString(data["tags"])}}</p>
           </div>
         </div>
       </div>

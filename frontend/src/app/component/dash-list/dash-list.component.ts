@@ -26,8 +26,8 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
   pagesComplete: boolean = false;
   lastScroll = 0;
 
-  private response : Promise<T[]> | undefined;
-  private component : Type<C> | undefined;
+  protected response : Promise<T[]> | undefined;
+  protected component : Type<C> | undefined;
 
   ngOnInit(): void {
   }
@@ -44,8 +44,6 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
     });
   }
   reload(response : Promise<T[]>, component : Type<C>): void {
-    this.response = response;
-    this.component = component;
     this.selectorItems = [];
     response.then((value : T[]) => {
       for (const valueElement of value) {
@@ -86,6 +84,8 @@ export class DashListPageableComponent<T extends DbObject, C extends DashListIte
 
 
   override load<T extends DbObject, C extends DashListItemComponent>(response: Promise<T[]>, component: Type<C>): void {
+    this.response = response;
+    this.component = component;
     response.then((value: T[]) => {
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(component, valueElement));
@@ -113,7 +113,6 @@ export class DashListPageableComponent<T extends DbObject, C extends DashListIte
       if (scroll >= (this.lastScroll + 100)) {
         // @ts-ignore
         this.load(this.response, this.component);
-        this.pageIndex++;
       } else {
       }
       this.lastScroll = scroll;

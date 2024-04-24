@@ -58,8 +58,9 @@ export class PostDisplayComponent extends DashBaseComponent implements OnInit{
 
   public onTagClick(){
     // @ts-ignore
-    SysVars.SELECTED_TAG.next(this.postTags.at(0))
+    SysVars.CURRENT_TAG = this.postTags.at(0);
     SysVars.SELECTED_PAGE.next("Themen");
+
   }
 
 }

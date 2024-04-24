@@ -39,6 +39,7 @@ export class SysVars {
   public static SELECTED_POST_IDS : EventEmitter<string> = new EventEmitter<string>();
 
   public static SELECTED_TAG : EventEmitter<Tag> = new EventEmitter<Tag>();
+  public static CURRENT_TAG : Tag = new Tag("378", "IT-Sicherheit");
 
   public static SELECTED_USER_ID : EventEmitter<number> = new EventEmitter<number>();
 

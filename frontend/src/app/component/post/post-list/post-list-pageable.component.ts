@@ -216,7 +216,7 @@ export class EventListComponent extends PostListPageableComponent{
 
   override ngOnInit() {
     this.setToolTip("Auflistung aller Events, sie können nach Datum oder Clicks sortieren oder nach Schlagwörtern in Titel oder Tags suchen");
-    this.load(this.api.getEventsLikePostsPaged( 0, this.pageSize, " ", ""), PostListItemComponent);
+    this.load(this.api.getEventsLikePostsPaged( this.pageIndex, this.pageSize, " ", ""), PostListItemComponent);
 
     this.input_search_cb = (event: { target: { value: string; }; }) => {
       this.search_text = event.target.value;

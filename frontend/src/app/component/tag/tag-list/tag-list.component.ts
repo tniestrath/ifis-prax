@@ -22,7 +22,7 @@ export class TagListComponent extends DashBaseComponent{
 
     this.api.getAllTagsWithStats().then(res => {
       for (var tag of res) {
-        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.viewsPost, tag.viewsCat, tag.count)));
+        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.viewsPosts, tag.viewsCat, tag.count)));
       }
       this.selectorItemsLoaded.next(this.selectorItems);
     })

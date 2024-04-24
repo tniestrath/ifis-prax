@@ -33,7 +33,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
     }
     this.api.getTagStatsByID(Number.parseInt(this.selectedTag.id),this.timeSpanMap.get(this.timeSpan) || 365*2).then((res : TagStats[]) => {
-      var tagViewsPost : number[] = [];
+      var tagViewsPosts : number[] = [];
       var tagViewsCat : number[] = [];
       var tagCount : number[] = [];
       var tagDate : string[] = [];
@@ -44,11 +44,11 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
 
       for (var tagStats of res) {
         tagCount.push(Number(tagStats.count));
-        tagViewsPost.push(Number(tagStats.viewsPost));
+        tagViewsPosts.push(Number(tagStats.viewsPosts));
         tagViewsCat.push(Number(tagStats.viewsCat));
         tagDate.push(Util.formatDate(tagStats.date));
       }
-      this.createChart(tagViewsPost, tagViewsCat, tagCount, tagDate, [DashColors.RED, DashColors.DARK_RED, DashColors.BLUE], res[0].name);
+      this.createChart(tagViewsPosts, tagViewsCat, tagCount, tagDate, [DashColors.RED, DashColors.DARK_RED, DashColors.BLUE], res[0].name);
 
     }).finally(() => {this.visibility = "visible"});
   }

@@ -1,42 +1,39 @@
 import {DbObject} from "../../services/DbObject";
 
-export interface WPTerm extends DbObject{
-  id : string;
-  name : string;
-  slug : string;
-  termGroup : number;
-}
-
 export class Tag extends DbObject{
-  constructor(public override id : string, public override name : string, public  img_src : string) {
+  constructor(public override id : string, public override name : string) {
     super(id, name);
   }
 }
 
-export class TagRanking extends DbObject{
-  constructor(public override id : string, public override name : string, public relevance : string, public views : string, public count : string) {
+export class TagRanking extends Tag{
+  constructor(public override id : string, public override name : string, public viewsPost : number, public viewsCat : number, public count : number) {
     super(id, name);
   }
 
-  compareByRelevance(other: TagRanking): number {
-    return Number.parseFloat(other.relevance) - Number.parseFloat(this.relevance);
+  compareByViewsPost(other: TagRanking): number {
+    return other.viewsPost - this.viewsPost;
+  }
+
+  compareByViewsCat(other: TagRanking): number {
+    return other.viewsCat - this.viewsCat;
   }
 
   compareByViews(other: TagRanking): number {
-    return Number.parseFloat(other.views) - Number.parseFloat(this.views);
+    return (other.viewsPost + other.viewsCat) - (this.viewsPost + this.viewsCat);
   }
 
   compareByCount(other: TagRanking): number {
-    return Number.parseFloat(other.count) - Number.parseFloat(this.count);
+    return other.count - this.count;
   }
 }
 export class TagStats extends TagRanking{
-  constructor(public override id : string, public override name : string, public override relevance : string, public override views : string, public override count : string, public date : string) {
-    super(id, name, relevance, views, count);
+  constructor(public override id : string, public override name : string, public override viewsPost : number, public override viewsCat : number, public override count : number, public date : string) {
+    super(id, name, viewsPost, viewsCat, count);
   }
 }
 
-export class UserTagDist extends DbObject{
+export class UserTagDist extends Tag{
   constructor(public override id : string = "0", public override name : string = "", public count : number = -1, public ranking : string = "#-1/-1", public percentage : number = 0, public userIDs : number[] = []) {
     super(id, name);
   }

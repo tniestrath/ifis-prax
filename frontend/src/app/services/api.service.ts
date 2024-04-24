@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
-import {Tag, TagStats} from "../component/tag/Tag";
+import {Tag, TagRanking, TagStats} from "../component/tag/Tag";
 import {DbObject} from "./DbObject";
 import {Post} from "../component/post/Post";
 import {User} from "../component/user/user";
@@ -32,14 +32,14 @@ export enum apiUrl {
    * Tags related requests
    */
   GET_TAGS_ALL = "/tags/getPostTagsIdName",
-  GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL = "/tags/allTermsRelevanceAndViews",
+  GET_TAGS_WITH_STATS = "/tags/getTagStatsAll",
   GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL = "/tags/getPostCountAbove?percentage=",
   /**
    * Single Tag
    */
   GET_TAG_POST_COUNT = "/tags/getPostcount?id=",
   GET_TAG_RANKING = "/tags/getTermRanking",
-  GET_TAGSTATS_BY_ID = "/tags/getTagStats?tagId=ID&limitDaysBack=DAYS&dataType=TYPE",
+  GET_TAGSTATS_BY_ID = "/tags/getTagStatsDaysBack?tagId=ID&daysBack=DAYS",
 
   /**
    * User related requests
@@ -246,9 +246,9 @@ export class ApiService {
     return await fetch(ApiService.setupRequest(apiUrl.MANUAL_VALIDATE).replace("VALUE", value), {credentials: "include", signal: ApiService.setupController(apiUrl.MANUAL_VALIDATE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getAllTagsWithRelevanceAndViews(){
+  async getAllTagsWithStats() : Promise<TagRanking[]>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGS_WITH_RELEVANCE_AND_VIEWS_ALL)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_TAGS_WITH_STATS), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGS_WITH_STATS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getAllTagsPostCount(percentage : number) : Promise<Map<string, number>>{
@@ -473,9 +473,9 @@ export class ApiService {
     return await fetch((ApiService.setupRequest(apiUrl.GET_USERS_ALL_VIEWS_PER_HOUR)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ALL_VIEWS_PER_HOUR)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getTagStatsByID(id: number, timeSpan: number, dataType: string) : Promise<TagStats[]> {
+  async getTagStatsByID(id: number, timeSpan: number) : Promise<TagStats[]> {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_TAGSTATS_BY_ID).replace("ID", String(id)).replace("DAYS", String(timeSpan)).replace("TYPE", dataType), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGSTATS_BY_ID)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_TAGSTATS_BY_ID).replace("ID", String(id)).replace("DAYS", String(timeSpan)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGSTATS_BY_ID)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getCallupsByTime(days: number) : Promise<Callup[]> {

@@ -26,7 +26,6 @@ export class SeoKeywordListComponent extends DashBaseComponent implements OnInit
       for (let element of value) {
         this.selectorItems.push(new SelectorItem(SeoKeywordListItemComponent, new SEOKeyword(element.clicks, element.impressions, element.keys.at(1), element.keys.at(0), element.ctr)));
       }
-      this.selectorItems.sort((a, b) => Number((b.data as TagRanking).relevance) - Number((a.data as TagRanking).relevance));
       this.selectorItemsLoaded.next(this.selectorItems);
     })
   }

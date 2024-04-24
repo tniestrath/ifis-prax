@@ -270,7 +270,7 @@ public class uniStatController {
 
         labelsForCategory.add("Main");
         labelsForCategory.add("Anbieterverzeichnis");
-        labelsForCategory.add("Article");
+        labelsForCategory.add("Artikel");
         labelsForCategory.add("News");
         labelsForCategory.add("Blog");
         labelsForCategory.add("Podcast");
@@ -365,7 +365,7 @@ public class uniStatController {
 
         labelsForCategory.add("Main");
         labelsForCategory.add("Anbieterverzeichnis");
-        labelsForCategory.add("Article");
+        labelsForCategory.add("Artikel");
         labelsForCategory.add("News");
         labelsForCategory.add("Blog");
         labelsForCategory.add("Podcast");

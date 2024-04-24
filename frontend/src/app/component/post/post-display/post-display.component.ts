@@ -3,6 +3,8 @@ import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Post} from "../Post";
 import {SysVars} from "../../../services/sys-vars-service";
 import Util from "../../../util/Util";
+import {AppComponent} from "../../../app.component";
+import {Tag} from "../../tag/Tag";
 
 @Component({
   selector: 'dash-post-display',
@@ -11,6 +13,7 @@ import Util from "../../../util/Util";
 })
 export class PostDisplayComponent extends DashBaseComponent implements OnInit{
   postImg: string = "";
+  postTags: Tag[] = [];
 
   ngOnInit(): void {
     this.setToolTip("", 1,false);
@@ -44,11 +47,19 @@ export class PostDisplayComponent extends DashBaseComponent implements OnInit{
     // @ts-ignore
     dateBox.innerText = post.date;
     // @ts-ignore
-    tagBox.innerText = Util.formatArray(post.tags);
+    tagBox.innerText = Util.formatArray(post.tags.map(value => value.name));
     // @ts-ignore
     tagBox.style.backgroundColor = Util.getColor("post", post.type);
     // @ts-ignore
+    imgBox.style.borderColor = Util.getColor("post", post.type);
     this.postImg = post.img;
+    this.postTags = post.tags;
+  }
+
+  public onTagClick(){
+    // @ts-ignore
+    SysVars.SELECTED_TAG.next(this.postTags.at(0))
+    SysVars.SELECTED_PAGE.next("Themen");
   }
 
 }

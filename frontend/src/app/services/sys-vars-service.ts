@@ -32,6 +32,8 @@ export class SysVars {
   public static login : EventEmitter<User> = new EventEmitter<User>();
   public static CURRENT_PAGE : string = "landing";
 
+  public static SELECTED_PAGE : EventEmitter<string> = new EventEmitter<string>();
+
   public static SELECTED_POST_ID : EventEmitter<number> = new EventEmitter<number>();
   public static SELECTED_POST : EventEmitter<Post> = new EventEmitter<Post>();
   public static SELECTED_POST_IDS : EventEmitter<string> = new EventEmitter<string>();

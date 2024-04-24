@@ -1,11 +1,12 @@
 import {DbObject} from "../../services/DbObject";
+import {Tag} from "../tag/Tag";
 
 export class Post extends DbObject{
   constructor(public title : string = "placeholder title",
               public date : string = "00/00/0000",
               public type : string = "default",
               public clicks : string = "0",
-              public tags : string[] = [],
+              public tags : Tag[] = [],
               public performance: number = 0,
               public relevance: number = 0,
               public searchSuccesses: number = 0,

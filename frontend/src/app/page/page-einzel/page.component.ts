@@ -55,7 +55,6 @@ export class PageComponent implements OnInit {
 
   resetSearchbar : Subject<boolean> = new Subject<boolean>();
 
-  @Input() pageSelected = new Observable<string>;
   cardsLoaded = new Subject<GridCard[]>();
 
   constructor(private cookieService : CookieService, private db : ApiService, private pdf : PdfService, private element : ElementRef) {
@@ -111,8 +110,8 @@ export class PageComponent implements OnInit {
   }
   getPostsPageCards() {
     return [
-      {type: PostListPageableComponent, row: 1, col: 1, height: 4, width: 2},
-      {type: PostDisplayComponent, row: 1, col: 3, height: 3, width: 2},
+      {type: PostListPageableComponent, row: 1, col: 1, height: 4, width: 3},
+      {type: PostDisplayComponent, row: 1, col: 4, height: 4, width: 3},
 
       {type: Top5ArticleComponent, row: 5, col: 1, height: 1, width: 6},
       {type: Top5BlogComponent, row: 6, col: 1, height: 1, width: 6},
@@ -175,7 +174,7 @@ export class PageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.pageSelected.subscribe(page => {
+    SysVars.SELECTED_PAGE.subscribe(page => {
       SysVars.CURRENT_PAGE = page;
       switch (page) {
         case "Anbieter":{
@@ -245,8 +244,6 @@ export class PageComponent implements OnInit {
       SysVars.CURRENT_PAGE = "UserDetail";
       SysVars.USER_ID = String(id);
       this.cardsLoaded.next(this.getUserDetailPageCards());
-      this.db.resetStatus();
     })
-
   }
 }

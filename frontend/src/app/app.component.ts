@@ -4,6 +4,7 @@ import {Chart} from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import ChartAnnotation from "chartjs-plugin-annotation";
 import Util from "./util/Util";
+import {SysVars} from "./services/sys-vars-service";
 
 
 
@@ -14,7 +15,6 @@ import Util from "./util/Util";
 })
 export class AppComponent {
   title = 'Dashboard';
-  selected = new Subject<string>();
   tag : string = "";
 
   selectedSearch : string = "";
@@ -34,8 +34,10 @@ export class AppComponent {
   }
 
   select(selection : string) {
-    this.selected.next(selection);
+    SysVars.SELECTED_PAGE.next(selection);
   }
+
+  protected readonly SysVars = SysVars;
 }
 
 

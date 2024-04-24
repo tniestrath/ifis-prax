@@ -48,7 +48,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
         tagViewsCat.push(Number(tagStats.viewsCat));
         tagDate.push(Util.formatDate(tagStats.date));
       }
-      this.createChart(tagViewsPosts, tagViewsCat, tagCount, tagDate, [DashColors.RED, DashColors.DARK_RED, DashColors.BLUE], res[0].name);
+      this.createChart(tagViewsPosts, tagViewsCat, tagCount, tagDate, [DashColors.RED, DashColors.DARK_RED, DashColors.BLUE]);
 
     }).finally(() => {this.visibility = "visible"});
   }
@@ -63,7 +63,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
     })
   }
 
-  private createChart(dataViewsPost: number[], dataViewsCat: number[],dataCount: number[], dates: string[], colors : string[], tagName : string) {
+  private createChart(dataViewsPost: number[], dataViewsCat: number[],dataCount: number[], dates: string[], colors : string[]) {
     if (this.chart){
       this.chart.destroy();
     }
@@ -77,6 +77,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       }
     }
 
+    // @ts-ignore
     // @ts-ignore
     this.chart = new Chart("tag_chart", {
       type: "line",
@@ -119,13 +120,22 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
         },
         scales: {
           y: {
-            min: 0
+            min: 0,
+            ticks: {
+              color : colors[0]
+            },
+            grid: {
+              drawOnChartArea: true
+            }
           },
           yCount: {
             min: 0,
             position: "right",
             ticks: {
               color : colors[2]
+            },
+            grid: {
+              drawOnChartArea: false
             }
           },
           x: {
@@ -141,15 +151,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
             display: false
           },
           title: {
-            display: true,
-            text: tagName,
-            position: "top",
-            fullSize: true,
-            font: {
-              size: 18,
-              weight: "bold",
-              family: "'Helvetica Neue', sans-serif"
-            }
+            display: false
           },
           legend: {
             display: false,
@@ -163,11 +165,12 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
               size: 15
             },
             callbacks: {
+
             }
           }
         },
         interaction: {
-          mode: "nearest",
+          mode: "x",
           intersect: true
         },
         onClick(event: ChartEvent, elements: ActiveElement[]) {
@@ -176,3 +179,4 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
     })
   }
 }
+

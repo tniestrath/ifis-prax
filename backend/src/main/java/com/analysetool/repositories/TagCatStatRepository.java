@@ -18,7 +18,7 @@ public interface TagCatStatRepository extends JpaRepository<TagCatStat, Long> {
     Integer getViewsByTagIdAndUniId(int tagId, int uniId);
 
     @Query("SELECT SUM(t.views) FROM TagCatStat t WHERE t.tagId=:tagId")
-    int getSumOfViewsForTag(int tagId);
+    Integer getSumOfViewsForTag(int tagId);
 
     @Query("SELECT t.uniId FROM TagCatStat t ORDER BY t.uniId ASC LIMIT 1")
     int getEarliestTrackingForTag(int tagId);

@@ -15,19 +15,17 @@
   box-sizing: border-box;
   padding-bottom: 5px;
 }
-select{
+.tag-chart-title{
   box-sizing: border-box;
   max-width: 35%;
   min-width: 25%;
   border-radius: 5px 0 0 5px;
   border: 1px solid #808080;
+  display: grid;
+  place-content: center;
 }
-
-select:focus-visible{
-  box-sizing: border-box;
-  outline-style: none;
-  border-radius: 5px 0 0 5px;
-  border: 1px solid black;
+.tag-chart-title > p {
+  margin: 0;
 }
 
 input[type="radio"]{

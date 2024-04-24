@@ -1,5 +1,8 @@
 <div class="component-box tag-chart-box">
   <form class="tag-chart-form">
+    <div class="tag-chart-title">
+      <p>{{this.selectedTag.name}}</p>
+    </div>
     <input type="radio" name="time_range" value="all_time" (change)="getData($event)">
     <input type="radio" name="time_range" value="half_year" id="tag-range-halfyear" (change)="getData($event)">
     <input type="radio" name="time_range" value="month" checked id="tag-range-month" (change)="getData($event)">

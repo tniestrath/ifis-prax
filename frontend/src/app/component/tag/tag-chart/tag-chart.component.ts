@@ -123,7 +123,10 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
           },
           yCount: {
             min: 0,
-            position: "right"
+            position: "right",
+            ticks: {
+              color : colors[2]
+            }
           },
           x: {
             display: true,

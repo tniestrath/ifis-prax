@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
-    @Query("Select S From PostStats S Where S.artId=:artid ORDER BY s.year DESC LIMIT 1")
+    @Query("Select s From PostStats s Where s.artId=:artid ORDER BY s.year DESC LIMIT 1")
     PostStats getStatByArtIDLatestYear(long artid);
 
     @Query("SELECT s FROM PostStats s WHERE s.artId=:artId AND s.year=:year")

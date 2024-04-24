@@ -357,7 +357,7 @@ public class TagsController {
             array.add(getTagStatsShort((int) tagId));
         }
 
-        if(sorter.isBlank()) {
+        if(sorter == null || sorter.isBlank()) {
             sorter = "viewsTotal";
         }
 

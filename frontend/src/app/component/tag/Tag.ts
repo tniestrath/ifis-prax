@@ -7,12 +7,12 @@ export class Tag extends DbObject{
 }
 
 export class TagRanking extends Tag{
-  constructor(public override id : string, public override name : string, public viewsPost : number, public viewsCat : number, public count : number) {
+  constructor(public override id : string, public override name : string, public viewsPosts : number, public viewsCat : number, public count : number) {
     super(id, name);
   }
 
   compareByViewsPost(other: TagRanking): number {
-    return other.viewsPost - this.viewsPost;
+    return other.viewsPosts - this.viewsPosts;
   }
 
   compareByViewsCat(other: TagRanking): number {
@@ -20,7 +20,7 @@ export class TagRanking extends Tag{
   }
 
   compareByViews(other: TagRanking): number {
-    return (other.viewsPost + other.viewsCat) - (this.viewsPost + this.viewsCat);
+    return (other.viewsPosts + other.viewsCat) - (this.viewsPosts + this.viewsCat);
   }
 
   compareByCount(other: TagRanking): number {
@@ -28,8 +28,8 @@ export class TagRanking extends Tag{
   }
 }
 export class TagStats extends TagRanking{
-  constructor(public override id : string, public override name : string, public override viewsPost : number, public override viewsCat : number, public override count : number, public date : string) {
-    super(id, name, viewsPost, viewsCat, count);
+  constructor(public override id : string, public override name : string, public override viewsPosts : number, public override viewsCat : number, public override count : number, public date : string) {
+    super(id, name, viewsPosts, viewsCat, count);
   }
 }
 

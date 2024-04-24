@@ -270,7 +270,7 @@ public class uniStatController {
 
         labelsForCategory.add("Main");
         labelsForCategory.add("Anbieterverzeichnis");
-        labelsForCategory.add("Article");
+        labelsForCategory.add("Artikel");
         labelsForCategory.add("News");
         labelsForCategory.add("Blog");
         labelsForCategory.add("Podcast");
@@ -365,7 +365,7 @@ public class uniStatController {
 
         labelsForCategory.add("Main");
         labelsForCategory.add("Anbieterverzeichnis");
-        labelsForCategory.add("Article");
+        labelsForCategory.add("Artikel");
         labelsForCategory.add("News");
         labelsForCategory.add("Blog");
         labelsForCategory.add("Podcast");
@@ -609,7 +609,7 @@ public class uniStatController {
     public JSONObject getClickOfDayAsJson(long id,int daysBack) throws JSONException {
 
         JSONObject obj = new JSONObject();
-        PostStats stats =postStatsRepo.getStatByArtID(id);
+        PostStats stats =postStatsRepo.getStatByArtIDLatestYear(id);
         long clicks;
         HashMap<String,Long> allClicks = (HashMap<String, Long>) stats.getViewsLastYear();
         LocalDate heute = LocalDate.now();

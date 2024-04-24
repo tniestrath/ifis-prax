@@ -1985,7 +1985,7 @@ public class LogService {
                         performance = (float)views/diffInDays;
                     }
 
-                    statsRepo.updateClicksAndPerformanceByArtId(views, id, performance);
+                    statsRepo.updateClicksAndPerformanceByArtId(views, id, logDate.getYear(), performance);
 
                     // Rufe die angepasste Methode mit dem extrahierten Datum und der Uhrzeit auf
                     erhoeheWertFuerLogDatum(id, logDate, logTime);
@@ -2160,7 +2160,7 @@ public class LogService {
     public void updateLetterCount(long id) {
 
         int lettercount = Jsoup.clean(postRepository.getContentById(id), Safelist.none()).length();
-        statsRepo.updateLetterCount(lettercount, id);
+        statsRepo.updateLetterCount(lettercount, id, LocalDateTime.now().getYear());
     }
 
     /**

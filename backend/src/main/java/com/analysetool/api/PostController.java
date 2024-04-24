@@ -108,58 +108,6 @@ public class PostController {
     @GetMapping("/publishedPosts")
     public List<Post> getPublishedPosts(){return postRepository.findPublishedPosts();}
 
-
-    /**
-     * Fetches all Posts of a specified user and enriches it with data.
-     * @param id the user_id of the user to fetch for.
-     * @return a JSON-String containing ONLY enriched data of posts (See PostStatsByIdForFrontend).
-     * @throws JSONException .
-     * @throws ParseException .
-     */
-    @GetMapping("/getPostsByAuthorLine2")
-    public String PostsByAuthorOld(@RequestParam int id) throws JSONException, ParseException {
-
-        JSONArray list = new JSONArray();
-        List<Post> posts = postRepository.findByAuthor(id);
-        DateFormat onlyDate = new SimpleDateFormat("yyyy-MM-dd");
-
-        String type;
-        float maxPerformance =   statsRepo.getMaxPerformance();
-        float maxRelevance = statsRepo.getMaxRelevance();
-        if (!posts.isEmpty()) {
-            for (Post i : posts) {
-                if (i.getType().equals("post")) {
-                    PostStats PostStats = null;
-                    if (statsRepo.existsByArtId(i.getId())) {
-                        PostStats = statsRepo.getStatByArtID(i.getId());
-                    }
-
-                    type = getType(i.getId()) == null ? "default" : getType(i.getId());
-
-                    JSONObject obj = new JSONObject();
-                    Date date = onlyDate.parse(i.getDate().toString());
-                    String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-                    obj.put("id", i.getId());
-                    obj.put("title", i.getTitle());
-                    obj.put("date", formattedDate);
-                    obj.put("type", type);
-                    if (PostStats != null) {
-                        obj.put("performance", (PostStats.getPerformance() /maxPerformance));
-                        obj.put("relevance", (PostStats.getRelevance() /maxRelevance));
-                    } else {
-                        obj.put("performance", 0);
-                        obj.put("relevance", 0);
-                    }
-                    if (!obj.get("type").equals("default")) {
-                        list.put(obj);
-                    }
-                }
-            }
-        }
-        return list.toString();
-    }
-
     /**
      *
      * @param authorId the user_id of the author you want posts from.
@@ -211,23 +159,6 @@ public class PostController {
     }
 
     /**
-     * Calculates the times a post has been interacted with.
-     * @param id the post_id to calc for.
-     * @return a JSON-String.
-     */
-    @GetMapping("/getViewsOfPostDistributedByHour")
-    public String getViewsOfPostDistributedByHour(@RequestParam Long id) {
-        //wip
-        String leViews="";
-        if(statsRepo.existsByArtId(id)){
-            PostStats stats = statsRepo.getStatByArtID(id);
-            leViews= stats.getViewsPerDay();
-
-        }
-        return leViews;
-    }
-
-    /**
      * Calculates the times a post has been interacted with, counting only specified days.
      * @param postId the post_id to calc for.
      * @param daysback the amount of days in the past (until now) that should be used to calculate.
@@ -236,6 +167,54 @@ public class PostController {
     @GetMapping("/postClicksDistributedByHours")
     public String getPostClicksOfLast24HourByPostIdAndDaysBackDistributedByHour(Long postId, Integer daysback){
        return postClicksService.getPostClicksOfLast24HourByPostIdAndDaysBackDistributedByHour(postId,daysback).toString();//banger Name
+    }
+
+    /**
+     * Fetches number of views on posts made by the specified user.
+     * @param id the id of the user to fetch for.
+     * @return a positive long.
+     */
+    @GetMapping("/getViewsOfUser")
+    public long getPostViewsOfUserById(@RequestParam Long id){
+        List<Post> posts = postRepo.findByAuthor(id.intValue());
+        long views = 0 ;
+
+        for (Post post : posts) {
+            if (statRepository.existsByArtId(post.getId())) {
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
+                        if (Constants.getInstance().getListOfPostTypesInteger().contains(termTax.getTermId().intValue())) {
+                            views = views + statRepository.getSumClicks(post.getId());
+                        }
+                    }
+                }
+            }
+        }
+        return views ;
+    }
+
+    /**
+     * Fetches the number of posts made by the specified user.
+     * @param id the id of the user to fetch for.
+     * @return a positive long.
+     */
+    @GetMapping("/getPostCountOfUser")
+    public long getPostCountOfUserById(@RequestParam Long id){
+        List<Post> posts = postRepo.findByAuthor(id.intValue());
+        long postCount = 0 ;
+
+        for (Post post : posts) {
+            if (statRepository.existsByArtId(post.getId())) {
+                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
+                        if (Constants.getInstance().getListOfPostTypesInteger().contains(termTax.getTermId().intValue())) {
+                            postCount++ ;
+                        }
+                    }
+                }
+            }
+        }
+        return postCount ;
     }
 
     /**
@@ -252,11 +231,12 @@ public class PostController {
         if(postRepository.findById(id).isEmpty()) {return null;}
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
+        List<Long> tagIds = new ArrayList<>();
         String type;
 
-        PostStats PostStats = null;
+        PostStats postStats = null;
         if(statsRepo.existsByArtId(post.getId())){
-            PostStats = statsRepo.getStatByArtID(post.getId());
+            postStats = statsRepo.getStatByArtIDLatestYear(post.getId());
         }
         List<Long> tagIDs = null;
         if(termRelationRepo.existsByObjectId(post.getId())){
@@ -279,6 +259,7 @@ public class PostController {
                     if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
                         //noinspection OptionalGetWithoutIsPresent
                         tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
+                        tagIds.add(tt.getTermId());
                     }
                 }
             }
@@ -301,15 +282,24 @@ public class PostController {
         obj.put("title", post.getTitle());
         obj.put("date", formattedDate);
 
-        obj.put("tags", tags);
+
+        JSONArray array = new JSONArray();
+        for(int i = 0; i < tags.size(); i++) {
+            JSONObject json = new JSONObject();
+            json.put("name", tags.get(i));
+            json.put("id", tagIds.get(i));
+            array.put(json);
+        }
+
+        obj.put("tags", array);
         obj.put("type", type);
-        if(PostStats != null){
+        if(postStats != null){
             float maxPerformance =   statsRepo.getMaxPerformance();
             float maxRelevance = statsRepo.getMaxRelevance();
-            obj.put("performance", (PostStats.getPerformance() /maxPerformance));
-            obj.put("relevance", (PostStats.getRelevance() /maxRelevance));
-            obj.put("clicks", PostStats.getClicks().toString());
-            obj.put("lettercount", PostStats.getLettercount());
+            obj.put("performance", (postStats.getPerformance() /maxPerformance));
+            obj.put("relevance", (postStats.getRelevance() /maxRelevance));
+            obj.put("clicks", postStats.getClicks().toString());
+            obj.put("lettercount", postStats.getLettercount());
         }else {
             obj.put("performance",0);
             obj.put("relevance",0);
@@ -488,60 +478,6 @@ public class PostController {
     }
 
     /**
-     * Fetches number of views on posts made by the specified user.
-     * @param id the id of the user to fetch for.
-     * @return a positive long.
-     */
-    @GetMapping("/getViewsOfUser")
-    public long getPostViewsOfUserById(@RequestParam Long id){
-        List<Post> posts = postRepo.findByAuthor(id.intValue());
-        long views = 0 ;
-
-        for (Post post : posts) {
-            if (statRepository.existsByArtId(post.getId())) {
-                PostStats Stat = statRepository.getStatByArtID(post.getId());
-                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
-                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
-                        if (Constants.getInstance().getListOfPostTypesInteger().contains(termTax.getTermId().intValue())) {
-                            views = views + Stat.getClicks();
-                        }
-                    }
-
-
-                }
-            }
-        }
-        return views ;
-    }
-
-    /**
-     * Fetches the number of posts made by the specified user.
-     * @param id the id of the user to fetch for.
-     * @return a positive long.
-     */
-    @GetMapping("/getPostCountOfUser")
-    public long getPostCountOfUserById(@RequestParam Long id){
-        List<Post> posts = postRepo.findByAuthor(id.intValue());
-        long PostCount = 0 ;
-
-        for (Post post : posts) {
-            if (statRepository.existsByArtId(post.getId())) {
-                PostStats Stat = statRepository.getStatByArtID(post.getId());
-                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
-                    for (WpTermTaxonomy termTax : taxTermRepo.findByTermTaxonomyId(l)) {
-                        if (Constants.getInstance().getListOfPostTypesInteger().contains(termTax.getTermId().intValue())) {
-                            PostCount++ ;
-                        }
-                    }
-
-
-                }
-            }
-        }
-        return PostCount ;
-    }
-
-    /**
      * Fetches the name, id and type for a post by the given author - that has the highest value in type
      * @param id the id of the user to fetch for.
      * @param type the type to use as value ("relevance" | "performance").
@@ -554,27 +490,25 @@ public class PostController {
         if (Posts.size() == 0) {
             return null;
         }
-        PostStats PostStats;
+        PostStats postStats;
         float max = 0;
         long PostId = 0;
 
-
-
         for (Post post : Posts) {
             if (statRepository.existsByArtId(post.getId())) {
-                PostStats = statRepository.getStatByArtID(post.getId());
+                postStats = statRepository.getStatByArtIDLatestYear(post.getId());
                 if (type.equals("relevance")) {
-                    if (PostStats.getRelevance() > max) {
+                    if (postStats.getRelevance() > max) {
                         float maxRelevance = statsRepo.getMaxRelevance();
-                        max = (PostStats.getRelevance() /maxRelevance);
-                        PostId = PostStats.getArtId();
+                        max = (postStats.getRelevance() /maxRelevance);
+                        PostId = postStats.getArtId();
                     }
                 }
                 if (type.equals("performance")) {
-                    if (PostStats.getPerformance() > max) {
+                    if (postStats.getPerformance() > max) {
                         float maxPerformance =   statsRepo.getMaxPerformance();
-                        max = (PostStats.getPerformance() /maxPerformance);
-                        PostId = PostStats.getArtId();
+                        max = (postStats.getPerformance() /maxPerformance);
+                        PostId = postStats.getArtId();
                     }
                 }
             }
@@ -939,7 +873,7 @@ public class PostController {
      */
     @GetMapping("/testLetterCount")
     public void updateLetterCount(int lettercount, long id) {
-        statsRepo.updateLetterCount(lettercount, id);
+        statsRepo.updateLetterCount(lettercount, id, LocalDateTime.now().getYear());
     }
 
     /**

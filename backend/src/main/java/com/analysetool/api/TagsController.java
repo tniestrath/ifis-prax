@@ -30,9 +30,13 @@ public class TagsController {
     @Autowired
     private TagStatRepository tagStatRepo;
     @Autowired
+    private TagCatStatRepository tagCatRepo;
+    @Autowired
     private WpTermRelationshipsRepository termRelRepo;
     @Autowired
     private PostRepository postRepo;
+    @Autowired
+    private universalStatsRepository uniRepo;
 
     @GetMapping("/{id}")
     public ResponseEntity<WPTerm> getTermById(@PathVariable Long id) {
@@ -278,28 +282,117 @@ public class TagsController {
     }
 
 
-    @GetMapping("/getTagStats")
-    public String getTagStat(@RequestParam int tagId,@RequestParam int limitDaysBack, @RequestParam String dataType) throws JSONException, ParseException {
-        JSONArray response = new JSONArray();
-        int dayOfYear = getDayOfYear();
-        TagStat tagStat = new TagStat();
-        if (tagStatRepo.existsByTagId(tagId)){
-            tagStat = tagStatRepo.getStatById(tagId).get(0);
-        }
-        for(int i=limitDaysBack;i>0;i--){
-            JSONObject obj =new JSONObject();
-            obj.put("id",tagId);
-            obj.put("name",termRepository.getNameById(tagId));
-            obj.put("date", new SimpleDateFormat("yyyy-MM-dd").format(getDate(i)));
-            switch (dataType) {
-                case "relevance" -> obj.put("relevance", (tagStatRepo.getRelevance(tagId) / tagStatRepo.getMaxRelevance()) * 100);
-                case "count" -> obj.put("count", getCount(tagId, getDate(i)));
-                case "views" -> obj.put("views", tagStatRepo.getViewsDaysBack(tagId, limitDaysBack) == null ? 0 : tagStatRepo.getViewsDaysBack(tagId, limitDaysBack));
-            }
-            response.put(obj);
+    @GetMapping("/getTagStatsSingle")
+    public String getTagStatsSingle(int tagId, String start, String end) throws JSONException {
+
+        java.sql.Date dateStart;
+        java.sql.Date dateEnd;
+
+        if(start.isBlank()) {
+            dateStart = tagStatRepo.getEarliestTrackingForTag(tagId) >= tagCatRepo.getEarliestTrackingForTag(tagId) ? java.sql.Date.valueOf(uniRepo.getDateByUniId(tagStatRepo.getEarliestTrackingForTag(tagId)).toString()) : java.sql.Date.valueOf(uniRepo.getDateByUniId(tagCatRepo.getEarliestTrackingForTag(tagId)).toString());
+        } else {
+             dateStart = java.sql.Date.valueOf(start);
         }
 
-        return response.toString();
+        if(end.isBlank()) {
+            dateEnd = java.sql.Date.valueOf(LocalDate.now().toString());
+        } else {
+            dateEnd = java.sql.Date.valueOf(end);
+        }
+
+
+        if (dateStart.after(dateEnd)) {
+            java.sql.Date datePuffer = dateEnd;
+            dateEnd = dateStart;
+            dateStart = datePuffer;
+        }
+
+        JSONArray array = new JSONArray();
+
+        for (LocalDate date : dateStart.toLocalDate().datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
+
+            int uniId = 0;
+
+            //Check if we have stats for the day we are checking
+            if (uniRepo.findByDatum(java.sql.Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                uniId = uniRepo.findByDatum(java.sql.Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+            }
+
+            JSONObject json = new JSONObject();
+
+            json.put("count", getCount(tagId, Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())));
+            json.put("viewsPosts", tagStatRepo.getViewsByTagIdAndUniId(tagId, uniId) == null ? 0 : tagStatRepo.getViewsByTagIdAndUniId(tagId, uniId));
+            json.put("viewsCat", tagCatRepo.getViewsByTagIdAndUniId(tagId, uniId) == null ? 0 : tagCatRepo.getViewsByTagIdAndUniId(tagId, uniId));
+            json.put("date", date.toString());
+
+            array.put(json);
+        }
+
+        return array.toString();
+    }
+
+    @GetMapping("/getTagStatsDaysBack")
+    public String getTagStatsSingle(int tagId, int daysBack) throws JSONException {
+        LocalDate dateEnd = LocalDate.now();
+        return getTagStatsSingle(tagId, dateEnd.minusDays(daysBack).toString(), dateEnd.toString());
+    }
+
+
+    public JSONObject getTagStatsShort(int tagId) throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("count", Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        json.put("name", termRepository.getNameById(tagId));
+        json.put("viewsPosts", tagStatRepo.getSumOfViewsForTag(tagId));
+        json.put("viewsCat", tagCatRepo.getSumOfViewsForTag(tagId));
+
+        return json;
+    }
+
+    @GetMapping("/getTagStatsAll")
+    public String getTagStatsAll(String sorter) throws JSONException {
+        List<JSONObject> array = new ArrayList<>();
+
+        for(long tagId : termTaxonomyRepository.getTermIdsOfPostTags()) {
+            array.add(getTagStatsShort((int) tagId));
+        }
+
+        switch(sorter) {
+            case "viewsPosts" -> {
+                array.sort((o1, o2) -> {
+                    try {
+                        return o2.getInt("viewsPosts") - o1.getInt("viewsPosts");
+                    } catch (JSONException ignored) {}
+                    return 0;
+                });
+            }
+            case "viewsCat" -> {
+                array.sort((o1, o2) -> {
+                    try {
+                        return o2.getInt("viewsCat") - o1.getInt("viewsCat");
+                    } catch (JSONException ignored) {}
+                    return 0;
+                });
+            }
+            case "count" -> {
+                array.sort((o1, o2) -> {
+                    try {
+                        return o2.getInt("count") - o1.getInt("count");
+                    } catch (JSONException ignored) {}
+                    return 0;
+                });
+            }
+            case "viewsTotal" ->  {
+                array.sort((o1, o2) -> {
+                    try {
+                        return (o2.getInt("viewsPosts") + o2.getInt("viewsCat")) - (o1.getInt("viewsPosts") + o1.getInt("viewsCat"));
+                    } catch (JSONException ignored) {}
+                    return 0;
+                });
+            }
+         }
+
+        return array.toString();
     }
 
     @GetMapping("/getRelevance")

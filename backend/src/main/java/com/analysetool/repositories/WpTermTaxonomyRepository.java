@@ -30,4 +30,7 @@ public interface WpTermTaxonomyRepository extends JpaRepository<WpTermTaxonomy, 
     WpTermTaxonomy findByTermId(int termId);
     List<WpTermTaxonomy> findByTermTaxonomyId(Long termTaxonomyId);
 
+    @Query("SELECT t.termId FROM WpTermTaxonomy t WHERE t.taxonomy = 'post_tag'")
+    List<Long> getTermIdsOfPostTags();
+
 }

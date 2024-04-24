@@ -341,10 +341,11 @@ public class TagsController {
     public JSONObject getTagStatsShort(int tagId) throws JSONException {
         JSONObject json = new JSONObject();
 
-        json.put("count", Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        json.put("count", getCount(tagId, Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())));
         json.put("name", termRepository.getNameById(tagId));
         json.put("viewsPosts", tagStatRepo.getSumOfViewsForTag(tagId) == null ? 0 : tagStatRepo.getSumOfViewsForTag(tagId));
         json.put("viewsCat", tagCatRepo.getSumOfViewsForTag(tagId) == null ? 0 : tagCatRepo.getSumOfViewsForTag(tagId));
+        json.put("id", tagId);
 
         return json;
     }

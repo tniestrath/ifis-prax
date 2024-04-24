@@ -696,14 +696,14 @@ public class UserController {
 
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
-                PostStats stat = statRepository.getStatByArtID(post.getId());
+                int stat = statRepository.getSumClicks(post.getId()) == null ? 0 : statRepository.getSumClicks(post.getId());
                 switch(postController.getType(post.getId())) {
-                    case "blog" -> viewsBlog += stat.getClicks();
-                    case "artikel" -> viewsArtikel += stat.getClicks();
-                    case "news" -> viewsNews += stat.getClicks();
-                    case "whitepaper" -> viewsWP += stat.getClicks();
-                    case "podcast" -> viewsPodcast += stat.getClicks();
-                    case "videos" -> viewsVideo += stat.getClicks();
+                    case "blog" -> viewsBlog += stat;
+                    case "artikel" -> viewsArtikel += stat;
+                    case "news" -> viewsNews += stat;
+                    case "whitepaper" -> viewsWP += stat;
+                    case "podcast" -> viewsPodcast += stat;
+                    case "videos" -> viewsVideo += stat;
                 }
             }
         }

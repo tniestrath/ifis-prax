@@ -8,126 +8,33 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
-    @Query("Select S From PostStats S Where S.artId=:artid")
-    PostStats getStatByArtID(long artid);
+    @Query("Select S From PostStats S Where S.artId=:artid ORDER BY s.year DESC LIMIT 1")
+    PostStats getStatByArtIDLatestYear(long artid);
 
     @Query("SELECT s FROM PostStats s WHERE s.artId=:artId AND s.year=:year")
     PostStats findByArtIdAndYear(long artId, int year);
 
     boolean existsByArtIdAndYear(long artid,int year);
 
-    @Modifying
-    @Query("UPDATE PostStats s SET s.searchSuccessRate = :searchSuccessRate, s.articleReferringRate = :articleReferringRate, s.clicks = :clicks, s.searchSuccess = :searchSucces, s.refferings = :refferings WHERE s.artId = :artId")
-    void updateStats(Long artId,  Float searchSuccessRate,  Float articleReferringRate,  Long clicks,Long searchSucces,  Long refferings);
-
-    // Methode zum Aktualisieren der searchSuccessRate-Spalte
-    @Modifying
-    @Query("UPDATE PostStats s SET s.searchSuccessRate = :searchSuccessRate WHERE s.artId = :artId")
-    void updateSearchSuccessRate(Long artId, Float searchSuccessRate);
-
-    // Methode zum Aktualisieren der articleReferringRate-Spalte
-    @Modifying
-    @Query("UPDATE PostStats s SET s.articleReferringRate = :articleReferringRate WHERE s.artId = :artId")
-    void updateArticleReferringRate( Long artId,  Float articleReferringRate);
-
-    // Methode zum Aktualisieren der clicks-Spalte
-    @Transactional
-    @Modifying
-    @Query("UPDATE PostStats s SET s.clicks = :clicks WHERE s.artId = :artId")
-    void updateClicks( Long artId,  Long clicks);
-
-    // Methode zum Aktualisieren der searchSucces-Spalte
-    @Modifying
-    @Query("UPDATE PostStats s SET s.searchSuccess = :searchSuccess WHERE s.artId = :artId")
-    void updateSearchSucces( Long artId,Long searchSuccess);
-
-    // Methode zum Aktualisieren der refferings-Spalte
-    @Modifying
-    @Query("UPDATE PostStats s SET s.refferings = :refferings WHERE s.artId = :artId")
-    void updateRefferings( Long artId,  Long refferings);
-
     List<PostStats> findByArtId(Long artId);
 
     @Query("SELECT SUM(p.clicks) FROM PostStats p WHERE p.artId=:artId")
     Integer getSumClicks(long artId);
 
-    // Zähle die Anzahl der Stats-Objekte anhand der artId
-    Long countByArtId(Long artId);
-
-    // Suche nach einem bestimmten Stats-Objekt anhand der artId
-    Optional<PostStats> findOneByArtId(Long artId);
-
-    // Aktualisiere die searchSuccessRate-Spalte für einen bestimmten Artikel
-    @Modifying
-    @Query("UPDATE PostStats s SET s.searchSuccessRate = :searchSuccessRate WHERE s.artId = :artId")
-    void updateSearchSuccessRateByArtId( Float searchSuccessRate,  Long artId);
-
-    // Aktualisiere die articleReferringRate-Spalte für einen bestimmten Artikel
-    @Modifying
-    @Query("UPDATE PostStats s SET s.articleReferringRate = :articleReferringRate WHERE s.artId = :artId")
-    void updateArticleReferringRateByArtId( Float articleReferringRate, Long artId);
-
-    // Aktualisiere die clicks-Spalte für einen bestimmten Artikel
-    @Transactional
-    @Modifying
-    @Query("UPDATE PostStats s SET s.clicks = :clicks WHERE s.artId = :artId")
-    void updateClicksByArtId( Long clicks,  Long artId);
-
-    // Aktualisiere die searchSucces-Spalte für einen bestimmten Artikel
-    @Modifying
-    @Query("UPDATE PostStats s SET s.searchSuccess = :searchSucces WHERE s.artId = :artId")
-    void updateSearchSuccesByArtId( Long searchSucces, Long artId);
-
-    // Aktualisiere die refferings-Spalte für einen bestimmten Artikel
-    @Transactional
-    @Modifying
-    @Query("UPDATE PostStats s SET s.refferings = :refferings WHERE s.artId = :artId")
-    void updateRefferingsByArtId( Long refferings,  Long artId);
-
     boolean existsByArtId(long artId);
 
-    @Query("SELECT s.searchSuccessRate FROM PostStats s WHERE s.artId = :artId")
-    Float getSearchSuccessRateByArtId(Long artId);
-
-    // Get the article referring rate for a given article ID
-    @Query("SELECT s.articleReferringRate FROM PostStats s WHERE s.artId = :artId")
-    Float getArticleReferringRateByArtId(Long artId);
-
     // Get the number of clicks for a given article ID
-    @Query("SELECT s.clicks FROM PostStats s WHERE s.artId = :artId")
+    @Query("SELECT SUM(s.clicks) FROM PostStats s WHERE s.artId = :artId")
     Long getClicksByArtId(Long artId);
 
-    // Get the number of successful searches for a given article ID
-    @Query("SELECT s.searchSuccess FROM PostStats s WHERE s.artId = :artId")
-    Long getSearchSuccesByArtId(Long artId);
-
-    // Get the number of referrings for a given article ID
-    @Query("SELECT s.refferings FROM PostStats s WHERE s.artId = :artId")
-    Long getReferringsByArtId(Long artId);
     @Transactional
     @Modifying
-    @Query("UPDATE PostStats s SET s.clicks = :clicks , s.searchSuccess =:searchSuccess WHERE s.artId = :artId")
-    void updateClicksAndSearchSuccess( Long artId,  Long clicks, Long searchSuccess);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE PostStats s SET s.refferings = :refferings , s.articleReferringRate=:rate WHERE s.artId = :artId")
-    void updateRefferingsAndRateByArtId( Float rate,Long refferings,  Long artId);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE PostStats s SET s.clicks = :clicks , s.searchSuccess =:searchSuccess , s.performance=:performance WHERE s.artId = :artId")
-    void updateClicksSearchSuccessPerformance( Long artId,  Long clicks, Long searchSuccess, float performance);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE PostStats s SET s.clicks = :clicks , s.performance=:performance WHERE s.artId = :artId")
-    void updateClicksAndPerformanceByArtId( Long clicks,  Long artId, float performance);
+    @Query("UPDATE PostStats s SET s.clicks = :clicks , s.performance=:performance WHERE s.artId = :artId AND s.year=:year")
+    void updateClicksAndPerformanceByArtId( Long clicks,  Long artId, int year, float performance);
 
     @Modifying
     @Transactional
@@ -136,8 +43,8 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE PostStats s SET s.lettercount =:lettercount WHERE s.artId =:artId")
-    void updateLetterCount(int lettercount, long artId);
+    @Query("UPDATE PostStats s SET s.lettercount =:lettercount WHERE s.artId =:artId AND s.year =:year")
+    void updateLetterCount(int lettercount, long artId, int year);
 
     default void updateClicksSearchSuccessRateAndPerformance(Long artId, Long clicks, Long searchSuccess, float performance) {
         float searchSuccessRate = (float) clicks / searchSuccess;
@@ -164,10 +71,10 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("SELECT s.artId FROM PostStats s ORDER BY s.performance DESC")
     List<Long> getTopPerformanceID(int limit);
 
-    @Query("SELECT s.lettercount FROM PostStats s WHERE s.artId=:artId")
+    @Query("SELECT MAX(s.lettercount) FROM PostStats s WHERE s.artId=:artId")
     Integer getLetterCount(long artId);
 
-    @Query("SELECT s.relevance FROM PostStats s WHERE s.artId=:artId")
+    @Query("SELECT MAX(s.relevance) FROM PostStats s WHERE s.artId=:artId")
     float getRelevanceById(long artId);
 
     @Query("SELECT s.wordcount FROM PostStats s WHERE s.artId =:artId")

@@ -32,5 +32,14 @@ public interface TagStatRepository extends JpaRepository<TagStat, Long> {
     @Query("SELECT SUM(t.views) FROM TagStat t WHERE t.tagId=:id AND t.uniId + :daysBack = (SELECT u.id FROM UniversalStats u ORDER BY u.id DESC LIMIT 1)")
     Integer getViewsDaysBack(int id, int daysBack);
 
+    @Query("SELECT SUM(t.views) FROM TagStat t WHERE t.tagId=:tagId AND t.uniId=:uniId")
+    Integer getViewsByTagIdAndUniId(int tagId, int uniId);
+
+    @Query("SELECT SUM(t.views) FROM TagStat t WHERE t.tagId=:tagId")
+    int getSumOfViewsForTag(int tagId);
+
+    @Query("SELECT t.uniId FROM TagStat t ORDER BY t.uniId ASC LIMIT 1")
+    int getEarliestTrackingForTag(int tagId);
+
 }
 

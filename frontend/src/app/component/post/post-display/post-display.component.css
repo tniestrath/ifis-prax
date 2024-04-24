@@ -12,6 +12,9 @@
 }
 #post-display-img {
   border-radius: 5px 5px 0 0;
+  border-style: solid;
+  border-width: 4px;
+  box-sizing: border-box;
   width: 100%;
   object-fit: cover;
   object-position: center center;
@@ -33,10 +36,11 @@
 }
 #post-display-tags{
   position: absolute;
+  font-size: 18px;
   top: 0;
   right: 0;
   z-index: 10;
-  padding: 4px 7px;
+  padding: 5px 8px;
   border-radius: 0 5px 0 5px;
   color: #FFFFFF;
 }

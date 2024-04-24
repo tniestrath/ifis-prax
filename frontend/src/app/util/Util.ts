@@ -3,7 +3,7 @@ export default class Util {
     if (n == undefined) return "NaN";
     var formattedN = String(n);
     if (typeof n === "string") n = Number.parseInt(n);
-    if (n > 1000){
+    if (n > 999){
       formattedN = +parseFloat(String(n / 1000)).toFixed( 1 ) + "K";
     }
     if (n > 9999){

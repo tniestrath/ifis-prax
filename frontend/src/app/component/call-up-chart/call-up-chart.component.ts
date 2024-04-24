@@ -157,6 +157,9 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         maintainAspectRatio: false,
         indexAxis: "y",
         layout: {
+          padding: {
+            right: -10
+          }
         },
         scales: {
           x: {
@@ -276,10 +279,18 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         },
         scales: {
           y: {
-            min: 0
+            min: 0,
+            ticks: {
+              callback: tickValue => Util.formatNumbers(tickValue)
+            }
           },
           x: {
-            display: true
+            display: true,
+            ticks: {
+              autoSkip: true,
+              maxRotation: 0,
+              maxTicksLimit: 15
+            }
           }
         },
         plugins: {

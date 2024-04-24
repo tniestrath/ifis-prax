@@ -383,11 +383,6 @@ export class ApiService {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_ALL_PAGED).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_ALL_PAGED)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-
-  async getPostById(id: number) : Promise<Post> {
-    this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_POST).replace("ID", String(id)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POST)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
-  }
   async getPostByIdWithContent(id: string) : Promise<Post> {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_POST_WITH_CONTENT).replace("ID", String(id)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POST_WITH_CONTENT)}).then(res => {this.setFinished(res.status, res.url); return res.json()});

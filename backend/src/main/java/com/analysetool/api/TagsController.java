@@ -343,8 +343,8 @@ public class TagsController {
 
         json.put("count", Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
         json.put("name", termRepository.getNameById(tagId));
-        json.put("viewsPosts", tagStatRepo.getSumOfViewsForTag(tagId));
-        json.put("viewsCat", tagCatRepo.getSumOfViewsForTag(tagId));
+        json.put("viewsPosts", tagStatRepo.getSumOfViewsForTag(tagId) == null ? 0 : tagStatRepo.getSumOfViewsForTag(tagId));
+        json.put("viewsCat", tagCatRepo.getSumOfViewsForTag(tagId) == null ? 0 : tagCatRepo.getSumOfViewsForTag(tagId));
 
         return json;
     }
@@ -355,6 +355,10 @@ public class TagsController {
 
         for(long tagId : termTaxonomyRepository.getTermIdsOfPostTags()) {
             array.add(getTagStatsShort((int) tagId));
+        }
+
+        if(sorter.isBlank()) {
+            sorter = "viewsTotal";
         }
 
         switch(sorter) {
@@ -391,8 +395,8 @@ public class TagsController {
                 });
             }
          }
-
-        return array.toString();
+        JSONArray jsonArray = new JSONArray(array);
+        return jsonArray.toString();
     }
 
     @GetMapping("/getRelevance")

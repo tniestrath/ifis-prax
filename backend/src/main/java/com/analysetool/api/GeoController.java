@@ -791,5 +791,20 @@ public class GeoController {
         json.put("NW", nw + json.getInt("NW"));
         json.put("Ausland", ausland + json.getInt("Ausland"));
     }
+
+    @GetMapping("/getTop5CitiesByClicks")
+    public String getTop5CitiesByClicks() {
+        try {
+            int uniId = uniStatRepo.getLatestUniStat().getId();
+            List<ClicksByBundeslandCitiesDLC> clicks = clicksByBundeslandCitiesDLCRepo.findTopCitiesByUniId(uniId);
+            JSONObject obj = new JSONObject();
+            for (ClicksByBundeslandCitiesDLC c : clicks) {
+                obj.put(c.getCity(), c.getClicks());
+            }
+            return obj.toString();
+        } catch (Exception e) {
+            return "Error";
+        }
+    }
 }
 

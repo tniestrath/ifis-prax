@@ -345,6 +345,7 @@ public class TagsController {
         json.put("name", termRepository.getNameById(tagId));
         json.put("viewsPosts", tagStatRepo.getSumOfViewsForTag(tagId) == null ? 0 : tagStatRepo.getSumOfViewsForTag(tagId));
         json.put("viewsCat", tagCatRepo.getSumOfViewsForTag(tagId) == null ? 0 : tagCatRepo.getSumOfViewsForTag(tagId));
+        json.put("id", tagId);
 
         return json;
     }

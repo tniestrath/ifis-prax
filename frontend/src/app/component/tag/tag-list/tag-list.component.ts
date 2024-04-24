@@ -10,7 +10,7 @@ import {TagListItemComponent} from "./tag-list-item/tag-list-item.component";
   templateUrl: './tag-list.component.html',
   styleUrls: ['./tag-list.component.css', "../../dash-base/dash-base.component.css"]
 })
-export class TagListComponent extends DashBaseComponent implements AfterViewInit{
+export class TagListComponent extends DashBaseComponent{
   selectorItems : SelectorItem[] = [];
   selectorItemsBackup = this.selectorItems;
   selectorItemsLoaded = new Subject<SelectorItem[]>();
@@ -20,12 +20,11 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
   ngOnInit(): void {
     this.setToolTip("Auflistung aller #Tags, sortierbar nach Relevanz oder Views")
 
-    this.api.getAllTagsWithRelevanceAndViews().then(res => {
+    this.api.getAllTagsWithStats().then(res => {
       for (var tag of res) {
-        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.relevance, tag.views, tag.count)));
-        this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRelevance((b.data as TagRanking)));
+        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.viewsPost, tag.viewsCat, tag.count)));
       }
-      this.selectorItemsLoaded.next(this.selectorItems)
+      this.selectorItemsLoaded.next(this.selectorItems);
     })
 
     this.search_input = document.getElementById("tag-search");
@@ -40,16 +39,12 @@ export class TagListComponent extends DashBaseComponent implements AfterViewInit
     })
 
     this.sorting_input_r.addEventListener("change", () => {
-      this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRelevance((b.data as TagRanking)));
+      this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByCount((b.data as TagRanking)));
       this.selectorItemsLoaded.next(this.selectorItems);
     });
     this.sorting_input_p.addEventListener("change", () => {
       this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByViews((b.data as TagRanking)));
       this.selectorItemsLoaded.next(this.selectorItems);
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByRelevance((b.data as TagRanking)));
   }
 }

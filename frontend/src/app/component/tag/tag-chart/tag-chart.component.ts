@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {SysVars} from "../../../services/sys-vars-service";
-import {TagStats} from "../Tag";
+import {Tag, TagStats} from "../Tag";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import Util, {DashColors} from "../../../util/Util";
 
@@ -15,9 +15,8 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
   canvas_id: string = "tag-chart";
   private visibility: string = "hidden";
 
-  selectedTag_id : number = 0;
+  selectedTag : Tag = new Tag("378", "IT-Sicherheit");
 
-  dataType : string = "views"
   timeSpan : string = "month";
   data : Promise<TagStats[]> | undefined;
 
@@ -29,28 +28,27 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
     ["day", 1]
   ]);
 
-  getData(event?: Event, id? : number) {
+  getData(event?: Event) {
     if (event !== undefined) {
       if ((event?.target as HTMLInputElement).type == "radio") this.timeSpan = (event?.target as HTMLInputElement).value;
-      if ((event?.target as HTMLInputElement).type == "select-one") this.dataType = (event?.target as HTMLInputElement).value;
     }
-    if (this.selectedTag_id == 0 && id) this.selectedTag_id = id; //TODO: REMIND PHIL TO REMOVE DATATYPE
-    this.api.getTagStatsByID(this.selectedTag_id,this.timeSpanMap.get(this.timeSpan) || 365*2, this.dataType).then((res : TagStats[]) => {
-      var tagName : string = "";
-      var tagViews : number[] = [];
+    this.api.getTagStatsByID(Number.parseInt(this.selectedTag.id),this.timeSpanMap.get(this.timeSpan) || 365*2).then((res : TagStats[]) => {
+      var tagViewsPost : number[] = [];
+      var tagViewsCat : number[] = [];
       var tagCount : number[] = [];
       var tagDate : string[] = [];
 
-      res.sort((a, b) => {
+      /*res.sort((a, b) => {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
-      })
-      tagName = res[0].name;
+      })*/
+
       for (var tagStats of res) {
         tagCount.push(Number(tagStats.count));
-        tagViews.push(Number(tagStats.views));
+        tagViewsPost.push(Number(tagStats.viewsPost));
+        tagViewsCat.push(Number(tagStats.viewsCat));
         tagDate.push(Util.formatDate(tagStats.date));
       }
-      this.createChart(tagViews, tagCount, tagDate, [DashColors.RED, DashColors.BLUE], tagName);
+      this.createChart(tagViewsPost, tagViewsCat, tagCount, tagDate, [DashColors.RED, DashColors.DARK_RED, DashColors.BLUE], res[0].name);
 
     }).finally(() => {this.visibility = "visible"});
   }
@@ -58,14 +56,14 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
   ngOnInit(): void {
     this.setToolTip("Diese Grafik zeigt die Views und Anzahl aller Beiträge zum Thema, im angegebenen Zeitraum.<br><br>" +
       "Sie können einen Tag anwählen, um dessen Informationen hier anzuzeigen.");
-    this.getData(undefined, 378);
-    SysVars.SELECTED_TAG.subscribe((id) => {
-      this.selectedTag_id = id;
+    this.getData();
+    SysVars.SELECTED_TAG.subscribe((tag) => {
+      this.selectedTag = tag;
       this.getData()
     })
   }
 
-  private createChart(dataViews: number[], dataCount: number[], dates: string[], colors : string[], tagName : string) {
+  private createChart(dataViewsPost: number[], dataViewsCat: number[],dataCount: number[], dates: string[], colors : string[], tagName : string) {
     if (this.chart){
       this.chart.destroy();
     }
@@ -85,22 +83,30 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
       data: {
         labels: timestamps,
         datasets: [{
-          label: "Views",
-          data: dataViews,
+          label: "Views (Beiträge)",
+          data: dataViewsPost,
           backgroundColor: colors[0],
           borderColor: colors[0],
           borderJoinStyle: 'round',
           borderWidth: 5
         },
-          {
-            label: "Beiträge zum Thema",
-            data: dataCount,
-            backgroundColor: colors[1],
-            borderColor: colors[1],
-            borderJoinStyle: 'round',
-            borderWidth: 5,
-            yAxisID: "yCount"
-          }]
+        {
+          label: "Views (Kategorie)",
+          data: dataViewsCat,
+          backgroundColor: colors[1],
+          borderColor: colors[1],
+          borderJoinStyle: 'round',
+          borderWidth: 5
+        },
+        {
+          label: "Beiträge zum Thema",
+          data: dataCount,
+          backgroundColor: colors[2],
+          borderColor: colors[2],
+          borderJoinStyle: 'round',
+          borderWidth: 5,
+          yAxisID: "yCount"
+        }]
       },
       options: {
         aspectRatio: 2.8,

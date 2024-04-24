@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input} from '@angular/core';
-import {TagRanking} from "../../Tag";
+import {Tag, TagRanking} from "../../Tag";
 import {DbObject} from "../../../../services/DbObject";
 import {SysVars} from "../../../../services/sys-vars-service";
 import Util from "../../../../util/Util";
@@ -11,11 +11,11 @@ import {DashListItemComponent} from "../../../dash-list/dash-list-item/dash-list
   styleUrls: ['./tag-list-item.component.css']
 })
 export class TagListItemComponent extends DashListItemComponent{
-  override data : TagRanking = new TagRanking("", "", "", "", "");
+  override data : TagRanking = new TagRanking("", "", 0, 0, 0);
   protected readonly parseFloat = parseFloat;
 
   override onClick(){
-    SysVars.SELECTED_TAG.emit(Number(this.data?.id));
+    SysVars.SELECTED_TAG.emit(this.data as Tag);
   }
 
   protected readonly Util = Util;

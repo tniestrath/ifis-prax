@@ -7,6 +7,7 @@ import {
 } from "../component/search/search-no-results-list/search-list-item/search-list-item.component";
 import {DbObject} from "./DbObject";
 import {Newsletter} from "../component/newsletter/Newsletter";
+import {Tag} from "../component/tag/Tag";
 
 export class PAGE {
   id: number = 0;
@@ -35,7 +36,7 @@ export class SysVars {
   public static SELECTED_POST : EventEmitter<Post> = new EventEmitter<Post>();
   public static SELECTED_POST_IDS : EventEmitter<string> = new EventEmitter<string>();
 
-  public static SELECTED_TAG : EventEmitter<number> = new EventEmitter<number>();
+  public static SELECTED_TAG : EventEmitter<Tag> = new EventEmitter<Tag>();
 
   public static SELECTED_USER_ID : EventEmitter<number> = new EventEmitter<number>();
 

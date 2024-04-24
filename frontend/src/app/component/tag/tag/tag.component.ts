@@ -9,7 +9,7 @@ import {DashBaseComponent} from "../../dash-base/dash-base.component";
 })
 export class TagComponent extends DashBaseComponent{
 
-  @Input() data : Tag = new Tag("0", "", "");
+  @Input() data : Tag = new Tag("0", "");
   @Input() override clicked = new EventEmitter<Tag>();
 
 

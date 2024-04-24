@@ -231,6 +231,7 @@ public class PostController {
         if(postRepository.findById(id).isEmpty()) {return null;}
         Post post = postRepository.findById(id).get();
         List<String> tags = new ArrayList<>();
+        List<Long> tagIds = new ArrayList<>();
         String type;
 
         PostStats postStats = null;
@@ -258,6 +259,7 @@ public class PostController {
                     if (Objects.equals(tt.getTaxonomy(), "post_tag")) {
                         //noinspection OptionalGetWithoutIsPresent
                         tags.add(wpTermRepo.findById(tt.getTermId()).get().getName());
+                        tagIds.add(tt.getTermId());
                     }
                 }
             }
@@ -280,7 +282,16 @@ public class PostController {
         obj.put("title", post.getTitle());
         obj.put("date", formattedDate);
 
-        obj.put("tags", tags);
+
+        JSONArray array = new JSONArray();
+        for(int i = 0; i < tags.size(); i++) {
+            JSONObject json = new JSONObject();
+            json.put("name", tags.get(i));
+            json.put("id", tagIds.get(i));
+            array.put(json);
+        }
+
+        obj.put("tags", array);
         obj.put("type", type);
         if(postStats != null){
             float maxPerformance =   statsRepo.getMaxPerformance();

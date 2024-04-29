@@ -103,3 +103,23 @@ path{
   width: 50% !important;
   margin-right: 5px !important;
 }
+
+@media print {
+  .origin-map-title{
+    display: none !important;
+  }
+  .origin-map-box{
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .origin-map-map-box{
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    align-content: center;
+  }
+  #Ebene_1{
+    max-height: 100% !important;
+  }
+}

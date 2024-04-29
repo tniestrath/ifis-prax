@@ -54,7 +54,8 @@
 
 @media print {
   .user-tags-dist-title{
-    display: none;
+    width: 100% !important;
+    border: none !important;
   }
   .user-tags-dist-selector-container{
     height: 100%;

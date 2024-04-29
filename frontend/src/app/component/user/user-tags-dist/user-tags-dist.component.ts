@@ -45,6 +45,9 @@ export class SingleUserTagsDistComponent extends UserTagsDistComponent implement
     this.element.nativeElement.getElementsByClassName("component-box")[0].classList.add("no-margin-top");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].classList.add("no-full-width");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].children[0].innerText = "Platzierung innerhalb der gewählten Themen";
+    if (SysVars.CURRENT_PAGE == "PRINT"){
+      this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].children[0].innerText = "Nutzeranteil / Platzierung innerhalb der gewählten Themen";
+    }
 
     this.api.getUserTagsRanking(SysVars.USER_ID, "profile").then((res : {name : string, percentage : number, ranking : number, count : number}[])  => {
       for (let tag of res) {

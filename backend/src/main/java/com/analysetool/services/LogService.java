@@ -792,11 +792,10 @@ public class LogService {
                     } else if(matched_user_search_success.find()) {
                         whatMatched = "userSS";
                         patternMatcher = matched_user_search_success;
-                    }
-                    else if(matched_post_impression_facebook.find()) {
+                    } else if(matched_post_impression_facebook.find()) {
                         whatMatched = "postImpressionFacebook";
                         patternMatcher = matched_post_impression_facebook;
-                    }else if(matched_post_impression_twitter.find()) {
+                    } else if(matched_post_impression_twitter.find()) {
                         whatMatched = "postImpressionTwitter";
                         patternMatcher = matched_post_impression_twitter;
                     } else if(matched_post_impression_LinkedIn.find()) {
@@ -817,8 +816,7 @@ public class LogService {
                     } else if(matched_user_impression_FacebookTwitterCombo.find()) {
                         whatMatched = "userImpressionFacebookTwitterCombo";
                         patternMatcher = matched_user_impression_FacebookTwitterCombo;
-                    }
-                    else if(matched_articleView.find()) {
+                    } else if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
                     } else if(matched_blogView.find()) {
@@ -874,7 +872,7 @@ public class LogService {
                     } else if(matched_ratgeber_buch.find()) {
                         whatMatched = "ratgeberBuch";
                         patternMatcher = matched_ratgeber_buch;
-                    }else if(matched_ratgeber_self.find()){
+                    } else if(matched_ratgeber_self.find()){
                         whatMatched = "ratgeberSelf";
                         patternMatcher = matched_ratgeber_self;
                     } else if(matched_content_download.find()){
@@ -883,13 +881,13 @@ public class LogService {
                     } else if(matched_outgoing_linkedin_redirect.find()){
                         whatMatched = "socialsLinkedInRedirect";
                         patternMatcher = matched_outgoing_linkedin_redirect;
-                    }else if(matched_outgoing_twitter_redirect.find()){
+                    } else if(matched_outgoing_twitter_redirect.find()){
                         whatMatched = "socialsTwitterRedirect";
                         patternMatcher = matched_outgoing_twitter_redirect;
-                    }else if(matched_outgoing_facebook_redirect.find()){
+                    } else if(matched_outgoing_facebook_redirect.find()){
                         whatMatched = "socialsFacebookRedirect";
                         patternMatcher = matched_outgoing_facebook_redirect;
-                    }else if(matched_outgoing_youtube_redirect.find()){
+                    } else if(matched_outgoing_youtube_redirect.find()){
                         whatMatched = "socialsYouTubeRedirect";
                         patternMatcher = matched_outgoing_youtube_redirect;
                     } else if(matched_event_view.find()) {
@@ -898,7 +896,7 @@ public class LogService {
                     } else if(matched_event_cat.find()) {
                         whatMatched = "eventCat";
                         patternMatcher = matched_event_cat;
-                    }else if(matched_userRedirect.find()){
+                    } else if(matched_userRedirect.find()){
                         whatMatched = "userRedirect";
                         patternMatcher = matched_userRedirect;
                     } else if (matched_videoView.find()) {

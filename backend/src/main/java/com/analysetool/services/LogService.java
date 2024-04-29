@@ -792,11 +792,10 @@ public class LogService {
                     } else if(matched_user_search_success.find()) {
                         whatMatched = "userSS";
                         patternMatcher = matched_user_search_success;
-                    }
-                    else if(matched_post_impression_facebook.find()) {
+                    } else if(matched_post_impression_facebook.find()) {
                         whatMatched = "postImpressionFacebook";
                         patternMatcher = matched_post_impression_facebook;
-                    }else if(matched_post_impression_twitter.find()) {
+                    } else if(matched_post_impression_twitter.find()) {
                         whatMatched = "postImpressionTwitter";
                         patternMatcher = matched_post_impression_twitter;
                     } else if(matched_post_impression_LinkedIn.find()) {
@@ -817,8 +816,7 @@ public class LogService {
                     } else if(matched_user_impression_FacebookTwitterCombo.find()) {
                         whatMatched = "userImpressionFacebookTwitterCombo";
                         patternMatcher = matched_user_impression_FacebookTwitterCombo;
-                    }
-                    else if(matched_articleView.find()) {
+                    } else if(matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
                     } else if(matched_blogView.find()) {
@@ -874,7 +872,7 @@ public class LogService {
                     } else if(matched_ratgeber_buch.find()) {
                         whatMatched = "ratgeberBuch";
                         patternMatcher = matched_ratgeber_buch;
-                    }else if(matched_ratgeber_self.find()){
+                    } else if(matched_ratgeber_self.find()){
                         whatMatched = "ratgeberSelf";
                         patternMatcher = matched_ratgeber_self;
                     } else if(matched_content_download.find()){
@@ -883,13 +881,13 @@ public class LogService {
                     } else if(matched_outgoing_linkedin_redirect.find()){
                         whatMatched = "socialsLinkedInRedirect";
                         patternMatcher = matched_outgoing_linkedin_redirect;
-                    }else if(matched_outgoing_twitter_redirect.find()){
+                    } else if(matched_outgoing_twitter_redirect.find()){
                         whatMatched = "socialsTwitterRedirect";
                         patternMatcher = matched_outgoing_twitter_redirect;
-                    }else if(matched_outgoing_facebook_redirect.find()){
+                    } else if(matched_outgoing_facebook_redirect.find()){
                         whatMatched = "socialsFacebookRedirect";
                         patternMatcher = matched_outgoing_facebook_redirect;
-                    }else if(matched_outgoing_youtube_redirect.find()){
+                    } else if(matched_outgoing_youtube_redirect.find()){
                         whatMatched = "socialsYouTubeRedirect";
                         patternMatcher = matched_outgoing_youtube_redirect;
                     } else if(matched_event_view.find()) {
@@ -898,7 +896,7 @@ public class LogService {
                     } else if(matched_event_cat.find()) {
                         whatMatched = "eventCat";
                         patternMatcher = matched_event_cat;
-                    }else if(matched_userRedirect.find()){
+                    } else if(matched_userRedirect.find()){
                         whatMatched = "userRedirect";
                         patternMatcher = matched_userRedirect;
                     } else if (matched_videoView.find()) {
@@ -1223,12 +1221,11 @@ public class LogService {
                         default -> {
                             if(!isNotNonsense) {
                                 updateUniqueUser(ip, "nonsense", dateLog);
-                                System.out.println(line);
                             }
                         }
                     }
 
-                    if(!whatMatched.equals("") || isNotNonsense) {
+                    if(!whatMatched.equals("")) {
                         sensibleClicks++;
                     }
 
@@ -1461,9 +1458,6 @@ public class LogService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(dateStirng);
-        System.out.println("Date Stirng" + dateStirng);
-        System.out.println("uniLastDateString" + uniLastDateString);
-        System.out.println(dateStirng.equalsIgnoreCase(uniLastDateString));
         final int curHour = LocalDateTime.now().getHour();
 
         //Updating UniversalStats
@@ -1861,23 +1855,18 @@ public class LogService {
      */
     public void endDay() {
         try {
-            System.out.println("UPDATE CLICKS AUSGEFÜHRT HIER!");
             updateClicksBy();
-            System.out.println("KEIN FEHLER BEI UPDATE CLICKS");
         } catch (Exception e) {
             System.out.println("-------------------------------------------------------------FEHLER BEI UPDATE CLICKS");
             e.printStackTrace();
         }
         try {
-            System.out.println("UPDATE GEO AUSGEFÜHRT HIER!");
             updateGeo();
-            System.out.println("KEIN FEHLER BEI UPDATE GEO");
         } catch (Exception e) {
             System.out.println("---------------------------------------------------------------------FEHLER BEI UPDATEGEO");
             e.printStackTrace();
         }
         try {
-            System.out.println("PERMANENTIFY ALL USERS");
             permanentifyAllUsers();
         } catch (Exception e) {
             System.out.println("FEHLER BEI PERMANENTIFY ALL USERS");
@@ -2170,7 +2159,6 @@ public class LogService {
         for(Post p : postRepository.findAllUserPosts()) {
             if (statsRepo.existsByArtId(p.getId())) {
                 if ((statsRepo.getLetterCount(p.getId()) == 0L) || statsRepo.getLetterCount(p.getId()) == null) {
-                  //  System.out.println(statsRepo.getLetterCount(p.getId()));
                     updateLetterCount(p.getId());
                 }
             }
@@ -2397,20 +2385,17 @@ public class LogService {
             //If the country is Germany, try to update ClicksByBundesland
             if (IPHelper.getCountryISO(ip) != null) {
                 if (IPHelper.getCountryISO(user.getIp()).equals("DE")) {
-                    System.out.println("TRY TO UPDATE CLICKSBYBUNDESLAND");
                     clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                             ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
 
                     clicksByBundesland.setUniStatId(uniId);
                     //If the ip can be matched to a bundesland, update and save it. Otherwise, don't.
                     if (IPHelper.getSubISO(ip) != null) {
-                        System.out.println("SUCCESS IN TRY TO UPDATE CLICKSBYBUNDESLAND");
                         clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
                         clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
                         clicksByBundeslandRepo.save(clicksByBundesland);
                         //If the ip can be matched to a city, set, update and save ClicksByBundeslandCitiesDLC
                         if (IPHelper.getCityName(ip) != null) {
-                            System.out.println("TRY TO UPDATE CLICKSBYBUNDESLAND");
                             clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip)) == null
                                     ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip));
                             clicksByBundeslandCitiesDLC.setUni_id(uniId);
@@ -2422,7 +2407,6 @@ public class LogService {
                     }
 
                 } else if(IPHelper.getCountryISO(ip).equals("BE")) {
-                    System.out.println("TRY TO UPDATE CLICKSBYCITY FOR BELGIUM");
                     if (IPHelper.getCityName(ip) != null) {
                         clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip)) == null
                                 ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip));
@@ -2433,7 +2417,6 @@ public class LogService {
                         clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
                     }
                 } else if(IPHelper.getCountryISO(ip).equals("NL") || IPHelper.getCountryISO(ip).equals("AT") || IPHelper.getCountryISO(ip).equals("CH") || IPHelper.getCountryISO(ip).equals("LU")){
-                    System.out.println("TRY TO UPDATE CLICKSBYCITY FOR OTHER COUNTRIES");
                     if (IPHelper.getCityName(ip) != null) {
                         clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip)) == null
                                 ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip));
@@ -2445,7 +2428,6 @@ public class LogService {
                     }
                 }
                 //Update ClicksByCountry
-                System.out.println("TRY TO UPDATE CLICKSBYCOUNTRY");
                 clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null
                         ? new ClicksByCountry() : clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip));
                 clicksByCountry.setUniStatId(uniId);
@@ -2469,20 +2451,17 @@ public class LogService {
         //If the country is Germany, try to update ClicksByBundesland
         if (IPHelper.getCountryISO(ip) != null) {
             if (IPHelper.getCountryISO(ip).equals("DE")) {
-                System.out.println("TRY TO UPDATE CLICKSBYBUNDESLAND FOR: " + ip);
                 clicksByBundesland = clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip)) == null
                         ? new ClicksByBundesland() : clicksByBundeslandRepo.getByUniIDAndBundesland(uniId, IPHelper.getSubISO(ip));
 
                 clicksByBundesland.setUniStatId(uniId);
                 //If the ip can be matched to a bundesland, update and save it. Otherwise, don't.
                 if (IPHelper.getSubISO(ip) != null) {
-                    System.out.println("SUCCESS IN TRY TO UPDATE CLICKSBYBUNDESLAND");
                     clicksByBundesland.setBundesland(IPHelper.getSubISO(ip));
                     clicksByBundesland.setClicks(clicksByBundesland.getClicks() + 1);
                     clicksByBundeslandRepo.save(clicksByBundesland);
                     //If the ip can be matched to a city, set, update and save ClicksByBundeslandCitiesDLC
                     if (IPHelper.getCityName(ip) != null) {
-                        System.out.println("TRY TO UPDATE CLICKSBYBUNDESLAND");
                         clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip)) == null
                                 ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getSubISO(ip), IPHelper.getCityName(ip));
                         clicksByBundeslandCitiesDLC.setUni_id(uniId);
@@ -2494,7 +2473,6 @@ public class LogService {
                 }
 
             } else if(IPHelper.getCountryISO(ip).equals("BE")) {
-                System.out.println("TRY TO UPDATE CLICKSBYCITY FOR BELGIUM");
                 if (IPHelper.getCityName(ip) != null) {
                     clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip)) == null
                             ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, "BG", IPHelper.getCityName(ip));
@@ -2505,7 +2483,6 @@ public class LogService {
                     clicksByBundeslandCityRepo.save(clicksByBundeslandCitiesDLC);
                 }
             } else if(IPHelper.getCountryISO(ip).equals("NL") || IPHelper.getCountryISO(ip).equals("AT") || IPHelper.getCountryISO(ip).equals("CH") || IPHelper.getCountryISO(ip).equals("LU")){
-                System.out.println("TRY TO UPDATE CLICKSBYCITY FOR OTHER COUNTRIES");
                 if (IPHelper.getCityName(ip) != null) {
                     clicksByBundeslandCitiesDLC = clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip)) == null
                             ? new ClicksByBundeslandCitiesDLC() : clicksByBundeslandCityRepo.getByUniIDAndBundeslandAndCity(uniId, IPHelper.getCountryISO(ip), IPHelper.getCityName(ip));
@@ -2517,7 +2494,6 @@ public class LogService {
                 }
             }
             //Update ClicksByCountry
-            System.out.println("TRY TO UPDATE CLICKSBYCOUNTRY");
             clicksByCountry = clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip)) == null
                     ? new ClicksByCountry() : clicksByCountryRepo.getByUniIDAndCountry(uniId, IPHelper.getCountryName(ip));
             clicksByCountry.setUniStatId(uniId);
@@ -2541,10 +2517,8 @@ public class LogService {
      */
     private void updatePostGeo() {
         PostGeo postGeo;
-        System.out.println("POST GEO UPDATE");
         try {
             for (IPsByPost post : iPsByPostRepository.findAll()) {
-                System.out.println(post.getPost_id());
                 postGeo = postGeoRepo.findByPostIdAndUniStatId(post.getPost_id(), uniRepo.getLatestUniStat().getId()) == null ? new PostGeo() : postGeoRepo.findByPostIdAndUniStatId(post.getPost_id(), uniRepo.getLatestUniStat().getId());
                 postGeo.setPost_id(post.getPost_id());
                 JSONArray json = new JSONArray(post.getIps());
@@ -2600,7 +2574,6 @@ public class LogService {
                 postGeoRepo.save(postGeo);
             }
         } catch(Exception e) {
-            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -2610,7 +2583,6 @@ public class LogService {
      */
     private void updateUserGeo() {
         UserGeo userGeo;
-        System.out.println("USER GEO UPDATE");
         try {
             for (IPsByUser user : iPsByUserRepository.findAll()) {
                 userGeo = userGeoRepo.findByUserIdAndUniStatId(user.getUser_id(), uniRepo.getLatestUniStat().getId()) == null ? new UserGeo() : userGeoRepo.findByUserIdAndUniStatId(user.getUser_id(), uniRepo.getLatestUniStat().getId());
@@ -2645,7 +2617,7 @@ public class LogService {
                 userGeoRepo.save(userGeo);
             }
         } catch(Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -3063,35 +3035,28 @@ public class LogService {
     private OutgoingSocialsRedirects updateSocialsRedirects(String whatMatched ,  OutgoingSocialsRedirects redirects){
         Long counter;
 
-        //System.out.println(whatMatched);
-
         switch (whatMatched) {
             case "socialsLinkedInRedirect" -> {
                 counter = redirects.getLinkedin();
                 counter++;
-                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
                 redirects.setLinkedin(counter);
             }
             case "socialsFacebookRedirect" -> {
                 counter = redirects.getFacebook();
                 counter++;
-                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
                 redirects.setFacebook(counter);
             }
             case "socialsTwitterRedirect" -> {
                 counter = redirects.getTwitter();
                 counter++;
-                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
                 redirects.setTwitter(counter);
             }
             case "socialsYouTubeRedirect" -> {
                 counter = redirects.getYoutube();
                 counter++;
-                //System.out.println("COOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNTTTTTTTTERRRR----------------------->"+counter);
                 redirects.setYoutube(counter);
             }
         }
-        //System.out.println("UPPPPDAAAATEEE REEEEDDIRREEEEEECCCCTTTTT----------------------------->>>>> "+redirects);
         return redirects;
     }
 

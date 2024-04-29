@@ -28,4 +28,6 @@ public interface ClicksByBundeslandCitiesDLCRepository extends JpaRepository<Cli
     @Query("SELECT u.uni_id FROM ClicksByBundeslandCitiesDLC u ORDER BY u.uni_id ASC LIMIT 1")
     int getFirstEntry();
 
+    @Query("SELECT c.city, SUM(c.clicks) AS totalClicks FROM ClicksByBundeslandCitiesDLC c WHERE c.uni_id = :uniId GROUP BY c.city ORDER BY totalClicks DESC LIMIT 5")
+    List<ClicksByBundeslandCitiesDLC> findTopCitiesByUniId(int uniId);
 }

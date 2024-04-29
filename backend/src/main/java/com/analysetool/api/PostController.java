@@ -1568,5 +1568,11 @@ public class PostController {
         List<SocialsImpressions>imps = soziImp.filterOutUserImpressions(soziImp.findAll());
         return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
     }
+
+    @GetMapping("/getBestPostImpressionToday")
+    public String getBestPostImpressionToday(){
+        List<SocialsImpressions>imps = soziImp.filterOutUserImpressions(soziImp.findAllToday());
+        return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
+    }
 }
 

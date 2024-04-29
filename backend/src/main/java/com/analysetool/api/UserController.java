@@ -2002,6 +2002,12 @@ public class UserController {
         return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
     }
 
+    @GetMapping("/getBestUserImpressionToday")
+    public String getBestUserImpressionToday(){
+        List<SocialsImpressions>imps = soziImp.filterOutPostImpressions(soziImp.findAllToday());
+        return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
+    }
+
     @GetMapping("/updateUserRankingBuffer")
     public boolean updateUserRankingBuffer() {
         try {

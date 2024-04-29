@@ -1226,7 +1226,7 @@ public class LogService {
                         }
                     }
 
-                    if(!whatMatched.equals("") || isNotNonsense) {
+                    if(!whatMatched.equals("")) {
                         sensibleClicks++;
                     }
 

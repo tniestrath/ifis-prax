@@ -124,6 +124,8 @@ public class LogService {
     private FinalSearchStatDLCRepository fDLCRepo;
     @Autowired
     private TagCatStatRepository tagCatRepo;
+    @Autowired
+    private CatPageViewRepository catPageRepo;
 
     @Autowired
     private RankingTotalProfileRepository rankingTotalProfileRepo;
@@ -153,7 +155,11 @@ public class LogService {
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
    // private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
 
-    private final String blogCategoryPattern= "^.*GET /blog/";
+    private final String blogCategoryPattern= "^.*GET /blog/(\\d+| )";
+    private final String articleCategoryPattern = "^.*GET /artikel/(\\d+| )";
+    private final String newsCategoryPattern = "^.*GET /news/(\\d+| )";
+    private final String whitepaperCategoryPattern = "^.*GET /whitepaper/(\\d+| )";
+
     private final String BlogViewPattern = "^.*GET /blogeintrag/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
@@ -242,6 +248,11 @@ public class LogService {
     final Pattern blackHoleTrapPattern = Pattern.compile(BlackHolePattern);
     final Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
     final Pattern blogCategory = Pattern.compile(blogCategoryPattern);
+    final Pattern articleCategory = Pattern.compile(articleCategoryPattern);
+    final Pattern newsCategory = Pattern.compile(newsCategoryPattern);
+    final Pattern whitepaperCategory = Pattern.compile(whitepaperCategoryPattern);
+
+
     final Pattern blogViewPattern = Pattern.compile(BlogViewPattern);
     final Pattern blogSearchSuccessPattern = Pattern.compile(BlogSSPattern);
     Pattern redirectPattern = Pattern.compile(RedirectPattern);
@@ -656,6 +667,7 @@ public class LogService {
 
                     //Does it match an article-type?
                     Matcher matched_articleView = articleViewPattern.matcher(request);
+                    Matcher matched_articleCat = articleCategory.matcher(request);
                     Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
 
                     //You activated my Trap
@@ -668,10 +680,12 @@ public class LogService {
 
                     //Does it match a news-type?
                     Matcher matched_newsView = newsViewPattern.matcher(request);
+                    Matcher matched_newsCat = newsCategory.matcher(request);
                     Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(line);
 
                     //Does it match a whitepaper-type?
                     Matcher matched_whitepaperView = patternWhitepaperView.matcher(request);
+                    Matcher matched_whitepaperCat = whitepaperCategory.matcher(request);
                     Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
 
                     //Does it match the main-page-type?
@@ -705,7 +719,6 @@ public class LogService {
                     Matcher matched_userViews = userViewPattern.matcher(request);
 
 
-
                     //Does it match a ratgeber-subpost-view?
                     Matcher matched_ratgeber_post = ratgeberPostViewPattern.matcher(request);
 
@@ -723,46 +736,46 @@ public class LogService {
 
                     //Does it match a content-download?
                     //Matcher matched_content_download= contentDownloadPattern.matcher(line);
-                    matched_content_download= contentDownloadPattern.matcher(line);
+                    matched_content_download = contentDownloadPattern.matcher(line);
                     //Does it match an event-View?
-                    Matcher matched_event_view= eventViewPattern.matcher(request);
+                    Matcher matched_event_view = eventViewPattern.matcher(request);
                     //Does it match an event-category view?
                     Matcher matched_event_cat = eventCatPattern.matcher(request);
                     //Does it match an event Search Success?
-                    Matcher matched_event_search_success= eventSSPattern.matcher(line);
+                    Matcher matched_event_search_success = eventSSPattern.matcher(line);
 
                     //Does it match a user Search Success?
-                    Matcher matched_user_search_success= anbieterSSPattern.matcher(line);
+                    Matcher matched_user_search_success = anbieterSSPattern.matcher(line);
 
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_linkedin_redirect= outgoingRedirectPatternLinkedin.matcher(request);
+                    Matcher matched_outgoing_linkedin_redirect = outgoingRedirectPatternLinkedin.matcher(request);
 
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_facebook_redirect= outgoingRedirectPatternFacebook.matcher(request);
+                    Matcher matched_outgoing_facebook_redirect = outgoingRedirectPatternFacebook.matcher(request);
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(request);
+                    Matcher matched_outgoing_twitter_redirect = outgoingRedirectPatternTwitter.matcher(request);
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(request);
+                    Matcher matched_outgoing_youtube_redirect = outgoingRedirectPatternYoutube.matcher(request);
                     //Does it match user-redirect?
                     Matcher matched_userRedirect = userRedirectPattern.matcher(request);
                     //Does it match a video-view?
                     Matcher matched_videoView = videoViewPattern.matcher(request);
                     //Does it match a socials impression?
-                    Matcher matched_post_impression_facebook=postImpressionFacebookPattern.matcher(line);
+                    Matcher matched_post_impression_facebook = postImpressionFacebookPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_post_impression_twitter=postImpressionTwitterPattern.matcher(line);
+                    Matcher matched_post_impression_twitter = postImpressionTwitterPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_post_impression_LinkedIn=postImpressionLinkedinPattern.matcher(line);
+                    Matcher matched_post_impression_LinkedIn = postImpressionLinkedinPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_post_impression_FacebookTwitterCombo=postImpressionFacebookTwitterComboPattern.matcher(line);
+                    Matcher matched_post_impression_FacebookTwitterCombo = postImpressionFacebookTwitterComboPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_user_impression_facebook=userImpressionFacebookPattern.matcher(line);
+                    Matcher matched_user_impression_facebook = userImpressionFacebookPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_user_impression_twitter=userImpressionTwitterPattern.matcher(line);
+                    Matcher matched_user_impression_twitter = userImpressionTwitterPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_user_impression_LinkedIn=userImpressionLinkedInPattern.matcher(line);
+                    Matcher matched_user_impression_LinkedIn = userImpressionLinkedInPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_user_impression_FacebookTwitterCombo=userImpressionTwitterFacebookComboPattern.matcher(line);
+                    Matcher matched_user_impression_FacebookTwitterCombo = userImpressionTwitterFacebookComboPattern.matcher(line);
 
                     //Does it match a anbieterverzeichnis-view?
                     Matcher matched_anbieterverzeichnis_view = anbieterCatPattern.matcher(request);
@@ -774,63 +787,73 @@ public class LogService {
                     String whatMatched = "";
                     Matcher patternMatcher = null;
 
-                    if(matched_articleSearchSuccess.find()) {
+                    if (matched_articleSearchSuccess.find()) {
                         whatMatched = "articleSS";
                         patternMatcher = matched_articleSearchSuccess;
-                    } else if(matched_blogSearchSuccess.find()) {
+                    } else if (matched_blogSearchSuccess.find()) {
                         whatMatched = "blogSS";
                         patternMatcher = matched_blogSearchSuccess;
-                    } else if(matched_newsSearchSuccess.find()) {
+                    } else if (matched_newsSearchSuccess.find()) {
                         whatMatched = "newsSS";
                         patternMatcher = matched_newsSearchSuccess;
-                    } else if(matched_whitepaperSearchSuccess.find()) {
+                    } else if (matched_whitepaperSearchSuccess.find()) {
                         whatMatched = "wpSS";
                         patternMatcher = matched_whitepaperSearchSuccess;
-                    } else if(matched_event_search_success.find()) {
+                    } else if (matched_event_search_success.find()) {
                         whatMatched = "eventSS";
                         patternMatcher = matched_event_search_success;
-                    } else if(matched_user_search_success.find()) {
+                    } else if (matched_user_search_success.find()) {
                         whatMatched = "userSS";
                         patternMatcher = matched_user_search_success;
-                    } else if(matched_post_impression_facebook.find()) {
+                    } else if (matched_post_impression_facebook.find()) {
                         whatMatched = "postImpressionFacebook";
                         patternMatcher = matched_post_impression_facebook;
-                    } else if(matched_post_impression_twitter.find()) {
+                    } else if (matched_post_impression_twitter.find()) {
                         whatMatched = "postImpressionTwitter";
                         patternMatcher = matched_post_impression_twitter;
-                    } else if(matched_post_impression_LinkedIn.find()) {
+                    } else if (matched_post_impression_LinkedIn.find()) {
                         whatMatched = "postImpressionLinkedIn";
                         patternMatcher = matched_post_impression_LinkedIn;
-                    } else if(matched_post_impression_FacebookTwitterCombo.find()) {
+                    } else if (matched_post_impression_FacebookTwitterCombo.find()) {
                         whatMatched = "postImpressionFacebookTwitterCombo";
                         patternMatcher = matched_post_impression_FacebookTwitterCombo;
-                    } else if(matched_user_impression_facebook.find()) {
+                    } else if (matched_user_impression_facebook.find()) {
                         whatMatched = "userImpressionFacebook";
                         patternMatcher = matched_user_impression_facebook;
-                    }else if(matched_user_impression_twitter.find()) {
+                    } else if (matched_user_impression_twitter.find()) {
                         whatMatched = "userImpressionTwitter";
                         patternMatcher = matched_user_impression_twitter;
-                    } else if(matched_user_impression_LinkedIn.find()) {
+                    } else if (matched_user_impression_LinkedIn.find()) {
                         whatMatched = "userImpressionLinkedIn";
                         patternMatcher = matched_user_impression_LinkedIn;
-                    } else if(matched_user_impression_FacebookTwitterCombo.find()) {
+                    } else if (matched_user_impression_FacebookTwitterCombo.find()) {
                         whatMatched = "userImpressionFacebookTwitterCombo";
                         patternMatcher = matched_user_impression_FacebookTwitterCombo;
-                    } else if(matched_articleView.find()) {
+                    } else if(matched_articleCat.find()) {
+                        whatMatched = "articleCat";
+                        patternMatcher = matched_articleCat;
+                    } else if (matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
-                    } else if(matched_blogView.find()) {
+                    } else if (matched_blogCat.find()) {
+                        whatMatched = "blogCat";
+                        patternMatcher = matched_blogCat;
+                    }else if (matched_blogView.find()) {
                         whatMatched = "blogView";
                         patternMatcher = matched_blogView;
-                    } else if(matched_blogCat.find()) {
-                        whatMatched = "blogCat";
-                    } else if(matched_newsView.find()) {
+                    } else if(matched_newsCat.find()) {
+                        whatMatched = "newsCat";
+                        patternMatcher = matched_newsCat;
+                    } else if (matched_newsView.find()) {
                         whatMatched = "newsView";
                         patternMatcher = matched_newsView;
-                    } else if(matched_whitepaperView.find()) {
+                    } else if(matched_whitepaperCat.find()) {
+                        whatMatched = "wpCat";
+                        patternMatcher = matched_whitepaperCat;
+                    } else if (matched_whitepaperView.find()) {
                         whatMatched = "wpView";
                         patternMatcher = matched_whitepaperView;
-                    } else if(matched_podcast_view.find()) {
+                    }  else if(matched_podcast_view.find()) {
                         whatMatched = "podView";
                         patternMatcher = matched_podcast_view;
                     } else if(matched_main_page.find()) {
@@ -1425,18 +1448,22 @@ public class LogService {
                 }
             }
             case "userImpressionFacebook", "userImpressionTwitter", "userImpressionLinkedIn", "userImpressionFacebookTwitterCombo" -> {
-            try {
-                if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).isPresent()) {
-                    Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).get().getId();
-                    socialsImpressionsService.updateSocialsImpressionsUser(whatMatched, dateLog, userId);
+                try {
+                    if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).get().getId();
+                        socialsImpressionsService.updateSocialsImpressionsUser(whatMatched, dateLog, userId);
+                    }
+                } catch (Exception e) {
+                    System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
-                e.printStackTrace();
             }
-        }
-            case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar" -> {
-
+            case "blogCat", "newsCat", "articleCat", "wpCat" -> {
+                if(patternMatcher.group(1).isBlank()) {
+                    addCatPageView(whatMatched, 0);
+                } else {
+                    addCatPageView(whatMatched, Integer.parseInt(patternMatcher.group(1)));
+                }
             }
 
             case "tagCat" -> {
@@ -3156,6 +3183,30 @@ public class LogService {
 
     public void updateRankings() {
         userController.updateUserRankingBuffer();
+    }
+
+    public void addCatPageView(String whatMatched, int page) {
+
+        CatPageViews catPage;
+        String cat = "error";
+        switch (whatMatched) {
+            case "articleCat" -> cat = ("article");
+            case "blogCat" -> cat = ("blog");
+            case "newsCat" -> cat = ("news");
+            case "wpCat" -> cat = ("whitepaper");
+        }
+
+        if(catPageRepo.findByUniAndCatAndPage(uniRepo.getLatestUniStat().getId(), cat, page).isEmpty()) {
+            catPage = new CatPageViews();
+            catPage.setPage(page);
+            catPage.setUniId(uniRepo.getLatestUniStat().getId());
+            catPage.setCat(cat);
+        } else {
+            catPage = catPageRepo.findByUniAndCatAndPage(uniRepo.getLatestUniStat().getId(), cat, page).get();
+            catPage.setViews(catPage.getViews() + 1);
+        }
+
+        catPageRepo.save(catPage);
     }
 
 }

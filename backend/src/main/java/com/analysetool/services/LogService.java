@@ -152,12 +152,6 @@ public class LogService {
 
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
    // private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
-
-    private final String blogCategoryPattern= "^.*GET /blog/(\\d+| )";
-    private final String articleCategoryPattern = "^.*GET /artikel/(\\d+| )";
-    private final String newsCategoryPattern = "^.*GET /news/(\\d+| )";
-    private final String whitepaperCategoryPattern = "^.*GET /whitepaper/(\\d+| )";
-
     private final String BlogViewPattern = "^.*GET /blogeintrag/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
@@ -245,11 +239,6 @@ public class LogService {
 
     final Pattern blackHoleTrapPattern = Pattern.compile(BlackHolePattern);
     final Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
-    final Pattern blogCategory = Pattern.compile(blogCategoryPattern);
-    final Pattern articleCategory = Pattern.compile(articleCategoryPattern);
-    final Pattern newsCategory = Pattern.compile(newsCategoryPattern);
-    final Pattern whitepaperCategory = Pattern.compile(whitepaperCategoryPattern);
-
 
     final Pattern blogViewPattern = Pattern.compile(BlogViewPattern);
     final Pattern blogSearchSuccessPattern = Pattern.compile(BlogSSPattern);
@@ -665,7 +654,6 @@ public class LogService {
 
                     //Does it match an article-type?
                     Matcher matched_articleView = articleViewPattern.matcher(request);
-                    Matcher matched_articleCat = articleCategory.matcher(request);
                     Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
 
                     //You activated my Trap
@@ -673,17 +661,14 @@ public class LogService {
 
                     //Does it match a blog-type?
                     Matcher matched_blogView = blogViewPattern.matcher(request);
-                    Matcher matched_blogCat = blogCategory.matcher(request);
                     Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
 
                     //Does it match a news-type?
                     Matcher matched_newsView = newsViewPattern.matcher(request);
-                    Matcher matched_newsCat = newsCategory.matcher(request);
                     Matcher matched_newsSearchSuccess = newsSearchSuccessPattern.matcher(line);
 
                     //Does it match a whitepaper-type?
                     Matcher matched_whitepaperView = patternWhitepaperView.matcher(request);
-                    Matcher matched_whitepaperCat = whitepaperCategory.matcher(request);
                     Matcher matched_whitepaperSearchSuccess = patternWhitepaperSearchSuccess.matcher(line);
 
                     //Does it match the main-page-type?
@@ -827,27 +812,15 @@ public class LogService {
                     } else if (matched_user_impression_FacebookTwitterCombo.find()) {
                         whatMatched = "userImpressionFacebookTwitterCombo";
                         patternMatcher = matched_user_impression_FacebookTwitterCombo;
-                    } else if(matched_articleCat.find()) {
-                        whatMatched = "articleCat";
-                        patternMatcher = matched_articleCat;
                     } else if (matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
-                    } else if (matched_blogCat.find()) {
-                        whatMatched = "blogCat";
-                        patternMatcher = matched_blogCat;
-                    }else if (matched_blogView.find()) {
+                    } else if (matched_blogView.find()) {
                         whatMatched = "blogView";
                         patternMatcher = matched_blogView;
-                    } else if(matched_newsCat.find()) {
-                        whatMatched = "newsCat";
-                        patternMatcher = matched_newsCat;
                     } else if (matched_newsView.find()) {
                         whatMatched = "newsView";
                         patternMatcher = matched_newsView;
-                    } else if(matched_whitepaperCat.find()) {
-                        whatMatched = "wpCat";
-                        patternMatcher = matched_whitepaperCat;
                     } else if (matched_whitepaperView.find()) {
                         whatMatched = "wpView";
                         patternMatcher = matched_whitepaperView;

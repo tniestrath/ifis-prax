@@ -237,6 +237,9 @@ public class LogService {
 
     private final String tagCatPatter = "GET \\/themenfeld\\/([^\\/]+)\\/";
 
+    private final String forumDiskussionsthemen = "^.*GET /marktplatz-forum/([^\\/]+)/";
+
+    final Pattern forumDiskussionsthemenPattern = Pattern.compile(forumDiskussionsthemen);
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
 
     final Pattern blackHoleTrapPattern = Pattern.compile(BlackHolePattern);

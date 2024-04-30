@@ -80,7 +80,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit() {
     this.setToolTip("Dies ist eine Karte, die durch Färbung die Orte angibt, von denen am meisten auf den Marktplatz zugegriffen wird.<br><br>" +
-      "Mit einem Click auf eine Region werden genauere Informationen angezeigt.");
+      "Mit einem Click auf eine Region werden genauere Informationen angezeigt.", 1, SysVars.CURRENT_PAGE != "PRINT");
     this.isRegionSelected = "none";
     this.showCharts = "none";
 

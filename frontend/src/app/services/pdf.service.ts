@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {DashBaseComponent} from "../component/dash-base/dash-base.component";
 @Injectable({
   providedIn: 'root'
 })
@@ -34,7 +35,7 @@ export class PdfService {
     child.style.backgroundColor = "white";
     child.style.overflow = "clip";
 
-    grid.style.gridTemplateRows = "repeat(8, calc(calc(100% - 10px) / 6))"
+    grid.style.gridTemplateRows = "repeat(10, calc(calc(100% - 10px) / 10))"
   }
   public restoreStyle(element : HTMLElement){
     if (this.oldElementStyle != "") {

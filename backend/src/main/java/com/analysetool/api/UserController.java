@@ -1991,14 +1991,36 @@ public class UserController {
         return json;
     }
 
+    /**
+     * Retrieves the total accumulated impressions for a specified user across all time.
+     *
+     * @param userId the ID of the user for whom to retrieve impressions
+     * @return a JSON string representing the total accumulated impressions for the user
+     */
     @GetMapping("/getAccumulatedUserImpressions")
     public String getAccumulatedUserImpressionsAllTime(@RequestParam Long userId){
         return soziImp.getImpressionsAccumulatedAllTimeByUserId(userId);
     }
 
+    /**
+     * Retrieves the impression details of the user who has the highest number of impressions of all time.
+     *
+     * @return a JSON string representing the user with the best impression record
+     */
     @GetMapping("/getBestUserImpression")
     public String getBestUserImpressionAllTime(){
         List<SocialsImpressions>imps = soziImp.filterOutPostImpressions(soziImp.findAll());
+        return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
+    }
+
+    /**
+     * Retrieves the impression details of the user who has the highest number of impressions for the current day.
+     *
+     * @return a JSON string representing the user with the best impression record today
+     */
+    @GetMapping("/getBestUserImpressionToday")
+    public String getBestUserImpressionToday(){
+        List<SocialsImpressions>imps = soziImp.filterOutPostImpressions(soziImp.findAllToday());
         return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
     }
 

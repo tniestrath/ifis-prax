@@ -21,7 +21,7 @@
     height: 100%;
     box-shadow: none;
   }
-  .component-box .help-button{
+  .component-box #help-button{
     display: none !important;
   }
 }

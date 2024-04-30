@@ -25,6 +25,7 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
   selectedPost: Post = new Post();
 
   ngOnInit(): void {
+    this.setToolTip("", 1, SysVars.CURRENT_PAGE != "PRINT");
     this.getData();
 
     SysVars.SELECTED_POST.subscribe(post => {
@@ -69,7 +70,7 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
     let biggestPost = [];
 
     for (var day of data) {
-      dates.push(day.date.substring(0, 10));
+      dates.push(Util.formatDate(day.date));
       profileClicks.push(day.profileViews);
       posts.push(day.posts);
       biggestPost.push(day.biggestPost);
@@ -294,4 +295,6 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
       }
     })
   }
+
+  protected readonly SysVars = SysVars;
 }

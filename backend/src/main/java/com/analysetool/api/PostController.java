@@ -1558,14 +1558,36 @@ public class PostController {
         return uncoolType;
     }
 
+    /**
+     * Retrieves the total accumulated impressions for a specified post across all time.
+     *
+     * @param postId the ID of the post for which to retrieve impressions
+     * @return a JSON string representing the total accumulated impressions for the post
+     */
     @GetMapping("/getAccumulatedPostImpressions")
     public String getAccumulatedPostImpressionsAllTime(@RequestParam Long postId){
         return soziImp.getImpressionsAccumulatedAllTimeByPostId(postId);
     }
 
+    /**
+     * Retrieves the impression details of the post that has the highest number of impressions of all time.
+     *
+     * @return a JSON string representing the post with the best impression record
+     */
     @GetMapping("/getBestPostImpression")
     public String getBestPostImpressionAllTime(){
         List<SocialsImpressions>imps = soziImp.filterOutUserImpressions(soziImp.findAll());
+        return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
+    }
+
+    /**
+     * Retrieves the impression details of the post that has the highest number of impressions for the current day.
+     *
+     * @return a JSON string representing the post with the best impression record today
+     */
+    @GetMapping("/getBestPostImpressionToday")
+    public String getBestPostImpressionToday(){
+        List<SocialsImpressions>imps = soziImp.filterOutUserImpressions(soziImp.findAllToday());
         return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
     }
 }

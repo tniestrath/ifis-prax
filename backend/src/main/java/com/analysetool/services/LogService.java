@@ -168,6 +168,8 @@ public class LogService {
 
     private final String ratgeberSelfView = "^.*GET /selbstlernangebot-it-sicherheit/";
 
+    private final String ratgeberSelfViewAlterEgo = "^.*GET /Selbstlernakademie/";
+
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
 
     private final String WhitepaperViewPattern = "^.*GET /whitepaper/(\\S+)/";
@@ -265,6 +267,7 @@ public class LogService {
     final Pattern ratgeberGlossarViewPattern = Pattern.compile(ratgeberGlossarView);
     final Pattern ratgeberBuchViewPattern = Pattern.compile(ratgeberBuchView);
     final Pattern ratgeberSelfViewPattern = Pattern.compile(ratgeberSelfView);
+    final Pattern ratgeberSelfViewPatternAlterEgoPattern = Pattern.compile(ratgeberSelfViewAlterEgo);
     final Pattern podcastViewPattern = Pattern.compile(PodcastViewPattern);
     final Pattern contentDownloadPattern= Pattern.compile(contentDownload);
     final Pattern eventViewPattern = Pattern.compile(eventView);
@@ -713,6 +716,7 @@ public class LogService {
 
                     //Does it match a ratgeber-self-help view?
                     Matcher matched_ratgeber_self = ratgeberSelfViewPattern.matcher(request);
+                    Matcher matched_ratgeber_self_alter = ratgeberSelfViewPatternAlterEgoPattern.matcher(request);
 
                     //Does it match a podcast-view?
                     Matcher matched_podcast_view = podcastViewPattern.matcher(request);
@@ -869,6 +873,9 @@ public class LogService {
                     } else if(matched_ratgeber_self.find()){
                         whatMatched = "ratgeberSelf";
                         patternMatcher = matched_ratgeber_self;
+                    } else if(matched_ratgeber_self_alter.find()) {
+                        whatMatched = "ratgeberSelf";
+                        patternMatcher = matched_ratgeber_self_alter;
                     } else if(matched_content_download.find()){
                         whatMatched = "contentDownload";
                         patternMatcher = matched_content_download;

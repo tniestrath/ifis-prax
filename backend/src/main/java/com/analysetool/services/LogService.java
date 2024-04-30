@@ -353,6 +353,8 @@ public class LogService {
 
     @Autowired
     private UserRedirectsHourlyRepository userRedirectRepo;
+    @Autowired
+    private ForumService forumService;
 
     private final Map<String, UserViewsByHourDLC> userViewsHourDLCMap = new HashMap<>();
     private final Map<String, ContentDownloadsHourly> contentDownloadsMap = new HashMap<>();
@@ -362,6 +364,7 @@ public class LogService {
 
     private final Map<String, List<FinalSearchStatDLC>> searchDLCMap = new ConcurrentHashMap<>();
 
+    private final Map<Long,ForumDiskussionsthemenClicksByHour> forumDiscussionClicksMap = new ConcurrentHashMap<>();
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) {
@@ -658,6 +661,9 @@ public class LogService {
                     //erhöhe Clicks und Besucher, falls anwendbar
                     totalClicks++;
 
+                    //Does it match a forum discussion view
+                    Matcher matched_forum_discussion_view = forumDiskussionsthemenPattern.matcher(request);
+
                     //Does it match an article-type?
                     Matcher matched_articleView = articleViewPattern.matcher(request);
                     Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
@@ -915,6 +921,9 @@ public class LogService {
                     } else if(matched_tagcat_view.find()) {
                         whatMatched = "tagCat";
                         patternMatcher = matched_tagcat_view;
+                    } else if(matched_forum_discussion_view.find()) {
+                        whatMatched = "forumDiscussionView";
+                        patternMatcher = matched_forum_discussion_view;
                     }
 
                     //If user existed,
@@ -1261,6 +1270,10 @@ public class LogService {
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
         postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
         userRedirectService.persistAllUserRedirectsHourly(userRedirectsMap);
+
+        //decomment to enable tracking
+        //forumService.persistAllForumDiscussionsClicksHour(forumDiscussionClicksMap);
+
         //maps clearen nur um sicher zu gehen
         cleanMaps();
         updateFinalSearchStatsAndTemporarySearchStats();
@@ -1443,8 +1456,32 @@ public class LogService {
             case "tagCat" -> {
                 updateTagCatStat(patternMatcher.group(1));
             }
+
+            case "forumDiscussionView" ->{
+                //decomment to enable
+                //updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
+            }
         }
 
+    }
+
+    private void updateForumDiscussionClicksMap(String slug,LocalDateTime logDate){
+       Long forumId = forumService.getForumIdBySlug(slug);
+       if(forumDiscussionClicksMap.containsKey(forumId)){
+          ForumDiskussionsthemenClicksByHour clicks = forumDiscussionClicksMap.get(forumId);
+          Long counter = clicks.getClicks() + 1;
+          clicks.setClicks(counter);
+          forumDiscussionClicksMap.put(forumId,clicks);
+       }else{
+           ForumDiskussionsthemenClicksByHour clicks = new ForumDiskussionsthemenClicksByHour();
+           Integer uniId = uniRepo.getLatestUniStat().getId();
+           Integer hour = logDate.getHour();
+           clicks.setClicks(1L);
+           clicks.setForumId(forumId);
+           clicks.setUniId(uniId);
+           clicks.setHour(hour);
+           forumDiscussionClicksMap.put(forumId,clicks);
+       }
     }
 
     /**

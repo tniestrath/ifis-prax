@@ -24,13 +24,13 @@ public class ForumService {
     WPWPForoPostsRepository forumPostsRepo;
 
     @Transactional
-    public void persistAllForumDiscussionsClicksHour(Map<String, ForumDiskussionsthemenClicksByHour> forumDiskussionsClicksMap) {
+    public void persistAllForumDiscussionsClicksHour(Map<Long, ForumDiskussionsthemenClicksByHour> forumDiskussionsClicksMap) {
         if (!forumDiskussionsClicksMap.isEmpty()) {
             clicksByHourRepo.saveAll(forumDiskussionsClicksMap.values());
         }
     }
 
-    public Integer getForumIdBySlug(String slug){
+    public Long getForumIdBySlug(String slug){
         return forumRepo.getForumIdBySlug(slug);
     }
 

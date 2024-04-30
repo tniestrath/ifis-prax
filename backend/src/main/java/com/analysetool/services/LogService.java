@@ -152,8 +152,6 @@ public class LogService {
 
     //private String BlogViewPattern = "^.*GET \/blog\/.* HTTP/1\\.1\" 200 .*$\n";//Blog view +1 bei match
    // private final String WhitepaperSSPattern = "^.*GET /whitepaper/(\\S+)/.*s=(\\S+)\".*";
-
-    private final String blogCategoryPattern= "^.*GET /blog/";
     private final String BlogViewPattern = "^.*GET /blogeintrag/(\\S+)/";
     private final String RedirectPattern = "/.*GET .*goto=.*\"(https?:/.*/(artikel|blog|news)/(\\S*)/)";
     private final String UserViewPattern="^.*GET /user/(\\S+)/";
@@ -169,6 +167,8 @@ public class LogService {
     private final String ratgeberBuchView = "^.*GET /ratgeber/cyber-sicherheit/";
 
     private final String ratgeberSelfView = "^.*GET /selbstlernangebot-it-sicherheit/";
+
+    private final String ratgeberSelfViewAlterEgo = "^.*GET /Selbstlernakademie/sec-aware-nrw-scorm12-8DUduEVd/scormcontent/index\\.html";
 
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
 
@@ -241,7 +241,7 @@ public class LogService {
 
     final Pattern blackHoleTrapPattern = Pattern.compile(BlackHolePattern);
     final Pattern articleSearchSuccessPattern = Pattern.compile(ArtikelSSPattern);
-    final Pattern blogCategory = Pattern.compile(blogCategoryPattern);
+
     final Pattern blogViewPattern = Pattern.compile(BlogViewPattern);
     final Pattern blogSearchSuccessPattern = Pattern.compile(BlogSSPattern);
     Pattern redirectPattern = Pattern.compile(RedirectPattern);
@@ -267,6 +267,7 @@ public class LogService {
     final Pattern ratgeberGlossarViewPattern = Pattern.compile(ratgeberGlossarView);
     final Pattern ratgeberBuchViewPattern = Pattern.compile(ratgeberBuchView);
     final Pattern ratgeberSelfViewPattern = Pattern.compile(ratgeberSelfView);
+    final Pattern ratgeberSelfViewPatternAlterEgoPattern = Pattern.compile(ratgeberSelfViewAlterEgo);
     final Pattern podcastViewPattern = Pattern.compile(PodcastViewPattern);
     final Pattern contentDownloadPattern= Pattern.compile(contentDownload);
     final Pattern eventViewPattern = Pattern.compile(eventView);
@@ -663,7 +664,6 @@ public class LogService {
 
                     //Does it match a blog-type?
                     Matcher matched_blogView = blogViewPattern.matcher(request);
-                    Matcher matched_blogCat = blogCategory.matcher(request);
                     Matcher matched_blogSearchSuccess = blogSearchSuccessPattern.matcher(line);
 
                     //Does it match a news-type?
@@ -705,7 +705,6 @@ public class LogService {
                     Matcher matched_userViews = userViewPattern.matcher(request);
 
 
-
                     //Does it match a ratgeber-subpost-view?
                     Matcher matched_ratgeber_post = ratgeberPostViewPattern.matcher(request);
 
@@ -717,52 +716,53 @@ public class LogService {
 
                     //Does it match a ratgeber-self-help view?
                     Matcher matched_ratgeber_self = ratgeberSelfViewPattern.matcher(request);
+                    Matcher matched_ratgeber_self_alter = ratgeberSelfViewPatternAlterEgoPattern.matcher(request);
 
                     //Does it match a podcast-view?
                     Matcher matched_podcast_view = podcastViewPattern.matcher(request);
 
                     //Does it match a content-download?
                     //Matcher matched_content_download= contentDownloadPattern.matcher(line);
-                    matched_content_download= contentDownloadPattern.matcher(line);
+                    matched_content_download = contentDownloadPattern.matcher(line);
                     //Does it match an event-View?
-                    Matcher matched_event_view= eventViewPattern.matcher(request);
+                    Matcher matched_event_view = eventViewPattern.matcher(request);
                     //Does it match an event-category view?
                     Matcher matched_event_cat = eventCatPattern.matcher(request);
                     //Does it match an event Search Success?
-                    Matcher matched_event_search_success= eventSSPattern.matcher(line);
+                    Matcher matched_event_search_success = eventSSPattern.matcher(line);
 
                     //Does it match a user Search Success?
-                    Matcher matched_user_search_success= anbieterSSPattern.matcher(line);
+                    Matcher matched_user_search_success = anbieterSSPattern.matcher(line);
 
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_linkedin_redirect= outgoingRedirectPatternLinkedin.matcher(request);
+                    Matcher matched_outgoing_linkedin_redirect = outgoingRedirectPatternLinkedin.matcher(request);
 
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_facebook_redirect= outgoingRedirectPatternFacebook.matcher(request);
+                    Matcher matched_outgoing_facebook_redirect = outgoingRedirectPatternFacebook.matcher(request);
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_twitter_redirect= outgoingRedirectPatternTwitter.matcher(request);
+                    Matcher matched_outgoing_twitter_redirect = outgoingRedirectPatternTwitter.matcher(request);
                     //Does it match an outgoing socials redirect?
-                    Matcher matched_outgoing_youtube_redirect= outgoingRedirectPatternYoutube.matcher(request);
+                    Matcher matched_outgoing_youtube_redirect = outgoingRedirectPatternYoutube.matcher(request);
                     //Does it match user-redirect?
                     Matcher matched_userRedirect = userRedirectPattern.matcher(request);
                     //Does it match a video-view?
                     Matcher matched_videoView = videoViewPattern.matcher(request);
                     //Does it match a socials impression?
-                    Matcher matched_post_impression_facebook=postImpressionFacebookPattern.matcher(line);
+                    Matcher matched_post_impression_facebook = postImpressionFacebookPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_post_impression_twitter=postImpressionTwitterPattern.matcher(line);
+                    Matcher matched_post_impression_twitter = postImpressionTwitterPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_post_impression_LinkedIn=postImpressionLinkedinPattern.matcher(line);
+                    Matcher matched_post_impression_LinkedIn = postImpressionLinkedinPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_post_impression_FacebookTwitterCombo=postImpressionFacebookTwitterComboPattern.matcher(line);
+                    Matcher matched_post_impression_FacebookTwitterCombo = postImpressionFacebookTwitterComboPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_user_impression_facebook=userImpressionFacebookPattern.matcher(line);
+                    Matcher matched_user_impression_facebook = userImpressionFacebookPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_user_impression_twitter=userImpressionTwitterPattern.matcher(line);
+                    Matcher matched_user_impression_twitter = userImpressionTwitterPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_user_impression_LinkedIn=userImpressionLinkedInPattern.matcher(line);
+                    Matcher matched_user_impression_LinkedIn = userImpressionLinkedInPattern.matcher(line);
                     //Does it match a socials impression?
-                    Matcher matched_user_impression_FacebookTwitterCombo=userImpressionTwitterFacebookComboPattern.matcher(line);
+                    Matcher matched_user_impression_FacebookTwitterCombo = userImpressionTwitterFacebookComboPattern.matcher(line);
 
                     //Does it match a anbieterverzeichnis-view?
                     Matcher matched_anbieterverzeichnis_view = anbieterCatPattern.matcher(request);
@@ -774,63 +774,61 @@ public class LogService {
                     String whatMatched = "";
                     Matcher patternMatcher = null;
 
-                    if(matched_articleSearchSuccess.find()) {
+                    if (matched_articleSearchSuccess.find()) {
                         whatMatched = "articleSS";
                         patternMatcher = matched_articleSearchSuccess;
-                    } else if(matched_blogSearchSuccess.find()) {
+                    } else if (matched_blogSearchSuccess.find()) {
                         whatMatched = "blogSS";
                         patternMatcher = matched_blogSearchSuccess;
-                    } else if(matched_newsSearchSuccess.find()) {
+                    } else if (matched_newsSearchSuccess.find()) {
                         whatMatched = "newsSS";
                         patternMatcher = matched_newsSearchSuccess;
-                    } else if(matched_whitepaperSearchSuccess.find()) {
+                    } else if (matched_whitepaperSearchSuccess.find()) {
                         whatMatched = "wpSS";
                         patternMatcher = matched_whitepaperSearchSuccess;
-                    } else if(matched_event_search_success.find()) {
+                    } else if (matched_event_search_success.find()) {
                         whatMatched = "eventSS";
                         patternMatcher = matched_event_search_success;
-                    } else if(matched_user_search_success.find()) {
+                    } else if (matched_user_search_success.find()) {
                         whatMatched = "userSS";
                         patternMatcher = matched_user_search_success;
-                    } else if(matched_post_impression_facebook.find()) {
+                    } else if (matched_post_impression_facebook.find()) {
                         whatMatched = "postImpressionFacebook";
                         patternMatcher = matched_post_impression_facebook;
-                    } else if(matched_post_impression_twitter.find()) {
+                    } else if (matched_post_impression_twitter.find()) {
                         whatMatched = "postImpressionTwitter";
                         patternMatcher = matched_post_impression_twitter;
-                    } else if(matched_post_impression_LinkedIn.find()) {
+                    } else if (matched_post_impression_LinkedIn.find()) {
                         whatMatched = "postImpressionLinkedIn";
                         patternMatcher = matched_post_impression_LinkedIn;
-                    } else if(matched_post_impression_FacebookTwitterCombo.find()) {
+                    } else if (matched_post_impression_FacebookTwitterCombo.find()) {
                         whatMatched = "postImpressionFacebookTwitterCombo";
                         patternMatcher = matched_post_impression_FacebookTwitterCombo;
-                    } else if(matched_user_impression_facebook.find()) {
+                    } else if (matched_user_impression_facebook.find()) {
                         whatMatched = "userImpressionFacebook";
                         patternMatcher = matched_user_impression_facebook;
-                    }else if(matched_user_impression_twitter.find()) {
+                    } else if (matched_user_impression_twitter.find()) {
                         whatMatched = "userImpressionTwitter";
                         patternMatcher = matched_user_impression_twitter;
-                    } else if(matched_user_impression_LinkedIn.find()) {
+                    } else if (matched_user_impression_LinkedIn.find()) {
                         whatMatched = "userImpressionLinkedIn";
                         patternMatcher = matched_user_impression_LinkedIn;
-                    } else if(matched_user_impression_FacebookTwitterCombo.find()) {
+                    } else if (matched_user_impression_FacebookTwitterCombo.find()) {
                         whatMatched = "userImpressionFacebookTwitterCombo";
                         patternMatcher = matched_user_impression_FacebookTwitterCombo;
-                    } else if(matched_articleView.find()) {
+                    } else if (matched_articleView.find()) {
                         whatMatched = "articleView";
                         patternMatcher = matched_articleView;
-                    } else if(matched_blogView.find()) {
+                    } else if (matched_blogView.find()) {
                         whatMatched = "blogView";
                         patternMatcher = matched_blogView;
-                    } else if(matched_blogCat.find()) {
-                        whatMatched = "blogCat";
-                    } else if(matched_newsView.find()) {
+                    } else if (matched_newsView.find()) {
                         whatMatched = "newsView";
                         patternMatcher = matched_newsView;
-                    } else if(matched_whitepaperView.find()) {
+                    } else if (matched_whitepaperView.find()) {
                         whatMatched = "wpView";
                         patternMatcher = matched_whitepaperView;
-                    } else if(matched_podcast_view.find()) {
+                    }  else if(matched_podcast_view.find()) {
                         whatMatched = "podView";
                         patternMatcher = matched_podcast_view;
                     } else if(matched_main_page.find()) {
@@ -875,6 +873,9 @@ public class LogService {
                     } else if(matched_ratgeber_self.find()){
                         whatMatched = "ratgeberSelf";
                         patternMatcher = matched_ratgeber_self;
+                    } else if(matched_ratgeber_self_alter.find()) {
+                        whatMatched = "ratgeberSelf";
+                        patternMatcher = matched_ratgeber_self_alter;
                     } else if(matched_content_download.find()){
                         whatMatched = "contentDownload";
                         patternMatcher = matched_content_download;
@@ -1425,18 +1426,15 @@ public class LogService {
                 }
             }
             case "userImpressionFacebook", "userImpressionTwitter", "userImpressionLinkedIn", "userImpressionFacebookTwitterCombo" -> {
-            try {
-                if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).isPresent()) {
-                    Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).get().getId();
-                    socialsImpressionsService.updateSocialsImpressionsUser(whatMatched, dateLog, userId);
+                try {
+                    if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).isPresent()) {
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).get().getId();
+                        socialsImpressionsService.updateSocialsImpressionsUser(whatMatched, dateLog, userId);
+                    }
+                } catch (Exception e) {
+                    System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
-                e.printStackTrace();
-            }
-        }
-            case "agb", "image", "newsletter", "datenschutz", "partner", "preisliste", "impressum", "ueber", "main", "ratgeberBuch", "ratgeberGlossar" -> {
-
             }
 
             case "tagCat" -> {

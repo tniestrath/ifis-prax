@@ -251,6 +251,11 @@ public class SocialsImpressionsService {
         return socialsImpressionsRepo.findAll();
     }
 
+    public List<SocialsImpressions> findAllToday(){
+        Integer uniId = uniRepo.getLatestUniStat().getId();
+        return socialsImpressionsRepo.findAllByUniId(uniId);
+    }
+
     /**
      * Gets the greatest SocialImpressionsRow by Twitter Impressions from a list.
      * @param allImps the list to fetch from.

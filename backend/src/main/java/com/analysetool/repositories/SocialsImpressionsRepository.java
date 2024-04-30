@@ -17,6 +17,8 @@ public interface SocialsImpressionsRepository  extends JpaRepository<SocialsImpr
     List<SocialsImpressions> findByPostId(Long postId);
     List<SocialsImpressions> findByUserId(Long userId);
 
+    List<SocialsImpressions> findAllByUniId(Integer uniId);
+
     @Query("SELECT sum(s.linkedIn) from SocialsImpressions s Where s.postId=:postId")
     Long sumUpLinkedInOfPostId(Long postId);
 

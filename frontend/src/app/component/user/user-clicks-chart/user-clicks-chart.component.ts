@@ -296,5 +296,5 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
     })
   }
 
-  protected readonly SysVars = SysVars;
+  protected override readonly SysVars = SysVars;
 }

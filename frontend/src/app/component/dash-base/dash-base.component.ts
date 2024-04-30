@@ -77,6 +77,7 @@ export class DashBaseComponent implements OnDestroy{
     tooltipContainer.appendChild(this.tooltip);
     this.helpButton.addEventListener("mouseenter", () => {this.tooltip.style.visibility = "visible"; this.cdr.detectChanges()});
     this.helpButton.addEventListener("mouseleave", () => {this.tooltip.style.visibility = "hidden"; this.cdr.detectChanges()});
+    this.setToolTip();
   }
 
   protected setToolTip(text: string = "PLACEHOLDER", width: number = 1, enabled = true){
@@ -94,4 +95,6 @@ export class DashBaseComponent implements OnDestroy{
     this.cdr.detectChanges();
     this.api.cancelAllRequests();
   }
+
+  protected readonly SysVars = SysVars;
 }

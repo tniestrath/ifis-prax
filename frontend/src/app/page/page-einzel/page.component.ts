@@ -46,6 +46,7 @@ import {NewsletterComponent} from "../../component/newsletter/newsletter/newslet
 import {ClicksByTimeNewsletterComponent} from "../../component/clicks-by-time/clicks-by-time.component";
 import {PostDisplayComponent} from "../../component/post/post-display/post-display.component";
 import {BlackHoleListComponent} from "../../component/system/black-hole-list/black-hole-list.component";
+import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -171,6 +172,11 @@ export class PageComponent implements OnInit {
       {type: ClicksByTimeNewsletterComponent, row: 3, col: 3, height: 2, width: 2}
     ];
   }
+  getForumPageCards(){
+    return [
+      {type: DashBaseComponent, row: 2, col: 2, height: 2, width: 4},
+    ]
+  }
 
   ngOnInit(): void {
     SysVars.SELECTED_PAGE.subscribe(page => {
@@ -225,6 +231,11 @@ export class PageComponent implements OnInit {
         case "Newsletter":{
           this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getNewsletterPageCards());
+          break;
+        }
+        case "Forum":{
+          this.pdf.restoreStyle(this.element.nativeElement);
+          this.cardsLoaded.next(this.getForumPageCards());
           break;
         }
         case "PRINT":{

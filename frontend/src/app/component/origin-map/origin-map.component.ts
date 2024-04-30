@@ -373,7 +373,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   }
 
   protected readonly Math = Math;
-  protected readonly SysVars = SysVars;
+  protected override readonly SysVars = SysVars;
 }
 
 @Component({

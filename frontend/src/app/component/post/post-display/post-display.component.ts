@@ -47,8 +47,6 @@ export class PostDisplayComponent extends DashBaseComponent implements OnInit{
     // @ts-ignore
     dateBox.innerText = post.date;
     // @ts-ignore
-    tagBox.innerText = Util.formatArray(post.tags.map(value => value.name));
-    // @ts-ignore
     tagBox.style.backgroundColor = Util.getColor("post", post.type);
     // @ts-ignore
     imgBox.style.borderColor = Util.getColor("post", post.type);
@@ -56,9 +54,9 @@ export class PostDisplayComponent extends DashBaseComponent implements OnInit{
     this.postTags = post.tags;
   }
 
-  public onTagClick(){
+  public onTagClick(tagId : string){
     // @ts-ignore
-    SysVars.CURRENT_TAG = this.postTags.at(0);
+    SysVars.CURRENT_TAG = this.postTags.at(this.postTags.findIndex(value => value.id == tagId) < 0 ? 0 : this.postTags.findIndex(value => value.id == tagId));
     SysVars.SELECTED_PAGE.next("Themen");
 
   }

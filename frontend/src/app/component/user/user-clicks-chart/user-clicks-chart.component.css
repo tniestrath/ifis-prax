@@ -4,6 +4,11 @@
   width: 100%;
   height: 100%;
 }
+#user-clicks-chart-title{
+  width: 100%;
+  text-align: center;
+  margin: 2px;
+}
 .post-chart-form{
   display: flex;
   width: calc(100% - 45px);
@@ -113,17 +118,11 @@ input[type="radio"]:checked::after{
 }
 
 @media print {
-  #user-clicks-chart-title{
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    margin: 2px;
-  }
   .post-chart-form{
-    display: none;
+    display: none !important;
   }
   input[type="radio"]{
-    display: none;
+    display: none !important;
   }
   select{
     box-sizing: border-box;

@@ -24,7 +24,7 @@
     <p>{{user.slogan}}</p>
   </div>
   <div class="user-email-box">
-    <p>Mail: {{user.email}}</p>
+    <span><a href="mailto:{{user.email}}">Mail: {{user.email}}</a></span>
   </div>
   <div class="user-tel-box">
     <p>Tel: {{user.tel}}</p>
@@ -57,10 +57,12 @@
     <p>{{user.redirects}}</p>
   </div>
   <div class="user-ranking-content-box">
-    <p>#{{user.rankingContent}} (<b [style.color]="Util.getColor('plan', user.accountType)">#{{user.rankingContentByGroup}}</b>) in Inhaltsaufrufen</p>
+    <p>#{{user.rankingContent}} (<b [style.color]="Util.getColor('plan', user.accountType)">#{{user.rankingContentByGroup}}</b>)</p>
+    <img [style.max-height]="'50%'" alt="Inhalts Aufrufe" src="assets/pencil-solid.png">
   </div>
   <div class="user-ranking-profile-box">
-    <p>#{{user.rankingProfile}} (<b [style.color]="Util.getColor('plan', user.accountType)">#{{user.rankingProfileByGroup}}</b>) in Profilaufrufen</p>
+    <p>#{{user.rankingProfile}} (<b [style.color]="Util.getColor('plan', user.accountType)">#{{user.rankingProfileByGroup}}</b>)</p>
+    <img [style.max-height]="'50%'" alt="Profil Aufrufe" src="assets/profile_views.png">
   </div>
 
 

@@ -93,7 +93,7 @@ export class PageComponent implements OnInit {
   getUserDetailPageCardsPRINT() {
     return [
       {type: ClicksComponent, row: 1, col: 1, height: 6, width: 2},
-      {type: OriginMapComponent, row: 8, col: 1, height: 2, width: 2},
+      {type: OriginMapComponent, row: 7, col: 1, height: 4, width: 2},
       {type: UserDisplayComponent, row: 1, col: 3, height: 2, width: 4},
       {type: SingleUserTagsDistComponent, row: 3, col: 3, height: 4, width: 4},
       {type: UserClicksChartComponent, row: 7, col: 3, height: 4, width: 4},

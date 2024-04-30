@@ -1,6 +1,6 @@
 <div class="component-box user-clicks-chart-box">
   <p id="user-clicks-chart-title" *ngIf="SysVars.CURRENT_PAGE=='PRINT'">Profilaufrufe und veröffentlichte Beiträge</p>
-  <form class="post-chart-form">
+  <form class="post-chart-form" *ngIf="SysVars.CURRENT_PAGE!='PRINT'">
     <select id="post-type-select" name="post_type" (change)="getData($event)">
       <option id="post-type-select-view" value="view" name="post_type">Profilaufrufe</option>
       <option *ngIf="isPostSelected" value="viewProfile" name="post_type">Profilaufrufe</option>

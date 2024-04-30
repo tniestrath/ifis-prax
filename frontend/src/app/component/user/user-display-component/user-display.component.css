@@ -2,7 +2,7 @@
   height: calc(100% - 10px);
   padding: 5px;
   display: grid;
-  grid-template-columns: 100px auto auto auto auto;
+  grid-template-columns: 100px 1fr 1fr 1fr 1fr;
   grid-template-rows: repeat(6, 20px) 1fr 1fr;
   grid-column-gap: 5px;
 
@@ -130,22 +130,26 @@
 }
 .user-ranking-content-box{
   grid-row: 8;
-  grid-column: 1 / span 3;
+  grid-column: 4 / span 3;
   display: flex;
   align-items: center;
   justify-content: start;
 }
 .user-ranking-profile-box{
   grid-row: 8;
-  grid-column: 4 / span 3;
+  grid-column: 1 / span 3;
   display: flex;
   align-items: center;
   justify-content: start;
 }
 
-p{
+p, a, span{
   margin: 0;
-  height: fit-content;
+  color: black;
+  text-decoration: none;
+  overflow: clip;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 img {
   max-height: 90%;

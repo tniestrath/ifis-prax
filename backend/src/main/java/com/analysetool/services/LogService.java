@@ -124,8 +124,6 @@ public class LogService {
     private FinalSearchStatDLCRepository fDLCRepo;
     @Autowired
     private TagCatStatRepository tagCatRepo;
-    @Autowired
-    private CatPageViewRepository catPageRepo;
 
     @Autowired
     private RankingTotalProfileRepository rankingTotalProfileRepo;
@@ -1456,13 +1454,6 @@ public class LogService {
                 } catch (Exception e) {
                     System.out.println("USER-SOCIAL EXCEPTION BEI: " + line);
                     e.printStackTrace();
-                }
-            }
-            case "blogCat", "newsCat", "articleCat", "wpCat" -> {
-                if(patternMatcher.group(1).isBlank()) {
-                    addCatPageView(whatMatched, 0);
-                } else {
-                    addCatPageView(whatMatched, Integer.parseInt(patternMatcher.group(1)));
                 }
             }
 
@@ -3183,30 +3174,6 @@ public class LogService {
 
     public void updateRankings() {
         userController.updateUserRankingBuffer();
-    }
-
-    public void addCatPageView(String whatMatched, int page) {
-
-        CatPageViews catPage;
-        String cat = "error";
-        switch (whatMatched) {
-            case "articleCat" -> cat = ("article");
-            case "blogCat" -> cat = ("blog");
-            case "newsCat" -> cat = ("news");
-            case "wpCat" -> cat = ("whitepaper");
-        }
-
-        if(catPageRepo.findByUniAndCatAndPage(uniRepo.getLatestUniStat().getId(), cat, page).isEmpty()) {
-            catPage = new CatPageViews();
-            catPage.setPage(page);
-            catPage.setUniId(uniRepo.getLatestUniStat().getId());
-            catPage.setCat(cat);
-        } else {
-            catPage = catPageRepo.findByUniAndCatAndPage(uniRepo.getLatestUniStat().getId(), cat, page).get();
-            catPage.setViews(catPage.getViews() + 1);
-        }
-
-        catPageRepo.save(catPage);
     }
 
 }

@@ -40,10 +40,10 @@ public class WPWPForoForum {
     private int lastTopicId;
 
     @Column(name="last_postid")
-    private int lastPostId;
+    private String lastPostId;
 
     @Column(name="last_userid")
-    private int lastUserId;
+    private String lastUserId;
 
     @Column(name="last_post_date")
     private LocalDateTime lastPostDate;
@@ -150,19 +150,19 @@ public class WPWPForoForum {
         this.lastTopicId = lastTopicId;
     }
 
-    public int getLastPostId() {
+    public String getLastPostId() {
         return lastPostId;
     }
 
-    public void setLastPostId(int lastPostId) {
+    public void setLastPostId(String lastPostId) {
         this.lastPostId = lastPostId;
     }
 
-    public int getLastUserId() {
+    public String getLastUserId() {
         return lastUserId;
     }
 
-    public void setLastUserId(int lastUserId) {
+    public void setLastUserId(String lastUserId) {
         this.lastUserId = lastUserId;
     }
 

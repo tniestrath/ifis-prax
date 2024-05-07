@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface WPWPForoForumRepository extends JpaRepository<WPWPForoForum, Long> {
 
     @Query("Select f.forumId FROM WPWPForoForum f  where f.slug =:slug")
-    Long getForumIdBySlug(String slug);
+    Integer getForumIdBySlug(String slug);
 
     WPWPForoForum findBySlug(String slug);
 }

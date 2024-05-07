@@ -239,7 +239,10 @@ public class LogService {
 
     private final String forumDiskussionsthemen = "^.*GET /marktplatz-forum/([^\\/]+)/";
 
+    private final String forumTopic = "^.*GET /marktplatz-forum/[^\\/]+/([^\\/]+)/";
+
     final Pattern forumDiskussionsthemenPattern = Pattern.compile(forumDiskussionsthemen);
+    final Pattern forumTopicPattern = Pattern.compile(forumTopic);
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
 
     final Pattern blackHoleTrapPattern = Pattern.compile(BlackHolePattern);
@@ -364,7 +367,9 @@ public class LogService {
 
     private final Map<String, List<FinalSearchStatDLC>> searchDLCMap = new ConcurrentHashMap<>();
 
-    private final Map<Long,ForumDiskussionsthemenClicksByHour> forumDiscussionClicksMap = new ConcurrentHashMap<>();
+    private final Map<Integer,ForumDiskussionsthemenClicksByHour> forumDiscussionClicksMap = new ConcurrentHashMap<>();
+
+    private final Map<Integer,ForumTopicsClicksByHour> forumTopicsClicksMap = new ConcurrentHashMap<>();
 
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) {
@@ -662,6 +667,9 @@ public class LogService {
                     totalClicks++;
 
                     //Does it match a forum discussion view
+                    Matcher matched_forum_topic_view = forumTopicPattern.matcher(request);
+
+                    //Does it match a forum discussion view
                     Matcher matched_forum_discussion_view = forumDiskussionsthemenPattern.matcher(request);
 
                     //Does it match an article-type?
@@ -921,6 +929,9 @@ public class LogService {
                     } else if(matched_tagcat_view.find()) {
                         whatMatched = "tagCat";
                         patternMatcher = matched_tagcat_view;
+                    } else if(matched_forum_topic_view.find()) {
+                        whatMatched = "forumTopicView";
+                        patternMatcher = matched_forum_topic_view;
                     } else if(matched_forum_discussion_view.find()) {
                         whatMatched = "forumDiscussionView";
                         patternMatcher = matched_forum_discussion_view;
@@ -1273,6 +1284,7 @@ public class LogService {
 
         //decomment to enable tracking
         //forumService.persistAllForumDiscussionsClicksHour(forumDiscussionClicksMap);
+        //forumService.persistAllForumTopicsClicksHour(forumTopicsClicksMap);
 
         //maps clearen nur um sicher zu gehen
         cleanMaps();
@@ -1461,12 +1473,16 @@ public class LogService {
                 //decomment to enable
                 //updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
             }
+            case "forumTopicView" ->{
+                //decomment to enable
+                //updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
+            }
         }
 
     }
 
     private void updateForumDiscussionClicksMap(String slug,LocalDateTime logDate){
-       Long forumId = forumService.getForumIdBySlug(slug);
+       Integer forumId = forumService.getForumIdBySlug(slug);
        if(forumDiscussionClicksMap.containsKey(forumId)){
           ForumDiskussionsthemenClicksByHour clicks = forumDiscussionClicksMap.get(forumId);
           Long counter = clicks.getClicks() + 1;
@@ -1477,11 +1493,29 @@ public class LogService {
            Integer uniId = uniRepo.getLatestUniStat().getId();
            Integer hour = logDate.getHour();
            clicks.setClicks(1L);
-           clicks.setForumId(forumId);
+           clicks.setForumIdInteger(forumId);
            clicks.setUniId(uniId);
            clicks.setHour(hour);
            forumDiscussionClicksMap.put(forumId,clicks);
        }
+    }
+    private void updateForumTopicClicksMap(String slug,LocalDateTime logDate){
+        Integer topicId = forumService.getTopicIdBySlug(slug);
+        if(forumTopicsClicksMap.containsKey(topicId)){
+            ForumTopicsClicksByHour clicks = forumTopicsClicksMap.get(topicId);
+            Long counter = clicks.getClicks() + 1;
+            clicks.setClicks(counter);
+            forumTopicsClicksMap.put(topicId,clicks);
+        }else{
+            ForumTopicsClicksByHour clicks = new ForumTopicsClicksByHour();
+            Integer uniId = uniRepo.getLatestUniStat().getId();
+            Integer hour = logDate.getHour();
+            clicks.setClicks(1L);
+            clicks.setTopicIdInteger(topicId);
+            clicks.setUniId(uniId);
+            clicks.setHour(hour);
+            forumTopicsClicksMap.put(topicId,clicks);
+        }
     }
 
     /**

@@ -45,8 +45,16 @@ public class ForumTopicsClicksByHour implements Serializable {
         return topicId;
     }
 
+    public Integer getTopicIdInteger() {
+        return topicId.intValue();
+    }
+
     public void setTopicId(Long topicId) {
         this.topicId = topicId;
+    }
+
+    public void setTopicIdInteger(Integer topicId) {
+        this.topicId = topicId.longValue();
     }
 
     public Integer getHour() {

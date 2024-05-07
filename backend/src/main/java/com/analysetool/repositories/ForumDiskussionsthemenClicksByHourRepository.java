@@ -11,7 +11,7 @@ import java.util.List;
 public interface ForumDiskussionsthemenClicksByHourRepository extends JpaRepository<ForumDiskussionsthemenClicksByHour, Integer> {
 
     List<ForumDiskussionsthemenClicksByHour> findByUniId(Integer uniId);
-    List<ForumDiskussionsthemenClicksByHour> findByForumId(Long forumId);
+    List<ForumDiskussionsthemenClicksByHour> findByForumId(Integer forumId);
     List<ForumDiskussionsthemenClicksByHour> findByHour(Integer hour);
 
     ForumDiskussionsthemenClicksByHour findByUniIdAndHourAndForumId(Integer uniId,Integer hour,Long forumId);

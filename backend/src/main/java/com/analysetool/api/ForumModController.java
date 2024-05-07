@@ -104,7 +104,7 @@ public class ForumModController {
         return false;
     }
 
-    @PostMapping("/setStatusForId")
+    @PostMapping("/setStatusById")
     public boolean setStatus(int id, int status) {
         if(wpForoPostRepo.findById((long) id).isPresent()) {
             WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();

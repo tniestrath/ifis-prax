@@ -51,7 +51,7 @@ public class ForumModController {
         JSONObject json = new JSONObject();
 
         json.put("forum", wpForoForumRepo.findById((long) post.getForumId()).isPresent() ? wpForoForumRepo.findById((long) post.getForumId()).get().getTitle() : "none");
-        json.put("topic", wpForoTopicsRepo.findById((long) post.getTopicId()).isPresent() ? wpForoTopicsRepo.findById((long) post.getTopicId()).get() : "none");
+        json.put("topic", wpForoTopicsRepo.findById((long) post.getTopicId()).isPresent() ? wpForoTopicsRepo.findById((long) post.getTopicId()).get().getTitle() : "none");
         json.put("id", post.getPostId());
         json.put("body", post.getBody());
         json.put("title", post.getTitle());

@@ -194,11 +194,11 @@ public class WPWPForoPosts {
         this.email = email;
     }
 
-    public String getIsPrivate() {
+    public int getIsPrivate() {
         return isPrivate;
     }
 
-    public void setIsPrivate(String isPrivate) {
+    public void setIsPrivate(int isPrivate) {
         this.isPrivate = isPrivate;
     }
 

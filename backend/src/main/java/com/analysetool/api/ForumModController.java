@@ -4,6 +4,7 @@ import com.analysetool.modells.WPWPForoPosts;
 import com.analysetool.repositories.WPUserRepository;
 import com.analysetool.repositories.WPWPForoForumRepository;
 import com.analysetool.repositories.WPWPForoPostsRepository;
+import com.analysetool.repositories.WPWPForoTopicsRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,6 +22,8 @@ public class ForumModController {
     private WPWPForoForumRepository wpForoForumRepo;
     @Autowired
     private WPUserRepository userRepo;
+    @Autowired
+    private WPWPForoTopicsRepository wpForoTopicsRepo;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
@@ -48,6 +51,7 @@ public class ForumModController {
         JSONObject json = new JSONObject();
 
         json.put("forum", wpForoForumRepo.findById((long) post.getForumId()).isPresent() ? wpForoForumRepo.findById((long) post.getForumId()).get().getTitle() : "none");
+        json.put("topic", wpForoTopicsRepo.findById((long) post.getTopicId()).isPresent() ? wpForoTopicsRepo.findById((long) post.getTopicId()).get() : "none");
         json.put("id", post.getPostId());
         json.put("body", post.getBody());
         json.put("title", post.getTitle());

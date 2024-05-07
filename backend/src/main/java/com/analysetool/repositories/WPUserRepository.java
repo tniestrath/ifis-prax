@@ -238,5 +238,8 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
     @Query("SELECT u FROM WPUser u LEFT JOIN WPUserMeta um ON u.id=um.userId WHERE um.key='wp_capabilities' AND um.value LIKE CONCAT('%', :typeAbo, '\"%')")
     List<WPUser> getByAboType(String typeAbo);
 
+    @Query("SELECT u.email FROM WPUser u")
+    List<String> getAllEmails();
+
 }
 

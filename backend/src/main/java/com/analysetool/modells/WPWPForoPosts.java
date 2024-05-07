@@ -61,7 +61,7 @@ public class WPWPForoPosts {
     private String email;
 
     @Column(name="private")
-    private String isPrivate;
+    private int isPrivate;
 
     @Column(name="root")
     private int root;

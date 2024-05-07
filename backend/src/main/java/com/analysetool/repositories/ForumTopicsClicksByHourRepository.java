@@ -16,9 +16,9 @@ public interface ForumTopicsClicksByHourRepository extends JpaRepository<ForumTo
 
     ForumTopicsClicksByHour findByUniIdAndHourAndTopicId(Integer uniId, Integer hour, Long topicId);
 
-    @Query("SELECT SUM(f.clicks) FROM ForumTopicsClicksByHour f WHERE f.topicId = :topicId")
+    @Query("SELECT SUM(f.clicks) FROM ForumTopicsClicksByHour f WHERE f.topicId =:topicId")
     Long getTotalClicksByTopicId(Long topicId);
 
-    @Query("SELECT SUM(f.clicks) FROM ForumTopicsClicksByHour f WHERE f.topicId = :topicId AND f.uniId = :uniId")
+    @Query("SELECT SUM(f.clicks) FROM ForumTopicsClicksByHour f WHERE f.topicId = :topicId AND f.uniId =:uniId")
     Long getClicksByTopicAndUniId(Long topicId, Integer uniId);
 }

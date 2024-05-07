@@ -18,7 +18,7 @@ public interface ForumDiskussionsthemenClicksByHourRepository extends JpaReposit
     @Query("Select sum(f.clicks) From ForumDiskussionsthemenClicksByHour f Where f.id=:forumId ")
     Long getClicksAllTimeById(Long forumId);
 
-    @Query("Select sum(f.clicks) From ForumDiskussionsthemenClicksByHour f Where f.id=:forumI AND f.uniId =: uniId")
+    @Query("Select sum(f.clicks) From ForumDiskussionsthemenClicksByHour f Where f.id=:forumId AND f.uniId =: uniId")
     Long getClicksOfDay(Long forumId,Integer uniId);
 
 }

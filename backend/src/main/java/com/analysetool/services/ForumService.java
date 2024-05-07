@@ -34,4 +34,12 @@ public class ForumService {
         return forumRepo.getForumIdBySlug(slug);
     }
 
+    public Long getViewsByIdAllTime(Long id){
+        return clicksByHourRepo.getClicksAllTimeById(id);
+    }
+
+    public Long getViewsByIdToday(Long id){
+        Integer uniId = uniRepo.getLatestUniStat().getId();
+        return clicksByHourRepo.getClicksOfDay(id,uniId);
+    }
 }

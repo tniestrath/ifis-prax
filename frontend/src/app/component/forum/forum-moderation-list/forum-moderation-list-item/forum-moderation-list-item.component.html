@@ -1,0 +1,22 @@
+<div class="forum-post-box" (click)="onClick(data)">
+  <div class="post-details">
+    <div class="post-detail-group-3">
+      <div class="post-detail">
+        <div class="post-label" [style.background-color]="bgColor">Name</div>
+        <p>{{data.userName}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label" [style.background-color]="bgColor">Titel</div>
+        <p>{{data.title}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label" [style.background-color]="bgColor">Datum</div>
+        <p>{{data.date}}</p>
+      </div>
+    </div>
+    <div class="post-detail">
+      <div class="post-label" [style.background-color]="bgColor">Inhalt</div>
+      <p>{{data.body}}</p>
+    </div>
+  </div>
+</div>

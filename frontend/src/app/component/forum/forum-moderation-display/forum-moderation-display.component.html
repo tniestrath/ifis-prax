@@ -1,0 +1,38 @@
+<div class="component-box forum-moderation-display-box">
+  <div class="forum-moderation-display-title">Moderation</div>
+  <div class="post-details">
+    <div class="post-detail-group-2">
+      <div class="post-detail">
+        <div class="post-label">Thema</div>
+        <p>{{data.forum}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label">Frage</div>
+        <p>{{data.topic}}</p>
+      </div>
+    </div>
+    <div class="post-detail-group-3">
+      <div class="post-detail">
+        <div class="post-label">Name</div>
+        <p>{{data.userName}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label">E-Mail</div>
+        <p>{{data.email}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label">Datum</div>
+        <p>{{data.date}}</p>
+      </div>
+    </div>
+    <div class="post-detail">
+      <div class="post-label">Inhalt</div>
+      <p>{{data.body}}</p>
+    </div>
+  </div>
+  <div class="forum-moderation-display-actions-box">
+    <div class="moderation-button" id="moderation-delete" [style.background-color]="DashColors.RED" (click)="onDeleteClick()"><p>Löschen</p></div>
+    <div class="moderation-button" id="moderation-accept" [style.background-color]="DashColors.GREEN" (click)="onAcceptClick()"><p>Freigeben</p></div>
+    <div class="moderation-button" id="moderation-stack" (click)="onStackClick()"><p>➜</p></div>
+  </div>
+</div>

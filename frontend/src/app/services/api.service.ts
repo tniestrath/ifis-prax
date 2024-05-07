@@ -15,6 +15,7 @@ import {
 } from "../component/search/search-no-results-list/search-list-item/search-list-item.component";
 import {Newsletter} from "../component/newsletter/Newsletter";
 import {BadBot} from "../component/system/black-hole-list/bad-bot-item/bad-bot-item.component";
+import {ForumPost} from "../component/forum/forum-moderation-list/ForumPost";
 
 /**
  * @enum apiUrl
@@ -135,6 +136,10 @@ export enum apiUrl {
   SEARCH_FLIP = "/search-stats/flipSearch?search=SEARCH",
   SEARCH_USER_IGNORE = "/search-stats/deleteAnbieterSearch?id=ID",
   SEARCH_USER_FLIP = "/search-stats/flipAnbieterSearch?search=SEARCH",
+
+  GET_FORUM_UNMODERATED_POSTS = "/forum/getAllUnmoderated",
+  FORUM_DELETE_POST = "/forum/deleteById?id=ID",
+  FORUM_ACCEPT_POST = "/forum/setStatusById?id=ID&status=0",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -774,6 +779,20 @@ export class ApiService {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.SEARCH_USER_FLIP).replace("SEARCH", id)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
+
+  async getUnmoderatedForumPosts() : Promise<ForumPost[]> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_UNMODERATED_POSTS)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async deleteForumPost(id : string) : Promise<boolean> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_DELETE_POST).replace("ID", id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async acceptForumPost(id : string) : Promise<boolean> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_ACCEPT_POST).replace("ID", id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
 
 
 

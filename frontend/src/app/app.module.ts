@@ -96,6 +96,10 @@ import { PostDisplayComponent } from './component/post/post-display/post-display
 import { BlackHoleListComponent } from './component/system/black-hole-list/black-hole-list.component';
 import { BadBotItemComponent } from './component/system/black-hole-list/bad-bot-item/bad-bot-item.component';
 import { DashListComponent } from './component/dash-list/dash-list.component';
+import { ForumModerationListComponent } from './component/forum/forum-moderation-list/forum-moderation-list.component';
+import { ForumModerationDisplayComponent } from './component/forum/forum-moderation-display/forum-moderation-display.component';
+import { ForumModerationListItemComponent } from './component/forum/forum-moderation-list/forum-moderation-list-item/forum-moderation-list-item.component';
+import { ForumModeratorComponent } from './component/forum/forum-moderator/forum-moderator.component';
 
 @NgModule({
   declarations: [
@@ -176,7 +180,11 @@ import { DashListComponent } from './component/dash-list/dash-list.component';
     PostDisplayComponent,
     BlackHoleListComponent,
     BadBotItemComponent,
-    DashListComponent
+    DashListComponent,
+    ForumModerationListComponent,
+    ForumModerationDisplayComponent,
+    ForumModerationListItemComponent,
+    ForumModeratorComponent
   ],
     imports: [
         BrowserModule,

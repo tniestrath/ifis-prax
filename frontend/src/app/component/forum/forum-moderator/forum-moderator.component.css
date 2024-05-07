@@ -1,0 +1,13 @@
+.forum-moderator-box{
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 100%;
+  grid-gap: 5px;
+}
+dash-forum-moderation-display{
+  grid-column: 1 / span 3;
+}
+dash-forum-moderation-list{
+  grid-column: 4 / span 2;
+}

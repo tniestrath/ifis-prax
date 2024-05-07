@@ -8,6 +8,7 @@ import {
 import {DbObject} from "./DbObject";
 import {Newsletter} from "../component/newsletter/Newsletter";
 import {Tag} from "../component/tag/Tag";
+import {ForumPost} from "../component/forum/forum-moderation-list/ForumPost";
 
 export class PAGE {
   id: number = 0;
@@ -48,6 +49,10 @@ export class SysVars {
   public static SEO_DATA : EventEmitter<{desktop: {now: number, last: number}, mobile: {now: number, last: number}}> = new EventEmitter<{desktop: {now: number; last: number}; mobile: {now: number; last: number}}>();
 
   public static SELECTED_SEARCH : EventEmitter<{item: DbObject, operation: string}> = new EventEmitter<{item: DbObject; operation: string}>();
+
+  public static SELECTED_FORUM_POST : EventEmitter<ForumPost | boolean> = new EventEmitter<ForumPost | boolean>();
+  public static CURRENT_FORUM_POST : ForumPost;
+  public static BUFFERED_FORUM_POST : ForumPost;
 
   public static PAGES = [
     //new PAGE(0, "Login", "Login");

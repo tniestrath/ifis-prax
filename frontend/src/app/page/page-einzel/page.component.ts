@@ -47,6 +47,13 @@ import {ClicksByTimeNewsletterComponent} from "../../component/clicks-by-time/cl
 import {PostDisplayComponent} from "../../component/post/post-display/post-display.component";
 import {BlackHoleListComponent} from "../../component/system/black-hole-list/black-hole-list.component";
 import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
+import {
+  ForumModerationListComponent
+} from "../../component/forum/forum-moderation-list/forum-moderation-list.component";
+import {
+  ForumModerationDisplayComponent
+} from "../../component/forum/forum-moderation-display/forum-moderation-display.component";
+import {ForumModeratorComponent} from "../../component/forum/forum-moderator/forum-moderator.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -174,7 +181,7 @@ export class PageComponent implements OnInit {
   }
   getForumPageCards(){
     return [
-      {type: DashBaseComponent, row: 2, col: 2, height: 2, width: 4},
+      {type: ForumModeratorComponent, row: 1, col: 2, height: 2, width: 5},
     ]
   }
 

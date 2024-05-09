@@ -215,6 +215,8 @@ export enum DashColors {
 
   GREY_50 = "rgba(200,200,200, .5)",
 
+  DARK_GREY = "rgb(128,128,128)",
+
   WHITE = "rgb(255,255,255)",
   BASEPAINT = "rgb(255,255,255)",
 

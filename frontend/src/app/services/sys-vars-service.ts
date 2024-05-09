@@ -50,9 +50,7 @@ export class SysVars {
 
   public static SELECTED_SEARCH : EventEmitter<{item: DbObject, operation: string}> = new EventEmitter<{item: DbObject; operation: string}>();
 
-  public static SELECTED_FORUM_POST : EventEmitter<ForumPost | boolean> = new EventEmitter<ForumPost | boolean>();
-  public static CURRENT_FORUM_POST : ForumPost;
-  public static BUFFERED_FORUM_POST : ForumPost;
+  public static SELECTED_FORUM_POST : EventEmitter<ForumPost> = new EventEmitter<ForumPost>();
 
   public static PAGES = [
     //new PAGE(0, "Login", "Login");

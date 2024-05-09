@@ -12,38 +12,19 @@ import {DashColors} from "../../../util/Util";
 export class ForumModerationDisplayComponent extends DashBaseComponent implements OnInit{
   data : ForumPost = new ForumPost();
   ngOnInit(): void {
-    SysVars.SELECTED_FORUM_POST.subscribe(value => {
-      console.log(value)
-      if (value != false) {
-        this.data = value as ForumPost
-        SysVars.BUFFERED_FORUM_POST = value as ForumPost;
-      }
-      else {
-        console.log(SysVars.CURRENT_FORUM_POST)
-        this.data = SysVars.CURRENT_FORUM_POST;
-      }
-    });
-
-
+    var style = "width: 15%; display: inline-flex; align-items: center; justify-content: center; border-radius: 5px; background-color: ";
+    this.setToolTip(
+ "<span>Hier können Beiträge aus dem Forum Moderiert werden</span>" +
+      "<br><br>" +
+      "<div style=\"" + style + DashColors.RED  + "\"><span>Löschen</span></div><span> : Der Beitrag wird aus der Liste entfernt und nicht im Forum angezeigt</span><br>" +
+      "<div style=\"" + style + DashColors.GREEN  + "\"><span>Freigeben</span></div><span> : Der Beitrag wird aus der Liste entfernt und im Forum angezeigt</span><br>" +
+      "<div style=\""+ style + DashColors.DARK_GREY + "\"><span>➜</span></div><span> : Der Beitrag wird zurück in die Liste geschoben</span>"
+      , 3)
   }
 
-  onDeleteClick(){
-    this.api.deleteForumPost(this.data.id).then(value => {
-      if(value){
-        this.data = new ForumPost();
-      }
-    });
-  }
-  onAcceptClick(){
-    this.api.acceptForumPost(this.data.id).then(value => {
-      if (value) {
-        this.data = new ForumPost();
-      }
-    });
-  }
-  onStackClick(){
-    //SysVars.SELECTED_FORUM_POST.next(false);
-  }
+  onDeleteClick = () : void => {};
+  onAcceptClick = () : void => {};
+  onStackClick = () : void => {};
 
   protected readonly DashColors = DashColors;
 }

@@ -26,6 +26,8 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
   pagesComplete: boolean = false;
   lastScroll = 0;
 
+  itemClick = new Subject<SelectorItem>()
+
   protected response : Promise<T[]> | undefined;
   protected component : Type<C> | undefined;
 
@@ -52,6 +54,10 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
       this.pagesComplete = value.length <= 0;
       this.selectorItemsLoaded.next(this.selectorItems);
     });
+  }
+
+  onItemCLick(item : SelectorItem, index : number){
+
   }
 
   onScrollEnd() {

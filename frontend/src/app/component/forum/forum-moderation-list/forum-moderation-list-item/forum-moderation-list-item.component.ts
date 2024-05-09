@@ -11,6 +11,8 @@ import {SysVars} from "../../../../services/sys-vars-service";
 export class ForumModerationListItemComponent extends DashListItemComponent{
   override data : ForumPost = new ForumPost();
 
+  public regex = new RegExp("<[^>]*>", "gm");
+
   override onClick(data: any): any {
     SysVars.SELECTED_FORUM_POST.next(data);
   }

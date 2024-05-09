@@ -16,7 +16,7 @@
     </div>
     <div class="post-detail">
       <div class="post-label" [style.background-color]="bgColor">Inhalt</div>
-      <p>{{data.body}}</p>
+      <p>{{data.body.replaceAll(regex, "")}}</p>
     </div>
   </div>
 </div>

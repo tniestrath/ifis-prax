@@ -13,7 +13,7 @@ import {SelectorItem} from "../../../page/selector/selector.component";
 })
 export class ForumModerationListComponent extends DashListComponent<ForumPost, ForumModerationListItemComponent>{
   override ngOnInit() {
-    this.setToolTip("Liste mit unmoderierten Beiträgen", 2)
+    this.setToolTip("Liste mit unmoderierten Beiträgen", 2);
   }
 
   override onScrollEnd() {

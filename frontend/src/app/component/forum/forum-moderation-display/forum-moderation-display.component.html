@@ -27,7 +27,7 @@
     </div>
     <div class="post-detail">
       <div class="post-label">Inhalt</div>
-      <p>{{data.body}}</p>
+      <div class="post-body" [innerHTML]="data.body"></div>
     </div>
   </div>
   <div class="forum-moderation-display-actions-box">

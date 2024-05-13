@@ -1,12 +1,12 @@
 <div class="forum-post-box" (click)="onClick(data)">
   <div class="post-details">
     <div class="post-detail-group-3">
-      <div class="post-detail">
-        <div class="post-label" [style.background-color]="bgColor">Name</div>
+      <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'User')" class="post-detail">
+        <div [style.color]="getRatingColor(data.preRatingSwearing,'User')" class="post-label" [style.background-color]="bgColor">Name</div>
         <p>{{data.userName}}</p>
       </div>
-      <div class="post-detail">
-        <div class="post-label" [style.background-color]="bgColor">Titel</div>
+      <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'Title')" class="post-detail">
+        <div [style.color]="getRatingColor(data.preRatingSwearing,'Title')" class="post-label" [style.background-color]="bgColor">Titel</div>
         <p>{{data.title}}</p>
       </div>
       <div class="post-detail">
@@ -14,8 +14,8 @@
         <p>{{data.date}}</p>
       </div>
     </div>
-    <div class="post-detail">
-      <div class="post-label" [style.background-color]="bgColor">Inhalt</div>
+    <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'Body')" class="post-detail">
+      <div [style.color]="getRatingColor(data.preRatingSwearing,'Body')" class="post-label" [style.background-color]="bgColor">Inhalt</div>
       <p>{{data.body.replaceAll(regex, "")}}</p>
     </div>
   </div>

@@ -26,19 +26,20 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     SysVars.SELECTED_FORUM_POST.subscribe(post => {
       this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.display.data));
       let index = this.list.selectorItems.findIndex((item: SelectorItem) => {return item.data.id == (post as ForumPost).id});
-      this.display.data = this.displayDataMapping(this.list.selectorItems.splice(index, 1)[0].data as ForumPost);
+      this.display.data = this.list.selectorItems.splice(index, 1)[0].data as ForumPost;
       this.list.selectorItemsLoaded.next(this.list.selectorItems);
       this.list.g_cdr.detectChanges();
     });
     this.list.load(this.api.getUnmoderatedForumPosts().then(data  =>{
-      this.display.data = this.displayDataMapping(data.splice(0, 1)[0]);
+      this.bulkDisplayDataMapping(data);
+      this.display.data = data.splice(0, 1)[0];
       return data;
     }), ForumModerationListItemComponent);
 
     this.display.onDeleteClick = () => {
       this.api.deleteForumPost(this.display.data.id).then(value => {
         if(value){
-          this.display.data = this.displayDataMapping(this.list.selectorItems.splice(0, 1)[0].data as ForumPost);
+          this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
           this.list.selectorItemsLoaded.next(this.list.selectorItems);
           this.list.g_cdr.detectChanges();
         }
@@ -47,7 +48,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     this.display.onAcceptClick = () => {
       this.api.acceptForumPost(this.display.data.id).then(value => {
         if (value) {
-          this.display.data = this.displayDataMapping(this.list.selectorItems.splice(0, 1)[0].data as ForumPost);
+          this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
           this.list.selectorItemsLoaded.next(this.list.selectorItems);
           this.list.g_cdr.detectChanges();
         }
@@ -55,10 +56,17 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     }
     this.display.onStackClick = () => {
       this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.display.data));
-      this.display.data = this.displayDataMapping(this.list.selectorItems.splice(0, 1)[0].data as ForumPost);
+      this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
       this.list.selectorItemsLoaded.next(this.list.selectorItems);
       this.list.g_cdr.detectChanges();
     }
+  }
+
+  private bulkDisplayDataMapping(data : ForumPost[]) : ForumPost[] {
+    for (let post of data) {
+      post = this.displayDataMapping(post);
+    }
+    return data;
   }
 
   private displayDataMapping(data : ForumPost) : ForumPost{

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {DashListItemComponent} from "../../../dash-list/dash-list-item/dash-list-item.component";
 import {ForumPost} from "../ForumPost";
 import {SysVars} from "../../../../services/sys-vars-service";
+import {DashColors} from "../../../../util/Util";
 
 @Component({
   selector: 'dash-forum-moderation-list-item',
@@ -16,4 +17,10 @@ export class ForumModerationListItemComponent extends DashListItemComponent{
   override onClick(data: any): any {
     SysVars.SELECTED_FORUM_POST.next(data);
   }
+  getRatingColor(preRating: string, category: string) {
+    if (preRating != "good" && preRating.includes(category)){
+      return DashColors.RED;
+    } else return "#808080";
+  }
+
 }

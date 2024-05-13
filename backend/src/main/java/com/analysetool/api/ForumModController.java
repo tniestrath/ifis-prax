@@ -90,12 +90,23 @@ public class ForumModController {
         String postTitle = post.getTitle();
         String postUserName = post.getName();
 
+        boolean body = false, title = false, user = false;
+
         for(String badWord : badWordRepo.getAllBadWords()) {
-            if(postBody.contains(badWord)) return "badBody";
-            if(postTitle.contains(badWord)) return "badTitle";
-            if(postUserName.contains(badWord)) return "badUserName";
+            if(postBody.contains(badWord)) body = true;
+            if(postTitle.contains(badWord)) title = true;
+            if(postUserName.contains(badWord)) user = true;
         }
-        return "good";
+
+        if(!body && !title && !user) {
+            return "good";
+        } else {
+            String returnal = "bad";
+            if(body) returnal+="Body";
+            if(title) returnal+="Title";
+            if(user) returnal+="User";
+            return returnal;
+        }
     }
 
     private String getUserName(WPWPForoPosts post) {

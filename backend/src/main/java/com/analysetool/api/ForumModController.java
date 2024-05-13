@@ -1,10 +1,8 @@
 package com.analysetool.api;
 
+import com.analysetool.modells.Badwords;
 import com.analysetool.modells.WPWPForoPosts;
-import com.analysetool.repositories.WPUserRepository;
-import com.analysetool.repositories.WPWPForoForumRepository;
-import com.analysetool.repositories.WPWPForoPostsRepository;
-import com.analysetool.repositories.WPWPForoTopicsRepository;
+import com.analysetool.repositories.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,12 +22,14 @@ public class ForumModController {
     private WPUserRepository userRepo;
     @Autowired
     private WPWPForoTopicsRepository wpForoTopicsRepo;
+    @Autowired
+    private BadWordRepository badWordRepo;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
         JSONArray array = new JSONArray();
         for (WPWPForoPosts post : wpForoPostRepo.getUnmoderatedPosts()) {
-            array.put(getSinglePostData(post));
+            array.put(getSinglePostData(post, true));
         }
 
         return array.toString();
@@ -39,7 +39,7 @@ public class ForumModController {
     public String getAllModerated() throws JSONException {
         JSONArray array = new JSONArray();
         for (WPWPForoPosts post : wpForoPostRepo.getModeratedPosts()) {
-            array.put(getSinglePostData(post));
+            array.put(getSinglePostData(post, true));
         }
 
         return array.toString();
@@ -47,7 +47,7 @@ public class ForumModController {
 
 
 
-    private JSONObject getSinglePostData(WPWPForoPosts post, boolean isParent) throws JSONException {
+    private JSONObject getSinglePostData(WPWPForoPosts post, boolean needsRating) throws JSONException {
         JSONObject json = new JSONObject();
 
         json.put("forum", wpForoForumRepo.findById((long) post.getForumId()).isPresent() ? wpForoForumRepo.findById((long) post.getForumId()).get().getTitle() : "none");
@@ -59,30 +59,42 @@ public class ForumModController {
         json.put("userName", getUserName(post));
         json.put("email", post.getEmail());
 
-        if (post.getParentId() != 0 && wpForoPostRepo.existsById((long) post.getParentId())) {
-            if (wpForoPostRepo.findById((long) post.getParentId()).isPresent()) {
-                json.put("parent", getSinglePostData(wpForoPostRepo.findById((long) post.getParentId()).get(), true));
-            }
+
+        if(needsRating) {
+            json.put("preRatingEmail", getRatingEmail(post));
+            json.put("preRatingSwearing", getRatingSwearing(post));
         }
 
-        if(!isParent) {
-            json.put("preRating", getRating(post));
-        }
 
         return json;
     }
 
-    private JSONObject getSinglePostData(WPWPForoPosts post) throws JSONException {
-        return getSinglePostData(post, false);
+    @GetMapping("/getPostById")
+    public String getPostById(long id) throws JSONException {
+        return wpForoPostRepo.existsById(id) ? getSinglePostData(wpForoPostRepo.findById(id).get(), false).toString() : "no";
     }
 
     private boolean isUserMailFake(WPWPForoPosts post) {
         return userRepo.getAllEmails().contains(post.getEmail()) && post.getUserId() == 0;
     }
 
-    private String getRating(WPWPForoPosts post) {
+    private String getRatingEmail(WPWPForoPosts post) {
         if(isUserMailFake(post)) return "bad";
 
+        return "good";
+    }
+
+    private String getRatingSwearing(WPWPForoPosts post) {
+
+        String postBody = post.getBody();
+        String postTitle = post.getTitle();
+        String postUserName = post.getName();
+
+        for(String badWord : badWordRepo.getAllBadWords()) {
+            if(postBody.contains(badWord)) return "badBody";
+            if(postTitle.contains(badWord)) return "badTitle";
+            if(postUserName.contains(badWord)) return "badUserName";
+        }
         return "good";
     }
 
@@ -112,6 +124,18 @@ public class ForumModController {
             wpForoPostRepo.save(post);
             return true;
         }
+        return false;
+    }
+
+    @PostMapping("/addBadWord")
+    public boolean addBadWord(String badWord) {
+        if(badWordRepo.getByWord(badWord).isEmpty()) {
+            Badwords badWordNew = new Badwords();
+            badWordNew.setBadWord(badWord);
+            badWordRepo.save(badWordNew);
+            return true;
+        }
+
         return false;
     }
 

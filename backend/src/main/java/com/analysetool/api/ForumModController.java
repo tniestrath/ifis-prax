@@ -138,11 +138,20 @@ public class ForumModController {
         return false;
     }
 
+    @GetMapping("/getAllBadWords")
+    public String getAllBadWords() {
+        JSONArray array = new JSONArray();
+        for(Badwords bad : badWordRepo.findAll()) {
+            array.put(bad.getBadWord());
+        }
+        return array.toString();
+    }
+
     @PostMapping("/addBadWord")
-    public boolean addBadWord(String badWord) {
-        if(badWordRepo.getByWord(badWord).isEmpty()) {
+    public boolean addBadWord(String word) {
+        if(badWordRepo.getByWord(word).isEmpty()) {
             Badwords badWordNew = new Badwords();
-            badWordNew.setBadWord(badWord);
+            badWordNew.setBadWord(word);
             badWordRepo.save(badWordNew);
             return true;
         }

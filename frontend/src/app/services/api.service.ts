@@ -139,8 +139,11 @@ export enum apiUrl {
 
   GET_FORUM_UNMODERATED_POSTS = "/forum/getAllUnmoderated",
   GET_FORUM_POST = "/forum/getPostById?id=ID",
+  GET_FORUM_BAD_WORDS = "/forum/getAllBadWords",
   FORUM_DELETE_POST = "/forum/deleteById?id=ID",
   FORUM_ACCEPT_POST = "/forum/setStatusById?id=ID&status=0",
+  FORUM_ADD_BAD_WORD = "/forum/addBadWord?word=WORD",
+
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -798,5 +801,15 @@ export class ApiService {
   async getForumPostById(id: string) : Promise<ForumPost> {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_POST).replace("ID", id)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getForumBadWords() :Promise<string[]> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_BAD_WORDS)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async addForumBadWord(word: string) : Promise<boolean> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_ADD_BAD_WORD).replace("WORD", word)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 }

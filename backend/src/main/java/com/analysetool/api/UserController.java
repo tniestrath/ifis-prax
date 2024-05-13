@@ -523,7 +523,7 @@ public class UserController {
                     postToday.put("id", post.getId());
                     postToday.put("title", post.getTitle());
                     postToday.put("type", postController.getType(Math.toIntExact(post.getId())));
-                    postToday.put("clicks", statRepository.getClicksByArtId(post.getId()) != null ? statRepository.getClicksByArtId(post.getId()) : 0);
+                    postToday.put("clicks", statRepository.getSumClicks(post.getId()) != null ? statRepository.getSumClicks(post.getId()) : 0);
                     dailyPosts.put(postToday);
                 }
                 day.put("posts", dailyPosts);
@@ -531,7 +531,7 @@ public class UserController {
                     biggestPost.put("id", biggestPostbuffer.getId());
                     biggestPost.put("title", biggestPostbuffer.getTitle());
                     biggestPost.put("type", postController.getType(Math.toIntExact(biggestPostbuffer.getId())));
-                    biggestPost.put("clicks", statRepository.getClicksByArtId(biggestPostbuffer.getId()) != null ? statRepository.getClicksByArtId(biggestPostbuffer.getId()) : 0);
+                    biggestPost.put("clicks", statRepository.getSumClicks(biggestPostbuffer.getId()) != null ? statRepository.getSumClicks(biggestPostbuffer.getId()) : 0);
                 } else {
                     biggestPost.put("id", 0);
                     biggestPost.put("title", 0);
@@ -1098,7 +1098,7 @@ public class UserController {
         int clicks = 0;
         for(Post post : posts) {
             if(post != null) {
-                clicks += statRepository.getClicksByArtId(post.getId()) != null ? statRepository.getClicksByArtId(post.getId()) : 0;
+                clicks += statRepository.getSumClicks(post.getId()) != null ? statRepository.getSumClicks(post.getId()) : 0;
             }
         }
 

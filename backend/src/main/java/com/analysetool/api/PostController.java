@@ -357,8 +357,8 @@ public class PostController {
      * @return numeric value.
      */
     @GetMapping("/getBestPostByTagClicks")
-    public Long getBestPostClicks(long tagId) {
-        return statsRepo.getClicksByArtId(getBestPostByTag(tagId));
+    public int getBestPostClicks(long tagId) {
+        return statsRepo.getSumClicks((getBestPostByTag(tagId)));
     }
 
     /**
@@ -371,7 +371,7 @@ public class PostController {
         Long bestPost = null;
         for(Post post : getPostsByTag(tagId)) {
             if(bestPost == null) bestPost = post.getId();
-            if(statsRepo.getClicksByArtId(post.getId()) > statsRepo.getClicksByArtId(bestPost)) bestPost = post.getId();
+            if(statsRepo.getSumClicks(post.getId()) > statsRepo.getSumClicks(bestPost)) bestPost = post.getId();
         }
         return bestPost;
     }
@@ -385,7 +385,7 @@ public class PostController {
     public double getAverageClicksByTag(long tagId) {
         int value = 0;
         for(Post post : getPostsByTag(tagId)) {
-            value += statsRepo.getClicksByArtId(post.getId());
+            value += statsRepo.getSumClicks(post.getId());
         }
         return (double) value / getPostsByTag(tagId).size();
     }
@@ -693,31 +693,31 @@ public class PostController {
                 case "news" -> {
                     counts.put("news", counts.getInt("news") + 1);
                     try {
-                        clicks.put("news", clicks.getInt("news") + statsRepo.getClicksByArtId(post.getId()));
+                        clicks.put("news", clicks.getInt("news") + statsRepo.getSumClicks(post.getId()));
                     } catch (Exception ignored) {}
                 }
                 case "artikel" -> {
                     counts.put("artikel", counts.getInt("artikel") + 1);
                     try {
-                    clicks.put("artikel", clicks.getInt("artikel") + statsRepo.getClicksByArtId(post.getId()));
+                    clicks.put("artikel", clicks.getInt("artikel") + statsRepo.getSumClicks(post.getId()));
                     } catch (Exception ignored) {}
                 }
                 case "blog" -> {
                     counts.put("blog", counts.getInt("blog") + 1);
                     try {
-                        clicks.put("blog", clicks.getInt("blog") + statsRepo.getClicksByArtId(post.getId()));
+                        clicks.put("blog", clicks.getInt("blog") + statsRepo.getSumClicks(post.getId()));
                     } catch (Exception ignored) {}
                 }
                 case "whitepaper" -> {
                     counts.put("whitepaper", counts.getInt("whitepaper") + 1);
                     try {
-                        clicks.put("whitepaper", clicks.getInt("whitepaper") + statsRepo.getClicksByArtId(post.getId()));
+                        clicks.put("whitepaper", clicks.getInt("whitepaper") + statsRepo.getSumClicks(post.getId()));
                     } catch (Exception ignored) {}
                 }
                 case "ratgeber" -> {
                     counts.put("ratgeber", counts.getInt("ratgeber") + 1);
                     try {
-                        clicks.put("ratgeber", clicks.getInt("ratgeber") + statsRepo.getClicksByArtId(post.getId()));
+                        clicks.put("ratgeber", clicks.getInt("ratgeber") + statsRepo.getSumClicks(post.getId()));
                     } catch (Exception ignored) {}
                 }
                 case "podcast" -> {

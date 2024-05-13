@@ -28,7 +28,7 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     boolean existsByArtId(long artId);
 
     // Get the number of clicks for a given article ID
-    @Query("SELECT SUM(s.clicks) FROM PostStats s WHERE s.artId = :artId")
+    @Query("SELECT s.clicks FROM PostStats s WHERE s.artId = :artId ORDER BY s.year DESC LIMIT 1")
     Long getClicksByArtId(Long artId);
 
     @Transactional

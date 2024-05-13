@@ -1283,8 +1283,8 @@ public class LogService {
         userRedirectService.persistAllUserRedirectsHourly(userRedirectsMap);
 
         //decomment to enable tracking
-        //forumService.persistAllForumDiscussionsClicksHour(forumDiscussionClicksMap);
-        //forumService.persistAllForumTopicsClicksHour(forumTopicsClicksMap);
+        forumService.persistAllForumDiscussionsClicksHour(forumDiscussionClicksMap);
+        forumService.persistAllForumTopicsClicksHour(forumTopicsClicksMap);
 
         //maps clearen nur um sicher zu gehen
         cleanMaps();
@@ -1471,11 +1471,11 @@ public class LogService {
 
             case "forumDiscussionView" ->{
                 //decomment to enable
-                //updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
+                updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
             }
             case "forumTopicView" ->{
                 //decomment to enable
-                //updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
+                updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
             }
         }
 

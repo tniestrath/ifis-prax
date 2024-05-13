@@ -138,6 +138,7 @@ export enum apiUrl {
   SEARCH_USER_FLIP = "/search-stats/flipAnbieterSearch?search=SEARCH",
 
   GET_FORUM_UNMODERATED_POSTS = "/forum/getAllUnmoderated",
+  GET_FORUM_POST = "/forum/getPostById?id=ID",
   FORUM_DELETE_POST = "/forum/deleteById?id=ID",
   FORUM_ACCEPT_POST = "/forum/setStatusById?id=ID&status=0",
 
@@ -794,6 +795,8 @@ export class ApiService {
   }
 
 
-
-
+  async getForumPostById(id: string) : Promise<ForumPost> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_POST).replace("ID", id)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
 }

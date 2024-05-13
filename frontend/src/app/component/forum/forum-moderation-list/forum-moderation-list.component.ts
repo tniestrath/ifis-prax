@@ -12,6 +12,8 @@ import {SelectorItem} from "../../../page/selector/selector.component";
   styleUrls: ['./forum-moderation-list.component.css', "/../../dash-base/dash-base.component.css"]
 })
 export class ForumModerationListComponent extends DashListComponent<ForumPost, ForumModerationListItemComponent>{
+
+  public g_cdr = this.cdr;
   override ngOnInit() {
     this.setToolTip("Liste mit unmoderierten Beiträgen", 2);
   }

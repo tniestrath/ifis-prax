@@ -53,6 +53,7 @@
   border-radius: 5px;
   margin-bottom: 10px;
   width: 100%;
+  height: inherit;
 }
 .post-label {
   position: relative;
@@ -89,4 +90,13 @@
 .moderation-button p {
   margin: 0;
   color: #FFFFFF;
+}
+.post-body{
+}
+.post-body-wrapper{
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  overflow-y: auto;
+  height: calc(100% - 12px);
 }

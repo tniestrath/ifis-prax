@@ -1,8 +1,18 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {ForumPost} from "../forum-moderation-list/ForumPost";
-import {SysVars} from "../../../services/sys-vars-service";
 import {DashColors} from "../../../util/Util";
+import {DomSanitizer} from "@angular/platform-browser";
+
+@Pipe({ name: 'unsafeHtml'})
+export class SafeHtmlPipe implements PipeTransform {
+  constructor(private sanitized: DomSanitizer) {
+  }
+
+  transform(value: string) {
+    return this.sanitized.bypassSecurityTrustHtml(value);
+  }
+}
 
 @Component({
   selector: 'dash-forum-moderation-display',
@@ -27,4 +37,10 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
   onStackClick = () : void => {};
 
   protected readonly DashColors = DashColors;
+
+  getRatingColor(preRating: string, category: string) {
+    if (preRating != "good" && preRating.includes(category)){
+        return DashColors.RED;
+    } else return "#808080";
+  }
 }

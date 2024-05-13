@@ -12,12 +12,12 @@
       </div>
     </div>
     <div class="post-detail-group-3">
-      <div class="post-detail">
-        <div class="post-label">Name</div>
+      <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'User')" class="post-detail">
+        <div [style.color]="getRatingColor(data.preRatingSwearing,'User')" class="post-label">Name</div>
         <p>{{data.userName}}</p>
       </div>
-      <div class="post-detail">
-        <div class="post-label">E-Mail</div>
+      <div [style.border-color]="getRatingColor(data.preRatingEmail,'Email')" class="post-detail">
+        <div [style.color]="getRatingColor(data.preRatingEmail,'Email')" class="post-label">E-Mail</div>
         <p>{{data.email}}</p>
       </div>
       <div class="post-detail">
@@ -25,9 +25,11 @@
         <p>{{data.date}}</p>
       </div>
     </div>
-    <div class="post-detail">
-      <div class="post-label">Inhalt</div>
-      <div class="post-body" [innerHTML]="data.body"></div>
+    <div [style.border-color]="getRatingColor(data.preRatingSwearing,'Body')" class="post-detail">
+      <div [style.color]="getRatingColor(data.preRatingSwearing,'Body')" class="post-label">Inhalt</div>
+      <div class="post-body-wrapper">
+        <div class="post-body" [innerHTML]="data.body | unsafeHtml"></div>
+      </div>
     </div>
   </div>
   <div class="forum-moderation-display-actions-box">

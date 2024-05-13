@@ -1471,11 +1471,11 @@ public class LogService {
 
             case "forumDiscussionView" ->{
                 //decomment to enable
-                updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
+                //updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
             }
             case "forumTopicView" ->{
                 //decomment to enable
-                updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
+                //updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
             }
         }
 

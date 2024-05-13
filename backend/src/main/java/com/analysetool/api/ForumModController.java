@@ -79,7 +79,7 @@ public class ForumModController {
     }
 
     private String getRatingEmail(WPWPForoPosts post) {
-        if(isUserMailFake(post)) return "bad";
+        if(isUserMailFake(post)) return "badEmail";
 
         return "good";
     }

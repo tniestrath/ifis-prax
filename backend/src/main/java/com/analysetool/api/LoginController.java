@@ -159,13 +159,13 @@ public class LoginController {
             // Process the response
             String responseBody = EntityUtils.toString(entity);
             for (int i = 0; i < allSetCookie.length; i++) {
-                System.out.println(responseCookie);
+                //System.out.println(responseCookie);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("USERNAME: " +  user + " PASSWORT: " + pass);
+        //System.out.println("USERNAME: " +  user + " PASSWORT: " + pass);
 
         return responseCookie;
     }
@@ -201,7 +201,7 @@ public class LoginController {
             // Process the response
             String responseBody = EntityUtils.toString(entity);
             for (int i = 0; i < allSetCookie.length; i++) {
-                System.out.println(responseCookie);
+                //System.out.println(responseCookie);
             }
 
         } catch (Exception e) {
@@ -215,7 +215,7 @@ public class LoginController {
     public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getValidate());
-        System.out.println("Cookie Validation in progress");
+        //System.out.println("Cookie Validation in progress");
 
         String responseBody = "INVALID";
         try {
@@ -238,8 +238,8 @@ public class LoginController {
             responseBody = EntityUtils.toString(entity);
 
         } catch (NullPointerException e) {
-            System.out.println("Code above causes an Error on every logout. It shouldn't. " +
-                    "This is printed instead of the Error, remove Catch and logout to see. LoginController:197");
+            //System.out.println("Code above causes an Error on every logout. It shouldn't. " +
+            //        "This is printed instead of the Error, remove Catch and logout to see. LoginController:197");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -250,14 +250,14 @@ public class LoginController {
     public String validateCookie(@RequestParam("value") String cookie){
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getValidate());
-        System.out.println("Manual Cookie Validation in progress");
+        //System.out.println("Manual Cookie Validation in progress");
 
 
         String responseBody = "INVALID";
         try {
             String cookieValue;
             cookieValue = java.net.URLDecoder.decode(cookie, StandardCharsets.UTF_8);
-            System.out.println(cookieValue);
+            //System.out.println(cookieValue);
 
             String jsonPayload = "{\"log\":\""+ cookieValue +"\"}";
             StringEntity strEntity = new StringEntity(jsonPayload, "UTF-8");

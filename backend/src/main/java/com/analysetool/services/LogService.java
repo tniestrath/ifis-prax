@@ -1216,13 +1216,15 @@ public class LogService {
 
                         } case "userRedirect" -> {
                         } case "eventView", "eventCat" -> {
-                            viewsEvents++;
-                            if (isUnique) {
-                                userEvents++;
-                            } else if (new JSONArray(uniqueUserRepo.findByIP(ip).getEvents()).length() < 2) {
-                                userEvents++;
+                            if(!request.contains("Calendar") && !request.contains("calendar")) {
+                                viewsEvents++;
+                                if (isUnique) {
+                                    userEvents++;
+                                } else if (new JSONArray(uniqueUserRepo.findByIP(ip).getEvents()).length() < 2) {
+                                    userEvents++;
+                                }
+                                updateUniqueUser(ip, "events", dateLog);
                             }
-                            updateUniqueUser(ip, "events", dateLog);
                         }
                         case "videoView" -> {
                             viewsVideos++;

@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {ForumModerationListComponent} from "../forum-moderation-list/forum-moderation-list.component";
 import {ForumModerationDisplayComponent} from "../forum-moderation-display/forum-moderation-display.component";
@@ -15,10 +15,29 @@ import {ForumPost} from "../forum-moderation-list/ForumPost";
   templateUrl: './forum-moderator.component.html',
   styleUrls: ['./forum-moderator.component.css', "/../../dash-base/dash-base.component.css"]
 })
-export class ForumModeratorComponent extends DashBaseComponent implements OnInit{
+export class ForumModeratorComponent extends DashBaseComponent implements OnInit, OnDestroy{
 
   @ViewChild(ForumModerationListComponent, {static : true}) list!: ForumModerationListComponent;
   @ViewChild(ForumModerationDisplayComponent, {static : true}) display!: ForumModerationDisplayComponent;
+
+  private evListener = (ev: KeyboardEvent) => {
+    if (ev.ctrlKey){
+      switch (ev.key) {
+        case "Insert":
+        case "ArrowUp":
+          this.display.onAcceptClick();
+          break;
+        case "Delete":
+        case "ArrowDown":
+          this.display.onDeleteClick()
+          break;
+        case "End":
+        case "ArrowRight":
+          this.display.onStackClick();
+          break;
+      }
+    }
+  }
 
   ngOnInit(): void {
     this.setToolTip("", 0,false);
@@ -60,6 +79,8 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       this.list.selectorItemsLoaded.next(this.list.selectorItems);
       this.list.g_cdr.detectChanges();
     }
+
+    document.addEventListener("keydown", this.evListener)
   }
 
   private bulkDisplayDataMapping(data : ForumPost[]) : ForumPost[] {
@@ -84,6 +105,11 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     }
 
     return data;
+  }
+
+  override ngOnDestroy() {
+    super.ngOnDestroy();
+    document.removeEventListener("keydown", this.evListener);
   }
 
 }

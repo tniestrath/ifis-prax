@@ -237,9 +237,9 @@ public class LogService {
 
     private final String tagCatPatter = "GET \\/themenfeld\\/([^\\/]+)\\/";
 
-    private final String forumDiskussionsthemen = "^.*GET /marktplatz-forum/([^\\/]+)/";
+   private final String forumDiskussionsthemen = "^.*GET /marktplatz-forum/([^/]+)/ HTTP.*";
 
-    private final String forumTopic = "^.*GET /marktplatz-forum/[^\\/]+/([^\\/]+)/";
+   private final String forumTopic = "^.*GET /marktplatz-forum/[^/]+/([^/]+)/.* HTTP.*";
 
     final Pattern forumDiskussionsthemenPattern = Pattern.compile(forumDiskussionsthemen);
     final Pattern forumTopicPattern = Pattern.compile(forumTopic);
@@ -1474,7 +1474,7 @@ public class LogService {
             case "forumDiscussionView" ->{
                 try {
                     //decomment to enable
-                    //updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
+                    updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
                 }catch(Exception e){
                     System.out.println("FORUM DISCUSSION VIEW EXCEPTION BEI: " + line);
                     e.printStackTrace();
@@ -1483,7 +1483,7 @@ public class LogService {
             case "forumTopicView" ->{
                 //decomment to enable
                 try {
-                    //updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
+                    updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
                 }catch(Exception e){
                     System.out.println("FORUM TOPIC VIEW EXCEPTION BEI: " + line);
                     e.printStackTrace();
@@ -1495,6 +1495,12 @@ public class LogService {
 
     private void updateForumDiscussionClicksMap(String slug,LocalDateTime logDate){
        Integer forumId = forumService.getForumIdBySlug(slug);
+
+        if (forumId == null) {
+            System.out.println("Warning: forumId is null for slug: " + slug);
+            return;
+        }
+
        if(forumDiscussionClicksMap.containsKey(forumId)){
           ForumDiskussionsthemenClicksByHour clicks = forumDiscussionClicksMap.get(forumId);
           Long counter = clicks.getClicks() + 1;
@@ -1513,6 +1519,12 @@ public class LogService {
     }
     private void updateForumTopicClicksMap(String slug,LocalDateTime logDate){
         Integer topicId = forumService.getTopicIdBySlug(slug);
+
+        if (topicId == null) {
+            System.out.println("Warning: topicId is null for slug: " + slug);
+            return;
+        }
+
         if(forumTopicsClicksMap.containsKey(topicId)){
             ForumTopicsClicksByHour clicks = forumTopicsClicksMap.get(topicId);
             Long counter = clicks.getClicks() + 1;

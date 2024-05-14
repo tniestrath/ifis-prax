@@ -1472,12 +1472,22 @@ public class LogService {
             }
 
             case "forumDiscussionView" ->{
-                //decomment to enable
-                //updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
+                try {
+                    //decomment to enable
+                    //updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
+                }catch(Exception e){
+                    System.out.println("FORUM DISCUSSION VIEW EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
             }
             case "forumTopicView" ->{
                 //decomment to enable
-                //updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
+                try {
+                    //updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
+                }catch(Exception e){
+                    System.out.println("FORUM TOPIC VIEW EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
             }
         }
 

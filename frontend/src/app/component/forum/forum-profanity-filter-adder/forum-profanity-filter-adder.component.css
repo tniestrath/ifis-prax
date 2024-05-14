@@ -1,0 +1,30 @@
+.forum-profanity-filter-adder-title{
+  display: flex;
+  position: relative;
+  top: 5px;
+  left: 5px;
+  width: calc(100% - 45px);
+  height: 30px;
+  padding: 5px;
+  border: 1px solid #808080;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.forum-profanity-filter-adder-container{
+  display: flex;
+  flex-direction: column;
+  padding: 15px 5px 0 5px;
+  width: 100%;
+  box-sizing: border-box;
+  height: 100%;
+}
+.forum-profanity-filter-adder-list-box{
+  display: flex;
+  flex-direction: row;
+}
+.forum-profanity-filter-adder-list{
+  color: black;
+  background-color: black;
+  line-break: auto;
+  width: 90%;
+}

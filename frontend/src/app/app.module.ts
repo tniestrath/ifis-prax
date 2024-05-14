@@ -103,6 +103,7 @@ import {
 } from './component/forum/forum-moderation-display/forum-moderation-display.component';
 import { ForumModerationListItemComponent } from './component/forum/forum-moderation-list/forum-moderation-list-item/forum-moderation-list-item.component';
 import { ForumModeratorComponent } from './component/forum/forum-moderator/forum-moderator.component';
+import { ForumProfanityFilterAdderComponent } from './component/forum/forum-profanity-filter-adder/forum-profanity-filter-adder.component';
 
 @NgModule({
     declarations: [
@@ -188,7 +189,8 @@ import { ForumModeratorComponent } from './component/forum/forum-moderator/forum
         ForumModerationDisplayComponent,
         ForumModerationListItemComponent,
         ForumModeratorComponent,
-        SafeHtmlPipe
+        SafeHtmlPipe,
+        ForumProfanityFilterAdderComponent
     ],
     imports: [
         BrowserModule,

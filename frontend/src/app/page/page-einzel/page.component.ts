@@ -54,6 +54,9 @@ import {
   ForumModerationDisplayComponent
 } from "../../component/forum/forum-moderation-display/forum-moderation-display.component";
 import {ForumModeratorComponent} from "../../component/forum/forum-moderator/forum-moderator.component";
+import {
+  ForumProfanityFilterAdderComponent
+} from "../../component/forum/forum-profanity-filter-adder/forum-profanity-filter-adder.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -181,6 +184,7 @@ export class PageComponent implements OnInit {
   }
   getForumPageCards(){
     return [
+      {type: ForumProfanityFilterAdderComponent, row: 1, col: 1, height: 2, width: 1},
       {type: ForumModeratorComponent, row: 1, col: 2, height: 2, width: 5},
     ]
   }

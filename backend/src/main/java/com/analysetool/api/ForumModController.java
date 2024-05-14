@@ -149,7 +149,7 @@ public class ForumModController {
 
     @PostMapping("/addBadWord")
     public boolean addBadWord(String word) {
-        if(badWordRepo.getByWord(word).isEmpty()) {
+        if(badWordRepo.getByWord(word).isEmpty() && !word.isBlank()) {
             Badwords badWordNew = new Badwords();
             badWordNew.setBadWord(word);
             badWordRepo.save(badWordNew);

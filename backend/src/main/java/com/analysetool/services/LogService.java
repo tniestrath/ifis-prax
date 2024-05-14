@@ -1216,13 +1216,15 @@ public class LogService {
 
                         } case "userRedirect" -> {
                         } case "eventView", "eventCat" -> {
-                            viewsEvents++;
-                            if (isUnique) {
-                                userEvents++;
-                            } else if (new JSONArray(uniqueUserRepo.findByIP(ip).getEvents()).length() < 2) {
-                                userEvents++;
+                            if(!request.contains("Calendar") && !request.contains("calendar")) {
+                                viewsEvents++;
+                                if (isUnique) {
+                                    userEvents++;
+                                } else if (new JSONArray(uniqueUserRepo.findByIP(ip).getEvents()).length() < 2) {
+                                    userEvents++;
+                                }
+                                updateUniqueUser(ip, "events", dateLog);
                             }
-                            updateUniqueUser(ip, "events", dateLog);
                         }
                         case "videoView" -> {
                             viewsVideos++;
@@ -1470,12 +1472,22 @@ public class LogService {
             }
 
             case "forumDiscussionView" ->{
-                //decomment to enable
-                //updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
+                try {
+                    //decomment to enable
+                    //updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
+                }catch(Exception e){
+                    System.out.println("FORUM DISCUSSION VIEW EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
             }
             case "forumTopicView" ->{
                 //decomment to enable
-                //updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
+                try {
+                    //updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
+                }catch(Exception e){
+                    System.out.println("FORUM TOPIC VIEW EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
             }
         }
 

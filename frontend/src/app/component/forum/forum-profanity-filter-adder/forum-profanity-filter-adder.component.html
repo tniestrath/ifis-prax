@@ -1,12 +1,13 @@
 <div class="component-box forum-profanity-filter-adder-box">
   <div class="forum-profanity-filter-adder-title">Wortfilter</div>
   <div class="forum-profanity-filter-adder-container">
-    <input id="profanity-filter-input" name="word" type="text" placeholder="Zu Filterndes Wort">
-    <input id="profanity-filter-submit" name="word" type="submit" (click)="onSubmit()">
+    <form name="word" class="forum-profanity-filter-adder-form" (ngSubmit)="onSubmit()">
+      <input id="profanity-filter-input" name="word" type="text" placeholder="Zu Filterndes Wort" autocomplete="off" required minlength="3">
+      <input id="profanity-filter-submit" name="word" type="submit">
+    </form>
     <div class="forum-profanity-filter-adder-list-box">
       <div id="profanity-list" class="forum-profanity-filter-adder-list">{{badWords}}</div>
-      <input id="profanity-list-visibility" type="checkbox" (change)="onProfanityClick()">
+      <input id="profanity-list-visibility" type="checkbox" title="Verbotene Wörter zeigen / verbergen" (change)="onProfanityClick()">
     </div>
-
   </div>
 </div>

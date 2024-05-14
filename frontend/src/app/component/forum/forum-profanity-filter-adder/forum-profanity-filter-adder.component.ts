@@ -16,7 +16,18 @@ export class ForumProfanityFilterAdderComponent extends DashBaseComponent implem
 
   onSubmit(){
     let input = document.getElementById("profanity-filter-input");
-    this.api.addForumBadWord((input as HTMLInputElement).value).then(r => console.log("DELETED?: " + r));
+    if ((input as HTMLInputElement).value != "") {
+      this.api.addForumBadWord((input as HTMLInputElement).value).then(r => {
+        if (r) {
+          (input as HTMLInputElement).value = "";
+          (input as HTMLInputElement).placeholder = "Zu Filterndes Wort";
+        } else {
+          (input as HTMLInputElement).value = "";
+          (input as HTMLInputElement).placeholder = "Dieses Wort ist schon in der Liste";
+        }
+      });
+      return true;
+    }else return false;
   }
 
   onProfanityClick() {
@@ -24,8 +35,11 @@ export class ForumProfanityFilterAdderComponent extends DashBaseComponent implem
     let list = document.getElementById("profanity-list");
     // @ts-ignore
     if (checkbox.checked){
-      // @ts-ignore
-      list.style.color = DashColors.WHITE;
+      this.api.getForumBadWords().then(value => {
+        this.badWords = value.toString().replaceAll(",", ", ");
+        // @ts-ignore
+        list.style.color = DashColors.WHITE;
+      });
     } else {
       // @ts-ignore
       list.style.color = DashColors.BLACK;

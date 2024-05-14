@@ -16,7 +16,7 @@ export class ForumProfanityFilterAdderComponent extends DashBaseComponent implem
 
   onSubmit(){
     let input = document.getElementById("profanity-filter-input");
-    if ((input as HTMLInputElement).value != "") {
+    if ((input as HTMLInputElement).value.length > 2) {
       this.api.addForumBadWord((input as HTMLInputElement).value).then(r => {
         if (r) {
           (input as HTMLInputElement).value = "";

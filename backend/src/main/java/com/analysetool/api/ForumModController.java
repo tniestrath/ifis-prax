@@ -9,6 +9,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RequestMapping("/forum")
@@ -93,25 +95,37 @@ public class ForumModController {
      */
     private String getRatingSwearing(WPWPForoPosts post) {
 
-        String postBody = post.getBody();
-        String postTitle = post.getTitle();
-        String postUserName = post.getName();
-
         boolean body = false, title = false, user = false;
+        ArrayList<String> bodyList = new ArrayList<>(), titleList = new ArrayList<>(), userList = new ArrayList<>();
 
         for(String badWord : badWordRepo.getAllBadWords()) {
-            if(postBody.contains(badWord)) {
+            if(post.getBody().contains(badWord)) {
                 body = true;
-                post.setBody(post.getBody().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+                bodyList.add(badWord);
             }
-            if(postTitle.contains(badWord)) {
+            if(post.getTitle().contains(badWord)) {
                 title = true;
-                post.setTitle(post.getTitle().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+                titleList.add(badWord);
             }
-            if(postUserName.contains(badWord)) {
+            if(post.getName().contains(badWord)) {
                 user = true;
-                post.setName(post.getName().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+                userList.add(badWord);
             }
+        }
+
+        //Sort lists to get to the longest words first, to avoid doubly replacing things
+        bodyList.sort((o1, o2) -> Integer.compare(o2.length(), o1.length()));
+        titleList.sort((o1, o2) -> Integer.compare(o2.length(), o1.length()));
+        userList.sort((o1, o2) -> Integer.compare(o2.length(), o1.length()));
+
+        for(String badWord : bodyList) {
+            post.setBody(post.getBody().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+        }
+        for(String badWord : titleList) {
+            post.setTitle(post.getTitle().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+        }
+        for(String badWord : userList) {
+            post.setName(post.getName().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
         }
 
         if(!body && !title && !user) {

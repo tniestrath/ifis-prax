@@ -75,6 +75,7 @@ public class ForumModController {
         json.put("body", post.getBody());
         json.put("title", post.getTitle());
         json.put("userName", post.getName());
+        json.put("isQuestion", post.getIsFirstPost());
 
         return json;
     }

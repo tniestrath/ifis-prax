@@ -20,22 +20,43 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
   @ViewChild(ForumModerationListComponent, {static : true}) list!: ForumModerationListComponent;
   @ViewChild(ForumModerationDisplayComponent, {static : true}) display!: ForumModerationDisplayComponent;
 
+  listenerToggle = true;
+
   private evListener = (ev: KeyboardEvent) => {
-    if (ev.ctrlKey){
+    if (ev.ctrlKey && this.listenerToggle){
       switch (ev.key) {
         case "Insert":
         case "ArrowUp":
+          this.listenerToggle = false;
           this.display.onAcceptClick();
           break;
         case "Delete":
         case "ArrowDown":
+          this.listenerToggle = false;
           this.display.onDeleteClick()
           break;
         case "End":
         case "ArrowRight":
+          this.listenerToggle = false;
           this.display.onStackClick();
           break;
       }
+    }
+  }
+  private evUpListener = (ev: KeyboardEvent) => {
+    switch (ev.key) {
+      case "Insert":
+      case "ArrowUp":
+        this.listenerToggle = true;
+        break;
+      case "Delete":
+      case "ArrowDown":
+        this.listenerToggle = true;
+        break;
+      case "End":
+      case "ArrowRight":
+        this.listenerToggle = true;
+        break;
     }
   }
 
@@ -80,7 +101,8 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       this.list.g_cdr.detectChanges();
     }
 
-    document.addEventListener("keydown", this.evListener)
+    document.addEventListener("keydown", this.evListener);
+    document.addEventListener("keyup", this.evUpListener);
   }
 
   private bulkDisplayDataMapping(data : ForumPost[]) : ForumPost[] {
@@ -110,6 +132,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
   override ngOnDestroy() {
     super.ngOnDestroy();
     document.removeEventListener("keydown", this.evListener);
+    document.addEventListener("keyup", this.evUpListener);
   }
 
 }

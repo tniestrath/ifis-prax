@@ -105,15 +105,15 @@ public class ForumModController {
         ArrayList<String> bodyList = new ArrayList<>(), titleList = new ArrayList<>(), userList = new ArrayList<>();
 
         for(String badWord : badWordRepo.getAllBadWords()) {
-            if(post.getBody().contains(badWord)) {
+            if(post.getBody().toUpperCase().contains(badWord.toUpperCase())) {
                 body = true;
                 bodyList.add(badWord);
             }
-            if(post.getTitle().contains(badWord)) {
+            if(post.getTitle().toUpperCase().contains(badWord.toUpperCase())) {
                 title = true;
                 titleList.add(badWord);
             }
-            if(post.getName().contains(badWord)) {
+            if(post.getName().toUpperCase().contains(badWord.toUpperCase())) {
                 user = true;
                 userList.add(badWord);
             }

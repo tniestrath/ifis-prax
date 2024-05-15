@@ -50,13 +50,12 @@ public class ForumModController {
     private JSONObject getSinglePostData(WPWPForoPosts post, boolean needsRating) throws JSONException {
         JSONObject json = new JSONObject();
 
+        String postBody = post.getBody();
+
         json.put("forum", wpForoForumRepo.findById((long) post.getForumId()).isPresent() ? wpForoForumRepo.findById((long) post.getForumId()).get().getTitle() : "none");
         json.put("topic", wpForoTopicsRepo.findById((long) post.getTopicId()).isPresent() ? wpForoTopicsRepo.findById((long) post.getTopicId()).get().getTitle() : "none");
         json.put("id", post.getPostId());
-        json.put("body", post.getBody());
-        json.put("title", post.getTitle());
         json.put("date", post.getCreated().toString());
-        json.put("userName", getUserName(post));
         json.put("email", post.getEmail());
 
 
@@ -65,6 +64,9 @@ public class ForumModController {
             json.put("preRatingSwearing", getRatingSwearing(post));
         }
 
+        json.put("body", post.getBody());
+        json.put("title", post.getTitle());
+        json.put("userName", post.getName());
 
         return json;
     }
@@ -84,6 +86,11 @@ public class ForumModController {
         return "good";
     }
 
+    /**
+     * Fetches a rating and adds b tags to all found profanities <b>in place</b>.
+     * @param post the post to rate / change.
+     * @return a rating.
+     */
     private String getRatingSwearing(WPWPForoPosts post) {
 
         String postBody = post.getBody();
@@ -93,9 +100,18 @@ public class ForumModController {
         boolean body = false, title = false, user = false;
 
         for(String badWord : badWordRepo.getAllBadWords()) {
-            if(postBody.contains(badWord)) body = true;
-            if(postTitle.contains(badWord)) title = true;
-            if(postUserName.contains(badWord)) user = true;
+            if(postBody.contains(badWord)) {
+                body = true;
+                post.setBody(post.getBody().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+            }
+            if(postTitle.contains(badWord)) {
+                title = true;
+                post.setTitle(post.getTitle().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+            }
+            if(postUserName.contains(badWord)) {
+                user = true;
+                post.setName(post.getName().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+            }
         }
 
         if(!body && !title && !user) {

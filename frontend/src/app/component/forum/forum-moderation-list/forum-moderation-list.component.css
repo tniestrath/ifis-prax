@@ -10,6 +10,10 @@
   padding: 5px;
   text-align: center;
   box-sizing: border-box;
+  justify-content: center;
+}
+.forum-post-list-box-title p{
+  margin: 0;
 }
 .post-list-selector-container{
   margin-top: 10px;

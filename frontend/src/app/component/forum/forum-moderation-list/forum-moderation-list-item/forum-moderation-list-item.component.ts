@@ -23,4 +23,5 @@ export class ForumModerationListItemComponent extends DashListItemComponent{
     } else return "#808080";
   }
 
+  protected readonly DashColors = DashColors;
 }

@@ -9,6 +9,10 @@
   border: 1px solid #808080;
   border-radius: 5px;
   box-sizing: border-box;
+  justify-content: center;
+}
+.forum-profanity-filter-adder-title p{
+  margin: 0;
 }
 .forum-profanity-filter-adder-container{
   display: flex;

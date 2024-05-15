@@ -1,5 +1,5 @@
 <div class="component-box forum-moderation-display-box">
-  <div class="forum-moderation-display-title">Moderation</div>
+  <div class="forum-moderation-display-title"><p>Moderation</p></div>
   <div class="post-details">
     <div class="post-detail-group-2">
       <div class="post-detail">
@@ -11,7 +11,7 @@
         <p>{{data.topic}}</p>
       </div>
     </div>
-    <div class="post-detail-group-3">
+    <div class="post-detail-group-4">
       <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'User')" class="post-detail">
         <div [style.color]="getRatingColor(data.preRatingSwearing,'User')" class="post-label">Name</div>
         <p [innerHTML]="data.userName | unsafeHtml"></p>
@@ -23,6 +23,13 @@
       <div class="post-detail">
         <div class="post-label">Datum</div>
         <p>{{data.date}}</p>
+      </div>
+      <div class="post-detail">
+        <div class="post-type">
+          <p *ngIf="data.isQuestion" [style.color]="DashColors.RED">F</p>
+          <p *ngIf="!data.isQuestion" [style.color]="DashColors.BLUE">A</p>
+        </div>
+
       </div>
     </div>
     <div [style.border-color]="getRatingColor(data.preRatingSwearing,'Body')" class="post-detail">

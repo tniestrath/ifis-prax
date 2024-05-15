@@ -107,10 +107,14 @@
   background-color: #808080;
   width: 20%;
   height: 100%;
+  cursor: pointer;
 }
 .moderation-button p {
   margin: 0;
   color: #FFFFFF;
+}
+.moderation-button:hover{
+  filter: brightness(85%);
 }
 .post-body{
 }

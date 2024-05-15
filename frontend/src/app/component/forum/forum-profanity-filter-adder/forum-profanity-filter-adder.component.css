@@ -47,3 +47,16 @@
 #profanity-list-items{
   visibility: hidden;
 }
+#profanity-filter-input{
+  border-radius: 5px 5px 0 0;
+  border: 1px solid #808080;
+  border-bottom: none;
+}
+#profanity-filter-submit{
+  border-radius: 0 0 5px 5px;
+  border: 1px solid #808080;
+}
+#profanity-filter-submit:hover{
+  background-color: #E5E5E5;
+  cursor: pointer;
+}

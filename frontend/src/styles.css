@@ -13,6 +13,9 @@ h1{
   margin: 0;
   padding: 0;
 }
+input[type="submit"], input[type="checkbox"], button[type="submit"]{
+  cursor: pointer !important;
+}
 
 
 .page-content{

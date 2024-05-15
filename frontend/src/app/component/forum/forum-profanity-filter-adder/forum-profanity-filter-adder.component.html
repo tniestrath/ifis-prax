@@ -6,7 +6,7 @@
       <input id="profanity-filter-submit" name="word" type="submit">
     </form>
     <div class="forum-profanity-filter-adder-list-box">
-      <div id="profanity-list" class="forum-profanity-filter-adder-list">{{badWords}}</div>
+      <div id="profanity-list" class="forum-profanity-filter-adder-list"><span id="profanity-list-items">{{badWords}}</span></div>
       <input id="profanity-list-visibility" type="checkbox" title="Verbotene Wörter zeigen / verbergen" (change)="onProfanityClick()">
     </div>
   </div>

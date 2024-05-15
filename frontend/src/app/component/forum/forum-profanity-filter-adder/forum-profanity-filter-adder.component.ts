@@ -11,6 +11,7 @@ export class ForumProfanityFilterAdderComponent extends DashBaseComponent implem
 
   public badWords : string = "";
   ngOnInit(): void {
+    this.setToolTip("Hier können weitere Wörter zur Filterliste hinzugefügt werden.<br><br>Hinter der geschwärzten Box sind die unzulässigen Wörter verdeckt")
     this.api.getForumBadWords().then(value => this.badWords = value.toString().replaceAll(",", ", "));
   }
 
@@ -32,17 +33,17 @@ export class ForumProfanityFilterAdderComponent extends DashBaseComponent implem
 
   onProfanityClick() {
     let checkbox = document.getElementById("profanity-list-visibility");
-    let list = document.getElementById("profanity-list");
+    let listItems = document.getElementById("profanity-list-items");
     // @ts-ignore
     if (checkbox.checked){
       this.api.getForumBadWords().then(value => {
         this.badWords = value.toString().replaceAll(",", ", ");
         // @ts-ignore
-        list.style.color = DashColors.WHITE;
+        listItems.style.visibility = "visible"
       });
     } else {
       // @ts-ignore
-      list.style.color = DashColors.BLACK;
+      listItems.style.visibility = "hidden"
     }
   }
 }

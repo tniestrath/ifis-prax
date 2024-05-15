@@ -14,11 +14,11 @@
     <div class="post-detail-group-3">
       <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'User')" class="post-detail">
         <div [style.color]="getRatingColor(data.preRatingSwearing,'User')" class="post-label">Name</div>
-        <p>{{data.userName}}</p>
+        <p [innerHTML]="data.userName | unsafeHtml"></p>
       </div>
       <div [style.border-color]="getRatingColor(data.preRatingEmail,'Email')" class="post-detail">
         <div [style.color]="getRatingColor(data.preRatingEmail,'Email')" class="post-label">E-Mail</div>
-        <p>{{data.email}}</p>
+        <p [innerHTML]="data.email | unsafeHtml"></p>
       </div>
       <div class="post-detail">
         <div class="post-label">Datum</div>

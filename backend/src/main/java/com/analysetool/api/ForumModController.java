@@ -81,7 +81,7 @@ public class ForumModController {
 
     @GetMapping("/getPostById")
     public String getPostById(long id) throws JSONException {
-        return wpForoPostRepo.existsById(id) ? getSinglePostData(wpForoPostRepo.findById(id).get(), false).toString() : "no";
+        return wpForoPostRepo.existsById(id) ? getSinglePostData(wpForoPostRepo.findById(id).get(), true).toString() : "no";
     }
 
     private boolean isUserMailFake(WPWPForoPosts post) {
@@ -101,21 +101,25 @@ public class ForumModController {
      */
     private String getRatingSwearing(WPWPForoPosts post) {
 
-        boolean body = false, title = false, user = false;
-        ArrayList<String> bodyList = new ArrayList<>(), titleList = new ArrayList<>(), userList = new ArrayList<>();
+        boolean body = false, title = false, user = false, email = false;
+        ArrayList<String> bodyList = new ArrayList<>(), titleList = new ArrayList<>(), userList = new ArrayList<>(), emailList = new ArrayList<>();
 
         for(String badWord : badWordRepo.getAllBadWords()) {
-            if(post.getBody().contains(badWord)) {
+            if(post.getBody().toUpperCase().contains(badWord.toUpperCase())) {
                 body = true;
                 bodyList.add(badWord);
             }
-            if(post.getTitle().contains(badWord)) {
+            if(post.getTitle().toUpperCase().contains(badWord.toUpperCase())) {
                 title = true;
                 titleList.add(badWord);
             }
-            if(post.getName().contains(badWord)) {
+            if(post.getName().toUpperCase().contains(badWord.toUpperCase())) {
                 user = true;
                 userList.add(badWord);
+            }
+            if(!post.getEmail().isBlank() && post.getEmail().toUpperCase().contains(badWord.toUpperCase())) {
+                email = true;
+                emailList.add(badWord);
             }
         }
 
@@ -123,15 +127,23 @@ public class ForumModController {
         bodyList.sort((o1, o2) -> Integer.compare(o2.length(), o1.length()));
         titleList.sort((o1, o2) -> Integer.compare(o2.length(), o1.length()));
         userList.sort((o1, o2) -> Integer.compare(o2.length(), o1.length()));
+        emailList.sort((o1, o2) -> Integer.compare(o2.length(), o1.length()));
 
         for(String badWord : bodyList) {
-            post.setBody(post.getBody().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+            String regex = "(?<!title=\")" + "(?i)" + badWord;
+            post.setBody(post.getBody().replaceAll(regex, "<b title=\"" + badWord + "\"" + ">****</b>"));
         }
         for(String badWord : titleList) {
-            post.setTitle(post.getTitle().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+            String regex = "(?<!title=\")" + "(?i)" + badWord;
+            post.setTitle(post.getTitle().replaceAll(regex, "<b title=\"" + badWord + "\"" + ">****</b>"));
         }
         for(String badWord : userList) {
-            post.setName(post.getName().replaceAll(badWord, "<b title=" + badWord + ">****</b>"));
+            String regex = "(?<!title=\")" + "(?i)" + badWord;
+            post.setName(post.getName().replaceAll(regex, "<b title=\"" + badWord + "\"" + ">****</b>"));
+        }
+        for(String badWord : emailList) {
+            String regex = "(?<!title=\")" + "(?i)" + badWord;
+            post.setEmail(post.getEmail().replaceAll(regex, "<b title=\"" + badWord + "\"" + ">****</b>"));
         }
 
         if(!body && !title && !user) {
@@ -141,6 +153,7 @@ public class ForumModController {
             if(body) returnal+="Body";
             if(title) returnal+="Title";
             if(user) returnal+="User";
+            if(email) returnal+="Email";
             return returnal;
         }
     }

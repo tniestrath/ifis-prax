@@ -126,15 +126,15 @@ public class ForumModController {
 
         for(String badWord : bodyList) {
             String regex = "(?<!title=\")" + badWord;
-            post.setBody(post.getBody().replaceAll(regex, "<b title=" + badWord + ">****</b>"));
+            post.setBody(post.getBody().replaceAll(regex, "<b title=\"" + badWord + "\"" + ">****</b>"));
         }
         for(String badWord : titleList) {
             String regex = "(?<!title=\")" + badWord;
-            post.setTitle(post.getTitle().replaceAll(regex, "<b title=" + badWord + ">****</b>"));
+            post.setTitle(post.getTitle().replaceAll(regex, "<b title=\"" + badWord + "\"" + ">****</b>"));
         }
         for(String badWord : userList) {
             String regex = "(?<!title=\")" + badWord;
-            post.setName(post.getName().replaceAll(regex, "<b title=" + badWord + ">****</b>"));
+            post.setName(post.getName().replaceAll(regex, "<b title=\"" + badWord + "\"" + ">****</b>"));
         }
 
         if(!body && !title && !user) {

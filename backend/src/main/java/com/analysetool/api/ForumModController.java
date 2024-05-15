@@ -48,7 +48,13 @@ public class ForumModController {
     }
 
 
-
+    /**
+     * Fetches a JSON representation of a post's data, edited towards moderation purpose
+     * @param post the post to fetch for.
+     * @param needsRating whether this post needs a content-rating.
+     * @return a JSONObject.
+     * @throws JSONException .
+     */
     private JSONObject getSinglePostData(WPWPForoPosts post, boolean needsRating) throws JSONException {
         JSONObject json = new JSONObject();
 

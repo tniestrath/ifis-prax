@@ -15,7 +15,7 @@ import {ForumPost} from "../forum-moderation-list/ForumPost";
   templateUrl: './forum-moderator.component.html',
   styleUrls: ['./forum-moderator.component.css', "/../../dash-base/dash-base.component.css"]
 })
-export class ForumModeratorComponent extends DashBaseComponent implements OnInit, OnDestroy{
+export class ForumModeratorComponent extends DashBaseComponent implements OnInit{
 
   @ViewChild(ForumModerationListComponent, {static : true}) list!: ForumModerationListComponent;
   @ViewChild(ForumModerationDisplayComponent, {static : true}) display!: ForumModerationDisplayComponent;

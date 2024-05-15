@@ -3,11 +3,11 @@
     <div class="post-detail-group-3">
       <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'User')" class="post-detail">
         <div [style.color]="getRatingColor(data.preRatingSwearing,'User')" class="post-label" [style.background-color]="bgColor">Name</div>
-        <p>{{data.userName}}</p>
+        <p [innerHTML]="data.userName | unsafeHtml"></p>
       </div>
       <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'Title')" class="post-detail">
         <div [style.color]="getRatingColor(data.preRatingSwearing,'Title')" class="post-label" [style.background-color]="bgColor">Titel</div>
-        <p>{{data.title}}</p>
+        <p >{{data.title}}</p>
       </div>
       <div class="post-detail">
         <div class="post-label" [style.background-color]="bgColor">Datum</div>

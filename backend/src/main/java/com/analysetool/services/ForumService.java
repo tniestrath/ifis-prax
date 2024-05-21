@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -111,5 +112,24 @@ public class ForumService {
         return jsonArray.toString();
     }
 
+
+    public JSONArray getRankedSearchTerms(int page, int size) throws JSONException {
+        Pageable pageable = PageRequest.of(page, size);
+        List<Object[]> results = searchRepo.findRankedSearchTerms(pageable);
+
+        JSONArray jsonArray = new JSONArray();
+        for (Object[] result : results) {
+            String suchbegriff = (String) result[0];
+            Long count = (Long) result[1];
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("suchbegriff", suchbegriff);
+            jsonObject.put("count", count);
+
+            jsonArray.put(jsonObject);
+        }
+
+        return jsonArray;
+    }
 
 }

@@ -113,7 +113,7 @@ public class ForumService {
     }
 
 
-    public JSONArray getRankedSearchTerms(int page, int size) throws JSONException {
+    public String getRankedSearchTerms(int page, int size) throws JSONException {
         Pageable pageable = PageRequest.of(page, size);
         List<Object[]> results = searchRepo.findRankedSearchTerms(pageable);
 
@@ -129,7 +129,7 @@ public class ForumService {
             jsonArray.put(jsonObject);
         }
 
-        return jsonArray;
+        return jsonArray.toString();
     }
 
 }

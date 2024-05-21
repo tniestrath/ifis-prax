@@ -3,6 +3,7 @@ package com.analysetool.api;
 import com.analysetool.modells.Badwords;
 import com.analysetool.modells.WPWPForoPosts;
 import com.analysetool.repositories.*;
+import com.analysetool.services.ForumService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +27,8 @@ public class ForumModController {
     private WPWPForoTopicsRepository wpForoTopicsRepo;
     @Autowired
     private BadWordRepository badWordRepo;
+    @Autowired
+    private ForumService forumService;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
@@ -210,6 +213,57 @@ public class ForumModController {
         }
 
         return false;
+    }
+
+    /**
+     * Get ranked forum discussions based on clicks.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked forum discussions
+     * @throws JSONException if a JSON error occurs
+     */
+    @GetMapping("/rankedDiscussions")
+    public String getRankedDiscussions(@RequestParam int page, @RequestParam int size) throws JSONException {
+        try{
+        return forumService.getRankedDiscussion(page, size);}catch(Exception e){
+            e.printStackTrace();
+            return "buggy bug bug";
+        }
+    }
+
+    /**
+     * Get ranked forum topics based on clicks.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked forum topics
+     * @throws JSONException if a JSON error occurs
+     */
+    @GetMapping("/rankedTopics")
+    public String getRankedTopics(@RequestParam int page, @RequestParam int size) throws JSONException {
+        try{
+        return forumService.getRankedTopic(page, size);}catch(Exception e){
+            e.printStackTrace();
+            return "sir bugs-alot";
+        }
+    }
+
+    /**
+     * Get ranked search terms based on frequency.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON array of ranked search terms
+     * @throws JSONException if a JSON error occurs
+     */
+    @GetMapping("/rankedSearchTerms")
+    public String getRankedSearchTerms(@RequestParam int page, @RequestParam int size) throws JSONException {
+        try{
+        return forumService.getRankedSearchTerms(page, size);}catch(Exception e){
+            e.printStackTrace();
+            return "a bug a day keeps happiness away";
+        }
     }
 
 }

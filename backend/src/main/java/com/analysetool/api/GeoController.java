@@ -139,70 +139,6 @@ public class GeoController {
     }
 
     /**
-     * Endpoint for retrieval of a User's Geolocation Data gathered between two Dates.
-     * @param id the users' id.
-     * @param start the starting date as a string in iso-format (inclusive).
-     * @param end the ending date as a string in iso-format. (inclusive)
-     * @return a List of Geolocation Data for the given user in a specific order.
-     */
-    @GetMapping("/getUserGeoByIdAndDay")
-    public List<Integer> getUserGeoByIDAndDay(long id, String start, String end) {
-        List<Integer> liste = new ArrayList<>();
-        Date dateStart = Date.valueOf(start);
-        Date dateEnd = Date.valueOf(end);
-
-        @SuppressWarnings("OptionalGetWithoutIsPresent") UserGeo geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.findByDatum(dateStart).get().getId());
-        if (geo != null) {
-            liste.add(geo.getHh());
-            liste.add(geo.getHb());
-            liste.add(geo.getBe());
-            liste.add(geo.getMv());
-            liste.add(geo.getBb());
-            liste.add(geo.getSn());
-            liste.add(geo.getSt());
-            liste.add(geo.getBye());
-            liste.add(geo.getSl());
-            liste.add(geo.getRp());
-            liste.add(geo.getSh());
-            liste.add(geo.getTh());
-            liste.add(geo.getNb());
-            liste.add(geo.getHe());
-            liste.add(geo.getBW());
-            liste.add(geo.getNW());
-            liste.add(geo.getAusland());
-
-            for (LocalDate date : dateStart.toLocalDate().plusDays(1).datesUntil(dateEnd.toLocalDate().plusDays(1)).toList()) {
-                boolean isGeo = false;
-                if (uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
-                    geo = userGeoRepo.findByUserIdAndUniStatId(id, uniStatRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId());
-                    isGeo = true;
-                }
-                if (geo != null && isGeo) {
-                    liste.set(0, geo.getHh() + liste.get(0));
-                    liste.set(1, geo.getHb() + liste.get(1));
-                    liste.set(2, geo.getBe() + liste.get(2));
-                    liste.set(3, geo.getMv() + liste.get(3));
-                    liste.set(4, geo.getBb() + liste.get(4));
-                    liste.set(5, geo.getSn() + liste.get(5));
-                    liste.set(6, geo.getSt() + liste.get(6));
-                    liste.set(7, geo.getBye() + liste.get(7));
-                    liste.set(8, geo.getSl() + liste.get(8));
-                    liste.set(9, geo.getRp() + liste.get(9));
-                    liste.set(10, geo.getSh() + liste.get(10));
-                    liste.set(11, geo.getTh() + liste.get(11));
-                    liste.set(12, geo.getNb() + liste.get(12));
-                    liste.set(13, geo.getHe() + liste.get(13));
-                    liste.set(14, geo.getBW() + liste.get(14));
-                    liste.set(15, geo.getNW() + liste.get(15));
-                    liste.set(16, geo.getAusland() + liste.get(16));
-                }
-
-            }
-        }
-        return liste;
-    }
-
-    /**
      * Endpoint for retrieval of all Global Geolocation Data gathered between the two Dates for the DACH region.
      * @param start a String representing the start date of calculation format: YYYY-MM-DD (inclusive).
      * @param end   a String representing the end date of calculation format: YYYY-MM-DD, (inclusive).
@@ -703,6 +639,7 @@ public class GeoController {
         }
 
         int total = 0;
+        int totalDACH = 0;
 
         json.put("HH", 0);
         json.put("HB", 0);
@@ -737,11 +674,14 @@ public class GeoController {
                 UserGeo user = userGeoRepo.findByUserIdAndUniStatId(userId, uniId);
                 if (user != null) {
                     updateRegionals(json, user.getHh(), user.getHb(), user.getBe(), user.getMv(), user.getBb(), user.getSn(), user.getSt(), user.getBye(), user.getSl(), user.getRp(), user.getSh(), user.getTh(), user.getNb(), user.getHe(), user.getBW(), user.getNW(), user.getAusland());
-
+                    totalDACH += user.getHh() +  user.getHb() + user.getBe() + user.getMv() + user.getBb() + user.getSn() + user.getSt() + user.getBye() + user.getSl()+ user.getRp() + user.getSh()+ user.getTh()+ user.getNb()+ user.getHe()+ user.getBW()+ user.getNW();
+                    total += user.getHh() +  user.getHb() + user.getBe() + user.getMv() + user.getBb() + user.getSn() + user.getSt() + user.getBye() + user.getSl()+ user.getRp() + user.getSh()+ user.getTh()+ user.getNb()+ user.getHe()+ user.getBW()+ user.getNW() + user.getAusland();
                     for (Post post : postRepo.findByAuthor(userId)) {
                         PostGeo postGeo = postGeoRepo.findByPostIdAndUniStatId(post.getId(), uniId);
                         if (postGeo != null) {
                             updateRegionals(json, postGeo.getHh(), postGeo.getHb(), postGeo.getBe(), postGeo.getMv(), postGeo.getBb(), postGeo.getSn(), postGeo.getSt(), postGeo.getBye(), postGeo.getSl(), postGeo.getRp(), postGeo.getSh(), postGeo.getTh(), postGeo.getNb(), postGeo.getHe(), postGeo.getBW(), postGeo.getNW(), postGeo.getAusland());
+                            totalDACH += postGeo.getHh() +  postGeo.getHb() + postGeo.getBe() + postGeo.getMv() + postGeo.getBb() + postGeo.getSn() + postGeo.getSt() + postGeo.getBye() + postGeo.getSl()+ postGeo.getRp() + postGeo.getSh()+ postGeo.getTh()+ postGeo.getNb()+ postGeo.getHe()+ postGeo.getBW()+ postGeo.getNW();
+                            total += postGeo.getHh() +  postGeo.getHb() + postGeo.getBe() + postGeo.getMv() + postGeo.getBb() + postGeo.getSn() + postGeo.getSt() + postGeo.getBye() + postGeo.getSl()+ postGeo.getRp() + postGeo.getSh()+ postGeo.getTh()+ postGeo.getNb()+ postGeo.getHe()+ postGeo.getBW()+ postGeo.getNW() + postGeo.getAusland();
                         }
                     }
                 }

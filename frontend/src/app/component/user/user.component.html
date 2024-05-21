@@ -22,7 +22,7 @@
   </div>
   <div class="user-potential-box">
     <div class="potential-background">
-      <div class="potential-value" [style.width]="Math.min((data.potential * 100), 100)+'%'"></div>
+      <div class="potential-value" [style.width]="Math.min((Math.round(data.potential * 10) * 10), 100)+'%'"></div>
     </div>
   </div>
   <div class="user-email-box">

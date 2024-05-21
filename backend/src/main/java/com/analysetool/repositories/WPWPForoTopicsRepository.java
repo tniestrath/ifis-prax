@@ -14,4 +14,7 @@ public interface WPWPForoTopicsRepository extends JpaRepository<WPWPForoTopics, 
     @Query("Select t.forumId FROM WPWPForoTopics t  where t.topicId =:id")
     Integer getForumIdByTopicId(Integer id);
 
+    @Query("SELECT t.topicId FROM WPWPForoTopics t WHERE t.firstPostId=:firstPostId")
+    Integer getTopicByFirstPost(int firstPostId);
+
 }

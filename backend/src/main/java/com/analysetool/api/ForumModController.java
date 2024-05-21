@@ -170,7 +170,10 @@ public class ForumModController {
 
     @PostMapping("/deleteById")
     public boolean deleteById(int id) {
-        if(wpForoPostRepo.existsById((long) id)) {
+        if(wpForoPostRepo.findById((long) id).isPresent()) {
+            if(wpForoPostRepo.findById((long) id).get().getIsFirstPost() == 1) {
+                wpForoTopicsRepo.deleteById((long) wpForoTopicsRepo.getTopicByFirstPost(id));
+            }
             wpForoPostRepo.deleteById((long) id);
             return true;
         }

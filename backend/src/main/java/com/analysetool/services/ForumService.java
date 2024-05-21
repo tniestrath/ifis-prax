@@ -1,6 +1,7 @@
 package com.analysetool.services;
 
 import com.analysetool.modells.ForumDiskussionsthemenClicksByHour;
+import com.analysetool.modells.ForumSearch;
 import com.analysetool.modells.ForumTopicsClicksByHour;
 import com.analysetool.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class ForumService {
     WPWPForoTopicsRepository topicRepo;
     @Autowired
     WPWPForoPostsRepository forumPostsRepo;
+    @Autowired
+    ForumSearchRepository searchRepo;
 
     @Transactional
     public void persistAllForumDiscussionsClicksHour(Map<Integer, ForumDiskussionsthemenClicksByHour> forumDiskussionsClicksMap) {
@@ -37,6 +40,10 @@ public class ForumService {
         if (!forumTopicsClicksMap.isEmpty()) {
             topicClicksByHourRepo.saveAll(forumTopicsClicksMap.values());
         }
+    }
+
+    public void saveSearchData(ForumSearch forumSearch) {
+        searchRepo.save(forumSearch);
     }
 
     public Integer getForumIdBySlug(String slug){

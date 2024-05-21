@@ -241,6 +241,8 @@ public class LogService {
 
    private final String forumTopic = "^.*GET /marktplatz-forum/[^/]+/([^/]+)/.* HTTP.*";
 
+   private final String forumSearch= "^.*GET /marktplatz-forum/\\?wpfs=(.*?)&wpfin=(.*?)&wpfd=(.*?)&wpfob=(.*?)&wpfo=(.*?)&wpfpaged=(.*?)(?:\\s|$)";
+
     final Pattern forumDiskussionsthemenPattern = Pattern.compile(forumDiskussionsthemen);
     final Pattern forumTopicPattern = Pattern.compile(forumTopic);
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -295,6 +297,8 @@ public class LogService {
     final Pattern eventCatPattern = Pattern.compile(eventCatView);
     final Pattern anbieterCatPattern = Pattern.compile(anbieterVerzeichnisPatter);
     final Pattern tagCatPattern = Pattern.compile(tagCatPatter);
+
+    final Pattern forumSearchPattern= Pattern.compile(forumSearch);
 
     private String lastLine = "";
     private int lineCounter = 0;
@@ -786,6 +790,8 @@ public class LogService {
 
                     //Does it match a tag-category view? (/themenfeld/)
                     Matcher matched_tagcat_view = tagCatPattern.matcher(request);
+                    //Does it match a forum search?
+                    Matcher matched_forum_search = forumSearchPattern.matcher(request);
 
                     //Find out which pattern matched
                     String whatMatched = "";
@@ -935,6 +941,9 @@ public class LogService {
                     } else if(matched_forum_discussion_view.find()) {
                         whatMatched = "forumDiscussionView";
                         patternMatcher = matched_forum_discussion_view;
+                    } else if(matched_forum_search.find()) {
+                        whatMatched = "forumSearch";
+                        patternMatcher = matched_forum_search;
                     }
 
                     //If user existed,
@@ -1488,6 +1497,26 @@ public class LogService {
                     System.out.println("FORUM TOPIC VIEW EXCEPTION BEI: " + line);
                     e.printStackTrace();
                 }
+            }
+            case "forumSearch" -> {
+                try{
+                System.out.println(line);
+                System.out.println(patternMatcher.group(1)+" "+patternMatcher.group(2)+" "+patternMatcher.group(3)+" "+patternMatcher.group(4)+" "+patternMatcher.group(5)+" "+patternMatcher.group(6));
+                String land = IPHelper.getCountryISO(ip);
+                String region = IPHelper.getSubISO(ip);
+                String stadt = IPHelper.getCityName(ip);
+                Integer stunde = dateLog.getHour();
+                Integer uniId = uniRepo.getLatestUniStat().getId();
+                Integer suchZeitraum = Integer.parseInt(patternMatcher.group(3));
+                Integer seitenAnzahl = Integer.parseInt(patternMatcher.group(6));
+
+                ForumSearch search = new ForumSearch(patternMatcher.group(1),patternMatcher.group(2),suchZeitraum ,patternMatcher.group(4),patternMatcher.group(5),seitenAnzahl,uniId,stunde,land,region,stadt);
+
+                forumService.saveSearchData(search);}catch(Exception e){
+                    System.out.println("FORUM SEARCH EXCEPTION BEI: " + line);
+                    e.printStackTrace();
+                }
+
             }
         }
 

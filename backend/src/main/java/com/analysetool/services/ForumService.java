@@ -1,9 +1,6 @@
 package com.analysetool.services;
 
-import com.analysetool.modells.ForumDiskussionsthemenClicksByHour;
-import com.analysetool.modells.ForumSearch;
-import com.analysetool.modells.ForumTopicsClicksByHour;
-import com.analysetool.modells.WPWPForoForum;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,6 +89,27 @@ public class ForumService {
         return jsonArray.toString();
     }
 
+    public String getRankedTopic(int page, int size) throws JSONException {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("clicks").descending());
+        Page<ForumTopicsClicksByHour> forumClicksPage = topicClicksByHourRepo.findAll(pageable);
+
+        JSONArray jsonArray = new JSONArray();
+
+        for (ForumTopicsClicksByHour topicClicks : forumClicksPage) {
+            WPWPForoTopics topic = topicRepo.findById(topicClicks.getTopicId()).orElse(null);
+            WPWPForoForum forum = forumRepo.findById((long)topic.getForumId()).get();
+            if (topic != null) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("title", topic.getTitle());
+                jsonObject.put("clicks", topicClicks.getClicks());
+                jsonObject.put("diskussionstitel", forum.getTitle());
+
+                jsonArray.put(jsonObject);
+            }
+        }
+
+        return jsonArray.toString();
+    }
 
 
 }

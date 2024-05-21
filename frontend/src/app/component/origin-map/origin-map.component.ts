@@ -94,24 +94,43 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     const svgElement = this.element.nativeElement.querySelector('#Ebene_1');
 
     startDatePicker.onchange = ev => {
-      // @ts-ignore
-      this.api.getGeoByDates(ev.target.value, endDatePicker.value).then(res => {
+      if (SysVars.CURRENT_PAGE == "UserDetail") {
         // @ts-ignore
-        this.startDate = ev.target.value;
+        this.api.getOriginMapByUser(Number.parseInt(SysVars.USER_ID), ev.target.value, endDatePicker.value).then(res => {
+          // @ts-ignore
+          this.startDate = ev.target.value;
+          this.readData(res, svgElement);
+          this.cdr.detectChanges();
+        });
+      } else {
         // @ts-ignore
-        this.readData(res, svgElement);
-        this.cdr.detectChanges();
-      });
-      };
+        this.api.getGeoByDates(ev.target.value, endDatePicker.value).then(res => {
+          // @ts-ignore
+          this.startDate = ev.target.value;
+          this.readData(res, svgElement);
+          this.cdr.detectChanges();
+        });
+      }
+    };
     endDatePicker.onchange = ev => {
-      // @ts-ignore
-      this.api.getGeoByDates(startDatePicker.value, ev.target.value).then(res => {
+      if (SysVars.CURRENT_PAGE == "UserDetail") {
         // @ts-ignore
-        this.endDate = ev.target.value;
+        this.api.getOriginMapByUser(Number.parseInt(SysVars.USER_ID), startDatePicker.value, ev.target.value).then(res => {
+          // @ts-ignore
+          this.endDate = ev.target.value;
+          this.readData(res, svgElement);
+          this.cdr.detectChanges();
+        });
+      } else {
         // @ts-ignore
-        this.readData(res, svgElement);
-        this.cdr.detectChanges();
-      });
+        this.api.getGeoByDates(startDatePicker.value, ev.target.value).then(res => {
+          // @ts-ignore
+          this.endDate = ev.target.value;
+          // @ts-ignore
+          this.readData(res, svgElement);
+          this.cdr.detectChanges();
+        });
+      }
     };
 
     this.api.getGeoTimespan().then(res => {
@@ -147,8 +166,9 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
     setTimeout(() => {
       this.isScaled = true;
       if (svgElement) {
+        console.log(SysVars.CURRENT_PAGE)
         // @ts-ignore
-        if (SysVars.CURRENT_PAGE == "Anbieter") {
+        if (SysVars.CURRENT_PAGE == "UserDetail") {
           this.api.getOriginMapByUser(Number.parseInt(SysVars.USER_ID), this.startDate, this.endDate).then(res => {
             this.readData(res, svgElement);
             this.cdr.detectChanges();

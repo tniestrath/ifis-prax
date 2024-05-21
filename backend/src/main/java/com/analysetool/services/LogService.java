@@ -1233,6 +1233,8 @@ public class LogService {
                                     userEvents++;
                                 }
                                 updateUniqueUser(ip, "events", dateLog);
+                            } else {
+                                whatMatched = "";
                             }
                         }
                         case "videoView" -> {
@@ -1260,7 +1262,7 @@ public class LogService {
                         }
                     }
 
-                    if(!whatMatched.equals("")) {
+                    if(!whatMatched.equals("") && patternMatcher != null) {
                         sensibleClicks++;
                     }
 

@@ -248,7 +248,7 @@ public class DiagnosisController {
     private List<Problem> findUniDLCProblems() {
         List<Problem> list = new ArrayList<>();
         list.addAll(uniDLCWrongReferenceCheckup());
-        list.addAll(uniDLCMissingHourCheckup());
+        //list.addAll(uniDLCMissingHourCheckup());
         list.addAll(uniDLCValuesCheckup());
         return list;
     }

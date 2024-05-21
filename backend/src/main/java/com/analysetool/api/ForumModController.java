@@ -254,7 +254,7 @@ public class ForumModController {
      *
      * @param page the page number
      * @param size the size of the page
-     * @return a JSON array of ranked search terms
+     * @return a JSON string of ranked search terms
      * @throws JSONException if a JSON error occurs
      */
     @GetMapping("/rankedSearchTerms")

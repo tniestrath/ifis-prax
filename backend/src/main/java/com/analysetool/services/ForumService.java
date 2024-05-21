@@ -69,6 +69,14 @@ public class ForumService {
         return clicksByHourRepo.getClicksOfDay(id,uniId);
     }
 
+    /**
+     * Get ranked forum discussions based on clicks.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked forum discussions
+     * @throws JSONException if a JSON error occurs
+     */
     public String getRankedDiscussion(int page, int size) throws JSONException {
         Pageable pageable = PageRequest.of(page, size, Sort.by("clicks").descending());
         Page<ForumDiskussionsthemenClicksByHour> forumClicksPage = clicksByHourRepo.findAll(pageable);
@@ -90,6 +98,14 @@ public class ForumService {
         return jsonArray.toString();
     }
 
+    /**
+     * Get ranked forum topics based on clicks.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked forum topics
+     * @throws JSONException if a JSON error occurs
+     */
     public String getRankedTopic(int page, int size) throws JSONException {
         Pageable pageable = PageRequest.of(page, size, Sort.by("clicks").descending());
         Page<ForumTopicsClicksByHour> forumClicksPage = topicClicksByHourRepo.findAll(pageable);
@@ -112,7 +128,14 @@ public class ForumService {
         return jsonArray.toString();
     }
 
-
+    /**
+     * Get ranked search terms based on frequency.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked search terms
+     * @throws JSONException if a JSON error occurs
+     */
     public String getRankedSearchTerms(int page, int size) throws JSONException {
         Pageable pageable = PageRequest.of(page, size);
         List<Object[]> results = searchRepo.findRankedSearchTerms(pageable);

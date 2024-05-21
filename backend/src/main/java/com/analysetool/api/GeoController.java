@@ -687,6 +687,8 @@ public class GeoController {
                 }
             }
         }
+        json.put("totalDACH", totalDACH);
+        json.put("total", total);
         return json.toString();
     }
 

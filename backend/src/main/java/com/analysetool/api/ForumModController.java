@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -270,7 +269,6 @@ public class ForumModController {
 
     @PostMapping("/updatePost")
     public boolean updatePost(@RequestBody String hson) throws JSONException {
-        System.out.println("JSON found");
         JSONObject json = new JSONObject(hson);
         try {
             if(wpForoPostRepo.findById((long) json.getInt("id")).isPresent()) {
@@ -286,16 +284,9 @@ public class ForumModController {
 
                 return true;
             } else {
-                System.out.println("Post not found");
                 return false;
             }
         } catch (Exception e) {
-            System.out.println("bing bong post wong");
-            Iterator key = json.keys();
-            while(key.hasNext()) {
-                System.out.println(key.next());
-            }
-
             return false;
         }
 

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -289,7 +290,11 @@ public class ForumModController {
             }
         } catch (Exception e) {
             System.out.println("bing bong post wong");
-            e.printStackTrace();
+            Iterator key = json.keys();
+            while(key.hasNext()) {
+                System.out.println(key.next());
+            }
+
             return false;
         }
 

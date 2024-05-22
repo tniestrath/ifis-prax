@@ -269,8 +269,9 @@ public class ForumModController {
 
 
     @PostMapping("/updatePost")
-    public boolean updatePost(@RequestBody JSONObject json) {
+    public boolean updatePost(@RequestBody String hson) throws JSONException {
         System.out.println("JSON found");
+        JSONObject json = new JSONObject(hson);
         try {
             if(wpForoPostRepo.findById((long) json.getInt("id")).isPresent()) {
 

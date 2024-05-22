@@ -1,13 +1,19 @@
 package com.analysetool.services;
 
-import com.analysetool.modells.ForumDiskussionsthemenClicksByHour;
-import com.analysetool.modells.ForumSearch;
-import com.analysetool.modells.ForumTopicsClicksByHour;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -62,4 +68,91 @@ public class ForumService {
         Integer uniId = uniRepo.getLatestUniStat().getId();
         return clicksByHourRepo.getClicksOfDay(id,uniId);
     }
+
+    /**
+     * Get ranked forum discussions based on clicks.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked forum discussions
+     * @throws JSONException if a JSON error occurs
+     */
+    public String getRankedDiscussion(int page, int size) throws JSONException {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("clicks").descending());
+        Page<ForumDiskussionsthemenClicksByHour> forumClicksPage = clicksByHourRepo.findAll(pageable);
+
+        JSONArray jsonArray = new JSONArray();
+
+        for (ForumDiskussionsthemenClicksByHour forumClicks : forumClicksPage) {
+            WPWPForoForum forum = forumRepo.findById(forumClicks.getForumId()).orElse(null);
+            if (forum != null) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("title", forum.getTitle());
+                jsonObject.put("clicks", forumClicks.getClicks());
+                jsonObject.put("lastPostDate", forum.getLastPostDate().toString());
+
+                jsonArray.put(jsonObject);
+            }
+        }
+
+        return jsonArray.toString();
+    }
+
+    /**
+     * Get ranked forum topics based on clicks.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked forum topics
+     * @throws JSONException if a JSON error occurs
+     */
+    public String getRankedTopic(int page, int size) throws JSONException {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("clicks").descending());
+        Page<ForumTopicsClicksByHour> forumClicksPage = topicClicksByHourRepo.findAll(pageable);
+
+        JSONArray jsonArray = new JSONArray();
+
+        for (ForumTopicsClicksByHour topicClicks : forumClicksPage) {
+            WPWPForoTopics topic = topicRepo.findById(topicClicks.getTopicId()).orElse(null);
+            WPWPForoForum forum = forumRepo.findById((long)topic.getForumId()).get();
+            if (topic != null) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("title", topic.getTitle());
+                jsonObject.put("clicks", topicClicks.getClicks());
+                jsonObject.put("diskussionstitel", forum.getTitle());
+
+                jsonArray.put(jsonObject);
+            }
+        }
+
+        return jsonArray.toString();
+    }
+
+    /**
+     * Get ranked search terms based on frequency.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked search terms
+     * @throws JSONException if a JSON error occurs
+     */
+    public String getRankedSearchTerms(int page, int size) throws JSONException {
+        Pageable pageable = PageRequest.of(page, size);
+        List<Object[]> results = searchRepo.findRankedSearchTerms(pageable);
+
+        JSONArray jsonArray = new JSONArray();
+        for (Object[] result : results) {
+            String suchbegriff = (String) result[0];
+            Long count = (Long) result[1];
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("suchbegriff", suchbegriff);
+            jsonObject.put("count", count);
+
+            jsonArray.put(jsonObject);
+        }
+
+        return jsonArray.toString();
+    }
+
 }

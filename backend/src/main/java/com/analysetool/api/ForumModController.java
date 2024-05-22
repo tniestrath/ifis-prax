@@ -3,6 +3,7 @@ package com.analysetool.api;
 import com.analysetool.modells.Badwords;
 import com.analysetool.modells.WPWPForoPosts;
 import com.analysetool.repositories.*;
+import com.analysetool.services.ForumService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +27,8 @@ public class ForumModController {
     private WPWPForoTopicsRepository wpForoTopicsRepo;
     @Autowired
     private BadWordRepository badWordRepo;
+    @Autowired
+    private ForumService forumService;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
@@ -170,7 +173,10 @@ public class ForumModController {
 
     @PostMapping("/deleteById")
     public boolean deleteById(int id) {
-        if(wpForoPostRepo.existsById((long) id)) {
+        if(wpForoPostRepo.findById((long) id).isPresent()) {
+            if(wpForoPostRepo.findById((long) id).get().getIsFirstPost() == 1) {
+                wpForoTopicsRepo.deleteById((long) wpForoTopicsRepo.getTopicByFirstPost(id));
+            }
             wpForoPostRepo.deleteById((long) id);
             return true;
         }
@@ -209,4 +215,83 @@ public class ForumModController {
         return false;
     }
 
+    /**
+     * Get ranked forum discussions based on clicks.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked forum discussions
+     * @throws JSONException if a JSON error occurs
+     */
+    @GetMapping("/rankedDiscussions")
+    public String getRankedDiscussions(@RequestParam int page, @RequestParam int size) throws JSONException {
+        try{
+        return forumService.getRankedDiscussion(page, size);}catch(Exception e){
+            e.printStackTrace();
+            return "buggy bug bug";
+        }
+    }
+
+    /**
+     * Get ranked forum topics based on clicks.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked forum topics
+     * @throws JSONException if a JSON error occurs
+     */
+    @GetMapping("/rankedTopics")
+    public String getRankedTopics(@RequestParam int page, @RequestParam int size) throws JSONException {
+        try{
+        return forumService.getRankedTopic(page, size);}catch(Exception e){
+            e.printStackTrace();
+            return "sir bugs-alot";
+        }
+    }
+
+    /**
+     * Get ranked search terms based on frequency.
+     *
+     * @param page the page number
+     * @param size the size of the page
+     * @return a JSON string of ranked search terms
+     * @throws JSONException if a JSON error occurs
+     */
+    @GetMapping("/rankedSearchTerms")
+    public String getRankedSearchTerms(@RequestParam int page, @RequestParam int size) throws JSONException {
+        try{
+        return forumService.getRankedSearchTerms(page, size);}catch(Exception e){
+            e.printStackTrace();
+            return "a bug a day keeps happiness away";
+        }
+    }
+
+
+    @PostMapping("/updatePost")
+    public boolean updatePost(@RequestBody String hson, boolean accepted) throws JSONException {
+        JSONObject json = new JSONObject(hson);
+        try {
+            if(wpForoPostRepo.findById((long) json.getInt("id")).isPresent()) {
+
+                WPWPForoPosts post = wpForoPostRepo.findById((long) json.getInt("id")).get();
+
+                post.setEmail(json.getString("email"));
+                post.setBody(json.getString("body"));
+                post.setTitle(json.getString("title"));
+                post.setName(json.getString("userName"));
+                post.setStatus(accepted ? 1 : 0);
+
+
+                wpForoPostRepo.save(post);
+
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
+
+    }
 }

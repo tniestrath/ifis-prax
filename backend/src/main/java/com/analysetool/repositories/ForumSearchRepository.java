@@ -9,9 +9,7 @@ import java.util.List;
 
 public interface ForumSearchRepository extends JpaRepository<ForumSearch, Long> {
 
-    @Query("SELECT s.suchbegriff, COUNT(s.suchbegriff) as suchCount " +
-            "FROM ForumSearch s " +
-            "GROUP BY s.suchbegriff " +
-            "ORDER BY suchCount DESC")
+
+    @Query("SELECT s.suchbegriff, COUNT(s.suchbegriff) as suchCount FROM ForumSearch s GROUP BY s.suchbegriff ORDER BY suchCount DESC")
     List<Object[]> findRankedSearchTerms(Pageable pageable);
 }

@@ -268,11 +268,11 @@ public class ForumModController {
 
 
     @PostMapping("/updatePost")
-    public boolean updatePost(int id, JSONObject json) {
+    public boolean updatePost(@RequestBody JSONObject json) {
         try {
-            if(wpForoPostRepo.findById((long) id).isPresent()) {
+            if(wpForoPostRepo.findById((long) json.getInt("id")).isPresent()) {
 
-                WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();
+                WPWPForoPosts post = wpForoPostRepo.findById((long) json.getInt("id")).get();
 
                 post.setEmail(json.getString("email"));
                 post.setBody(json.getString("body"));

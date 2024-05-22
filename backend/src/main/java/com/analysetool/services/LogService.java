@@ -1577,6 +1577,7 @@ public class LogService {
      * Updates respective data from UniversalStats.
      * @throws ParseException .
      */
+    //ToDo: Make updateUniStats update per line, and use dateLog.
     private void updateUniStats(int totalClicks, int internalClicks, int sensibleClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsVideos, int viewsWhitepaper, int viewsEvents, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsAnbieter, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userVideos, int userWhitepaper, int userEvents, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userAnbieter, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
@@ -1586,6 +1587,13 @@ public class LogService {
         String uniLastDateString = sdf.format(uniRepo.getLatestUniStat().getDatum());
         Date date = sdf.parse(dateStirng);
         final int curHour = LocalDateTime.now().getHour();
+
+        try {
+            checkForAndFixMissingRows(date, curHour);
+        } catch (Exception e) {
+            System.out.println("HOOPLA FIX MISSING ROWS ERROR IN UPDATE UNISTATS");
+        }
+
 
         //Updating UniversalStats
         {
@@ -1892,6 +1900,90 @@ public class LogService {
             }
         }
 
+    }
+
+    /**
+     * Checks whether any rows have been missed since the last uni-stats update, if so, it adds them.
+     * @param curDate the CURRENT date.
+     * @param curHour the CURRENT hour.
+     */
+    private void checkForAndFixMissingRows(Date curDate, int curHour) throws ParseException {
+
+        fixMissingInUni(curDate);
+
+        fixMissingInCat(curHour);
+
+    }
+
+    /**
+     * Should always be called after fixMissingDays.
+     * Will generate all missing hours since the last generated hour, up until curHour.
+     * @param curHour the CURRENT hour.
+     */
+    private void fixMissingInCat(int curHour) {
+
+
+        //Whether the current hour is later than the last entry's hour, but the day isn't fully generated yet (So 23 is not generated).
+        boolean missingHoursInCurrentDay = universalCategoriesDLCRepo.getLast().getStunde() < curHour && universalCategoriesDLCRepo.getLast().getStunde() != 23;
+
+        /*Whether the last generated entry of uniCat is earlier than the last updated day - fixMissingDays should have generated the missing day in uniStats
+        So all days that have been skipped should be present in UniStats, but not yet in uniCat.
+        */
+        boolean missingDay = uniRepo.getLatestUniStat().getId() > universalCategoriesDLCRepo.getLast().getUniStatId();
+
+        while(missingDay || missingHoursInCurrentDay) {
+            if(missingHoursInCurrentDay) {
+
+                UniversalCategoriesDLC cat = new UniversalCategoriesDLC();
+                cat.setUniStatId(universalCategoriesDLCRepo.getLast().getUniStatId());
+                cat.setStunde(universalCategoriesDLCRepo.getLastStunde() + 1);
+                universalCategoriesDLCRepo.save(cat);
+
+                missingHoursInCurrentDay = universalCategoriesDLCRepo.getLast().getStunde() < curHour && universalCategoriesDLCRepo.getLast().getStunde() != 23;
+            }
+            if(missingDay) {
+                UniversalCategoriesDLC cat = new UniversalCategoriesDLC();
+                cat.setUniStatId(universalCategoriesDLCRepo.getLast().getUniStatId() + 1);
+                cat.setStunde(0);
+                universalCategoriesDLCRepo.save(cat);
+
+                missingDay = uniRepo.getLatestUniStat().getId() > universalCategoriesDLCRepo.getLast().getUniStatId();
+
+                if(missingDay) {
+                    for(int i = 1; i <= 23; i++) {
+                        cat = new UniversalCategoriesDLC();
+                        cat.setUniStatId(universalCategoriesDLCRepo.getLast().getUniStatId());
+                        cat.setStunde(i);
+                        universalCategoriesDLCRepo.save(cat);
+                    }
+                } else {
+                    for(int i = 1; i <= curHour; i++) {
+                        cat = new UniversalCategoriesDLC();
+                        cat.setUniStatId(universalCategoriesDLCRepo.getLast().getUniStatId());
+                        cat.setStunde(i);
+                        universalCategoriesDLCRepo.save(cat);
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    private void fixMissingInUni(Date curDate) throws ParseException {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        LocalDate currentDate = curDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate oldDate = uniRepo.getLatestUniStat().getDatum().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        for(LocalDate date : oldDate.plusDays(1).datesUntil(currentDate).toList()) {
+            String dateStirng = date.getYear() + "-" + (date.getMonthValue() > 10 ? date.getMonthValue() : "0" + date.getMonthValue()) + "-" + (date.getDayOfMonth() > 10 ? date.getDayOfMonth() : "0" + date.getDayOfMonth());
+            Date fixerDate = sdf.parse(dateStirng);
+
+            uniRepo.save(new UniversalStats(fixerDate));
+
+        }
     }
 
     /**

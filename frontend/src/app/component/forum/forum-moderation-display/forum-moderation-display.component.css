@@ -65,6 +65,13 @@
   width: 100%;
   height: inherit;
 }
+#edit-body{
+  position: relative;
+  top: -.75vh;
+  left: 96%;
+  width: fit-content;
+  z-index: 1;
+}
 .post-type{
   display: flex;
   justify-content: center;

@@ -142,6 +142,7 @@ export enum apiUrl {
   GET_FORUM_BAD_WORDS = "/forum/getAllBadWords",
   FORUM_DELETE_POST = "/forum/deleteById?id=ID",
   FORUM_ACCEPT_POST = "/forum/setStatusById?id=ID&status=0",
+  FORUM_MODIFY_POST = "/forum/updatePost?accepted=ACCEPTED",
   FORUM_ADD_BAD_WORD = "/forum/addBadWord?word=WORD",
 
 
@@ -795,6 +796,12 @@ export class ApiService {
   async acceptForumPost(id : string) : Promise<boolean> {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.FORUM_ACCEPT_POST).replace("ID", id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async modifyForumPost(post : ForumPost, accepted : boolean) : Promise<boolean> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_MODIFY_POST).replace("ACCEPTED", String(accepted))) ,
+      {credentials: "include", method: "post",
+        headers: {"content-type": "application/json", "accept": "application/json"}, body: JSON.stringify(post)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
 

@@ -266,4 +266,30 @@ public class ForumModController {
         }
     }
 
+
+    @PostMapping("/updatePost")
+    public boolean updatePost(int id, JSONObject json) {
+        try {
+            if(wpForoPostRepo.findById((long) id).isPresent()) {
+
+                WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();
+
+                post.setEmail(json.getString("email"));
+                post.setBody(json.getString("body"));
+                post.setTitle(json.getString("title"));
+                post.setName(json.getString("userName"));
+
+                wpForoPostRepo.save(post);
+
+                return true;
+            } else {
+
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
+
+    }
 }

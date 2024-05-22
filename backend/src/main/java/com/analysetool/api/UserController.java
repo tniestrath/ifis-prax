@@ -1767,6 +1767,7 @@ public class UserController {
      * @param userId Die ID des Benutzers, dessen Tags verwendet werden, um Konkurrenz zu finden.
      * @return Eine Map, bei der Schlüssel Tags und Werte Zeichenketten sind, die Listen von Anzeigenamen konkurrierender Benutzer darstellen.
      */
+    @GetMapping("/getCompetitionByTagsForUser")
     public Map<String,String> getCompetitionByTags(Long userId){
         Map<String, String> tagsWithCompetingUsers = new HashMap<>();
         Optional<String> tagData = getTags(userId, getTypeProfileTags(Math.toIntExact(userId)));
@@ -1942,6 +1943,7 @@ public class UserController {
         return wpUserMetaRepository.getTotalCountOfUsersWithTagBasis() + wpUserMetaRepository.getTotalCountOfUsersWithTagBasisPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPremium();
     }
 
+    @GetMapping("/countUsersByTag")
     public Integer countUsersByTag(String tag) {
         return wpUserMetaRepository.countUsersByTagBasis("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagBasisPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPremium("\"" + tag + "\"");
     }

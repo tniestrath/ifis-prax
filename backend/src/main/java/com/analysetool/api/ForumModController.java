@@ -268,7 +268,7 @@ public class ForumModController {
 
 
     @PostMapping("/updatePost")
-    public boolean updatePost(@RequestBody String hson) throws JSONException {
+    public boolean updatePost(@RequestBody String hson, boolean accepted) throws JSONException {
         JSONObject json = new JSONObject(hson);
         try {
             if(wpForoPostRepo.findById((long) json.getInt("id")).isPresent()) {
@@ -279,6 +279,8 @@ public class ForumModController {
                 post.setBody(json.getString("body"));
                 post.setTitle(json.getString("title"));
                 post.setName(json.getString("userName"));
+                post.setStatus(accepted ? 1 : 0);
+
 
                 wpForoPostRepo.save(post);
 

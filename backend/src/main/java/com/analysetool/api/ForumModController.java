@@ -269,6 +269,7 @@ public class ForumModController {
 
     @PostMapping("/updatePost")
     public boolean updatePost(@RequestBody JSONObject json) {
+        System.out.println("JSON found");
         try {
             if(wpForoPostRepo.findById((long) json.getInt("id")).isPresent()) {
 
@@ -283,10 +284,12 @@ public class ForumModController {
 
                 return true;
             } else {
-
+                System.out.println("Post not found");
                 return false;
             }
         } catch (Exception e) {
+            System.out.println("bing bong post wong");
+            e.printStackTrace();
             return false;
         }
 

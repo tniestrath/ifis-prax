@@ -981,6 +981,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "article", dateLog);
+
+                            updateUniSingleLine("article", isUnique, dateLog);
                         }
 
                         case "blogView", "blogSS", "blogCat" -> {
@@ -996,6 +998,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "blog", dateLog);
+
+                            updateUniSingleLine("blog", isUnique, dateLog);
                         }
 
                         case "newsView", "newsSS" -> {
@@ -1011,6 +1015,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "news", dateLog);
+
+                            updateUniSingleLine("news", isUnique, dateLog);
                         }
 
                         case "wpView", "wpSS" -> {
@@ -1026,6 +1032,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "whitepaper", dateLog);
+
+                            updateUniSingleLine("whitepaper", isUnique, dateLog);
                         }
                         case "podView" -> {
                             //Erhöhe Clicks für Podcast um 1.
@@ -1039,6 +1047,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "podcast", dateLog);
+
+                            updateUniSingleLine("podcast", isUnique, dateLog);
                         }
                         case "main" -> {
                             viewsMain++;
@@ -1051,6 +1061,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "main", dateLog);
+
+                            updateUniSingleLine("main", isUnique, dateLog);
                         }
                         case "ueber" -> {
                             //Erhöhe Clicks für Ueber-Uns um 1.
@@ -1064,6 +1076,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "ueber", dateLog);
+
+                            updateUniSingleLine("ueber", isUnique, dateLog);
                         }
                         case "impressum" -> {
                             //Erhöhe Clicks für Impressum um 1.
@@ -1077,6 +1091,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "impressum", dateLog);
+
+                            updateUniSingleLine("impressum", isUnique, dateLog);
                         }
                         case "preisliste" -> {
                             //Erhöhe Clicks für Preisliste um 1.
@@ -1090,6 +1106,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "preisliste", dateLog);
+
+                            updateUniSingleLine("preis", isUnique, dateLog);
                         }
                         case "partner" -> {
                             //Erhöhe Clicks für Partner um 1.
@@ -1103,6 +1121,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "partner", dateLog);
+
+                            updateUniSingleLine("partner", isUnique, dateLog);
                         }
                         case "datenschutz" -> {
                             //Erhöhe Clicks für Datenschutzerkl. um 1.
@@ -1116,6 +1136,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "datenschutz", dateLog);
+
+                            updateUniSingleLine("datenschutz", isUnique, dateLog);
                         }
                         case "newsletter" -> {
                             //Erhöhe Clicks für Newsletter um 1.
@@ -1129,6 +1151,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "newsletter", dateLog);
+
+                            updateUniSingleLine("newsletter", isUnique, dateLog);
                         }
                         case "image" -> {
                             //Erhöhe Clicks für Image um 1.
@@ -1142,6 +1166,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "image", dateLog);
+
+                            updateUniSingleLine("image", isUnique, dateLog);
                         }
                         case "agb" -> {
                             //Erhöhe Clicks für AGBS um 1.
@@ -1155,6 +1181,8 @@ public class LogService {
                                 }
                             }
                             updateUniqueUser(ip, "agb", dateLog);
+
+                            updateUniSingleLine("agb", isUnique, dateLog);
                         }
                         case "userView" -> {
                             try {
@@ -1164,6 +1192,8 @@ public class LogService {
                             } catch (Exception e) {
                                 System.out.println(patternMatcher.group(1));
                             }
+
+                            updateUniSingleLine("anbieter", isUnique, dateLog);
                         }
                         case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch", "ratgeberSelf" -> {
                             //Erhöhe Clicks für RatgeberViews um 1.
@@ -1178,6 +1208,8 @@ public class LogService {
                             }
                             updateUniqueUser(ip, "ratgeber", dateLog);
 
+                            updateUniSingleLine("ratgeber", isUnique, dateLog);
+
                             //Update stats for more concrete type of Ratgeber
                             switch (whatMatched) {
                                 case "ratgeberPost" -> {
@@ -1189,6 +1221,8 @@ public class LogService {
                                             userRatgeberPost++;
                                         }
                                     }
+
+                                    updateUniSingleLine("ratgeberPost", isUnique, dateLog);
                                 }
                                 case "ratgeberGlossar" -> {
                                     viewsRatgeberGlossar++;
@@ -1199,6 +1233,8 @@ public class LogService {
                                             userRatgeberGlossar++;
                                         }
                                     }
+
+                                    updateUniSingleLine("ratgeberGlossar", isUnique, dateLog);
                                 }
                                 case "ratgeberBuch" -> {
                                     viewsRatgeberBuch++;
@@ -1209,6 +1245,8 @@ public class LogService {
                                             userRatgeberBuch++;
                                         }
                                     }
+
+                                    updateUniSingleLine("ratgeberBuch", isUnique, dateLog);
                                 }
                                 case "ratgeberSelf" -> {
                                     viewsRatgeberSelf++;
@@ -1219,6 +1257,8 @@ public class LogService {
                                             userRatgeberSelf++;
                                         }
                                     }
+
+                                    updateUniSingleLine("ratgeberSelf", isUnique, dateLog);
                                 }
                             }
 
@@ -1233,6 +1273,8 @@ public class LogService {
                                     userEvents++;
                                 }
                                 updateUniqueUser(ip, "events", dateLog);
+
+                                updateUniSingleLine("events", isUnique, dateLog);
                             } else {
                                 whatMatched = "";
                             }
@@ -1245,6 +1287,8 @@ public class LogService {
                                 userVideos++;
                             }
                             updateUniqueUser(ip, "video", dateLog);
+
+                            updateUniSingleLine("videos", isUnique, dateLog);
                         }
                         case "anbieterCat" -> {
                             viewsAnbieter++;
@@ -1254,6 +1298,8 @@ public class LogService {
                                 userAnbieter++;
                             }
                             updateUniqueUser(ip, "anbieter", dateLog);
+
+                            updateUniSingleLine("anbieter", isUnique, dateLog);
                         }
                         default -> {
                             if(!isNotNonsense) {
@@ -1289,7 +1335,7 @@ public class LogService {
             }
 
         }
-        updateUniStats(totalClicks, internalClicks, sensibleClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsVideos, viewsWhitepaper, viewsEvents,  viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsRatgeberSelf, viewsMain, viewsAnbieter, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userVideos, userWhitepaper, userEvents, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userRatgeberSelf, userMain, userAnbieter, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
+        //updateUniStats(totalClicks, internalClicks, sensibleClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsVideos, viewsWhitepaper, viewsEvents,  viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsRatgeberSelf, viewsMain, viewsAnbieter, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userVideos, userWhitepaper, userEvents, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userRatgeberSelf, userMain, userAnbieter, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
         //Service weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
         postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
@@ -1574,10 +1620,9 @@ public class LogService {
     }
 
     /**
-     * Updates respective data from UniversalStats.
+     * Updates respective data from UniversalStats table.
      * @throws ParseException .
      */
-    //ToDo: Make updateUniStats update per line, and use dateLog.
     private void updateUniStats(int totalClicks, int internalClicks, int sensibleClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsVideos, int viewsWhitepaper, int viewsEvents, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsAnbieter, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userVideos, int userWhitepaper, int userEvents, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userAnbieter, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
@@ -1592,6 +1637,7 @@ public class LogService {
             checkForAndFixMissingRows(date, curHour);
         } catch (Exception e) {
             System.out.println("HOOPLA FIX MISSING ROWS ERROR IN UPDATE UNISTATS");
+            e.printStackTrace();
         }
 
 
@@ -1901,6 +1947,160 @@ public class LogService {
         }
 
     }
+
+    private void updateUniSingleLine(String updateColumn, boolean isUnique, LocalDateTime dateLog) {
+        Date normalDate = java.sql.Date.valueOf(dateLog.toLocalDate());
+        int curHour = dateLog.getHour();
+
+        try {
+            checkForAndFixMissingRows(normalDate, curHour);
+        } catch (Exception e) {
+            System.out.println("HOOPLA FIX MISSING ROWS ERROR IN UPDATE UNISTATS");
+            e.printStackTrace();
+        }
+
+        UniversalStats uni;
+        if(uniRepo.getUniversalStatsByDatum(normalDate).isPresent()) {
+            uni = uniRepo.getUniversalStatsByDatum(normalDate).get();
+            uni.setSensibleClicks(uni.getSensibleClicks() + 1);
+            uni.setBesucherAnzahl(uni.getBesucherAnzahl() + (isUnique ? 1 : 0));
+            uni.setTotalClicks(uni.getTotalClicks() + 1);
+        }
+        else {
+            uni = new UniversalStats();
+            uni.setBesucherAnzahl(1L);
+            uni.setTotalClicks(1L);
+            uni.setSensibleClicks(1L);
+
+            uni.setDatum(normalDate);
+
+            uni.setAnbieterProfileAnzahl(wpUserRepo.count());
+            uni = setNewsArticelBlogCountForUniversalStats(normalDate, uni);
+            uni = setAccountTypeAllUniStats(uni);
+        }
+        uniRepo.save(uni);
+
+        UniversalCategoriesDLC uniCat;
+        if(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uni.getId(), curHour) != null) {
+            uniCat = universalCategoriesDLCRepo.getByUniStatIdAndStunde(uni.getId(), curHour);
+            switch (updateColumn) {
+                case "article" -> {
+                    uniCat.setViewsArticle(uniCat.getViewsArticle() + 1);
+                    uniCat.setBesucherArticle(uniCat.getBesucherArticle() + (isUnique ? 1 : 0));
+                }
+                case "news" -> {
+                    uniCat.setViewsNews(uniCat.getViewsNews() + 1);
+                    uniCat.setBesucherNews(uniCat.getBesucherNews() + (isUnique ? 1 : 0));
+                }
+                case "blog" -> {
+                    uniCat.setViewsBlog(uniCat.getViewsBlog() + 1);
+                    uniCat.setBesucherBlog(uniCat.getBesucherBlog() + (isUnique ? 1 : 0));
+                }
+                case "podcast" -> {
+                    uniCat.setViewsPodcast(uniCat.getViewsPodcast() + 1);
+                    uniCat.setBesucherPodcast(uniCat.getBesucherPodcast() + (isUnique ? 1 : 0));
+                }
+                case "videos" -> {
+                    uniCat.setViewsVideos(uniCat.getViewsVideos() + 1);
+                    uniCat.setBesucherVideos(uniCat.getBesucherVideos() + (isUnique ? 1 : 0));
+                }
+                case "whitepaper" -> {
+                    uniCat.setViewsWhitepaper(uniCat.getViewsWhitepaper() + 1);
+                    uniCat.setBesucherWhitepaper(uniCat.getBesucherWhitepaper() + (isUnique ? 1 : 0));
+                }
+                case "events" -> {
+                    uniCat.setViewsEvents(uniCat.getViewsEvents() + 1);
+                    uniCat.setBesucherEvents(uniCat.getBesucherEvents() + (isUnique ? 1 : 0));
+                }
+                case "ratgeber" -> {
+                    uniCat.setViewsRatgeber(uniCat.getViewsRatgeber() + 1);
+                    uniCat.setBesucherRatgeber(uniCat.getBesucherRatgeber() + (isUnique ? 1 : 0));
+                }
+                case "ratgeberPost" -> {
+                    uniCat.setViewsRatgeberPost(uniCat.getViewsRatgeberPost() + 1);
+                    uniCat.setBesucherRatgeberPost(uniCat.getBesucherRatgeberPost() + (isUnique ? 1 : 0));
+                }
+                case "ratgeberGlossar" -> {
+                    uniCat.setViewsRatgeberGlossar(uniCat.getViewsRatgeberGlossar() + 1);
+                    uniCat.setBesucherRatgeberGlossar(uniCat.getBesucherRatgeberGlossar() + (isUnique ? 1 : 0));
+                }
+                case "ratgeberBuch" -> {
+                    uniCat.setViewsRatgeberBuch(uniCat.getViewsRatgeberBuch() + 1);
+                    uniCat.setBesucherRatgeberBuch(uniCat.getBesucherRatgeberBuch() + (isUnique ? 1 : 0));
+                }
+                case "ratgeberSelf" -> {
+                    uniCat.setViewsRatgeberSelf(uniCat.getViewsRatgeberSelf() + 1);
+                    uniCat.setBesucherRatgeberSelf(uniCat.getBesucherRatgeberSelf() + (isUnique ? 1 : 0));
+                }
+                case "main" -> {
+                    uniCat.setViewsMain(uniCat.getViewsMain() + 1);
+                    uniCat.setBesucherMain(uniCat.getBesucherMain() + (isUnique ? 1 : 0));
+                }
+                case "anbieter" -> {
+                    uniCat.setViewsAnbieter(uniCat.getViewsAnbieter() + 1);
+                    uniCat.setBesucherAnbieter(uniCat.getBesucherAnbieter() + (isUnique ? 1 : 0));
+                }
+                case "ueber" -> {
+                    uniCat.setViewsUeber(uniCat.getViewsUeber() + 1);
+                    uniCat.setBesucherUeber(uniCat.getBesucherUeber() + (isUnique ? 1 : 0));
+                }
+                case "impressum" -> {
+                    uniCat.setViewsImpressum(uniCat.getViewsImpressum() + 1);
+                    uniCat.setBesucherImpressum(uniCat.getBesucherImpressum() + (isUnique ? 1 : 0));
+                }
+                case "preis" -> {
+                    uniCat.setViewsPreisliste(uniCat.getViewsPreisliste() + 1);
+                    uniCat.setBesucherPreisliste(uniCat.getBesucherPreisliste() + (isUnique ? 1 : 0));
+                }
+                case "partner" -> {
+                    uniCat.setViewsPartner(uniCat.getViewsPartner() + 1);
+                    uniCat.setBesucherPartner(uniCat.getBesucherPartner() + (isUnique ? 1 : 0));
+                }
+                case "datenschutz" -> {
+                    uniCat.setViewsDatenschutz(uniCat.getViewsDatenschutz() + 1);
+                    uniCat.setBesucherDatenschutz(uniCat.getBesucherDatenschutz() + (isUnique ? 1 : 0));
+                }
+                case "newsletter" -> {
+                    uniCat.setViewsNewsletter(uniCat.getViewsNewsletter() + 1);
+                    uniCat.setBesucherNewsletter(uniCat.getBesucherNewsletter() + (isUnique ? 1 : 0));
+                }
+                case "image" -> {
+                    uniCat.setViewsImage(uniCat.getViewsImage() + 1);
+                    uniCat.setBesucherImage(uniCat.getBesucherImage() + (isUnique ? 1 : 0));
+                }
+                case "agb" -> {
+                    uniCat.setViewsAGBS(uniCat.getViewsAGBS() + 1);
+                    uniCat.setBesucherAGBS(uniCat.getBesucherAGBS() + (isUnique ? 1 : 0));
+                }
+
+            }
+        }
+        else {
+            uniCat = new UniversalCategoriesDLC();
+            uniCat.setUniStatId(uniRepo.getLatestUniStat().getId());
+            uniCat.setStunde(curHour);
+        }
+
+        UniversalStatsHourly uniHourly;
+        if(uniHourlyRepo.getByStundeAndUniStatId(curHour, uni.getId()) != null) {
+            uniHourly = uniHourlyRepo.getByStundeAndUniStatId(curHour, uni.getId());
+            uniHourly.setSensibleClicks(uni.getSensibleClicks() + 1);
+            uniHourly.setBesucherAnzahl(uni.getBesucherAnzahl() + (isUnique ? 1 : 0));
+            uniHourly.setTotalClicks(uni.getTotalClicks() + 1);
+        }
+        else {
+            uniHourly = new UniversalStatsHourly();
+            setAccountTypeAllUniStats(uniHourly);
+            setNewsArticelBlogCountForUniversalStats(uniHourly);
+
+            uniHourly.setStunde(curHour);
+            uniHourly.setUniStatId(uni.getId());
+        }
+
+
+    }
+
+
 
     /**
      * Checks whether any rows have been missed since the last uni-stats update, if so, it adds them.

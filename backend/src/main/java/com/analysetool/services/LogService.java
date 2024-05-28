@@ -2174,7 +2174,9 @@ public class LogService {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        LocalDate currentDate = curDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate currentDate = Instant.ofEpochMilli(curDate.getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
         LocalDate oldDate = uniRepo.getLatestUniStat().getDatum().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
         for(LocalDate date : oldDate.plusDays(1).datesUntil(currentDate).toList()) {

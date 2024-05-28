@@ -2085,9 +2085,9 @@ public class LogService {
         UniversalStatsHourly uniHourly;
         if(uniHourlyRepo.getByStundeAndUniStatId(curHour, uni.getId()) != null) {
             uniHourly = uniHourlyRepo.getByStundeAndUniStatId(curHour, uni.getId());
-            uniHourly.setSensibleClicks(uni.getSensibleClicks() + 1);
-            uniHourly.setBesucherAnzahl(uni.getBesucherAnzahl() + (isUnique ? 1 : 0));
-            uniHourly.setTotalClicks(uni.getTotalClicks() + 1);
+            uniHourly.setSensibleClicks(uniHourly.getSensibleClicks() + 1);
+            uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (isUnique ? 1 : 0));
+            uniHourly.setTotalClicks(uniHourly.getTotalClicks() + 1);
 
             setAccountTypeAllUniStats(uniHourly);
             setNewsArticelBlogCountForUniversalStats(uniHourly);

@@ -2080,6 +2080,7 @@ public class LogService {
             uniCat.setUniStatId(uniRepo.getLatestUniStat().getId());
             uniCat.setStunde(curHour);
         }
+        universalCategoriesDLCRepo.save(uniCat);
 
         UniversalStatsHourly uniHourly;
         if(uniHourlyRepo.getByStundeAndUniStatId(curHour, uni.getId()) != null) {
@@ -2096,6 +2097,7 @@ public class LogService {
             uniHourly.setStunde(curHour);
             uniHourly.setUniStatId(uni.getId());
         }
+        uniHourlyRepo.save(uniHourly);
 
 
     }

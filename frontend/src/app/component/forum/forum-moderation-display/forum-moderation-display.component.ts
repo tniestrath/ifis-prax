@@ -1,4 +1,4 @@
-import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
+import {Component, OnInit, Pipe, PipeTransform, ViewChild} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {ForumPost} from "../forum-moderation-list/ForumPost";
 import {DashColors} from "../../../util/Util";
@@ -21,6 +21,7 @@ export class SafeHtmlPipe implements PipeTransform {
 })
 export class ForumModerationDisplayComponent extends DashBaseComponent implements OnInit{
   data : ForumPost = new ForumPost();
+  isEdited : boolean = false;
   ngOnInit(): void {
     var style = "width: 15%; display: inline-flex; align-items: center; justify-content: center; border-radius: 5px; background-color: ";
     this.setToolTip(
@@ -36,6 +37,15 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
   onAcceptClick = () : void => {};
   onStackClick = () : void => {};
 
+  onEdited($event : any) {
+    if($event.target.checked){
+      this.isEdited = true;
+      $event.target.disabled = true;
+      // @ts-ignore
+      this.getEditorField().contentEditable = "true";
+    }
+  }
+
   protected readonly DashColors = DashColors;
 
   getRatingColor(preRating: string, category: string) {
@@ -43,4 +53,17 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
         return DashColors.RED;
     } else return "#808080";
   }
+
+  public getEditorField(){
+    return document.getElementById("editorField");
+  }
+  public resetEditButton(){
+    (document.getElementById("edit-body") as HTMLInputElement).disabled = false;
+    (document.getElementById("edit-body") as HTMLInputElement).checked = false;
+    this.isEdited = false;
+    // @ts-ignore
+    this.getEditorField().contentEditable = "false";
+  }
+
+
 }

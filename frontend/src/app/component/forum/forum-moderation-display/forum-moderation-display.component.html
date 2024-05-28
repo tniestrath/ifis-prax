@@ -34,8 +34,9 @@
     </div>
     <div [style.border-color]="getRatingColor(data.preRatingSwearing,'Body')" class="post-detail">
       <div [style.color]="getRatingColor(data.preRatingSwearing,'Body')" class="post-label">Inhalt</div>
+      <input type="checkbox" title="bearbeiten" name="editBody" id="edit-body" (change)="onEdited($event)">
       <div class="post-body-wrapper">
-        <div class="post-body" [innerHTML]="data.body | unsafeHtml"></div>
+        <div id="editorField" contenteditable="false" class="post-body" [innerHTML]="data.body | unsafeHtml"></div>
       </div>
     </div>
   </div>

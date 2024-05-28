@@ -19,7 +19,9 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
   loginErrorMsg : string = "";
 
   ngOnInit(): void {
-    this.setToolTip("Sie können sich hier mit den Login-Daten Ihres Marktplatz-Kontos anmelden.");
+    this.setToolTip("Sie können sich hier mit den Login-Daten Ihres Marktplatz-Kontos anmelden." +
+      "<br><br>" +
+      "Sollte der Server gerage ein Update durchführen oder aus anderen Gründen nicht erreichbar sein, werden sie, sobald möglich automatisch eingeloggt");
   }
 
   onSubmit(username: string, userpass: string) {

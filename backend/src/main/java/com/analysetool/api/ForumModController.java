@@ -1,6 +1,7 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.Badwords;
+import com.analysetool.modells.ForumModLog;
 import com.analysetool.modells.WPWPForoPosts;
 import com.analysetool.repositories.*;
 import com.analysetool.services.ForumService;
@@ -29,6 +30,8 @@ public class ForumModController {
     private BadWordRepository badWordRepo;
     @Autowired
     private ForumService forumService;
+    @Autowired
+    private ForumModLogRepository forumModLogRepo;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
@@ -276,7 +279,7 @@ public class ForumModController {
     }
 
     @PostMapping("/updatePost")
-    public boolean updatePost(@RequestBody String hson, boolean accepted) throws JSONException {
+    public boolean updatePost(@RequestBody String hson, boolean accepted, int userId) throws JSONException {
         JSONObject json = new JSONObject(hson);
         try {
             if(wpForoPostRepo.findById((long) json.getInt("id")).isPresent()) {
@@ -289,8 +292,12 @@ public class ForumModController {
                 post.setName(json.getString("userName"));
                 post.setStatus(accepted ? 0 : 1);
 
-
                 wpForoPostRepo.save(post);
+
+                ForumModLog log = new ForumModLog();
+                log.setPostId(json.getInt("id"));
+                log.setUserId(userId);
+                forumModLogRepo.save(log);
 
                 return true;
             } else {

@@ -23,15 +23,18 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
   }
 
   onSubmit(username: string, userpass: string) {
+    (document.getElementById("login-submit") as HTMLButtonElement).disabled = true;
     // @ts-ignore
     this.api.loginWithBody(username, userpass).then(res => {
       res.text().then(ans => {
         ans = decodeURIComponent(ans);
         this.cs.deleteAll();
         this.styleLogin(Reason.CORRECT);
+        (document.getElementById("login-submit") as HTMLButtonElement).disabled = false;
         //CHECK LOGIN
         if (ans.includes("LOGIN REJECTED")){
           this.styleLogin(Reason.INCORRECT);
+          (document.getElementById("login-submit") as HTMLButtonElement).disabled = false;
           return;
         }
         this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));
@@ -55,9 +58,11 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
                 ans = decodeURIComponent(ans);
                 this.cs.deleteAll();
                 this.styleLogin(Reason.CORRECT);
+                (document.getElementById("login-submit") as HTMLButtonElement).disabled = false;
                 //CHECK LOGIN
                 if (ans.includes("LOGIN REJECTED")){
                   this.styleLogin(Reason.INCORRECT);
+                  (document.getElementById("login-submit") as HTMLButtonElement).disabled = false;
                   return;
                 }
                 this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));

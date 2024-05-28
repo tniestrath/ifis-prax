@@ -2088,6 +2088,9 @@ public class LogService {
             uniHourly.setSensibleClicks(uni.getSensibleClicks() + 1);
             uniHourly.setBesucherAnzahl(uni.getBesucherAnzahl() + (isUnique ? 1 : 0));
             uniHourly.setTotalClicks(uni.getTotalClicks() + 1);
+
+            setAccountTypeAllUniStats(uniHourly);
+            setNewsArticelBlogCountForUniversalStats(uniHourly);
         }
         else {
             uniHourly = new UniversalStatsHourly();

@@ -279,7 +279,7 @@ public class ForumModController {
                 post.setBody(json.getString("body"));
                 post.setTitle(json.getString("title"));
                 post.setName(json.getString("userName"));
-                post.setStatus(accepted ? 1 : 0);
+                post.setStatus(accepted ? 0 : 1);
 
 
                 wpForoPostRepo.save(post);

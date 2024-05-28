@@ -31,6 +31,7 @@ export class SysVars {
   public static ADMIN : boolean = false;
   public static WELCOME : boolean = true;
   public static login : EventEmitter<User> = new EventEmitter<User>();
+  public static ACCOUNT : User;
   public static CURRENT_PAGE : string = "landing";
 
   public static SELECTED_PAGE : EventEmitter<string> = new EventEmitter<string>();

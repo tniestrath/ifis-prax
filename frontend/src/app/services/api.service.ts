@@ -16,6 +16,7 @@ import {
 import {Newsletter} from "../component/newsletter/Newsletter";
 import {BadBot} from "../component/system/black-hole-list/bad-bot-item/bad-bot-item.component";
 import {ForumPost} from "../component/forum/forum-moderation-list/ForumPost";
+import {SysVars} from "./sys-vars-service";
 
 /**
  * @enum apiUrl
@@ -142,7 +143,7 @@ export enum apiUrl {
   GET_FORUM_BAD_WORDS = "/forum/getAllBadWords",
   FORUM_DELETE_POST = "/forum/deleteById?id=ID",
   FORUM_ACCEPT_POST = "/forum/setStatusById?id=ID&status=0",
-  FORUM_MODIFY_POST = "/forum/updatePost?accepted=ACCEPTED",
+  FORUM_MODIFY_POST = "/forum/updatePost?accepted=ACCEPTED&userId=USERID",
   FORUM_ADD_BAD_WORD = "/forum/addBadWord?word=WORD",
 
 
@@ -804,7 +805,7 @@ export class ApiService {
   }
   async modifyForumPost(post : ForumPost, accepted : boolean) : Promise<boolean> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.FORUM_MODIFY_POST).replace("ACCEPTED", String(accepted))) ,
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_MODIFY_POST).replace("ACCEPTED", String(accepted)).replace("USERID", SysVars.ACCOUNT.id)),
       {credentials: "include", method: "post",
         headers: {"content-type": "application/json", "accept": "application/json"}, body: JSON.stringify(post)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }

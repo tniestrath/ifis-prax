@@ -19,17 +19,17 @@ export class HeaderComponent implements AfterViewInit{
   loadingBar_process : any = null;
   html_err_code : string = "";
 
-  constructor(private cs : CookieService, private db : ApiService) {
+  constructor(private cs : CookieService, private api : ApiService) {
     this.navElements = [];
     // COOKIE VALIDATION //
-    this.db.validate().then(res  => {
+    this.api.validate().then(res  => {
       if (res.toString().includes("Invalid") || res == null || res.user_id == undefined) {
         SysVars.USER_ID = "0";
         return;
       }
-      this.db.getUserById(String(res.user_id)).then(res => {
+      this.api.getUserById(String(res.user_id)).then(res => {
         SysVars.login.next(res);
-        SysVars.USER_ID = "0";
+        SysVars.ACCOUNT = res;
         SysVars.ADMIN = true;
         this.stopAndHideLoadingBar();
       })
@@ -39,14 +39,25 @@ export class HeaderComponent implements AfterViewInit{
       this.navElements = this.navElementsBackup;
       cs.set("user", user.id + ":" + user.displayName);
       this.selected.next("Übersicht");
-      SysVars.USER_ID = "0";
+      SysVars.ACCOUNT = user;
       this.stopAndHideLoadingBar();
-    })
+
+      var ping = setInterval(() => {
+        this.api.ping().then(res => {
+          if (!res){
+            clearInterval(ping);
+            this.onLogoutClick();
+          }
+        }).catch(reason => {
+          clearInterval(ping);
+          this.onLogoutClick();
+        })}, 1000 * 30);
+      });
   }
 
   ngOnInit(): void {
     this.showAndStartLoadingBar();
-    this.db.status.subscribe(status => {
+    this.api.status.subscribe(status => {
       if (status == 0) this.stopAndHideLoadingBar();
       else if (status == 1) this.showAndStartLoadingBar();
       else {this.setLoadingBarErrorCode(status); this.showAndStartLoadingBar()}

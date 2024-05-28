@@ -145,7 +145,6 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
   private modify() : ForumPost {
     let update = this.display.data;
     let fields = this.display.isEditedWhere();
-    console.log(this.display.isEditedWhere());
     for (const field of fields) {
       if (field == "body"){
         let editorField = this.display.getEditorField();

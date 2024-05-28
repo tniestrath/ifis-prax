@@ -46,6 +46,34 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
       });
     }).catch(reason => {
       this.styleLogin(Reason.ERR_502);
+      var ping = setInterval(() => {
+        this.api.ping().then(res => {
+          if (res){
+            clearInterval(ping);
+            this.api.loginWithBody(username, userpass).then(res => {
+              res.text().then(ans => {
+                ans = decodeURIComponent(ans);
+                this.cs.deleteAll();
+                this.styleLogin(Reason.CORRECT);
+                //CHECK LOGIN
+                if (ans.includes("LOGIN REJECTED")){
+                  this.styleLogin(Reason.INCORRECT);
+                  return;
+                }
+                this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));
+                this.api.getUserByLogin(ans.substring(ans.indexOf("=") + 1, ans.indexOf("|"))).then(res => {
+                  SysVars.login.next(res);
+                  //SysVars.ADMIN = res.accountType == "admin";
+                  SysVars.ADMIN = true;
+
+                  this.cdr.detectChanges();
+                });
+                this.cdr.detectChanges();
+              });
+            });
+          }
+        })
+      }, 1000 * 30);
       return;
     });
   }

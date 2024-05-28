@@ -274,4 +274,9 @@ public class LoginController {
         }
         return responseBody;
     }
+
+    @GetMapping("/ping")
+    public boolean ping() {
+        return true;
+    }
 }

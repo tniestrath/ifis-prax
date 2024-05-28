@@ -155,6 +155,7 @@ export enum apiUrl {
   LOGIN_WITH_BODY = "/login2",
   VALIDATE = "/validate",
   MANUAL_VALIDATE = "/validateCookie?value=VALUE",
+  PING = "/ping"
 }
 
 @Injectable({
@@ -254,6 +255,10 @@ export class ApiService {
   async manualValidate(value : string) : Promise<number>{
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.MANUAL_VALIDATE).replace("VALUE", value), {credentials: "include", signal: ApiService.setupController(apiUrl.MANUAL_VALIDATE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async ping() : Promise<boolean> {
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.PING), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getAllTagsWithStats() : Promise<TagRanking[]>{

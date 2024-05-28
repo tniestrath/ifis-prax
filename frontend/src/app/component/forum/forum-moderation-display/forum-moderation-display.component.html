@@ -14,11 +14,13 @@
     <div class="post-detail-group-4">
       <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'User')" class="post-detail">
         <div [style.color]="getRatingColor(data.preRatingSwearing,'User')" class="post-label">Name</div>
-        <p [innerHTML]="data.userName | unsafeHtml"></p>
+        <input type="checkbox" title="bearbeiten" name="editName" class="edit-field" id="edit-name" (change)="onEdited($event, 'name')">
+        <p contenteditable="false" id="editorName" [innerHTML]="data.userName | unsafeHtml"></p>
       </div>
       <div [style.border-color]="getRatingColor(data.preRatingEmail,'Email')" class="post-detail">
         <div [style.color]="getRatingColor(data.preRatingEmail,'Email')" class="post-label">E-Mail</div>
-        <p [innerHTML]="data.email | unsafeHtml"></p>
+        <input type="checkbox" title="bearbeiten" name="editEmail" class="edit-field" id="edit-email" (change)="onEdited($event, 'email')">
+        <p contenteditable="false" id="editorEmail" [innerHTML]="data.email | unsafeHtml"></p>
       </div>
       <div class="post-detail">
         <div class="post-label">Datum</div>
@@ -34,7 +36,7 @@
     </div>
     <div [style.border-color]="getRatingColor(data.preRatingSwearing,'Body')" class="post-detail">
       <div [style.color]="getRatingColor(data.preRatingSwearing,'Body')" class="post-label">Inhalt</div>
-      <input type="checkbox" title="bearbeiten" name="editBody" id="edit-body" (change)="onEdited($event)">
+      <input type="checkbox" title="bearbeiten" class="edit-field" name="editBody" id="edit-body" (change)="onEdited($event, 'body')">
       <div class="post-body-wrapper">
         <div id="editorField" contenteditable="false" class="post-body" [innerHTML]="data.body | unsafeHtml"></div>
       </div>

@@ -143,23 +143,37 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
   }
 
   private modify() : ForumPost {
-    let editorField = this.display.getEditorField();
-    let editedIndex = editorField?.innerHTML.lastIndexOf("</div>");
-    let rawIndex = this.display.data.rawBody.lastIndexOf("[/quote]");
-    let editedBody;
-    if (editorField && editedIndex) {
-      if (editedIndex > 0) {
-        editedBody = editorField.innerHTML.slice(editedIndex);
-      } else {
-        editedBody = editorField.innerHTML;
+    let update = this.display.data;
+    let fields = this.display.isEditedWhere();
+    console.log(this.display.isEditedWhere());
+    for (const field of fields) {
+      if (field == "body"){
+        let editorField = this.display.getEditorField();
+        let editedIndex = editorField?.innerHTML.lastIndexOf("</div>");
+        let rawIndex = this.display.data.rawBody.lastIndexOf("[/quote]");
+        let editedBody;
+        if (editorField && editedIndex) {
+          if (editedIndex > 0) {
+            editedBody = editorField.innerHTML.slice(editedIndex);
+          } else {
+            editedBody = editorField.innerHTML;
+          }
+          if (rawIndex && rawIndex > 0 && editedIndex > 0) {
+            editedBody = this.display.data.rawBody?.slice(0, rawIndex) + editedBody;
+          }
+        }
+        // @ts-ignore
+        update.body = editedBody;
       }
-      if (rawIndex && rawIndex > 0 && editedIndex > 0) {
-        editedBody = this.display.data.rawBody?.slice(0, rawIndex) + editedBody;
+      if (field == "email"){
+        // @ts-ignore
+        update.email = this.display.getEmailField().innerHTML;
+      }
+      if (field == "name"){
+        // @ts-ignore
+        update.userName = this.display.getNameField().innerHTML;
       }
     }
-    let update = this.display.data;
-    // @ts-ignore
-    update.body = editedBody;
     return update;
   }
 

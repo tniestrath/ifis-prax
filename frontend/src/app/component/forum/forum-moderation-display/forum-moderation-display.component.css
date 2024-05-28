@@ -64,11 +64,12 @@
   margin-bottom: 10px;
   width: 100%;
   height: inherit;
-}
-#edit-body{
   position: relative;
-  top: -.75vh;
-  left: 96%;
+}
+.edit-field{
+  position: absolute;
+  top: 5px;
+  right: 5px;
   width: fit-content;
   z-index: 1;
 }

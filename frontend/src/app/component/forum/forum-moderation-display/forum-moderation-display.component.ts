@@ -37,13 +37,39 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
   onAcceptClick = () : void => {};
   onStackClick = () : void => {};
 
-  onEdited($event : any) {
+  onEdited($event : any, field : string) {
     if($event.target.checked){
       this.isEdited = true;
       $event.target.disabled = true;
-      // @ts-ignore
-      this.getEditorField().contentEditable = "true";
+      switch (field){
+        case "name":
+          // @ts-ignore
+          document.getElementById("editorName").contentEditable = "true";
+          break;
+        case "email":
+          // @ts-ignore
+          document.getElementById("editorEmail").contentEditable = "true";
+          break;
+        case "body":
+          // @ts-ignore
+          document.getElementById("editorField").contentEditable = "true";
+          break;
+      }
     }
+  }
+
+  public isEditedWhere(){
+    let ans : string[] = [];
+    if ((document.getElementById("edit-body") as HTMLInputElement).checked){
+      ans.push("body");
+    }
+    if ((document.getElementById("edit-email") as HTMLInputElement).checked){
+      ans.push("email");
+    }
+    if ((document.getElementById("edit-name") as HTMLInputElement).checked){
+      ans.push("name");
+    }
+    return ans;
   }
 
   protected readonly DashColors = DashColors;
@@ -57,12 +83,28 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
   public getEditorField(){
     return document.getElementById("editorField");
   }
+
+  public getEmailField(){
+    return document.getElementById("editorEmail");
+  }
+
+  public getNameField(){
+    return document.getElementById("editorName");
+  }
   public resetEditButton(){
     (document.getElementById("edit-body") as HTMLInputElement).disabled = false;
     (document.getElementById("edit-body") as HTMLInputElement).checked = false;
+    (document.getElementById("edit-email") as HTMLInputElement).disabled = false;
+    (document.getElementById("edit-email") as HTMLInputElement).checked = false;
+    (document.getElementById("edit-name") as HTMLInputElement).disabled = false;
+    (document.getElementById("edit-name") as HTMLInputElement).checked = false;
     this.isEdited = false;
     // @ts-ignore
-    this.getEditorField().contentEditable = "false";
+    document.getElementById("editorField").contentEditable = "false";
+    // @ts-ignore
+    document.getElementById("editorEmail").contentEditable = "false";
+    // @ts-ignore
+    document.getElementById("editorName").contentEditable = "false";
   }
 
 

@@ -2080,6 +2080,7 @@ public class LogService {
             uniCat.setUniStatId(uniRepo.getLatestUniStat().getId());
             uniCat.setStunde(curHour);
         }
+        universalCategoriesDLCRepo.save(uniCat);
 
         UniversalStatsHourly uniHourly;
         if(uniHourlyRepo.getByStundeAndUniStatId(curHour, uni.getId()) != null) {
@@ -2087,6 +2088,10 @@ public class LogService {
             uniHourly.setSensibleClicks(uni.getSensibleClicks() + 1);
             uniHourly.setBesucherAnzahl(uni.getBesucherAnzahl() + (isUnique ? 1 : 0));
             uniHourly.setTotalClicks(uni.getTotalClicks() + 1);
+
+            setAccountTypeAllUniStats(uniHourly);
+            setNewsArticelBlogCountForUniversalStats(uniHourly);
+
         }
         else {
             uniHourly = new UniversalStatsHourly();
@@ -2095,7 +2100,9 @@ public class LogService {
 
             uniHourly.setStunde(curHour);
             uniHourly.setUniStatId(uni.getId());
+            uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
         }
+        uniHourlyRepo.save(uniHourly);
 
 
     }

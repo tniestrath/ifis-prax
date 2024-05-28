@@ -2091,6 +2091,7 @@ public class LogService {
 
             setAccountTypeAllUniStats(uniHourly);
             setNewsArticelBlogCountForUniversalStats(uniHourly);
+
         }
         else {
             uniHourly = new UniversalStatsHourly();
@@ -2099,6 +2100,7 @@ public class LogService {
 
             uniHourly.setStunde(curHour);
             uniHourly.setUniStatId(uni.getId());
+            uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
         }
         uniHourlyRepo.save(uniHourly);
 

@@ -41,3 +41,13 @@ form > input{
   box-sizing: border-box;
   color: #7a1833;
 }
+#login-submit:disabled,
+#login-submit[disabled]{
+  border: 1px solid #ffffff00;
+  box-sizing: border-box;
+  border-radius: 5px;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: white;
+  background-color: #808080;
+}

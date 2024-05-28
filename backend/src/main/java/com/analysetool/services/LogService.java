@@ -2174,15 +2174,19 @@ public class LogService {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        LocalDate currentDate = curDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate currentDate = Instant.ofEpochMilli(curDate.getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
         LocalDate oldDate = uniRepo.getLatestUniStat().getDatum().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-        for(LocalDate date : oldDate.plusDays(1).datesUntil(currentDate).toList()) {
-            String dateStirng = date.getYear() + "-" + (date.getMonthValue() > 10 ? date.getMonthValue() : "0" + date.getMonthValue()) + "-" + (date.getDayOfMonth() > 10 ? date.getDayOfMonth() : "0" + date.getDayOfMonth());
-            Date fixerDate = sdf.parse(dateStirng);
+        if(oldDate.plusDays(1).isBefore(currentDate)) {
+            for (LocalDate date : oldDate.plusDays(1).datesUntil(currentDate).toList()) {
+                String dateStirng = date.getYear() + "-" + (date.getMonthValue() > 10 ? date.getMonthValue() : "0" + date.getMonthValue()) + "-" + (date.getDayOfMonth() > 10 ? date.getDayOfMonth() : "0" + date.getDayOfMonth());
+                Date fixerDate = sdf.parse(dateStirng);
 
-            uniRepo.save(new UniversalStats(fixerDate));
+                uniRepo.save(new UniversalStats(fixerDate));
 
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package com.analysetool.services;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class ForumService {
@@ -141,18 +144,44 @@ public class ForumService {
         List<Object[]> results = searchRepo.findRankedSearchTerms(pageable);
 
         JSONArray jsonArray = new JSONArray();
-        for (Object[] result : results) {
-            String suchbegriff = (String) result[0];
-            Long count = (Long) result[1];
+        if (results != null && !results.isEmpty()) {
+            for (Object[] result : results) {
+                String suchbegriff = (String) result[0];
+                Long count = (Long) result[1];
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("suchbegriff", suchbegriff);
-            jsonObject.put("count", count);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("suchbegriff", suchbegriff);
+                jsonObject.put("count", count);
 
-            jsonArray.put(jsonObject);
+                jsonArray.put(jsonObject);
+            }
         }
 
         return jsonArray.toString();
+    }
+
+    public String getRankedSearchTop15(){
+        List<ForumSearch> allsearches = searchRepo.findAll();
+        Map<String,Long> termCount = new ConcurrentHashMap<>();
+        for(ForumSearch f:allsearches){
+           Long count = termCount.getOrDefault(f.getSuchbegriff(),0L);
+           count++;
+           termCount.put(f.getSuchbegriff(),count);
+        }
+        // Sort the terms by count in descending order and limit to top 15
+        List<Map.Entry<String, Long>> top15Terms = termCount.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(15)
+                .collect(Collectors.toList());
+
+        // Convert to JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(top15Terms);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{}"; // return an empty JSON object in case of an error
+        }
     }
 
 }

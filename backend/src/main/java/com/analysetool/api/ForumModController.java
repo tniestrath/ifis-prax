@@ -224,7 +224,7 @@ public class ForumModController {
      * @throws JSONException if a JSON error occurs
      */
     @GetMapping("/rankedDiscussions")
-    public String getRankedDiscussions(@RequestParam int page, @RequestParam int size) throws JSONException {
+    public String getRankedDiscussions(@RequestParam int page, @RequestParam int size)  {
         try{
         return forumService.getRankedDiscussion(page, size);}catch(Exception e){
             e.printStackTrace();
@@ -241,7 +241,7 @@ public class ForumModController {
      * @throws JSONException if a JSON error occurs
      */
     @GetMapping("/rankedTopics")
-    public String getRankedTopics(@RequestParam int page, @RequestParam int size) throws JSONException {
+    public String getRankedTopics(@RequestParam int page, @RequestParam int size) {
         try{
         return forumService.getRankedTopic(page, size);}catch(Exception e){
             e.printStackTrace();
@@ -258,7 +258,7 @@ public class ForumModController {
      * @throws JSONException if a JSON error occurs
      */
     @GetMapping("/rankedSearchTerms")
-    public String getRankedSearchTerms(@RequestParam int page, @RequestParam int size) throws JSONException {
+    public String getRankedSearchTerms(@RequestParam int page, @RequestParam int size)  {
         try{
         return forumService.getRankedSearchTerms(page, size);}catch(Exception e){
             e.printStackTrace();
@@ -266,6 +266,14 @@ public class ForumModController {
         }
     }
 
+    @GetMapping("/rankedSearchTermsTop15")
+    public String getRankedSearchTermsTop15() throws JSONException {
+        try{
+            return forumService.getRankedSearchTop15();}catch(Exception e){
+            e.printStackTrace();
+            return "a bug a day keeps happiness away";
+        }
+    }
 
     @PostMapping("/updatePost")
     public boolean updatePost(@RequestBody String hson, boolean accepted) throws JSONException {
@@ -279,7 +287,7 @@ public class ForumModController {
                 post.setBody(json.getString("body"));
                 post.setTitle(json.getString("title"));
                 post.setName(json.getString("userName"));
-                post.setStatus(accepted ? 1 : 0);
+                post.setStatus(accepted ? 0 : 1);
 
 
                 wpForoPostRepo.save(post);

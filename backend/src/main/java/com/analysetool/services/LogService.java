@@ -2098,6 +2098,11 @@ public class LogService {
             setAccountTypeAllUniStats(uniHourly);
             setNewsArticelBlogCountForUniversalStats(uniHourly);
 
+            uniHourly.setBesucherAnzahl(0L);
+            uniHourly.setInternalClicks(0);
+            uniHourly.setTotalClicks(0L);
+            uniHourly.setSensibleClicks(0L);
+
             uniHourly.setStunde(curHour);
             uniHourly.setUniStatId(uni.getId());
             uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());

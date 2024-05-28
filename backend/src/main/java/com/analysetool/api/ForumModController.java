@@ -11,6 +11,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 @RestController
@@ -297,6 +300,7 @@ public class ForumModController {
                 ForumModLog log = new ForumModLog();
                 log.setPostId(json.getInt("id"));
                 log.setUserId(userId);
+                log.setTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.of("Europe/Paris")).toInstant()));
                 forumModLogRepo.save(log);
 
                 return true;

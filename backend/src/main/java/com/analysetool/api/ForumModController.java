@@ -372,4 +372,15 @@ public class ForumModController {
         return link;
     }
 
+    @GetMapping("/getLinks")
+    public String getLinksAll(long id) {
+        JSONArray array = new JSONArray();
+
+        array.put(getLinkToForum(id));
+        array.put(getLinkToTopic(id));
+        array.put(getLinkToPost(id));
+
+        return array.toString();
+    }
+
 }

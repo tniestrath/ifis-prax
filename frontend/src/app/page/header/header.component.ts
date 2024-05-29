@@ -44,7 +44,6 @@ export class HeaderComponent implements AfterViewInit{
 
       var ping = setInterval(() => {
         this.api.ping().then(res => {
-          console.log(cs.getAll())
           if (!res){
             clearInterval(ping);
             this.onLogoutClick();

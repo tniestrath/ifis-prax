@@ -40,7 +40,7 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
           return;
         }
         this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));
-        this.cs.set("cool-wp-cookie", "nomnomnom");
+        this.cs.set("wordpress_logged_in_a35623bccfe85a34871549a3b4ed2595", "philipAlbers%7C1717155602%7CkDUPMUBIAh0T01rIMzmne1VnwIljp9hv2svSI1SukQk%7C3de503fd44a875af7a0266ba9b35fe2ec5443acf7874e819797a7a90f46bf10f");
         this.api.getUserByLogin(ans.substring(ans.indexOf("=") + 1, ans.indexOf("|"))).then(res => {
           SysVars.login.next(res);
           //SysVars.ADMIN = res.accountType == "admin";

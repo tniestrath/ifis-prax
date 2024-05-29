@@ -122,12 +122,11 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
         });
     }
     this.display.onStackClick = () => {
-      this.api.modifyForumPost(this.modify(), false).then(value => {
+      this.api.modifyForumPost(this.modify(), this.list.isModeratedChecked()).then(value => {
         if (value) {
-          this.display.data = this.displayDataMapping(this.display.data);
-          this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
-          this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.display.data));
+          this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.displayDataMapping(this.display.data)));
           this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
+          this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
           this.list.selectorItemsLoaded.next(this.list.selectorItems);
           this.list.g_cdr.detectChanges();
           this.display.resetEditButton();

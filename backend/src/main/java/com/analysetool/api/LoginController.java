@@ -232,14 +232,15 @@ public class LoginController {
             strEntity.setContentType("application/json");
             httpPost.setEntity(strEntity);
 
+            System.out.println("Pre res2");
             HttpResponse response2 = httpClient.execute(httpPost);
+            System.out.println("Post res2");
             HttpEntity entity = response2.getEntity();
+            System.out.println("Post entity out of res2");
 
             responseBody = EntityUtils.toString(entity);
+            System.out.println("body set");
 
-        } catch (NullPointerException e) {
-            //System.out.println("Code above causes an Error on every logout. It shouldn't. " +
-            //        "This is printed instead of the Error, remove Catch and logout to see. LoginController:197");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,8 +1,6 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.Badwords;
-import com.analysetool.modells.ForumModLog;
-import com.analysetool.modells.WPWPForoPosts;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.ForumService;
 import org.json.JSONArray;
@@ -15,6 +13,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -313,4 +312,75 @@ public class ForumModController {
 
 
     }
+
+    @GetMapping("/getLinkToPost")
+    public String getLinkToPost(long postId) {
+        String link = "https://it-sicherheit.de/marktplatz-forum/";
+
+        if(wpForoPostRepo.findById(postId).isPresent()) {
+            WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
+            try {
+                WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
+                WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).orElseThrow();
+                link += forum.getSlug() + "/";
+                link += topic.getSlug() + "/";
+                link += "post/" + post.getPostId();
+            } catch (NoSuchElementException e) {
+                return "kein derartiges Element";
+            }
+        }
+
+        return link;
+    }
+
+    @GetMapping("/getLinkToTopic")
+    public String getLinkToTopic(long postId) {
+        String link = "https://it-sicherheit.de/marktplatz-forum/";
+
+        if(wpForoPostRepo.findById(postId).isPresent()) {
+            WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
+            try {
+                WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
+                WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).orElseThrow();
+                link += forum.getSlug() + "/";
+                link += topic.getSlug() + "/";
+            } catch (NoSuchElementException e) {
+                return "kein derartiges Element";
+            }
+
+
+        }
+
+        return link;
+    }
+
+    @GetMapping("/getLinkToForum")
+    public String getLinkToForum(long postId) {
+        String link = "https://it-sicherheit.de/marktplatz-forum/";
+
+        if(wpForoPostRepo.findById(postId).isPresent()) {
+            WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
+            try {
+                WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
+                WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).orElseThrow();
+                link += forum.getSlug() + "/";
+            } catch (NoSuchElementException e) {
+                return "kein derartiges Element";
+            }
+        }
+
+        return link;
+    }
+
+    @GetMapping("/getLinks")
+    public String getLinksAll(long id) {
+        JSONArray array = new JSONArray();
+
+        array.put(getLinkToForum(id));
+        array.put(getLinkToTopic(id));
+        array.put(getLinkToPost(id));
+
+        return array.toString();
+    }
+
 }

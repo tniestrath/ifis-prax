@@ -23,7 +23,7 @@ export class HeaderComponent implements AfterViewInit{
     this.navElements = [];
     // COOKIE VALIDATION //
     this.api.validate().then(res  => {
-      if (res.toString().includes("Invalid") || res == null || res.user_id == undefined) {
+      if (res.toString().toUpperCase().includes("INVALID") || res == null || res.user_id == undefined) {
         SysVars.USER_ID = "0";
         return;
       }

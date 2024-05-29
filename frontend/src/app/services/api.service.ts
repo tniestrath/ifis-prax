@@ -236,7 +236,7 @@ export class ApiService {
   }
   async loginWithBody(username : string, userpass : string){
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.LOGIN_WITH_BODY), {method: "POST", credentials: "include", body: "{\"username\":\"" + username + "\",\"password\":\""+ userpass +"\"}" , headers: {"Content-Type" : "application/json"}}).then(res => {this.setFinished(res.status, res.url); return res.blob()});
+    return await fetch(ApiService.setupRequest(apiUrl.LOGIN_WITH_BODY), {method: "POST", credentials: "include", body: "{\"username\":\"" + username + "\",\"password\":\""+ userpass +"\"}" , headers: {"Content-Type" : "application/json"}}).then(res => {this.setFinished(res.status, res.url); return res});
   }
   async getUserByLogin(login : string) : Promise<User> {
     this.setLoading();

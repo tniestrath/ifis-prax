@@ -324,7 +324,7 @@ public class ForumModController {
                 WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).orElseThrow();
                 link += forum.getSlug() + "/";
                 link += topic.getSlug() + "/";
-                link += "post/" + post.getPostId();
+                link += "postid/" + post.getPostId();
             } catch (NoSuchElementException e) {
                 return "kein derartiges Element";
             }

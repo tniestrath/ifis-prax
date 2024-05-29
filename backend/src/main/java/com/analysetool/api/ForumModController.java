@@ -1,8 +1,6 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.Badwords;
-import com.analysetool.modells.ForumModLog;
-import com.analysetool.modells.WPWPForoPosts;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.ForumService;
 import org.json.JSONArray;
@@ -313,4 +311,22 @@ public class ForumModController {
 
 
     }
+
+    @GetMapping("/getLinkToPost")
+    public String getLinkToPost(long postId) {
+        String link = "https://it-sicherheit.de/marktplatz-forum/";
+
+        if(wpForoPostRepo.findById(postId).isPresent()) {
+            WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
+            WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
+            WPWPForoForum forum = wpForoForumRepo.findById((long)topic.getForumId()).orElseThrow();
+
+            link += forum.getSlug() + "/";
+            link += topic.getSlug() + "/";
+            link += "/post/" + post.getPostId();
+        }
+
+        return link;
+    }
+
 }

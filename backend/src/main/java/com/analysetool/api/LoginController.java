@@ -185,11 +185,9 @@ public class LoginController {
             //Header[] headers = response.getAllHeaders();
 
             Header[] allSetCookie = response.getHeaders("Set-Cookie");
-            System.out.println(Arrays.toString(allSetCookie));
             for (Header h: allSetCookie) {
                 if (h.getValue().contains("wordpress_logged_in")){
                     responseCookie = h.getValue();
-                    System.out.println(h.getValue());
                 }
             }
             String userData = userController.getUserByLogin(loginForm.username);

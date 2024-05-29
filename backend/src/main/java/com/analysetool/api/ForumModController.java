@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -351,10 +352,13 @@ public class ForumModController {
 
         if(wpForoPostRepo.findById(postId).isPresent()) {
             WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
-            WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
-            WPWPForoForum forum = wpForoForumRepo.findById((long)topic.getForumId()).orElseThrow();
-
-            link += forum.getSlug() + "/";
+            try {
+                WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
+                WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).orElseThrow();
+                link += forum.getSlug() + "/";
+            } catch (NoSuchElementException e) {
+                return "kein derartiges Element";
+            }
         }
 
         return link;

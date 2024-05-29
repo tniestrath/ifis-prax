@@ -28,6 +28,7 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
     (document.getElementById("login-submit") as HTMLButtonElement).disabled = true;
     // @ts-ignore
     this.api.loginWithBody(username, userpass).then(res => {
+      if (res.status >= 400) throw "Error";
       res.text().then(ans => {
         ans = decodeURIComponent(ans);
         this.cs.deleteAll();

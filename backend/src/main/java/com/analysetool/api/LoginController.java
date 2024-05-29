@@ -22,10 +22,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -232,14 +229,10 @@ public class LoginController {
             strEntity.setContentType("application/json");
             httpPost.setEntity(strEntity);
 
-            System.out.println("Pre res2");
             HttpResponse response2 = httpClient.execute(httpPost);
-            System.out.println("Post res2");
             HttpEntity entity = response2.getEntity();
-            System.out.println("Post entity out of res2");
 
             responseBody = EntityUtils.toString(entity);
-            System.out.println("body set");
 
         } catch (Exception e) {
             e.printStackTrace();

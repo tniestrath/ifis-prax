@@ -202,7 +202,7 @@ public class LoginController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         return responseCookie;
@@ -235,7 +235,7 @@ public class LoginController {
             responseBody = EntityUtils.toString(entity);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return responseBody;
     }

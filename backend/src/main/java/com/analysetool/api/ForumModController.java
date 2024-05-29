@@ -329,4 +329,35 @@ public class ForumModController {
         return link;
     }
 
+    @GetMapping("/getLinkToTopic")
+    public String getLinkToTopic(long postId) {
+        String link = "https://it-sicherheit.de/marktplatz-forum/";
+
+        if(wpForoPostRepo.findById(postId).isPresent()) {
+            WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
+            WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
+            WPWPForoForum forum = wpForoForumRepo.findById((long)topic.getForumId()).orElseThrow();
+
+            link += forum.getSlug() + "/";
+            link += topic.getSlug() + "/";
+        }
+
+        return link;
+    }
+
+    @GetMapping("/getLinkToForum")
+    public String getLinkToForum(long postId) {
+        String link = "https://it-sicherheit.de/marktplatz-forum/";
+
+        if(wpForoPostRepo.findById(postId).isPresent()) {
+            WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
+            WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
+            WPWPForoForum forum = wpForoForumRepo.findById((long)topic.getForumId()).orElseThrow();
+
+            link += forum.getSlug() + "/";
+        }
+
+        return link;
+    }
+
 }

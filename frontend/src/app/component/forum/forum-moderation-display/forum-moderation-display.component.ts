@@ -22,6 +22,8 @@ export class SafeHtmlPipe implements PipeTransform {
 export class ForumModerationDisplayComponent extends DashBaseComponent implements OnInit{
   data : ForumPost = new ForumPost();
   isEdited : boolean = false;
+
+  postLinks : string[] = [];
   ngOnInit(): void {
     var style = "width: 15%; display: inline-flex; align-items: center; justify-content: center; border-radius: 5px; background-color: ";
     this.setToolTip(
@@ -91,6 +93,9 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
   public getNameField(){
     return document.getElementById("editorName");
   }
+  public setPostLinks(value: string[]) {
+    this.postLinks = value;
+  }
   public resetEditButton(){
     (document.getElementById("edit-body") as HTMLInputElement).disabled = false;
     (document.getElementById("edit-body") as HTMLInputElement).checked = false;
@@ -106,6 +111,4 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
     // @ts-ignore
     document.getElementById("editorName").contentEditable = "false";
   }
-
-
 }

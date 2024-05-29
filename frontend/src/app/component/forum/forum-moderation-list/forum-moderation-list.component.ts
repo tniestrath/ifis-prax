@@ -16,8 +16,28 @@ export class ForumModerationListComponent extends DashListComponent<ForumPost, F
   public g_cdr = this.cdr;
   override ngOnInit() {
     this.setToolTip("Liste mit unmoderierten Beiträgen", 2);
+
+    let moderatedCheckbox = document.getElementById("moderated-checkbox");
+    let titleText = document.getElementById("forum-post-list-box-title-text");
+
+    // @ts-ignore
+    (moderatedCheckbox as HTMLInputElement).onchange = () => {
+      if ((moderatedCheckbox as HTMLInputElement).checked){
+        // @ts-ignore
+        titleText.innerText = "Moderierte Beiträge";
+      } else {
+        // @ts-ignore
+        titleText.innerText = "Unmoderierte Beiträge";
+      }
+      this.onModeratedCheckboxChange((moderatedCheckbox as HTMLInputElement).checked);
+    }
+  }
+  override onScrollEnd() {
   }
 
-  override onScrollEnd() {
+  onModeratedCheckboxChange = (checked : boolean) : void => {};
+
+  public isModeratedChecked(){
+    return (document.getElementById("moderated-checkbox") as HTMLInputElement).checked;
   }
 }

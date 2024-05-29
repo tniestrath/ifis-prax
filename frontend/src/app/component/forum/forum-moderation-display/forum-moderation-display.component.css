@@ -96,6 +96,17 @@
   color: #808080;
   background-color: #FFFFFF;
 }
+.forum-link{
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: fit-content;
+  z-index: 1;
+}
+.forum-link a{
+  text-decoration: none;
+  filter: invert();
+}
 
 .forum-moderation-display-actions-box{
   display: flex;

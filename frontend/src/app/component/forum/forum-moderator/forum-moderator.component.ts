@@ -67,13 +67,32 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.display.data));
       let index = this.list.selectorItems.findIndex((item: SelectorItem) => {return item.data.id == (post as ForumPost).id});
       this.display.data = this.list.selectorItems.splice(index, 1)[0].data as ForumPost;
+      this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
       this.list.selectorItemsLoaded.next(this.list.selectorItems);
       this.list.g_cdr.detectChanges();
       this.display.resetEditButton();
     });
+    this.list.onModeratedCheckboxChange = (checked : boolean) => {
+      if (checked){
+        this.list.reload(this.api.getModeratedForumPosts().then(data  =>{
+          this.bulkDisplayDataMapping(data);
+          this.display.data = data.splice(0, 1)[0];
+          this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
+          return data;
+        }), ForumModerationListItemComponent);
+      } else {
+        this.list.reload(this.api.getUnmoderatedForumPosts().then(data  =>{
+          this.bulkDisplayDataMapping(data);
+          this.display.data = data.splice(0, 1)[0];
+          this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
+          return data;
+        }), ForumModerationListItemComponent);
+      }
+    }
     this.list.load(this.api.getUnmoderatedForumPosts().then(data  =>{
       this.bulkDisplayDataMapping(data);
       this.display.data = data.splice(0, 1)[0];
+      this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
       return data;
     }), ForumModerationListItemComponent);
 
@@ -81,6 +100,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       this.api.deleteForumPost(this.display.data.id).then(value => {
         if(value){
           this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
+          this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
           this.list.selectorItemsLoaded.next(this.list.selectorItems);
           this.list.g_cdr.detectChanges();
           this.display.resetEditButton();
@@ -93,6 +113,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
             this.display.data = this.displayDataMapping(this.display.data);
             if (this.list.selectorItems.length > 0){
               this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
+              this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
               this.list.selectorItemsLoaded.next(this.list.selectorItems);
               this.list.g_cdr.detectChanges();
               this.display.resetEditButton();
@@ -104,6 +125,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       this.api.modifyForumPost(this.modify(), false).then(value => {
         if (value) {
           this.display.data = this.displayDataMapping(this.display.data);
+          this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
           this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.display.data));
           this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
           this.list.selectorItemsLoaded.next(this.list.selectorItems);

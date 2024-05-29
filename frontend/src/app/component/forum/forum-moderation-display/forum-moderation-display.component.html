@@ -4,12 +4,12 @@
     <div class="post-detail-group-2">
       <div class="post-detail">
         <div class="post-label">Forum</div>
-        <div title="zum Forum" class="forum-link"><a [href]="this.postLinks[0]">🔗</a></div>
+        <div title="zum Forum" class="forum-link"><a [href]="this.postLinks[0]" target="_blank">🔗</a></div>
         <p>{{data.forum}}</p>
       </div>
       <div class="post-detail">
         <div class="post-label">Frage</div>
-        <div title="zur Frage" class="forum-link"><a [href]="this.postLinks[1]">🔗</a></div>
+        <div title="zur Frage" class="forum-link"><a [href]="this.postLinks[1]" target="_blank">🔗</a></div>
         <p>{{data.topic}}</p>
       </div>
     </div>
@@ -39,7 +39,7 @@
     <div [style.border-color]="getRatingColor(data.preRatingSwearing,'Body')" class="post-detail">
       <div [style.color]="getRatingColor(data.preRatingSwearing,'Body')" class="post-label">Inhalt</div>
       <input type="checkbox" title="bearbeiten" class="edit-field" name="editBody" id="edit-body" (change)="onEdited($event, 'body')">
-      <div title="zum Beitrag" class="forum-link"><a [href]="this.postLinks[2]">🔗</a></div>
+      <div title="zum Beitrag" class="forum-link"><a [href]="this.postLinks[2]" target="_blank">🔗</a></div>
       <div class="post-body-wrapper">
         <div id="editorField" contenteditable="false" class="post-body" [innerHTML]="data.body | unsafeHtml"></div>
       </div>

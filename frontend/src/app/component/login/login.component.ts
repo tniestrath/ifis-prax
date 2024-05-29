@@ -39,8 +39,7 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
           (document.getElementById("login-submit") as HTMLButtonElement).disabled = false;
           return;
         }
-        this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));
-        this.cs.set("wordpress_logged_in_a35", "3de503fd44a875af7a0266ba9b35fe2ec5443acf7874e819797a7a90f46bf10f");
+        this.cs.set("wordpress_logged_in", ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));
         this.api.getUserByLogin(ans.substring(ans.indexOf("=") + 1, ans.indexOf("|"))).then(res => {
           SysVars.login.next(res);
           //SysVars.ADMIN = res.accountType == "admin";

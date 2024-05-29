@@ -88,6 +88,17 @@ public class UserController {
         this.config = config;
     }
 
+    @GetMapping("/getById")
+    public String getUserById(int id) throws JSONException {
+        JSONObject obj = new JSONObject();
+        WPUser user = userRepository.findById((long) id).orElseThrow();
+
+        obj.put("id", user.getId());
+        obj.put("displayName", user.getDisplayName());
+
+        return obj.toString();
+    }
+
     @GetMapping("/getByLogin")
     public String getUserByLogin(@RequestParam String u) throws JSONException {
         JSONObject obj = new JSONObject();

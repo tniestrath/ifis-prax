@@ -323,7 +323,7 @@ public class ForumModController {
 
             link += forum.getSlug() + "/";
             link += topic.getSlug() + "/";
-            link += "/post/" + post.getPostId();
+            link += "post/" + post.getPostId();
         }
 
         return link;

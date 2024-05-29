@@ -319,12 +319,15 @@ public class ForumModController {
 
         if(wpForoPostRepo.findById(postId).isPresent()) {
             WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
-            WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
-            WPWPForoForum forum = wpForoForumRepo.findById((long)topic.getForumId()).orElseThrow();
-
-            link += forum.getSlug() + "/";
-            link += topic.getSlug() + "/";
-            link += "post/" + post.getPostId();
+            try {
+                WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
+                WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).orElseThrow();
+                link += forum.getSlug() + "/";
+                link += topic.getSlug() + "/";
+                link += "post/" + post.getPostId();
+            } catch (NoSuchElementException e) {
+                return "kein derartiges Element";
+            }
         }
 
         return link;
@@ -336,11 +339,16 @@ public class ForumModController {
 
         if(wpForoPostRepo.findById(postId).isPresent()) {
             WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
-            WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
-            WPWPForoForum forum = wpForoForumRepo.findById((long)topic.getForumId()).orElseThrow();
+            try {
+                WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
+                WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).orElseThrow();
+                link += forum.getSlug() + "/";
+                link += topic.getSlug() + "/";
+            } catch (NoSuchElementException e) {
+                return "kein derartiges Element";
+            }
 
-            link += forum.getSlug() + "/";
-            link += topic.getSlug() + "/";
+
         }
 
         return link;

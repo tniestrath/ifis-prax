@@ -55,7 +55,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "ssl": true,
+              "ssl": false,
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,

@@ -74,7 +74,7 @@
           "configurations": {
             "production": {
               "browserTarget": "frontend:build:production",
-              "ssl": true
+              "ssl": false
             },
             "development": {
               "browserTarget": "frontend:build:development",

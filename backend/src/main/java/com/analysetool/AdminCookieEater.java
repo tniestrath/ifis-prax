@@ -24,12 +24,12 @@ public class AdminCookieEater implements HandlerInterceptor {
         System.out.println(result);
 
         boolean isForum = request.getRequestURL().toString().contains("/forum/");
-        boolean isAdmin = userController.getType(new JSONObject(result).getInt("user_id")).equalsIgnoreCase("admin");
 
         if(isForum) {
             return true;
         } else {
             if (!result.contains("INVALID")) {
+                boolean isAdmin = userController.getType(new JSONObject(result).getInt("user_id")).equalsIgnoreCase("admin");
                 if (!isAdmin) response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return isAdmin;
             } else {

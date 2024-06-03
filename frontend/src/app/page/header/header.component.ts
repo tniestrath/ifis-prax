@@ -30,15 +30,21 @@ export class HeaderComponent implements AfterViewInit{
       this.api.getUserById(String(res.user_id)).then(res => {
         SysVars.login.next(res);
         SysVars.ACCOUNT = res;
-        SysVars.ADMIN = true;
+        SysVars.ADMIN = res.accountType == "admin";
         this.stopAndHideLoadingBar();
       })
     })
 
     SysVars.login.subscribe(user => {
-      this.navElements = this.navElementsBackup;
+      if (user.accountType != "admin"){
+        this.navElements = ["Forum"];
+        this.selected.next("Forum");
+
+      } else {
+        this.navElements = this.navElementsBackup;
+        this.selected.next("Übersicht");
+        }
       cs.set("user", user.id + ":" + user.displayName);
-      this.selected.next("Übersicht");
       SysVars.ACCOUNT = user;
       this.stopAndHideLoadingBar();
 

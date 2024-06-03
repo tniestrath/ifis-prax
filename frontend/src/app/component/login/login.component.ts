@@ -43,8 +43,7 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
         this.cs.set("wordpress_logged_in", ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));
         this.api.getUserByLogin(ans.substring(ans.indexOf("=") + 1, ans.indexOf("|"))).then(res => {
           SysVars.login.next(res);
-          //SysVars.ADMIN = res.accountType == "admin";
-          SysVars.ADMIN = true;
+          SysVars.ADMIN = res.accountType == "admin";
 
           this.cdr.detectChanges();
         });
@@ -71,8 +70,7 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
                 this.cs.set(ans.substring(0, ans.indexOf("=")), ans.substring(ans.indexOf("=")+1, ans.indexOf(";")));
                 this.api.getUserByLogin(ans.substring(ans.indexOf("=") + 1, ans.indexOf("|"))).then(res => {
                   SysVars.login.next(res);
-                  //SysVars.ADMIN = res.accountType == "admin";
-                  SysVars.ADMIN = true;
+                  SysVars.ADMIN = res.accountType == "admin";
 
                   this.cdr.detectChanges();
                 });

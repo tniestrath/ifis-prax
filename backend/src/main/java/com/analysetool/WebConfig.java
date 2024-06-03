@@ -17,21 +17,13 @@ public class WebConfig implements WebMvcConfigurer {
     private AdminCookieEater adminCookieEater;
     @Autowired
     private ModeratorCookieEater moderatorCookieEater;
-
-    private String[] apiPaths = new String[]{"/api/**", ""};
-    private String[] forumPaths = new String[]{"/api/forum/**", "/login", "/validate"};
-    private String[] excludedPaths = new String[]{"/login", "/validate"};
+    private String[] excludedPaths = new String[]{"/login**", "/validate**"};
 
 
 
     @Bean
     public MappedInterceptor adminCookieBeater() {
-        return new MappedInterceptor(apiPaths, forumPaths, adminCookieEater);
-    }
-
-    @Bean
-    public MappedInterceptor moderatorCookieBeater() {
-        return new MappedInterceptor(forumPaths, excludedPaths, moderatorCookieEater);
+        return new MappedInterceptor(null, excludedPaths, adminCookieEater);
     }
 
     @Override
@@ -45,9 +37,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(adminCookieBeater());
-
-        registry.addInterceptor(moderatorCookieBeater());
-
-        System.out.println("CookieEaters-Added");
+        System.out.println("CookieEater-Added");
     }
 }

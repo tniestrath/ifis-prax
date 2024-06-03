@@ -21,8 +21,6 @@ public class AdminCookieEater implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String result = loginController.validateCookie(request);
 
-        System.out.println(result);
-
         boolean isForum = request.getRequestURL().toString().contains("/forum/");
 
         if(isForum) {

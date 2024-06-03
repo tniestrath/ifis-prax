@@ -95,6 +95,7 @@ public class UserController {
 
         obj.put("id", user.getId());
         obj.put("displayName", user.getDisplayName());
+        obj.put("accountType", getType(Math.toIntExact(user.getId())));
 
         return obj.toString();
     }

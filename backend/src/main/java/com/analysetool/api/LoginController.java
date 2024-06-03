@@ -220,7 +220,7 @@ public class LoginController {
             for (Cookie cookie : request.getCookies()) {
                 if (cookie.getName().contains("wordpress_logged_in")) {
                     cookieValue = java.net.URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
-                    System.out.println(cookieValue);
+                    //System.out.println(cookieValue);
                 }
             }
 

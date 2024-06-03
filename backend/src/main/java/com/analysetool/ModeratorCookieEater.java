@@ -10,13 +10,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-public class CookieEater implements HandlerInterceptor {
+public class ModeratorCookieEater implements HandlerInterceptor {
 
     @Autowired
     LoginController loginController;
     @Autowired
     UserController userController;
 
+
+    //ToDo: Wait for Moderator Role, then change this behavior.
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String cookie = request.getHeader("wordpress_logged_in");
@@ -28,5 +30,5 @@ public class CookieEater implements HandlerInterceptor {
             return false;
         }
     }
-}
 
+}

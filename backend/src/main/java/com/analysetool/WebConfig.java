@@ -8,10 +8,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final CookieEater cookieEater;
+    private final AdminCookieEater adminCookieEater;
+    private final ModeratorCookieEater moderatorCookieEater;
 
-    public WebConfig(CookieEater cookieEater) {
-        this.cookieEater = cookieEater;
+    public WebConfig(AdminCookieEater adminCookieEater, ModeratorCookieEater moderatorCookieEater) {
+        this.adminCookieEater = adminCookieEater;
+        this.moderatorCookieEater = moderatorCookieEater;
     }
 
     @Override
@@ -24,7 +26,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(cookieEater)
+        registry.addInterceptor(adminCookieEater)
                 .addPathPatterns("/api/**").excludePathPatterns("/api/forum/**");
+
+        registry.addInterceptor(moderatorCookieEater).addPathPatterns("/api/forum/**");
     }
 }

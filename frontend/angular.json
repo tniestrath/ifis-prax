@@ -68,8 +68,8 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "ssl": true,
-            "sslCert": "../../../etc/letsencrypt/live/it-sicherheit.de/cert.pem",
-            "sslKey": "../../../etc/letsencrypt/live/it-sicherheit.de/privkey.pem"
+            "sslCert": "/etc/letsencrypt/live/it-sicherheit.de/cert.pem",
+            "sslKey": "/etc/letsencrypt/live/it-sicherheit.de/privkey.pem"
           },
           "configurations": {
             "production": {

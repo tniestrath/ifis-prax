@@ -1,5 +1,6 @@
 package com.analysetool;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -8,13 +9,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final AdminCookieEater adminCookieEater;
-    private final ModeratorCookieEater moderatorCookieEater;
+    @Autowired
+    private AdminCookieEater adminCookieEater;
+    @Autowired
+    private ModeratorCookieEater moderatorCookieEater;
 
-    public WebConfig(AdminCookieEater adminCookieEater, ModeratorCookieEater moderatorCookieEater) {
-        this.adminCookieEater = adminCookieEater;
-        this.moderatorCookieEater = moderatorCookieEater;
-    }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {

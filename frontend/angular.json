@@ -39,7 +39,6 @@
           },
           "configurations": {
             "production": {
-              "ssl": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -55,7 +54,6 @@
               "outputHashing": "all"
             },
             "development": {
-              "ssl": false,
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
@@ -68,12 +66,19 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "ssl": true,
+            "sslCert": "../../../etc/pki/tls/certs/ca-bundle.crt",
+            "sslKey": "../../../etc/pki/tls/certs/postfix.pem"
+          },
           "configurations": {
             "production": {
-              "browserTarget": "frontend:build:production"
+              "browserTarget": "frontend:build:production",
+              "ssl": true
             },
             "development": {
-              "browserTarget": "frontend:build:development"
+              "browserTarget": "frontend:build:development",
+              "ssl": false
             }
           },
           "defaultConfiguration": "development"

@@ -39,6 +39,7 @@
           },
           "configurations": {
             "production": {
+              "ssl": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -54,6 +55,7 @@
               "outputHashing": "all"
             },
             "development": {
+              "ssl": true,
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,

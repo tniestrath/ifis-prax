@@ -29,5 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/**").excludePathPatterns("/api/forum/**");
 
         registry.addInterceptor(moderatorCookieEater).addPathPatterns("/api/forum/**");
+
+        System.out.println("CookieEaters-Added");
     }
 }

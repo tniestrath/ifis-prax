@@ -15,8 +15,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
     private AdminCookieEater adminCookieEater;
-    @Autowired
-    private ModeratorCookieEater moderatorCookieEater;
     private String[] excludedPaths = new String[]{"/login**", "/validate**"};
 
 

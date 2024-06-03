@@ -24,7 +24,11 @@ public class ModeratorCookieEater implements HandlerInterceptor {
         String cookie = request.getHeader("wordpress_logged_in");
         String result = loginController.validateCookie(request);
         if (cookie != null && !result.contains("INVALID")) {
-            return userController.getType(new JSONObject(result).getInt("user_id")).equals("admin");
+            boolean isAdmin = userController.getType(new JSONObject(result).getInt("user_id")).equals("admin");
+
+            if(!isAdmin) response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return isAdmin;
+
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;

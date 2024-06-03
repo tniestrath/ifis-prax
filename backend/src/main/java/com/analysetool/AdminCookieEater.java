@@ -21,18 +21,20 @@ public class AdminCookieEater implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String cookie = request.getHeader("wordpress_logged_in");
         String result = loginController.validateCookie(request);
-        System.out.println("CookieEater called" + result);
-        if (cookie != null && !result.contains("INVALID")) {
-            boolean isAdmin = userController.getType(new JSONObject(result).getInt("user_id")).equals("admin");
 
-            System.out.println("CookieEater ate cookie" + isAdmin);
+        boolean isForum = request.getRequestURL().toString().contains("/forum/");
+        boolean isAdmin = userController.getType(new JSONObject(result).getInt("user_id")).equals("admin");
 
-            if(!isAdmin) response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return isAdmin;
-
+        if(isForum) {
+            return true;
         } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
+            if (cookie != null && !result.contains("INVALID")) {
+                if (!isAdmin) response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return isAdmin;
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return false;
+            }
         }
     }
 }

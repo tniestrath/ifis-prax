@@ -273,4 +273,41 @@ public class UniqueUserService {
 
         return obj.toString();
     }
+
+    public String getVisitorsDepthInSegments() throws JSONException {
+        List<UniqueUser> allUniques = uniqueUserRepo.findAll();
+        List<TrackingBlacklist> allBlocked = trackBlackRepo.findAll();
+
+        List<UniqueUser> filteredUniques = filterOutBlocked(allUniques, allBlocked);
+        JSONObject obj = new JSONObject();
+
+        // Segmentierung der Tiefe
+        int[] segments = {1, 2, 3, 4, 5};
+        int[] counts = new int[segments.length + 1];
+
+        for (UniqueUser user : filteredUniques) {
+            int clickDepth = user.getAmount_of_clicks();
+
+            // Segment finden und Zähler inkrementieren
+            boolean segmented = false;
+            for (int i = 0; i < segments.length; i++) {
+                if (clickDepth <= segments[i]) {
+                    counts[i]++;
+                    segmented = true;
+                    break;
+                }
+            }
+            if (!segmented) {
+                counts[segments.length]++;
+            }
+        }
+
+        String[] segmentLabels = {"1 Klick", "2 Klicks", "3 Klicks", "4 Klicks", "5 Klicks", "6+ Klicks"};
+        for (int i = 0; i < segmentLabels.length; i++) {
+            obj.put(segmentLabels[i], counts[i]);
+        }
+
+        return obj.toString();
+    }
+
 }

@@ -19,7 +19,6 @@ export class BlackHoleListComponent extends DashBaseComponent implements OnInit{
   ngOnInit() {
     this.selectorItems = [];
     this.api.getBlackHoleData().then(res => {
-      console.log(res);
       for (var badBot of res) {
         if(badBot.date || badBot.date.length!=0) badBot.date = badBot.date.substring(0, badBot.date.indexOf("@"));
         this.selectorItems.push(new SelectorItem(BadBotItemComponent, badBot));

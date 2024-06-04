@@ -1,0 +1,25 @@
+.external-services-list-item-box{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ffffff00;
+}
+.external-services-list-item-name{
+  width: 80%;
+  text-align: left;
+}
+.external-services-list-item-check{
+  display: flex;
+  width: 20%;
+}
+img {
+  height: 20px;
+  aspect-ratio: 1;
+  margin-right: 2px;
+}
+p{
+  padding-top: 2px;
+  margin: 0;
+}

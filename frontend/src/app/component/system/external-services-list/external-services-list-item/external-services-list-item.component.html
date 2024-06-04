@@ -1,0 +1,9 @@
+<div class="external-services-list-item-box">
+    <div class="external-services-list-item-name">
+      <p>{{data.name}}</p>
+    </div>
+    <div class="external-services-list-item-check">
+      <img *ngIf="data.check == 0" src="assets/check-circle.png" alt="Good">
+      <img *ngIf="data.check != 0" src="assets/alert-circle.png" alt="Bad">
+    </div>
+</div>

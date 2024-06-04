@@ -17,6 +17,7 @@ import {Newsletter} from "../component/newsletter/Newsletter";
 import {BadBot} from "../component/system/black-hole-list/bad-bot-item/bad-bot-item.component";
 import {ForumPost} from "../component/forum/forum-moderation-list/ForumPost";
 import {SysVars} from "./sys-vars-service";
+import {ExternalService} from "../component/system/external-services-list/external-services-list.component";
 
 /**
  * @enum apiUrl
@@ -153,6 +154,8 @@ export enum apiUrl {
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
   GET_SYSTEM_TIME_HOUR = "/systemLoad/getHour",
   GET_SYSTEM_BAD_BOTS = "/diagnosis/getBlackHoleData",
+
+  GET_EXTERNAL_SERVICES = "/diagnosis/getServices?page=PAGE&size=SIZE",
 
   LOGIN = "/login?user=USERNAME&pass=PASSWORD",
   LOGIN_WITH_BODY = "/login2",
@@ -599,6 +602,11 @@ export class ApiService {
   async getBlackHoleData() : Promise<BadBot[]>{
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_SYSTEM_BAD_BOTS), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_SYSTEM_BAD_BOTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getServices(page : number, size : number) : Promise<ExternalService[]>{
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.GET_EXTERNAL_SERVICES).replace("PAGE", String(page)).replace("SIZE", String(size)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_EXTERNAL_SERVICES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getEvents() : Promise<string[]> {

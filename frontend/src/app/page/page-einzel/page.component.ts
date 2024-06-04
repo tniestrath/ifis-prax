@@ -57,6 +57,9 @@ import {ForumModeratorComponent} from "../../component/forum/forum-moderator/for
 import {
   ForumProfanityFilterAdderComponent
 } from "../../component/forum/forum-profanity-filter-adder/forum-profanity-filter-adder.component";
+import {
+  ExternalServicesListComponent
+} from "../../component/system/external-services-list/external-services-list.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -162,7 +165,8 @@ export class PageComponent implements OnInit {
   getSystemPageCards() {
     return [
       {type: SystemloadComponent, row: 1, col: 1, height: 2, width: 2},
-      {type: BlackHoleListComponent, row: 1, col: 3, height: 2, width: 3},
+      {type: BlackHoleListComponent, row: 1, col: 3, height: 2, width: 2},
+      {type: ExternalServicesListComponent, row: 1, col: 5, height: 2, width: 2},
     ];
   }
 

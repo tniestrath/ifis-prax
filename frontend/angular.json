@@ -68,13 +68,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "ssl": true,
-            "sslCert": "../../../etc/letsencrypt/live/it-sicherheit.de/cert.pem",
-            "sslKey": "../../../etc/letsencrypt/live/it-sicherheit.de/privkey.pem"
+            "sslCert": "/etc/letsencrypt/live/analyse.it-sicherheit.de/cert.pem",
+            "sslKey": "/etc/letsencrypt/live/analyse.it-sicherheit.de/privkey.pem"
           },
           "configurations": {
             "production": {
               "browserTarget": "frontend:build:production",
-              "ssl": true
+              "ssl": false
             },
             "development": {
               "browserTarget": "frontend:build:development",

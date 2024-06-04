@@ -59,6 +59,15 @@ public class UniqueUserService {
         processCategoryClicks(user.getNonsense(), "nonsense", clickMap);
     }
 
+    private Boolean isConsumer(Map<String,Long> cliokMap,Integer dwellTime){
+        Boolean dwellTimeOver5min = (dwellTime >= 300);
+        if (dwellTimeOver5min){
+            Boolean clickInConsumingCategory =
+                    (cliokMap.get("article")>=1) || (cliokMap.get("blog")>=1) || (cliokMap.get("news")>=1) || (cliokMap.get("whitepaper")>=1) || (cliokMap.get("podcast")>=1) || (cliokMap.get("ratgeber")>=1);
+            return clickInConsumingCategory;
+        }else{return false;}
+    }
+
     public void processCategoryClicks(String categoryData, String categoryName, Map<Integer, String> clickMap) throws JSONException {
         if (categoryData != null && !categoryData.isEmpty()) {
             JSONArray clicksArray = new JSONArray(categoryData);
@@ -270,6 +279,67 @@ public class UniqueUserService {
         for (int i = 0; i < segmentLabels.length; i++) {
             obj.put(segmentLabels[i], counts[i]);
         }
+
+        return obj.toString();
+    }
+
+    public String getVisitorsDepthInSegments() throws JSONException {
+        List<UniqueUser> allUniques = uniqueUserRepo.findAll();
+        List<TrackingBlacklist> allBlocked = trackBlackRepo.findAll();
+
+        List<UniqueUser> filteredUniques = filterOutBlocked(allUniques, allBlocked);
+        JSONObject obj = new JSONObject();
+
+        // Segmentierung der Tiefe
+        int[] segments = {1, 2, 3, 4, 5};
+        int[] counts = new int[segments.length + 1];
+
+        for (UniqueUser user : filteredUniques) {
+            int clickDepth = user.getAmount_of_clicks();
+
+            // Segment finden und Zähler inkrementieren
+            boolean segmented = false;
+            for (int i = 0; i < segments.length; i++) {
+                if (clickDepth <= segments[i]) {
+                    counts[i]++;
+                    segmented = true;
+                    break;
+                }
+            }
+            if (!segmented) {
+                counts[segments.length]++;
+            }
+        }
+
+        String[] segmentLabels = {"1 Klick", "2 Klicks", "3 Klicks", "4 Klicks", "5 Klicks", "6+ Klicks"};
+        for (int i = 0; i < segmentLabels.length; i++) {
+            obj.put(segmentLabels[i], counts[i]);
+        }
+
+        return obj.toString();
+    }
+
+    public String getVisitorAndConsumerAndProsumerCounts() throws JSONException {
+        List<UniqueUser> allUniques = uniqueUserRepo.findAll();
+        List<TrackingBlacklist> allBlocked = trackBlackRepo.findAll();
+
+        List<UniqueUser> filteredUniques = filterOutBlocked(allUniques, allBlocked);
+        JSONObject obj = new JSONObject();
+
+        Long visitorCount = 0L;
+        Long consumerCount = 0L;
+        //prosumer anhand von unique temporäre Suchen (kommt noch)
+        Long prosumerCount = 0L;
+
+        for(UniqueUser u : filteredUniques) {
+            Map<String,Long> clicksMap = getClicksCategory(u);
+            if(isConsumer(clicksMap,u.getTime_spent())){
+                consumerCount++;
+            }else{visitorCount++;}
+        }
+
+        obj.put("Visitors",visitorCount);
+        obj.put("Consumers",consumerCount);
 
         return obj.toString();
     }

@@ -26,7 +26,7 @@ export enum apiUrl {
   /**
    * Host and Port url prefixes
    */
-  HOST = "http://analyse.it-sicherheit.de/api",
+  HOST = "https://analyse.it-sicherheit.de/api",
   //HOST = "http://localhost:8080/api", // DEBUG
   PORT = "",
 

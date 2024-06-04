@@ -160,7 +160,7 @@ public class LoginController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         //System.out.println("USERNAME: " +  user + " PASSWORT: " + pass);
 
@@ -264,7 +264,7 @@ public class LoginController {
             responseBody = new JSONObject(EntityUtils.toString(entity)).getString("user_id");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return responseBody;
     }

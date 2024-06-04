@@ -8,11 +8,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +41,8 @@ public class DiagnosisController {
     PostController postController;
     @Autowired
     WPOptionsRepository wpOpRepo;
+    @Autowired
+    ExternalServiceRepository externalServiceRepo;
 
     int MAX_CLICKS_IN_CAT_UNTIL_BOT = 5;
     final int MAX_NONSENSE_UNTIL_BOT = 10;
@@ -595,4 +595,46 @@ public class DiagnosisController {
 
         return array.toString();
     }
+
+
+    @GetMapping("/getServices")
+    public String getServices(int page, int size) throws JSONException {
+        JSONArray array = new JSONArray();
+
+        for(ExternalService e : externalServiceRepo.findAll(PageRequest.of(page, size))) {
+            JSONObject obj = new JSONObject();
+
+            obj.put("id", e.getId());
+            obj.put("name", e.getName());
+            obj.put("link", e.getLink());
+
+            array.put(obj);
+        }
+
+        return array.toString();
+    }
+
+    @PostMapping("/addService")
+    public boolean addService(String name, String link) {
+        if(externalServiceRepo.findByLinkOrName(link, name).isPresent()) {
+            return false;
+        } else {
+            ExternalService e = new ExternalService();
+            e.setLink(link);
+            e.setName(name);
+            externalServiceRepo.save(e);
+            return true;
+        }
+    }
+
+    @PostMapping("/removeService")
+    public boolean removeService(String name, String link) {
+        if(externalServiceRepo.findByLinkOrName(link, name).isPresent()) {
+            externalServiceRepo.delete(externalServiceRepo.findByLinkOrName(link, name).get());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

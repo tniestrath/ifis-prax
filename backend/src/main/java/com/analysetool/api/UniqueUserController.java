@@ -83,5 +83,14 @@ public class UniqueUserController {
     }
 
 
+    @GetMapping("/getClickDepthSegmented")
+    public String getClickDepthSegmented(){
+        try {
+            return uniqueUserService.getVisitorsDepthInSegments();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Fehler Mehler";
+        }
+    }
 
 }

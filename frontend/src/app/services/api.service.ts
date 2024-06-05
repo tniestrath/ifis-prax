@@ -18,17 +18,14 @@ import {BadBot} from "../component/system/black-hole-list/bad-bot-item/bad-bot-i
 import {ForumPost} from "../component/forum/forum-moderation-list/ForumPost";
 import {SysVars} from "./sys-vars-service";
 import {ExternalService} from "../component/system/external-services-list/external-services-list.component";
+import {Environment} from "../../environment";
 
 /**
  * @enum apiUrl
  * backend request urls
  */
 export enum apiUrl {
-  /**
-   * Host and Port url prefixes
-   */
-  HOST = "https://analyse.it-sicherheit.de/api",
-  //HOST = "http://localhost:8080/api", // DEBUG
+
   PORT = "",
 
   /**
@@ -174,7 +171,7 @@ export class ApiService {
   public status : Subject<number> = new Subject<number>();
   private requestCount = 0;
   private failedRequestCount = 0;
-  private lastFail : string = apiUrl.HOST;
+  private lastFail : string = Environment.api;
   private static abortController: Map<String,AbortController> = new Map<String, AbortController>();
 
 
@@ -183,7 +180,7 @@ export class ApiService {
   constructor(private sanitizer : DomSanitizer) { }
 
   private static setupRequest( prompt : string){
-    return apiUrl.HOST + apiUrl.PORT + prompt;
+    return Environment.api + apiUrl.PORT + prompt;
   }
 
   private static setupController( prompt : string){
@@ -206,7 +203,7 @@ export class ApiService {
       this.requestCount--;
       console.log("OPEN: " + this.requestCount);
       if (this.lastFail == url){
-        this.lastFail = apiUrl.HOST;
+        this.lastFail = Environment.api;
         this.failedRequestCount--;
         this.setStatus(0);
       }
@@ -606,7 +603,7 @@ export class ApiService {
 
   async getServices(page : number, size : number) : Promise<ExternalService[]>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_EXTERNAL_SERVICES).replace("PAGE", String(page)).replace("SIZE", String(size)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_EXTERNAL_SERVICES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_EXTERNAL_SERVICES).replace("PAGE", String(page)).replace("SIZE", String(size)), {method: "HEAD", credentials: "include", signal: ApiService.setupController(apiUrl.GET_EXTERNAL_SERVICES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getEvents() : Promise<string[]> {

@@ -16,7 +16,7 @@ export class ExternalService extends DbObject{
 @Component({
   selector: 'dash-external-services-list',
   templateUrl: './external-services-list.component.html',
-  styleUrls: ['./external-services-list.component.css']
+  styleUrls: ['./external-services-list.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class ExternalServicesListComponent extends DashListPageableComponent<ExternalService, ExternalServicesListItemComponent>{
 

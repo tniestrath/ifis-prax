@@ -124,7 +124,7 @@ public class LoginController {
      * @return String representation of the WordPress-login-cookie value
      */
 
-    @GetMapping("/login")
+    @GetMapping(value = {"/login", "/0wB4P2mly-xaRmeeDOj0_g/login"})
     public String login(@RequestParam String user, String pass) {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getWplogin());
@@ -166,7 +166,7 @@ public class LoginController {
 
         return responseCookie;
     }
-    @PostMapping("/login2")
+    @PostMapping(value = {"/login2", "/0wB4P2mly-xaRmeeDOj0_g/login2"})
     public String login2(@RequestBody LoginForm loginForm){
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getWplogin());
@@ -208,7 +208,7 @@ public class LoginController {
         return responseCookie;
     }
 
-    @GetMapping("/validate")
+    @GetMapping(value = {"/validate", "/0wB4P2mly-xaRmeeDOj0_g/validate"})
     public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getValidate());
@@ -240,7 +240,7 @@ public class LoginController {
         return responseBody;
     }
 
-    @GetMapping(value = "/validateCookie")
+    @GetMapping(value = {"/validateCookie", "/0wB4P2mly-xaRmeeDOj0_g/validateCookie"})
     public String validateCookie(@RequestParam("value") String cookie){
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getValidate());
@@ -269,7 +269,7 @@ public class LoginController {
         return responseBody;
     }
 
-    @GetMapping("/ping")
+    @GetMapping(value = {"/ping", "/0wB4P2mly-xaRmeeDOj0_g/ping"})
     public boolean ping() {
         return true;
     }

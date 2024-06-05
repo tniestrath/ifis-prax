@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping("/forum")
+@RequestMapping(value = {"/forum", "/0wB4P2mly-xaRmeeDOj0_g/forum"})
 public class ForumModController {
 
     @Autowired

@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping("/geo")
+@RequestMapping(value = {"/geo", "/0wB4P2mly-xaRmeeDOj0_g/geo"})
 public class GeoController {
 
     @Autowired

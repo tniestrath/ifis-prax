@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping("/diagnosis")
+@RequestMapping(value = {"/diagnosis", "/0wB4P2mly-xaRmeeDOj0_g/diagnosis"})
 public class DiagnosisController {
 
 

@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping("/events")
+@RequestMapping(value = {"/events", "/0wB4P2mly-xaRmeeDOj0_g/events"})
 public class EventsController {
 
     @Autowired

@@ -11,7 +11,7 @@ export class ExternalServicesListItemComponent extends DashListItemComponent imp
   override data : ExternalService = new ExternalService("", "", "" , 2);
 
   ngOnInit(): void {
-    fetch(this.data.link).then(response => {
+    fetch(this.data.link, {method: "GET"}).then(response => {
       if (response.status >= 200 && response.status <= 299){
         return this.data.check = 0;
       } else if (response.status >= 300 && response.status <= 399){

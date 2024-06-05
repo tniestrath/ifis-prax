@@ -603,7 +603,7 @@ export class ApiService {
 
   async getServices(page : number, size : number) : Promise<ExternalService[]>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_EXTERNAL_SERVICES).replace("PAGE", String(page)).replace("SIZE", String(size)), {method: "HEAD", credentials: "include", signal: ApiService.setupController(apiUrl.GET_EXTERNAL_SERVICES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_EXTERNAL_SERVICES).replace("PAGE", String(page)).replace("SIZE", String(size)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_EXTERNAL_SERVICES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getEvents() : Promise<string[]> {

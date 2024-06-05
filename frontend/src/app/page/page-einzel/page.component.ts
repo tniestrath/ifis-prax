@@ -165,8 +165,8 @@ export class PageComponent implements OnInit {
   getSystemPageCards() {
     return [
       {type: SystemloadComponent, row: 1, col: 1, height: 2, width: 2},
-      {type: BlackHoleListComponent, row: 1, col: 3, height: 2, width: 2},
-      {type: ExternalServicesListComponent, row: 1, col: 5, height: 2, width: 2},
+      {type: BlackHoleListComponent, row: 1, col: 3, height: 2, width: 4},
+      {type: ExternalServicesListComponent, row: 3, col: 1, height: 2, width: 2},
     ];
   }
 

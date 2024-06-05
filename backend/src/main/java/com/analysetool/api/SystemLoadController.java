@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@RequestMapping("/systemLoad")
+@RequestMapping(value = {"/systemLoad", "/0wB4P2mly-xaRmeeDOj0_g/systemLoad"})
 public class SystemLoadController {
 
     private final SystemLoadService systemLoadService;

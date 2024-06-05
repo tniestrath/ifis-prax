@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping("/feature")
+@RequestMapping(value = {"/feature", "/0wB4P2mly-xaRmeeDOj0_g/feature"})
 public class FeatureWishController {
 
     @Autowired

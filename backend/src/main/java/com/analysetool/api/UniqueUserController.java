@@ -2,7 +2,6 @@ package com.analysetool.api;
 
 import com.analysetool.repositories.UniqueUserRepository;
 import com.analysetool.services.UniqueUserService;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +9,7 @@ import java.time.LocalDateTime;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
-@RequestMapping("/uniqueusers")
+@RequestMapping(value = {"/uniqueusers", "/0wB4P2mly-xaRmeeDOj0_g/uniqueusers"})
 public class UniqueUserController {
 
     @Autowired

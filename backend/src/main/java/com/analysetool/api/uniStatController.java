@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping("/bericht")
+@RequestMapping(value =  {"/bericht", "/0wB4P2mly-xaRmeeDOj0_g/bericht"})
 public class uniStatController {
 
     @Autowired

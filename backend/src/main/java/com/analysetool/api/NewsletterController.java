@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping("/newsletter")
+@RequestMapping(value = {"/newsletter", "/0wB4P2mly-xaRmeeDOj0_g/newsletter"})
 public class NewsletterController {
 
     @Autowired

@@ -133,7 +133,8 @@ public class LogService {
     private RankingGroupProfileRepository rankingGroupProfileRepo;
     @Autowired
     private RankingGroupContentRepository rankingGroupContentRepo;
-
+    @Autowired
+    private UniqueUserService uniqueUserService;
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
@@ -597,6 +598,8 @@ public class LogService {
         String last_ip = null;
         String last_request = null;
         List<String> blacklist2 = tbRepo.getAllIps();
+        //decomment to activate
+        //blacklist2.addAll(findPotentialBotsAsListWithIps(10));
 
         while ((line = br.readLine()) != null ) {
             UniqueUser user = null;
@@ -3587,6 +3590,28 @@ public class LogService {
             tagCatRepo.save(cat);
         } catch (Exception ignored) {}
 
+    }
+
+    private List<String> findPotentialBotsAsListWithIps(int repeatedClicksLimit) {
+        List<String> potentialBotsIps = new ArrayList<>();
+
+        List<UniqueUser> potentialBots = uniqueUserService.getPossibleBots(repeatedClicksLimit);
+        if (!potentialBots.isEmpty()) {
+            for (UniqueUser potBot : potentialBots) {
+                if (tbRepo.findByIp(potBot.getIp()).isEmpty()) {
+                    try {
+                        Map<String, Long> categoryClicksMap = uniqueUserService.getClicksCategory(potBot);
+                        if (uniqueUserService.areClicksInSingleCategory(categoryClicksMap)) {
+                            potentialBotsIps.add(potBot.getIp());
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Potential bot processing error: " + Arrays.toString(e.getStackTrace()));
+                    }
+                }
+            }
+        }
+
+        return potentialBotsIps;
     }
 
     public void updateRankings() {

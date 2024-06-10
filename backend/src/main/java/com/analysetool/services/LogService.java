@@ -171,7 +171,7 @@ public class LogService {
     private final String ratgeberBuchView = "^.*GET /ratgeber/cyber-sicherheit/";
 
     private final String ratgeberSelfView = "^.*GET /selbstlernangebot-it-sicherheit/";
-
+    private final String ratgeberSelfSubView ="^.*GET /selbstlernangebot-it-sicherheit/([^/]+)/";
     private final String ratgeberSelfViewAlterEgo = "^.*GET /Selbstlernakademie/sec-aware-nrw-scorm12-8DUduEVd/scormcontent/index\\.html";
 
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
@@ -247,6 +247,8 @@ public class LogService {
 
    private final String forumSearch= "^.*GET /marktplatz-forum/\\?wpfs=(.*?)&wpfin=(.*?)&wpfd=(.*?)&wpfob=(.*?)&wpfo=(.*?)&wpfpaged=(.*?)(?:\\s|$)";
 
+   private final String itNotfall= "^.*GET /ratgeber/(it-notfall)/";
+   private final String itNotfallSub = "^.*GET /ratgeber/it-notfall/([^/]+)/";
     final Pattern forumDiskussionsthemenPattern = Pattern.compile(forumDiskussionsthemen);
     final Pattern forumTopicPattern = Pattern.compile(forumTopic);
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -303,7 +305,9 @@ public class LogService {
     final Pattern tagCatPattern = Pattern.compile(tagCatPatter);
 
     final Pattern forumSearchPattern= Pattern.compile(forumSearch);
-
+    final Pattern itNotfallPattern = Pattern.compile(itNotfall);
+    final Pattern itNotfallSubPattern = Pattern.compile(itNotfallSub);
+    final Pattern ratgeberSelfSub = Pattern.compile(ratgeberSelfSubView);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -801,6 +805,12 @@ public class LogService {
                     Matcher matched_tagcat_view = tagCatPattern.matcher(request);
                     //Does it match a forum search?
                     Matcher matched_forum_search = forumSearchPattern.matcher(request);
+                    //Does it match it-notfall ?
+                    Matcher matched_it_notfall = itNotfallPattern.matcher(request);
+                    //Does it match it-notfall-sub ?
+                    Matcher matched_it_notfall_sub = itNotfallSubPattern.matcher(request);
+                    // Does it match ratgeber-self-sub ?
+                    Matcher matched_ratgeber_self_sub = ratgeberSelfSub.matcher(request);
 
                     //Find out which pattern matched
                     String whatMatched = "";
@@ -902,6 +912,9 @@ public class LogService {
                     } else if(matched_ratgeber_buch.find()) {
                         whatMatched = "ratgeberBuch";
                         patternMatcher = matched_ratgeber_buch;
+                    } else if (matched_ratgeber_self_sub.find()) {
+                        whatMatched = "ratgeberSelfSub";
+                        patternMatcher = matched_ratgeber_self_sub;
                     } else if(matched_ratgeber_self.find()){
                         whatMatched = "ratgeberSelf";
                         patternMatcher = matched_ratgeber_self;
@@ -953,6 +966,12 @@ public class LogService {
                     } else if(matched_forum_search.find()) {
                         whatMatched = "forumSearch";
                         patternMatcher = matched_forum_search;
+                    } else if (matched_it_notfall_sub.find()) {
+                        whatMatched = "notfallSub";
+                        patternMatcher = matched_it_notfall_sub;
+                    } else if (matched_it_notfall.find()) {
+                        whatMatched = "notfall";
+                        patternMatcher = matched_it_notfall;
                     }
 
                     //If user existed,
@@ -1204,7 +1223,7 @@ public class LogService {
 
                             updateUniSingleLine("anbieter", isUnique, dateLog);
                         }
-                        case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch", "ratgeberSelf" -> {
+                        case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch", "ratgeberSelf", "ratgeberSelfSub" -> {
                             //Erhöhe Clicks für RatgeberViews um 1.
                             viewsRatgeber++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -1269,6 +1288,20 @@ public class LogService {
 
                                     updateUniSingleLine("ratgeberSelf", isUnique, dateLog);
                                 }
+
+                                case "ratgeberSelfSub" -> {
+                                    //decomment when uni table is updated
+                               /*     viewsRatgeberSelfSub++;
+                                    if (isUnique) {
+                                        userRatgeberSelfSub++;
+                                    } else {
+                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                            userRatgeberSelfSub++;
+                                        }
+                                    }
+
+                                    updateUniSingleLine("ratgeberSelfSub", isUnique, dateLog);*/
+                                }
                             }
 
 
@@ -1309,6 +1342,39 @@ public class LogService {
                             updateUniqueUser(ip, "anbieter", dateLog);
 
                             updateUniSingleLine("anbieter", isUnique, dateLog);
+                        }
+                        case "notfall", "notfallSub" -> {
+                            //decomment when uni table is updated
+                          /*  //Erhöhe Clicks für IT-NotfallViews um 1.
+                            viewsNotfall++;
+                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                            if (isUnique) {
+                                userNotfall++;
+                            } else {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNotfall()).length() < 2) {
+                                    userNotfall++;
+                                }
+                            }
+                            updateUniqueUser(ip, "notfall", dateLog);
+
+                            updateUniSingleLine("notfall", isUnique, dateLog);
+
+                            //Update stats for more concrete type of notfall
+                            switch (whatMatched) {
+                                case "notfallSub" -> {
+                                    viewsNotfallSub++;
+                                    if (isUnique) {
+                                        userNotfallSub++;
+                                    } else {
+                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getNotfall()).length() < 2) {
+                                            userNotfallSub++;
+                                        }
+                                    }
+
+                                    updateUniSingleLine("notfall", isUnique, dateLog);
+                                }
+                            }
+                            */
                         }
                         default -> {
                             if(!isNotNonsense) {
@@ -1574,6 +1640,22 @@ public class LogService {
                     e.printStackTrace();
                 }
 
+            }
+            // page views
+            case "notfall","notfallSub","ratgeberSelfSub"->{
+                try {
+                    Optional<Post> postOptional = postRepository.findPageByPostName(patternMatcher.group(1));
+                    if( postOptional.isPresent()){
+                        Post post = postOptional.get();
+                        Long postId = post.getId();
+                        UpdatePerformanceAndViews(dateLog, postId);
+                        updateIPsByPost(ip, postId);
+                        updatePostClicksMap(postId, dateLog);
+                    }
+                }catch (Exception e){
+                    System.out.println("Page Tracking Exception: " + line);
+                    e.printStackTrace();
+                }
             }
         }
 

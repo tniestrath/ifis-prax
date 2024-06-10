@@ -106,5 +106,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p WHERE p.type='event' AND p.status='publish' AND p.title LIKE %:search% AND p.authorId=:authorId")
    List<Post> getAllEventsWithSearchAndAuthor(String search, long authorId, Pageable pageable);
 
+   @Query("Select p FROM Post p WHERE p.slug =:postName AND p.type = 'page' ")
+   Optional<Post> findPageByPostName(String postName);
 }
 

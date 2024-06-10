@@ -15,7 +15,7 @@ public interface MembershipBufferRepository extends JpaRepository<MembershipsBuf
     MembershipsBuffer getLastByUserId(Long userId);
 
     @Query("SELECT m FROM MembershipsBuffer m WHERE m.userId=:userId ORDER BY m.id DESC")
-    MembershipsBuffer getPageableSingle(Long userId, Pageable pageable);
+    List<MembershipsBuffer> getPageableSingle(Long userId, Pageable pageable);
 
     @Query("SELECT m FROM MembershipsBuffer m WHERE m.userId NOT IN (SELECT u.id FROM WPUser u)")
     List<MembershipsBuffer> findAllDeleted();

@@ -40,28 +40,26 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       this.chart_total = this.data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
       this.cdr.detectChanges();
     }).finally(() => {
-      this.api.getUserAccountTypesLastWeek().then(res => {
-        let map : Map<string, number> = new Map(Object.entries(res));
-        this.readMap(map, this.prev_data);
-        for (var i = 0; i < this.data.length; i++) {
-          this.prev_data[i] = this.data[i] - this.prev_data[i];
-        }
-        this.prev_total = this.prev_data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      this.api.getUserAccountTypesAllNew().then(res => {
+        // @ts-ignore
+        document.getElementById("oaList").append(...this.formatArray(res.ohne));
+        this.prev_data[0] = res.ohneCount;
+        // @ts-ignore
+        document.getElementById("basicList").append(...this.formatArray(res.basis));
+        this.prev_data[1] = res.basisCount;
+        // @ts-ignore
+        document.getElementById("bpList").append(...this.formatArray(res.basisPlus));
+        this.prev_data[2] = res.basisPlusCount;
+        // @ts-ignore
+        document.getElementById("plusList").append(...this.formatArray(res.plus));
+        this.prev_data[3] = res.plusCount;
+        // @ts-ignore
+        document.getElementById("premiumList").append(...this.formatArray(res.premium));
+        this.prev_data[4] = res.premiumCount;
+
+        this.prev_total = (res.ohneCount + res.basisCount + res.basisPlusCount + res.plusCount + res.premiumCount)
         this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
         this.cdr.detectChanges();
-      }).finally(() => {
-        this.api.getUserAccountTypesAllNew().then(res => {
-          // @ts-ignore
-          document.getElementById("oaList").append(...this.formatArray(res.ohne));
-          // @ts-ignore
-          document.getElementById("basicList").append(...this.formatArray(res.basis));
-          // @ts-ignore
-          document.getElementById("bpList").append(...this.formatArray(res.basisPlus));
-          // @ts-ignore
-          document.getElementById("plusList").append(...this.formatArray(res.plus));
-          // @ts-ignore
-          document.getElementById("premiumList").append(...this.formatArray(res.premium));
-        })
       })
     })
 

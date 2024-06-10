@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -1293,6 +1294,31 @@ public class UserController {
         return total;
     }
 
+    @GetMapping("/getFullLog")
+    public String getFullLog(int page, int size, Long userId) throws JSONException {
+
+        JSONArray array = new JSONArray();
+
+        Page<MembershipsBuffer> buffers;
+
+        if(userId == null) {
+            buffers = memberRepo.findAll(PageRequest.of(page, size));
+        } else {
+            buffers = memberRepo.findAllForUser(userId, PageRequest.of(page, size));
+        }
+
+        for (MembershipsBuffer buffer : buffers) {
+            JSONObject obj = new JSONObject();
+            obj.put("new", buffer.getMembership());
+            obj.put("old", memberRepo.getPreviousMembership(buffer.getUserId(), buffer.getId()) == null ? "" : memberRepo.getPreviousMembership(buffer.getUserId(), buffer.getId()));
+            obj.put("time", buffer.getTimestamp().toString());
+            obj.put("user", userRepository.findById(buffer.getId()).isPresent() ? userRepository.findById(buffer.getId()).get().getDisplayName() : buffer.getUserId());
+            array.put(obj);
+        }
+
+
+        return array.toString();
+    }
 
     /**
      *

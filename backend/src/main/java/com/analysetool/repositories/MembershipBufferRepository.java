@@ -24,6 +24,6 @@ public interface MembershipBufferRepository extends JpaRepository<MembershipsBuf
     @Query("SELECT m FROM MembershipsBuffer m WHERE m.userId=:userId ORDER BY m.id DESC")
     Page<MembershipsBuffer> findAllForUser(long userId, Pageable pageable);
 
-    @Query("SELECT m.membership FROM MembershipsBuffer m WHERE m.id < :id AND m.userId =: userId ORDER BY m.id DESC LIMIT 1")
+    @Query("SELECT m.membership FROM MembershipsBuffer m WHERE m.id < :id AND m.userId =:userId ORDER BY m.id DESC LIMIT 1")
     String getPreviousMembership(long userId, long id);
 }

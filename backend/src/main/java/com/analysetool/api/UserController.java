@@ -1172,6 +1172,11 @@ public class UserController {
 
     }
 
+    /**
+     * Fetches a representation of all user-plan changes within the last week.
+     * @return a JSON-Object containing Lists of Strings and counts of items for those lists.
+     * @throws JSONException .
+     */
     @GetMapping("/getNewUsersAll")
     public String getNewUsersAll() throws JSONException {
         JSONObject obj = new JSONObject();

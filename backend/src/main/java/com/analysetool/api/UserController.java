@@ -1183,7 +1183,7 @@ public class UserController {
         List<String> ohne = new ArrayList<>(), basis = new ArrayList<>(), basis_plus = new ArrayList<>(), plus = new ArrayList<>(), premium = new ArrayList<>();
 
         for(WPUser user : userRepository.findAll()) {
-            if(memberRepo.getLastByUserId(user.getId()).getTimestamp().toLocalDateTime().isAfter(lastWeek)) {
+            if(memberRepo.getLastByUserId(user.getId()).getTimestamp().toLocalDateTime().isAfter(lastWeek) && !getType(Math.toIntExact(user.getId())).equals("admin")) {
                 char preSign = '+';
                 if (memberRepo.getSecondLastByUserId(user.getId()) != null && !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted")) {
                     preSign = '&';
@@ -1249,11 +1249,18 @@ public class UserController {
         obj.put("basisPlus", new JSONArray(basis_plus));
         obj.put("plus", new JSONArray(plus));
         obj.put("premium", new JSONArray(premium));
+
+        obj.put("ohneCount", getUserChangeCountFromList(ohne));
+        obj.put("basisCount", getUserChangeCountFromList(basis));
+        obj.put("basisPlusCount", getUserChangeCountFromList(basis_plus));
+        obj.put("plusCount", getUserChangeCountFromList(plus));
+        obj.put("premiumCount", getUserChangeCountFromList(premium));
+
         return obj.toString();
 
     }
 
-    void addToUserList(char preSign, List<String> newMembership, List<String> oldMembership, WPUser user) {
+    private void addToUserList(char preSign, List<String> newMembership, List<String> oldMembership, WPUser user) {
 
         switch(preSign) {
             case '&' -> {
@@ -1268,6 +1275,14 @@ public class UserController {
             }
         }
 
+    }
+
+    private int getUserChangeCountFromList(List<String> list) {
+        int total = 0;
+        for(String user : list) {
+            total = user.charAt(0) == '+' ? total + 1 : total - 1;
+        }
+        return total;
     }
 
 

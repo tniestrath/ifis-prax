@@ -671,7 +671,8 @@ public class LogService {
                     }
                 }
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
-                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isInternal && !isServerError && !isBlacklisted && isSuccessfulRequest && !isSpam && isGet) {
+                //isInternal ist kurzzeitig entfernt als test.
+                if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isServerError && !isBlacklisted && isSuccessfulRequest && !isSpam && isGet) {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
 

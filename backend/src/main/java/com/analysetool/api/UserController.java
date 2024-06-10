@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -1188,9 +1189,12 @@ public class UserController {
         List<String> ohne = new ArrayList<>(), basis = new ArrayList<>(), basis_plus = new ArrayList<>(), plus = new ArrayList<>(), premium = new ArrayList<>();
 
         for(WPUser user : userRepository.findAll()) {
+
+            String secondLastMembership = memberRepo.getPageableSingle(user.getId(), PageRequest.of(1, 1)).size() > 0 ? memberRepo.getPageableSingle(user.getId(), PageRequest.of(1, 1)).get(0).getMembership() : "none";
+
             if(memberRepo.getLastByUserId(user.getId()).getTimestamp().toLocalDateTime().isAfter(lastWeek) && !getType(Math.toIntExact(user.getId())).equals("admin")) {
                 char preSign = '+';
-                if (memberRepo.getSecondLastByUserId(user.getId()) != null && !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted")) {
+                if (memberRepo.getPageableSingle(user.getId(), PageRequest.of(1,1)).size() > 0 && !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted")) {
                     preSign = '&';
                 } else if (memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted")) {
                     preSign = '-';
@@ -1216,8 +1220,8 @@ public class UserController {
                     }
                     default -> newMembership = null;
                 }
-                if (memberRepo.findById(memberRepo.getSecondLastByUserId(user.getId())).isPresent()) {
-                    switch (memberRepo.findById(memberRepo.getSecondLastByUserId(user.getId())).get().getMembership()) {
+                if (memberRepo.getPageableSingle(user.getId(), PageRequest.of(1, 1)).size() > 0) {
+                    switch (secondLastMembership) {
                         case "none" -> {
                             oldMembership = ohne;
                         }
@@ -1290,6 +1294,31 @@ public class UserController {
         return total;
     }
 
+    @GetMapping("/getFullLog")
+    public String getFullLog(int page, int size, Long userId) throws JSONException {
+
+        JSONArray array = new JSONArray();
+
+        Page<MembershipsBuffer> buffers;
+
+        if(userId == null) {
+            buffers = memberRepo.findAll(PageRequest.of(page, size));
+        } else {
+            buffers = memberRepo.findAllForUser(userId, PageRequest.of(page, size));
+        }
+
+        for (MembershipsBuffer buffer : buffers) {
+            JSONObject obj = new JSONObject();
+            obj.put("newPlan", buffer.getMembership());
+            obj.put("oldPlan", memberRepo.getPreviousMembership(buffer.getUserId(), buffer.getId()) == null ? "" : memberRepo.getPreviousMembership(buffer.getUserId(), buffer.getId()));
+            obj.put("time", buffer.getTimestamp().toString());
+            obj.put("user", userRepository.findById(buffer.getId()).isPresent() ? userRepository.findById(buffer.getId()).get().getDisplayName() : buffer.getUserId());
+            array.put(obj);
+        }
+
+
+        return array.toString();
+    }
 
     /**
      *

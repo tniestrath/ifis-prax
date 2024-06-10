@@ -40,7 +40,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       this.chart_total = this.data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
       this.cdr.detectChanges();
     }).finally(() => {
-      this.api.getUserAccountTypesYesterday().then(res => {
+      this.api.getUserAccountTypesLastWeek().then(res => {
         let map : Map<string, number> = new Map(Object.entries(res));
         this.readMap(map, this.prev_data);
         for (var i = 0; i < this.data.length; i++) {
@@ -56,7 +56,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
           // @ts-ignore
           document.getElementById("basicList").append(...this.formatArray(res.basis));
           // @ts-ignore
-          document.getElementById("bpList").append(...this.formatArray(res["basis-plus"]));
+          document.getElementById("bpList").append(...this.formatArray(res.basisPlus));
           // @ts-ignore
           document.getElementById("plusList").append(...this.formatArray(res.plus));
           // @ts-ignore
@@ -74,7 +74,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     for (let username of array) {
       if (username.startsWith("+")){
         let p = document.createElement("p");
-        p.style.color = DashColors.GREEN;
+        p.style.color = DashColors.BLUE;
         p.style.margin = String(0);
         p.innerText = username.slice(1);
         result.push(p);
@@ -85,13 +85,6 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         p1.style.margin = String(0);
         p1.innerText = username.slice(1);
         result.push(p1);
-      }
-      else if (username.startsWith("&")){
-        let p2 = document.createElement("p");
-        p2.style.color = DashColors.BLUE;
-        p2.style.margin = String(0);
-        p2.innerText = username.slice(1);
-        result.push(p2);
       }
     }
     return result;

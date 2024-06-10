@@ -46,8 +46,8 @@ export enum apiUrl {
    */
   GET_USERS_ALL = "/users/getAll?page=PAGE&size=SIZE&search=SEARCH&filterAbo=ACCFILTER&filterTyp=USRFILTER&sorter=SORTER",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
-  GET_USERS_ACCOUNTTYPES_YESTERDAY = "/users/getAccountTypeAllYesterday",
-  GET_USERS_ACCOUNTTYPES_ALL_NEW = "/users/getNewUsersAll",
+  GET_USERS_ACCOUNTTYPES_LAST_WEEK = "/users/getAccountTypeAllLastWeek",
+  GET_USERS_ACCOUNTTYPES_CHANGED = "/users/getNewUsersAll",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
   GET_USERS_CLICKS_AVERAGE_BY_VIEWTYPE = "/users/getUserProfileAndPostViewsAveragesByType",
   GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING = "/users/getUserProfileViewsAveragesByTypeAndPosts",
@@ -512,14 +512,14 @@ export class ApiService {
     return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_ALL_TIME), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_CALLUP_CATEGORIES_ALL_TIME)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getUserAccountTypesYesterday() {
+  async getUserAccountTypesLastWeek() {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ACCOUNTTYPES_YESTERDAY)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_LAST_WEEK), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ACCOUNTTYPES_LAST_WEEK)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getUserAccountTypesAllNew() : Promise<{ohne: string[], basis: string[], "basis-plus": string[], plus: string[], premium: string[], sponsor: string[]}>{
+  async getUserAccountTypesAllNew() : Promise<{ohne: string[], basis: string[], basisPlus: string[], plus: string[], premium: string[]}>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_ALL_NEW), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ACCOUNTTYPES_ALL_NEW)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_CHANGED), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ACCOUNTTYPES_CHANGED)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getTopPostsBySorterWithType(sorter: string, type: string, limit: number) : Promise<Post[]>{

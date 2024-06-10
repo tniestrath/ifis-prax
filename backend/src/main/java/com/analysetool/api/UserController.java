@@ -1188,9 +1188,12 @@ public class UserController {
         List<String> ohne = new ArrayList<>(), basis = new ArrayList<>(), basis_plus = new ArrayList<>(), plus = new ArrayList<>(), premium = new ArrayList<>();
 
         for(WPUser user : userRepository.findAll()) {
+
+            String secondLastMembership = memberRepo.getPageableSingle(user.getId(), PageRequest.of(1, 1)).size() > 0 ? memberRepo.getPageableSingle(user.getId(), PageRequest.of(1, 1)).get(0).getMembership() : "none";
+
             if(memberRepo.getLastByUserId(user.getId()).getTimestamp().toLocalDateTime().isAfter(lastWeek) && !getType(Math.toIntExact(user.getId())).equals("admin")) {
                 char preSign = '+';
-                if (memberRepo.getPageableSingle(user.getId(), PageRequest.of(1,1)).get(0) != null && !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted")) {
+                if (memberRepo.getPageableSingle(user.getId(), PageRequest.of(1,1)).size() > 0 && !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted")) {
                     preSign = '&';
                 } else if (memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted")) {
                     preSign = '-';
@@ -1216,8 +1219,8 @@ public class UserController {
                     }
                     default -> newMembership = null;
                 }
-                if (memberRepo.getPageableSingle(user.getId(), PageRequest.of(1, 1)).get(0) != null) {
-                    switch (memberRepo.getPageableSingle(user.getId(), PageRequest.of(1, 1)).get(0).getMembership()) {
+                if (memberRepo.getPageableSingle(user.getId(), PageRequest.of(1, 1)).size() > 0) {
+                    switch (secondLastMembership) {
                         case "none" -> {
                             oldMembership = ohne;
                         }

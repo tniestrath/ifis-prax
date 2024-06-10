@@ -34,7 +34,7 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
 }
 
 @Component({
-  selector: 'dash-user-tags-dist',
+  selector: 'dash-user-tags-dist-single',
   templateUrl: './user-tags-dist.component.html',
   styleUrls: ['./user-tags-dist.component.css', "../../dash-base/dash-base.component.css"]
 })

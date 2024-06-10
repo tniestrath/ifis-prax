@@ -144,7 +144,7 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
 }
 
 @Component({
-  selector: 'dash-user-stats-by-plan',
+  selector: 'dash-user-stats-by-plan-type-compare',
   templateUrl: './user-stats-by-plan.component.html',
   styleUrls: ['./user-stats-by-plan.component.css', "../../dash-base/dash-base.component.css"]
 })

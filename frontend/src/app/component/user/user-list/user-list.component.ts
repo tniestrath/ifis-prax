@@ -1,11 +1,8 @@
-import {Component, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Subject} from "rxjs";
 import {SelectorItem} from "../../../page/selector/selector.component";
 import {UserComponent} from "../user.component";
-import {
-  SearchListSSItemComponent
-} from "../../search/search-no-results-list/search-list-item/search-list-item.component";
 
 
 @Component({

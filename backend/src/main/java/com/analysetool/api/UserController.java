@@ -26,7 +26,6 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -81,6 +80,8 @@ public class UserController {
     private RankingGroupProfileRepository rankingGroupProfileRepo;
     @Autowired
     private RankingGroupContentRepository rankingGroupContentRepo;
+    @Autowired
+    private MembershipBufferRepository memberRepo;
 
     private final DashConfig config;
 
@@ -1176,61 +1177,99 @@ public class UserController {
         JSONObject obj = new JSONObject();
 
         Comparator<String> customComparator = Comparator.comparing(s -> s.charAt(0));
-        List<String> ohne = getNewUserSchmarotzer();
-        List<String> basis = getNewUsersByTypeToday("basis");
-        List<String> basis_plus = getNewUsersByTypeToday("basis-plus");
-        List<String> plus = getNewUsersByTypeToday("plus");
-        List<String> premium = getNewUsersByTypeToday("premium");
-        List<String> sponsor = getNewUsersByTypeToday("sponsor");
+
+        LocalDateTime lastWeek = LocalDateTime.now().minusDays(7);
+
+        List<String> ohne = new ArrayList<>(), basis = new ArrayList<>(), basis_plus = new ArrayList<>(), plus = new ArrayList<>(), premium = new ArrayList<>();
+
+        for(WPUser user : userRepository.findAll()) {
+            if(memberRepo.getLastByUserId(user.getId()).getTimestamp().toLocalDateTime().isAfter(lastWeek)) {
+                char preSign = '+';
+                if (memberRepo.getSecondLastByUserId(user.getId()) != null && !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted")) {
+                    preSign = '&';
+                } else if (memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted")) {
+                    preSign = '-';
+                }
+
+                List<String> newMembership, oldMembership;
+
+                switch (memberRepo.getLastByUserId(user.getId()).getMembership()) {
+                    case "none" -> {
+                        newMembership = ohne;
+                    }
+                    case "basis" -> {
+                        newMembership = basis;
+                    }
+                    case "basis-plus" -> {
+                        newMembership = basis_plus;
+                    }
+                    case "plus" -> {
+                        newMembership = plus;
+                    }
+                    case "premium" -> {
+                        newMembership = premium;
+                    }
+                    default -> newMembership = null;
+                }
+                if (memberRepo.findById(memberRepo.getSecondLastByUserId(user.getId())).isPresent()) {
+                    switch (memberRepo.findById(memberRepo.getSecondLastByUserId(user.getId())).get().getMembership()) {
+                        case "none" -> {
+                            oldMembership = ohne;
+                        }
+                        case "basis" -> {
+                            oldMembership = basis;
+                        }
+                        case "basis-plus" -> {
+                            oldMembership = basis_plus;
+                        }
+                        case "plus" -> {
+                            oldMembership = plus;
+                        }
+                        case "premium" -> {
+                            oldMembership = premium;
+                        }
+                        default -> oldMembership = null;
+                    }
+                } else {
+                    oldMembership = null;
+                }
+
+                addToUserList(preSign, newMembership, oldMembership, user);
+            }
+        }
+
         ohne.sort(customComparator);
         basis.sort(customComparator);
         basis_plus.sort(customComparator);
         plus.sort(customComparator);
         premium.sort(customComparator);
-        sponsor.sort(customComparator);
 
         obj.put("ohne", new JSONArray(ohne));
         obj.put("basis", new JSONArray(basis));
-        obj.put("basis-plus", new JSONArray(basis_plus));
+        obj.put("basisPlus", new JSONArray(basis_plus));
         obj.put("plus", new JSONArray(plus));
         obj.put("premium", new JSONArray(premium));
-        obj.put("sponsor", new JSONArray(sponsor));
         return obj.toString();
 
     }
 
-    public List<String> getNewUserSchmarotzer() {
-        List<Long> listCheck = wpMemberRepo.getAllActiveMembersIds();
-        List<String> listResponse = new ArrayList<>();
-        for(WPUser user : userRepository.findAll()) {
-            if(user.getRegistered().isAfter(LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT))) {
-                if (!listCheck.contains(user.getId())) {
-                    listResponse.add("+" + user.getDisplayName());
-                }
+    void addToUserList(char preSign, List<String> newMembership, List<String> oldMembership, WPUser user) {
+
+        switch(preSign) {
+            case '&' -> {
+                newMembership.add("+" + user.getDisplayName());
+                oldMembership.add("-" + user.getDisplayName());
+            }
+            case '+' -> {
+                newMembership.add("+" + user.getDisplayName());
+            }
+            case '-' -> {
+                oldMembership.add("-" + user.getDisplayName());
             }
         }
-        return listResponse;
+
     }
 
-    private void listAddByType(String type, List<String> list, WPMemberships member) {
-        switch (type) {
-            case "basis-plus" -> listAdd(list, member);
-            case "sponsor" -> listAdd(list, member);
-            case "premium" -> listAdd(list, member);
-            case "plus" -> listAdd(list, member);
-            case "basis" -> listAdd(list, member);
-        }
-    }
-
-    private void listAdd(List<String> list, WPMemberships member) {
-        if(userRepository.findById(member.getUser_id()).isPresent()) {
-            switch (member.getStatus()) {
-                case "active" -> list.add("+" + userRepository.findById(member.getUser_id()).get().getDisplayName());
-                case "cancelled" -> list.add("-" + userRepository.findById(member.getUser_id()).get().getDisplayName());
-                case "changed" -> list.add("&" + userRepository.findById(member.getUser_id()).get().getDisplayName());
-            }
-        }
-    }
 
     /**
      *
@@ -1290,16 +1329,6 @@ public class UserController {
 
 
         return "none";
-    }
-
-    public List<String> getNewUsersByTypeToday(String type) {
-        List<String> list = new ArrayList<>();
-        for(WPMemberships member : wpMemberRepo.getAllActiveMembers()) {
-            if(member.getModified().after(uniRepo.getLatestUniStat().getDatum())) {
-                listAddByType(type, list, member);
-            }
-        }
-        return list;
     }
 
     @GetMapping("/hasPost")

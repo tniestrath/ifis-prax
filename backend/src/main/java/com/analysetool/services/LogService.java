@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -124,6 +125,8 @@ public class LogService {
     private FinalSearchStatDLCRepository fDLCRepo;
     @Autowired
     private TagCatStatRepository tagCatRepo;
+    @Autowired
+    private MembershipBufferRepository memberRepo;
 
     @Autowired
     private RankingTotalProfileRepository rankingTotalProfileRepo;
@@ -521,6 +524,8 @@ public class LogService {
         updatePostTypes();
 
         doAutoClean();
+
+        updateMemberBuffer();
 
         if(LocalDateTime.now().getHour() == 5) {
             endDay();
@@ -3616,6 +3621,27 @@ public class LogService {
 
     public void updateRankings() {
         userController.updateUserRankingBuffer();
+    }
+
+    private void updateMemberBuffer() {
+
+        for(WPUser user : wpUserRepo.findAll()) {
+            if(memberRepo.getLastByUserId(user.getId()) == null || !userController.getType(Math.toIntExact(user.getId())).equals(memberRepo.getLastByUserId(user.getId()).getMembership())) {
+                MembershipsBuffer newMembership = new MembershipsBuffer();
+                newMembership.setUserId(user.getId());
+                newMembership.setMembership(userController.getType(Math.toIntExact(user.getId())));
+                newMembership.setTimestamp(new Timestamp(new Date().getTime()));
+                memberRepo.save(newMembership);
+            }
+        }
+
+        for(MembershipsBuffer buffer : memberRepo.findAllDeleted()) {
+            MembershipsBuffer goneMember = new MembershipsBuffer();
+            goneMember.setTimestamp(new Timestamp(new Date().getTime()));
+            goneMember.setMembership("deleted");
+            goneMember.setUserId(buffer.getUserId());
+            memberRepo.save(goneMember);
+        }
     }
 
 }

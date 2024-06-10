@@ -566,6 +566,7 @@ public class LogService {
         int viewsRatgeberGlossar = 0;
         int viewsRatgeberBuch = 0;
         int viewsRatgeberSelf = 0;
+        int viewsRatgeberSelfSub = 0;
         int viewsMain = 0;
         int viewsAnbieter = 0;
         int viewsUeber = 0;
@@ -576,7 +577,8 @@ public class LogService {
         int viewsDatenschutz = 0;
         int viewsNewsletter = 0;
         int viewsImage = 0;
-
+        int viewsNotfall = 0;
+        int viewsNotfallSub=0;
 
         int uniqueUsers = 0;
         int userArticle = 0;
@@ -591,6 +593,7 @@ public class LogService {
         int userRatgeberGlossar = 0;
         int userRatgeberBuch = 0;
         int userRatgeberSelf = 0;
+        int userRatgeberSelfSub = 0;
         int userMain = 0;
         int userAnbieter = 0;
         int userUeber = 0;
@@ -601,7 +604,8 @@ public class LogService {
         int userDatenschutz = 0;
         int userNewsletter = 0;
         int userImage = 0;
-
+        int userNotfall = 0 ;
+        int userNotfallSub = 0;
         int serverErrors = 0;
 
         String last_ip = null;
@@ -2123,6 +2127,11 @@ public class LogService {
                     uniCat.setViewsRatgeberSelf(uniCat.getViewsRatgeberSelf() + 1);
                     uniCat.setBesucherRatgeberSelf(uniCat.getBesucherRatgeberSelf() + (isUnique ? 1 : 0));
                 }
+                case "ratgeberSelfSub" -> {
+                    //decomment when uni is updated
+                   /* uniCat.setViewsRatgeberSelfSub(uniCat.getViewsRatgeberSelfSub() + 1);
+                    uniCat.setBesucherRatgeberSelfSub(uniCat.getBesucherRatgeberSelfSub() + (isUnique ? 1 : 0));*/
+                }
                 case "main" -> {
                     uniCat.setViewsMain(uniCat.getViewsMain() + 1);
                     uniCat.setBesucherMain(uniCat.getBesucherMain() + (isUnique ? 1 : 0));
@@ -2163,7 +2172,16 @@ public class LogService {
                     uniCat.setViewsAGBS(uniCat.getViewsAGBS() + 1);
                     uniCat.setBesucherAGBS(uniCat.getBesucherAGBS() + (isUnique ? 1 : 0));
                 }
-
+                case "notfall" -> {
+                    //decomment when uni is updated
+                   /* uniCat.setViewsNotfall(uniCat.getViewsNotfall() + 1);
+                    uniCat.setBesucherNotfall(uniCat.getBesucherNotfall() + (isUnique ? 1 : 0));*/
+                }
+                case "notfallSub" -> {
+                    //decomment when uni is updated
+                   /* uniCat.setViewsNotfallSub(uniCat.getViewsNotfallSub() + 1);
+                    uniCat.setBesucherNotfallSub(uniCat.getBesucherNotfallSub() + (isUnique ? 1 : 0));*/
+                }
             }
         }
         else {

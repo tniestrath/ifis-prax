@@ -55,6 +55,10 @@ public class UniversalCategoriesDLC {
     @Column(name = "besucher_ratgeber_self")
     private int besucherRatgeberSelf;
 
+  /*  @Column(name = "besucher_ratgeber_self_sub")
+    private int besucherRatgeberSelfSub;*/
+
+
     @Column(name="besucher_main")
     private int besucherMain;
 
@@ -81,6 +85,13 @@ public class UniversalCategoriesDLC {
 
     @Column(name="besucher_image")
     private int besucherImage;
+
+       /* @Column(name = "besucher_notfall")
+    private int besucherNotfall;
+
+    @Column(name = "besucher_notfall_sub")
+    private int besucherNotfallSub;
+    */
 
     @Column(name="besucher_agbs")
     private int besucherAGBS;
@@ -124,6 +135,11 @@ public class UniversalCategoriesDLC {
     @Column(name = "views_ratgeber_self")
     private int viewsRatgeberSelf;
 
+/*
+    @Column(name = "views_ratgeber_self_sub")
+    private int viewsRatgeberSelfSub;
+*/
+
     @Column(name="views_main")
     private int viewsMain;
 
@@ -145,6 +161,12 @@ public class UniversalCategoriesDLC {
     @Column(name="views_agbs")
     private int viewsAGBS;
 
+   /* @Column(name = "views_notfall")
+    private int viewsNotfall;
+
+    @Column(name = "views_notfall_sub")
+    private int viewsNotfallSub;
+    */
     public int getBesucherMain() {
         return besucherMain;
     }

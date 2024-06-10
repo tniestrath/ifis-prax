@@ -49,7 +49,7 @@ export enum apiUrl {
   GET_USERS_ACCOUNTTYPES_YESTERDAY = "/users/getAccountTypeAllYesterday",
   GET_USERS_ACCOUNTTYPES_ALL_NEW = "/users/getNewUsersAll",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
-  GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE = "/users/getUserProfileAndPostViewsAveragesByType",
+  GET_USERS_CLICKS_AVERAGE_BY_VIEWTYPE = "/users/getUserProfileAndPostViewsAveragesByType",
   GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING = "/users/getUserProfileViewsAveragesByTypeAndPosts",
   GET_USERS_TAG_DISTRIBUTION_PRECENTAGE = "/users/getAllUserTagsData",
 
@@ -639,7 +639,7 @@ export class ApiService {
 
   async getUserClicksAverageByViewType() {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_Clicks_AVERAGE_BY_VIEWTYPE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_CLICKS_AVERAGE_BY_VIEWTYPE), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_CLICKS_AVERAGE_BY_VIEWTYPE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async loginSeo() {
@@ -800,11 +800,11 @@ export class ApiService {
 
   async getUnmoderatedForumPosts() : Promise<ForumPost[]> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_UNMODERATED_POSTS)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_UNMODERATED_POSTS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_UNMODERATED_POSTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getModeratedForumPosts() : Promise<ForumPost[]> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_MODERATED_POSTS)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_MODERATED_POSTS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_MODERATED_POSTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async deleteForumPost(id : string) : Promise<boolean> {
     this.setLoading();
@@ -833,7 +833,7 @@ export class ApiService {
 
   async getForumBadWords() :Promise<string[]> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_BAD_WORDS)) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_BAD_WORDS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_BAD_WORDS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async addForumBadWord(word: string) : Promise<boolean> {

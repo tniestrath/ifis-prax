@@ -3626,7 +3626,6 @@ public class LogService {
     private void updateMemberBuffer() {
 
         for(WPUser user : wpUserRepo.findAll()) {
-
             if(memberRepo.getLastByUserId(user.getId()) == null || !userController.getType(Math.toIntExact(user.getId())).equals(memberRepo.getLastByUserId(user.getId()).getMembership())) {
                 MembershipsBuffer newMembership = new MembershipsBuffer();
                 newMembership.setUserId(user.getId());
@@ -3634,6 +3633,14 @@ public class LogService {
                 newMembership.setTimestamp(new Timestamp(new Date().getTime()));
                 memberRepo.save(newMembership);
             }
+        }
+
+        for(MembershipsBuffer buffer : memberRepo.findAllDeleted()) {
+            MembershipsBuffer goneMember = new MembershipsBuffer();
+            goneMember.setTimestamp(new Timestamp(new Date().getTime()));
+            goneMember.setMembership("deleted");
+            goneMember.setUserId(buffer.getUserId());
+            memberRepo.save(goneMember);
         }
     }
 

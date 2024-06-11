@@ -1302,7 +1302,7 @@ public class UserController {
         Page<MembershipsBuffer> buffers;
 
         if(userId == null || !userId.isBlank()) {
-            buffers = memberRepo.findAll(PageRequest.of(page, size));
+            buffers = memberRepo.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"id")));
         } else {
             buffers = memberRepo.findAllForUser(Integer.parseInt(userId), PageRequest.of(page, size));
         }

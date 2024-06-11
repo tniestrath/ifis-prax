@@ -124,4 +124,16 @@ export class DashListPageableComponent<T extends DbObject, C extends DashListIte
       this.lastScroll = scroll;
     }
   }
+
+  onScrollEndWithPromise(response : Promise<T[]>) {
+    if (!this.pagesComplete) {
+      let scroll = Date.now();
+      if (scroll >= (this.lastScroll + 100)) {
+        // @ts-ignore
+        this.load(response, this.component);
+      } else {
+      }
+      this.lastScroll = scroll;
+    }
+  }
 }

@@ -11,15 +11,16 @@
 }
 
 .user-name{
-  width: 20%;
+  width: 40%;
   text-align: left;
 }
-.user-old-plan{
-  width: 20%;
+.user-plan-arrow{
+  width: 20px;
+  height: 20px;
   text-align: center;
 }
 .user-new-plan{
-  width: 20%;
+  width: 40%;
   text-align: right;
 }
 .user-plan-time{

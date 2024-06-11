@@ -1,1 +1,9 @@
-<p>user-plan-log works!</p>
+<div class="component-box user-plan-log-box">
+  <div class="user-plan-log-title">
+    <p>Abonnement aktualisierungen</p>
+  </div>
+  <div class="user-plan-log-selector-container">
+    <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded" (scrollEnd)="onScrollEnd()"></dash-selector>
+  </div>
+  <div id="shadow"></div>
+</div>

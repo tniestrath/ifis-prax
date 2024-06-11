@@ -19,6 +19,7 @@ import {ForumPost} from "../component/forum/forum-moderation-list/ForumPost";
 import {SysVars} from "./sys-vars-service";
 import {ExternalService} from "../component/system/external-services-list/external-services-list.component";
 import {Environment} from "../../environment";
+import {UserPlanLogItem} from "../component/user/user-plan-log/user-plan-log-item/user-plan-log-item.component";
 
 /**
  * @enum apiUrl
@@ -48,6 +49,7 @@ export enum apiUrl {
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
   GET_USERS_ACCOUNTTYPES_LAST_WEEK = "/users/getAccountTypeAllLastWeek",
   GET_USERS_ACCOUNTTYPES_CHANGED = "/users/getNewUsersAll",
+  GET_USERS_ACCOUNTTYPES_LOG = "/users/getFullLog?page=PAGE&size=SIZE",
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
   GET_USERS_CLICKS_AVERAGE_BY_VIEWTYPE = "/users/getUserProfileAndPostViewsAveragesByType",
   GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING = "/users/getUserProfileViewsAveragesByTypeAndPosts",
@@ -520,6 +522,10 @@ export class ApiService {
   async getUserAccountTypesAllNew() : Promise<{ohne: string[], ohneCount: number, basis: string[], basisCount: number, basisPlus: string[], basisPlusCount: number, plus: string[], plusCount: number, premium: string[], premiumCount : number}>{
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_CHANGED), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ACCOUNTTYPES_CHANGED)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUserPlanChangesLog(page : number, size : number) : Promise<UserPlanLogItem[]>{
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_LOG).replace("PAGE", String(page)).replace("SIZE", String(size)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ACCOUNTTYPES_LOG)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getTopPostsBySorterWithType(sorter: string, type: string, limit: number) : Promise<Post[]>{

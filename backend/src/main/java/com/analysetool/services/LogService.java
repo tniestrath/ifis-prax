@@ -171,7 +171,7 @@ public class LogService {
     private final String ratgeberBuchView = "^.*GET /ratgeber/cyber-sicherheit/";
 
     private final String ratgeberSelfView = "^.*GET /selbstlernangebot-it-sicherheit/";
-
+    private final String ratgeberSelfSubView ="^.*GET /selbstlernangebot-it-sicherheit/([^/]+)/";
     private final String ratgeberSelfViewAlterEgo = "^.*GET /Selbstlernakademie/sec-aware-nrw-scorm12-8DUduEVd/scormcontent/index\\.html";
 
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";
@@ -247,6 +247,8 @@ public class LogService {
 
    private final String forumSearch= "^.*GET /marktplatz-forum/\\?wpfs=(.*?)&wpfin=(.*?)&wpfd=(.*?)&wpfob=(.*?)&wpfo=(.*?)&wpfpaged=(.*?)(?:\\s|$)";
 
+   private final String itNotfall= "^.*GET /ratgeber/(it-notfall)/";
+   private final String itNotfallSub = "^.*GET /ratgeber/it-notfall/([^/]+)/";
     final Pattern forumDiskussionsthemenPattern = Pattern.compile(forumDiskussionsthemen);
     final Pattern forumTopicPattern = Pattern.compile(forumTopic);
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -303,7 +305,9 @@ public class LogService {
     final Pattern tagCatPattern = Pattern.compile(tagCatPatter);
 
     final Pattern forumSearchPattern= Pattern.compile(forumSearch);
-
+    final Pattern itNotfallPattern = Pattern.compile(itNotfall);
+    final Pattern itNotfallSubPattern = Pattern.compile(itNotfallSub);
+    final Pattern ratgeberSelfSub = Pattern.compile(ratgeberSelfSubView);
     private String lastLine = "";
     private int lineCounter = 0;
     private int lastLineCounter = 0;
@@ -562,6 +566,7 @@ public class LogService {
         int viewsRatgeberGlossar = 0;
         int viewsRatgeberBuch = 0;
         int viewsRatgeberSelf = 0;
+        int viewsRatgeberSelfSub = 0;
         int viewsMain = 0;
         int viewsAnbieter = 0;
         int viewsUeber = 0;
@@ -572,7 +577,8 @@ public class LogService {
         int viewsDatenschutz = 0;
         int viewsNewsletter = 0;
         int viewsImage = 0;
-
+        int viewsNotfall = 0;
+        int viewsNotfallSub=0;
 
         int uniqueUsers = 0;
         int userArticle = 0;
@@ -587,6 +593,7 @@ public class LogService {
         int userRatgeberGlossar = 0;
         int userRatgeberBuch = 0;
         int userRatgeberSelf = 0;
+        int userRatgeberSelfSub = 0;
         int userMain = 0;
         int userAnbieter = 0;
         int userUeber = 0;
@@ -597,7 +604,8 @@ public class LogService {
         int userDatenschutz = 0;
         int userNewsletter = 0;
         int userImage = 0;
-
+        int userNotfall = 0 ;
+        int userNotfallSub = 0;
         int serverErrors = 0;
 
         String last_ip = null;
@@ -801,6 +809,12 @@ public class LogService {
                     Matcher matched_tagcat_view = tagCatPattern.matcher(request);
                     //Does it match a forum search?
                     Matcher matched_forum_search = forumSearchPattern.matcher(request);
+                    //Does it match it-notfall ?
+                    Matcher matched_it_notfall = itNotfallPattern.matcher(request);
+                    //Does it match it-notfall-sub ?
+                    Matcher matched_it_notfall_sub = itNotfallSubPattern.matcher(request);
+                    // Does it match ratgeber-self-sub ?
+                    Matcher matched_ratgeber_self_sub = ratgeberSelfSub.matcher(request);
 
                     //Find out which pattern matched
                     String whatMatched = "";
@@ -902,6 +916,9 @@ public class LogService {
                     } else if(matched_ratgeber_buch.find()) {
                         whatMatched = "ratgeberBuch";
                         patternMatcher = matched_ratgeber_buch;
+                    } else if (matched_ratgeber_self_sub.find()) {
+                        whatMatched = "ratgeberSelfSub";
+                        patternMatcher = matched_ratgeber_self_sub;
                     } else if(matched_ratgeber_self.find()){
                         whatMatched = "ratgeberSelf";
                         patternMatcher = matched_ratgeber_self;
@@ -953,6 +970,12 @@ public class LogService {
                     } else if(matched_forum_search.find()) {
                         whatMatched = "forumSearch";
                         patternMatcher = matched_forum_search;
+                    } else if (matched_it_notfall_sub.find()) {
+                        whatMatched = "notfallSub";
+                        patternMatcher = matched_it_notfall_sub;
+                    } else if (matched_it_notfall.find()) {
+                        whatMatched = "notfall";
+                        patternMatcher = matched_it_notfall;
                     }
 
                     //If user existed,
@@ -1204,7 +1227,7 @@ public class LogService {
 
                             updateUniSingleLine("anbieter", isUnique, dateLog);
                         }
-                        case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch", "ratgeberSelf" -> {
+                        case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch", "ratgeberSelf", "ratgeberSelfSub" -> {
                             //Erhöhe Clicks für RatgeberViews um 1.
                             viewsRatgeber++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
@@ -1269,6 +1292,20 @@ public class LogService {
 
                                     updateUniSingleLine("ratgeberSelf", isUnique, dateLog);
                                 }
+
+                                case "ratgeberSelfSub" -> {
+                                    //decomment when uni table is updated
+                                    viewsRatgeberSelfSub++;
+                                    if (isUnique) {
+                                        userRatgeberSelfSub++;
+                                    } else {
+                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
+                                            userRatgeberSelfSub++;
+                                        }
+                                    }
+
+                                    updateUniSingleLine("ratgeberSelfSub", isUnique, dateLog);
+                                }
                             }
 
 
@@ -1310,6 +1347,38 @@ public class LogService {
 
                             updateUniSingleLine("anbieter", isUnique, dateLog);
                         }
+                        case "notfall", "notfallSub" -> {
+                            //decomment when uni table is updated
+                            //Erhöhe Clicks für IT-NotfallViews um 1.
+                            viewsNotfall++;
+                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
+                            if (isUnique) {
+                                userNotfall++;
+                            } else {
+                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNotfall()).length() < 2) {
+                                    userNotfall++;
+                                }
+                            }
+                            updateUniqueUser(ip, "notfall", dateLog);
+
+                            updateUniSingleLine("notfall", isUnique, dateLog);
+
+                            //Update stats for more concrete type of notfall
+                            switch (whatMatched) {
+                                case "notfallSub" -> {
+                                    viewsNotfallSub++;
+                                    if (isUnique) {
+                                        userNotfallSub++;
+                                    } else {
+                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getNotfall()).length() < 2) {
+                                            userNotfallSub++;
+                                        }
+                                    }
+
+                                    updateUniSingleLine("notfall", isUnique, dateLog);
+                                }
+                            }
+                        }
                         default -> {
                             if(!isNotNonsense) {
                                 updateUniqueUser(ip, "nonsense", dateLog);
@@ -1344,7 +1413,6 @@ public class LogService {
             }
 
         }
-        //updateUniStats(totalClicks, internalClicks, sensibleClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsVideos, viewsWhitepaper, viewsEvents,  viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsRatgeberSelf, viewsMain, viewsAnbieter, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userVideos, userWhitepaper, userEvents, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userRatgeberSelf, userMain, userAnbieter, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
         //Service weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
         postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
@@ -1574,6 +1642,22 @@ public class LogService {
                     e.printStackTrace();
                 }
 
+            }
+            // page views
+            case "notfall","notfallSub","ratgeberSelfSub"->{
+                try {
+                    Optional<Post> postOptional = postRepository.findPageByPostName(patternMatcher.group(1));
+                    if( postOptional.isPresent()){
+                        Post post = postOptional.get();
+                        Long postId = post.getId();
+                        UpdatePerformanceAndViews(dateLog, postId);
+                        updateIPsByPost(ip, postId);
+                        updatePostClicksMap(postId, dateLog);
+                    }
+                }catch (Exception e){
+                    System.out.println("Page Tracking Exception: " + line);
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -2041,6 +2125,11 @@ public class LogService {
                     uniCat.setViewsRatgeberSelf(uniCat.getViewsRatgeberSelf() + 1);
                     uniCat.setBesucherRatgeberSelf(uniCat.getBesucherRatgeberSelf() + (isUnique ? 1 : 0));
                 }
+                case "ratgeberSelfSub" -> {
+                    //decomment when uni is updated
+                   /* uniCat.setViewsRatgeberSelfSub(uniCat.getViewsRatgeberSelfSub() + 1);
+                    uniCat.setBesucherRatgeberSelfSub(uniCat.getBesucherRatgeberSelfSub() + (isUnique ? 1 : 0));*/
+                }
                 case "main" -> {
                     uniCat.setViewsMain(uniCat.getViewsMain() + 1);
                     uniCat.setBesucherMain(uniCat.getBesucherMain() + (isUnique ? 1 : 0));
@@ -2081,7 +2170,16 @@ public class LogService {
                     uniCat.setViewsAGBS(uniCat.getViewsAGBS() + 1);
                     uniCat.setBesucherAGBS(uniCat.getBesucherAGBS() + (isUnique ? 1 : 0));
                 }
-
+                case "notfall" -> {
+                    //decomment when uni is updated
+                   /* uniCat.setViewsNotfall(uniCat.getViewsNotfall() + 1);
+                    uniCat.setBesucherNotfall(uniCat.getBesucherNotfall() + (isUnique ? 1 : 0));*/
+                }
+                case "notfallSub" -> {
+                    //decomment when uni is updated
+                   /* uniCat.setViewsNotfallSub(uniCat.getViewsNotfallSub() + 1);
+                    uniCat.setBesucherNotfallSub(uniCat.getBesucherNotfallSub() + (isUnique ? 1 : 0));*/
+                }
             }
         }
         else {
@@ -3204,6 +3302,7 @@ public class LogService {
         user.setImage(new JSONArray().put(0).toString());
         user.setAgb(new JSONArray().put(0).toString());
         user.setNonsense(new JSONArray().put(0).toString());
+        user.setNotfall(new JSONArray().put(0).toString());
         user.setFirst_click(clickTime);
         user.setTime_spent(0);
         user.setAmount_of_clicks(0);

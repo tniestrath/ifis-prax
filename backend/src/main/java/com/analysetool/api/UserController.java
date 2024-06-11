@@ -1295,16 +1295,16 @@ public class UserController {
     }
 
     @GetMapping("/getFullLog")
-    public String getFullLog(int page, int size, Long userId) throws JSONException {
+    public String getFullLog(int page, int size, String userId) throws JSONException {
 
         JSONArray array = new JSONArray();
 
         Page<MembershipsBuffer> buffers;
 
-        if(userId == null) {
+        if(userId == null || !userId.isBlank()) {
             buffers = memberRepo.findAll(PageRequest.of(page, size));
         } else {
-            buffers = memberRepo.findAllForUser(userId, PageRequest.of(page, size));
+            buffers = memberRepo.findAllForUser(Integer.parseInt(userId), PageRequest.of(page, size));
         }
 
         for (MembershipsBuffer buffer : buffers) {
@@ -1312,7 +1312,7 @@ public class UserController {
             obj.put("newPlan", buffer.getMembership());
             obj.put("oldPlan", memberRepo.getPreviousMembership(buffer.getUserId(), buffer.getId()) == null ? "" : memberRepo.getPreviousMembership(buffer.getUserId(), buffer.getId()));
             obj.put("time", buffer.getTimestamp().toString());
-            obj.put("user", userRepository.findById(buffer.getId()).isPresent() ? userRepository.findById(buffer.getId()).get().getDisplayName() : buffer.getUserId());
+            obj.put("user", userRepository.findById(buffer.getUserId()).isPresent() ? userRepository.findById(buffer.getUserId()).get().getDisplayName() : buffer.getUserId());
             array.put(obj);
         }
 

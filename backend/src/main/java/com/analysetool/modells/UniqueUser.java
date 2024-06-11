@@ -72,6 +72,9 @@ public class UniqueUser {
     @Column(name = "image")
     private String image;
 
+    @Column(name="notfall")
+    private String notfall;
+
     @Column(name = "agb")
     private String agb;
 
@@ -271,5 +274,13 @@ public class UniqueUser {
 
     public void setAnbieter(String anbieter) {
         this.anbieter = anbieter;
+    }
+
+    public String getNotfall() {
+        return notfall;
+    }
+
+    public void setNotfall(String notfall) {
+        this.notfall = notfall;
     }
 }

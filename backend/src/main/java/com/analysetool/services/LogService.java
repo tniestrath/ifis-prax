@@ -1295,7 +1295,7 @@ public class LogService {
 
                                 case "ratgeberSelfSub" -> {
                                     //decomment when uni table is updated
-                               /*     viewsRatgeberSelfSub++;
+                                    viewsRatgeberSelfSub++;
                                     if (isUnique) {
                                         userRatgeberSelfSub++;
                                     } else {
@@ -1304,7 +1304,7 @@ public class LogService {
                                         }
                                     }
 
-                                    updateUniSingleLine("ratgeberSelfSub", isUnique, dateLog);*/
+                                    updateUniSingleLine("ratgeberSelfSub", isUnique, dateLog);
                                 }
                             }
 
@@ -1349,7 +1349,7 @@ public class LogService {
                         }
                         case "notfall", "notfallSub" -> {
                             //decomment when uni table is updated
-                          /*  //Erhöhe Clicks für IT-NotfallViews um 1.
+                            //Erhöhe Clicks für IT-NotfallViews um 1.
                             viewsNotfall++;
                             //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
                             if (isUnique) {
@@ -1378,7 +1378,6 @@ public class LogService {
                                     updateUniSingleLine("notfall", isUnique, dateLog);
                                 }
                             }
-                            */
                         }
                         default -> {
                             if(!isNotNonsense) {
@@ -1414,7 +1413,6 @@ public class LogService {
             }
 
         }
-        //updateUniStats(totalClicks, internalClicks, sensibleClicks, viewsArticle, viewsNews, viewsBlog, viewsPodcast, viewsVideos, viewsWhitepaper, viewsEvents,  viewsRatgeber,viewsRatgeberPost, viewsRatgeberGlossar, viewsRatgeberBuch, viewsRatgeberSelf, viewsMain, viewsAnbieter, viewsUeber, viewsAGBS, viewsImpressum, viewsPreisliste, viewsPartner, viewsDatenschutz, viewsNewsletter, viewsImage, uniqueUsers, userArticle, userNews, userBlog, userPodcast, userVideos, userWhitepaper, userEvents, userRatgeber, userRatgeberPost, userRatgeberGlossar, userRatgeberBuch, userRatgeberSelf, userMain, userAnbieter, userUeber, userAGBS, userImpressum, userPreisliste, userPartner, userDatenschutz, userNewsletter, userImage, serverErrors);
         //Service weil Springs AOP ist whack und batch operationen am besten extern aufgerufen werden sollen
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
         postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
@@ -3304,6 +3302,7 @@ public class LogService {
         user.setImage(new JSONArray().put(0).toString());
         user.setAgb(new JSONArray().put(0).toString());
         user.setNonsense(new JSONArray().put(0).toString());
+        user.setNotfall(new JSONArray().put(0).toString());
         user.setFirst_click(clickTime);
         user.setTime_spent(0);
         user.setAmount_of_clicks(0);

@@ -55,8 +55,8 @@ public class UniversalCategoriesDLC {
     @Column(name = "besucher_ratgeber_self")
     private int besucherRatgeberSelf;
 
-  /*  @Column(name = "besucher_ratgeber_self_sub")
-    private int besucherRatgeberSelfSub;*/
+    @Column(name = "besucher_ratgeber_self_sub")
+    private int besucherRatgeberSelfSub;
 
 
     @Column(name="besucher_main")
@@ -86,12 +86,12 @@ public class UniversalCategoriesDLC {
     @Column(name="besucher_image")
     private int besucherImage;
 
-       /* @Column(name = "besucher_notfall")
+    @Column(name = "besucher_notfall")
     private int besucherNotfall;
 
     @Column(name = "besucher_notfall_sub")
     private int besucherNotfallSub;
-    */
+
 
     @Column(name="besucher_agbs")
     private int besucherAGBS;
@@ -135,10 +135,10 @@ public class UniversalCategoriesDLC {
     @Column(name = "views_ratgeber_self")
     private int viewsRatgeberSelf;
 
-/*
+
     @Column(name = "views_ratgeber_self_sub")
     private int viewsRatgeberSelfSub;
-*/
+
 
     @Column(name="views_main")
     private int viewsMain;
@@ -161,12 +161,12 @@ public class UniversalCategoriesDLC {
     @Column(name="views_agbs")
     private int viewsAGBS;
 
-   /* @Column(name = "views_notfall")
+   @Column(name = "views_notfall")
     private int viewsNotfall;
 
     @Column(name = "views_notfall_sub")
     private int viewsNotfallSub;
-    */
+
     public int getBesucherMain() {
         return besucherMain;
     }
@@ -566,6 +566,55 @@ public class UniversalCategoriesDLC {
 
     public void setViewsAnbieter(int viewsAnbieter) {
         this.viewsAnbieter = viewsAnbieter;
+    }
+
+
+    public int getBesucherRatgeberSelfSub() {
+        return besucherRatgeberSelfSub;
+    }
+
+    public void setBesucherRatgeberSelfSub(int besucherRatgeberSelfSub) {
+        this.besucherRatgeberSelfSub = besucherRatgeberSelfSub;
+    }
+
+    public int getBesucherNotfall() {
+        return besucherNotfall;
+    }
+
+    public void setBesucherNotfall(int besucherNotfall) {
+        this.besucherNotfall = besucherNotfall;
+    }
+
+    public int getBesucherNotfallSub() {
+        return besucherNotfallSub;
+    }
+
+    public void setBesucherNotfallSub(int besucherNotfallSub) {
+        this.besucherNotfallSub = besucherNotfallSub;
+    }
+
+    public int getViewsRatgeberSelfSub() {
+        return viewsRatgeberSelfSub;
+    }
+
+    public void setViewsRatgeberSelfSub(int viewsRatgeberSelfSub) {
+        this.viewsRatgeberSelfSub = viewsRatgeberSelfSub;
+    }
+
+    public int getViewsNotfall() {
+        return viewsNotfall;
+    }
+
+    public void setViewsNotfall(int viewsNotfall) {
+        this.viewsNotfall = viewsNotfall;
+    }
+
+    public int getViewsNotfallSub() {
+        return viewsNotfallSub;
+    }
+
+    public void setViewsNotfallSub(int viewsNotfallSub) {
+        this.viewsNotfallSub = viewsNotfallSub;
     }
 }
 

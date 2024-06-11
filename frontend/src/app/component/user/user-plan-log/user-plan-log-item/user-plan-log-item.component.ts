@@ -33,6 +33,7 @@ export class UserPlanLogItemComponent extends DashListItemComponent implements A
   ngAfterViewInit(): void {
     if (this.data.oldPlan == this.data.newPlan && this.data.oldPlan == "none"){
       this.data.newPlan = "Registriert";
+
     }
   }
 }

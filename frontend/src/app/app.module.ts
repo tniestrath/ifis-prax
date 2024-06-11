@@ -105,7 +105,10 @@ import { ForumModerationListItemComponent } from './component/forum/forum-modera
 import { ForumModeratorComponent } from './component/forum/forum-moderator/forum-moderator.component';
 import { ForumProfanityFilterAdderComponent } from './component/forum/forum-profanity-filter-adder/forum-profanity-filter-adder.component';
 import { ExternalServicesListComponent } from './component/system/external-services-list/external-services-list.component';
-import { ExternalServicesListItemComponent } from './component/system/external-services-list/external-services-list-item/external-services-list-item.component';
+import {
+    ExternalServicesListItemComponent,
+    SafeUrlPipe
+} from './component/system/external-services-list/external-services-list-item/external-services-list-item.component';
 import { UserPlanLogComponent } from './component/user/user-plan-log/user-plan-log.component';
 import { UserPlanLogItemComponent } from './component/user/user-plan-log/user-plan-log-item/user-plan-log-item.component';
 
@@ -198,7 +201,8 @@ import { UserPlanLogItemComponent } from './component/user/user-plan-log/user-pl
         ExternalServicesListComponent,
         ExternalServicesListItemComponent,
         UserPlanLogComponent,
-        UserPlanLogItemComponent
+        UserPlanLogItemComponent,
+        SafeUrlPipe
     ],
     imports: [
         BrowserModule,

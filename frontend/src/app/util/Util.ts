@@ -104,6 +104,8 @@ export default class Util {
           case "premium":
           case "sponsor":
             return DashColors.PLAN_PREMIUM;
+          case "none":
+            return DashColors.BLACK;
           default:
             return DashColors.PLAN_WITHOUT;
         }

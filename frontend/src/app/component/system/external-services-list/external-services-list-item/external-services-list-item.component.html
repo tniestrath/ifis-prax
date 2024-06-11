@@ -6,4 +6,7 @@
       <img *ngIf="data.check == 0" src="assets/check-circle.png" alt="Good">
       <img *ngIf="data.check != 0" src="assets/alert-circle.png" alt="Bad">
     </div>
+  <div class="hidden">
+    <iframe #iframe class="external-service-iframe" [src]="data.link | unsafeURL" (load)="onLoad($event)" (error)="data.check = 1"></iframe>
+  </div>
 </div>

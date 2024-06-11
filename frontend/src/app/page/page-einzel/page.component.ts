@@ -60,6 +60,7 @@ import {
 import {
   ExternalServicesListComponent
 } from "../../component/system/external-services-list/external-services-list.component";
+import {UserPlanLogComponent} from "../../component/user/user-plan-log/user-plan-log.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -85,7 +86,7 @@ export class PageComponent implements OnInit {
       {type: UserComparatorComponent, row: 1, col: 1, height: 4, width: 6},
       {type: UserStatsByPlanComponent, row: 1, col: 4, height: 1, width: 3},
       {type: UserStatsByPlanViewTypeCompareComponent, row: 2, col: 4, height: 1, width: 3},
-      {type: UserTagsDistComponent, row: 3, col: 4, height: 2, width: 2}
+      {type: UserPlanLogComponent, row: 3, col: 4, height: 2, width: 3}
     ];
   }
 

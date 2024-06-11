@@ -5,7 +5,7 @@
   margin: 0 0 5px 0;
 
   display: grid;
-  grid-template-columns: 100px 200px auto 150px 60px 60px;
+  grid-template-columns: 100px 200px auto 150px 65px 65px;
   grid-template-rows: 25px 25px 12.5px 12.5px 25px;
   grid-column-gap: 10px;
 
@@ -109,6 +109,7 @@
   grid-column: 4;
   display: flex;
   align-items: end;
+  justify-content: flex-end;
 }
 .user-profile-views-box{
   grid-row: 1;

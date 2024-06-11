@@ -1310,7 +1310,7 @@ public class UserController {
         for (MembershipsBuffer buffer : buffers) {
             JSONObject obj = new JSONObject();
             obj.put("newPlan", buffer.getMembership());
-            obj.put("oldPlan", memberRepo.getPreviousMembership(buffer.getUserId(), buffer.getId()) == null ? "" : memberRepo.getPreviousMembership(buffer.getUserId(), buffer.getId()));
+            obj.put("oldPlan", memberRepo.getPreviousMembership(buffer.getUserId(), buffer.getId()) == null ? "none" : memberRepo.getPreviousMembership(buffer.getUserId(), buffer.getId()));
             obj.put("time", buffer.getTimestamp().toString());
             obj.put("user", userRepository.findById(buffer.getUserId()).isPresent() ? userRepository.findById(buffer.getUserId()).get().getDisplayName() : buffer.getUserId());
             array.put(obj);

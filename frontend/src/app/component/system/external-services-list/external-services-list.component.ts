@@ -21,7 +21,7 @@ export class ExternalService extends DbObject{
 export class ExternalServicesListComponent extends DashListPageableComponent<ExternalService, ExternalServicesListItemComponent>{
 
   override ngOnInit() {
-    this.load(this.api.getServices(this.pageSize, this.pageSize), ExternalServicesListItemComponent);
+    this.load(this.api.getServices(this.pageIndex, this.pageSize), ExternalServicesListItemComponent);
   }
 
 

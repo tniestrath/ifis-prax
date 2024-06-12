@@ -2127,8 +2127,8 @@ public class LogService {
                 }
                 case "ratgeberSelfSub" -> {
                     //decomment when uni is updated
-                   /* uniCat.setViewsRatgeberSelfSub(uniCat.getViewsRatgeberSelfSub() + 1);
-                    uniCat.setBesucherRatgeberSelfSub(uniCat.getBesucherRatgeberSelfSub() + (isUnique ? 1 : 0));*/
+                    uniCat.setViewsRatgeberSelfSub(uniCat.getViewsRatgeberSelfSub() + 1);
+                    uniCat.setBesucherRatgeberSelfSub(uniCat.getBesucherRatgeberSelfSub() + (isUnique ? 1 : 0));
                 }
                 case "main" -> {
                     uniCat.setViewsMain(uniCat.getViewsMain() + 1);
@@ -2172,13 +2172,13 @@ public class LogService {
                 }
                 case "notfall" -> {
                     //decomment when uni is updated
-                   /* uniCat.setViewsNotfall(uniCat.getViewsNotfall() + 1);
-                    uniCat.setBesucherNotfall(uniCat.getBesucherNotfall() + (isUnique ? 1 : 0));*/
+                    uniCat.setViewsNotfall(uniCat.getViewsNotfall() + 1);
+                    uniCat.setBesucherNotfall(uniCat.getBesucherNotfall() + (isUnique ? 1 : 0));
                 }
                 case "notfallSub" -> {
                     //decomment when uni is updated
-                   /* uniCat.setViewsNotfallSub(uniCat.getViewsNotfallSub() + 1);
-                    uniCat.setBesucherNotfallSub(uniCat.getBesucherNotfallSub() + (isUnique ? 1 : 0));*/
+                    uniCat.setViewsNotfallSub(uniCat.getViewsNotfallSub() + 1);
+                    uniCat.setBesucherNotfallSub(uniCat.getBesucherNotfallSub() + (isUnique ? 1 : 0));
                 }
             }
         }

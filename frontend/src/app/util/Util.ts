@@ -104,6 +104,10 @@ export default class Util {
           case "premium":
           case "sponsor":
             return DashColors.PLAN_PREMIUM;
+          case "none":
+            return DashColors.BLACK;
+          case "Registriert":
+            return DashColors.REGISTERED;
           default:
             return DashColors.PLAN_WITHOUT;
         }
@@ -205,7 +209,7 @@ export enum DashColors {
 
   VIDEO = "rgb(106,34,130)",
 
-  MAINPAGE = "rgb(17,65,53)",
+  REGISTERED = "rgb(17,65,53)",
 
   FOOTER = "rgb(34,130,106)",
 

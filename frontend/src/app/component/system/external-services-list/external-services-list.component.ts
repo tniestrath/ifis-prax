@@ -24,5 +24,8 @@ export class ExternalServicesListComponent extends DashListPageableComponent<Ext
     this.load(this.api.getServices(this.pageIndex, this.pageSize), ExternalServicesListItemComponent);
   }
 
+  override onScrollEnd() {
+  }
+
 
 }

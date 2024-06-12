@@ -82,6 +82,10 @@ export default class Util {
     }
   }
 
+  static firstToUpperCase(string : string){
+    return string[0].toUpperCase() + string.slice(1);
+  }
+
 
   /**
    *
@@ -106,8 +110,6 @@ export default class Util {
             return DashColors.PLAN_PREMIUM;
           case "none":
             return DashColors.BLACK;
-          case "Registriert":
-            return DashColors.REGISTERED;
           default:
             return DashColors.PLAN_WITHOUT;
         }

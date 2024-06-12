@@ -1,7 +1,7 @@
 import {AfterViewInit, Component} from '@angular/core';
 import {DbObject} from "../../../../services/DbObject";
 import {DashListItemComponent} from "../../../dash-list/dash-list-item/dash-list-item.component";
-import Util from "../../../../util/Util";
+import Util, {DashColors} from "../../../../util/Util";
 
 
 export class UserPlanLogItem extends DbObject{
@@ -27,13 +27,15 @@ export class UserPlanLogItem extends DbObject{
 })
 export class UserPlanLogItemComponent extends DashListItemComponent implements AfterViewInit{
   override data : UserPlanLogItem = new UserPlanLogItem("", "", "", "");
+  public registered : boolean = false;
 
   protected readonly Util = Util;
 
   ngAfterViewInit(): void {
     if (this.data.oldPlan == this.data.newPlan && this.data.oldPlan == "none"){
-      this.data.newPlan = "Registriert";
-
+      this.registered = true;
     }
   }
+
+  protected readonly DashColors = DashColors;
 }

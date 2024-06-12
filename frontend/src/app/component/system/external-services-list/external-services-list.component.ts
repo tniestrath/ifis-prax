@@ -21,6 +21,7 @@ export class ExternalService extends DbObject{
 export class ExternalServicesListComponent extends DashListPageableComponent<ExternalService, ExternalServicesListItemComponent>{
 
   override ngOnInit() {
+    this.setToolTip("Hier sind die gleichen IFrames wie auf dem Martzplatz eingebunden, sollte bei diesen ein fehler auftauchen, wird dies hier angezeigt");
     this.load(this.api.getServices(this.pageIndex, this.pageSize), ExternalServicesListItemComponent);
   }
 

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent, TooltipItem} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
 
 export class Callup {
@@ -187,12 +187,19 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           y: {
             stacked: true,
             ticks: {
-              autoSkip: false
+              autoSkip: false,
+              color : (ctx, options) => {
+                if (ctx.index == 0) return DashColors.RED;
+                return DashColors.BLACK;
+              }
             }
           },
           x1: {
             stacked: false,
-            position: "top"
+            position: "top",
+            ticks: {
+              color: DashColors.RED
+            }
           }
         },
         plugins: {

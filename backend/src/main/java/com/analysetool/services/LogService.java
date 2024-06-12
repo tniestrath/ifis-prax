@@ -550,64 +550,6 @@ public class LogService {
     public void findAMatch(SysVar sysVar) throws IOException, ParseException, JSONException {
         String line;
 
-        int totalClicks = 0;
-        int internalClicks = 0;
-        int sensibleClicks = 0;
-
-        int viewsArticle = 0;
-        int viewsNews = 0;
-        int viewsBlog = 0;
-        int viewsPodcast = 0;
-        int viewsVideos = 0;
-        int viewsWhitepaper = 0;
-        int viewsEvents = 0;
-        int viewsRatgeber = 0;
-        int viewsRatgeberPost = 0;
-        int viewsRatgeberGlossar = 0;
-        int viewsRatgeberBuch = 0;
-        int viewsRatgeberSelf = 0;
-        int viewsRatgeberSelfSub = 0;
-        int viewsMain = 0;
-        int viewsAnbieter = 0;
-        int viewsUeber = 0;
-        int viewsAGBS = 0;
-        int viewsImpressum = 0;
-        int viewsPreisliste = 0;
-        int viewsPartner = 0;
-        int viewsDatenschutz = 0;
-        int viewsNewsletter = 0;
-        int viewsImage = 0;
-        int viewsNotfall = 0;
-        int viewsNotfallSub=0;
-
-        int uniqueUsers = 0;
-        int userArticle = 0;
-        int userNews = 0;
-        int userBlog = 0;
-        int userPodcast = 0;
-        int userVideos = 0;
-        int userWhitepaper = 0;
-        int userEvents = 0;
-        int userRatgeber = 0;
-        int userRatgeberPost = 0;
-        int userRatgeberGlossar = 0;
-        int userRatgeberBuch = 0;
-        int userRatgeberSelf = 0;
-        int userRatgeberSelfSub = 0;
-        int userMain = 0;
-        int userAnbieter = 0;
-        int userUeber = 0;
-        int userAGBS = 0;
-        int userImpressum = 0;
-        int userPreisliste = 0;
-        int userPartner = 0;
-        int userDatenschutz = 0;
-        int userNewsletter = 0;
-        int userImage = 0;
-        int userNotfall = 0 ;
-        int userNotfallSub = 0;
-        int serverErrors = 0;
-
         String last_ip = null;
         String last_request = null;
         List<String> blacklist2 = tbRepo.getAllIps();
@@ -683,9 +625,6 @@ public class LogService {
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isServerError && !isBlacklisted && isSuccessfulRequest && !isSpam && isGet) {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
-
-                    //erhöhe Clicks und Besucher, falls anwendbar
-                    totalClicks++;
 
                     //Does it match a forum discussion view
                     Matcher matched_forum_topic_view = forumTopicPattern.matcher(request);
@@ -978,23 +917,6 @@ public class LogService {
                         patternMatcher = matched_it_notfall;
                     }
 
-                    //If user existed,
-                    // but only clicked nonsense so far and now clicked something else,
-                    // add them as a UniqueUser.
-                    if(!isUnique) {
-                        UniqueUser temp = uniqueUserRepo.findByIP(ip);
-                        boolean wasOnlyNonsense = new JSONArray(temp.getNonsense()).length() == temp.getAmount_of_clicks() + 1;
-
-                        if ((!whatMatched.equals("") || isNotNonsense) && wasOnlyNonsense){
-                            uniqueUsers++;
-                        }
-
-                    }
-                    //If the user is unique, AND has made a sensible request, mark him as unique and add them as a unique user.
-                    if(isUnique && (!whatMatched.equals("") || isNotNonsense)) {
-                        uniqueUsers++;
-                    }
-
                     //If the user is new, initialize them.
                     if(isUnique) {
                         initUniqueUser(ip, dateLog);
@@ -1002,216 +924,88 @@ public class LogService {
 
                     switch (whatMatched) {
                         case "articleView", "articleSS" -> {
-                            //Erhöhe Clicks für Artikel um 1.
-                            viewsArticle++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userArticle++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getArticle()).length() < 2) {
-                                    userArticle++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "article", dateLog);
 
                             updateUniSingleLine("article", isUnique, dateLog);
                         }
 
                         case "blogView", "blogSS", "blogCat" -> {
-                            //Erhöhe Clicks für Blog um 1.
-                            viewsBlog++;
 
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userBlog++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getBlog()).length() < 2) {
-                                    userBlog++;
-                                }
-                            }
                             updateUniqueUser(ip, "blog", dateLog);
 
                             updateUniSingleLine("blog", isUnique, dateLog);
                         }
 
                         case "newsView", "newsSS" -> {
-                            //Erhöhe Clicks für News um 1.
-                            viewsNews++;
 
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userNews++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNews()).length() < 2) {
-                                    userNews++;
-                                }
-                            }
                             updateUniqueUser(ip, "news", dateLog);
 
                             updateUniSingleLine("news", isUnique, dateLog);
                         }
 
                         case "wpView", "wpSS" -> {
-                            //Erhöhe Clicks für Whitepaper um 1.
-                            viewsWhitepaper++;
 
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userWhitepaper++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getWhitepaper()).length() < 2) {
-                                    userWhitepaper++;
-                                }
-                            }
                             updateUniqueUser(ip, "whitepaper", dateLog);
 
                             updateUniSingleLine("whitepaper", isUnique, dateLog);
                         }
                         case "podView" -> {
-                            //Erhöhe Clicks für Podcast um 1.
-                            viewsPodcast++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userPodcast++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPodcast()).length() < 2) {
-                                    userPodcast++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "podcast", dateLog);
 
                             updateUniSingleLine("podcast", isUnique, dateLog);
                         }
                         case "main" -> {
-                            viewsMain++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userMain++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getMain()).length() < 2) {
-                                    userMain++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "main", dateLog);
 
                             updateUniSingleLine("main", isUnique, dateLog);
                         }
                         case "ueber" -> {
-                            //Erhöhe Clicks für Ueber-Uns um 1.
-                            viewsUeber++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userUeber++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getUeber()).length() < 2) {
-                                    userUeber++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "ueber", dateLog);
 
                             updateUniSingleLine("ueber", isUnique, dateLog);
                         }
                         case "impressum" -> {
-                            //Erhöhe Clicks für Impressum um 1.
-                            viewsImpressum++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userImpressum++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImpressum()).length() < 2) {
-                                    userImpressum++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "impressum", dateLog);
 
                             updateUniSingleLine("impressum", isUnique, dateLog);
                         }
                         case "preisliste" -> {
-                            //Erhöhe Clicks für Preisliste um 1.
-                            viewsPreisliste++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userPreisliste++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPreisliste()).length() < 2) {
-                                    userPreisliste++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "preisliste", dateLog);
 
                             updateUniSingleLine("preis", isUnique, dateLog);
                         }
                         case "partner" -> {
-                            //Erhöhe Clicks für Partner um 1.
-                            viewsPartner++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userPartner++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getPartner()).length() < 2) {
-                                    userPartner++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "partner", dateLog);
 
                             updateUniSingleLine("partner", isUnique, dateLog);
                         }
                         case "datenschutz" -> {
-                            //Erhöhe Clicks für Datenschutzerkl. um 1.
-                            viewsDatenschutz++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userDatenschutz++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getDatenschutz()).length() < 2) {
-                                    userDatenschutz++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "datenschutz", dateLog);
 
                             updateUniSingleLine("datenschutz", isUnique, dateLog);
                         }
                         case "newsletter" -> {
-                            //Erhöhe Clicks für Newsletter um 1.
-                            viewsNewsletter++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userNewsletter++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNewsletter()).length() < 2) {
-                                    userNewsletter++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "newsletter", dateLog);
 
                             updateUniSingleLine("newsletter", isUnique, dateLog);
                         }
                         case "image" -> {
-                            //Erhöhe Clicks für Image um 1.
-                            viewsImage++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userImage++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getImage()).length() < 2) {
-                                    userImage++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "image", dateLog);
 
                             updateUniSingleLine("image", isUnique, dateLog);
                         }
                         case "agb" -> {
-                            //Erhöhe Clicks für AGBS um 1.
-                            viewsAGBS++;
-                            //Wenn der User Unique ist, erstelle eine Zeile in UniqueUser.
-                            if (isUnique) {
-                                userAGBS++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getAgb()).length() < 2) {
-                                    userAGBS++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "agb", dateLog);
 
                             updateUniSingleLine("agb", isUnique, dateLog);
@@ -1228,96 +1022,24 @@ public class LogService {
                             updateUniSingleLine("anbieter", isUnique, dateLog);
                         }
                         case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch", "ratgeberSelf", "ratgeberSelfSub" -> {
-                            //Erhöhe Clicks für RatgeberViews um 1.
-                            viewsRatgeber++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userRatgeber++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
-                                    userRatgeber++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "ratgeber", dateLog);
 
                             updateUniSingleLine("ratgeber", isUnique, dateLog);
 
                             //Update stats for more concrete type of Ratgeber
                             switch (whatMatched) {
-                                case "ratgeberPost" -> {
-                                    viewsRatgeberPost++;
-                                    if (isUnique) {
-                                        userRatgeberPost++;
-                                    } else {
-                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
-                                            userRatgeberPost++;
-                                        }
-                                    }
-
-                                    updateUniSingleLine("ratgeberPost", isUnique, dateLog);
-                                }
-                                case "ratgeberGlossar" -> {
-                                    viewsRatgeberGlossar++;
-                                    if (isUnique) {
-                                        userRatgeberGlossar++;
-                                    } else {
-                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
-                                            userRatgeberGlossar++;
-                                        }
-                                    }
-
-                                    updateUniSingleLine("ratgeberGlossar", isUnique, dateLog);
-                                }
-                                case "ratgeberBuch" -> {
-                                    viewsRatgeberBuch++;
-                                    if (isUnique) {
-                                        userRatgeberBuch++;
-                                    } else {
-                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
-                                            userRatgeberBuch++;
-                                        }
-                                    }
-
-                                    updateUniSingleLine("ratgeberBuch", isUnique, dateLog);
-                                }
-                                case "ratgeberSelf" -> {
-                                    viewsRatgeberSelf++;
-                                    if (isUnique) {
-                                        userRatgeberSelf++;
-                                    } else {
-                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
-                                            userRatgeberSelf++;
-                                        }
-                                    }
-
-                                    updateUniSingleLine("ratgeberSelf", isUnique, dateLog);
-                                }
-
-                                case "ratgeberSelfSub" -> {
-                                    //decomment when uni table is updated
-                                    viewsRatgeberSelfSub++;
-                                    if (isUnique) {
-                                        userRatgeberSelfSub++;
-                                    } else {
-                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getRatgeber()).length() < 2) {
-                                            userRatgeberSelfSub++;
-                                        }
-                                    }
-
-                                    updateUniSingleLine("ratgeberSelfSub", isUnique, dateLog);
-                                }
+                                case "ratgeberPost" -> updateUniSingleLine("ratgeberPost", isUnique, dateLog);
+                                case "ratgeberGlossar" -> updateUniSingleLine("ratgeberGlossar", isUnique, dateLog);
+                                case "ratgeberBuch" -> updateUniSingleLine("ratgeberBuch", isUnique, dateLog);
+                                case "ratgeberSelf" -> updateUniSingleLine("ratgeberSelf", isUnique, dateLog);
+                                case "ratgeberSelfSub" -> updateUniSingleLine("ratgeberSelfSub", isUnique, dateLog);
                             }
 
 
                         } case "userRedirect" -> {
                         } case "eventView", "eventCat" -> {
                             if(!request.contains("Calendar") && !request.contains("calendar")) {
-                                viewsEvents++;
-                                if (isUnique) {
-                                    userEvents++;
-                                } else if (new JSONArray(uniqueUserRepo.findByIP(ip).getEvents()).length() < 2) {
-                                    userEvents++;
-                                }
                                 updateUniqueUser(ip, "events", dateLog);
 
                                 updateUniSingleLine("events", isUnique, dateLog);
@@ -1326,68 +1048,28 @@ public class LogService {
                             }
                         }
                         case "videoView" -> {
-                            viewsVideos++;
-                            if (isUnique) {
-                                userVideos++;
-                            }  else if (new JSONArray(uniqueUserRepo.findByIP(ip).getVideo()).length() < 2) {
-                                userVideos++;
-                            }
+
                             updateUniqueUser(ip, "video", dateLog);
 
                             updateUniSingleLine("videos", isUnique, dateLog);
                         }
                         case "anbieterCat" -> {
-                            viewsAnbieter++;
-                            if (isUnique) {
-                                userAnbieter++;
-                            } else if (new JSONArray(uniqueUserRepo.findByIP(ip).getAnbieter()).length() < 2) {
-                                userAnbieter++;
-                            }
+
                             updateUniqueUser(ip, "anbieter", dateLog);
 
                             updateUniSingleLine("anbieter", isUnique, dateLog);
                         }
                         case "notfall", "notfallSub" -> {
-                            //decomment when uni table is updated
-                            //Erhöhe Clicks für IT-NotfallViews um 1.
-                            viewsNotfall++;
-                            //Wenn der user unique ist, erstelle eine Zeile in UniqueUser
-                            if (isUnique) {
-                                userNotfall++;
-                            } else {
-                                if (new JSONArray(uniqueUserRepo.findByIP(ip).getNotfall()).length() < 2) {
-                                    userNotfall++;
-                                }
-                            }
+
                             updateUniqueUser(ip, "notfall", dateLog);
 
-                            updateUniSingleLine("notfall", isUnique, dateLog);
-
-                            //Update stats for more concrete type of notfall
-                            switch (whatMatched) {
-                                case "notfallSub" -> {
-                                    viewsNotfallSub++;
-                                    if (isUnique) {
-                                        userNotfallSub++;
-                                    } else {
-                                        if (new JSONArray(uniqueUserRepo.findByIP(ip).getNotfall()).length() < 2) {
-                                            userNotfallSub++;
-                                        }
-                                    }
-
-                                    updateUniSingleLine("notfall", isUnique, dateLog);
-                                }
-                            }
+                            updateUniSingleLine(whatMatched, isUnique, dateLog);
                         }
                         default -> {
                             if(!isNotNonsense) {
                                 updateUniqueUser(ip, "nonsense", dateLog);
                             }
                         }
-                    }
-
-                    if(!whatMatched.equals("") && patternMatcher != null) {
-                        sensibleClicks++;
                     }
 
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
@@ -1400,12 +1082,6 @@ public class LogService {
                     //noinspection StatementWithEmptyBody
                     if(isSpam && !isInternal) {
                         //System.out.println("SPAM!!!: " + ip + " " + request + " " + userAgent);
-                    }
-                    if(isServerError) {
-                        serverErrors++;
-                    }
-                    if(isInternal) {
-                        internalClicks++;
                     }
                 }
                 last_request = request;
@@ -2171,12 +1847,10 @@ public class LogService {
                     uniCat.setBesucherAGBS(uniCat.getBesucherAGBS() + (isUnique ? 1 : 0));
                 }
                 case "notfall" -> {
-                    //decomment when uni is updated
                     uniCat.setViewsNotfall(uniCat.getViewsNotfall() + 1);
                     uniCat.setBesucherNotfall(uniCat.getBesucherNotfall() + (isUnique ? 1 : 0));
                 }
                 case "notfallSub" -> {
-                    //decomment when uni is updated
                     uniCat.setViewsNotfallSub(uniCat.getViewsNotfallSub() + 1);
                     uniCat.setBesucherNotfallSub(uniCat.getBesucherNotfallSub() + (isUnique ? 1 : 0));
                 }

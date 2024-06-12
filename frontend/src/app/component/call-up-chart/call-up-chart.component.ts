@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent, TooltipItem} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
 
 export class Callup {
@@ -125,8 +125,10 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       this.categories_chart.destroy();
     }
 
-    var c_max = Math.max(...clicksData);
-    var v_max = Math.max(...visitorsData);
+    var mainClicks = clicksData.shift() as number;
+    var mainVis = visitorsData.shift() as number;
+    clicksData.unshift(0);
+    visitorsData.unshift(0);
 
     // @ts-ignore
     this.categories_chart = new Chart("categories-chart", {
@@ -137,17 +139,33 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         datasets: [
           {
             label: "Besucher",
+            data: [mainVis],
+            backgroundColor: DashColors.BLUE,
+            borderColor: DashColors.BLUE,
+            stack: "1",
+            xAxisID: "x1"
+          },
+          {
+            label: "Aufrufe",
+            data: [mainClicks],
+            backgroundColor: DashColors.RED,
+            borderColor: DashColors.RED,
+            stack: "1",
+            xAxisID: "x1"
+          },
+          {
+            label: "Besucher",
             data: visitorsData,
             backgroundColor: DashColors.BLUE,
             borderColor: DashColors.BLUE,
             stack: "1"
           },
           {
-          label: "Aufrufe",
-          data: clicksData,
-          backgroundColor: DashColors.RED,
-          borderColor: DashColors.RED,
-          stack: "1"
+            label: "Aufrufe",
+            data: clicksData,
+            backgroundColor: DashColors.RED,
+            borderColor: DashColors.RED,
+            stack: "1"
         },
         ]
       },
@@ -171,6 +189,10 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
             ticks: {
               autoSkip: false
             }
+          },
+          x1: {
+            stacked: false,
+            position: "top"
           }
         },
         plugins: {
@@ -200,6 +222,12 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
               size: 15
             },
             callbacks: {
+              label(tooltipItem): string | string[] | void {
+                // @ts-ignore
+                if (tooltipItem.parsed.x == 0){
+                  return "";
+                } else return ;
+              }
             }
           },
         },

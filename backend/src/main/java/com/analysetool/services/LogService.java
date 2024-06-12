@@ -922,156 +922,20 @@ public class LogService {
                         initUniqueUser(ip, dateLog);
                     }
 
-                    switch (whatMatched) {
-                        case "articleView", "articleSS" -> {
-
-                            updateUniqueUser(ip, "article", dateLog);
-
-                            updateUniSingleLine("article", isUnique, dateLog);
-                        }
-
-                        case "blogView", "blogSS", "blogCat" -> {
-
-                            updateUniqueUser(ip, "blog", dateLog);
-
-                            updateUniSingleLine("blog", isUnique, dateLog);
-                        }
-
-                        case "newsView", "newsSS" -> {
-
-                            updateUniqueUser(ip, "news", dateLog);
-
-                            updateUniSingleLine("news", isUnique, dateLog);
-                        }
-
-                        case "wpView", "wpSS" -> {
-
-                            updateUniqueUser(ip, "whitepaper", dateLog);
-
-                            updateUniSingleLine("whitepaper", isUnique, dateLog);
-                        }
-                        case "podView" -> {
-
-                            updateUniqueUser(ip, "podcast", dateLog);
-
-                            updateUniSingleLine("podcast", isUnique, dateLog);
-                        }
-                        case "main" -> {
-
-                            updateUniqueUser(ip, "main", dateLog);
-
-                            updateUniSingleLine("main", isUnique, dateLog);
-                        }
-                        case "ueber" -> {
-
-                            updateUniqueUser(ip, "ueber", dateLog);
-
-                            updateUniSingleLine("ueber", isUnique, dateLog);
-                        }
-                        case "impressum" -> {
-
-                            updateUniqueUser(ip, "impressum", dateLog);
-
-                            updateUniSingleLine("impressum", isUnique, dateLog);
-                        }
-                        case "preisliste" -> {
-
-                            updateUniqueUser(ip, "preisliste", dateLog);
-
-                            updateUniSingleLine("preis", isUnique, dateLog);
-                        }
-                        case "partner" -> {
-
-                            updateUniqueUser(ip, "partner", dateLog);
-
-                            updateUniSingleLine("partner", isUnique, dateLog);
-                        }
-                        case "datenschutz" -> {
-
-                            updateUniqueUser(ip, "datenschutz", dateLog);
-
-                            updateUniSingleLine("datenschutz", isUnique, dateLog);
-                        }
-                        case "newsletter" -> {
-
-                            updateUniqueUser(ip, "newsletter", dateLog);
-
-                            updateUniSingleLine("newsletter", isUnique, dateLog);
-                        }
-                        case "image" -> {
-
-                            updateUniqueUser(ip, "image", dateLog);
-
-                            updateUniSingleLine("image", isUnique, dateLog);
-                        }
-                        case "agb" -> {
-
-                            updateUniqueUser(ip, "agb", dateLog);
-
-                            updateUniSingleLine("agb", isUnique, dateLog);
-                        }
-                        case "userView" -> {
-                            try {
-                                if(wpUserRepo.findByNicename(patternMatcher.group(1)).isPresent()) {
-                                    updateUserStats(wpUserRepo.findByNicename(patternMatcher.group(1)).get().getId(), dateLog);
-                                }
-                            } catch (Exception e) {
-                                System.out.println(patternMatcher.group(1));
-                            }
-
-                            updateUniSingleLine("anbieter", isUnique, dateLog);
-                        }
-                        case "ratgeberPost", "ratgeberGlossar", "ratgeberBuch", "ratgeberSelf", "ratgeberSelfSub" -> {
-
-                            updateUniqueUser(ip, "ratgeber", dateLog);
-
-                            updateUniSingleLine("ratgeber", isUnique, dateLog);
-
-                            //Update stats for more concrete type of Ratgeber
-                            switch (whatMatched) {
-                                case "ratgeberPost" -> updateUniSingleLine("ratgeberPost", isUnique, dateLog);
-                                case "ratgeberGlossar" -> updateUniSingleLine("ratgeberGlossar", isUnique, dateLog);
-                                case "ratgeberBuch" -> updateUniSingleLine("ratgeberBuch", isUnique, dateLog);
-                                case "ratgeberSelf" -> updateUniSingleLine("ratgeberSelf", isUnique, dateLog);
-                                case "ratgeberSelfSub" -> updateUniSingleLine("ratgeberSelfSub", isUnique, dateLog);
-                            }
-
-
-                        } case "userRedirect" -> {
-                        } case "eventView", "eventCat" -> {
-                            if(!request.contains("Calendar") && !request.contains("calendar")) {
-                                updateUniqueUser(ip, "events", dateLog);
-
-                                updateUniSingleLine("events", isUnique, dateLog);
-                            } else {
-                                whatMatched = "";
-                            }
-                        }
-                        case "videoView" -> {
-
-                            updateUniqueUser(ip, "video", dateLog);
-
-                            updateUniSingleLine("videos", isUnique, dateLog);
-                        }
-                        case "anbieterCat" -> {
-
-                            updateUniqueUser(ip, "anbieter", dateLog);
-
-                            updateUniSingleLine("anbieter", isUnique, dateLog);
-                        }
-                        case "notfall", "notfallSub" -> {
-
-                            updateUniqueUser(ip, "notfall", dateLog);
-
-                            updateUniSingleLine(whatMatched, isUnique, dateLog);
-                        }
-                        default -> {
-                            if(!isNotNonsense) {
-                                updateUniqueUser(ip, "nonsense", dateLog);
-                            }
+                    //If event-bot-view do not count it
+                    if(whatMatched.equals("eventView") || whatMatched.equals("eventCat")) {
+                        if(request.contains("Calendar") || request.contains("calendar")) {
+                            whatMatched = "";
                         }
                     }
 
+                    if(!isNotNonsense) {
+                        updateUniqueUser(ip, "nonsense", dateLog);
+                    } else {
+                        updateUniqueUser(ip, whatMatched, dateLog);
+                    }
+
+                    updateUniSingleLine(whatMatched, isUnique, dateLog);
                     processLine(line, ip, whatMatched, dateLog, patternMatcher);
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead))) {
@@ -1750,34 +1614,35 @@ public class LogService {
         uniRepo.save(uni);
 
         UniversalCategoriesDLC uniCat;
+
         if(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uni.getId(), curHour) != null) {
             uniCat = universalCategoriesDLCRepo.getByUniStatIdAndStunde(uni.getId(), curHour);
             switch (updateColumn) {
-                case "article" -> {
+                case "articleView", "articleSS" -> {
                     uniCat.setViewsArticle(uniCat.getViewsArticle() + 1);
                     uniCat.setBesucherArticle(uniCat.getBesucherArticle() + (isUnique ? 1 : 0));
                 }
-                case "news" -> {
+                case "newsView", "newsSS" -> {
                     uniCat.setViewsNews(uniCat.getViewsNews() + 1);
                     uniCat.setBesucherNews(uniCat.getBesucherNews() + (isUnique ? 1 : 0));
                 }
-                case "blog" -> {
+                case "blogView", "blogSS", "blogCat" -> {
                     uniCat.setViewsBlog(uniCat.getViewsBlog() + 1);
                     uniCat.setBesucherBlog(uniCat.getBesucherBlog() + (isUnique ? 1 : 0));
                 }
-                case "podcast" -> {
+                case "podView" -> {
                     uniCat.setViewsPodcast(uniCat.getViewsPodcast() + 1);
                     uniCat.setBesucherPodcast(uniCat.getBesucherPodcast() + (isUnique ? 1 : 0));
                 }
-                case "videos" -> {
+                case "videoView" -> {
                     uniCat.setViewsVideos(uniCat.getViewsVideos() + 1);
                     uniCat.setBesucherVideos(uniCat.getBesucherVideos() + (isUnique ? 1 : 0));
                 }
-                case "whitepaper" -> {
+                case "wpView", "wpSS" -> {
                     uniCat.setViewsWhitepaper(uniCat.getViewsWhitepaper() + 1);
                     uniCat.setBesucherWhitepaper(uniCat.getBesucherWhitepaper() + (isUnique ? 1 : 0));
                 }
-                case "events" -> {
+                case "eventView", "eventCat" -> {
                     uniCat.setViewsEvents(uniCat.getViewsEvents() + 1);
                     uniCat.setBesucherEvents(uniCat.getBesucherEvents() + (isUnique ? 1 : 0));
                 }
@@ -1810,7 +1675,7 @@ public class LogService {
                     uniCat.setViewsMain(uniCat.getViewsMain() + 1);
                     uniCat.setBesucherMain(uniCat.getBesucherMain() + (isUnique ? 1 : 0));
                 }
-                case "anbieter" -> {
+                case "userView", "anbieterCat" -> {
                     uniCat.setViewsAnbieter(uniCat.getViewsAnbieter() + 1);
                     uniCat.setBesucherAnbieter(uniCat.getBesucherAnbieter() + (isUnique ? 1 : 0));
                 }
@@ -1822,7 +1687,7 @@ public class LogService {
                     uniCat.setViewsImpressum(uniCat.getViewsImpressum() + 1);
                     uniCat.setBesucherImpressum(uniCat.getBesucherImpressum() + (isUnique ? 1 : 0));
                 }
-                case "preis" -> {
+                case "preisliste" -> {
                     uniCat.setViewsPreisliste(uniCat.getViewsPreisliste() + 1);
                     uniCat.setBesucherPreisliste(uniCat.getBesucherPreisliste() + (isUnique ? 1 : 0));
                 }
@@ -2886,22 +2751,22 @@ public class LogService {
 
         //Update the List of clicked categories
         switch(category) {
-            case "article" -> {
+            case "articleView", "articleSS" -> {
                 user.setArticle(new JSONArray(user.getArticle()).put(clicks).toString());
             }
-            case "blog" -> {
+            case "blogView", "blogSS", "blogCat" -> {
                 user.setBlog(new JSONArray(user.getBlog()).put(clicks).toString());
             }
-            case "news" -> {
+            case "newsView", "newsSS" -> {
                 user.setNews(new JSONArray(user.getNews()).put(clicks).toString());
             }
-            case "whitepaper" -> {
+            case "wpView", "wpSS" -> {
                 user.setWhitepaper(new JSONArray(user.getWhitepaper()).put(clicks).toString());
             }
-            case "podcast" -> {
+            case "podView" -> {
                 user.setPodcast(new JSONArray(user.getPodcast()).put(clicks).toString());
             }
-            case "ratgeber" -> {
+            case "ratgeber","ratgeberPost", "ratgeberBuch", "ratgeberGlossar", "ratgeberSelf", "ratgeberSelfSub" -> {
                 user.setRatgeber(new JSONArray(user.getRatgeber()).put(clicks).toString());
             }
             case "main" -> {
@@ -2934,14 +2799,17 @@ public class LogService {
             case "anbieter" -> {
                 user.setAnbieter(new JSONArray(user.getAnbieter()).put(clicks).toString());
             }
-            case "video" -> {
+            case "videoView" -> {
                 user.setVideo(new JSONArray(user.getVideo()).put(clicks).toString());
             }
-            case "events" -> {
+            case "eventView", "eventCat" -> {
                 user.setEvents(new JSONArray(user.getEvents()).put(clicks).toString());
             }
             case "nonsense" -> {
                 user.setNonsense(new JSONArray(user.getNonsense()).put(clicks).toString());
+            }
+            case "notfall", "notfallSub" -> {
+                user.setNotfall(new JSONArray(user.getNotfall()).put(clicks).toString());
             }
         }
 

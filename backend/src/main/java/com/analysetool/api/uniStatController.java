@@ -187,7 +187,8 @@ public class uniStatController {
 
         List<String> labelsForCategory = new ArrayList<>();
         labelsForCategory.add("Main");
-        labelsForCategory.add("Article");
+        labelsForCategory.add("Anbieterverzeichnis");
+        labelsForCategory.add("Artikel");
         labelsForCategory.add("News");
         labelsForCategory.add("Blog");
         labelsForCategory.add("Podcast");
@@ -212,6 +213,7 @@ public class uniStatController {
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
 
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsMain());
+        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsAnbieter());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsArticle());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsNews());
         clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsBlog());
@@ -235,6 +237,7 @@ public class uniStatController {
         List<Integer> besucherByCategory = new ArrayList<>();
 
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherMain());
+        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherAnbieter());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherArticle());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherNews());
         besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherBlog());

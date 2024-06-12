@@ -629,6 +629,7 @@ public class GeoController {
      */
     @GetMapping("/getUserGeoWithPostsByDays")
     public String getUserGeoTotalByDays(int userId, String start, String end) throws JSONException {
+        try {
         JSONObject json = new JSONObject();
         Date dateStart = Date.valueOf(start);
         Date dateEnd = Date.valueOf(end);
@@ -690,6 +691,9 @@ public class GeoController {
         json.put("totalDACH", totalDACH);
         json.put("total", total);
         return json.toString();
+        } catch (Exception ignored) {
+            return "kaputt";
+        }
     }
 
     /**

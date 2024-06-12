@@ -248,7 +248,7 @@ public class LogService {
    private final String forumSearch= "^.*GET /marktplatz-forum/\\?wpfs=(.*?)&wpfin=(.*?)&wpfd=(.*?)&wpfob=(.*?)&wpfo=(.*?)&wpfpaged=(.*?)(?:\\s|$)";
 
    private final String itNotfall= "^.*GET /ratgeber/(it-notfall)/";
-   private final String itNotfallSub = "^.*GET /ratgeber/it-notfall/([^/]+)/";
+   private final String itNotfallSub = "^.*GET /ratgeber/it-notfall/(?!\\s)([^ ]+)";
     final Pattern forumDiskussionsthemenPattern = Pattern.compile(forumDiskussionsthemen);
     final Pattern forumTopicPattern = Pattern.compile(forumTopic);
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);

@@ -26,6 +26,9 @@ export class ExternalServicesListItemComponent extends DashListItemComponent{
   override data : ExternalService = new ExternalService("", "", "" , 2);
   @ViewChild('iframe', { static: true }) iframe: HTMLIFrameElement | undefined;
 
+  override onClick(data: any): any {
+
+  }
 
   onLoad($event: Event){
     this.data.check = 0;

@@ -25,5 +25,26 @@ p{
   margin: 0;
 }
 .hidden{
-  display: none;
+  display: none !important;
+}
+.external-service-iframe-container{
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  bottom: 10%;
+  right: 10%;
+  width: 80%;
+  height: 80%;
+  border: 2px solid #808080;
+  border-radius: 5px;
+  padding: 0 5px 5px 5px;
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+  z-index: 10000;
+}
+.external-service-iframe{
+  height: 100%;
+  width: 100%;
 }

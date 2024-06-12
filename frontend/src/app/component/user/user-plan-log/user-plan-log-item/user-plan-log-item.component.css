@@ -12,7 +12,9 @@
 
 .user-name{
   width: 50%;
-  text-align: left;
+  display: flex;
+  text-align: right;
+  justify-content: center;
 }
 .user-plan-arrow{
   width: 20px;
@@ -25,15 +27,8 @@
   text-align: right;
   justify-content: center;
 }
-.user-new-plan > p {
-  margin: 2px;
-  padding: 2px;
-  border: 1px solid #00000000;
-  border-radius: 5px;
-  box-sizing: border-box;
-  color: #FFFFFF;
+chip-user-plan{
   width: 80%;
-  text-align: center;
 }
 .user-plan-time{
   width: 15%;

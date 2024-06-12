@@ -1,5 +1,8 @@
 import {DbObject} from "../../services/DbObject";
 import {SafeUrl} from "@angular/platform-browser";
+import {Component, Input, OnInit} from "@angular/core";
+import {SelectableComponent} from "../../page/selector/selectable.component";
+import Util from "../../util/Util";
 
 export class User extends DbObject {
   constructor(public override id: string = "",
@@ -30,4 +33,16 @@ export class User extends DbObject {
               public img : string = "") {
     super(id, displayName);
   }
+}
+
+@Component({
+  selector: 'chip-user-plan',
+  template: '<div [style.background-color]="Util.getPlanColor(plan)" class="chip-user-plan-box">{{user || Util.firstToUpperCase(plan)}}</div>',
+  styles: ["chip-user-plan { padding: 5px}",".chip-user-plan-box { padding: 2px; border: 1px solid #00000000;color: #FFFFFF; width: 100%; text-align: center; border-radius: 5px; font-size: 100%}"]
+})
+export class UserPlanChip extends Component {
+  @Input() plan : string = "none";
+  @Input() user : string | undefined;
+
+  protected readonly Util = Util;
 }

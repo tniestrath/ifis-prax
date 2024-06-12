@@ -54,6 +54,8 @@ export class SysVars {
 
   public static SELECTED_FORUM_POST : EventEmitter<ForumPost> = new EventEmitter<ForumPost>();
 
+  public static IS_POPUP : boolean = false;
+
   public static PAGES = [
     //new PAGE(0, "Login", "Login");
     new PAGE(1, "Overview", "Übersicht"),

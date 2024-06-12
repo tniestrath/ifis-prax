@@ -1,4 +1,4 @@
-<div class="external-services-list-item-box">
+<div class="external-services-list-item-box" (click)="onClick()">
     <div class="external-services-list-item-name">
       <p>{{data.name}}</p>
     </div>
@@ -6,7 +6,8 @@
       <img *ngIf="data.check == 0" src="assets/check-circle.png" alt="Good">
       <img *ngIf="data.check != 0" src="assets/alert-circle.png" alt="Bad">
     </div>
-  <div class="hidden">
-    <iframe #iframe class="external-service-iframe" [src]="data.link | unsafeURL" (load)="onLoad($event)" (error)="data.check = 1"></iframe>
+  <div #iframe class="external-service-iframe-container hidden">
+    <div style="width: 100%; height: 20px; display: flex; justify-content: flex-end"><span style="margin: 0 -5px 0 0;background-color: #7a1833; color: #FFFFFF;width: 20px; text-align: center; cursor: pointer">X</span></div>
+    <iframe class="external-service-iframe" [src]="data.link | unsafeURL" (load)="onLoad($event)" (error)="data.check = 1"></iframe>
   </div>
 </div>

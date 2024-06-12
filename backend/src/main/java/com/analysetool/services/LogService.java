@@ -170,8 +170,8 @@ public class LogService {
 
     private final String ratgeberBuchView = "^.*GET /ratgeber/cyber-sicherheit/";
 
-    private final String ratgeberSelfView = "^.*GET /selbstlernangebot-it-sicherheit/";
-    private final String ratgeberSelfSubView ="^.*GET /selbstlernangebot-it-sicherheit/([^/]+)/";
+    private final String ratgeberSelfView = "^.*GET /ratgeber/selbstlernangebot-it-sicherheit/";
+    private final String ratgeberSelfSubView ="^.*GET /ratgeber/selbstlernangebot-it-sicherheit/(\\S+)/";
     private final String ratgeberSelfViewAlterEgo = "^.*GET /Selbstlernakademie/sec-aware-nrw-scorm12-8DUduEVd/scormcontent/index\\.html";
 
     private final String NewsViewPatter = "^.*GET /news/(\\S+)/";

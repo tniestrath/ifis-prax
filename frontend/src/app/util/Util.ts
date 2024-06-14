@@ -100,6 +100,7 @@ export default class Util {
       case "plan":
         switch (type) {
           case "basis":
+          case "basic":
             return DashColors.PLAN_BASIC;
           case "basis-plus":
             return DashColors.PLAN_BASIC_PLUS;

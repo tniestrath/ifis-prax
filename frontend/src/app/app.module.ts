@@ -29,7 +29,12 @@ import { GridCardDirective } from './grid/grid-card.directive';
 import { RelevanceComponent } from './component/gauge/relevance/relevance.component';
 import { PostComponent } from './component/post/post.component';
 import { PotentialComponent } from './component/potential/potential.component';
-import { UserPlanComponent } from './component/user/user-plan/user-plan.component';
+import {
+  BasicListDirective,
+  BpListDirective, OaListDirective,
+  PlusListDirective, PremiumListDirective,
+  UserPlanComponent
+} from './component/user/user-plan/user-plan.component';
 import { LoginComponent } from './component/login/login.component';
 import {
   OriginMapComponent,
@@ -204,7 +209,12 @@ import {UserPlanChip} from "./component/user/user";
     UserPlanLogComponent,
     UserPlanLogItemComponent,
     SafeUrlPipe,
-    UserPlanChip
+    UserPlanChip,
+    BasicListDirective,
+    BpListDirective,
+    PlusListDirective,
+    PremiumListDirective,
+    OaListDirective
   ],
     imports: [
         BrowserModule,

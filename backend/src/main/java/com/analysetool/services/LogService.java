@@ -523,14 +523,30 @@ public class LogService {
         //setUniversalStats(SystemVariabeln);
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
-        updateWordCountForAll();
-
-        updatePostTypes();
-
-        doAutoClean();
-
-        updateMemberBuffer();
-
+        try {
+            updateWordCountForAll();
+        } catch(Exception e) {
+            System.out.println("FEHLER AT updateWordCount");
+            e.printStackTrace();
+        }
+        try {
+            updatePostTypes();
+        } catch(Exception e) {
+            System.out.println("FEHLER AT updatePostTypes");
+            e.printStackTrace();
+        }
+        try {
+            doAutoClean();
+        } catch(Exception e) {
+            System.out.println("FEHLER AT autoclean");
+            e.printStackTrace();
+        }
+        try {
+            updateMemberBuffer();
+        } catch(Exception e) {
+            System.out.println("FEHLER AT updateMemberBuffer");
+            e.printStackTrace();
+        }
         if(LocalDateTime.now().getHour() == 5) {
             endDay();
         }

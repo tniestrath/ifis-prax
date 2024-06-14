@@ -3162,7 +3162,7 @@ public class LogService {
                 AnbieterFailedSearchBuffer b = new AnbieterFailedSearchBuffer();
                 b.setSearch(a.getSearch());
                 if(a.getCity_name().equals("") && a.getPlz() != 0) {
-                    b.setCity(geoNamesRepo.getCityByPlz(a.getPlz()));
+                    b.setCity(geoNamesRepo.getCityByPlz(String.valueOf(a.getPlz())));
                 } else {
                     b.setCity(a.getCity_name());
                 }

@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface GeoNamesPostalRepository extends JpaRepository<GeoNamesPostal, Long> {
 
     @Query("SELECT c.placeName FROM GeoNamesPostal c WHERE c.postalCode=:plz")
-    String getCityByPlz(int plz);
+    String getCityByPlz(String plz);
 }

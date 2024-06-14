@@ -523,14 +523,30 @@ public class LogService {
         //setUniversalStats(SystemVariabeln);
         SystemVariabeln.setLastLineCount(lastLineCounter);
         SystemVariabeln.setLastLine(lastLine);
-        updateWordCountForAll();
-
-        updatePostTypes();
-
-        doAutoClean();
-
-        updateMemberBuffer();
-
+        try {
+            updateWordCountForAll();
+        } catch(Exception e) {
+            System.out.println("FEHLER AT updateWordCount");
+            e.printStackTrace();
+        }
+        try {
+            updatePostTypes();
+        } catch(Exception e) {
+            System.out.println("FEHLER AT updatePostTypes");
+            e.printStackTrace();
+        }
+        try {
+            doAutoClean();
+        } catch(Exception e) {
+            System.out.println("FEHLER AT autoclean");
+            e.printStackTrace();
+        }
+        try {
+            updateMemberBuffer();
+        } catch(Exception e) {
+            System.out.println("FEHLER AT updateMemberBuffer");
+            e.printStackTrace();
+        }
         if(LocalDateTime.now().getHour() == 5) {
             endDay();
         }
@@ -3162,7 +3178,7 @@ public class LogService {
                 AnbieterFailedSearchBuffer b = new AnbieterFailedSearchBuffer();
                 b.setSearch(a.getSearch());
                 if(a.getCity_name().equals("") && a.getPlz() != 0) {
-                    b.setCity(geoNamesRepo.getCityByPlz(a.getPlz()));
+                    b.setCity(geoNamesRepo.getCityByPlz(String.valueOf(a.getPlz())));
                 } else {
                     b.setCity(a.getCity_name());
                 }

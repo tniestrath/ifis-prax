@@ -43,7 +43,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p.id from Post p where p.slug =:name AND p.status='publish' AND p.type='post'")
    Long getIdByName(String name);
 
-   @Query("select p.date from Post p where p.id =:Id AND p.status= 'publish' AND p.type='post' OR p.type='page'")
+   @Query("select p.date from Post p where p.id =:Id AND p.status= 'publish' AND (p.type='post' OR p.type='page')")
    LocalDateTime getPostDateById(long Id);
 
    @Query("SELECT p.content FROM Post p WHERE p.id =:pId AND p.type='post'")

@@ -4,14 +4,11 @@ import com.analysetool.modells.FeatureWishes;
 import com.analysetool.repositories.FeatureWishesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping(value = {"/feature", "/0wB4P2mly-xaRmeeDOj0_g/feature"})
+@RequestMapping(value = {"/feature", "/0wB4P2mly-xaRmeeDOj0_g/feature"}, method = RequestMethod.GET, produces = "application/json")
 public class FeatureWishController {
 
     @Autowired

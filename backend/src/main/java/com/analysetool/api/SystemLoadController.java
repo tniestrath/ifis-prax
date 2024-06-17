@@ -8,13 +8,14 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@RequestMapping(value = {"/systemLoad", "/0wB4P2mly-xaRmeeDOj0_g/systemLoad"})
+@RequestMapping(value = {"/systemLoad", "/0wB4P2mly-xaRmeeDOj0_g/systemLoad"}, method = RequestMethod.GET, produces = "application/json")
 public class SystemLoadController {
 
     private final SystemLoadService systemLoadService;

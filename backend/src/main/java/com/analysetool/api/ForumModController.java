@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping(value = {"/forum", "/0wB4P2mly-xaRmeeDOj0_g/forum"})
+@RequestMapping(value = {"/forum", "/0wB4P2mly-xaRmeeDOj0_g/forum"}, method = RequestMethod.GET, produces = "application/json")
 public class ForumModController {
 
     @Autowired

@@ -7,10 +7,7 @@ import com.analysetool.repositories.WpTermRelationshipsRepository;
 import com.analysetool.util.Constants;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,7 +17,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping(value = {"/events", "/0wB4P2mly-xaRmeeDOj0_g/events"})
+@RequestMapping(value = {"/events", "/0wB4P2mly-xaRmeeDOj0_g/events"}, method = RequestMethod.GET, produces = "application/json")
 public class EventsController {
 
     @Autowired

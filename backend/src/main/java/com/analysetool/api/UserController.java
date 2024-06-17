@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
-@RequestMapping(value = { "/users", "/0wB4P2mly-xaRmeeDOj0_g/users"})
+@RequestMapping(value = { "/users", "/0wB4P2mly-xaRmeeDOj0_g/users"}, method = RequestMethod.GET, produces = "application/json")
 public class UserController {
 
     @Autowired

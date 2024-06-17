@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -40,10 +39,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p.id from Post p where p.title =:title")
    List<Long> getIdByTitle(String title);
 
-   @Query("SELECT p.id from Post p where p.slug =:name AND p.status='publish' AND p.type='post'")
+   @Query("SELECT p.id from Post p where p.slug =:name AND p.status='publish' AND (p.type='post' OR p.type='page' OR p.type='event')")
    Long getIdByName(String name);
 
-   @Query("select p.date from Post p where p.id =:Id AND p.status= 'publish' AND (p.type='post' OR p.type='page')")
+   @Query("select p.date from Post p where p.id =:Id AND p.status= 'publish' AND (p.type='post' OR p.type='page' OR p.type='event')")
    LocalDateTime getPostDateById(long Id);
 
    @Query("SELECT p.content FROM Post p WHERE p.id =:pId AND p.type='post'")
@@ -56,9 +55,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    @Query("SELECT p.date FROM Post p WHERE p.id =:pId AND p.status = 'publish' AND p.type = 'post'")
    LocalDateTime getDateById(long pId);
-
-   @Query("SELECT p.date FROM Post p WHERE p.status = 'publish' AND p.type = 'post'")
-   Map<Integer, LocalDateTime> getAllDates();
 
    @Query("SELECT e.id FROM Post e WHERE e.status = 'publish' AND e.type = 'post' ORDER BY e.date DESC")
    List<Long> findByTypeOrderByDateDesc(Pageable pageable);

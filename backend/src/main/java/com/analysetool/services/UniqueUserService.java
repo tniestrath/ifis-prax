@@ -177,6 +177,19 @@ public class UniqueUserService {
     }
 
 
+    public List<UniqueUser> getBotsByClicksOverTime() {
+        List<UniqueUser> users = uniqueUserRepo.findAll();
+        List<UniqueUser> bots = new ArrayList<>();
+
+        for(UniqueUser user : users) {
+            if(user.getAmount_of_clicks() > 5 && user.getAmount_of_clicks() > user.getTime_spent()) {
+                bots.add(user);
+            }
+        }
+        return bots;
+    }
+
+
     public Map<String, Long> getClicksCategory(UniqueUser user) throws JSONException {
         Map<Integer, String> clickMap = new TreeMap<>();
         // Wiederholung des Prozesses, um die Klicks in Kategorien zu erfassen

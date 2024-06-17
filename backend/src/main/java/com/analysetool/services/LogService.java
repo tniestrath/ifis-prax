@@ -1,5 +1,6 @@
 package com.analysetool.services;
 
+import com.analysetool.api.IPController;
 import com.analysetool.api.PostController;
 import com.analysetool.api.UserController;
 import com.analysetool.modells.*;
@@ -127,6 +128,8 @@ public class LogService {
     private TagCatStatRepository tagCatRepo;
     @Autowired
     private MembershipBufferRepository memberRepo;
+    @Autowired
+    private IPController ipController;
 
     @Autowired
     private RankingTotalProfileRepository rankingTotalProfileRepo;
@@ -3304,6 +3307,21 @@ public class LogService {
     }
 
     private void banBots() {
+        for(UniqueUser user : uniqueUserService.getPossibleBots(15)) {
+               ipController.blockIp(user.getIp());
+        }
+        for(UniqueUser user : uniqueUserService.getPossibleBots(10)) {
+            if(IPHelper.getCountryISO(user.getIp()).equals("DE")
+                    || IPHelper.getCountryISO(user.getIp()).equals("BG")
+                    || IPHelper.getCountryISO(user.getIp()).equals("NL")
+                    || IPHelper.getCountryISO(user.getIp()).equals("CH")
+                    || IPHelper.getCountryISO(user.getIp()).equals("AT")
+                    || IPHelper.getCountryISO(user.getIp()).equals("LU")) ipController.blockIp(user.getIp());
+        }
+
+        for(UniqueUser bot : uniqueUserService.getBotsByClicksOverTime()) {
+            ipController.blockIp(bot.getIp());
+        }
 
     }
 

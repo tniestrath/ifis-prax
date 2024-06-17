@@ -32,7 +32,10 @@ export class ForumStatsComponent extends DashBaseComponent implements OnInit{
   data : ForumStats = new ForumStats(0,0,0,0,0,0);
 
   ngOnInit(): void {
-    this.api.getForumStats().then(res => this.data = res);
+    this.api.getForumStats().then(res => {
+      this.data = res;
+      this.cdr.detectChanges();
+    });
   }
 
   protected readonly Util = Util;

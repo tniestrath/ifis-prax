@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping(value = {"/search-stats", "/0wB4P2mly-xaRmeeDOj0_g/search-stats"})
+@RequestMapping(value = {"/search-stats", "/0wB4P2mly-xaRmeeDOj0_g/search-stats"}, method = RequestMethod.GET, produces = "application/json")
 public class SearchStatsController {
 
     @Autowired

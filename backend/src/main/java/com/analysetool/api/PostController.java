@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping(value = {"/posts", "/0wB4P2mly-xaRmeeDOj0_g/posts"})
+@RequestMapping(value = {"/posts", "/0wB4P2mly-xaRmeeDOj0_g/posts"}, method = RequestMethod.GET, produces = "application/json")
 public class PostController {
     private Calendar kalender = Calendar.getInstance();
     private int aktuellesJahr = kalender.get(Calendar.YEAR);

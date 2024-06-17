@@ -20,7 +20,7 @@ import java.util.*;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
-@RequestMapping(value = {"/tags", "/0wB4P2mly-xaRmeeDOj0_g/tags"})
+@RequestMapping(value = {"/tags", "/0wB4P2mly-xaRmeeDOj0_g/tags"}, method = RequestMethod.GET, produces = "application/json")
 public class TagsController {
 
     @Autowired

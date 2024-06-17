@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
-@RequestMapping(value = {"/uniqueusers", "/0wB4P2mly-xaRmeeDOj0_g/uniqueusers"})
+@RequestMapping(value = {"/uniqueusers", "/0wB4P2mly-xaRmeeDOj0_g/uniqueusers"}, method = RequestMethod.GET, produces = "application/json")
 public class UniqueUserController {
 
     @Autowired

@@ -16,9 +16,10 @@
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[0]}}</p>
               <p class="tooltip-box" style="margin: 0;">
                 {{prev_data[0] >= 0 ? "+" + prev_data[0] : prev_data[0].toString()}}
-                <span id="oaList" class="tooltip-text"></span>
+                <span class="tooltip-text">
+                  <ng-template oaListDirective></ng-template>
+                </span>
               </p>
-
             </div>
           </li>
           <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
@@ -31,7 +32,9 @@
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[1]}}</p>
               <p class="tooltip-box" style="margin: 0;">
                 {{prev_data[1] >= 0 ? "+" + prev_data[1] : prev_data[1].toString()}}
-                <span id="basicList" class="tooltip-text"></span>
+                <span class="tooltip-text">
+                  <ng-template id="basicList" basicListDirective></ng-template>
+                </span>
               </p>
             </div>
           </li>
@@ -45,7 +48,9 @@
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[2]}}</p>
               <p class="tooltip-box" style="margin: 0;">
                 {{prev_data[2] >= 0 ? "+" + prev_data[2] : prev_data[2].toString()}}
-                <span id="bpList" class="tooltip-text"></span>
+                <span class="tooltip-text">
+                  <ng-template id="bpList" bpListDirective></ng-template>
+                </span>
               </p>
             </div>
           </li>
@@ -59,7 +64,9 @@
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[3]}}</p>
               <p class="tooltip-box" style="margin: 0;">
                 {{prev_data[3] >= 0 ? "+" + prev_data[3] : prev_data[3].toString()}}
-                <span id="plusList" class="tooltip-text"></span>
+                <span class="tooltip-text">
+                  <ng-template id="plusList" plusListDirective></ng-template>
+                </span>
               </p>
             </div>
           </li>
@@ -73,7 +80,9 @@
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[4]}}</p>
               <p class="tooltip-box" style="margin: 0;">
                 {{prev_data[4] >= 0 ? "+" + prev_data[4] : prev_data[4].toString()}}
-                <span id="premiumList" class="tooltip-text"></span>
+                <span class="tooltip-text">
+                  <ng-template id="premiumList" premiumListDirective></ng-template>
+                </span>
               </p>
             </div>
           </li>

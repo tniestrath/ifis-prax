@@ -6,10 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.text.ParseException;
@@ -21,7 +18,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping(value = {"/geo", "/0wB4P2mly-xaRmeeDOj0_g/geo"})
+@RequestMapping(value = {"/geo", "/0wB4P2mly-xaRmeeDOj0_g/geo"}, method = RequestMethod.GET, produces = "application/json")
 public class GeoController {
 
     @Autowired

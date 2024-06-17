@@ -1,8 +1,60 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
+import {
+  Component,
+  ComponentFactoryResolver,
+  Directive,
+  EventEmitter,
+  OnInit,
+  ViewChild,
+  ViewContainerRef
+} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import Util, {DashColors} from "../../../util/Util";
+import {UserPlanChip} from "../user";
+import {SelectableDirective} from "../../../page/selector/selectable.directive";
+
+
+@Directive({
+  selector: '[oaListDirective]'
+})
+export class OaListDirective {
+
+  constructor(public viewContainerRef: ViewContainerRef) { }
+
+}
+@Directive({
+  selector: '[basicListDirective]'
+})
+export class BasicListDirective {
+
+  constructor(public viewContainerRef: ViewContainerRef) { }
+
+}
+@Directive({
+  selector: '[bpListDirective]'
+})
+export class BpListDirective {
+
+  constructor(public viewContainerRef: ViewContainerRef) { }
+
+}
+@Directive({
+  selector: '[plusListDirective]'
+})
+export class PlusListDirective {
+
+  constructor(public viewContainerRef: ViewContainerRef) { }
+
+}
+@Directive({
+  selector: '[premiumListDirective]'
+})
+export class PremiumListDirective {
+
+  constructor(public viewContainerRef: ViewContainerRef) { }
+
+}
 
 @Component({
   selector: 'dash-user-plan',
@@ -26,6 +78,11 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
   plusList: HTMLParagraphElement[] = [];
   premiumList: HTMLParagraphElement[] = [];
   sponsorList: HTMLParagraphElement[] = [];
+  @ViewChild(OaListDirective, {static: true}) oaListDirective!: OaListDirective;
+  @ViewChild(BasicListDirective, {static: true}) basicListDirective!: BasicListDirective;
+  @ViewChild(BpListDirective, {static: true}) bpListDirective!: BpListDirective;
+  @ViewChild(PlusListDirective, {static: true}) plusListDirective!: PlusListDirective;
+  @ViewChild(PremiumListDirective, {static: true}) premiumListDirective!: PremiumListDirective;
 
   ngOnInit(): void {
     if (this.chart != undefined) {
@@ -42,19 +99,19 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
     }).finally(() => {
       this.api.getUserAccountTypesAllNew().then(res => {
         // @ts-ignore
-        document.getElementById("oaList").append(...this.formatArray(res.ohne));
+        this.appendToList(this.oaListDirective, res.ohne);
         this.prev_data[0] = res.ohneCount;
         // @ts-ignore
-        document.getElementById("basicList").append(...this.formatArray(res.basis));
+        this.appendToList(this.basicListDirective, res.basis);
         this.prev_data[1] = res.basisCount;
         // @ts-ignore
-        document.getElementById("bpList").append(...this.formatArray(res.basisPlus));
+        this.appendToList(this.bpListDirective, res.basisPlus);
         this.prev_data[2] = res.basisPlusCount;
         // @ts-ignore
-        document.getElementById("plusList").append(...this.formatArray(res.plus));
+        this.appendToList(this.plusListDirective, res.plus);
         this.prev_data[3] = res.plusCount;
         // @ts-ignore
-        document.getElementById("premiumList").append(...this.formatArray(res.premium));
+        this.appendToList(this.premiumListDirective, res.premium);
         this.prev_data[4] = res.premiumCount;
 
         this.prev_total = (res.ohneCount + res.basisCount + res.basisPlusCount + res.plusCount + res.premiumCount)
@@ -67,25 +124,21 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
   }
 
 
-  formatArray(array: string[]) : HTMLParagraphElement[]{
-    var result: HTMLParagraphElement[] = [];
+  appendToList(list : any, array: string[]) {
     for (let username of array) {
       if (username.startsWith("+")){
-        let p = document.createElement("p");
-        p.style.color = DashColors.BLUE;
-        p.style.margin = String(0);
-        p.innerText = username.slice(1);
-        result.push(p);
+        const componentRef = list.viewContainerRef.createComponent(UserPlanChip);
+        componentRef.instance.user = username.substring(1);
+        componentRef.instance.plan = "basic";
+        componentRef.location.nativeElement.setAttribute("style", "margin: 0 1px 0 0");
       }
       else if (username.startsWith("-")){
-        let p1 = document.createElement("p");
-        p1.style.color = DashColors.RED;
-        p1.style.margin = String(0);
-        p1.innerText = username.slice(1);
-        result.push(p1);
+        const componentRef = list.viewContainerRef.createComponent(UserPlanChip);
+        componentRef.instance.user = username.substring(1);
+        componentRef.instance.plan = "plus";
+        componentRef.location.nativeElement.setAttribute("style", "margin: 0 1px 0 0");
       }
     }
-    return result;
   }
 
   private readMap(map: Map<string, number>, data: number[]) {

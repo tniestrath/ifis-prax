@@ -17,4 +17,13 @@ public interface WPWPForoTopicsRepository extends JpaRepository<WPWPForoTopics, 
     @Query("SELECT t.topicId FROM WPWPForoTopics t WHERE t.firstPostId=:firstPostId")
     Integer getTopicByFirstPost(int firstPostId);
 
+    @Query("SELECT COUNT(w) FROM WPWPForoTopics w")
+    int getCountTopicsTotal();
+
+    @Query("SELECT COUNT(w) FROM WPWPForoTopics w WHERE w.closed = 1")
+    int getCountTopicsClosed();
+
+    @Query("SELECT COUNT(w) FROM WPWPForoTopics w WHERE w.solved = 1")
+    int getCountTopicsAnswered();
+
 }

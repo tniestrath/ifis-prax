@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping(value = {"/forum", "/0wB4P2mly-xaRmeeDOj0_g/forum"})
+@RequestMapping(value = {"/forum", "/0wB4P2mly-xaRmeeDOj0_g/forum"}, method = RequestMethod.GET, produces = "application/json")
 public class ForumModController {
 
     @Autowired
@@ -381,6 +381,21 @@ public class ForumModController {
         array.put(getLinkToPost(id));
 
         return array.toString();
+    }
+
+    @GetMapping("/getCounts")
+    public String getCounts() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("questions", wpForoPostRepo.getCountQuestions());
+        json.put("answers", wpForoPostRepo.getCountAnswers());
+        json.put("topics", wpForoTopicsRepo.getCountTopicsTotal());
+        json.put("topicsClosed", wpForoTopicsRepo.getCountTopicsClosed());
+        json.put("topicsAnswered", wpForoTopicsRepo.getCountTopicsAnswered());
+        json.put("forums", wpForoForumRepo.getCountForums());
+
+        return json.toString();
+
     }
 
 }

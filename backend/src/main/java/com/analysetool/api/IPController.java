@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping(value = {"/ip", "/0wB4P2mly-xaRmeeDOj0_g/ip"})
+@RequestMapping(value = {"/ip", "/0wB4P2mly-xaRmeeDOj0_g/ip"}, method = RequestMethod.GET, produces = "application/json")
 public class IPController {
 
     @Autowired

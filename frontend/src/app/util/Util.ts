@@ -100,6 +100,7 @@ export default class Util {
       case "plan":
         switch (type) {
           case "basis":
+          case "basic":
             return DashColors.PLAN_BASIC;
           case "basis-plus":
             return DashColors.PLAN_BASIC_PLUS;
@@ -110,6 +111,9 @@ export default class Util {
             return DashColors.PLAN_PREMIUM;
           case "none":
             return DashColors.BLACK;
+          case "registered":
+          case "registriert":
+            return DashColors.REGISTERED;
           default:
             return DashColors.PLAN_WITHOUT;
         }
@@ -139,7 +143,9 @@ export default class Util {
       default:
         return DashColors.GREY;
     }
-
+  }
+  static getPlanColor(plan : string){
+    return this.getColor("plan", plan);
   }
 
   static getLevenshteinDistance(s1 : string, s2 : string) : number {

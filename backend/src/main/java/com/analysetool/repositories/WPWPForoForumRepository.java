@@ -12,4 +12,7 @@ public interface WPWPForoForumRepository extends JpaRepository<WPWPForoForum, Lo
     Integer getForumIdBySlug(String slug);
 
     WPWPForoForum findBySlug(String slug);
+
+    @Query("SELECT COUNT(w) FROM WPWPForoForum w")
+    int getCountForums();
 }

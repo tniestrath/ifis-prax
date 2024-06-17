@@ -1,7 +1,7 @@
 <div class="user-plan-log-item-box" (click)="onClick(data)">
-  <div [style.color]="Util.getColor('plan', data.oldPlan)" class="user-name">{{data.user}}</div>
+  <div class="user-name"><chip-user-plan [user]="data.user" [plan]="data.oldPlan"></chip-user-plan></div>
   <img class="user-plan-arrow" src="../../../../../assets/trend_flat.png"/>
-  <div *ngIf="!this.registered" class="user-new-plan"><p [style.background-color]="Util.getColor('plan', data.newPlan)">{{Util.firstToUpperCase(data.newPlan)}}</p></div>
-  <div *ngIf="this.registered" class="user-new-plan"><p [style.background-color]="DashColors.REGISTERED">Registriert</p></div>
+  <div *ngIf="!this.registered" class="user-new-plan"><chip-user-plan [plan]="data.newPlan"></chip-user-plan></div>
+  <div *ngIf="this.registered" class="user-new-plan"><chip-user-plan plan='registriert'></chip-user-plan></div>
   <div class="user-plan-time">{{data.time.slice(0, 10)}}</div>
 </div>

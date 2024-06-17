@@ -383,4 +383,19 @@ public class ForumModController {
         return array.toString();
     }
 
+    @GetMapping("/getCounts")
+    public String getCounts() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("questions", wpForoPostRepo.getCountQuestions());
+        json.put("answers", wpForoPostRepo.getCountAnswers());
+        json.put("topicsTotal", wpForoTopicsRepo.getCountTopicsTotal());
+        json.put("topicsClosed", wpForoTopicsRepo.getCountTopicsClosed());
+        json.put("topicsAnswered", wpForoTopicsRepo.getCountTopicsAnswered());
+        json.put("forums", wpForoForumRepo.getCountForums());
+
+        return json.toString();
+
+    }
+
 }

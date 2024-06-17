@@ -3231,6 +3231,7 @@ public class LogService {
         updateAnbieterFailedSearchBuffer();
         deleteStandardSearch();
         cleanFinalSearchStatDLC();
+        banBots();
     }
 
     /**
@@ -3300,6 +3301,10 @@ public class LogService {
             goneMember.setUserId(buffer.getUserId());
             memberRepo.save(goneMember);
         }
+    }
+
+    private void banBots() {
+
     }
 
 }

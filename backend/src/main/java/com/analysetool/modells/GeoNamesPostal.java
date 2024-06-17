@@ -3,7 +3,7 @@ package com.analysetool.modells;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "\"wp_geonamesPostal\"")
+@Table(name = "wp_geonamesPostal")
 public class GeoNamesPostal {
 
     @Id

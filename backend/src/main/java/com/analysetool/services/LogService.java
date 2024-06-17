@@ -3308,7 +3308,8 @@ public class LogService {
 
     private void banBots() {
         for(UniqueUser user : uniqueUserService.getPossibleBots(15)) {
-               ipController.blockIp(user.getIp());
+            ipController.blockIp(user.getIp());
+            System.out.println("BLOCKED SOMEONE");
         }
         for(UniqueUser user : uniqueUserService.getPossibleBots(10)) {
             if(IPHelper.getCountryISO(user.getIp()).equals("DE")
@@ -3316,11 +3317,15 @@ public class LogService {
                     || IPHelper.getCountryISO(user.getIp()).equals("NL")
                     || IPHelper.getCountryISO(user.getIp()).equals("CH")
                     || IPHelper.getCountryISO(user.getIp()).equals("AT")
-                    || IPHelper.getCountryISO(user.getIp()).equals("LU")) ipController.blockIp(user.getIp());
+                    || IPHelper.getCountryISO(user.getIp()).equals("LU")) {
+                ipController.blockIp(user.getIp());
+                System.out.println("BLOCKED SOMEONE");
+            }
         }
 
         for(UniqueUser bot : uniqueUserService.getBotsByClicksOverTime()) {
             ipController.blockIp(bot.getIp());
+            System.out.println("BLOCKED SOMEONE");
         }
 
     }

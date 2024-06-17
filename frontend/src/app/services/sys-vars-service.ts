@@ -62,7 +62,7 @@ export class SysVars {
     new PAGE(2, "Posts", "Beiträge"),
     new PAGE(3, "Tags", "Themen"),
     new PAGE(4, "Users", "Anbieter"),
-    new PAGE(5, "Inhalte", "Content"),
+    new PAGE(5, "Content", "Inhalte"),
   ]
 
   constructor() {}

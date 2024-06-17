@@ -1,0 +1,22 @@
+<div class="component-box forum-stats-box">
+  <div class="forum-stats-content">
+    <div class="forum-stat">
+      <div class="forum-stat-title">Foren</div>
+      <div class="forum-stat-data">{{data.forums}}</div>
+    </div>
+    <div class="forum-stat">
+      <div class="forum-stat-title">Themen</div>
+      <div class="forum-stat-data">{{data.topics}}</div>
+      <div class="forum-stat-data" [style.color]="DashColors.BLUE">{{data.topicsClosed}}</div>
+      <div class="forum-stat-data" [style.color]="DashColors.GREEN">{{data.topicsAnswered}}</div>
+    </div>
+    <div class="forum-stat">
+      <div class="forum-stat-title">Fragen</div>
+      <div class="forum-stat-data">{{Util.formatNumbers(data.questions)}}</div>
+    </div>
+    <div class="forum-stat">
+      <div class="forum-stat-title">Antworten</div>
+      <div class="forum-stat-data">{{Util.formatNumbers(data.answers)}}</div>
+    </div>
+  </div>
+</div>

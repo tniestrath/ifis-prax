@@ -284,18 +284,19 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   setupCities(region: string, region_clicks: SVG_Region[]){
     // @ts-ignore
     let gesamt = region_clicks.find(value => value.identifier == region).clicks;
-
-    this.api.getGeoByRegionByDates(region, this.startDate, this.endDate).then((res: Map<string,number>) => {
-      let data : Map<string, number> = new Map(Object.entries(res));
+    this.api.getGeoByRegionByDates(region, this.startDate, this.endDate).then((res: Map<string, number>) => {
+      let data: Map<string, number> = new Map(Object.entries(res));
       this.tooltipHeader.style.paddingBottom = "5px";
       this.tooltipHeader.innerText = this.getRegionFullName(region);
 
+      if (SysVars.CURRENT_PAGE == "UserDetail") { data = new Map}
+
       this.tooltipCities.replaceChildren();
-      let cityElement = document.createElement('div', );
+      let cityElement = document.createElement('div',);
       let cityName = document.createElement('div');
       let cityClicks = document.createElement('div');
 
-      var citiesList : any[] = [];
+      var citiesList: any[] = [];
 
       cityElement.style.marginTop = "3px";
       cityElement.style.paddingTop = "2px";
@@ -337,9 +338,14 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
           this.tooltipCharts.classList.add("hidden");
         }
       }
-      citiesList.sort((a: {element: HTMLElement, clicks: number; }, b: {element: HTMLElement, clicks: number; }) => b.clicks - a.clicks);
+      citiesList.sort((a: { element: HTMLElement, clicks: number; }, b: {
+        element: HTMLElement,
+        clicks: number;
+      }) => b.clicks - a.clicks);
       citiesList.splice(24);
-      citiesList = citiesList.map((a: { element: HTMLElement, clicks: number }) => {return a.element});
+      citiesList = citiesList.map((a: { element: HTMLElement, clicks: number }) => {
+        return a.element
+      });
       this.tooltipCities.append(...citiesList);
       cityElement.appendChild(cityName);
       cityElement.appendChild(cityClicks);

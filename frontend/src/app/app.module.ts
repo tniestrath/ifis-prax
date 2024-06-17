@@ -111,6 +111,7 @@ import {
 } from './component/system/external-services-list/external-services-list-item/external-services-list-item.component';
 import { UserPlanLogComponent } from './component/user/user-plan-log/user-plan-log.component';
 import { UserPlanLogItemComponent } from './component/user/user-plan-log/user-plan-log-item/user-plan-log-item.component';
+import { ForumStatsComponent } from './component/forum/forum-stats/forum-stats.component';
 
 @NgModule({
     declarations: [
@@ -202,7 +203,8 @@ import { UserPlanLogItemComponent } from './component/user/user-plan-log/user-pl
         ExternalServicesListItemComponent,
         UserPlanLogComponent,
         UserPlanLogItemComponent,
-        SafeUrlPipe
+        SafeUrlPipe,
+        ForumStatsComponent
     ],
     imports: [
         BrowserModule,

@@ -61,6 +61,7 @@ import {
   ExternalServicesListComponent
 } from "../../component/system/external-services-list/external-services-list.component";
 import {UserPlanLogComponent} from "../../component/user/user-plan-log/user-plan-log.component";
+import {ForumStats, ForumStatsComponent} from "../../component/forum/forum-stats/forum-stats.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -192,6 +193,7 @@ export class PageComponent implements OnInit {
     return [
       {type: ForumProfanityFilterAdderComponent, row: 1, col: 1, height: 2, width: 1},
       {type: ForumModeratorComponent, row: 1, col: 2, height: 2, width: 5},
+      {type: ForumStatsComponent, row: 3, col: 1, height: 2, width: 1},
     ]
   }
 

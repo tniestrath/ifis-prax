@@ -1,0 +1,25 @@
+.forum-stats-content{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 5px;
+  box-sizing: border-box;
+}
+.forum-stat{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.forum-stat-title{
+  width: fit-content;
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.forum-stat-data{
+  font-size: 1.2em;
+}

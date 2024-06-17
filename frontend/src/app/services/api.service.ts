@@ -20,6 +20,7 @@ import {SysVars} from "./sys-vars-service";
 import {ExternalService} from "../component/system/external-services-list/external-services-list.component";
 import {Environment} from "../../environment";
 import {UserPlanLogItem} from "../component/user/user-plan-log/user-plan-log-item/user-plan-log-item.component";
+import {ForumStats} from "../component/forum/forum-stats/forum-stats.component";
 
 /**
  * @enum apiUrl
@@ -143,6 +144,7 @@ export enum apiUrl {
   GET_FORUM_POST = "/forum/getPostById?id=ID",
   GET_FORUM_POST_LINKS = "/forum/getLinks?id=ID",
   GET_FORUM_BAD_WORDS = "/forum/getAllBadWords",
+  GET_FORUM_STATS = "/forum/getCounts",
   FORUM_DELETE_POST = "/forum/deleteById?id=ID",
   FORUM_ACCEPT_POST = "/forum/setStatusById?id=ID&status=0",
   FORUM_MODIFY_POST = "/forum/updatePost?accepted=ACCEPTED&userId=USERID",
@@ -840,6 +842,10 @@ export class ApiService {
   async getForumBadWords() :Promise<string[]> {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_BAD_WORDS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_BAD_WORDS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getForumStats() :Promise<ForumStats> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_STATS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_STATS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async addForumBadWord(word: string) : Promise<boolean> {

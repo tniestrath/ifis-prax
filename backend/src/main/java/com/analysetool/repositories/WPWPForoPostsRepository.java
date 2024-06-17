@@ -22,6 +22,4 @@ public interface WPWPForoPostsRepository extends JpaRepository<WPWPForoPosts, Lo
 
     @Query("SELECT COUNT(w) FROM WPWPForoPosts w WHERE w.isPrivate = 0 AND w.isFirstPost = 0")
     int getCountAnswers();
-
-    int getSumForums();
 }

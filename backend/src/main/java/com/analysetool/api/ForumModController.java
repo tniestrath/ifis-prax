@@ -389,7 +389,7 @@ public class ForumModController {
 
         json.put("questions", wpForoPostRepo.getCountQuestions());
         json.put("answers", wpForoPostRepo.getCountAnswers());
-        json.put("topicsTotal", wpForoTopicsRepo.getCountTopicsTotal());
+        json.put("topics", wpForoTopicsRepo.getCountTopicsTotal());
         json.put("topicsClosed", wpForoTopicsRepo.getCountTopicsClosed());
         json.put("topicsAnswered", wpForoTopicsRepo.getCountTopicsAnswered());
         json.put("forums", wpForoForumRepo.getCountForums());

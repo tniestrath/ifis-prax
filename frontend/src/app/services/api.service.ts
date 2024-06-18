@@ -256,7 +256,7 @@ export class ApiService {
     return await fetch(ApiService.setupRequest(apiUrl.GET_USER_ALL_STATS_BY_ID) + id, {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USER_ALL_STATS_BY_ID)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async validate() : Promise<{"user_id":string}>{
+  async validate() : Promise<{"user_id":string, "role":string | undefined}>{
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.VALIDATE), {credentials: "include", signal: ApiService.setupController(apiUrl.VALIDATE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }

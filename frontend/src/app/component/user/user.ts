@@ -16,6 +16,7 @@ export class User extends DbObject {
               public viewsPerDay : number = 0,
               public performance : number = 0,
               public accountType : string = "undefined", // basic plus premium admin ?customer?
+              public accessLevel : string = "none",
               public potential : number = 0,
               public TeleDE : boolean = false,
               public TeleEU : boolean = false,

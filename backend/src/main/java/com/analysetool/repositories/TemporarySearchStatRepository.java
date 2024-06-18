@@ -13,4 +13,7 @@ public interface TemporarySearchStatRepository extends JpaRepository<TemporarySe
 
     @Query("SELECT t from TemporarySearchStat t ")
     CopyOnWriteArrayList<TemporarySearchStat> findAllConcurrent();
+
+    @Query("SELECT count(DISTINCT t.searchIp) from TemporarySearchStat t")
+    Integer countAllDistinctIps();
 }

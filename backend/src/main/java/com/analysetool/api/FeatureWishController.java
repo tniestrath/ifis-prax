@@ -68,7 +68,7 @@ public class FeatureWishController {
      * Builds a Site from all current Feedback and Wishes.
      * @return an HTML-File as a String.
      */
-    @GetMapping("/feedbackSite")
+    @GetMapping(value = {"/feedbackSite"}, produces = "text/html")
     public String getAllAndFeedbackOption() {
         String html = hardcodedHTML;
 

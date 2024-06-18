@@ -315,15 +315,11 @@ public class ForumModController {
 
     @GetMapping("/getLinkToPost")
     public String getLinkToPost(long postId) {
-        String link = "https://it-sicherheit.de/marktplatz-forum/";
+        String link = "https://it-sicherheit.de/forum-it-sicherheit/";
 
         if(wpForoPostRepo.findById(postId).isPresent()) {
             WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
             try {
-                WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
-                WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).orElseThrow();
-                link += forum.getSlug() + "/";
-                link += topic.getSlug() + "/";
                 link += "postid/" + post.getPostId();
             } catch (NoSuchElementException e) {
                 return "kein derartiges Element";
@@ -356,7 +352,7 @@ public class ForumModController {
 
     @GetMapping("/getLinkToForum")
     public String getLinkToForum(long postId) {
-        String link = "https://it-sicherheit.de/marktplatz-forum/";
+        String link = "https://it-sicherheit.de/forum-it-sicherheit/";
 
         if(wpForoPostRepo.findById(postId).isPresent()) {
             WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
@@ -392,7 +388,7 @@ public class ForumModController {
         json.put("topics", wpForoTopicsRepo.getCountTopicsTotal());
         json.put("topicsClosed", wpForoTopicsRepo.getCountTopicsClosed());
         json.put("topicsAnswered", wpForoTopicsRepo.getCountTopicsAnswered());
-        json.put("forums", wpForoForumRepo.getCountForums());
+        json.put("forums", wpForoForumRepo.getCountForums() - 1);
 
         return json.toString();
 

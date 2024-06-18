@@ -212,11 +212,20 @@ public class ForumModController {
     public boolean addBadWord(String word) {
         if(badWordRepo.getByWord(word).isEmpty() && !word.isBlank()) {
             Badwords badWordNew = new Badwords();
-            badWordNew.setBadWord(word);
+            badWordNew.setBadWord(word.toLowerCase());
             badWordRepo.save(badWordNew);
             return true;
         }
 
+        return false;
+    }
+
+    @GetMapping("/removeBadWord")
+    public boolean removeBadWord(String word) {
+        if(badWordRepo.getByWord(word.toLowerCase()).isPresent()) {
+            badWordRepo.delete(badWordRepo.getByWord(word.toLowerCase()).get());
+            return true;
+        }
         return false;
     }
 

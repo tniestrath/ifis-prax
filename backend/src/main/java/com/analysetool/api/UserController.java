@@ -98,8 +98,19 @@ public class UserController {
         obj.put("id", user.getId());
         obj.put("displayName", user.getDisplayName());
         obj.put("accountType", getType(Math.toIntExact(user.getId())));
+        obj.put("accessLevel", getAccessLevel(user.getId()));
 
         return obj.toString();
+    }
+
+    public String getAccessLevel(long userId) {
+        if(getType((int) userId).equals("admin")) {
+            return "admin";
+        } else if(isModerator(userId)) {
+            return "mod";
+        } else {
+            return "none";
+        }
     }
 
     @GetMapping("/getByLogin")
@@ -1318,6 +1329,14 @@ public class UserController {
 
 
         return array.toString();
+    }
+
+
+    public boolean isModerator(long userId) {
+        if(wpUserMetaRepository.existsByUserId(userId)) {
+            return wpUserMetaRepository.getWPUserMetaValueByUserId(userId).contains("editor");
+        }
+        return false;
     }
 
     /**

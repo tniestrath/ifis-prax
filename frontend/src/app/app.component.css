@@ -4,6 +4,13 @@ dash-page{
   overflow-y: scroll;
   overflow-x: hidden;
 }
+dialog-sure{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 100px
+}
 
 @media print {
   dash-page{

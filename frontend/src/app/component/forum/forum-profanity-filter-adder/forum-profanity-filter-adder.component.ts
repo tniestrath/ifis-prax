@@ -30,6 +30,21 @@ export class ForumProfanityFilterAdderComponent extends DashBaseComponent implem
       return true;
     }else return false;
   }
+  onWithdraw(){
+    let input = document.getElementById("profanity-filter-input");
+    if ((input as HTMLInputElement).value.length > 2) {
+      this.api.removeForumBadWord((input as HTMLInputElement).value).then(r => {
+        if (r) {
+          (input as HTMLInputElement).value = "";
+          (input as HTMLInputElement).placeholder = "Zu Filterndes Wort";
+        } else {
+          (input as HTMLInputElement).value = "";
+          (input as HTMLInputElement).placeholder = "Dieses Wort ist nicht in der Liste";
+        }
+      });
+      return true;
+    }else return false;
+  }
 
   onProfanityClick() {
     let checkbox = document.getElementById("profanity-list-visibility");

@@ -149,6 +149,7 @@ export enum apiUrl {
   FORUM_ACCEPT_POST = "/forum/setStatusById?id=ID&status=0",
   FORUM_MODIFY_POST = "/forum/updatePost?accepted=ACCEPTED&userId=USERID",
   FORUM_ADD_BAD_WORD = "/forum/addBadWord?word=WORD",
+  FORUM_REMOVE_BAD_WORD = "/forum/removeBadWord?word=WORD",
 
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
@@ -851,5 +852,9 @@ export class ApiService {
   async addForumBadWord(word: string) : Promise<boolean> {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.FORUM_ADD_BAD_WORD).replace("WORD", word)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async removeForumBadWord(word: string) : Promise<boolean> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_REMOVE_BAD_WORD).replace("WORD", word)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 }

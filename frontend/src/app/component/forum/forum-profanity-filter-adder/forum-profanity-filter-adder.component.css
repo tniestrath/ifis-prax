@@ -25,7 +25,7 @@
 .forum-profanity-filter-adder-form{
   display: grid;
   grid-template-rows: 1fr 1fr;
-  grid-template-columns: auto;
+  grid-template-columns: 1fr 1fr;
   width: 100%;
   height: 20%;
   box-sizing: border-box;
@@ -48,15 +48,26 @@
   visibility: hidden;
 }
 #profanity-filter-input{
+  grid-column: 1 / 3;
   border-radius: 5px 5px 0 0;
   border: 1px solid #808080;
   border-bottom: none;
 }
 #profanity-filter-submit{
-  border-radius: 0 0 5px 5px;
+  grid-column: 1;
+  border-radius: 0 0 0 5px;
   border: 1px solid #808080;
 }
 #profanity-filter-submit:hover{
+  background-color: #E5E5E5;
+  cursor: pointer;
+}
+#profanity-filter-withdraw{
+  grid-column: 2;
+  border-radius: 0 0 5px 0;
+  border: 1px solid #808080;
+}
+#profanity-filter-withdraw:hover{
   background-color: #E5E5E5;
   cursor: pointer;
 }

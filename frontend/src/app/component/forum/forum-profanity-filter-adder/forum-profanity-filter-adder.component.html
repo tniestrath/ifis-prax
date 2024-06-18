@@ -3,7 +3,8 @@
   <div class="forum-profanity-filter-adder-container">
     <form name="word" class="forum-profanity-filter-adder-form" (ngSubmit)="onSubmit()">
       <input id="profanity-filter-input" name="word" type="text" placeholder="Zu Filterndes Wort" autocomplete="off" required minlength="3">
-      <input id="profanity-filter-submit" name="word" type="submit">
+      <input id="profanity-filter-submit" name="word" type="submit" value="Hinzufügen">
+      <input id="profanity-filter-withdraw" name="word" type="button" value="Entfernen" (click)="onWithdraw()">
     </form>
     <div class="forum-profanity-filter-adder-list-box">
       <div id="profanity-list" class="forum-profanity-filter-adder-list"><span id="profanity-list-items">{{badWords}}</span></div>

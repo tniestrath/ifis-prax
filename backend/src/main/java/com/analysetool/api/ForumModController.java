@@ -315,7 +315,7 @@ public class ForumModController {
 
     @GetMapping("/getLinkToPost")
     public String getLinkToPost(long postId) {
-        String link = "https://it-sicherheit.de/marktplatz-forum/";
+        String link = "https://it-sicherheit.de/forum-it-sicherheit/";
 
         if(wpForoPostRepo.findById(postId).isPresent()) {
             WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
@@ -356,7 +356,7 @@ public class ForumModController {
 
     @GetMapping("/getLinkToForum")
     public String getLinkToForum(long postId) {
-        String link = "https://it-sicherheit.de/marktplatz-forum/";
+        String link = "https://it-sicherheit.de/forum-it-sicherheit/";
 
         if(wpForoPostRepo.findById(postId).isPresent()) {
             WPWPForoPosts post = wpForoPostRepo.findById(postId).get();

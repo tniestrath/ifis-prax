@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import {AppComponent, AreYouSureDialog, DialogDirective} from './app.component';
 import { ProfileCompletionComponent } from './component/user/profile-completion/profile-completion.component';
 import { HeaderComponent } from './page/header/header.component';
 import { CounterComponent } from './component/counter/counter.component';
@@ -214,7 +214,9 @@ import {UserPlanChip} from "./component/user/user";
     BasicListDirective,
     BpListDirective,
     PlusListDirective,
-    PremiumListDirective
+    PremiumListDirective,
+    AreYouSureDialog,
+    DialogDirective
   ],
     imports: [
         BrowserModule,

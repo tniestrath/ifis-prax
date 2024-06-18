@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {ComponentRef, EventEmitter, Injectable} from '@angular/core';
 
 import {User} from "../component/user/user";
 import {Post} from "../component/post/Post";
@@ -9,6 +9,8 @@ import {DbObject} from "./DbObject";
 import {Newsletter} from "../component/newsletter/Newsletter";
 import {Tag} from "../component/tag/Tag";
 import {ForumPost} from "../component/forum/forum-moderation-list/ForumPost";
+import {Subject} from "rxjs";
+import {AreYouSureDialog} from "../app.component";
 
 export class PAGE {
   id: number = 0;
@@ -55,6 +57,9 @@ export class SysVars {
   public static SELECTED_FORUM_POST : EventEmitter<ForumPost> = new EventEmitter<ForumPost>();
 
   public static IS_POPUP : boolean = false;
+
+  public static CREATE_DIALOG : () => AreYouSureDialog;
+  public static REMOVE_DIALOG : () => void;
 
   public static PAGES = [
     //new PAGE(0, "Login", "Login");

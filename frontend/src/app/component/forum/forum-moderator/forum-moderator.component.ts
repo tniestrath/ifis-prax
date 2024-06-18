@@ -8,6 +8,8 @@ import {
   ForumModerationListItemComponent
 } from "../forum-moderation-list/forum-moderation-list-item/forum-moderation-list-item.component";
 import {ForumPost} from "../forum-moderation-list/ForumPost";
+import {Dialog} from "@angular/cdk/dialog";
+import {AppComponent} from "../../../app.component";
 
 
 @Component({
@@ -88,6 +90,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
           return data;
         }), ForumModerationListItemComponent);
       }
+      SysVars.REMOVE_DIALOG.call(this);
     }
     this.list.load(this.api.getUnmoderatedForumPosts().then(data  =>{
       this.bulkDisplayDataMapping(data);
@@ -97,15 +100,20 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     }), ForumModerationListItemComponent);
 
     this.display.onDeleteClick = () => {
-      this.api.deleteForumPost(this.display.data.id).then(value => {
-        if(value){
-          this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
-          this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
-          this.list.selectorItemsLoaded.next(this.list.selectorItems);
-          this.list.g_cdr.detectChanges();
-          this.display.resetEditButton();
+      SysVars.CREATE_DIALOG.call(this).awaitAnswer().subscribe((value: boolean) => {
+        if (value){
+          this.api.deleteForumPost(this.display.data.id).then(value => {
+            if(value){
+              this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
+              this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
+              this.list.selectorItemsLoaded.next(this.list.selectorItems);
+              this.list.g_cdr.detectChanges();
+              this.display.resetEditButton();
+            }
+          });
+        } else {
         }
-      });
+      })
     }
     this.display.onAcceptClick = () => {
         this.api.modifyForumPost(this.modify(), true).then(value => {

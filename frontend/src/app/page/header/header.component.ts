@@ -28,22 +28,22 @@ export class HeaderComponent implements AfterViewInit{
         return;
       }
       this.api.getUserById(String(res.user_id)).then(res => {
+        SysVars.ADMIN = res.accountType == "admin";
         SysVars.login.next(res);
         SysVars.ACCOUNT = res;
-        SysVars.ADMIN = res.accountType == "admin";
         this.stopAndHideLoadingBar();
       })
     })
 
     SysVars.login.subscribe(user => {
-      if (user.accountType != "admin"){
+      if (user.accessLevel == "mod"){
         this.navElements = ["Forum"];
         this.selected.next("Forum");
 
-      } else {
+      } else if(user.accessLevel == "admin" || user.accountType == "admin") {
         this.navElements = this.navElementsBackup;
         this.selected.next("Übersicht");
-        }
+      } else return;
       cs.set("user", user.id + ":" + user.displayName);
       SysVars.ACCOUNT = user;
       this.stopAndHideLoadingBar();

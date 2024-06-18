@@ -1610,171 +1610,168 @@ public class LogService {
             System.out.println("HOOPLA FIX MISSING ROWS ERROR IN UPDATE UNISTATS");
             e.printStackTrace();
         }
+        if(!updateColumn.equals("")) {
+            UniversalStats uni;
+            if (uniRepo.getUniversalStatsByDatum(normalDate).isPresent()) {
+                uni = uniRepo.getUniversalStatsByDatum(normalDate).get();
+                uni.setSensibleClicks(uni.getSensibleClicks() + 1);
+                uni.setBesucherAnzahl(uni.getBesucherAnzahl() + (isUnique ? 1 : 0));
+                uni.setTotalClicks(uni.getTotalClicks() + 1);
+            } else {
+                uni = new UniversalStats();
+                uni.setBesucherAnzahl(1L);
+                uni.setTotalClicks(1L);
+                uni.setSensibleClicks(1L);
 
-        UniversalStats uni;
-        if(uniRepo.getUniversalStatsByDatum(normalDate).isPresent()) {
-            uni = uniRepo.getUniversalStatsByDatum(normalDate).get();
-            uni.setSensibleClicks(uni.getSensibleClicks() + 1);
-            uni.setBesucherAnzahl(uni.getBesucherAnzahl() + (isUnique ? 1 : 0));
-            uni.setTotalClicks(uni.getTotalClicks() + 1);
-        }
-        else {
-            uni = new UniversalStats();
-            uni.setBesucherAnzahl(1L);
-            uni.setTotalClicks(1L);
-            uni.setSensibleClicks(1L);
+                uni.setDatum(normalDate);
 
-            uni.setDatum(normalDate);
-
-            uni.setAnbieterProfileAnzahl(wpUserRepo.count());
-            uni = setNewsArticelBlogCountForUniversalStats(normalDate, uni);
-            uni = setAccountTypeAllUniStats(uni);
-        }
-        uniRepo.save(uni);
-
-        UniversalCategoriesDLC uniCat;
-
-        if(universalCategoriesDLCRepo.getByUniStatIdAndStunde(uni.getId(), curHour) != null) {
-            uniCat = universalCategoriesDLCRepo.getByUniStatIdAndStunde(uni.getId(), curHour);
-            switch (updateColumn) {
-                case "articleView", "articleSS" -> {
-                    uniCat.setViewsArticle(uniCat.getViewsArticle() + 1);
-                    uniCat.setBesucherArticle(uniCat.getBesucherArticle() + (isUnique ? 1 : 0));
-                }
-                case "newsView", "newsSS" -> {
-                    uniCat.setViewsNews(uniCat.getViewsNews() + 1);
-                    uniCat.setBesucherNews(uniCat.getBesucherNews() + (isUnique ? 1 : 0));
-                }
-                case "blogView", "blogSS", "blogCat" -> {
-                    uniCat.setViewsBlog(uniCat.getViewsBlog() + 1);
-                    uniCat.setBesucherBlog(uniCat.getBesucherBlog() + (isUnique ? 1 : 0));
-                }
-                case "podView" -> {
-                    uniCat.setViewsPodcast(uniCat.getViewsPodcast() + 1);
-                    uniCat.setBesucherPodcast(uniCat.getBesucherPodcast() + (isUnique ? 1 : 0));
-                }
-                case "videoView" -> {
-                    uniCat.setViewsVideos(uniCat.getViewsVideos() + 1);
-                    uniCat.setBesucherVideos(uniCat.getBesucherVideos() + (isUnique ? 1 : 0));
-                }
-                case "wpView", "wpSS" -> {
-                    uniCat.setViewsWhitepaper(uniCat.getViewsWhitepaper() + 1);
-                    uniCat.setBesucherWhitepaper(uniCat.getBesucherWhitepaper() + (isUnique ? 1 : 0));
-                }
-                case "eventView", "eventCat" -> {
-                    uniCat.setViewsEvents(uniCat.getViewsEvents() + 1);
-                    uniCat.setBesucherEvents(uniCat.getBesucherEvents() + (isUnique ? 1 : 0));
-                }
-                case "ratgeber" -> {
-                    uniCat.setViewsRatgeber(uniCat.getViewsRatgeber() + 1);
-                    uniCat.setBesucherRatgeber(uniCat.getBesucherRatgeber() + (isUnique ? 1 : 0));
-                }
-                case "ratgeberPost" -> {
-                    uniCat.setViewsRatgeberPost(uniCat.getViewsRatgeberPost() + 1);
-                    uniCat.setBesucherRatgeberPost(uniCat.getBesucherRatgeberPost() + (isUnique ? 1 : 0));
-                }
-                case "ratgeberGlossar" -> {
-                    uniCat.setViewsRatgeberGlossar(uniCat.getViewsRatgeberGlossar() + 1);
-                    uniCat.setBesucherRatgeberGlossar(uniCat.getBesucherRatgeberGlossar() + (isUnique ? 1 : 0));
-                }
-                case "ratgeberBuch" -> {
-                    uniCat.setViewsRatgeberBuch(uniCat.getViewsRatgeberBuch() + 1);
-                    uniCat.setBesucherRatgeberBuch(uniCat.getBesucherRatgeberBuch() + (isUnique ? 1 : 0));
-                }
-                case "ratgeberSelf" -> {
-                    uniCat.setViewsRatgeberSelf(uniCat.getViewsRatgeberSelf() + 1);
-                    uniCat.setBesucherRatgeberSelf(uniCat.getBesucherRatgeberSelf() + (isUnique ? 1 : 0));
-                }
-                case "ratgeberSelfSub" -> {
-                    //decomment when uni is updated
-                    uniCat.setViewsRatgeberSelfSub(uniCat.getViewsRatgeberSelfSub() + 1);
-                    uniCat.setBesucherRatgeberSelfSub(uniCat.getBesucherRatgeberSelfSub() + (isUnique ? 1 : 0));
-                }
-                case "main" -> {
-                    uniCat.setViewsMain(uniCat.getViewsMain() + 1);
-                    uniCat.setBesucherMain(uniCat.getBesucherMain() + (isUnique ? 1 : 0));
-                }
-                case "userView", "anbieterCat" -> {
-                    uniCat.setViewsAnbieter(uniCat.getViewsAnbieter() + 1);
-                    uniCat.setBesucherAnbieter(uniCat.getBesucherAnbieter() + (isUnique ? 1 : 0));
-                }
-                case "ueber" -> {
-                    uniCat.setViewsUeber(uniCat.getViewsUeber() + 1);
-                    uniCat.setBesucherUeber(uniCat.getBesucherUeber() + (isUnique ? 1 : 0));
-                }
-                case "impressum" -> {
-                    uniCat.setViewsImpressum(uniCat.getViewsImpressum() + 1);
-                    uniCat.setBesucherImpressum(uniCat.getBesucherImpressum() + (isUnique ? 1 : 0));
-                }
-                case "preisliste" -> {
-                    uniCat.setViewsPreisliste(uniCat.getViewsPreisliste() + 1);
-                    uniCat.setBesucherPreisliste(uniCat.getBesucherPreisliste() + (isUnique ? 1 : 0));
-                }
-                case "partner" -> {
-                    uniCat.setViewsPartner(uniCat.getViewsPartner() + 1);
-                    uniCat.setBesucherPartner(uniCat.getBesucherPartner() + (isUnique ? 1 : 0));
-                }
-                case "datenschutz" -> {
-                    uniCat.setViewsDatenschutz(uniCat.getViewsDatenschutz() + 1);
-                    uniCat.setBesucherDatenschutz(uniCat.getBesucherDatenschutz() + (isUnique ? 1 : 0));
-                }
-                case "newsletter" -> {
-                    uniCat.setViewsNewsletter(uniCat.getViewsNewsletter() + 1);
-                    uniCat.setBesucherNewsletter(uniCat.getBesucherNewsletter() + (isUnique ? 1 : 0));
-                }
-                case "image" -> {
-                    uniCat.setViewsImage(uniCat.getViewsImage() + 1);
-                    uniCat.setBesucherImage(uniCat.getBesucherImage() + (isUnique ? 1 : 0));
-                }
-                case "agb" -> {
-                    uniCat.setViewsAGBS(uniCat.getViewsAGBS() + 1);
-                    uniCat.setBesucherAGBS(uniCat.getBesucherAGBS() + (isUnique ? 1 : 0));
-                }
-                case "notfall" -> {
-                    uniCat.setViewsNotfall(uniCat.getViewsNotfall() + 1);
-                    uniCat.setBesucherNotfall(uniCat.getBesucherNotfall() + (isUnique ? 1 : 0));
-                }
-                case "notfallSub" -> {
-                    uniCat.setViewsNotfallSub(uniCat.getViewsNotfallSub() + 1);
-                    uniCat.setBesucherNotfallSub(uniCat.getBesucherNotfallSub() + (isUnique ? 1 : 0));
-                }
+                uni.setAnbieterProfileAnzahl(wpUserRepo.count());
+                uni = setNewsArticelBlogCountForUniversalStats(normalDate, uni);
+                uni = setAccountTypeAllUniStats(uni);
             }
+            uniRepo.save(uni);
+
+            UniversalCategoriesDLC uniCat;
+
+            if (universalCategoriesDLCRepo.getByUniStatIdAndStunde(uni.getId(), curHour) != null) {
+                uniCat = universalCategoriesDLCRepo.getByUniStatIdAndStunde(uni.getId(), curHour);
+                switch (updateColumn) {
+                    case "articleView", "articleSS" -> {
+                        uniCat.setViewsArticle(uniCat.getViewsArticle() + 1);
+                        uniCat.setBesucherArticle(uniCat.getBesucherArticle() + (isUnique ? 1 : 0));
+                    }
+                    case "newsView", "newsSS" -> {
+                        uniCat.setViewsNews(uniCat.getViewsNews() + 1);
+                        uniCat.setBesucherNews(uniCat.getBesucherNews() + (isUnique ? 1 : 0));
+                    }
+                    case "blogView", "blogSS", "blogCat" -> {
+                        uniCat.setViewsBlog(uniCat.getViewsBlog() + 1);
+                        uniCat.setBesucherBlog(uniCat.getBesucherBlog() + (isUnique ? 1 : 0));
+                    }
+                    case "podView" -> {
+                        uniCat.setViewsPodcast(uniCat.getViewsPodcast() + 1);
+                        uniCat.setBesucherPodcast(uniCat.getBesucherPodcast() + (isUnique ? 1 : 0));
+                    }
+                    case "videoView" -> {
+                        uniCat.setViewsVideos(uniCat.getViewsVideos() + 1);
+                        uniCat.setBesucherVideos(uniCat.getBesucherVideos() + (isUnique ? 1 : 0));
+                    }
+                    case "wpView", "wpSS" -> {
+                        uniCat.setViewsWhitepaper(uniCat.getViewsWhitepaper() + 1);
+                        uniCat.setBesucherWhitepaper(uniCat.getBesucherWhitepaper() + (isUnique ? 1 : 0));
+                    }
+                    case "eventView", "eventCat" -> {
+                        uniCat.setViewsEvents(uniCat.getViewsEvents() + 1);
+                        uniCat.setBesucherEvents(uniCat.getBesucherEvents() + (isUnique ? 1 : 0));
+                    }
+                    case "ratgeber" -> {
+                        uniCat.setViewsRatgeber(uniCat.getViewsRatgeber() + 1);
+                        uniCat.setBesucherRatgeber(uniCat.getBesucherRatgeber() + (isUnique ? 1 : 0));
+                    }
+                    case "ratgeberPost" -> {
+                        uniCat.setViewsRatgeberPost(uniCat.getViewsRatgeberPost() + 1);
+                        uniCat.setBesucherRatgeberPost(uniCat.getBesucherRatgeberPost() + (isUnique ? 1 : 0));
+                    }
+                    case "ratgeberGlossar" -> {
+                        uniCat.setViewsRatgeberGlossar(uniCat.getViewsRatgeberGlossar() + 1);
+                        uniCat.setBesucherRatgeberGlossar(uniCat.getBesucherRatgeberGlossar() + (isUnique ? 1 : 0));
+                    }
+                    case "ratgeberBuch" -> {
+                        uniCat.setViewsRatgeberBuch(uniCat.getViewsRatgeberBuch() + 1);
+                        uniCat.setBesucherRatgeberBuch(uniCat.getBesucherRatgeberBuch() + (isUnique ? 1 : 0));
+                    }
+                    case "ratgeberSelf" -> {
+                        uniCat.setViewsRatgeberSelf(uniCat.getViewsRatgeberSelf() + 1);
+                        uniCat.setBesucherRatgeberSelf(uniCat.getBesucherRatgeberSelf() + (isUnique ? 1 : 0));
+                    }
+                    case "ratgeberSelfSub" -> {
+                        //decomment when uni is updated
+                        uniCat.setViewsRatgeberSelfSub(uniCat.getViewsRatgeberSelfSub() + 1);
+                        uniCat.setBesucherRatgeberSelfSub(uniCat.getBesucherRatgeberSelfSub() + (isUnique ? 1 : 0));
+                    }
+                    case "main" -> {
+                        uniCat.setViewsMain(uniCat.getViewsMain() + 1);
+                        uniCat.setBesucherMain(uniCat.getBesucherMain() + (isUnique ? 1 : 0));
+                    }
+                    case "userView", "anbieterCat" -> {
+                        uniCat.setViewsAnbieter(uniCat.getViewsAnbieter() + 1);
+                        uniCat.setBesucherAnbieter(uniCat.getBesucherAnbieter() + (isUnique ? 1 : 0));
+                    }
+                    case "ueber" -> {
+                        uniCat.setViewsUeber(uniCat.getViewsUeber() + 1);
+                        uniCat.setBesucherUeber(uniCat.getBesucherUeber() + (isUnique ? 1 : 0));
+                    }
+                    case "impressum" -> {
+                        uniCat.setViewsImpressum(uniCat.getViewsImpressum() + 1);
+                        uniCat.setBesucherImpressum(uniCat.getBesucherImpressum() + (isUnique ? 1 : 0));
+                    }
+                    case "preisliste" -> {
+                        uniCat.setViewsPreisliste(uniCat.getViewsPreisliste() + 1);
+                        uniCat.setBesucherPreisliste(uniCat.getBesucherPreisliste() + (isUnique ? 1 : 0));
+                    }
+                    case "partner" -> {
+                        uniCat.setViewsPartner(uniCat.getViewsPartner() + 1);
+                        uniCat.setBesucherPartner(uniCat.getBesucherPartner() + (isUnique ? 1 : 0));
+                    }
+                    case "datenschutz" -> {
+                        uniCat.setViewsDatenschutz(uniCat.getViewsDatenschutz() + 1);
+                        uniCat.setBesucherDatenschutz(uniCat.getBesucherDatenschutz() + (isUnique ? 1 : 0));
+                    }
+                    case "newsletter" -> {
+                        uniCat.setViewsNewsletter(uniCat.getViewsNewsletter() + 1);
+                        uniCat.setBesucherNewsletter(uniCat.getBesucherNewsletter() + (isUnique ? 1 : 0));
+                    }
+                    case "image" -> {
+                        uniCat.setViewsImage(uniCat.getViewsImage() + 1);
+                        uniCat.setBesucherImage(uniCat.getBesucherImage() + (isUnique ? 1 : 0));
+                    }
+                    case "agb" -> {
+                        uniCat.setViewsAGBS(uniCat.getViewsAGBS() + 1);
+                        uniCat.setBesucherAGBS(uniCat.getBesucherAGBS() + (isUnique ? 1 : 0));
+                    }
+                    case "notfall" -> {
+                        uniCat.setViewsNotfall(uniCat.getViewsNotfall() + 1);
+                        uniCat.setBesucherNotfall(uniCat.getBesucherNotfall() + (isUnique ? 1 : 0));
+                    }
+                    case "notfallSub" -> {
+                        uniCat.setViewsNotfallSub(uniCat.getViewsNotfallSub() + 1);
+                        uniCat.setBesucherNotfallSub(uniCat.getBesucherNotfallSub() + (isUnique ? 1 : 0));
+                    }
+                }
+            } else {
+                uniCat = new UniversalCategoriesDLC();
+                uniCat.setUniStatId(uniRepo.getLatestUniStat().getId());
+                uniCat.setStunde(curHour);
+            }
+            universalCategoriesDLCRepo.save(uniCat);
+
+            UniversalStatsHourly uniHourly;
+            if (uniHourlyRepo.getByStundeAndUniStatId(curHour, uni.getId()) != null) {
+                uniHourly = uniHourlyRepo.getByStundeAndUniStatId(curHour, uni.getId());
+                uniHourly.setSensibleClicks(uniHourly.getSensibleClicks() + 1);
+                uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (isUnique ? 1 : 0));
+                uniHourly.setTotalClicks(uniHourly.getTotalClicks() + 1);
+
+                setAccountTypeAllUniStats(uniHourly);
+                setNewsArticelBlogCountForUniversalStats(uniHourly);
+
+            } else {
+                uniHourly = new UniversalStatsHourly();
+                setAccountTypeAllUniStats(uniHourly);
+                setNewsArticelBlogCountForUniversalStats(uniHourly);
+
+                uniHourly.setBesucherAnzahl(0L);
+                uniHourly.setInternalClicks(0);
+                uniHourly.setTotalClicks(0L);
+                uniHourly.setSensibleClicks(0L);
+
+                uniHourly.setStunde(curHour);
+                uniHourly.setUniStatId(uni.getId());
+                uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
+            }
+            uniHourlyRepo.save(uniHourly);
+
         }
-        else {
-            uniCat = new UniversalCategoriesDLC();
-            uniCat.setUniStatId(uniRepo.getLatestUniStat().getId());
-            uniCat.setStunde(curHour);
-        }
-        universalCategoriesDLCRepo.save(uniCat);
-
-        UniversalStatsHourly uniHourly;
-        if(uniHourlyRepo.getByStundeAndUniStatId(curHour, uni.getId()) != null) {
-            uniHourly = uniHourlyRepo.getByStundeAndUniStatId(curHour, uni.getId());
-            uniHourly.setSensibleClicks(uniHourly.getSensibleClicks() + 1);
-            uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (isUnique ? 1 : 0));
-            uniHourly.setTotalClicks(uniHourly.getTotalClicks() + 1);
-
-            setAccountTypeAllUniStats(uniHourly);
-            setNewsArticelBlogCountForUniversalStats(uniHourly);
-
-        }
-        else {
-            uniHourly = new UniversalStatsHourly();
-            setAccountTypeAllUniStats(uniHourly);
-            setNewsArticelBlogCountForUniversalStats(uniHourly);
-
-            uniHourly.setBesucherAnzahl(0L);
-            uniHourly.setInternalClicks(0);
-            uniHourly.setTotalClicks(0L);
-            uniHourly.setSensibleClicks(0L);
-
-            uniHourly.setStunde(curHour);
-            uniHourly.setUniStatId(uni.getId());
-            uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
-        }
-        uniHourlyRepo.save(uniHourly);
-
-
     }
 
 

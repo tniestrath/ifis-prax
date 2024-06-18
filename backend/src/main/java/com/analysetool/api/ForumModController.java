@@ -320,11 +320,7 @@ public class ForumModController {
         if(wpForoPostRepo.findById(postId).isPresent()) {
             WPWPForoPosts post = wpForoPostRepo.findById(postId).get();
             try {
-                WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).orElseThrow();
-                WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).orElseThrow();
-                link += forum.getSlug() + "/";
-                link += topic.getSlug() + "/";
-                link += "#post-" + post.getPostId();
+                link += "postid/" + post.getPostId();
             } catch (NoSuchElementException e) {
                 return "kein derartiges Element";
             }

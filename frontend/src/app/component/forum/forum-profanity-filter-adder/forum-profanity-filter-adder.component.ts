@@ -8,11 +8,14 @@ import {DashColors} from "../../../util/Util";
   styleUrls: ['./forum-profanity-filter-adder.component.css', "../../dash-base/dash-base.component.css"]
 })
 export class ForumProfanityFilterAdderComponent extends DashBaseComponent implements OnInit{
-
+  checkbox : HTMLInputElement | undefined;
+  listItems : HTMLElement | null | undefined;
   public badWords : string = "";
   ngOnInit(): void {
     this.setToolTip("Hier können weitere Wörter zur Filterliste hinzugefügt werden.<br><br>Hinter der geschwärzten Box sind die unzulässigen Wörter verdeckt")
     this.api.getForumBadWords().then(value => this.badWords = value.toString().replaceAll(",", ", "));
+    this.checkbox = (document.getElementById("profanity-list-visibility") as HTMLInputElement)
+    this.listItems = document.getElementById("profanity-list-items");
   }
 
   onSubmit(){
@@ -22,6 +25,7 @@ export class ForumProfanityFilterAdderComponent extends DashBaseComponent implem
         if (r) {
           (input as HTMLInputElement).value = "";
           (input as HTMLInputElement).placeholder = "Zu Filterndes Wort";
+          this.reload();
         } else {
           (input as HTMLInputElement).value = "";
           (input as HTMLInputElement).placeholder = "Dieses Wort ist schon in der Liste";
@@ -37,6 +41,7 @@ export class ForumProfanityFilterAdderComponent extends DashBaseComponent implem
         if (r) {
           (input as HTMLInputElement).value = "";
           (input as HTMLInputElement).placeholder = "Zu Filterndes Wort";
+          this.reload();
         } else {
           (input as HTMLInputElement).value = "";
           (input as HTMLInputElement).placeholder = "Dieses Wort ist nicht in der Liste";
@@ -47,18 +52,24 @@ export class ForumProfanityFilterAdderComponent extends DashBaseComponent implem
   }
 
   onProfanityClick() {
-    let checkbox = document.getElementById("profanity-list-visibility");
     let listItems = document.getElementById("profanity-list-items");
     // @ts-ignore
-    if (checkbox.checked){
-      this.api.getForumBadWords().then(value => {
-        this.badWords = value.toString().replaceAll(",", ", ");
-        // @ts-ignore
-        listItems.style.visibility = "visible"
-      });
+    if (this.checkbox && this.checkbox.checked){
+      this.reload()
+      // @ts-ignore
+      listItems.style.visibility = "visible"
     } else {
       // @ts-ignore
       listItems.style.visibility = "hidden"
+    }
+  }
+
+  reload(){
+    if (this.checkbox && this.checkbox.checked) {
+      this.api.getForumBadWords().then(value => {
+        this.badWords = value.toString().replaceAll(",", ", ");
+        this.cdr.detectChanges();
+      });
     }
   }
 }

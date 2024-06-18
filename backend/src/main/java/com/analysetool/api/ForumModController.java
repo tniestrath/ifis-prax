@@ -220,7 +220,7 @@ public class ForumModController {
         return false;
     }
 
-    @GetMapping("/removeBadWord")
+    @PostMapping("/removeBadWord")
     public boolean removeBadWord(String word) {
         if(badWordRepo.getByWord(word.toLowerCase()).isPresent()) {
             badWordRepo.delete(badWordRepo.getByWord(word.toLowerCase()).get());

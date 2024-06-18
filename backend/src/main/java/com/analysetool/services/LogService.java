@@ -3285,7 +3285,7 @@ public class LogService {
     private void updateMemberBuffer() {
 
         for(WPUser user : wpUserRepo.findAll()) {
-            if(memberRepo.getLastByUserId(user.getId()) == null || !userController.getType(Math.toIntExact(user.getId())).equals(memberRepo.getLastByUserId(user.getId()).getMembership())) {
+            if(memberRepo.getLastByUserId(user.getId()) == null || !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted") && (!userController.getType(Math.toIntExact(user.getId())).equals(memberRepo.getLastByUserId(user.getId()).getMembership()))) {
                 MembershipsBuffer newMembership = new MembershipsBuffer();
                 newMembership.setUserId(user.getId());
                 newMembership.setMembership(userController.getType(Math.toIntExact(user.getId())));

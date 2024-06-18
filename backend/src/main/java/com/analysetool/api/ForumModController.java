@@ -340,7 +340,7 @@ public class ForumModController {
 
     @GetMapping("/getLinkToTopic")
     public String getLinkToTopic(long postId) {
-        String link = "https://it-sicherheit.de/marktplatz-forum/";
+        String link = "https://it-sicherheit.de/forum-it-sicherheit/";
 
         if(wpForoPostRepo.findById(postId).isPresent()) {
             WPWPForoPosts post = wpForoPostRepo.findById(postId).get();

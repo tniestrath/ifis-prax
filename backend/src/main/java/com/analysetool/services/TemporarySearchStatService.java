@@ -43,5 +43,7 @@ public class TemporarySearchStatService {
        }
     }
 
-
+    public Integer getProsumerCountBySearch(){
+        return  repository.countAllDistinctIps();
+    }
 }

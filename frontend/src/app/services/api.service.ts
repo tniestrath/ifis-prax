@@ -816,13 +816,13 @@ export class ApiService {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_MODERATED_POSTS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_MODERATED_POSTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async deleteForumPost(id : string, userId : string) : Promise<boolean> {
+  async deleteForumPost(id : string) : Promise<boolean> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.FORUM_DELETE_POST).replace("ID", id).replace("USERID", userId)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_DELETE_POST).replace("ID", id).replace("USERID", SysVars.ACCOUNT.id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async acceptForumPost(id : string, userId : string) : Promise<boolean> {
+  async acceptForumPost(id : string) : Promise<boolean> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.FORUM_ACCEPT_POST).replace("ID", id).replace("USERID", userId)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_ACCEPT_POST).replace("ID", id).replace("USERID", SysVars.ACCOUNT.id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async modifyForumPost(post : ForumPost, accepted : boolean) : Promise<boolean> {
     this.setLoading();

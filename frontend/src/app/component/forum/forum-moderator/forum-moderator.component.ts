@@ -152,7 +152,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     this.display.onDeleteClick = () => {
       SysVars.CREATE_DIALOG.call(this).awaitAnswer().subscribe((value: boolean) => {
         if (value){
-          this.api.deleteForumPost(this.display.data.id, SysVars.ACCOUNT.id).then(value => {
+          this.api.deleteForumPost(this.display.data.id).then(value => {
             if(value){
               this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
               if (this.display.data.isLocked){

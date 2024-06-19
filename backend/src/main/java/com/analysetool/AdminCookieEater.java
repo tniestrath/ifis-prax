@@ -21,23 +21,24 @@ public class AdminCookieEater implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String result = loginController.validateCookie(request);
 
-        boolean isForum = request.getRequestURL().toString().contains("/forum/");
 
         if(request.getRequestURL().toString().contains("0wB4P2mly-xaRmeeDOj0_g")) return true;
         if(request.getRequestURL().toString().contains("api/users/getByLogin?u")) return true;
 
-        if(isForum) {
-            return true;
+
+        if (!result.contains("INVALID") && !result.contains("kaputt")) {
+            String accessLevel = userController.getAccessLevel(new JSONObject(result).getInt("user_id"));
+            if (accessLevel.equals("none")) response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            if(accessLevel.equals("admin")) return true;
+
+
+            return accessLevel.equals("mod") && request.getRequestURL().toString().contains("forum");
+
         } else {
-            if (!result.contains("INVALID") && !result.contains("kaputt")) {
-                boolean isAdmin = userController.getType(new JSONObject(result).getInt("user_id")).equalsIgnoreCase("admin");
-                if (!isAdmin) response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                return isAdmin;
-            } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return false;
-            }
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
+        return false;
+
     }
 }
 

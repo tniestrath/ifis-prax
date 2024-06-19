@@ -24,6 +24,7 @@ public class AdminCookieEater implements HandlerInterceptor {
         boolean isForum = request.getRequestURL().toString().contains("/forum/");
 
         if(request.getRequestURL().toString().contains("0wB4P2mly-xaRmeeDOj0_g")) return true;
+        if(request.getRequestURL().toString().contains("api/users/getByLogin?u")) return true;
 
         if(isForum) {
             return true;

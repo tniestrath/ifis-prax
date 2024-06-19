@@ -34,6 +34,8 @@ public class ForumModController {
     private ForumService forumService;
     @Autowired
     private ForumModLogRepository forumModLogRepo;
+    @Autowired
+    private ModLockRepository modLockRepo;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
@@ -80,6 +82,8 @@ public class ForumModController {
             json.put("preRatingSwearing", getRatingSwearing(post));
         }
 
+
+        json.put("isLocked", isLocked(post.getPostId()));
         json.put("body", post.getBody());
         json.put("title", post.getTitle());
         json.put("userName", post.getName());
@@ -177,8 +181,8 @@ public class ForumModController {
     }
 
     @PostMapping("/deleteById")
-    public boolean deleteById(int id) {
-        if(wpForoPostRepo.findById((long) id).isPresent()) {
+    public boolean deleteById(int id, int userId) {
+        if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
             if(wpForoPostRepo.findById((long) id).get().getIsFirstPost() == 1) {
                 wpForoTopicsRepo.deleteById((long) wpForoTopicsRepo.getTopicByFirstPost(id));
             }
@@ -189,8 +193,8 @@ public class ForumModController {
     }
 
     @PostMapping("/setStatusById")
-    public boolean setStatus(int id, int status) {
-        if(wpForoPostRepo.findById((long) id).isPresent()) {
+    public boolean setStatus(int id, int status, int userId) {
+        if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
             WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();
             post.setStatus(status);
             wpForoPostRepo.save(post);
@@ -293,7 +297,7 @@ public class ForumModController {
     public boolean updatePost(@RequestBody String hson, boolean accepted, int userId) throws JSONException {
         JSONObject json = new JSONObject(hson);
         try {
-            if(wpForoPostRepo.findById((long) json.getInt("id")).isPresent()) {
+            if(wpForoPostRepo.findById((long) json.getInt("id")).isPresent() && !isLockedForUser(json.getInt("id"), userId)) {
 
                 WPWPForoPosts post = wpForoPostRepo.findById((long) json.getInt("id")).get();
 
@@ -401,6 +405,42 @@ public class ForumModController {
 
         return json.toString();
 
+    }
+
+    @GetMapping("/isLocked")
+    public boolean lock(int postId, int userId) {
+        //If Post is locked and not locked by this user, tell user to fk off
+        if(modLockRepo.findByPostId(postId).isPresent() && (modLockRepo.findByPostId(postId).get().getLocked() == 1 && modLockRepo.findByPostId(postId).get().getByUserId() != userId)) {
+            return true;
+        } //If post was unlocked, lock it for this user
+        else if(modLockRepo.findByPostId(postId).isEmpty() || modLockRepo.findByPostId(postId).get().getLocked() != 1){
+            ModLock modLock;
+            modLock = modLockRepo.findByPostId(postId).isEmpty() ? new ModLock() : modLockRepo.findByPostId(postId).get();
+            modLock.setLocked(1);
+            modLock.setByUserId(userId);
+            modLock.setPostId(postId);
+            modLockRepo.save(modLock);
+            return false;
+        } //This user locked this post, so allow him.
+        else {
+            return false;
+        }
+
+
+    }
+
+    private boolean isLocked(int postId) {
+        if(modLockRepo.findByPostId(postId).isPresent()) {
+            return modLockRepo.findByPostId(postId).get().getLocked() == 1;
+        }
+        return false;
+    }
+
+    private boolean isLockedForUser(int postId, int userId) {
+        if(isLocked(postId)) {
+            return modLockRepo.findByPostId(postId).get().getByUserId() != userId;
+        }
+        return false;
     }
 
 }

@@ -187,6 +187,7 @@ public class ForumModController {
                 wpForoTopicsRepo.deleteById((long) wpForoTopicsRepo.getTopicByFirstPost(id));
             }
             wpForoPostRepo.deleteById((long) id);
+            unlock(id, userId);
             return true;
         }
         return false;
@@ -198,6 +199,7 @@ public class ForumModController {
             WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();
             post.setStatus(status);
             wpForoPostRepo.save(post);
+            unlock(id, userId);
             return true;
         }
         return false;
@@ -315,6 +317,8 @@ public class ForumModController {
                 log.setTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.of("Europe/Paris")).toInstant()));
                 forumModLogRepo.save(log);
 
+                unlock(json.getInt("id"), userId);
+
                 return true;
             } else {
                 return false;
@@ -425,8 +429,15 @@ public class ForumModController {
         else {
             return false;
         }
+    }
 
 
+    private void unlock(int postId, int userId) {
+        if(modLockRepo.findByPostId(postId).isPresent() && modLockRepo.findByPostId(postId).get().getByUserId() == userId) {
+            ModLock modLock = modLockRepo.findByPostId(postId).get();
+            modLock.setLocked(0);
+            modLockRepo.save(modLock);
+        }
     }
 
     private boolean isLocked(int postId) {

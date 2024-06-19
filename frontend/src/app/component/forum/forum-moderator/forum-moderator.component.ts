@@ -70,7 +70,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       if (this.display.data.isLocked){
         this.display.isLocked = true;
       } else {
-        this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+        this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
           if (res){
             this.display.isLocked = true;
           } else {
@@ -93,7 +93,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
           if (this.display.data.isLocked){
             this.display.isLocked = true;
           } else {
-            this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+            this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
               if (res){
                 this.display.isLocked = true;
               } else {
@@ -113,7 +113,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
           if (this.display.data.isLocked){
             this.display.isLocked = true;
           } else {
-            this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+            this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
               if (res){
                 this.display.isLocked = true;
               } else {
@@ -135,7 +135,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       if (this.display.data.isLocked){
         this.display.isLocked = true;
       } else {
-        this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+        this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
           if (res){
             this.display.isLocked = true;
           } else {
@@ -152,13 +152,13 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     this.display.onDeleteClick = () => {
       SysVars.CREATE_DIALOG.call(this).awaitAnswer().subscribe((value: boolean) => {
         if (value){
-          this.api.deleteForumPost(this.display.data.id, SysVars.USER_ID).then(value => {
+          this.api.deleteForumPost(this.display.data.id, SysVars.ACCOUNT.id).then(value => {
             if(value){
               this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
               if (this.display.data.isLocked){
                 this.display.isLocked = true;
               } else {
-                this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+                this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
                   if (res){
                     this.display.isLocked = true;
                   } else {
@@ -187,7 +187,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
               if (this.display.data.isLocked){
                 this.display.isLocked = true;
               } else {
-                this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+                this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
                   if (res){
                     this.display.isLocked = true;
                   } else {
@@ -213,7 +213,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
           if (this.display.data.isLocked){
             this.display.isLocked = true;
           } else {
-            this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+            this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
               if (res){
                 this.display.isLocked = true;
               } else {
@@ -234,7 +234,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
           if (this.display.data.isLocked){
             this.display.isLocked = true;
           } else {
-            this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+            this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
               if (res){
                 this.display.isLocked = true;
               } else {

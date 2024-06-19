@@ -145,8 +145,9 @@ export enum apiUrl {
   GET_FORUM_POST_LINKS = "/forum/getLinks?id=ID",
   GET_FORUM_BAD_WORDS = "/forum/getAllBadWords",
   GET_FORUM_STATS = "/forum/getCounts",
-  FORUM_DELETE_POST = "/forum/deleteById?id=ID",
-  FORUM_ACCEPT_POST = "/forum/setStatusById?id=ID&status=0",
+  FORUM_IS_LOCKED_POST = "/forum/isLocked?postId=POSTID&userId=USERID",
+  FORUM_DELETE_POST = "/forum/deleteById?id=ID&userId=USERID",
+  FORUM_ACCEPT_POST = "/forum/setStatusById?id=ID&status=0&userId=USERID",
   FORUM_MODIFY_POST = "/forum/updatePost?accepted=ACCEPTED&userId=USERID",
   FORUM_ADD_BAD_WORD = "/forum/addBadWord?word=WORD",
   FORUM_REMOVE_BAD_WORD = "/forum/removeBadWord?word=WORD",
@@ -815,13 +816,13 @@ export class ApiService {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_MODERATED_POSTS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_MODERATED_POSTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async deleteForumPost(id : string) : Promise<boolean> {
+  async deleteForumPost(id : string, userId : string) : Promise<boolean> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.FORUM_DELETE_POST).replace("ID", id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_DELETE_POST).replace("ID", id).replace("USERID", userId)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async acceptForumPost(id : string) : Promise<boolean> {
+  async acceptForumPost(id : string, userId : string) : Promise<boolean> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.FORUM_ACCEPT_POST).replace("ID", id)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_ACCEPT_POST).replace("ID", id).replace("USERID", userId)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async modifyForumPost(post : ForumPost, accepted : boolean) : Promise<boolean> {
     this.setLoading();
@@ -847,6 +848,10 @@ export class ApiService {
   async getForumStats() :Promise<ForumStats> {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_STATS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_STATS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async isForumPostLocked(postId : string, userId : string) :Promise<boolean> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_IS_LOCKED_POST)).replace("POSTID", postId).replace("USERID", userId) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.FORUM_IS_LOCKED_POST)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async addForumBadWord(word: string) : Promise<boolean> {

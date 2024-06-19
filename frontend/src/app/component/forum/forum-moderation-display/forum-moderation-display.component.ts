@@ -1,4 +1,4 @@
-import {Component, OnInit, Pipe, PipeTransform, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, Pipe, PipeTransform, ViewChild} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {ForumPost} from "../forum-moderation-list/ForumPost";
 import {DashColors} from "../../../util/Util";
@@ -22,6 +22,7 @@ export class SafeHtmlPipe implements PipeTransform {
 export class ForumModerationDisplayComponent extends DashBaseComponent implements OnInit{
   data : ForumPost = new ForumPost();
   isEdited : boolean = false;
+  isLocked : boolean = false;
 
   postLinks : string[] = [];
   ngOnInit(): void {
@@ -110,5 +111,10 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
     document.getElementById("editorEmail").contentEditable = "false";
     // @ts-ignore
     document.getElementById("editorName").contentEditable = "false";
+  }
+
+  public isLockedColor(){
+    if (this.isLocked) return DashColors.RED;
+    else return "#00000000"
   }
 }

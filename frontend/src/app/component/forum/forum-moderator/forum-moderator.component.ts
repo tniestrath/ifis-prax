@@ -8,8 +8,6 @@ import {
   ForumModerationListItemComponent
 } from "../forum-moderation-list/forum-moderation-list-item/forum-moderation-list-item.component";
 import {ForumPost} from "../forum-moderation-list/ForumPost";
-import {Dialog} from "@angular/cdk/dialog";
-import {AppComponent} from "../../../app.component";
 
 
 @Component({
@@ -22,7 +20,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
   @ViewChild(ForumModerationListComponent, {static : true}) list!: ForumModerationListComponent;
   @ViewChild(ForumModerationDisplayComponent, {static : true}) display!: ForumModerationDisplayComponent;
 
-  listenerToggle = true;
+  listenerToggle: boolean = true;
 
   private evListener = (ev: KeyboardEvent) => {
     if (ev.ctrlKey && this.listenerToggle){
@@ -69,7 +67,20 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.display.data));
       let index = this.list.selectorItems.findIndex((item: SelectorItem) => {return item.data.id == (post as ForumPost).id});
       this.display.data = this.list.selectorItems.splice(index, 1)[0].data as ForumPost;
-      this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
+      if (this.display.data.isLocked){
+        this.display.isLocked = true;
+      } else {
+        this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+          if (res){
+            this.display.isLocked = true;
+          } else {
+            this.display.isLocked = false;
+            this.display.data.isLocked = true;
+          }
+          this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+        })
+      }
+      this.cdr.detectChanges();
       this.list.selectorItemsLoaded.next(this.list.selectorItems);
       this.list.g_cdr.detectChanges();
       this.display.resetEditButton();
@@ -79,14 +90,40 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
         this.list.reload(this.api.getModeratedForumPosts().then(data  =>{
           this.bulkDisplayDataMapping(data);
           this.display.data = data.splice(0, 1)[0];
-          this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
+          if (this.display.data.isLocked){
+            this.display.isLocked = true;
+          } else {
+            this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+              if (res){
+                this.display.isLocked = true;
+              } else {
+                this.display.isLocked = false;
+                this.display.data.isLocked = true;
+              }
+              this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+            })
+          }
+          this.cdr.detectChanges();
           return data;
         }), ForumModerationListItemComponent);
       } else {
         this.list.reload(this.api.getUnmoderatedForumPosts().then(data  =>{
           this.bulkDisplayDataMapping(data);
           this.display.data = data.splice(0, 1)[0];
-          this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
+          if (this.display.data.isLocked){
+            this.display.isLocked = true;
+          } else {
+            this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+              if (res){
+                this.display.isLocked = true;
+              } else {
+                this.display.isLocked = false;
+                this.display.data.isLocked = true;
+              }
+              this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+            })
+          }
+          this.cdr.detectChanges();
           return data;
         }), ForumModerationListItemComponent);
       }
@@ -95,17 +132,43 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     this.list.load(this.api.getUnmoderatedForumPosts().then(data  =>{
       this.bulkDisplayDataMapping(data);
       this.display.data = data.splice(0, 1)[0];
-      this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
+      if (this.display.data.isLocked){
+        this.display.isLocked = true;
+      } else {
+        this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+          if (res){
+            this.display.isLocked = true;
+          } else {
+            this.display.isLocked = false;
+            this.display.data.isLocked = true;
+          }
+          this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+        })
+      }
+      this.cdr.detectChanges();
       return data;
     }), ForumModerationListItemComponent);
 
     this.display.onDeleteClick = () => {
       SysVars.CREATE_DIALOG.call(this).awaitAnswer().subscribe((value: boolean) => {
         if (value){
-          this.api.deleteForumPost(this.display.data.id).then(value => {
+          this.api.deleteForumPost(this.display.data.id, SysVars.USER_ID).then(value => {
             if(value){
               this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
-              this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
+              if (this.display.data.isLocked){
+                this.display.isLocked = true;
+              } else {
+                this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+                  if (res){
+                    this.display.isLocked = true;
+                  } else {
+                    this.display.isLocked = false;
+                    this.display.data.isLocked = true;
+                  }
+                  this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+                })
+              }
+              this.cdr.detectChanges();
               this.list.selectorItemsLoaded.next(this.list.selectorItems);
               this.list.g_cdr.detectChanges();
               this.display.resetEditButton();
@@ -121,7 +184,20 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
             this.display.data = this.displayDataMapping(this.display.data);
             if (this.list.selectorItems.length > 0){
               this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
-              this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
+              if (this.display.data.isLocked){
+                this.display.isLocked = true;
+              } else {
+                this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+                  if (res){
+                    this.display.isLocked = true;
+                  } else {
+                    this.display.isLocked = false;
+                    this.display.data.isLocked = true;
+                  }
+                  this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+                })
+              }
+              this.cdr.detectChanges();
               this.list.selectorItemsLoaded.next(this.list.selectorItems);
               this.list.g_cdr.detectChanges();
               this.display.resetEditButton();
@@ -134,7 +210,41 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
         if (value) {
           this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.displayDataMapping(this.display.data)));
           this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
-          this.api.getForumPostLinksById(this.display.data.id).then(res =>this.display.setPostLinks(res));
+          if (this.display.data.isLocked){
+            this.display.isLocked = true;
+          } else {
+            this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+              if (res){
+                this.display.isLocked = true;
+              } else {
+                this.display.isLocked = false;
+                this.display.data.isLocked = true;
+              }
+              this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+            })
+          }
+          this.cdr.detectChanges();
+          this.list.selectorItemsLoaded.next(this.list.selectorItems);
+          this.list.g_cdr.detectChanges();
+          this.display.resetEditButton();
+        }
+        else {
+          this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.displayDataMapping(this.display.data)));
+          this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
+          if (this.display.data.isLocked){
+            this.display.isLocked = true;
+          } else {
+            this.api.isForumPostLocked(this.display.data.id, SysVars.USER_ID).then(res => {
+              if (res){
+                this.display.isLocked = true;
+              } else {
+                this.display.isLocked = false;
+                this.display.data.isLocked = true;
+              }
+              this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+            })
+          }
+          this.cdr.detectChanges();
           this.list.selectorItemsLoaded.next(this.list.selectorItems);
           this.list.g_cdr.detectChanges();
           this.display.resetEditButton();

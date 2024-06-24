@@ -18,7 +18,7 @@ public interface WPWPForoForumRepository extends JpaRepository<WPWPForoForum, Lo
     @Query("SELECT COUNT(w) FROM WPWPForoForum w")
     int getCountForums();
 
-    @Query("SELECT w FROM WPWPForoForum w WHERE w.isCat = 0")
+    @Query("SELECT w FROM WPWPForoForum w WHERE w.isCat = 0 AND w.forumId!=17")
     List<WPWPForoForum> getAllNotCat();
 
     @Query("SELECT w FROM WPWPForoForum w WHERE w.parentId=:forumId")

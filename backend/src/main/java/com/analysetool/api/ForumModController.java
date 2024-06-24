@@ -570,7 +570,7 @@ public class ForumModController {
                 topicJson.put("forumId", 0);
                 topicJson.put("catId", 0);
                 topicJson.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
-                topicList.put(json);
+                topicList.put(topicJson);
             }
 
             for(WPWPForoForum cat : wpForoForumRepo.getAllChildrenOf(forum.getForumId())) {
@@ -581,7 +581,7 @@ public class ForumModController {
                 catJson.put("topicId", 0);
                 catJson.put("catId", cat.getForumId());
                 catJson.put("count", wpForoPostRepo.getCountUnmoderatedInForum(cat.getForumId()));
-
+                catList.put(catJson);
 
                 for(WPWPForoTopics topic : wpForoTopicsRepo.getAllTopicsInForum(cat.getForumId())) {
                     JSONObject topicJson = new JSONObject();
@@ -590,7 +590,7 @@ public class ForumModController {
                     topicJson.put("forumId", forum.getForumId());
                     topicJson.put("catId", cat.getForumId());
                     topicJson.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
-                    topicList.put(json);
+                    topicList.put(topicJson);
                 }
             }
         }

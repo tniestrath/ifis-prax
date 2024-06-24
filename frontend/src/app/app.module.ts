@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -18,7 +18,7 @@ import {CookieService} from "ngx-cookie-service";
 import { SelectorComponent } from './page/selector/selector.component';
 import { SelectableDirective } from './page/selector/selectable.directive';
 import {UserComponent} from './component/user/user.component';
-import {NgOptimizedImage} from "@angular/common";
+import {CommonModule, NgFor, NgForOf, NgOptimizedImage} from "@angular/common";
 import { DashBaseComponent } from './component/dash-base/dash-base.component';
 import { ClicksComponent } from './component/clicks/clicks.component';
 import { TagListComponent } from './component/tag/tag-list/tag-list.component';
@@ -118,6 +118,7 @@ import { UserPlanLogComponent } from './component/user/user-plan-log/user-plan-l
 import { UserPlanLogItemComponent } from './component/user/user-plan-log/user-plan-log-item/user-plan-log-item.component';
 import {UserPlanChip} from "./component/user/user";
 import {AreYouSureDialog, DialogDirective} from "./util/Dialog";
+import {ForumStatsComponent} from "./component/forum/forum-stats/forum-stats.component";
 
 @NgModule({
   declarations: [
@@ -203,6 +204,7 @@ import {AreYouSureDialog, DialogDirective} from "./util/Dialog";
     ForumModerationDisplayComponent,
     ForumModerationListItemComponent,
     ForumModeratorComponent,
+    ForumStatsComponent,
     SafeHtmlPipe,
     ForumProfanityFilterAdderComponent,
     ExternalServicesListComponent,
@@ -221,6 +223,7 @@ import {AreYouSureDialog, DialogDirective} from "./util/Dialog";
   ],
     imports: [
         BrowserModule,
+        CommonModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         MatAutocompleteModule,
@@ -230,6 +233,7 @@ import {AreYouSureDialog, DialogDirective} from "./util/Dialog";
         FormsModule
     ],
   providers: [CookieService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class AppModule {}

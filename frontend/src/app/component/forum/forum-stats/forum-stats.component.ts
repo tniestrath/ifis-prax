@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, NO_ERRORS_SCHEMA, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import Util, {DashColors} from "../../../util/Util";
 

@@ -1047,7 +1047,7 @@ public class LogService {
             case "userView" -> {
                 try {
                     if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-").replace(".", "-").replace("--", "-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).get().getId();
+                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-").replace(".", "-").replace("--", "-")).get().getId();
                         updateUserStats(userId, dateLog);
                         updateIPsByUser(ip, userId);
                     }

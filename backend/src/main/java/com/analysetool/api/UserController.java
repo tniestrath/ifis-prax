@@ -120,10 +120,8 @@ public class UserController {
         if (user.isPresent()){
             obj.put("id", user.get().getId());
             obj.put("displayName",user.get().getDisplayName());
-            if (wpUserMetaRepository.existsByUserId(user.get().getId())){
-                obj.put("accountType", getType(Math.toIntExact(user.get().getId())));
-                obj.put("accessLevel", getAccessLevel(user.get().getId()));
-            }
+            obj.put("accountType", getType(Math.toIntExact(user.get().getId())));
+            obj.put("accessLevel", getAccessLevel(user.get().getId()));
         }
         return obj.toString();
     }

@@ -191,7 +191,7 @@ public class LoginController {
                 }
             }
             String userData = userController.getUserByLogin(loginForm.username);
-            if (responseCookie.isEmpty() || !(new JSONObject(userData).get("accountType").equals("admin"))){
+            if (responseCookie.isEmpty()){
                 responseCookie = "LOGIN REJECTED";
             }
 

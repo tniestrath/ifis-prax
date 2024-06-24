@@ -542,4 +542,40 @@ public class ForumModController {
         }
     }
 
+    @GetMapping("/getModCounts")
+    public String getModCounts(int userId) throws JSONException {
+
+        JSONObject obj = new JSONObject();
+        JSONArray forumList = new JSONArray();
+        JSONArray topicList = new JSONArray();
+
+        List<WPWPForoForum> forums = new ArrayList<>();
+        List<WPWPForoTopics> topics = new ArrayList<>();
+
+        for(WPWPForoForum forum : forums) {
+            JSONObject json = new JSONObject();
+            json.put("name", forum.getTitle());
+            json.put("forumId", forum.getForumId());
+            json.put("topicId", 0);
+            json.put("catId", 0);
+            json.put("count", wpForoPostRepo.getCountUnmoderatedInForum(forum.getForumId()));
+            forumList.put(json);
+        }
+        for(WPWPForoTopics topic : topics) {
+            JSONObject json = new JSONObject();
+            json.put("name", topic.getTitle());
+            json.put("topicId", topic.getTopicId());
+            json.put("forumId", 0);
+            json.put("catId", 0);
+            json.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
+            topicList.put(json);
+        }
+
+        obj.put("forums", forumList);
+        obj.put("topics", topicList);
+
+        return obj.toString();
+    }
+
+
 }

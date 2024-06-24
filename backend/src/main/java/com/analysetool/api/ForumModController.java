@@ -63,6 +63,19 @@ public class ForumModController {
     }
 
 
+    /*
+     * 0=ifis-admin
+     * 2=Backend admin (kappels?)
+     * 20= wir
+     * 27=pohlmann
+     *
+     * */
+    private boolean isAdmin(int userId){
+
+    return (userId == 0 || userId == 2 || userId ==  20 || userId == 27);
+
+    }
+
     @GetMapping("/getUnmoderatedWithFilter")
     public String getUnmoderatedWithFilter(int userId, int filterForum, int filterCat, int filterTopic, String search) throws JSONException {
         JSONArray array = new JSONArray();
@@ -71,6 +84,8 @@ public class ForumModController {
         List<Integer> filterForums;
 
         //ToDo Admin Check
+        boolean isAdmin = isAdmin(userId);
+
         if(userId != 0) {
             filterForums = wpForoModsRepo.getAllForumByUser(userId);
         } else {
@@ -106,6 +121,8 @@ public class ForumModController {
         List<WPWPForoPosts> list;
         List<Integer> filterForums;
         //ToDo Admin Check
+        boolean isAdmin = isAdmin(userId);
+
         if(userId != 0) {
             filterForums = wpForoModsRepo.getAllForumByUser(userId);
         } else {
@@ -259,6 +276,8 @@ public class ForumModController {
     @PostMapping("/deleteById")
     public boolean deleteById(int id, int userId) {
         //ToDo Admin Check
+        boolean isAdmin = isAdmin(userId);
+
         if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
             if(wpForoPostRepo.findById((long) id).get().getIsFirstPost() == 1) {
                 wpForoTopicsRepo.deleteById((long) wpForoTopicsRepo.getTopicByFirstPost(id));
@@ -273,6 +292,8 @@ public class ForumModController {
     @PostMapping("/setStatusById")
     public boolean setStatus(int id, int status, int userId) {
         //ToDo Admin Check
+        boolean isAdmin = isAdmin(userId);
+        
         if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
             WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();
             post.setStatus(status);

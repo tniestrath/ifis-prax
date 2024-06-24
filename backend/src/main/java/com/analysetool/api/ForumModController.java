@@ -83,7 +83,7 @@ public class ForumModController {
         } else if(filterTopic == 0) {
             list = wpForoPostRepo.geUnmoderatedWithFilters2(filterForums, filterCat, search);
         } else {
-            list = wpForoPostRepo.geUnmoderatedWithFilters3(filterForums, filterCat, search);
+            list = wpForoPostRepo.geUnmoderatedWithFilters3(filterForums, filterTopic, search);
         }
 
 

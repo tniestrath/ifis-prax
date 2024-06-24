@@ -69,7 +69,7 @@ public class ForumModController {
         List<Integer> filterForums;
 
         if(userId != 0) {
-            //ToDo: Add DB Table to give mods a list of forums, then add forums to list
+            //ToDo: Add DB Table to give mods a list of forums, then add forums to list - only allow user allowed forums here!
             filterForums = new ArrayList<>();
         } else {
             filterForums = new ArrayList<>();
@@ -83,7 +83,7 @@ public class ForumModController {
         } else if(filterTopic == 0) {
             list = wpForoPostRepo.geUnmoderatedWithFilters2(filterForums, filterCat, search);
         } else {
-            list = wpForoPostRepo.geUnmoderatedWithFilters3(filterForums, filterCat, filterTopic, search);
+            list = wpForoPostRepo.geUnmoderatedWithFilters3(filterForums, filterTopic, search);
         }
 
 
@@ -119,7 +119,7 @@ public class ForumModController {
         } else if(filterTopic == 0) {
             list = wpForoPostRepo.geModeratedWithFilters2(filterForums, filterCat, search);
         } else {
-            list = wpForoPostRepo.getModeratedWithFilters3(filterForums, filterCat, filterTopic, search);
+            list = wpForoPostRepo.getModeratedWithFilters3(filterForums, filterTopic, search);
         }
 
 
@@ -570,7 +570,7 @@ public class ForumModController {
                 topicJson.put("forumId", 0);
                 topicJson.put("catId", 0);
                 topicJson.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
-                topicList.put(json);
+                topicList.put(topicJson);
             }
 
             for(WPWPForoForum cat : wpForoForumRepo.getAllChildrenOf(forum.getForumId())) {
@@ -581,7 +581,7 @@ public class ForumModController {
                 catJson.put("topicId", 0);
                 catJson.put("catId", cat.getForumId());
                 catJson.put("count", wpForoPostRepo.getCountUnmoderatedInForum(cat.getForumId()));
-
+                catList.put(catJson);
 
                 for(WPWPForoTopics topic : wpForoTopicsRepo.getAllTopicsInForum(cat.getForumId())) {
                     JSONObject topicJson = new JSONObject();
@@ -590,7 +590,7 @@ public class ForumModController {
                     topicJson.put("forumId", forum.getForumId());
                     topicJson.put("catId", cat.getForumId());
                     topicJson.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
-                    topicList.put(json);
+                    topicList.put(topicJson);
                 }
             }
         }

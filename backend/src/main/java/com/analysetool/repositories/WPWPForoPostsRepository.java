@@ -37,7 +37,7 @@ public interface WPWPForoPostsRepository extends JpaRepository<WPWPForoPosts, Lo
     List<WPWPForoPosts> geUnmoderatedWithFilters2(List<Integer> filterForum, int forumCat, String search);
 
     @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 1 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND w.topicId=:forumTopic  AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
-    List<WPWPForoPosts> geUnmoderatedWithFilters3(List<Integer> filterForum, int forumCat, int forumTopic, String search);
+    List<WPWPForoPosts> geUnmoderatedWithFilters3(List<Integer> filterForum, int forumTopic, String search);
 
 
     @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 0 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")

@@ -578,4 +578,12 @@ public class ForumModController {
     }
 
 
+    @GetMapping("/getForumsByUser")
+    public String getForumsByUser(int userId) {
+        JSONArray array = new JSONArray();
+        //ToDo
+
+        return array.toString();
+    }
+
 }

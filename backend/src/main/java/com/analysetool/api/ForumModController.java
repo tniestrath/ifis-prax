@@ -37,6 +37,8 @@ public class ForumModController {
     private ForumModLogRepository forumModLogRepo;
     @Autowired
     private ModLockRepository modLockRepo;
+    @Autowired
+    private UserController userController;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
@@ -582,6 +584,12 @@ public class ForumModController {
     public String getForumsByUser(int userId) {
         JSONArray array = new JSONArray();
         //ToDo
+
+        if(userController.getType(userId).equals("admin")) {
+            for(WPWPForoForum forum : wpForoForumRepo.findAll()) {
+                array.put(forum.getForumId());
+            }
+        }
 
         return array.toString();
     }

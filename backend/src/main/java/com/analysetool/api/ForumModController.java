@@ -545,7 +545,7 @@ public class ForumModController {
     }
 
     @GetMapping("/getModCounts")
-    public String getModCounts(int userId) throws JSONException {
+    public String getModCounts(Integer userId) throws JSONException {
 
         JSONObject obj = new JSONObject();
         JSONArray forumList = new JSONArray();

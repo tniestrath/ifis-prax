@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -36,6 +37,8 @@ public class ForumModController {
     private ForumModLogRepository forumModLogRepo;
     @Autowired
     private ModLockRepository modLockRepo;
+    @Autowired
+    private UserController userController;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
@@ -51,6 +54,78 @@ public class ForumModController {
     public String getAllModerated() throws JSONException {
         JSONArray array = new JSONArray();
         for (WPWPForoPosts post : wpForoPostRepo.getModeratedPosts()) {
+            array.put(getSinglePostData(post, true));
+        }
+
+        return array.toString();
+    }
+
+
+    @GetMapping("/getUnmoderatedWithFilter")
+    public String getUnmoderatedWithFilter(int userId, int filterForum, int filterCat, int filterTopic, String search) throws JSONException {
+        JSONArray array = new JSONArray();
+
+        List<WPWPForoPosts> list;
+        List<Integer> filterForums;
+
+        if(userId != 0) {
+            //ToDo: Add DB Table to give mods a list of forums, then add forums to list
+            filterForums = new ArrayList<>();
+        } else {
+            filterForums = new ArrayList<>();
+            filterForums.add(filterForum);
+        }
+
+        if(filterForum == 0) {
+            list = wpForoPostRepo.getUnmoderatedPosts();
+        } else if(filterCat == 0) {
+            list = wpForoPostRepo.geUnmoderatedWithFilter(filterForums, search);
+        } else if(filterTopic == 0) {
+            list = wpForoPostRepo.geUnmoderatedWithFilters2(filterForums, filterCat, search);
+        } else {
+            list = wpForoPostRepo.geUnmoderatedWithFilters3(filterForums, filterCat, filterTopic, search);
+        }
+
+
+
+
+        for (WPWPForoPosts post : list) {
+            array.put(getSinglePostData(post, true));
+        }
+
+        return array.toString();
+    }
+
+
+    @GetMapping("/getModeratedWithFilter")
+    public String getModeratedWithFilter(int userId, int filterForum, int filterCat, int filterTopic, String search) throws JSONException {
+        JSONArray array = new JSONArray();
+
+        List<WPWPForoPosts> list;
+        List<Integer> filterForums;
+
+        if(userId != 0) {
+            //ToDo: Add DB Table to give mods a list of forums, then add forums to list
+            filterForums = new ArrayList<>();
+        } else {
+            filterForums = new ArrayList<>();
+            filterForums.add(filterForum);
+        }
+
+        if(filterForum == 0) {
+            list = wpForoPostRepo.getModeratedPosts();
+        } else if(filterCat == 0) {
+            list = wpForoPostRepo.geModeratedWithFilter(filterForums, search);
+        } else if(filterTopic == 0) {
+            list = wpForoPostRepo.geModeratedWithFilters2(filterForums, filterCat, search);
+        } else {
+            list = wpForoPostRepo.getModeratedWithFilters3(filterForums, filterCat, filterTopic, search);
+        }
+
+
+
+
+        for (WPWPForoPosts post : list) {
             array.put(getSinglePostData(post, true));
         }
 
@@ -431,13 +506,15 @@ public class ForumModController {
         }
     }
 
-
-    private void unlock(int postId, int userId) {
+    @GetMapping("/unlock")
+    public boolean unlock(int postId, int userId) {
         if(modLockRepo.findByPostId(postId).isPresent() && modLockRepo.findByPostId(postId).get().getByUserId() == userId) {
             ModLock modLock = modLockRepo.findByPostId(postId).get();
             modLock.setLocked(0);
             modLockRepo.save(modLock);
+            return true;
         }
+        return false;
     }
 
     private boolean isLocked(int postId) {
@@ -452,6 +529,92 @@ public class ForumModController {
             return modLockRepo.findByPostId(postId).get().getByUserId() != userId;
         }
         return false;
+    }
+
+    @GetMapping("/unlockAll")
+    public boolean unlockAllForUser(int userId) {
+        try {
+            for (ModLock modLock : modLockRepo.findByUserId(userId)) {
+                modLock.setLocked(0);
+                modLockRepo.save(modLock);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @GetMapping("/getModCounts")
+    public String getModCounts(Integer userId) throws JSONException {
+
+        JSONObject obj = new JSONObject();
+        JSONArray forumList = new JSONArray();
+        JSONArray topicList = new JSONArray();
+        JSONArray catList = new JSONArray();
+
+        List<WPWPForoForum> forums = wpForoForumRepo.getAllNotCat();
+
+        for(WPWPForoForum forum : forums) {
+            JSONObject json = new JSONObject();
+            json.put("name", forum.getTitle());
+            json.put("forumId", forum.getForumId());
+            json.put("topicId", 0);
+            json.put("catId", 0);
+            json.put("count", wpForoPostRepo.getCountUnmoderatedInForum(forum.getForumId()));
+            forumList.put(json);
+
+            for(WPWPForoTopics topic : wpForoTopicsRepo.getAllTopicsInForum(forum.getForumId())) {
+                JSONObject topicJson = new JSONObject();
+                topicJson.put("name", topic.getTitle());
+                topicJson.put("topicId", topic.getTopicId());
+                topicJson.put("forumId", 0);
+                topicJson.put("catId", 0);
+                topicJson.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
+                topicList.put(json);
+            }
+
+            for(WPWPForoForum cat : wpForoForumRepo.getAllChildrenOf(forum.getForumId())) {
+                JSONObject catJson = new JSONObject();
+
+                catJson.put("name", cat.getTitle());
+                catJson.put("forumId", forum.getForumId());
+                catJson.put("topicId", 0);
+                catJson.put("catId", cat.getForumId());
+                catJson.put("count", wpForoPostRepo.getCountUnmoderatedInForum(cat.getForumId()));
+
+
+                for(WPWPForoTopics topic : wpForoTopicsRepo.getAllTopicsInForum(cat.getForumId())) {
+                    JSONObject topicJson = new JSONObject();
+                    topicJson.put("name", topic.getTitle());
+                    topicJson.put("topicId", topic.getTopicId());
+                    topicJson.put("forumId", forum.getForumId());
+                    topicJson.put("catId", cat.getForumId());
+                    topicJson.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
+                    topicList.put(json);
+                }
+            }
+        }
+
+        obj.put("forums", forumList);
+        obj.put("topics", topicList);
+        obj.put("cats", catList);
+
+        return obj.toString();
+    }
+
+
+    @GetMapping("/getForumsByUser")
+    public String getForumsByUser(int userId) {
+        JSONArray array = new JSONArray();
+        //ToDo
+
+        if(userController.getType(userId).equals("admin")) {
+            for(WPWPForoForum forum : wpForoForumRepo.getAllNotCat()) {
+                array.put(forum.getForumId());
+            }
+        }
+
+        return array.toString();
     }
 
 }

@@ -22,4 +22,32 @@ public interface WPWPForoPostsRepository extends JpaRepository<WPWPForoPosts, Lo
 
     @Query("SELECT COUNT(w) FROM WPWPForoPosts w WHERE w.isPrivate = 0 AND w.isFirstPost = 0")
     int getCountAnswers();
+
+    @Query("SELECT COUNT(w) FROM WPWPForoPosts w WHERE w.status = 1 AND w.topicId=:topicId")
+    int getCountUnmoderatedInTopic(int topicId);
+
+    @Query("SELECT COUNT(w) FROM WPWPForoPosts w WHERE w.status = 1 AND w.forumId=:forumId")
+    int getCountUnmoderatedInForum(int forumId);
+
+    @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 1 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
+    List<WPWPForoPosts> geUnmoderatedWithFilter(List<Integer> filterForum, String search);
+
+    //ToDo change behavior for actual category
+    @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 1 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
+    List<WPWPForoPosts> geUnmoderatedWithFilters2(List<Integer> filterForum, int forumCat, String search);
+
+    @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 1 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND w.topicId=:forumTopic  AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
+    List<WPWPForoPosts> geUnmoderatedWithFilters3(List<Integer> filterForum, int forumCat, int forumTopic, String search);
+
+
+    @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 0 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
+    List<WPWPForoPosts> geModeratedWithFilter(List<Integer> filterForum, String search);
+
+    //ToDo change behavior for actual category
+    @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 0 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
+    List<WPWPForoPosts> geModeratedWithFilters2(List<Integer> filterForum, int forumCat, String search);
+
+    @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 0 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND w.topicId=:forumTopic  AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
+    List<WPWPForoPosts> getModeratedWithFilters3(List<Integer> filterForum, int forumCat, int forumTopic, String search);
+
 }

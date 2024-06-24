@@ -1,25 +1,33 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import Util, {DashColors} from "../../../util/Util";
-import {DbObject} from "../../../services/DbObject";
 
-export class ForumStats extends DbObject{
-  public forums : number;
-  public topics : number;
-  public topicsClosed : number;
-  public topicsAnswered : number;
-  public questions : number;
-  public answers : number;
+export class ForumStats{
+  public forums : ForumStat[];
+  public topics : ForumStat[];
+  public cats : ForumStat[];
 
 
-  constructor(forums : number, topics : number, topicsClosed : number, topicsAnswered : number, questions : number, answers : number) {
-    super("0", "name");
-    this.topics = topics;
+  constructor(forums: ForumStat[] = [], topics: ForumStat[] = [], cats: ForumStat[] = []) {
     this.forums = forums;
-    this.topicsClosed = topicsClosed;
-    this.topicsAnswered = topicsAnswered;
-    this.questions = questions;
-    this.answers = answers;
+    this.topics = topics;
+    this.cats = cats;
+  }
+}
+export class ForumStat {
+  public name : string;
+  public forumId : number;
+  public topicId : number;
+  public catId : number;
+  public count : number;
+
+
+  constructor(name: string, forumId: number, topicId: number, catId: number, count: number) {
+    this.name = name;
+    this.forumId = forumId;
+    this.topicId = topicId;
+    this.catId = catId;
+    this.count = count;
   }
 }
 
@@ -29,7 +37,7 @@ export class ForumStats extends DbObject{
   styleUrls: ['./forum-stats.component.css', '../../dash-base/dash-base.component.css']
 })
 export class ForumStatsComponent extends DashBaseComponent implements OnInit{
-  data : ForumStats = new ForumStats(0,0,0,0,0,0);
+  data : ForumStats = new ForumStats();
 
   ngOnInit(): void {
     this.api.getForumStats().then(res => {

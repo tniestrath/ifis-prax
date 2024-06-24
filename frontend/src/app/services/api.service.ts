@@ -144,8 +144,11 @@ export enum apiUrl {
   GET_FORUM_POST = "/forum/getPostById?id=ID",
   GET_FORUM_POST_LINKS = "/forum/getLinks?id=ID",
   GET_FORUM_BAD_WORDS = "/forum/getAllBadWords",
-  GET_FORUM_STATS = "/forum/getCounts",
+  GET_FORUM_STATS = "/forum/getModCounts?userId=USERID",
+  SET_FORUM_FILTER = "/forum/setFilter",
   FORUM_IS_LOCKED_POST = "/forum/isLocked?postId=POSTID&userId=USERID",
+  FORUM_UNLOCK_POST = "/forum/unlock?postId=POSTID&userId=USERID",
+  FORUM_UNLOCK_ALL_BY_USER = "/forum/unlockAll?userId=USERID",
   FORUM_DELETE_POST = "/forum/deleteById?id=ID&userId=USERID",
   FORUM_ACCEPT_POST = "/forum/setStatusById?id=ID&status=0&userId=USERID",
   FORUM_MODIFY_POST = "/forum/updatePost?accepted=ACCEPTED&userId=USERID",
@@ -847,11 +850,19 @@ export class ApiService {
   }
   async getForumStats() :Promise<ForumStats> {
     this.setLoading();
-    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_STATS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_STATS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_STATS).replace("USERID", SysVars.ACCOUNT.id)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_STATS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async isForumPostLocked(postId : string, userId : string) :Promise<boolean> {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.FORUM_IS_LOCKED_POST)).replace("POSTID", postId).replace("USERID", userId) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.FORUM_IS_LOCKED_POST)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async unlockForumPost(postId : string) :Promise<boolean> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_UNLOCK_POST)).replace("POSTID", postId).replace("USERID", SysVars.ACCOUNT.id) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.FORUM_UNLOCK_POST)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async unlockForumPostAllByUser() :Promise<boolean> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_UNLOCK_ALL_BY_USER)).replace("USERID", SysVars.ACCOUNT.id) , {credentials: "include", method: "get"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async addForumBadWord(word: string) : Promise<boolean> {

@@ -1,16 +1,12 @@
-import {ComponentRef, EventEmitter, Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 
 import {User} from "../component/user/user";
 import {Post} from "../component/post/Post";
-import {
-  SearchItem
-} from "../component/search/search-no-results-list/search-list-item/search-list-item.component";
 import {DbObject} from "./DbObject";
 import {Newsletter} from "../component/newsletter/Newsletter";
 import {Tag} from "../component/tag/Tag";
 import {ForumPost} from "../component/forum/forum-moderation-list/ForumPost";
-import {Subject} from "rxjs";
-import {AreYouSureDialog} from "../app.component";
+import {Dialog} from "../util/Dialog";
 
 export class PAGE {
   id: number = 0;
@@ -58,7 +54,7 @@ export class SysVars {
 
   public static IS_POPUP : boolean = false;
 
-  public static CREATE_DIALOG : () => AreYouSureDialog;
+  public static CREATE_DIALOG : (name : string) => Dialog;
   public static REMOVE_DIALOG : () => void;
 
   public static PAGES = [

@@ -44,10 +44,10 @@ public interface WPWPForoPostsRepository extends JpaRepository<WPWPForoPosts, Lo
     List<WPWPForoPosts> geModeratedWithFilter(List<Integer> filterForum, String search);
 
     //ToDo change behavior for actual category
-    @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 0 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
+    @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 0 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND w.forumId=:forumCat AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
     List<WPWPForoPosts> geModeratedWithFilters2(List<Integer> filterForum, int forumCat, String search);
 
     @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 0 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND w.topicId=:forumTopic  AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
-    List<WPWPForoPosts> getModeratedWithFilters3(List<Integer> filterForum, int forumCat, int forumTopic, String search);
+    List<WPWPForoPosts> getModeratedWithFilters3(List<Integer> filterForum, int forumTopic, String search);
 
 }

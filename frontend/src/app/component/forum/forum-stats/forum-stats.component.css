@@ -22,6 +22,10 @@
   margin-bottom: 10px;
 }
 .forum-stat-data{
-  font-size: 1.2em;
+  width: 100%;
+  font-size: 1em;
   max-height: 100%;
+  overflow-y: scroll;
+  overflow-x: clip;
 }
+

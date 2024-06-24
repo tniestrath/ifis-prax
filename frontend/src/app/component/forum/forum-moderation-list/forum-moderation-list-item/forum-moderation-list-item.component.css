@@ -26,10 +26,16 @@
   font-size: calc(.4vw + .6vh);
   padding: 0 5px 5px;
 }
-.post-detail-group-2{
+.post-detail-group-2-5pc{
   display: grid;
   grid-template-rows: 1fr;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 5%;
+  grid-gap: 5px;
+}
+.post-detail-group-2-25pc{
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr 25%;
   grid-gap: 5px;
 }
 .post-detail-group-3{

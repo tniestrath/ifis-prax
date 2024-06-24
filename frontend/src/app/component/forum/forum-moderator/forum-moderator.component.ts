@@ -85,7 +85,16 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       this.list.g_cdr.detectChanges();
       this.display.resetEditButton();
     });
+
+    this.list.onFilterButtonClick = () => {
+
+    };
+
     this.list.onModeratedCheckboxChange = (checked : boolean) => {
+      if(this.display.data){
+        this.display.data.isLocked = false;
+        this.api.unlockForumPost(this.display.data.id);
+      }
       if (checked){
         this.list.reload(this.api.getModeratedForumPosts().then(data  =>{
           this.bulkDisplayDataMapping(data);
@@ -150,7 +159,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     }), ForumModerationListItemComponent);
 
     this.display.onDeleteClick = () => {
-      SysVars.CREATE_DIALOG.call(this).awaitAnswer().subscribe((value: boolean) => {
+      SysVars.CREATE_DIALOG("sure").awaitAnswer().subscribe((value: boolean) => {
         if (value){
           this.api.deleteForumPost(this.display.data.id).then(value => {
             if(value){
@@ -317,6 +326,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
 
   override ngOnDestroy() {
     super.ngOnDestroy();
+    this.api.unlockForumPostAllByUser();
     document.removeEventListener("keydown", this.evListener);
     document.addEventListener("keyup", this.evUpListener);
   }

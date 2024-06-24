@@ -36,6 +36,7 @@ export class HeaderComponent implements AfterViewInit{
     })
 
     SysVars.login.subscribe(user => {
+      console.log(user)
       if (user.accessLevel == "mod"){
         this.navElements = ["Forum"];
         this.selected.next("Forum");

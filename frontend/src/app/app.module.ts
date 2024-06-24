@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
-import {AppComponent, AreYouSureDialog, DialogDirective} from './app.component';
+import {AppComponent} from './app.component';
 import { ProfileCompletionComponent } from './component/user/profile-completion/profile-completion.component';
 import { HeaderComponent } from './page/header/header.component';
 import { CounterComponent } from './component/counter/counter.component';
@@ -117,6 +117,7 @@ import {
 import { UserPlanLogComponent } from './component/user/user-plan-log/user-plan-log.component';
 import { UserPlanLogItemComponent } from './component/user/user-plan-log/user-plan-log-item/user-plan-log-item.component';
 import {UserPlanChip} from "./component/user/user";
+import {AreYouSureDialog, DialogDirective} from "./util/Dialog";
 
 @NgModule({
   declarations: [

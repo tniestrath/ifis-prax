@@ -1,23 +1,25 @@
 <div class="forum-post-box" (click)="onClick(data)">
   <div class="post-details">
-    <div class="post-detail-group-4">
-      <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'User')" class="post-detail">
-        <div [style.color]="getRatingColor(data.preRatingSwearing,'User')" class="post-label" [style.background-color]="bgColor">Name</div>
-        <p [innerHTML]="data.userName | unsafeHtml"></p>
-      </div>
+    <div class="post-detail-group-2-5pc">
       <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'Title')" class="post-detail">
         <div [style.color]="getRatingColor(data.preRatingSwearing,'Title')" class="post-label" [style.background-color]="bgColor">Titel</div>
         <p >{{data.title}}</p>
-      </div>
-      <div class="post-detail">
-        <div class="post-label" [style.background-color]="bgColor">Datum</div>
-        <p>{{data.date}}</p>
       </div>
       <div class="post-detail">
         <div class="post-type">
           <p *ngIf="data.isQuestion" [style.color]="DashColors.RED">F</p>
           <p *ngIf="!data.isQuestion" [style.color]="DashColors.BLUE">A</p>
         </div>
+      </div>
+    </div>
+    <div class="post-detail-group-2-25pc">
+      <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'User')" class="post-detail">
+        <div [style.color]="getRatingColor(data.preRatingSwearing,'User')" class="post-label" [style.background-color]="bgColor">Name</div>
+        <p [innerHTML]="data.userName | unsafeHtml"></p>
+      </div>
+      <div class="post-detail">
+        <div class="post-label" [style.background-color]="bgColor">Datum</div>
+        <p>{{data.date.slice(0,10)}}</p>
       </div>
     </div>
     <div [style.border-color]="getRatingColor(data.preRatingSwearing, 'Body')" class="post-detail">

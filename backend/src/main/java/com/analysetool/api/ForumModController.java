@@ -70,6 +70,7 @@ public class ForumModController {
         List<WPWPForoPosts> list;
         List<Integer> filterForums;
 
+        //ToDo Admin Check
         if(userId != 0) {
             filterForums = wpForoModsRepo.getAllForumByUser(userId);
         } else {
@@ -104,10 +105,9 @@ public class ForumModController {
 
         List<WPWPForoPosts> list;
         List<Integer> filterForums;
-
+        //ToDo Admin Check
         if(userId != 0) {
-            //ToDo: Add DB Table to give mods a list of forums, then add forums to list
-            filterForums = new ArrayList<>();
+            filterForums = wpForoModsRepo.getAllForumByUser(userId);
         } else {
             filterForums = new ArrayList<>();
             filterForums.add(filterForum);
@@ -258,6 +258,7 @@ public class ForumModController {
 
     @PostMapping("/deleteById")
     public boolean deleteById(int id, int userId) {
+        //ToDo Admin Check
         if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
             if(wpForoPostRepo.findById((long) id).get().getIsFirstPost() == 1) {
                 wpForoTopicsRepo.deleteById((long) wpForoTopicsRepo.getTopicByFirstPost(id));
@@ -271,6 +272,7 @@ public class ForumModController {
 
     @PostMapping("/setStatusById")
     public boolean setStatus(int id, int status, int userId) {
+        //ToDo Admin Check
         if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
             WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();
             post.setStatus(status);

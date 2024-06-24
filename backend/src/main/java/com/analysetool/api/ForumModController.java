@@ -119,7 +119,7 @@ public class ForumModController {
         } else if(filterTopic == 0) {
             list = wpForoPostRepo.geModeratedWithFilters2(filterForums, filterCat, search);
         } else {
-            list = wpForoPostRepo.getModeratedWithFilters3(filterForums, filterCat, filterTopic, search);
+            list = wpForoPostRepo.getModeratedWithFilters3(filterForums, filterTopic, search);
         }
 
 

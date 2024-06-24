@@ -121,13 +121,8 @@ public class UserController {
             obj.put("id", user.get().getId());
             obj.put("displayName",user.get().getDisplayName());
             if (wpUserMetaRepository.existsByUserId(user.get().getId())){
-                String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId(user.get().getId());
-                if (wpUserMeta.contains("customer")) obj.put("accountType", "?customer?");
-                if (wpUserMeta.contains("administrator")) obj.put("accountType", "admin");
-                if (wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) obj.put("accountType", "basic");
-                if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) obj.put("accountType", "basic-plus");
-                if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) obj.put("accountType", "plus");
-                if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) obj.put("accountType", "premium");
+                obj.put("accountType", getType(Math.toIntExact(user.get().getId())));
+                obj.put("accessLevel", getAccessLevel(user.get().getId()));
             }
         }
         return obj.toString();

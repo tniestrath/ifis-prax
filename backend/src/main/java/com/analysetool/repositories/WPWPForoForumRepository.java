@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface WPWPForoForumRepository extends JpaRepository<WPWPForoForum, Long> {
 
@@ -15,4 +17,11 @@ public interface WPWPForoForumRepository extends JpaRepository<WPWPForoForum, Lo
 
     @Query("SELECT COUNT(w) FROM WPWPForoForum w")
     int getCountForums();
+
+    @Query("SELECT w FROM WPWPForoForum w WHERE w.isCat = 0")
+    List<WPWPForoForum> getAllNotCat();
+
+    @Query("SELECT w FROM WPWPForoForum w WHERE w.parentId=:forumId")
+    List<WPWPForoForum> getAllChildrenOf(int forumId);
+
 }

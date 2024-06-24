@@ -550,9 +550,9 @@ public class ForumModController {
         JSONObject obj = new JSONObject();
         JSONArray forumList = new JSONArray();
         JSONArray topicList = new JSONArray();
+        JSONArray catList = new JSONArray();
 
-        List<WPWPForoForum> forums = new ArrayList<>();
-        List<WPWPForoTopics> topics = new ArrayList<>();
+        List<WPWPForoForum> forums = wpForoForumRepo.getAllNotCat();
 
         for(WPWPForoForum forum : forums) {
             JSONObject json = new JSONObject();
@@ -562,19 +562,42 @@ public class ForumModController {
             json.put("catId", 0);
             json.put("count", wpForoPostRepo.getCountUnmoderatedInForum(forum.getForumId()));
             forumList.put(json);
-        }
-        for(WPWPForoTopics topic : topics) {
-            JSONObject json = new JSONObject();
-            json.put("name", topic.getTitle());
-            json.put("topicId", topic.getTopicId());
-            json.put("forumId", 0);
-            json.put("catId", 0);
-            json.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
-            topicList.put(json);
+
+            for(WPWPForoTopics topic : wpForoTopicsRepo.getAllTopicsInForum(forum.getForumId())) {
+                JSONObject topicJson = new JSONObject();
+                topicJson.put("name", topic.getTitle());
+                topicJson.put("topicId", topic.getTopicId());
+                topicJson.put("forumId", 0);
+                topicJson.put("catId", 0);
+                topicJson.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
+                topicList.put(json);
+            }
+
+            for(WPWPForoForum cat : wpForoForumRepo.getAllChildrenOf(forum.getForumId())) {
+                JSONObject catJson = new JSONObject();
+
+                catJson.put("name", cat.getTitle());
+                catJson.put("forumId", forum.getForumId());
+                catJson.put("topicId", 0);
+                catJson.put("catId", cat.getForumId());
+                catJson.put("count", wpForoPostRepo.getCountUnmoderatedInForum(cat.getForumId()));
+
+
+                for(WPWPForoTopics topic : wpForoTopicsRepo.getAllTopicsInForum(cat.getForumId())) {
+                    JSONObject topicJson = new JSONObject();
+                    topicJson.put("name", topic.getTitle());
+                    topicJson.put("topicId", topic.getTopicId());
+                    topicJson.put("forumId", forum.getForumId());
+                    topicJson.put("catId", cat.getForumId());
+                    topicJson.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
+                    topicList.put(json);
+                }
+            }
         }
 
         obj.put("forums", forumList);
         obj.put("topics", topicList);
+        obj.put("cats", catList);
 
         return obj.toString();
     }
@@ -586,7 +609,7 @@ public class ForumModController {
         //ToDo
 
         if(userController.getType(userId).equals("admin")) {
-            for(WPWPForoForum forum : wpForoForumRepo.findAll()) {
+            for(WPWPForoForum forum : wpForoForumRepo.getAllNotCat()) {
                 array.put(forum.getForumId());
             }
         }

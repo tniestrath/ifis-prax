@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface WPWPForoTopicsRepository extends JpaRepository<WPWPForoTopics, Long> {
 
@@ -25,5 +27,8 @@ public interface WPWPForoTopicsRepository extends JpaRepository<WPWPForoTopics, 
 
     @Query("SELECT COUNT(w) FROM WPWPForoTopics w WHERE w.solved = 1")
     int getCountTopicsAnswered();
+
+    @Query("SELECT w FROM WPWPForoTopics w WHERE w.forumId=:forumId")
+    List<WPWPForoTopics> getAllTopicsInForum(int forumId);
 
 }

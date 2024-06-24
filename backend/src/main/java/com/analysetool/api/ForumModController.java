@@ -39,6 +39,8 @@ public class ForumModController {
     private ModLockRepository modLockRepo;
     @Autowired
     private UserController userController;
+    @Autowired
+    private WPWPForoModsModsRepositoryRepo wpForoModsRepo;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
@@ -69,8 +71,7 @@ public class ForumModController {
         List<Integer> filterForums;
 
         if(userId != 0) {
-            //ToDo: Add DB Table to give mods a list of forums, then add forums to list - only allow user allowed forums here!
-            filterForums = new ArrayList<>();
+            filterForums = wpForoModsRepo.getAllForumByUser(userId);
         } else {
             filterForums = new ArrayList<>();
             filterForums.add(filterForum);
@@ -552,7 +553,12 @@ public class ForumModController {
         JSONArray topicList = new JSONArray();
         JSONArray catList = new JSONArray();
 
-        List<WPWPForoForum> forums = wpForoForumRepo.getAllNotCat();
+        List<WPWPForoForum> forums;
+        if(userController.getType(userId).equals("admin")) {
+            forums = wpForoForumRepo.getAllNotCatAdmin();
+        } else {
+            forums = wpForoForumRepo.getAllNotCat(userId);
+        }
 
         for(WPWPForoForum forum : forums) {
             JSONObject json = new JSONObject();
@@ -609,7 +615,7 @@ public class ForumModController {
         //ToDo
 
         if(userController.getType(userId).equals("admin")) {
-            for(WPWPForoForum forum : wpForoForumRepo.getAllNotCat()) {
+            for(WPWPForoForum forum : wpForoForumRepo.getAllNotCat(userId)) {
                 array.put(forum.getForumId());
             }
         }

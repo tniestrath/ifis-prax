@@ -50,6 +50,6 @@ public interface WPWPForoPostsRepository extends JpaRepository<WPWPForoPosts, Lo
     List<WPWPForoPosts> getModeratedWithFilters3(List<Integer> filterForum, int forumTopic, String search);
 
     @Query("SELECT w FROM WPWPForoPosts w WHERE w.topicId=:topicId ORDER BY w.postId DESC")
-    WPWPForoPosts getPostInTopic(int topicId, Pageable pageable);
+    List<WPWPForoPosts> getPostInTopic(int topicId, Pageable pageable);
 
 }

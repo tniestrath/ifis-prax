@@ -368,15 +368,18 @@ public class ForumModController {
         trash.setPostId(post.getPostId());
         wpTrashRepo.save(trash);
 
-        WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).get();
-        topic.setPosts(topic.getPosts() - 1);
-        topic.setLastPost(wpForoPostRepo.getPostInTopic(topic.getTopicId(), PageRequest.of(1, 1)).getPostId());
-        wpForoTopicsRepo.save(topic);
+
+        if(post.getStatus() == 0) {
+            WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).get();
+            topic.setPosts(topic.getPosts() - 1);
+            topic.setLastPost(wpForoPostRepo.getPostInTopic(topic.getTopicId(), PageRequest.of(1, 1)).get(0).getPostId());
+            wpForoTopicsRepo.save(topic);
 
 
-        WPWPForoForum forum = wpForoForumRepo.findById((long) post.getForumId()).get();
-        forum.setPosts(forum.getPosts() - 1);
-        wpForoForumRepo.save(forum);
+            WPWPForoForum forum = wpForoForumRepo.findById((long) post.getForumId()).get();
+            forum.setPosts(forum.getPosts() - 1);
+            wpForoForumRepo.save(forum);
+        }
 
         if(post.getIsFirstPost() == 1) {
             throwTrashcan(wpForoTopicsRepo.findById((long) post.getTopicId()).get());

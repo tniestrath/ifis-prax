@@ -218,7 +218,6 @@ public class ForumModController {
         json.put("date", post.getCreated().toString());
         json.put("email", post.getEmail());
 
-        json.put("isLocked", isLocked(post.getPostId()));
         json.put("body", post.getBody());
         json.put("title", post.getTitle());
         json.put("userName", post.getName());

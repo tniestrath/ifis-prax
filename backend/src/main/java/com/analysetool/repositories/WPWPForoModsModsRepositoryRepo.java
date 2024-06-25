@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface WPWPForoModsModsRepositoryRepo extends JpaRepository<WPWPForoModsMods, Long> {
 
-    @Query("SELECT w FROM WPWPForoModsMods w WHERE w.userId=:userId")
+    @Query("SELECT w.forum_id FROM WPWPForoModsMods w WHERE w.userId=:userId")
     List<Integer> getAllForumByUser(int userId);
 
 }

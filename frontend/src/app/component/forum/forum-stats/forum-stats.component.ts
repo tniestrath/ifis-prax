@@ -51,7 +51,15 @@ export class ForumStatsComponent extends DashBaseComponent implements OnInit{
   }
 
   selectStat(stat : ForumStat){
-    SysVars.SELECTED_FORUM_FILTER.next(stat);
+    if (stat.count > 0){
+      SysVars.SELECTED_FORUM_FILTER.next(stat);
+    }
+  }
+
+  isHover(stat : ForumStat){
+    if (stat.count <= 0){
+      return "noHover";
+    } return "";
   }
 
 

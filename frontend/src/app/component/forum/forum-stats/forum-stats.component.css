@@ -42,9 +42,15 @@
 .forum-stat-data-item{
   border: 1px solid #00000000;
   border-bottom: 1px solid #808080;
+  cursor: pointer;
 }
 .forum-stat-data-item:hover{
   border: 1px solid black;
   border-radius: 5px;
+}
+.noHover:hover{
+  border: 1px solid #00000000 !important;
+  border-bottom: 1px solid #808080 !important;
+  cursor: auto;
 }
 

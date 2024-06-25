@@ -26,7 +26,7 @@ public interface WPWPForoPostsRepository extends JpaRepository<WPWPForoPosts, Lo
     @Query("SELECT COUNT(w) FROM WPWPForoPosts w WHERE w.status = 1 AND w.topicId=:topicId")
     int getCountUnmoderatedInTopic(int topicId);
 
-    @Query("SELECT COUNT(w) FROM WPWPForoPosts w WHERE w.status = 1 AND w.forumId=:forumId")
+    @Query("SELECT COUNT(w) FROM WPWPForoPosts w WHERE w.status = 1 AND w.forumId=:forumId OR w.forumId IN (SELECT wc.forumId FROM WPWPForoForum wc WHERE wc.parentId = w.forumId)")
     int getCountUnmoderatedInForum(int forumId);
 
     @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 1 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")

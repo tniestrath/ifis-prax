@@ -760,6 +760,15 @@ public class ForumModController {
         }
     }
 
+    public boolean unlockAll() {
+        try {
+            modLockRepo.deleteAll(modLockRepo.findAll());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @GetMapping("/getModCounts")
     public String getModCounts(Integer userId) throws JSONException {
 

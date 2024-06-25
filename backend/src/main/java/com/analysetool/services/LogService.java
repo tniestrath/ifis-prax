@@ -1,5 +1,6 @@
 package com.analysetool.services;
 
+import com.analysetool.api.ForumModController;
 import com.analysetool.api.IPController;
 import com.analysetool.api.PostController;
 import com.analysetool.api.UserController;
@@ -141,6 +142,10 @@ public class LogService {
     private RankingGroupContentRepository rankingGroupContentRepo;
     @Autowired
     private UniqueUserService uniqueUserService;
+    @Autowired
+    private LastPingRepository lpRepo;
+    @Autowired
+    private ForumModController forumModController;
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
@@ -550,6 +555,14 @@ public class LogService {
             System.out.println("FEHLER AT updateMemberBuffer");
             e.printStackTrace();
         }
+        try {
+            checkLastPingTimer();
+        } catch(Exception e) {
+            System.out.println("FEHLER AT checkLastPingTimer");
+            e.printStackTrace();
+        }
+
+
         if(LocalDateTime.now().getHour() == 5) {
             endDay();
         }
@@ -3323,6 +3336,17 @@ public class LogService {
         for(UniqueUser bot : uniqueUserService.getBotsByClicksOverTime()) {
             ipController.blockIp(bot.getIp());
             System.out.println("BLOCKED SOMEONE");
+        }
+
+    }
+
+    private void checkLastPingTimer() {
+        if(lpRepo.findById(1L).isPresent()) {
+            LastPing ping = lpRepo.findById(1L).get();
+
+            if(ping.getTimestamp().toLocalDateTime().plusMinutes(15).isBefore(LocalDateTime.now())) {
+                forumModController.unlockAll();
+            }
         }
 
     }

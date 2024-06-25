@@ -1,5 +1,7 @@
 package com.analysetool.api;
 
+import com.analysetool.modells.LastPing;
+import com.analysetool.repositories.LastPingRepository;
 import com.analysetool.util.DashConfig;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +24,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -30,6 +34,8 @@ import java.util.*;
 public class LoginController {
 
     @Autowired UserController userController;
+    @Autowired
+    private LastPingRepository lpRepo;
 
     public Authentication adminAuthentication = new Authentication() {
         @Override
@@ -271,6 +277,14 @@ public class LoginController {
 
     @GetMapping(value = {"/ping", "/0wB4P2mly-xaRmeeDOj0_g/ping"})
     public boolean ping() {
+        LastPing ping;
+        if(lpRepo.findById(1L).isPresent()) {
+            ping = lpRepo.findById(1L).get();
+        } else {
+            ping = new LastPing();
+        }
+        ping.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
+        lpRepo.save(ping);
         return true;
     }
 }

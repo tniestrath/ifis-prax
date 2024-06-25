@@ -443,9 +443,30 @@ public class ForumModController {
         post.setVotes(trash.getVotes());
         wpForoPostRepo.save(post);
 
+      /* brauchen wir den shit ?
+        post.setPostId(trash.getPostId());
+        post.setEmail(trash.getEmail());
+        post.setName(trash.getName());
+        post.setUserId(trash.getUserId());
+        post.setTopicId(trash.getTopicId());
+        post.setTitle(trash.getTitle());
+        */
         if(trash.getIsFirstPost() == 1) {
             restore(wpTopicTrashRepo.findById((long) post.getTopicId()).get());
         }
+
+           /* dings so ?
+    if (post.getStatus() == 0) {
+        WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).get();
+        topic.setPosts(topic.getPosts() + 1);
+        topic.setLastPost(post.getPostId());
+        wpForoTopicsRepo.save(topic);
+
+        WPWPForoForum forum = wpForoForumRepo.findById((long) post.getForumId()).get();
+        forum.setPosts(forum.getPosts() + 1);
+        wpForoForumRepo.save(forum);
+    }
+    */
 
         wpTrashRepo.delete(trash);
     }
@@ -479,6 +500,15 @@ public class ForumModController {
         topic.setTags(trash.getTags());
 
         wpForoTopicsRepo.save(topic);
+
+            /* so ?
+    if (topic.getStatus() == 0) {
+        WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).get();
+        forum.setTopics(forum.getTopics() + 1);
+        wpForoForumRepo.save(forum);
+    }
+    */
+
         wpTopicTrashRepo.delete(trash);
     }
 

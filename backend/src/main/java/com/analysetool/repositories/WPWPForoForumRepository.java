@@ -27,4 +27,7 @@ public interface WPWPForoForumRepository extends JpaRepository<WPWPForoForum, Lo
     @Query("SELECT w FROM WPWPForoForum w WHERE w.parentId=:forumId")
     List<WPWPForoForum> getAllChildrenOf(int forumId);
 
+    @Query("SELECT w.forumId FROM WPWPForoForum w WHERE w.parentId=:forumId")
+    List<Integer> getAllChildrenOfIds(int forumId);
+
 }

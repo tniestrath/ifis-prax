@@ -13,4 +13,7 @@ public interface WPWPForoModsModsRepositoryRepo extends JpaRepository<WPWPForoMo
     @Query("SELECT w.forum_id FROM WPWPForoModsMods w WHERE w.userId=:userId")
     List<Integer> getAllForumByUser(int userId);
 
+
+    @Query("SELECT w.forum_id FROM WPWPForoModsMods w")
+    List<Integer> getAllForumForAdmin();
 }

@@ -77,16 +77,26 @@ public class ForumModController {
         List<WPWPForoPosts> list;
         List<Integer> filterForums;
 
-        //ToDo Admin Check
         boolean isAdmin = isAdmin(userId);
 
-        if(userId != 0) {
+
+        //Set all forums that are allowed for user
+        if(userId != 0 && !isAdmin) {
             filterForums = wpForoModsRepo.getAllForumByUser(userId);
+        } else if(isAdmin) {
+            filterForums = wpForoModsRepo.getAllForumForAdmin();
         } else {
             filterForums = new ArrayList<>();
-            filterForums.add(filterForum);
         }
 
+        //If a filter was set, and it was allowed, add only that one and all children to allow-list
+        if(filterForum != 0 && filterForums.contains(filterForum)) {
+            filterForums = new ArrayList<>();
+            filterForums.add(filterForum);
+            filterForums.addAll(wpForoForumRepo.getAllChildrenOfIds(filterForum));
+        }
+
+        //Fetch all that meet the specifics
         if(filterForum == 0) {
             list = wpForoPostRepo.getUnmoderatedPosts();
         } else if(filterCat == 0) {
@@ -97,9 +107,7 @@ public class ForumModController {
             list = wpForoPostRepo.geUnmoderatedWithFilters3(filterForums, filterTopic, search);
         }
 
-
-
-
+        //Fetch data
         for (WPWPForoPosts post : list) {
             array.put(getSinglePostData(post, true));
         }
@@ -114,12 +122,20 @@ public class ForumModController {
 
         List<WPWPForoPosts> list;
         List<Integer> filterForums;
-        //ToDo Admin Check
+
         boolean isAdmin = isAdmin(userId);
 
-        if(userId != 0) {
+        //Set all forums that are allowed for user
+        if(userId != 0 && !isAdmin) {
             filterForums = wpForoModsRepo.getAllForumByUser(userId);
+        } else if(isAdmin) {
+            filterForums = wpForoModsRepo.getAllForumForAdmin();
         } else {
+            filterForums = new ArrayList<>();
+        }
+
+        //If a filter was set, and it was allowed, add only that one and all children to allow-list
+        if(filterForum != 0 && filterForums.contains(filterForum)) {
             filterForums = new ArrayList<>();
             filterForums.add(filterForum);
         }

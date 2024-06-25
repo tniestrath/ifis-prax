@@ -364,6 +364,7 @@ public class ForumModController {
         trash.setUserId(post.getUserId());
         trash.setTopicId(post.getTopicId());
         trash.setTitle(post.getTitle());
+        trash.setPostId(post.getPostId());
         wpTrashRepo.save(trash);
 
         if(post.getIsFirstPost() == 1) {

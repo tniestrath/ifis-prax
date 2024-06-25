@@ -155,7 +155,7 @@ export default class Util {
       } if (value <= threshold){
         color = DashColors.ORANGE;
       } if (value <= 0){
-        color = DashColors.GREEN;
+        color = DashColors.BLUE;
       }
       return color;
   }

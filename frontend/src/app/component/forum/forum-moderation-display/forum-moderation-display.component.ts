@@ -31,7 +31,7 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
  "<span>Hier können Beiträge aus dem Forum Moderiert werden</span>" +
       "<br><br>" +
       "<div style=\"" + style + DashColors.RED  + "\"><span>Löschen</span></div><span> (STRG + ↓ / ENTF) : Der Beitrag wird aus der Liste entfernt und nicht im Forum angezeigt</span><br><br>" +
-      "<div style=\"" + style + DashColors.GREEN  + "\"><span>Freigeben</span></div><span> (STRG + ↑ / EINFG) : Der Beitrag wird aus der Liste entfernt und im Forum angezeigt</span><br><br>" +
+      "<div style=\"" + style + DashColors.BLUE  + "\"><span>Freigeben</span></div><span> (STRG + ↑ / EINFG) : Der Beitrag wird aus der Liste entfernt und im Forum angezeigt</span><br><br>" +
       "<div style=\""+ style + DashColors.DARK_GREY + "\"><span>→</span></div><span> (STRG + → / ENDE) : Der Beitrag wird zurück in die Liste geschoben </span>"
       , 3)
   }

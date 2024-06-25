@@ -106,7 +106,7 @@ input[type="submit"], input[type="checkbox"], button[type="submit"]{
 }
 
 input:checked + .slider {
-  background-color: #86DA76FF;
+  background-color: #5A7995FF;
 }
 
 input:focus + .slider {

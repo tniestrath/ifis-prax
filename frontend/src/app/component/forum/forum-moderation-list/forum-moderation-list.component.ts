@@ -37,7 +37,6 @@ export class ForumModerationListComponent extends DashListComponent<ForumPost, F
 
   onModeratedCheckboxChange = (checked : boolean) : void => {};
 
-  onFilterButtonClick = () : void => {}
 
   public isModeratedChecked(){
     return (document.getElementById("moderated-checkbox") as HTMLInputElement).checked;

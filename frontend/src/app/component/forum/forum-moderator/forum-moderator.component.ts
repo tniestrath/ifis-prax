@@ -9,7 +9,7 @@ import {
 } from "../forum-moderation-list/forum-moderation-list-item/forum-moderation-list-item.component";
 import {ForumPost} from "../forum-moderation-list/ForumPost";
 import {ForumStat} from "../forum-stats/forum-stats.component";
-import {filter} from "rxjs";
+import {filter, Subscription} from "rxjs";
 
 
 @Component({
@@ -25,6 +25,8 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
   listenerToggle: boolean = true;
 
   selectedFilter : ForumStat = new ForumStat("", 0,0,0,0);
+
+  private filterListener! : Subscription;
 
   private evListener = (ev: KeyboardEvent) => {
     if (ev.ctrlKey && this.listenerToggle){
@@ -89,8 +91,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       this.list.g_cdr.detectChanges();
       this.display.resetEditButton();
     });
-
-    SysVars.SELECTED_FORUM_FILTER.subscribe(filter => {
+    this.filterListener = SysVars.SELECTED_FORUM_FILTER.subscribe(filter => {
       //TODO: REPLACE NAME WITH SEARCH? OR FIND OTHER SOLUTION
       this.selectedFilter = filter;
       this.list.onModeratedCheckboxChange(this.list.isModeratedChecked());
@@ -335,6 +336,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     this.api.unlockForumPostAllByUser();
     document.removeEventListener("keydown", this.evListener);
     document.addEventListener("keyup", this.evUpListener);
+    this.filterListener.unsubscribe();
   }
 
 }

@@ -41,6 +41,10 @@ public class ForumModController {
     private UserController userController;
     @Autowired
     private WPWPForoModsModsRepositoryRepo wpForoModsRepo;
+    @Autowired
+    private WPWPForoTrashcanRepository wpTrashRepo;
+    @Autowired
+    private WPWPForoTopicsTrashRepository wpTopicTrashRepo;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
@@ -63,6 +67,13 @@ public class ForumModController {
     }
 
 
+    /*
+     * admin = admin
+     * */
+    private boolean isAdmin(int userId){
+        return userController.getType(userId).equals("admin");
+    }
+
     @GetMapping("/getUnmoderatedWithFilter")
     public String getUnmoderatedWithFilter(int userId, int filterForum, int filterCat, int filterTopic, String search) throws JSONException {
         JSONArray array = new JSONArray();
@@ -70,13 +81,26 @@ public class ForumModController {
         List<WPWPForoPosts> list;
         List<Integer> filterForums;
 
-        if(userId != 0) {
+        boolean isAdmin = isAdmin(userId);
+
+
+        //Set all forums that are allowed for user
+        if(userId != 0 && !isAdmin) {
             filterForums = wpForoModsRepo.getAllForumByUser(userId);
+        } else if(isAdmin) {
+            filterForums = wpForoModsRepo.getAllForumForAdmin();
         } else {
             filterForums = new ArrayList<>();
-            filterForums.add(filterForum);
         }
 
+        //If a filter was set, and it was allowed, add only that one and all children to allow-list
+        if(filterForum != 0 && filterForums.contains(filterForum)) {
+            filterForums = new ArrayList<>();
+            filterForums.add(filterForum);
+            filterForums.addAll(wpForoForumRepo.getAllChildrenOfIds(filterForum));
+        }
+
+        //Fetch all that meet the specifics
         if(filterForum == 0) {
             list = wpForoPostRepo.getUnmoderatedPosts();
         } else if(filterCat == 0) {
@@ -87,9 +111,7 @@ public class ForumModController {
             list = wpForoPostRepo.geUnmoderatedWithFilters3(filterForums, filterTopic, search);
         }
 
-
-
-
+        //Fetch data
         for (WPWPForoPosts post : list) {
             array.put(getSinglePostData(post, true));
         }
@@ -105,12 +127,22 @@ public class ForumModController {
         List<WPWPForoPosts> list;
         List<Integer> filterForums;
 
-        if(userId != 0) {
-            //ToDo: Add DB Table to give mods a list of forums, then add forums to list
-            filterForums = new ArrayList<>();
+        boolean isAdmin = isAdmin(userId);
+
+        //Set all forums that are allowed for user
+        if(userId != 0 && !isAdmin) {
+            filterForums = wpForoModsRepo.getAllForumByUser(userId);
+        } else if(isAdmin) {
+            filterForums = wpForoModsRepo.getAllForumForAdmin();
         } else {
             filterForums = new ArrayList<>();
+        }
+
+        //If a filter was set, and it was allowed, add only that one and all children to allow-list
+        if(filterForum != 0 && filterForums.contains(filterForum)) {
+            filterForums = new ArrayList<>();
             filterForums.add(filterForum);
+            filterForums.addAll(wpForoForumRepo.getAllChildrenOfIds(filterForum));
         }
 
         if(filterForum == 0) {
@@ -166,6 +198,19 @@ public class ForumModController {
         json.put("isQuestion", post.getIsFirstPost());
 
         return json;
+    }
+
+    private List<Integer> getAllForumsWithChildrenForUser(int userId) {
+
+        if(isAdmin(userId)) {
+            return wpForoForumRepo.getAllForumIds();
+        }
+        List<Integer> filterForums = new ArrayList<>(wpForoModsRepo.getAllForumByUser(userId));
+        for(Integer forum : wpForoModsRepo.getAllForumByUser(userId)) {
+            filterForums.addAll(wpForoForumRepo.getAllChildrenOfIds(forum));
+        }
+
+        return filterForums;
     }
 
     @GetMapping("/getPostById")
@@ -258,19 +303,81 @@ public class ForumModController {
 
     @PostMapping("/deleteById")
     public boolean deleteById(int id, int userId) {
-        if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
-            if(wpForoPostRepo.findById((long) id).get().getIsFirstPost() == 1) {
-                wpForoTopicsRepo.deleteById((long) wpForoTopicsRepo.getTopicByFirstPost(id));
-            }
-            wpForoPostRepo.deleteById((long) id);
+
+        if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId) && getAllForumsWithChildrenForUser(userId).contains(wpForoPostRepo.findById((long) id).get().getForumId())) {
+            WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();
+
+            throwTrashcan(post);
+
             unlock(id, userId);
             return true;
         }
         return false;
     }
 
+    /**
+     * Deletes post from wp_wpforo_posts, and adds it to trashcan
+     * @param post to toss away.
+     */
+    private void throwTrashcan(WPWPForoPosts post) {
+        WPWPForoTrashcan trash = new WPWPForoTrashcan();
+        trash.setCreated(post.getCreated());
+        trash.setForumId(post.getForumId());
+        trash.setIsAnswer(post.getIsAnswer());
+        trash.setLikes(post.getLikes());
+        trash.setModified(post.getModified());
+        trash.setRoot(post.getRoot());
+        trash.setIsPrivate(post.getIsPrivate());
+        trash.setParentId(post.getParentId());
+        trash.setStatus(post.getStatus());
+        trash.setBody(post.getBody());
+        trash.setIsFirstPost(post.getIsFirstPost());
+        trash.setVotes(post.getVotes());
+        wpTrashRepo.save(trash);
+
+        if(post.getIsFirstPost() == 1) {
+            throwTrashcan(wpForoTopicsRepo.findById((long) post.getTopicId()).get());
+        }
+
+
+        wpForoPostRepo.deleteById((long) post.getPostId());
+    }
+
+    private void throwTrashcan(WPWPForoTopics topic) {
+        WPWPForoTopicsTrash trash = new WPWPForoTopicsTrash();
+        trash.setAnswers(topic.getAnswers());
+        trash.setClosed(topic.getClosed());
+        trash.setHasAttach(topic.getHasAttach());
+        trash.setFirstPostId(topic.getFirstPostId());
+        trash.setMetaDesc(topic.getMetaDesc());
+        trash.setLastPost(topic.getLastPost());
+        trash.setMetaKey(topic.getMetaKey());
+        trash.setPrefix(topic.getPrefix());
+        trash.setTopicId(topic.getTopicId());
+        trash.setForumId(topic.getForumId());
+        trash.setSlug(topic.getSlug());
+        trash.setPosts(topic.getPosts());
+        trash.setViews(topic.getViews());
+        trash.setVotes(topic.getVotes());
+        trash.setUserId(topic.getUserId());
+        trash.setTitle(topic.getTitle());
+        trash.setType(topic.getType());
+        trash.setStatus(topic.getStatus());
+        trash.setSolved(topic.getSolved());
+        trash.setName(topic.getName());
+        trash.setModified(topic.getModified());
+        trash.setIsPrivate(topic.getIsPrivate());
+        trash.setEmail(topic.getEmail());
+        trash.setCreated(topic.getCreated());
+        trash.setTags(topic.getTags());
+
+        wpTopicTrashRepo.save(trash);
+        wpForoTopicsRepo.delete(topic);
+    }
+
     @PostMapping("/setStatusById")
     public boolean setStatus(int id, int status, int userId) {
+        
         if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
             WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();
             post.setStatus(status);

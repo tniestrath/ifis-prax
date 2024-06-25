@@ -23,7 +23,8 @@ public class AdminCookieEater implements HandlerInterceptor {
 
 
         if(request.getRequestURL().toString().contains("0wB4P2mly-xaRmeeDOj0_g")) return true;
-        if(request.getRequestURL().toString().contains("api/users/getByLogin?u")) return true;
+        if(request.getRequestURL().toString().contains("api/users/getByLogin")) return true;
+        if(request.getRequestURL().toString().contains("/login")) return true;
 
 
         if (!result.contains("INVALID") && !result.contains("kaputt")) {

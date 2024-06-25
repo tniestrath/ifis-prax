@@ -360,6 +360,7 @@ public class ForumModController {
         trash.setBody(post.getBody());
         trash.setIsFirstPost(post.getIsFirstPost());
         trash.setVotes(post.getVotes());
+        trash.setEmail(post.getEmail());
         wpTrashRepo.save(trash);
 
         if(post.getIsFirstPost() == 1) {

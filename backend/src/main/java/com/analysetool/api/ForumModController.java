@@ -218,7 +218,6 @@ public class ForumModController {
         json.put("date", post.getCreated().toString());
         json.put("email", post.getEmail());
 
-        json.put("isLocked", isLocked(post.getPostId()));
         json.put("body", post.getBody());
         json.put("title", post.getTitle());
         json.put("userName", post.getName());
@@ -361,6 +360,11 @@ public class ForumModController {
         trash.setIsFirstPost(post.getIsFirstPost());
         trash.setVotes(post.getVotes());
         trash.setEmail(post.getEmail());
+        trash.setName(post.getName());
+        trash.setUserId(post.getUserId());
+        trash.setTopicId(post.getTopicId());
+        trash.setTitle(post.getTitle());
+        trash.setPostId(post.getPostId());
         wpTrashRepo.save(trash);
 
         if(post.getIsFirstPost() == 1) {

@@ -818,19 +818,4 @@ public class ForumModController {
         return obj.toString();
     }
 
-
-    @GetMapping("/getForumsByUser")
-    public String getForumsByUser(int userId) {
-        JSONArray array = new JSONArray();
-        //ToDo
-
-        if(userController.getType(userId).equals("admin")) {
-            for(WPWPForoForum forum : wpForoForumRepo.getAllNotCat(userId)) {
-                array.put(forum.getForumId());
-            }
-        }
-
-        return array.toString();
-    }
-
 }

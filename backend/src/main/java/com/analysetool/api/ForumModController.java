@@ -41,6 +41,10 @@ public class ForumModController {
     private UserController userController;
     @Autowired
     private WPWPForoModsModsRepositoryRepo wpForoModsRepo;
+    @Autowired
+    private WPWPForoTrashcanRepository wpTrashRepo;
+    @Autowired
+    private WPWPForoTopicsTrashRepository wpTopicTrashRepo;
 
     @GetMapping("/getAllUnmoderated")
     public String getAllUnmoderated() throws JSONException {
@@ -138,6 +142,7 @@ public class ForumModController {
         if(filterForum != 0 && filterForums.contains(filterForum)) {
             filterForums = new ArrayList<>();
             filterForums.add(filterForum);
+            filterForums.addAll(wpForoForumRepo.getAllChildrenOfIds(filterForum));
         }
 
         if(filterForum == 0) {
@@ -193,6 +198,19 @@ public class ForumModController {
         json.put("isQuestion", post.getIsFirstPost());
 
         return json;
+    }
+
+    private List<Integer> getAllForumsWithChildrenForUser(int userId) {
+
+        if(isAdmin(userId)) {
+            return wpForoForumRepo.getAllForumIds();
+        }
+        List<Integer> filterForums = new ArrayList<>(wpForoModsRepo.getAllForumByUser(userId));
+        for(Integer forum : wpForoModsRepo.getAllForumByUser(userId)) {
+            filterForums.addAll(wpForoForumRepo.getAllChildrenOfIds(forum));
+        }
+
+        return filterForums;
     }
 
     @GetMapping("/getPostById")
@@ -285,24 +303,80 @@ public class ForumModController {
 
     @PostMapping("/deleteById")
     public boolean deleteById(int id, int userId) {
-        //ToDo Admin Check
-        boolean isAdmin = isAdmin(userId);
 
-        if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
-            if(wpForoPostRepo.findById((long) id).get().getIsFirstPost() == 1) {
-                wpForoTopicsRepo.deleteById((long) wpForoTopicsRepo.getTopicByFirstPost(id));
-            }
-            wpForoPostRepo.deleteById((long) id);
+        if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId) && getAllForumsWithChildrenForUser(userId).contains(wpForoPostRepo.findById((long) id).get().getForumId())) {
+            WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();
+
+            throwTrashcan(post);
+
             unlock(id, userId);
             return true;
         }
         return false;
     }
 
+    /**
+     * Deletes post from wp_wpforo_posts, and adds it to trashcan
+     * @param post to toss away.
+     */
+    private void throwTrashcan(WPWPForoPosts post) {
+        WPWPForoTrashcan trash = new WPWPForoTrashcan();
+        trash.setCreated(post.getCreated());
+        trash.setForumId(post.getForumId());
+        trash.setIsAnswer(post.getIsAnswer());
+        trash.setLikes(post.getLikes());
+        trash.setModified(post.getModified());
+        trash.setRoot(post.getRoot());
+        trash.setIsPrivate(post.getIsPrivate());
+        trash.setParentId(post.getParentId());
+        trash.setStatus(post.getStatus());
+        trash.setBody(post.getBody());
+        trash.setIsFirstPost(post.getIsFirstPost());
+        trash.setVotes(post.getVotes());
+        wpTrashRepo.save(trash);
+
+        if(post.getIsFirstPost() == 1) {
+            throwTrashcan(wpForoTopicsRepo.findById((long) post.getTopicId()).get());
+        }
+
+
+        wpForoPostRepo.deleteById((long) post.getPostId());
+    }
+
+    private void throwTrashcan(WPWPForoTopics topic) {
+        WPWPForoTopicsTrash trash = new WPWPForoTopicsTrash();
+        trash.setAnswers(topic.getAnswers());
+        trash.setClosed(topic.getClosed());
+        trash.setHasAttach(topic.getHasAttach());
+        trash.setFirstPostId(topic.getFirstPostId());
+        trash.setMetaDesc(topic.getMetaDesc());
+        trash.setLastPost(topic.getLastPost());
+        trash.setMetaKey(topic.getMetaKey());
+        trash.setPrefix(topic.getPrefix());
+        trash.setTopicId(topic.getTopicId());
+        trash.setForumId(topic.getForumId());
+        trash.setSlug(topic.getSlug());
+        trash.setPosts(topic.getPosts());
+        trash.setViews(topic.getViews());
+        trash.setVotes(topic.getVotes());
+        trash.setUserId(topic.getUserId());
+        trash.setTitle(topic.getTitle());
+        trash.setType(topic.getType());
+        trash.setStatus(topic.getStatus());
+        trash.setSolved(topic.getSolved());
+        trash.setName(topic.getName());
+        trash.setModified(topic.getModified());
+        trash.setIsPrivate(topic.getIsPrivate());
+        trash.setEmail(topic.getEmail());
+        trash.setCreated(topic.getCreated());
+        trash.setTags(topic.getTags());
+
+        wpTopicTrashRepo.save(trash);
+        wpForoTopicsRepo.delete(topic);
+    }
+
     @PostMapping("/setStatusById")
     public boolean setStatus(int id, int status, int userId) {
-        //ToDo Admin Check
-        boolean isAdmin = isAdmin(userId);
         
         if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
             WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();

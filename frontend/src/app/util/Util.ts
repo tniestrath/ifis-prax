@@ -148,6 +148,18 @@ export default class Util {
     return this.getColor("plan", plan);
   }
 
+  static getColorByThreshold(value : number, threshold : number){
+    let color = DashColors.BLACK;
+      if (value > threshold){
+        color = DashColors.RED;
+      } if (value <= threshold){
+        color = DashColors.ORANGE;
+      } if (value <= 0){
+        color = DashColors.GREEN;
+      }
+      return color;
+  }
+
   static getLevenshteinDistance(s1 : string, s2 : string) : number {
     var array = new Array(s1.length + 1);
     for (var i = 0; i < s1.length + 1; i++)
@@ -178,6 +190,9 @@ export default class Util {
 export enum DashColors {
   GREEN = "rgb(134,218,118)",
   OK = "rgb(134,218,118)",
+
+  ORANGE = "rgb(218,134,118)",
+  MEDIUM = "rgb(218,134,118)",
 
   RED = "rgb(148,28,62)",
   BLOG = "rgb(148,28,62)",

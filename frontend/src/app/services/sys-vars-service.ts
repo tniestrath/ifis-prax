@@ -7,6 +7,7 @@ import {Newsletter} from "../component/newsletter/Newsletter";
 import {Tag} from "../component/tag/Tag";
 import {ForumPost} from "../component/forum/forum-moderation-list/ForumPost";
 import {Dialog} from "../util/Dialog";
+import {ForumStat} from "../component/forum/forum-stats/forum-stats.component";
 
 export class PAGE {
   id: number = 0;
@@ -51,6 +52,7 @@ export class SysVars {
   public static SELECTED_SEARCH : EventEmitter<{item: DbObject, operation: string}> = new EventEmitter<{item: DbObject; operation: string}>();
 
   public static SELECTED_FORUM_POST : EventEmitter<ForumPost> = new EventEmitter<ForumPost>();
+  public static SELECTED_FORUM_FILTER : EventEmitter<ForumStat> = new EventEmitter<ForumStat>();
 
   public static IS_POPUP : boolean = false;
 

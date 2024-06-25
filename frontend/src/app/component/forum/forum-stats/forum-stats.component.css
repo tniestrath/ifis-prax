@@ -10,10 +10,19 @@
 .forum-stat{
   display: flex;
   width: 100%;
-  max-height: 33%;
+  height: 63%;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  font-size: .9em;
+}
+.forum-stat-forum{
+  height: 10%;
+  font-size: 1em;
+}
+.forum-stat-cat{
+  height: 27%;
+  font-size: 1em;
 }
 .forum-stat-title{
   width: fit-content;
@@ -23,9 +32,19 @@
 }
 .forum-stat-data{
   width: 100%;
-  font-size: 1em;
   max-height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: clip;
+}
+.last-child{
+  border-bottom: 1px solid #80808000;
+}
+.forum-stat-data-item{
+  border: 1px solid #00000000;
+  border-bottom: 1px solid #808080;
+}
+.forum-stat-data-item:hover{
+  border: 1px solid black;
+  border-radius: 5px;
 }
 

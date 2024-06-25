@@ -8,6 +8,8 @@ import {
   ForumModerationListItemComponent
 } from "../forum-moderation-list/forum-moderation-list-item/forum-moderation-list-item.component";
 import {ForumPost} from "../forum-moderation-list/ForumPost";
+import {ForumStat} from "../forum-stats/forum-stats.component";
+import {filter} from "rxjs";
 
 
 @Component({
@@ -21,6 +23,8 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
   @ViewChild(ForumModerationDisplayComponent, {static : true}) display!: ForumModerationDisplayComponent;
 
   listenerToggle: boolean = true;
+
+  selectedFilter : ForumStat = new ForumStat("", 0,0,0,0);
 
   private evListener = (ev: KeyboardEvent) => {
     if (ev.ctrlKey && this.listenerToggle){
@@ -86,9 +90,11 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       this.display.resetEditButton();
     });
 
-    this.list.onFilterButtonClick = () => {
-
-    };
+    SysVars.SELECTED_FORUM_FILTER.subscribe(filter => {
+      //TODO: REPLACE NAME WITH SEARCH? OR FIND OTHER SOLUTION
+      this.selectedFilter = filter;
+      this.list.onModeratedCheckboxChange(this.list.isModeratedChecked());
+    })
 
     this.list.onModeratedCheckboxChange = (checked : boolean) => {
       if(this.display.data){
@@ -96,7 +102,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
         this.api.unlockForumPost(this.display.data.id);
       }
       if (checked){
-        this.list.reload(this.api.getModeratedForumPosts().then(data  =>{
+        this.list.reload(this.api.getModeratedForumPostsByFilter(this.selectedFilter.forumId, this.selectedFilter.catId, this.selectedFilter.topicId, "").then(data  =>{
           this.bulkDisplayDataMapping(data);
           this.display.data = data.splice(0, 1)[0];
           if (this.display.data.isLocked){
@@ -116,7 +122,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
           return data;
         }), ForumModerationListItemComponent);
       } else {
-        this.list.reload(this.api.getUnmoderatedForumPosts().then(data  =>{
+        this.list.reload(this.api.getUnmoderatedForumPostsByFilter(this.selectedFilter.forumId, this.selectedFilter.catId, this.selectedFilter.topicId, "").then(data  =>{
           this.bulkDisplayDataMapping(data);
           this.display.data = data.splice(0, 1)[0];
           if (this.display.data.isLocked){
@@ -138,7 +144,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       }
       SysVars.REMOVE_DIALOG.call(this);
     }
-    this.list.load(this.api.getUnmoderatedForumPosts().then(data  =>{
+    this.list.load(this.api.getUnmoderatedForumPostsByFilter(this.selectedFilter.forumId, this.selectedFilter.catId, this.selectedFilter.topicId, "").then(data  =>{
       this.bulkDisplayDataMapping(data);
       this.display.data = data.splice(0, 1)[0];
       if (this.display.data.isLocked){

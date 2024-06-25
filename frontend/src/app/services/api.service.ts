@@ -140,12 +140,13 @@ export enum apiUrl {
   SEARCH_USER_FLIP = "/search-stats/flipAnbieterSearch?search=SEARCH",
 
   GET_FORUM_UNMODERATED_POSTS = "/forum/getAllUnmoderated",
+  GET_FORUM_UNMODERATED_POSTS_BY_FILTER = "/forum/getUnmoderatedWithFilter?userId=USERID&filterForum=FORUM&filterCat=CAT&filterTopic=TOPIC&search=SEARCH",
   GET_FORUM_MODERATED_POSTS = "/forum/getAllModerated",
+  GET_FORUM_MODERATED_POSTS_BY_FILTER = "/forum/getModeratedWithFilter?userId=USERID&filterForum=FORUM&filterCat=CAT&filterTopic=TOPIC&search=SEARCH",
   GET_FORUM_POST = "/forum/getPostById?id=ID",
   GET_FORUM_POST_LINKS = "/forum/getLinks?id=ID",
   GET_FORUM_BAD_WORDS = "/forum/getAllBadWords",
   GET_FORUM_STATS = "/forum/getModCounts?userId=USERID",
-  SET_FORUM_FILTER = "/forum/setFilter",
   FORUM_IS_LOCKED_POST = "/forum/isLocked?postId=POSTID&userId=USERID",
   FORUM_UNLOCK_POST = "/forum/unlock?postId=POSTID&userId=USERID",
   FORUM_UNLOCK_ALL_BY_USER = "/forum/unlockAll?userId=USERID",
@@ -815,9 +816,17 @@ export class ApiService {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_UNMODERATED_POSTS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_UNMODERATED_POSTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
+  async getUnmoderatedForumPostsByFilter(forum : number, cat : number, topic : number, search : string) : Promise<ForumPost[]> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_UNMODERATED_POSTS_BY_FILTER).replace("USERID", SysVars.ACCOUNT.id).replace("FORUM", String(forum)).replace("CAT", String(cat)).replace("TOPIC", String(topic)).replace("SEARCH", search)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_UNMODERATED_POSTS_BY_FILTER)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
   async getModeratedForumPosts() : Promise<ForumPost[]> {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_MODERATED_POSTS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_MODERATED_POSTS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getModeratedForumPostsByFilter(forum : number, cat : number, topic : number, search : string) : Promise<ForumPost[]> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.GET_FORUM_MODERATED_POSTS_BY_FILTER).replace("USERID", SysVars.ACCOUNT.id).replace("FORUM", String(forum)).replace("CAT", String(cat)).replace("TOPIC", String(topic)).replace("SEARCH", search)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_FORUM_MODERATED_POSTS_BY_FILTER)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async deleteForumPost(id : string) : Promise<boolean> {
     this.setLoading();

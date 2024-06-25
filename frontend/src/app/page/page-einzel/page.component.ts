@@ -191,9 +191,9 @@ export class PageComponent implements OnInit {
   }
   getForumPageCards(){
     return [
-      {type: ForumStatsComponent, row: 1, col: 1, height: 2, width: 1},
+      {type: ForumStatsComponent, row: 1, col: 1, height: 4, width: 1},
       {type: ForumModeratorComponent, row: 1, col: 2, height: 2, width: 5},
-      {type: ForumProfanityFilterAdderComponent, row: 3, col: 1, height: 2, width: 1},
+      {type: ForumProfanityFilterAdderComponent, row: 3, col: 6, height: 2, width: 1},
     ]
   }
 

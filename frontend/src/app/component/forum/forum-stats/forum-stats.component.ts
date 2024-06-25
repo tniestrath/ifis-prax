@@ -1,6 +1,7 @@
 import {Component, NO_ERRORS_SCHEMA, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import Util, {DashColors} from "../../../util/Util";
+import {SysVars} from "../../../services/sys-vars-service";
 
 export class ForumStats{
   public forums : ForumStat[];
@@ -45,6 +46,12 @@ export class ForumStatsComponent extends DashBaseComponent implements OnInit{
       this.cdr.detectChanges();
     });
   }
+
+  selectStat(stat : ForumStat){
+    SysVars.SELECTED_FORUM_FILTER.next(stat);
+  }
+
+
 
   protected readonly Util = Util;
   protected readonly DashColors = DashColors;

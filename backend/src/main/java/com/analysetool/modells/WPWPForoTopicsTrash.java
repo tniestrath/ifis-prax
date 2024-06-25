@@ -1,7 +1,5 @@
 package com.analysetool.modells;
 
-package com.analysetool.modells;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

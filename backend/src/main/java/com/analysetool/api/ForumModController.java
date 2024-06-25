@@ -64,16 +64,10 @@ public class ForumModController {
 
 
     /*
-     * 0=ifis-admin
-     * 2=Backend admin (kappels?)
-     * 20= wir
-     * 27=pohlmann
-     *
+     * admin = admin
      * */
     private boolean isAdmin(int userId){
-
-    return (userId == 0 || userId == 2 || userId ==  20 || userId == 27);
-
+        return userController.getType(userId).equals("admin");
     }
 
     @GetMapping("/getUnmoderatedWithFilter")

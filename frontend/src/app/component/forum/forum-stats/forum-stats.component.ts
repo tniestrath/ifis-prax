@@ -41,6 +41,9 @@ export class ForumStatsComponent extends DashBaseComponent implements OnInit{
   data : ForumStats = new ForumStats();
 
   ngOnInit(): void {
+    this.setToolTip("Hier können die unmoderierten Beiträge nach Teilbereich eingesehen und ausgewählt werden. <br>" +
+      "Der Effekt der Auswauhl ist in der Liste der Beiträge rechts zu sehen. <br><br>" +
+      "Eine Auswahl wird mittels eines Klicks getroffen. Teilbereiche ohne unmoderierte Beiträge stehen nicht zur Auswahl.");
     this.api.getForumStats().then(res => {
       this.data = res;
       this.cdr.detectChanges();

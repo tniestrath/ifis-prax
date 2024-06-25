@@ -360,6 +360,7 @@ public class ForumModController {
         trash.setBody(post.getBody());
         trash.setIsFirstPost(post.getIsFirstPost());
         trash.setVotes(post.getVotes());
+        trash.setEmail(post.getEmail());
         wpTrashRepo.save(trash);
 
         if(post.getIsFirstPost() == 1) {
@@ -816,21 +817,6 @@ public class ForumModController {
         obj.put("cats", catList);
 
         return obj.toString();
-    }
-
-
-    @GetMapping("/getForumsByUser")
-    public String getForumsByUser(int userId) {
-        JSONArray array = new JSONArray();
-        //ToDo
-
-        if(userController.getType(userId).equals("admin")) {
-            for(WPWPForoForum forum : wpForoForumRepo.getAllNotCat(userId)) {
-                array.put(forum.getForumId());
-            }
-        }
-
-        return array.toString();
     }
 
 }

@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -367,6 +368,16 @@ public class ForumModController {
         trash.setPostId(post.getPostId());
         wpTrashRepo.save(trash);
 
+        WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).get();
+        topic.setPosts(topic.getPosts() - 1);
+        topic.setLastPost(wpForoPostRepo.getPostInTopic(topic.getTopicId(), PageRequest.of(1, 1)).getPostId());
+        wpForoTopicsRepo.save(topic);
+
+
+        WPWPForoForum forum = wpForoForumRepo.findById((long) post.getForumId()).get();
+        forum.setPosts(forum.getPosts() - 1);
+        wpForoForumRepo.save(forum);
+
         if(post.getIsFirstPost() == 1) {
             throwTrashcan(wpForoTopicsRepo.findById((long) post.getTopicId()).get());
         }
@@ -402,6 +413,11 @@ public class ForumModController {
         trash.setEmail(topic.getEmail());
         trash.setCreated(topic.getCreated());
         trash.setTags(topic.getTags());
+
+
+        WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).get();
+        forum.setTopics(forum.getPosts() - 1);
+        wpForoForumRepo.save(forum);
 
         wpTopicTrashRepo.save(trash);
         wpForoTopicsRepo.delete(topic);

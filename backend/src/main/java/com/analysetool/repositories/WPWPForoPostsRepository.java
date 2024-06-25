@@ -1,6 +1,7 @@
 package com.analysetool.repositories;
 
 import com.analysetool.modells.WPWPForoPosts;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -47,5 +48,8 @@ public interface WPWPForoPostsRepository extends JpaRepository<WPWPForoPosts, Lo
 
     @Query("SELECT w FROM WPWPForoPosts w WHERE w.status = 0 AND w.isPrivate = 0 AND w.forumId IN :filterForum AND w.topicId=:forumTopic  AND (w.title LIKE %:search% OR w.body LIKE %:search% OR w.name LIKE %:search%)")
     List<WPWPForoPosts> getModeratedWithFilters3(List<Integer> filterForum, int forumTopic, String search);
+
+    @Query("SELECT w FROM WPWPForoPosts w WHERE w.topicId=:topicId ORDER BY w.postId DESC")
+    WPWPForoPosts getPostInTopic(int topicId, Pageable pageable);
 
 }

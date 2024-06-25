@@ -200,6 +200,33 @@ public class ForumModController {
         return json;
     }
 
+    /**
+     * Fetches a JSON representation of a post's data, edited towards moderation purpose
+     * @param post the post to fetch for.
+     * @param needsRating whether this post needs a content-rating.
+     * @return a JSONObject.
+     * @throws JSONException .
+     */
+    private JSONObject getSinglePostData(WPWPForoTrashcan post, boolean needsRating) throws JSONException {
+        JSONObject json = new JSONObject();
+
+        String postBody = post.getBody();
+
+        json.put("forum", wpForoForumRepo.findById((long) post.getForumId()).isPresent() ? wpForoForumRepo.findById((long) post.getForumId()).get().getTitle() : "none");
+        json.put("topic", wpForoTopicsRepo.findById((long) post.getTopicId()).isPresent() ? wpForoTopicsRepo.findById((long) post.getTopicId()).get().getTitle() : "none");
+        json.put("id", post.getPostId());
+        json.put("date", post.getCreated().toString());
+        json.put("email", post.getEmail());
+
+        json.put("isLocked", isLocked(post.getPostId()));
+        json.put("body", post.getBody());
+        json.put("title", post.getTitle());
+        json.put("userName", post.getName());
+        json.put("isQuestion", post.getIsFirstPost());
+
+        return json;
+    }
+
     private List<Integer> getAllForumsWithChildrenForUser(int userId) {
 
         if(isAdmin(userId)) {
@@ -340,7 +367,7 @@ public class ForumModController {
         }
 
 
-        wpForoPostRepo.deleteById((long) post.getPostId());
+        wpForoPostRepo.delete(post);
     }
 
     private void throwTrashcan(WPWPForoTopics topic) {
@@ -373,6 +400,82 @@ public class ForumModController {
 
         wpTopicTrashRepo.save(trash);
         wpForoTopicsRepo.delete(topic);
+    }
+
+
+    private void restore(WPWPForoTrashcan trash) {
+        WPWPForoPosts post = new WPWPForoPosts();
+        post.setCreated(trash.getCreated());
+        post.setForumId(trash.getForumId());
+        post.setIsAnswer(trash.getIsAnswer());
+        post.setLikes(trash.getLikes());
+        post.setModified(trash.getModified());
+        post.setRoot(trash.getRoot());
+        post.setIsPrivate(trash.getIsPrivate());
+        post.setParentId(trash.getParentId());
+        post.setStatus(trash.getStatus());
+        post.setBody(trash.getBody());
+        post.setIsFirstPost(trash.getIsFirstPost());
+        post.setVotes(trash.getVotes());
+        wpForoPostRepo.save(post);
+
+        if(trash.getIsFirstPost() == 1) {
+            restore(wpTopicTrashRepo.findById((long) post.getTopicId()).get());
+        }
+
+        wpTrashRepo.delete(trash);
+    }
+
+    private void restore(WPWPForoTopicsTrash trash) {
+        WPWPForoTopics topic = new WPWPForoTopics();
+        topic.setAnswers(trash.getAnswers());
+        topic.setClosed(trash.getClosed());
+        topic.setHasAttach(trash.getHasAttach());
+        topic.setFirstPostId(trash.getFirstPostId());
+        topic.setMetaDesc(trash.getMetaDesc());
+        topic.setLastPost(trash.getLastPost());
+        topic.setMetaKey(trash.getMetaKey());
+        topic.setPrefix(trash.getPrefix());
+        topic.setTopicId(trash.getTopicId());
+        topic.setForumId(trash.getForumId());
+        topic.setSlug(trash.getSlug());
+        topic.setPosts(trash.getPosts());
+        topic.setViews(trash.getViews());
+        topic.setVotes(trash.getVotes());
+        topic.setUserId(trash.getUserId());
+        topic.setTitle(trash.getTitle());
+        topic.setType(trash.getType());
+        topic.setStatus(trash.getStatus());
+        topic.setSolved(trash.getSolved());
+        topic.setName(trash.getName());
+        topic.setModified(trash.getModified());
+        topic.setIsPrivate(trash.getIsPrivate());
+        topic.setEmail(trash.getEmail());
+        topic.setCreated(trash.getCreated());
+        topic.setTags(trash.getTags());
+
+        wpForoTopicsRepo.save(topic);
+        wpTopicTrashRepo.delete(trash);
+    }
+
+    @GetMapping("/getAllTrashed")
+    public String getAllTrashed() throws JSONException {
+        JSONArray array = new JSONArray();
+        for (WPWPForoTrashcan post : wpTrashRepo.findAll()) {
+            array.put(getSinglePostData(post, true));
+        }
+
+        return array.toString();
+    }
+
+    @GetMapping("/restore")
+    public boolean restoreById(int postId) {
+        try {
+            restore(wpTrashRepo.findById((long) postId).get());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @PostMapping("/setStatusById")
@@ -680,7 +783,7 @@ public class ForumModController {
                 JSONObject topicJson = new JSONObject();
                 topicJson.put("name", topic.getTitle());
                 topicJson.put("topicId", topic.getTopicId());
-                topicJson.put("forumId", 0);
+                topicJson.put("forumId", forum.getForumId());
                 topicJson.put("catId", 0);
                 topicJson.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
                 topicList.put(topicJson);
@@ -701,7 +804,7 @@ public class ForumModController {
                     topicJson.put("name", topic.getTitle());
                     topicJson.put("topicId", topic.getTopicId());
                     topicJson.put("forumId", forum.getForumId());
-                    topicJson.put("catId", cat.getForumId());
+                    topicJson.put("catId", 0);
                     topicJson.put("count", wpForoPostRepo.getCountUnmoderatedInTopic(topic.getTopicId()));
                     topicList.put(topicJson);
                 }

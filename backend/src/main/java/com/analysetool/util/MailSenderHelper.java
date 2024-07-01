@@ -1,6 +1,5 @@
 package com.analysetool.util;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -9,15 +8,15 @@ import org.springframework.stereotype.Component;
 import java.util.Properties;
 
 @Component
-public class MailSender {
+public class MailSenderHelper {
 
-    private static MailSender INSTANCE;
+    private static MailSenderHelper INSTANCE;
 
-    private MailSender(){}
+    private MailSenderHelper(){}
 
-    public static MailSender getInstance() {
+    public static MailSenderHelper getInstance() {
         if(INSTANCE == null) {
-            INSTANCE = new MailSender();
+            INSTANCE = new MailSenderHelper();
         }
         return INSTANCE;
     }
@@ -50,7 +49,6 @@ public class MailSender {
         return mailSender;
     }
 
-    @Bean
     public SimpleMailMessage templateSimpleMessage() {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setText(

@@ -1,6 +1,6 @@
 package com.analysetool.api;
 
-import com.analysetool.util.MailSender;
+import com.analysetool.util.MailSenderHelper;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +14,7 @@ public class EmailSenderController {
 
     @GetMapping("/sendMailTo")
     public boolean sendMailTo(String email) {
-        MailSender.getInstance().sendSimpleMessage(email, "hallo ich bins", "eins test");
+        MailSenderHelper.getInstance().sendSimpleMessage(email, "hallo ich bins", "eins test");
         return true;
     }
 

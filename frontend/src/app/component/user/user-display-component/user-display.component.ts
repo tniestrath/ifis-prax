@@ -13,7 +13,13 @@ export class UserDisplayComponent extends DashBaseComponent implements OnInit{
   user : User = new User();
 
   ngOnInit(): void {
-    this.setToolTip("", 1,false);
+    this.setToolTip("Hier ist eine kurzzusammenfassung des Profils zu sehen.<br><br>" +
+      "<img src='assets/profile_views.png' style='height: 15px; filter:invert(1)'> Profilaufrufe<br>" +
+      "<img src='assets/pencil-solid.png' style='height: 15px; filter:invert(1)'> Inhaltsaufrufe<br>" +
+      "<img src='assets/24-hours_x25.png' style='height: 15px; filter:invert(1)'> Durchschn. Aufrufe pro Tag<br>" +
+      "<img src='assets/trend_up.png' style='height: 15px; filter:invert(1)'> Tendenz sinkend / steigend : Aufrufe pro Tag<br>" +
+      "<img src='assets/target.png' style='height: 15px; filter:invert(1)'> Weiterleitungen zur eigenen Homepage<br><br>" +
+      "#1 (#2) -> Plazierung unter allen Anbietern (unter Anbietern der gleichen Abo-Stufe)", 2);
     this.api.getUserAllStatsById(SysVars.USER_ID).then(res => {
       this.user = res;
     });

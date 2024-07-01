@@ -34,16 +34,17 @@ public class MailSenderHelper {
 
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(465);
+        mailSender.setHost("smtp.internet-sicherheit.de");
+        mailSender.setPort(587);
 
-        mailSender.setUsername("statistiken.itsicherheit@gmail.com");
-        mailSender.setPassword("DeineMutter69!");
+        mailSender.setUsername("albers@internet-sicherheit.de");
+        mailSender.setPassword("M0qkSTejJrmLViSvZpl5Pf2JLQ5rbhLf");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.ssl.enable", "true");
         props.put("mail.debug", "true");
 
         return mailSender;

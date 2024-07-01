@@ -441,32 +441,36 @@ public class ForumModController {
         post.setBody(trash.getBody());
         post.setIsFirstPost(trash.getIsFirstPost());
         post.setVotes(trash.getVotes());
-        wpForoPostRepo.save(post);
-
-      /* brauchen wir den shit ?
         post.setPostId(trash.getPostId());
         post.setEmail(trash.getEmail());
         post.setName(trash.getName());
         post.setUserId(trash.getUserId());
         post.setTopicId(trash.getTopicId());
         post.setTitle(trash.getTitle());
-        */
+        wpForoPostRepo.save(post);
+
+
+
         if(trash.getIsFirstPost() == 1) {
             restore(wpTopicTrashRepo.findById((long) post.getTopicId()).get());
         }
 
-           /* dings so ?
-    if (post.getStatus() == 0) {
-        WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).get();
-        topic.setPosts(topic.getPosts() + 1);
-        topic.setLastPost(post.getPostId());
-        wpForoTopicsRepo.save(topic);
 
-        WPWPForoForum forum = wpForoForumRepo.findById((long) post.getForumId()).get();
-        forum.setPosts(forum.getPosts() + 1);
-        wpForoForumRepo.save(forum);
-    }
-    */
+        if (post.getStatus() == 0) {
+            try {
+                WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).get();
+                topic.setPosts(topic.getPosts() + 1);
+                topic.setLastPost(post.getPostId());
+                wpForoTopicsRepo.save(topic);
+
+                WPWPForoForum forum = wpForoForumRepo.findById((long) post.getForumId()).get();
+                forum.setPosts(forum.getPosts() + 1);
+                wpForoForumRepo.save(forum);
+            } catch (Exception e) {
+                System.out.println("SMALL ERROR RESTORING FORUM_POST: " + trash.getPostId());
+            }
+        }
+
 
         wpTrashRepo.delete(trash);
     }
@@ -501,13 +505,13 @@ public class ForumModController {
 
         wpForoTopicsRepo.save(topic);
 
-            /* so ?
-    if (topic.getStatus() == 0) {
-        WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).get();
-        forum.setTopics(forum.getTopics() + 1);
-        wpForoForumRepo.save(forum);
-    }
-    */
+
+        if (topic.getStatus() == 0) {
+            WPWPForoForum forum = wpForoForumRepo.findById((long) topic.getForumId()).get();
+            forum.setTopics(forum.getTopics() + 1);
+            wpForoForumRepo.save(forum);
+        }
+
 
         wpTopicTrashRepo.delete(trash);
     }

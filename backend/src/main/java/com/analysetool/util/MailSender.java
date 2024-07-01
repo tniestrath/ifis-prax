@@ -1,6 +1,5 @@
 package com.analysetool.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,10 +10,6 @@ import java.util.Properties;
 
 @Component
 public class MailSender {
-
-
-    @Autowired
-    private JavaMailSender emailSender;
 
     private static MailSender INSTANCE;
 

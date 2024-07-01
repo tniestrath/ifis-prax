@@ -585,7 +585,6 @@ public class ForumModController {
      * @param page the page number
      * @param size the size of the page
      * @return a JSON string of ranked forum discussions
-     * @throws JSONException if a JSON error occurs
      */
     @GetMapping("/rankedDiscussions")
     public String getRankedDiscussions(@RequestParam int page, @RequestParam int size)  {

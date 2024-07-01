@@ -34,7 +34,7 @@ public class MailSenderHelper {
 
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
+        mailSender.setHost("smtp.internet-sicherheit.de");
         mailSender.setPort(587);
 
         mailSender.setUsername("statistiken.itsicherheit@gmail.com");

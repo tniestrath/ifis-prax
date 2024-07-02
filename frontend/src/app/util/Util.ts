@@ -115,7 +115,7 @@ export default class Util {
           case "registriert":
             return DashColors.REGISTERED;
           default:
-            return DashColors.PLAN_WITHOUT;
+            return DashColors.GREY;
         }
       case "post":
         switch (type) {
@@ -220,7 +220,7 @@ export enum DashColors {
 
   BLACK = "rgb(0,0,0)",
   PODCAST = "rgb(0,0,0)",
-  PLAN_SPONSOR = "rgb(0,0,0)",
+  PLAN_WITHOUT = "rgb(0,0,0)",
 
   BLACK_50 = "rgba(0,0,0, .5)",
 
@@ -237,7 +237,6 @@ export enum DashColors {
   FOOTER = "rgb(34,130,106)",
 
   GREY = "rgb(200,200,200)",
-  PLAN_WITHOUT = "rgb(200,200,200)",
   BACKGROUND = "rgb(200,200,200)",
 
   GREY_50 = "rgba(200,200,200, .5)",

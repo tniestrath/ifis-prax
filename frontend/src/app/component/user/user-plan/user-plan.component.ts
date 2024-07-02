@@ -1,18 +1,15 @@
 import {
   Component,
-  ComponentFactoryResolver,
   Directive,
-  EventEmitter,
   OnInit,
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
+import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import Util, {DashColors} from "../../../util/Util";
 import {UserPlanChip} from "../user";
-import {SelectableDirective} from "../../../page/selector/selectable.directive";
 
 
 @Directive({
@@ -126,16 +123,15 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
   appendToList(list : any, array: string[]) {
     for (let username of array) {
+      const componentRef = list.viewContainerRef.createComponent(UserPlanChip);
       if (username.startsWith("+")){
-        const componentRef = list.viewContainerRef.createComponent(UserPlanChip);
-        componentRef.instance.user = username.substring(1);
-        componentRef.instance.plan = "basic";
+        componentRef.instance.user = username.substring(1, username.indexOf("<&>"));
+        componentRef.instance.plan = username.substring(username.indexOf("<&>"));
         componentRef.location.nativeElement.setAttribute("style", "margin: 0 1px 0 0");
       }
       else if (username.startsWith("-")){
-        const componentRef = list.viewContainerRef.createComponent(UserPlanChip);
-        componentRef.instance.user = username.substring(1);
-        componentRef.instance.plan = "plus";
+        componentRef.instance.user = username.substring(1, username.indexOf("<&>"));
+        componentRef.instance.plan = username.substring(username.indexOf("<&>"));
         componentRef.location.nativeElement.setAttribute("style", "margin: 0 1px 0 0");
       }
     }

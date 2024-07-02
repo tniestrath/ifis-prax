@@ -43,16 +43,19 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
       }
       this.pagesComplete = value.length <= 0;
       this.selectorItemsLoaded.next(this.selectorItems);
+      if (value.length <= 0) return;
     });
   }
   reload(response : Promise<T[]>, component : Type<C>): void {
     this.selectorItems = [];
     response.then((value : T[]) => {
+
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(component, valueElement));
       }
       this.pagesComplete = value.length <= 0;
       this.selectorItemsLoaded.next(this.selectorItems);
+      if (value.length <= 0) return;
     });
   }
 

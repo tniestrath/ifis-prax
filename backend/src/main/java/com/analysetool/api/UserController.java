@@ -1280,14 +1280,14 @@ public class UserController {
 
         switch(preSign) {
             case '&' -> {
-                if(newMembership != null) newMembership.add("+" + user.getDisplayName());
-                if(oldMembership != null) oldMembership.add("-" + user.getDisplayName());
+                if(newMembership != null) newMembership.add("+" + user.getDisplayName() + "<&>" + getType(Math.toIntExact(user.getId())));
+                if(oldMembership != null) oldMembership.add("-" + user.getDisplayName() + "<&>" + getType(Math.toIntExact(user.getId())));
             }
             case '+' -> {
-                if(newMembership != null) newMembership.add("+" + user.getDisplayName());
+                if(newMembership != null) newMembership.add("+" + user.getDisplayName() + "<&>" + getType(Math.toIntExact(user.getId())));
             }
             case '-' -> {
-                if(oldMembership != null) oldMembership.add("-" + user.getDisplayName());
+                if(oldMembership != null) oldMembership.add("-" + user.getDisplayName() + "<&>" + "DELETED");
             }
         }
 

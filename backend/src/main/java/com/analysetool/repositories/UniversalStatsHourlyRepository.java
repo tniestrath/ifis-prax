@@ -33,4 +33,25 @@ public interface UniversalStatsHourlyRepository extends JpaRepository<UniversalS
     @Query("DELETE FROM UniversalStatsHourly u WHERE u.id > 0")
     void truncate();
 
+    @Query("SELECT AVG(u.serverErrors) FROM UniversalStatsHourly u")
+    double getAverageServerErrors();
+
+    @Query("SELECT AVG(u.internalClicks) FROM UniversalStatsHourly u")
+    double getAverageInternalClicks();
+
+    @Query("SELECT SUM(u.serverErrors) FROM UniversalStatsHourly u")
+    long getTotalServerErrors();
+
+    @Query("SELECT SUM(u.internalClicks) FROM UniversalStatsHourly u")
+    long getTotalInternalClicks();
+
+    @Query("SELECT u.stunde, SUM(u.serverErrors) as totalErrors FROM UniversalStatsHourly u WHERE u.uniStatId = :uniId GROUP BY u.stunde ORDER BY totalErrors DESC")
+    List<Object[]> getHourlyServerErrorRanking( int uniId);
+
+    @Query("SELECT u.stunde, SUM(u.internalClicks) as totalClicks FROM UniversalStatsHourly u WHERE u.uniStatId = :uniId GROUP BY u.stunde ORDER BY totalClicks DESC")
+    List<Object[]> getHourlyInternalClicksRanking(int uniStatId);
+
+
+
+
 }

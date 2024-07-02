@@ -4,6 +4,7 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Constants;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -915,5 +916,30 @@ public class uniStatController {
 
 
 
+    private String convertObjectArrayToJson(List<Object[]> results, String key1, String key2) {
+        // Konvertiert die Liste von Objekten in ein JSON-String-Format
+        ObjectMapper mapper = new ObjectMapper();
+        List<Map<String, Object>> formattedResults = new ArrayList<>();
 
+        for (Object[] result : results) {
+            Map<String, Object> map = new HashMap<>();
+            map.put(key1, result[0]);
+            map.put(key2, result[1]);
+            formattedResults.add(map);
+        }
+
+        try {
+            return mapper.writeValueAsString(formattedResults);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{}";
+        }
+    }
+
+    @GetMapping("/server-error-ranking")
+    public String getHourlyServerErrorRanking(@RequestParam int uniStatId) {
+        List<Object[]> results = universalStatsHourlyRepo.getHourlyServerErrorRanking(uniStatId);
+        return convertObjectArrayToJson(results, "Stunde", "value");
+    }
+    
 }

@@ -21,7 +21,6 @@ public class AdminCookieEater implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String result = loginController.validateCookie(request);
 
-
         if(request.getRequestURL().toString().contains("0wB4P2mly-xaRmeeDOj0_g")) return true;
         if(request.getRequestURL().toString().contains("api/users/getByLogin")) return true;
         if(request.getRequestURL().toString().contains("/login")) return true;
@@ -40,7 +39,7 @@ public class AdminCookieEater implements HandlerInterceptor {
             }
 
             if(accessLevel.equals("user") && (request.getRequestURL().toString().contains("api/users/") || (request.getRequestURL().toString().contains("posts/")) || (request.getRequestURL().toString().contains("geo/getUserGeo")))) {
-                if(request.getRequestURL().toString().endsWith("=" + userid) || request.getRequestURL().toString().contains("=" + userid+ "&")) {
+                if(request.getParameter("userId").equals(String.valueOf(userid)) || request.getParameter("id").equals(String.valueOf(userid))) {
                     return true;
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -48,8 +47,6 @@ public class AdminCookieEater implements HandlerInterceptor {
                     return false;
                 }
             }
-
-            if(accessLevel.equals("user"))
 
             return accessLevel.equals("mod") && request.getRequestURL().toString().contains("forum");
 

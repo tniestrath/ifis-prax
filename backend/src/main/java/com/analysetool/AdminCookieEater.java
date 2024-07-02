@@ -29,13 +29,27 @@ public class AdminCookieEater implements HandlerInterceptor {
 
 
         if (!result.contains("INVALID") && !result.contains("kaputt")) {
-            String accessLevel = userController.getAccessLevel(new JSONObject(result).getInt("user_id"));
+            int userid = new JSONObject(result).getInt("user_id");
+            String accessLevel = userController.getAccessLevel(userid);
             if (accessLevel.equals("none")) response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             if(accessLevel.equals("admin")) return true;
 
-            if(accessLevel.equals("user") && (request.getRequestURL().toString().contains("/api/users/") || (request.getRequestURL().toString().contains("/posts/bestPost")) || (request.getRequestURL().toString().contains("/geo/getUserGeo")))) {
-                return request.getRequestURL().toString().endsWith("=" + new JSONObject(result).getInt("user_id")) || request.getRequestURL().toString().contains("=" + new JSONObject(result).getInt("user_id") + "&");
+
+            if(accessLevel.equals("user")) {
+                System.out.println(userid);
             }
+
+            if(accessLevel.equals("user") && (request.getRequestURL().toString().contains("api/users/") || (request.getRequestURL().toString().contains("posts/")) || (request.getRequestURL().toString().contains("geo/getUserGeo")))) {
+                if(request.getRequestURL().toString().endsWith("=" + userid) || request.getRequestURL().toString().contains("=" + userid+ "&")) {
+                    return true;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    System.out.println(request.getRequestURL().toString());
+                    return false;
+                }
+            }
+
+            if(accessLevel.equals("user"))
 
             return accessLevel.equals("mod") && request.getRequestURL().toString().contains("forum");
 

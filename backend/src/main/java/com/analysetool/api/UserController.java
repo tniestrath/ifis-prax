@@ -108,7 +108,7 @@ public class UserController {
             return "admin";
         } else if(isModerator(userId)) {
             return "mod";
-        } else if(userId == 357) {
+        } else if(getType((int) userId).equals("premium")) {
             return "user";
         } else {
             return "none";

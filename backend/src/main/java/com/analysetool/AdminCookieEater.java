@@ -38,8 +38,16 @@ public class AdminCookieEater implements HandlerInterceptor {
                 System.out.println(userid);
             }
 
+            boolean userIdMatches = false;
+
+            if(request.getParameter("userId") != null) {
+                userIdMatches = request.getParameter("userId").equals(String.valueOf(userid));
+            } else if(request.getParameter("id") != null) {
+                userIdMatches = request.getParameter("id").equals(String.valueOf(userid));
+            }
+
             if(accessLevel.equals("user") && (request.getRequestURL().toString().contains("api/users/") || (request.getRequestURL().toString().contains("posts/")) || (request.getRequestURL().toString().contains("geo/getUserGeo")))) {
-                if(request.getParameter("userId").equals(String.valueOf(userid)) || request.getParameter("id").equals(String.valueOf(userid))) {
+                if(userIdMatches) {
                     return true;
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

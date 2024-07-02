@@ -936,12 +936,23 @@ public class uniStatController {
         }
     }
 
+    /**
+     * Retrieves the hourly server error ranking for a given universal statistic ID.
+     *
+     * @param uniStatId the universal statistic ID for which the server error ranking is to be retrieved
+     * @return a JSON string containing the hourly server error ranking
+     */
     @GetMapping("/server-error-ranking")
     public String getHourlyServerErrorRanking(@RequestParam int uniStatId) {
         List<Object[]> results = universalStatsHourlyRepo.getHourlyServerErrorRanking(uniStatId);
         return convertObjectArrayToJson(results, "Stunde", "value");
     }
 
+    /**
+     * Retrieves the error rate for the current day.
+     *
+     * @return a JSON string containing the total clicks, total errors, and error rate for the current day
+     */
     @GetMapping("/error-rate-today")
     public String getErrorRateForToday() {
         int uniId = uniRepo.getLatestUniStat().getId();

@@ -70,14 +70,18 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     this.setToolTip("", 0,false);
 
     SysVars.SELECTED_FORUM_POST.subscribe(post => {
-      this.api.unlockForumPost(this.display.data.id);
-      this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.display.data));
-      let index = this.list.selectorItems.findIndex((item: SelectorItem) => {return item.data.id == (post as ForumPost).id});
-      this.display.data = this.list.selectorItems.splice(index, 1)[0].data as ForumPost;
-      this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
-        this.display.isLocked = res;
-        this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
-      })
+      if (post) {
+        this.api.unlockForumPost(this.display.data.id);
+        this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.display.data));
+        let index = this.list.selectorItems.findIndex((item: SelectorItem) => {
+          return item.data.id == (post as ForumPost).id
+        });
+        this.display.data = this.list.selectorItems.splice(index, 1)[0].data as ForumPost;
+        this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
+          this.display.isLocked = res;
+          this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+        })
+      }
       this.cdr.detectChanges();
       this.list.selectorItemsLoaded.next(this.list.selectorItems);
       this.list.g_cdr.detectChanges();
@@ -90,42 +94,57 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     })
 
     this.list.onModeratedCheckboxChange = (checked : boolean) => {
-      if(this.display.data){
+      if(this.display.data.id != ""){
         this.api.unlockForumPost(this.display.data.id);
       }
       if (checked){
         this.list.reload(this.api.getModeratedForumPostsByFilter(this.selectedFilter.forumId, this.selectedFilter.catId, this.selectedFilter.topicId, "").then(data  =>{
-          this.bulkDisplayDataMapping(data);
-          this.display.data = data.splice(0, 1)[0];
-          this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
-            this.display.isLocked = res;
-            this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
-          })
-          this.cdr.detectChanges();
+          if (data.length > 0){
+            this.bulkDisplayDataMapping(data);
+            this.display.data = data.splice(0, 1)[0];
+            this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
+              this.display.isLocked = res;
+              this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+            })
+            this.cdr.detectChanges();
+          }
+          else {
+            this.display.data = new ForumPost()
+          }
           return data;
         }), ForumModerationListItemComponent);
       } else {
         this.list.reload(this.api.getUnmoderatedForumPostsByFilter(this.selectedFilter.forumId, this.selectedFilter.catId, this.selectedFilter.topicId, "").then(data  =>{
-          this.bulkDisplayDataMapping(data);
-          this.display.data = data.splice(0, 1)[0];
-          this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
-            this.display.isLocked = res;
-            this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
-          })
-          this.cdr.detectChanges();
+          if (data.length > 0){
+            this.bulkDisplayDataMapping(data);
+            this.display.data = data.splice(0, 1)[0];
+            this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
+              this.display.isLocked = res;
+              this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+            })
+            this.cdr.detectChanges();
+          }
+          else {
+            this.display.data = new ForumPost()
+          }
           return data;
         }), ForumModerationListItemComponent);
       }
       SysVars.REMOVE_DIALOG.call(this);
     }
     this.list.load(this.api.getUnmoderatedForumPostsByFilter(this.selectedFilter.forumId, this.selectedFilter.catId, this.selectedFilter.topicId, "").then(data  =>{
-      this.bulkDisplayDataMapping(data);
-      this.display.data = data.splice(0, 1)[0];
-      this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
-        this.display.isLocked = res;
-        this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
-      })
-      this.cdr.detectChanges();
+      if (data.length > 0){
+        this.bulkDisplayDataMapping(data);
+        this.display.data = data.splice(0, 1)[0];
+        this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
+          this.display.isLocked = res;
+          this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+        })
+        this.cdr.detectChanges();
+      }
+      else {
+        this.display.data = new ForumPost()
+      }
       return data;
     }), ForumModerationListItemComponent);
 
@@ -134,11 +153,15 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
         if (value){
           this.api.deleteForumPost(this.display.data.id).then(value => {
             if(value){
-              this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
-              this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
-                this.display.isLocked = res;
-                this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
-              })
+              if (this.list.selectorItems.length > 0){
+                this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
+                this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
+                  this.display.isLocked = res;
+                  this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+                })
+              } else {
+                this.display.data = new ForumPost();
+              }
               this.cdr.detectChanges();
               this.list.selectorItemsLoaded.next(this.list.selectorItems);
               this.list.g_cdr.detectChanges();
@@ -159,22 +182,29 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
                 this.display.isLocked = res;
                 this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
               })
-              this.cdr.detectChanges();
-              this.list.selectorItemsLoaded.next(this.list.selectorItems);
-              this.list.g_cdr.detectChanges();
-              this.display.resetEditButton();
+            } else {
+              this.display.data = new ForumPost();
             }
+            this.cdr.detectChanges();
+            this.list.selectorItemsLoaded.next(this.list.selectorItems);
+            this.list.g_cdr.detectChanges();
+            this.display.resetEditButton();
+
           }
         });
     }
     this.display.onStackClick = () => {
       this.api.modifyForumPost(this.modify(), this.list.isModeratedChecked()).then(value => {
-        this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.displayDataMapping(this.display.data)));
-        this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
-        this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
-          this.display.isLocked = res;
-          this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
-        })
+        if (this.list.selectorItems.length > 0){
+          this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.displayDataMapping(this.display.data)));
+          this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
+          this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
+            this.display.isLocked = res;
+            this.api.getForumPostLinksById(this.display.data.id).then(res => this.display.setPostLinks(res));
+          })
+        } else {
+          this.display.data = new ForumPost();
+        }
         this.cdr.detectChanges();
         this.list.selectorItemsLoaded.next(this.list.selectorItems);
         this.list.g_cdr.detectChanges();

@@ -44,6 +44,9 @@ export class HeaderComponent implements AfterViewInit{
       } else if(user.accessLevel == "admin" || user.accountType == "admin") {
         this.navElements = this.navElementsBackup;
         this.selected.next("Übersicht");
+      } else if (user.accessLevel == "user" || user.accountType == "user"){
+        this.navElements = [];
+        SysVars.SELECTED_USER_ID.next(Number(user.id));
       } else return;
       cs.set("user", user.id + ":" + user.displayName);
       SysVars.ACCOUNT = user;

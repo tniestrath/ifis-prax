@@ -25,6 +25,7 @@ public class AdminCookieEater implements HandlerInterceptor {
         if(request.getRequestURL().toString().contains("0wB4P2mly-xaRmeeDOj0_g")) return true;
         if(request.getRequestURL().toString().contains("api/users/getByLogin")) return true;
         if(request.getRequestURL().toString().contains("/login")) return true;
+        if(request.getRequestURL().toString().contains("/ping")) return true;
 
 
         if (!result.contains("INVALID") && !result.contains("kaputt")) {
@@ -32,8 +33,12 @@ public class AdminCookieEater implements HandlerInterceptor {
             if (accessLevel.equals("none")) response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             if(accessLevel.equals("admin")) return true;
 
+            if(accessLevel.equals("user") && (request.getRequestURL().toString().contains("/api/users/") || (request.getRequestURL().toString().contains("/posts/bestPost")) || (request.getRequestURL().toString().contains("/geo/getUserGeo")))) {
+                return request.getRequestURL().toString().endsWith("=" + new JSONObject(result).getInt("user_id")) || request.getRequestURL().toString().contains("=" + new JSONObject(result).getInt("user_id") + "&");
+            }
 
             return accessLevel.equals("mod") && request.getRequestURL().toString().contains("forum");
+
 
         } else {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

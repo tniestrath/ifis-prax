@@ -108,6 +108,8 @@ public class UserController {
             return "admin";
         } else if(isModerator(userId)) {
             return "mod";
+        } else if(userId == 357) {
+            return "user";
         } else {
             return "none";
         }

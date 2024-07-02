@@ -543,6 +543,18 @@ public class ForumModController {
             WPWPForoPosts post = wpForoPostRepo.findById((long) id).get();
             post.setStatus(status);
             wpForoPostRepo.save(post);
+
+            if(post.getIsFirstPost() == 1 && post.getTopicId() != 0) {
+                try {
+                    WPWPForoTopics topic = wpForoTopicsRepo.findById((long) post.getTopicId()).get();
+                    topic.setStatus(status);
+                    wpForoTopicsRepo.save(topic);
+                } catch (Exception e) {
+                    System.out.println("Couldn't set status for topic: " + post.getTopicId());
+                }
+
+            }
+
             unlock(id, userId);
             return true;
         }

@@ -941,5 +941,32 @@ public class uniStatController {
         List<Object[]> results = universalStatsHourlyRepo.getHourlyServerErrorRanking(uniStatId);
         return convertObjectArrayToJson(results, "Stunde", "value");
     }
-    
+
+    @GetMapping("/error-rate-today")
+    public String getErrorRateForToday() {
+        int uniId = uniRepo.getLatestUniStat().getId();
+        List<Object[]> results = universalStatsHourlyRepo.getTotalClicksAndErrorsForDay(uniId);
+        if (results == null || results.isEmpty()) {
+            return "no Data";
+        }
+
+        Object[] result = results.get(0);
+        Long totalClicks = (Long) result[0];
+        Long totalErrors = (Long) result[1];
+
+        double errorRate = totalClicks == 0 ? 0.0 : (double) totalErrors / totalClicks;
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalClicks", totalClicks);
+        response.put("totalErrors", totalErrors);
+        response.put("errorRate", errorRate);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Data processing Error";
+        }
+    }
 }

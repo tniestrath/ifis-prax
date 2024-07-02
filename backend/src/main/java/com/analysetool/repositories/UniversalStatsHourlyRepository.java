@@ -51,7 +51,8 @@ public interface UniversalStatsHourlyRepository extends JpaRepository<UniversalS
     @Query("SELECT u.stunde, SUM(u.internalClicks) as totalClicks FROM UniversalStatsHourly u WHERE u.uniStatId = :uniId GROUP BY u.stunde ORDER BY totalClicks DESC")
     List<Object[]> getHourlyInternalClicksRanking(int uniStatId);
 
-
+    @Query("SELECT SUM(u.totalClicks), SUM(u.serverErrors) FROM UniversalStatsHourly u WHERE u.uniStatId = :uniStatId")
+    List<Object[]> getTotalClicksAndErrorsForDay(int uniStatId);
 
 
 }

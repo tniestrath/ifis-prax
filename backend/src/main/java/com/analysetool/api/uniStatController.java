@@ -4,6 +4,7 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Constants;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -915,5 +916,81 @@ public class uniStatController {
 
 
 
+    private String convertObjectArrayToJson(List<Object[]> results, String key1, String key2) {
+        // Konvertiert die Liste von Objekten in ein JSON-String-Format
+        ObjectMapper mapper = new ObjectMapper();
+        List<Map<String, Object>> formattedResults = new ArrayList<>();
 
+        for (Object[] result : results) {
+            Map<String, Object> map = new HashMap<>();
+            map.put(key1, result[0]);
+            map.put(key2, result[1]);
+            formattedResults.add(map);
+        }
+
+        try {
+            return mapper.writeValueAsString(formattedResults);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{}";
+        }
+    }
+
+    /**
+     * Retrieves the hourly server error ranking for a given universal statistic ID.
+     *
+     * @param uniStatId the universal statistic ID for which the server error ranking is to be retrieved
+     * @return a JSON string containing the hourly server error ranking
+     */
+    @GetMapping("/server-error-ranking")
+    public String getHourlyServerErrorRanking(@RequestParam int uniStatId) {
+        List<Object[]> results = universalStatsHourlyRepo.getHourlyServerErrorRanking(uniStatId);
+        return convertObjectArrayToJson(results, "Stunde", "value");
+    }
+
+    /**
+     * Retrieves the hourly server error ranking for today.
+     *
+     * @param uniStatId the universal statistic ID for which the server error ranking is to be retrieved
+     * @return a JSON string containing the hourly server error ranking
+     */
+    @GetMapping("/server-error-ranking-today")
+    public String getHourlyServerErrorRankingToday() {
+        int uniId = uniRepo.getLatestUniStat().getId();
+        List<Object[]> results = universalStatsHourlyRepo.getHourlyServerErrorRanking(uniId);
+        return convertObjectArrayToJson(results, "Stunde", "value");
+    }
+
+    /**
+     * Retrieves the error rate for the current day.
+     *
+     * @return a JSON string containing the total clicks, total errors, and error rate for the current day
+     */
+    @GetMapping("/error-rate-today")
+    public String getErrorRateForToday() {
+        int uniId = uniRepo.getLatestUniStat().getId();
+        List<Object[]> results = universalStatsHourlyRepo.getTotalClicksAndErrorsForDay(uniId);
+        if (results == null || results.isEmpty()) {
+            return "no Data";
+        }
+
+        Object[] result = results.get(0);
+        Long totalClicks = (Long) result[0];
+        Long totalErrors = (Long) result[1];
+
+        double errorRate = totalClicks == 0 ? 0.0 : (double) totalErrors / totalClicks;
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalClicks", totalClicks);
+        response.put("totalErrors", totalErrors);
+        response.put("errorRate", errorRate);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Data processing Error";
+        }
+    }
 }

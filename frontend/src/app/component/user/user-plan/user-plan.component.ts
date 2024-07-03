@@ -60,7 +60,7 @@ export class PremiumListDirective {
 })
 export class UserPlanComponent extends DashBaseComponent implements OnInit{
 
-  colors : string[] = [DashColors.GREY, DashColors.BLUE, DashColors.DARK_BLUE, DashColors.RED, DashColors.DARK_RED, DashColors.BLACK];
+  colors : string[] = [DashColors.PLAN_WITHOUT, DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM];
   chart_total : number = 0;
   prev_total : number = 0;
   prev_total_text : any;
@@ -126,12 +126,12 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
       const componentRef = list.viewContainerRef.createComponent(UserPlanChip);
       if (username.startsWith("+")){
         componentRef.instance.user = username.substring(1, username.indexOf("<&>"));
-        componentRef.instance.plan = username.substring(username.indexOf("<&>"));
+        componentRef.instance.plan = username.substring(username.indexOf("<&>") +3);
         componentRef.location.nativeElement.setAttribute("style", "margin: 0 1px 0 0");
       }
       else if (username.startsWith("-")){
         componentRef.instance.user = username.substring(1, username.indexOf("<&>"));
-        componentRef.instance.plan = username.substring(username.indexOf("<&>"));
+        componentRef.instance.plan = username.substring(username.indexOf("<&>") +3);
         componentRef.location.nativeElement.setAttribute("style", "margin: 0 1px 0 0");
       }
     }

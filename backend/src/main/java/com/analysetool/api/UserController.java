@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.services.MailGeneratorService;
 import com.analysetool.services.PostClicksByHourDLCService;
 import com.analysetool.services.SocialsImpressionsService;
 import com.analysetool.services.UserViewsByHourDLCService;
@@ -85,6 +86,8 @@ public class UserController {
     private MembershipBufferRepository memberRepo;
     @Autowired
     private NewsletterRepository newsletterRepo;
+    @Autowired
+    private MailGeneratorService mailGeneratorService;
 
     private final DashConfig config;
 
@@ -333,6 +336,15 @@ public class UserController {
         return new JSONObject().put("users", response).put("count", list.size()).toString();
     }
 
+    @GetMapping("/generateMailSingle")
+    public boolean generateMailSingle(int userId) {
+        try {
+            mailGeneratorService.generateMailSingle(userId);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
+    }
 
     @GetMapping("/getAllSingleUser")
     public String getAllSingleUser(long id) throws JSONException {

@@ -63,6 +63,7 @@ public class UserService {
 
             statMail.setContent(tableBase.replace("{{TABLEROW}}",  makeMailContent("plus", Math.toIntExact(user.getId()))));
             statMail.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
+            statMailsRepo.save(statMail);
         }
     }
 
@@ -78,6 +79,8 @@ public class UserService {
 
         statMail.setContent(tableBase.replace("{{TABLEROW}}",  makeMailContent("plus", Math.toIntExact(user.getId()))));
         statMail.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
+
+        statMailsRepo.save(statMail);
     }
 
 

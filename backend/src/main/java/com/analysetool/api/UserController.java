@@ -83,6 +83,8 @@ public class UserController {
     private RankingGroupContentRepository rankingGroupContentRepo;
     @Autowired
     private MembershipBufferRepository memberRepo;
+    @Autowired
+    private NewsletterRepository newsletterRepo;
 
     private final DashConfig config;
 
@@ -461,6 +463,26 @@ public class UserController {
         } else {
             return "User not found";
         }
+    }
+
+
+    @GetMapping("/getAllSingleUserForNewsletter")
+    public String getAllSingleUserNewsletter(long id) {
+        JSONObject obj = new JSONObject();
+        try {
+            id = newsletterRepo.getWpUserIdById(id);
+            WPUser user = userRepository.findById(id).isPresent() ? userRepository.findById(id).get() : null;
+            if (user != null) {
+                obj.put("id", user.getId());
+                obj.put("email", user.getEmail());
+                obj.put("displayName", user.getDisplayName());
+                obj.put("niceName", user.getNicename());
+                obj.put("creationDate", user.getRegistered().toLocalDate().toString());
+            }
+        } catch (Exception e) {
+            return "Error, user kaputt";
+        }
+        return obj.toString();
     }
 
     private String getCompanyCategoryFromString(String categoryString) {

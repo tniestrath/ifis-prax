@@ -25,4 +25,7 @@ public interface NewsletterRepository extends JpaRepository<Newsletter, Long> {
 
     @Query("SELECT n.email, n.status FROM Newsletter n")
     Map<String, Character> getMailAndStatusAll();
+
+    @Query("SELECT n.wp_user_id FROM Newsletter n WHERE n.id=:id")
+    long getWpUserIdById(long id);
 }

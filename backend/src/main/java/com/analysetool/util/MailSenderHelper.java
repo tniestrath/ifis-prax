@@ -37,8 +37,8 @@ public class MailSenderHelper {
         mailSender.setHost("smtp.internet-sicherheit.de");
         mailSender.setPort(587);
 
-        mailSender.setUsername("statistiken.itsicherheit@gmail.com");
-        mailSender.setPassword("DeineMutter69!");
+        mailSender.setUsername("");
+        mailSender.setPassword("");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

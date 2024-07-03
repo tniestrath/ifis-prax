@@ -37,15 +37,16 @@ export class HeaderComponent implements AfterViewInit{
 
     SysVars.login.subscribe(user => {
       console.log(user)
-      if (user.accessLevel == "mod"){
+      if (user.accessLevel == "mod" || user.id == String(357)){
         this.navElements = ["Forum"];
         this.selected.next("Forum");
-
       } else if(user.accessLevel == "admin" || user.accountType == "admin") {
         this.navElements = this.navElementsBackup;
         this.selected.next("Übersicht");
       } else if (user.accessLevel == "user" || user.accountType == "user"){
         this.navElements = [];
+        // @ts-ignore
+        document.getElementById("feedback-panel").innerHTML = "";
         SysVars.SELECTED_USER_ID.next(Number(user.id));
       } else return;
       cs.set("user", user.id + ":" + user.displayName);
@@ -156,6 +157,8 @@ export class HeaderComponent implements AfterViewInit{
   protected readonly window = window;
 
   onFeedbackClick() {
+    if (SysVars.ACCOUNT.accountType != "user"){
       window.open("http://analyse.it-sicherheit.de/api/feature/feedbackSite", "_feedBack");
+    }
   }
 }

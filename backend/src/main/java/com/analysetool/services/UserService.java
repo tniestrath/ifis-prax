@@ -92,10 +92,10 @@ public class UserService {
                 .replace("{{TENDENCY}}", obj.getBoolean("tendencyUp") ? "HOCH" : "RUNTER")
                 .replace("{{REDIRECTS}}", obj.getString("redirects"))
                 .replace("{{CONTENTVIEWS}}", obj.getString("postViews"))
-                .replace("{{PROFILERANK}}", obj.getString("profileRank"))
-                .replace("{{GROUPPROFILERANK}}", obj.getString("profileRankByGroup"))
-                .replace("{{CONTENTRANK}}", obj.getString("contentRank"))
-                .replace("{{GROUPCONTENTRANK}}", obj.getString("contentRankByGroup"));
+                .replace("{{PROFILERANK}}", obj.getString("rankingProfile"))
+                .replace("{{GROUPPROFILERANK}}", obj.getString("rankingProfileByGroup"))
+                .replace("{{CONTENTRANK}}", obj.getString("rankingContent"))
+                .replace("{{GROUPCONTENTRANK}}", obj.getString("rankingContentByGroup"));
 
 
 

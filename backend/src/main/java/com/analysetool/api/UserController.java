@@ -340,6 +340,7 @@ public class UserController {
             userService.generateMailSingle(userId);
             return true;
         } catch(Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

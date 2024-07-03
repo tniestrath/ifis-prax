@@ -89,7 +89,7 @@ public class UserService {
         String content = tableBase.replace("{{TABLEROW}}",  makeRankingTable("plus", Math.toIntExact(user.getId())))
                 .replace("{{PROFILEVIEWS}}", obj.getString("profileViews"))
                 .replace("{{DAILYVIEWS}}", obj.getString("viewsPerDay"))
-                .replace("{{TENDENCY}}", obj.getBoolean("tendencyUp") ? "HOCH" : "RUNTER")
+                .replace("{{TENDENCY}}", obj.getBoolean("tendency") ? "HOCH" : "RUNTER")
                 .replace("{{REDIRECTS}}", obj.getString("redirects"))
                 .replace("{{CONTENTVIEWS}}", obj.getString("postViews"))
                 .replace("{{PROFILERANK}}", obj.getString("rankingProfile"))

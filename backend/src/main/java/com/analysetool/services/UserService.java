@@ -53,7 +53,7 @@ public class UserService {
     }
 
 
-    private final String tableBase = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Analyse ihrer Marktplatz Präsens</title></head><body><table id=\"rankings\"><thead><tr><th>Gewählte Themen</th><th>Ihre Platzierung</th><th>Globale Nutzungshäufigkeit</th></tr></thead><tbody>{{TABLEROW}}</tbody></table></body></html>\n";
+    private final String tableBase = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Analyse ihrer Marktplatz Präsens</title></head><body><div id=\"baseStats\"><ul id=\"baseStatsList\"><li id=\"bs-1\">Profilaufrufe: {{PROFILEVIEWS}}<br><ul><li id=\"bs-1-1\">Tägliche Aufrufe: {{DAILYVIEWS}} Tendenz: {{TENDENCY}}</li><li id=\"bs-1-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTS}}</li></ul></li><li id=\"bs-2\">Inhaltsaufrufe: {{CONTENTVIEWS}}</li></ul></div><div id=\"rankings\"><ul id=\"rankingsList\"><li id=\"rs-1\">Ihre Platzierung nach Profilaufrufen: {{PROFILERANK}} Innerhalb des gleichen Packets: {{GROUPPROFILERANK}}</li><li id=\"rs-2\">Ihre Platzierung nach Inhaltsaufrufen: {{CONTENTRANK}} Innerhalb des gleichen Packets: {{GROUPCONTENTRANK}}</li></ul><table id=\"rankingsTable\"><thead><tr><th>Gewählte Themen</th><th>Ihre Platzierung</th><th>Globale Nutzungshäufigkeit</th></tr></thead><tbody><tr><td id=\"rankings-1\"></td><td id=\"rankings-2\"></td><td id=\"rankings-3\"></td></tr>{{TABLEROW}}</tbody></table></div></body></html>\n";
     private final String tablerowBase = "<tr><td id='rankings-1'>REPLACE1</td><td id='rankings-2'>REPLACE2</td><td id='rankings-3'>REPLACE3</td></tr>";
 
     @Scheduled(cron = "0 0 0 1 */3 ?")

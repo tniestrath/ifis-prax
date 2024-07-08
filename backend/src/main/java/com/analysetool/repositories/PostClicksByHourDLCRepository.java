@@ -28,5 +28,12 @@ public interface PostClicksByHourDLCRepository extends JpaRepository<PostClicksB
 
     @Query("SELECT p.uniId FROM PostClicksByHourDLC p ORDER BY p.uniId ASC LIMIT 1")
     Long findOldestUni();
+
+
+    @Query("SELECT SUM(u.clicks) FROM PostClicksByHourDLC u WHERE u.uniId > (SELECT uh.uniId - 91 FROM PostClicksByHourDLC uh ORDER BY uh.uniId DESC LIMIT 1) AND u.postId IN (SELECT p.id FROM Post p WHERE p.authorId=:userId)")
+    Long getSumForUserThisQuarter(int userId);
+
+    @Query("SELECT SUM(u.clicks) FROM PostClicksByHourDLC u WHERE u.uniId < (SELECT uh.uniId - 91 FROM PostClicksByHourDLC uh ORDER BY uh.uniId DESC LIMIT 1) AND u.uniId > (SELECT uh.uniId - 182 FROM PostClicksByHourDLC uh ORDER BY uh.uniId DESC LIMIT 1) AND u.postId IN (SELECT p.id FROM Post p WHERE p.authorId=:userId)")
+    Long getSumForUserPreviousQuarter(int userId);
 }
 

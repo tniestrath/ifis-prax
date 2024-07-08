@@ -46,4 +46,10 @@ public interface UserViewsByHourDLCRepository extends JpaRepository<UserViewsByH
     @Query("SELECT SUM(u.views) FROM UserViewsByHourDLC u WHERE u.userId=:userId")
     Long getSumForUser(long userId);
 
+    @Query("SELECT SUM(u.views) FROM UserViewsByHourDLC u WHERE u.userId=:userId AND u.uniId > (SELECT uh.uniId - 91 FROM UserViewsByHourDLC uh ORDER BY uh.uniId DESC LIMIT 1)")
+    Long getSumForUserThisQuarter(int userId);
+
+    @Query("SELECT SUM(u.views) FROM UserViewsByHourDLC u WHERE u.userId=:userId AND u.uniId < (SELECT uh.uniId - 91 FROM UserViewsByHourDLC uh ORDER BY uh.uniId DESC LIMIT 1) AND u.uniId > (SELECT uh.uniId - 182 FROM UserViewsByHourDLC uh ORDER BY uh.uniId DESC LIMIT 1)")
+    Long getSumForUserPreviousQuarter(int userId);
+
 }

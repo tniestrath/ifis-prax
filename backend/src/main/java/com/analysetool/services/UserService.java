@@ -72,7 +72,7 @@ public class UserService {
             "<head>\n" +
             "    <meta charset=\"UTF-8\">\n" +
             "    <title>Analyse ihrer Marktplatz Präsens</title>\n" +
-            "    <style>\n" +
+            "<style>\n" +
             "        html, body{\n" +
             "            width: 100%;\n" +
             "            display: flex;\n" +
@@ -94,10 +94,11 @@ public class UserService {
             "        ul{\n" +
             "            list-style: none;\n" +
             "            padding-left: 0;\n" +
+            "            min-width: 50%;\n" +
             "        }\n" +
             "        ul ul{\n" +
             "            padding-left: 40px;\n" +
-            "\n" +
+            "          \n" +
             "        }\n" +
             "        li{\n" +
             "            list-style: none;\n" +
@@ -107,7 +108,16 @@ public class UserService {
             "            width: auto;\n" +
             "            aspect-ratio: 1/1;\n" +
             "        }\n" +
-            "    </style>\n" +
+            "        table{\n" +
+            "            border-collapse: collapse;\n" +
+            "        }\n" +
+            "        tr{\n" +
+            "            border-bottom: 1px solid #ddd;\n" +
+            "        }\n" +
+            "        .rankings-2, .rankings-3{\n" +
+            "            text-align: center;\n" +
+            "        }\n" +
+            "    </style>" +
             "</head>\n" +
             "<body>\n" +
             "    <div id=\"quarterStats\" class=\"chapter\">\n" +
@@ -146,7 +156,6 @@ public class UserService {
             "            </tr>\n" +
             "            </thead>\n" +
             "            <tbody>\n" +
-            "            <tr><td id=\"rankings-1\">-</td><td id=\"rankings-2\">-</td><td id=\"rankings-3\">-</td></tr>\n" +
             "            {{TABLEROW}}\n" +
             "            </tbody>\n" +
             "        </table>\n" +
@@ -155,7 +164,7 @@ public class UserService {
             "</body>\n" +
             "</html>";
 
-    private final String tablerowBase = "<tr><td id='rankings-1'>REPLACE1</td><td id='rankings-2'>REPLACE2</td><td id='rankings-3'>REPLACE3</td></tr>";
+    private final String tablerowBase = "<tr><td class='rankings-1'>REPLACE1</td><td class='rankings-2'>REPLACE2</td><td class='rankings-3'>REPLACE3</td></tr>";
 
     @Scheduled(cron = "0 0 0 1 */3 ?")
     public void generateMails() throws JSONException {

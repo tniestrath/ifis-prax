@@ -1,7 +1,10 @@
 package com.analysetool.services;
 
 import com.analysetool.api.PostController;
-import com.analysetool.modells.*;
+import com.analysetool.modells.StatMails;
+import com.analysetool.modells.UserStats;
+import com.analysetool.modells.UserViewsByHourDLC;
+import com.analysetool.modells.WPUser;
 import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
 import com.analysetool.util.DashConfig;
@@ -50,9 +53,18 @@ public class UserService {
 
     private final DashConfig config;
 
+    private String imageProfile = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA3QAAAN0BcFOiBwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAIASURBVFiFvdY/a5RBEMfxz5MLRIwRFRtRAioIgn8CsbKwM2KnFhEbCytfhJ2IlWCjIIgWCmqrBHwBFiKEWFgoGBSxSKGFaKLBxLG4S1juLnf73D2XgYFnH57Z33efnZndIiKUsaIoTuIiJnAc3zCHN7gbEYulJoyILMcW3MIqYgOfx6ncOSMiDwAjmO0gnPo/XK4a4Gam+Jr/wHglADiBlZIAgZc5AEMZaXIOtcyUSm2qKIqxbh/lAEz0IA6FepX0DXC0R4Cs2ByAhT4AusbmAMz1AdA1NgfgdY/iCxHxuetXGWVYU2+zZctwuspGdBi/S4g/q7QTNiCm8DVD/DG2Vw7QgNiBh1hqIzyP82XmiwhFY+K2VhTFfkziIGYi4l3jfQ2HJMdxRHxP4iZxGh8wGxFfSiUhduKe+smWrvIBdnf4Q3vwtClmBbcxlrUF6uf+2w57vIT7mMYRHMMlPMJyh7hXGM4BuNMlyfrxGx0BsA9/BwiwiF2djuOrGG6bLNXYVlxJXzQDnBmgeHuN5PeP6u3mU9Z/YajdFhzQ282nrI1i79ogBRjfBPEWrRRg2yYCrGulADl3g6psqOUB7zcR4OP6U1IFI/hj8FXwE7WWKoiIZVwf0IpTuxYRq+ujplY8jBc9rCrXn0h6wIYXElzADD5pPZLL+Kr6ReU5zrbT+g/lp72yFoh52gAAAABJRU5ErkJggg==";
+    private String imageContent = "iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAABFNAAARTQHAOWBjAAAB/0lEQVRIiWL4//8/xZiBgcGAgYHhAQMDA4gDwgcYGBgEwGb//88AAAAA//+ilgUfkCyA4Qtgi/7/ZwAAAAD//6KVBQiLGBgEAAAAAP//otSSCXgsgGAGhgMAAAAA//+ixAcToOwFeC1hYPgPAAAA//+iNIgWELSIgeE/AAAA//+iRhzgt4iB4QAAAAD//6JWJOOy6AMDA4MBAAAA//8i1wIQOwCaenBZBLbg////DAAAAAD//yLXApAYvqADpTqwBf///2cAAAAA//+ipgUwDE51cPz/PwMAAAD//6K2BfAgguP//xkAAAAA//+iuQX///9nAAAAAP//orkF////ZwAAAAD//6K5Bf///2cAAAAA//8ilA8aKLXg////DAAAAAD//0K2BFQHECrsSLbg////DAAAAAD//4JZkIBWPCNXQBRZ8P//fwYAAAAA//+CWYJcHCgQ8BVJFvz//58BAAAA//+CWQIL8wtI8QOyCN1HJFvw//9/BgAAAAD//wIZ6IAtt0J9hFw2kWXB////GQAAAAD//2KBFnQw8IGRkRFU7oDE5JHEP4Ic8///f5ClpAEGBgYAAAAA//8CYWTXYq8PGBgUyPEBGP//zwAAAAD//wJZgityQYkB5HqyDQfj//8ZAAAAAP//Qs4fIB+BMx81DIbj//8ZAAAAAP//AwARtZXpaOI3DgAAAABJRU5ErkJggg==";
+    private String imageDaily = "iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJYSURBVEhLvZbNS1ZBFIevhRYq2BcE0sYKJALXFS2Lighatq+V0K7+CAP/CME/oIWgEAVtCzLcRRD0qdEHRZuorJ7nOkeO876YmvWDh/vemXPOnTlzZubtadbXEFwojMEh2A8f4BUswCzMwSfYlHbBTXgBvzaAdtrrtyEdh4cQAZ7ABJyB66XNp++22x+2+um/rk7De9DhDVyF3RA6Ad/LM2S/dtrrp79xusoRxAfug/mvtROOlGct7fWLD3XMyFxGijQcgK1Iv/iQ8daskYtmh1PuNoPNSP9InXFb7YGXYKO5rTUI9cxyunaUZ5ZxjGfVuQ2aK6XBKsmLrPM0OCqNb8MBOAiPwMrS/i5ol/ec7VF1xm+myotOWX2QS1km4WT5/RhcXH+7Oc1IlvHsm3K07mR1pzxD3+AcHIbI7VGI9Nj/FX6AZV0r4o3pEAt9DKz/nO+PMAyn2reVgI5OOXI3pDGiTelvHOOpNv5P0EgckfsgNA7RJy6oa/IltYnrFunS3zjRtwzNu/LiUZFnYo0/Bftc2IsQugT3wAOy/kjMJI4g4zfz5cWpZ+2Ft+BMz8MI5OpTo2AKl6BeeOMZd958Ohp1tjyzHJWl6XH+DKyuWtr0rvxco4i34EcMoC5DHqn3wwyYiuewCH4o6zWYNmN8tqHIOMZTbXx3ZNwb3Xa8u13627dORUlnXQPjre54dQNsdNTbeXYZd1X/5RRW//w+CdU3o7nNxWD9/9XNGHIED0AH8TS9BZbkttzxIXPpoRhV9ye0075jDdRW/nftAw/O/L+r3idJTfMbUfvNNr3flUgAAAAASUVORK5CYII=";
+    private String imageRedirect = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAALPSURBVFhH1ZfL6w1RHMCvZwhRFBbkLWEjr9hIoSjPlNfSwubHgqWNWPkDSMpCLBTlsfDIjrxKIiulEAsboizx+cycuc0998zv3hkkn/p0z8w553vOPXMeM63/nQPBxgwNv02ZEWzMsPBbh5m4AbfhJpyDU3AafsfP2Dd1RmA73sWbuA9H47fgKNyLN9Aylv1jzMd7+BRteAIWHA8WmGeZJ2gd6/4Wm/EdHsUh3og4EoyxrHWsa4xGWPE9rs2u0owMVmFdY9TuhENn7wdrXHp1QIxhrFqPw+fnEFYxCc/i86DpyViFsYzZF85gJ1zqmctYfIxncEHQtPfMS2EsY7p0e+IyciZXcQiv5ckOvHc4TybZj8buIN4H3GTcUFzrVSxH13uM95blySTmG9s22sQdMPgb/JJdpfmEs/NkB7PQvCqMaWzbaBN3YB6+yJOVnMMtuCK7yjG9Fc0bjJc4N0/mODnsxB6ciLvQnt5B9/RL+APLOIxXcCXe9gZ4Nrj7OYE/eKNEOf56dLe8jFl8M9XnshAt5HIy7b14hHbgA7Sx3XghaPoR3sedWKYc39h2oCp+6xiezJNdLMK3uDq7SmOeZRZnV90Y2zbaxD14jUvyZBcuv/PoCFRhnmUsm8LYtlGJM/kVlk+8Aod3TZ4cFEfBsjHGNLZttIlHwGXyEePDo5isvnD0wjKWjXdSYxrbNtp0TQI4jQMYBxiO03Fq+E1Z5I3AMsbysRi7g7iRAg+OW3gqu8q5iEvRf1hV7yeOwWfo0ivwMNqI67KrPkgdx/6r8ZHjgvH98gg0Oo6lnxeSXli30QtJgRXtvUOYGvaq7wLLWse6jRsvcOiKl1KP1PISPREsMM+j3LJ9vZRWTaYU7vMH0bPApeShtQrlIbrJuMZdas72q9iTOh0ocA/3SPVU81SU6+gO5xnRsc7/NvF3QW1SG1Edvgb/GX6SaUNarV8yHYTxxkCURwAAAABJRU5ErkJggg==";
+
     public UserService(DashConfig config) {
         this.config = config;
     }
+
+
+
+
 
 
     private final String tableBase = "<!DOCTYPE html>\n" +
@@ -101,21 +113,21 @@ public class UserService {
             "    <div id=\"quarterStats\" class=\"chapter\">\n" +
             "        <p class=\"chapter-title\">Ihr Zuwachs im letzten Quartal:</p>\n" +
             "        <ul id=\"quarterStatsList\">\n" +
-            "            <li id=\"qs-1\">Profilaufrufe: {{PROFILEVIEWSQUARTER}}<img src=\"../frontend/src/assets/profile_views.png\"/><br>\n" +
-            "            <li id=\"qs-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTSQUARTER}}<img src=\"../frontend/src/assets/target.png\"/></li>\n" +
-            "            <li id=\"qs-3\">Inhaltsaufrufe: {{CONTENTVIEWSQUARTER}}<img src=\"../frontend/src/assets/pencil-solid.png\"/></li>\n" +
+            "            <li id=\"qs-1\">Profilaufrufe: {{PROFILEVIEWSQUARTER}}<img src=<img src=\"data:image/png;base64,{{IMAGEPROFILE}}\"/><br>\n" +
+            "            <li id=\"qs-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTSQUARTER}}<img src=\"data:image/png;base64,{{IMAGEREDIRECTS}}\"/></li>\n" +
+            "            <li id=\"qs-3\">Inhaltsaufrufe: {{CONTENTVIEWSQUARTER}}<img src=\"data:image/png;base64,{{IMAGECONTENT}}\"/></li>\n" +
             "        </ul>\n" +
             "    </div>\n" +
             "    <div id=\"baseStats\" class=\"chapter\">\n" +
             "        <p class=\"chapter-title\">Ihre Gesamtübersicht:</p>\n" +
             "        <ul id=\"baseStatsList\">\n" +
-            "            <li id=\"bs-1\">Profilaufrufe: {{PROFILEVIEWS}}<img src=\"../frontend/src/assets/profile_views.png\"/><br>\n" +
+            "            <li id=\"bs-1\">Profilaufrufe: {{PROFILEVIEWS}}<img src=<img src=\"data:image/png;base64,{{IMAGEPROFILE}}\"/><br>\n" +
             "                <ul>\n" +
-            "                    <li id=\"bs-1-1\">Tägliche Aufrufe: {{DAILYVIEWS}}<img src=\"../frontend/src/assets/24-hours_x25.png\"/></li>\n" +
-            "                    <li id=\"bs-1-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTS}}<img src=\"../frontend/src/assets/target.png\"/></li>\n" +
+            "                    <li id=\"bs-1-1\">Tägliche Aufrufe: {{DAILYVIEWS}}<img src=\"data:image/png;base64,{{IMAGEDAILY}}\"/></li>\n" +
+            "                    <li id=\"bs-1-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTS}}<img src=\"data:image/png;base64,{{IMAGEREDIRECTS}}\"/></li>\n" +
             "                </ul>\n" +
             "            </li>\n" +
-            "            <li id=\"bs-2\">Inhaltsaufrufe: {{CONTENTVIEWS}}<img src=\"../frontend/src/assets/pencil-solid.png\"/></li>\n" +
+            "            <li id=\"bs-2\">Inhaltsaufrufe: {{CONTENTVIEWS}}<img src=\"data:image/png;base64,{{IMAGECONTENT}}\"/></li>\n" +
             "        </ul>\n" +
             "    </div>\n" +
             "    <div id=\"rankings\" class=\"chapter\">\n" +
@@ -186,7 +198,12 @@ public class UserService {
                 .replace("{{GROUPCONTENTRANK}}", obj.getString("rankingContentByGroup"))
                 .replace("{{PROFILEVIEWSQUARTER}}", ((userViewsRepo.getSumForUserThisQuarter(userId) - userViewsRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (userViewsRepo.getSumForUserThisQuarter(userId) - userViewsRepo.getSumForUserPreviousQuarter(userId)) + "(" + userViewsRepo.getSumForUserThisQuarter(userId) + " - " + userViewsRepo.getSumForUserPreviousQuarter(userId) + ")"))
                 .replace("{{REDIRECTSQUARTER}}", (userRedirectsRepo.getSumForUserThisQuarter(userId) - userRedirectsRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (userRedirectsRepo.getSumForUserThisQuarter(userId) - userRedirectsRepo.getSumForUserPreviousQuarter(userId)) + "(" + userRedirectsRepo.getSumForUserThisQuarter(userId) + " - " + userRedirectsRepo.getSumForUserPreviousQuarter(userId) + ")")
-                .replace("{{CONTENTVIEWSQUARTER}}", (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId)) + "(" + postClicksRepo.getSumForUserThisQuarter(userId) + " - " + postClicksRepo.getSumForUserPreviousQuarter(userId) + ")");
+                .replace("{{CONTENTVIEWSQUARTER}}", (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId)) + "(" + postClicksRepo.getSumForUserThisQuarter(userId) + " - " + postClicksRepo.getSumForUserPreviousQuarter(userId) + ")")
+                .replace("{{IMAGEDAILY}}", imageDaily)
+                .replace("{{IMAGEPROFILE}}", imageProfile)
+                .replace("{{IMAGEREDIRECT}}", imageRedirect)
+                .replace("{{IMAGECONTENT}}", imageContent)
+                ;
 
 
 

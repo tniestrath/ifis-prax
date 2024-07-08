@@ -166,6 +166,9 @@ public class UserService {
 
     private final String tablerowBase = "<tr><td class='rankings-1'>REPLACE1</td><td class='rankings-2'>REPLACE2</td><td class='rankings-3'>REPLACE3</td></tr>";
 
+    private String tablerowCSS = "border-bottom: 1px solid #ddd;";
+
+
     @Scheduled(cron = "0 0 0 1 */3 ?")
     public void generateMails() throws JSONException {
         generateMailsPlus();
@@ -212,6 +215,7 @@ public class UserService {
                 .replace("{{IMAGEPROFILE}}", imageProfile)
                 .replace("{{IMAGEREDIRECTS}}", imageRedirect)
                 .replace("{{IMAGECONTENT}}", imageContent)
+                .replace("<tr>", "<tr style=\"" + tablerowCSS + "\">")
                 ;
 
 

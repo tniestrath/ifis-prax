@@ -3,23 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <title>Analyse ihrer Marktplatz Präsens</title>
+    <style>
+        html, body{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #cccccc;
+        }
+        .chapter{
+            width: 95%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chapter-title{
+            text-align: center;
+            font-size: x-large;
+        }
+        ul{
+            list-style: none;
+            padding-left: 0;
+        }
+        ul ul{
+            padding-left: 40px;
+
+        }
+        li{
+            list-style: none;
+        }
+        img{
+            height: 1em;
+            width: auto;
+            aspect-ratio: 1/1;
+        }
+    </style>
 </head>
 <body>
-    <div id="baseStats">
-        <ul id="baseStatsList">
-            <li id="bs-1">Profilaufrufe: {{PROFILEVIEWS}}<br>
-                <ul>
-                    <li id="bs-1-1">Tägliche Aufrufe: {{DAILYVIEWS}} Tendenz: {{TENDENCY}}</li>
-                    <li id="bs-1-2">Weiterleitungen zur eigenen Homepage: {{REDIRECTS}}</li>
-                </ul>
-            </li>
-            <li id="bs-2">Inhaltsaufrufe: {{CONTENTVIEWS}}</li>
+    <div id="quarterStats" class="chapter">
+        <p class="chapter-title">Ihr Zuwachs im letzten Quartal:</p>
+        <ul id="quarterStatsList">
+            <li id="qs-1">Profilaufrufe: {{PROFILEVIEWSQUARTER}}<img src="../frontend/src/assets/profile_views.png"/><br>
+            <li id="qs-2">Weiterleitungen zur eigenen Homepage: {{REDIRECTSQUARTER}}<img src="../frontend/src/assets/target.png"/></li>
+            <li id="qs-3">Inhaltsaufrufe: {{CONTENTVIEWSQUARTER}}<img src="../frontend/src/assets/pencil-solid.png"/></li>
         </ul>
     </div>
-    <div id="rankings">
+    <div id="baseStats" class="chapter">
+        <p class="chapter-title">Ihre Gesamtübersicht:</p>
+        <ul id="baseStatsList">
+            <li id="bs-1">Profilaufrufe: {{PROFILEVIEWS}}<img src="../frontend/src/assets/profile_views.png"/><br>
+                <ul>
+                    <li id="bs-1-1">Tägliche Aufrufe: {{DAILYVIEWS}}<img src="../frontend/src/assets/24-hours_x25.png"/></li>
+                    <li id="bs-1-2">Weiterleitungen zur eigenen Homepage: {{REDIRECTS}}<img src="../frontend/src/assets/target.png"/></li>
+                </ul>
+            </li>
+            <li id="bs-2">Inhaltsaufrufe: {{CONTENTVIEWS}}<img src="../frontend/src/assets/pencil-solid.png"/></li>
+        </ul>
+    </div>
+    <div id="rankings" class="chapter">
         <ul id="rankingsList">
-            <li id="rs-1">Ihre Platzierung nach Profilaufrufen: {{PROFILERANK}} Innerhalb des gleichen Packets: {{GROUPPROFILERANK}}</li>
-            <li id="rs-2">Ihre Platzierung nach Inhaltsaufrufen: {{CONTENTRANK}} Innerhalb des gleichen Packets: {{GROUPCONTENTRANK}}</li>
+            <li id="rs-1">Ihre Platzierung nach Profilaufrufen: #{{PROFILERANK}}<br>
+                Innerhalb des gleichen Packets: #{{GROUPPROFILERANK}}</li><br>
+            <li id="rs-2">Ihre Platzierung nach Inhaltsaufrufen: #{{CONTENTRANK}}<br>
+                Innerhalb des gleichen Packets: #{{GROUPCONTENTRANK}}</li>
         </ul>
         <table id="rankingsTable">
             <thead>
@@ -30,7 +77,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr><td id="rankings-1"></td><td id="rankings-2"></td><td id="rankings-3"></td></tr>
+            <tr><td id="rankings-1">-</td><td id="rankings-2">-</td><td id="rankings-3">-</td></tr>
             {{TABLEROW}}
             </tbody>
         </table>

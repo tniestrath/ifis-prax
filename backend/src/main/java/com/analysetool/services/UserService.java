@@ -45,6 +45,8 @@ public class UserService {
     private RankingTotalContentRepository rankingTotalContentRepo;
     @Autowired
     private RankingTotalProfileRepository rankingTotalProfileRepo;
+    @Autowired
+    private PostClicksByHourDLCRepository postClicksRepo;
 
     private final DashConfig config;
 
@@ -89,13 +91,15 @@ public class UserService {
         String content = tableBase.replace("{{TABLEROW}}",  makeRankingTable("plus", Math.toIntExact(user.getId())))
                 .replace("{{PROFILEVIEWS}}", obj.getString("profileViews"))
                 .replace("{{DAILYVIEWS}}", obj.getString("viewsPerDay"))
-                .replace("{{TENDENCY}}", obj.getBoolean("tendency") ? "HOCH" : "RUNTER")
                 .replace("{{REDIRECTS}}", obj.getString("redirects"))
                 .replace("{{CONTENTVIEWS}}", obj.getString("postViews"))
                 .replace("{{PROFILERANK}}", obj.getString("rankingProfile"))
                 .replace("{{GROUPPROFILERANK}}", obj.getString("rankingProfileByGroup"))
                 .replace("{{CONTENTRANK}}", obj.getString("rankingContent"))
-                .replace("{{GROUPCONTENTRANK}}", obj.getString("rankingContentByGroup"));
+                .replace("{{GROUPCONTENTRANK}}", obj.getString("rankingContentByGroup"))
+                .replace("{{PROFILEVIEWSQUARTER}}", ((userViewsRepo.getSumForUserThisQuarter(userId) - userViewsRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (userViewsRepo.getSumForUserThisQuarter(userId) - userViewsRepo.getSumForUserPreviousQuarter(userId)) + "(" + userViewsRepo.getSumForUserThisQuarter(userId) + " - " + userViewsRepo.getSumForUserPreviousQuarter(userId) + ")"))
+                .replace("{{REDIRECTSQUARTER}}", (userRedirectsRepo.getSumForUserThisQuarter(userId) - userRedirectsRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (userRedirectsRepo.getSumForUserThisQuarter(userId) - userRedirectsRepo.getSumForUserPreviousQuarter(userId)) + "(" + userRedirectsRepo.getSumForUserThisQuarter(userId) + " - " + userRedirectsRepo.getSumForUserPreviousQuarter(userId) + ")")
+                .replace("{{CONTENTVIEWSQUARTER}}", (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId)) + "(" + postClicksRepo.getSumForUserThisQuarter(userId) + " - " + postClicksRepo.getSumForUserPreviousQuarter(userId) + ")");
 
 
 
@@ -701,5 +705,6 @@ public class UserService {
     public int getRankingTotalContentViews(long id)  {
         return rankingTotalContentRepo.getRankById(id).isPresent() ? rankingTotalContentRepo.getRankById(id).get() : -1;
     }
+
 
 }

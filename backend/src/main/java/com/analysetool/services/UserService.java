@@ -164,7 +164,7 @@ public class UserService {
             "</body>\n" +
             "</html>";
 
-    private final String tablerowBase = "<tr><td class='rankings-1'>REPLACE1</td><td class='rankings-2'>REPLACE2</td><td class='rankings-3'>REPLACE3</td></tr>";
+    private final String tablerowBase = "<tr><td class='rankings-1'>REPLACE1</td><td style=\"text-align:center;\" class='rankings-2'>REPLACE2</td><td style=\"text-align:center;\" class='rankings-3'>REPLACE3</td></tr>";
 
     private String tablerowCSS = "border-bottom: 1px solid #ddd;";
 

@@ -55,7 +55,94 @@ public class UserService {
     }
 
 
-    private final String tableBase = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Analyse ihrer Marktplatz Präsens</title></head><body><div id=\"baseStats\"><ul id=\"baseStatsList\"><li id=\"bs-1\">Profilaufrufe: {{PROFILEVIEWS}}<br><ul><li id=\"bs-1-1\">Tägliche Aufrufe: {{DAILYVIEWS}} Tendenz: {{TENDENCY}}</li><li id=\"bs-1-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTS}}</li></ul></li><li id=\"bs-2\">Inhaltsaufrufe: {{CONTENTVIEWS}}</li></ul></div><div id=\"rankings\"><ul id=\"rankingsList\"><li id=\"rs-1\">Ihre Platzierung nach Profilaufrufen: {{PROFILERANK}} Innerhalb des gleichen Packets: {{GROUPPROFILERANK}}</li><li id=\"rs-2\">Ihre Platzierung nach Inhaltsaufrufen: {{CONTENTRANK}} Innerhalb des gleichen Packets: {{GROUPCONTENTRANK}}</li></ul><table id=\"rankingsTable\"><thead><tr><th>Gewählte Themen</th><th>Ihre Platzierung</th><th>Globale Nutzungshäufigkeit</th></tr></thead><tbody><tr><td id=\"rankings-1\"></td><td id=\"rankings-2\"></td><td id=\"rankings-3\"></td></tr>{{TABLEROW}}</tbody></table></div></body></html>\n";
+    private final String tableBase = "<!DOCTYPE html>\n" +
+            "<html lang=\"en\">\n" +
+            "<head>\n" +
+            "    <meta charset=\"UTF-8\">\n" +
+            "    <title>Analyse ihrer Marktplatz Präsens</title>\n" +
+            "    <style>\n" +
+            "        html, body{\n" +
+            "            width: 100%;\n" +
+            "            display: flex;\n" +
+            "            flex-direction: column;\n" +
+            "            align-items: center;\n" +
+            "            background: #cccccc;\n" +
+            "        }\n" +
+            "        .chapter{\n" +
+            "            width: 95%;\n" +
+            "            background: white;\n" +
+            "            display: flex;\n" +
+            "            flex-direction: column;\n" +
+            "            align-items: center;\n" +
+            "        }\n" +
+            "        .chapter-title{\n" +
+            "            text-align: center;\n" +
+            "            font-size: x-large;\n" +
+            "        }\n" +
+            "        ul{\n" +
+            "            list-style: none;\n" +
+            "            padding-left: 0;\n" +
+            "        }\n" +
+            "        ul ul{\n" +
+            "            padding-left: 40px;\n" +
+            "\n" +
+            "        }\n" +
+            "        li{\n" +
+            "            list-style: none;\n" +
+            "        }\n" +
+            "        img{\n" +
+            "            height: 1em;\n" +
+            "            width: auto;\n" +
+            "            aspect-ratio: 1/1;\n" +
+            "        }\n" +
+            "    </style>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "    <div id=\"quarterStats\" class=\"chapter\">\n" +
+            "        <p class=\"chapter-title\">Ihr Zuwachs im letzten Quartal:</p>\n" +
+            "        <ul id=\"quarterStatsList\">\n" +
+            "            <li id=\"qs-1\">Profilaufrufe: {{PROFILEVIEWSQUARTER}}<img src=\"../frontend/src/assets/profile_views.png\"/><br>\n" +
+            "            <li id=\"qs-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTSQUARTER}}<img src=\"../frontend/src/assets/target.png\"/></li>\n" +
+            "            <li id=\"qs-3\">Inhaltsaufrufe: {{CONTENTVIEWSQUARTER}}<img src=\"../frontend/src/assets/pencil-solid.png\"/></li>\n" +
+            "        </ul>\n" +
+            "    </div>\n" +
+            "    <div id=\"baseStats\" class=\"chapter\">\n" +
+            "        <p class=\"chapter-title\">Ihre Gesamtübersicht:</p>\n" +
+            "        <ul id=\"baseStatsList\">\n" +
+            "            <li id=\"bs-1\">Profilaufrufe: {{PROFILEVIEWS}}<img src=\"../frontend/src/assets/profile_views.png\"/><br>\n" +
+            "                <ul>\n" +
+            "                    <li id=\"bs-1-1\">Tägliche Aufrufe: {{DAILYVIEWS}}<img src=\"../frontend/src/assets/24-hours_x25.png\"/></li>\n" +
+            "                    <li id=\"bs-1-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTS}}<img src=\"../frontend/src/assets/target.png\"/></li>\n" +
+            "                </ul>\n" +
+            "            </li>\n" +
+            "            <li id=\"bs-2\">Inhaltsaufrufe: {{CONTENTVIEWS}}<img src=\"../frontend/src/assets/pencil-solid.png\"/></li>\n" +
+            "        </ul>\n" +
+            "    </div>\n" +
+            "    <div id=\"rankings\" class=\"chapter\">\n" +
+            "        <ul id=\"rankingsList\">\n" +
+            "            <li id=\"rs-1\">Ihre Platzierung nach Profilaufrufen: #{{PROFILERANK}}<br>\n" +
+            "                Innerhalb des gleichen Packets: #{{GROUPPROFILERANK}}</li><br>\n" +
+            "            <li id=\"rs-2\">Ihre Platzierung nach Inhaltsaufrufen: #{{CONTENTRANK}}<br>\n" +
+            "                Innerhalb des gleichen Packets: #{{GROUPCONTENTRANK}}</li>\n" +
+            "        </ul>\n" +
+            "        <table id=\"rankingsTable\">\n" +
+            "            <thead>\n" +
+            "            <tr>\n" +
+            "                <th>Gewählte Themen</th>\n" +
+            "                <th>Ihre Platzierung</th>\n" +
+            "                <th>Globale Nutzungshäufigkeit</th>\n" +
+            "            </tr>\n" +
+            "            </thead>\n" +
+            "            <tbody>\n" +
+            "            <tr><td id=\"rankings-1\">-</td><td id=\"rankings-2\">-</td><td id=\"rankings-3\">-</td></tr>\n" +
+            "            {{TABLEROW}}\n" +
+            "            </tbody>\n" +
+            "        </table>\n" +
+            "    </div>\n" +
+            "\n" +
+            "</body>\n" +
+            "</html>";
+
     private final String tablerowBase = "<tr><td id='rankings-1'>REPLACE1</td><td id='rankings-2'>REPLACE2</td><td id='rankings-3'>REPLACE3</td></tr>";
 
     @Scheduled(cron = "0 0 0 1 */3 ?")

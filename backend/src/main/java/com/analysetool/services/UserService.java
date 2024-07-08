@@ -113,7 +113,7 @@ public class UserService {
             "    <div id=\"quarterStats\" class=\"chapter\">\n" +
             "        <p class=\"chapter-title\">Ihr Zuwachs im letzten Quartal:</p>\n" +
             "        <ul id=\"quarterStatsList\">\n" +
-            "            <li id=\"qs-1\">Profilaufrufe: {{PROFILEVIEWSQUARTER}}<img src=<img src=\"data:image/png;base64,{{IMAGEPROFILE}}\"/><br>\n" +
+            "            <li id=\"qs-1\">Profilaufrufe: {{PROFILEVIEWSQUARTER}}<img src=\"data:image/png;base64,{{IMAGEPROFILE}}\"/><br>\n" +
             "            <li id=\"qs-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTSQUARTER}}<img src=\"data:image/png;base64,{{IMAGEREDIRECTS}}\"/></li>\n" +
             "            <li id=\"qs-3\">Inhaltsaufrufe: {{CONTENTVIEWSQUARTER}}<img src=\"data:image/png;base64,{{IMAGECONTENT}}\"/></li>\n" +
             "        </ul>\n" +
@@ -121,7 +121,7 @@ public class UserService {
             "    <div id=\"baseStats\" class=\"chapter\">\n" +
             "        <p class=\"chapter-title\">Ihre Gesamtübersicht:</p>\n" +
             "        <ul id=\"baseStatsList\">\n" +
-            "            <li id=\"bs-1\">Profilaufrufe: {{PROFILEVIEWS}}<img src=<img src=\"data:image/png;base64,{{IMAGEPROFILE}}\"/><br>\n" +
+            "            <li id=\"bs-1\">Profilaufrufe: {{PROFILEVIEWS}}<img src=\"data:image/png;base64,{{IMAGEPROFILE}}\"/><br>\n" +
             "                <ul>\n" +
             "                    <li id=\"bs-1-1\">Tägliche Aufrufe: {{DAILYVIEWS}}<img src=\"data:image/png;base64,{{IMAGEDAILY}}\"/></li>\n" +
             "                    <li id=\"bs-1-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTS}}<img src=\"data:image/png;base64,{{IMAGEREDIRECTS}}\"/></li>\n" +
@@ -201,7 +201,7 @@ public class UserService {
                 .replace("{{CONTENTVIEWSQUARTER}}", (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId)) + "(" + postClicksRepo.getSumForUserThisQuarter(userId) + " - " + postClicksRepo.getSumForUserPreviousQuarter(userId) + ")")
                 .replace("{{IMAGEDAILY}}", imageDaily)
                 .replace("{{IMAGEPROFILE}}", imageProfile)
-                .replace("{{IMAGEREDIRECT}}", imageRedirect)
+                .replace("{{IMAGEREDIRECTS}}", imageRedirect)
                 .replace("{{IMAGECONTENT}}", imageContent)
                 ;
 

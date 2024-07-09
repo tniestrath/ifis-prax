@@ -241,6 +241,7 @@ public class UserService {
 
         statMail.setContent(content);
         statMail.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
+        statMail.setSent(0);
 
         statMailsRepo.save(statMail);
     }

@@ -22,6 +22,9 @@ public class StatMails implements Serializable {
     @Column(name="made_at")
     private Timestamp timestamp;
 
+    @Column(name="sent")
+    private int sent;
+
     public Long getId() {
         return id;
     }
@@ -52,5 +55,13 @@ public class StatMails implements Serializable {
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getSent() {
+        return sent;
+    }
+
+    public void setSent(int sent) {
+        this.sent = sent;
     }
 }

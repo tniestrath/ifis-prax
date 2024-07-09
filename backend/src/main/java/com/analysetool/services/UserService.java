@@ -218,21 +218,21 @@ public class UserService {
         }
 
         String profileViewsQuarter;
-        if(userViewsRepo.getSumForUserThisQuarter(userId) != 0 && userViewsRepo.getSumForUserPreviousQuarter(userId) != 0) {
+        if(userViewsRepo.getSumForUserThisQuarter(userId) != null && userViewsRepo.getSumForUserPreviousQuarter(userId) != null) {
             profileViewsQuarter = (userViewsRepo.getSumForUserThisQuarter(userId) - userViewsRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (userViewsRepo.getSumForUserThisQuarter(userId) - userViewsRepo.getSumForUserPreviousQuarter(userId)) + "(" + userViewsRepo.getSumForUserThisQuarter(userId) + " - " + userViewsRepo.getSumForUserPreviousQuarter(userId) + ")";
         } else {
             profileViewsQuarter = "0";
         }
 
         String redirectsQuarter;
-        if(userRedirectsRepo.getSumForUserThisQuarter(userId) != 0 && userRedirectsRepo.getSumForUserPreviousQuarter(userId) != 0) {
+        if(userRedirectsRepo.getSumForUserThisQuarter(userId) != null && userRedirectsRepo.getSumForUserPreviousQuarter(userId) != null) {
             redirectsQuarter = (userRedirectsRepo.getSumForUserThisQuarter(userId) - userRedirectsRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (userRedirectsRepo.getSumForUserThisQuarter(userId) - userRedirectsRepo.getSumForUserPreviousQuarter(userId)) + "(" + userRedirectsRepo.getSumForUserThisQuarter(userId) + " - " + userRedirectsRepo.getSumForUserPreviousQuarter(userId) + ")";
         } else {
             redirectsQuarter = "0";
         }
 
         String contentViewsQuarter;
-        if(postClicksRepo.getSumForUserThisQuarter(userId) != 0 && postClicksRepo.getSumForUserPreviousQuarter(userId) != 0) {
+        if(postClicksRepo.getSumForUserThisQuarter(userId) != null && postClicksRepo.getSumForUserPreviousQuarter(userId) != null) {
             contentViewsQuarter = (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId)) + "(" + postClicksRepo.getSumForUserThisQuarter(userId) + " - " + postClicksRepo.getSumForUserPreviousQuarter(userId) + ")";
         } else {
             contentViewsQuarter = "0";

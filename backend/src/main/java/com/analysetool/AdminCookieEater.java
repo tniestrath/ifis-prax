@@ -1,7 +1,7 @@
 package com.analysetool;
 
 import com.analysetool.api.LoginController;
-import com.analysetool.api.UserController;
+import com.analysetool.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
@@ -15,7 +15,7 @@ public class AdminCookieEater implements HandlerInterceptor {
     @Autowired
     LoginController loginController;
     @Autowired
-    UserController userController;
+    UserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -30,7 +30,7 @@ public class AdminCookieEater implements HandlerInterceptor {
 
         if (!result.contains("INVALID") && !result.contains("kaputt")) {
             int userid = new JSONObject(result).getInt("user_id");
-            String accessLevel = userController.getAccessLevel(userid);
+            String accessLevel = userService.getAccessLevel(userid);
             if (accessLevel.equals("none")) response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             if(accessLevel.equals("admin")) return true;
 

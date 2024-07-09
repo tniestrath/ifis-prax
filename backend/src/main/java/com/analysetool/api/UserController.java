@@ -17,18 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.Date;
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -95,243 +88,22 @@ public class UserController {
 
     @GetMapping("/getById")
     public String getUserById(int id) throws JSONException {
-        JSONObject obj = new JSONObject();
-        WPUser user = userRepository.findById((long) id).orElseThrow();
-
-        obj.put("id", user.getId());
-        obj.put("displayName", user.getDisplayName());
-        obj.put("accountType", getType(Math.toIntExact(user.getId())));
-        obj.put("accessLevel", getAccessLevel(user.getId()));
-
-        return obj.toString();
-    }
-
-    public String getAccessLevel(long userId) {
-        if(getType((int) userId).equals("admin")) {
-            return "admin";
-        } else if(isModerator(userId)) {
-            return "mod";
-        } else if(getType((int) userId).equals("premium")) {
-            return "user";
-        } else {
-            return "none";
-        }
+        return userService.getUserById(id);
     }
 
     @GetMapping("/getByLogin")
     public String getUserByLogin(@RequestParam String u) throws JSONException {
-        JSONObject obj = new JSONObject();
-        var user = userRepository.findByLogin(u);
-        if (user.isPresent()){
-            obj.put("id", user.get().getId());
-            obj.put("displayName",user.get().getDisplayName());
-            obj.put("accountType", getType(Math.toIntExact(user.get().getId())));
-            obj.put("accessLevel", getAccessLevel(user.get().getId()));
-        }
-        return obj.toString();
+        return userService.getUserByLogin(u);
     }
 
-    /**
-     *
-     * @param page which page of results in the given size you want to fetch.
-     * @param size the number of results you want per page.
-     * @param search the search-term you want results for, give empty string for none.
-     * @param filterAbo "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
-     * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
-     * @return a JSON String containing information about all users in the specified page, and the number of users loaded.
-     * @throws JSONException .
-     */
     @GetMapping("/getAll")
     public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
-        List<WPUser> list;
-
-
-        if(sorter != null) {
-            //Both filters unused, sorter used.
-            if(filterAbo.isBlank() && filterTyp.isBlank()) {
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAll(search, PageRequest.of(page, size));
-                    }
-                    case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAll(search, PageRequest.of(page, size));
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAll(search, PageRequest.of(page, size));
-                    }
-                    default -> {
-                        list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size, Sort.by("id").descending()));
-                    }
-                }
-            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
-                //Abo-Filter used, sorter used.
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAbo(search, filterAbo, PageRequest.of(page, size));
-                    }
-                    case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAbo(search, filterAbo, PageRequest.of(page, size));
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAbo(search, filterAbo, PageRequest.of(page, size));
-                    }
-                    default -> {
-                        list = userRepository.getAllByNicenameContainingAbo(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
-                    }
-                }
-            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
-                //Company-Type Filter used, sorter used.
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsCompany(search, filterTyp, PageRequest.of(page, size));
-                    }
-                    case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsCompany(search, filterTyp, PageRequest.of(page, size));
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeCompany(search, filterTyp, PageRequest.of(page, size));
-                    }
-                    default -> {
-                        list = userRepository.getAllByNicenameContainingCompany(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
-                    }
-                }
-            } else {
-                //Abo, Company type and sorter used.
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size));
-                    }
-                    case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size));
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size));
-                    }
-                    default -> {
-                        list = userRepository.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
-                    }
-                }
-            }
-        } else {
-            //Neither filters nor sorter used.
-            if(filterAbo.isBlank() && filterTyp.isBlank()) {
-                list = userRepository.getAllByNicenameContainingAll(search, PageRequest.of(page, size, Sort.by("id").descending()));
-            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
-                //Abo-Filter used.
-                list = userRepository.getAllByNicenameContainingAbo(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
-            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
-                //Company-Filter used.
-                list = userRepository.getAllByNicenameContainingCompany(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
-            } else {
-                //Both filters used, no sorter used.
-                list = userRepository.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
-            }
-        }
-
-        JSONArray response = new JSONArray();
-
-        for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
-            response.put(obj);
-        }
-        return new JSONObject().put("users", response).put("count", list.size()).toString();
+        return userService.getAll(page, size, search, filterAbo, filterTyp, sorter);
     }
-
 
     @GetMapping("/getAllWithTagsTest")
     public String getAllWithTagsTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String tag, String sorter) throws JSONException {
-        List<WPUser> list;
-
-
-        if(sorter != null) {
-            //Both filters unused, sorter used.
-            if(filterAbo.isBlank() && filterTyp.isBlank()) {
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAllWithTags(search, tag, PageRequest.of(page, size));
-                    }
-                    case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAllWithTags(search, tag, PageRequest.of(page, size));
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAllWithTags(search, tag, PageRequest.of(page, size));
-                    }
-                    default -> {
-                        list = userRepository.getAllByNicenameContainingAllWithTags(search, tag, PageRequest.of(page, size, Sort.by("id").descending()));
-                    }
-                }
-            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
-                //Abo-Filter used, sorter used.
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
-                    }
-                    case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
-                    }
-                    default -> {
-                        list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, tag, PageRequest.of(page, size, Sort.by("id").descending()));
-                    }
-                }
-            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
-                //Company-Type Filter used, sorter used.
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
-                    }
-                    case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
-                    }
-                    default -> {
-                        list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
-                    }
-                }
-            } else {
-                //Abo, Company type and sorter used.
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
-                    }
-                    case "contentView" -> {
-                        list = userRepository.getAllNameLikeAndContentViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepository.getAllNameLikeAndProfileViewsByTimeAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
-                    }
-                    default -> {
-                        list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
-                    }
-                }
-            }
-        } else {
-            //Neither filters nor sorter used.
-            if(filterAbo.isBlank() && filterTyp.isBlank()) {
-                list = userRepository.getAllByNicenameContainingAllWithTags(search, tag, PageRequest.of(page, size, Sort.by("id").descending()));
-            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
-                //Abo-Filter used.
-                list = userRepository.getAllByNicenameContainingAboWithTags(search, filterAbo, tag, PageRequest.of(page, size, Sort.by("id").descending()));
-            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
-                //Company-Filter used.
-                list = userRepository.getAllByNicenameContainingCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
-            } else {
-                //Both filters used, no sorter used.
-                list = userRepository.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
-            }
-        }
-
-        JSONArray response = new JSONArray();
-
-        for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
-            response.put(obj);
-        }
-        return new JSONObject().put("users", response).put("count", list.size()).toString();
+        return userService.getAllWithTagsTest(page, size, search, filterAbo, filterTyp, tag, sorter);
     }
 
     @GetMapping("/generateMailSingle")
@@ -353,188 +125,27 @@ public class UserController {
 
     @GetMapping("/getAllSingleUserForNewsletter")
     public String getAllSingleUserNewsletter(long id) {
-        JSONObject obj = new JSONObject();
-        try {
-            id = newsletterRepo.getWpUserIdById(id);
-            WPUser user = userRepository.findById(id).isPresent() ? userRepository.findById(id).get() : null;
-            if (user != null) {
-                obj.put("id", user.getId());
-                obj.put("email", user.getEmail());
-                obj.put("displayName", user.getDisplayName());
-                obj.put("niceName", user.getNicename());
-                obj.put("creationDate", user.getRegistered().toLocalDate().toString());
-            }
-        } catch (Exception e) {
-            return "Error, user kaputt";
-        }
-        return obj.toString();
+        return userService.getAllSingleUserNewsletter(id);
     }
 
     @GetMapping("/profilePic")
     public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) {
-
-        try {
-            String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + id + "/profile_photo.png"));
-            String path2 = String.valueOf(Paths.get(config.getProfilephotos() + "/" + id + "/profile_photo.jpg"));
-
-            File cutePic = new File(path);
-            if (!cutePic.exists())
-            {
-                cutePic = new File(path2);
-            }
-            byte[] imageBytes = Files.readAllBytes(cutePic.toPath());
-            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
-        } catch (Exception e) {
-            return ResponseEntity.noContent().build();
-        }
+        return userService.getProfilePic(id);
     }
 
     @GetMapping("/getUserClicksChartData")
     public String getUserClicksChartData(long id, String start, String end) throws JSONException {
-        Date startDate = Date.valueOf(start);
-        Date endDate  = Date.valueOf(end);
-
-        //If the beginning is after the end (good manhwa), swap them.
-        if(startDate.after(endDate)) {
-            Date puffer = startDate;
-            startDate = endDate;
-            endDate = puffer;
-        }
-
-        JSONArray json = new JSONArray();
-        //For all dates selected, add data
-        for(LocalDate date : startDate.toLocalDate().datesUntil(endDate.toLocalDate().plusDays(1)).toList()) {
-            int uniId = 0;
-            //Check if we have stats for the day
-            if (uniRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
-                uniId = uniRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
-            }
-
-            if(uniId != 0 && uniRepo.findById(uniId).isPresent()) {
-                //Since we have data, add date and profileViews
-                JSONObject day = new JSONObject();
-                JSONArray dailyPosts = new JSONArray();
-                JSONObject biggestPost = new JSONObject();
-
-                day.put("date", uniRepo.findById(uniId).get().getDatum());
-                if(userViewsRepo.existsByUserId(id)) {
-                    day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id) != null ? userViewsRepo.getSumByUniIdAndUserId(uniId, id) : 0);
-                } else {
-                    day.put("profileViews", 0);
-                }
-
-                Post biggestPostbuffer = null;
-                for(Post post : postRepository.getPostsByAuthorAndDate(id, date)) {
-                    //Add data for all posts
-                    JSONObject postToday = new JSONObject();
-                    if(biggestPostbuffer == null) {
-                        biggestPostbuffer = post;
-                    } else {
-                        if((statRepository.getSumClicks(post.getId())) != null) {
-                            if(statRepository.getSumClicks(post.getId()) > statRepository.getSumClicks(biggestPostbuffer.getId())) {
-                                biggestPostbuffer = post;
-                            }
-                        }
-                    }
-                    postToday.put("id", post.getId());
-                    postToday.put("title", post.getTitle());
-                    postToday.put("type", postController.getType(Math.toIntExact(post.getId())));
-                    postToday.put("clicks", statRepository.getSumClicks(post.getId()) != null ? statRepository.getSumClicks(post.getId()) : 0);
-                    dailyPosts.put(postToday);
-                }
-                day.put("posts", dailyPosts);
-                if(biggestPostbuffer != null) {
-                    biggestPost.put("id", biggestPostbuffer.getId());
-                    biggestPost.put("title", biggestPostbuffer.getTitle());
-                    biggestPost.put("type", postController.getType(Math.toIntExact(biggestPostbuffer.getId())));
-                    biggestPost.put("clicks", statRepository.getSumClicks(biggestPostbuffer.getId()) != null ? statRepository.getSumClicks(biggestPostbuffer.getId()) : 0);
-                } else {
-                    biggestPost.put("id", 0);
-                    biggestPost.put("title", 0);
-                    biggestPost.put("type", 0);
-                    biggestPost.put("clicks", 0);
-                }
-                day.put("biggestPost", biggestPost);
-
-                json.put(day);
-            }
-
-        }
-        return  json.toString();
+        return userService.getUserClicksChartData(id, start, end);
     }
 
-    /**
-     *
-     * @return a JSON-String containing a list of Events (newEvents) starting with u| for upcoming, c| for current and their type,
-     * the count of events in the past for this user (countOldEvents)
-     * and a count of all events by this user that are active (countTotal).
-     */
     @GetMapping("/getAmountOfEvents")
     public String getCountEvents(long id) throws JSONException {
-
-        JSONObject json = new JSONObject();
-
-        List<String> events = new ArrayList<>();
-        List<Events> allEvents = eventsRepo.getAllByOwnerID(id);
-        int countOld = 0;
-
-        for (Events e : allEvents) {
-            if(eventsController.isActive(e)) {
-                if (eventsController.isCurrent(e)) {
-                    events.add("c|" + eventsController.getEventType(e));
-                } else if (eventsController.isUpcoming(e)) {
-                    events.add("u|" + eventsController.getEventType(e));
-                } else {
-                    countOld++;
-                }
-            }
-
-        }
-        json.put("newEvents", new JSONArray(events));
-        json.put("countOldEvents", countOld);
-        json.put("countTotal", countOld + events.size());
-
-        return json.toString();
+        return userService.getCountEvents(id);
     }
 
     @GetMapping("/getPostCountByType")
     public String getPostCountByType(long id) throws JSONException {
-        List<Post> posts = postRepository.findByAuthorPageable(id, "", PageRequest.of(0, postController.getCountTotalPosts()));
-
-        int countArtikel = 0;
-        int countBlogs = 0;
-        int countNews = 0;
-        int countWhitepaper = 0;
-        int countPodcasts = 0;
-
-        for(Post post : posts) {
-            switch(postController.getType(post.getId())) {
-                case "artikel" -> {
-                    countArtikel++;
-                }
-                case "blog" -> {
-                    countBlogs++;
-                }
-                case "news" -> {
-                    countNews++;
-                }
-                case "podcast" -> {
-                    countPodcasts++;
-                }
-                case "whitepaper" -> {
-                    countWhitepaper++;
-                }
-            }
-        }
-
-        JSONObject json = new JSONObject();
-        json.put("Whitepaper", countWhitepaper);
-        json.put("Blogs", countBlogs);
-        json.put("News", countNews);
-        json.put("Podcasts", countPodcasts);
-        json.put("Artikel", countArtikel);
-
-        return json.toString();
+        return userService.getPostCountByType(id);
     }
 
     /**
@@ -543,113 +154,37 @@ public class UserController {
      */
     @GetMapping("/getAmountOfEventsCreatedYesterday")
     public List<String> getAmountOfEventsCreatedYesterday(long id) {
-        List<String> events = new ArrayList<>();
-        List<Events> allEvents = eventsRepo.getAllByOwnerID(id);
-        LocalDate today = LocalDate.now();
-
-        for (Events e : allEvents) {
-            LocalDate createdDate = e.getEventDateCreated().toLocalDate();
-
-            if (createdDate.isBefore(today) && eventsController.isActive(e)) {
-                if(eventsController.isCurrent(e)) {
-                    events.add("c|" + eventsController.getEventType(e));
-                } else if(eventsController.isUpcoming(e)) {
-                    events.add("u|" + eventsController.getEventType(e));
-                }
-
-            }
-        }
-        return events;
+        return userService.getAmountOfEventsCreatedYesterday(id);
     }
 
     @GetMapping("/getEventsWithStatsAndId")
     public String getEventsWithStats(Integer page, Integer size,  String filter, String search, long id) throws JSONException, ParseException {
-        List<Post> list;
-
-        if(filter.isBlank()) {
-            list = postRepository.getAllEventsWithSearchAndAuthor(search, id, PageRequest.of(page, size));
-        } else {
-            list = postRepository.getAllEventsWithTypeAndSearchAndAuthor(eventsController.getTermIdFromFrontendType(filter), search, id, PageRequest.of(page, size));
-        }
-
-        List<JSONObject> stats = new ArrayList<>();
-
-        for(Post post : list) {
-           stats.add(new JSONObject(postController.PostStatsByIdForFrontend(post.getId())));
-        }
-
-        return new JSONArray(stats).toString();
+        return userService.getEventsWithStats(page, size, filter, search, id);
     }
 
     @GetMapping("/{userId}")
     public UserStats getUserStats(@PathVariable("userId") Long userId) {
-        return userStatsRepository.findByUserId(userId);
+        return userService.getUserStats(userId);
     }
 
     @GetMapping("/getUserStats")
     public String getUserStat(@RequestParam Long id) throws JSONException {
-        JSONObject obj = new JSONObject();
-        UserStats user = userStatsRepository.findByUserId(id);
-        obj.put("Profilaufrufe",user.getProfileView());
-        return obj.toString();
+        return userService.getUserStat(id);
     }
 
     @GetMapping("/getViewsBrokenDown")
     public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
-        long viewsBlog = 0;
-        long viewsArtikel = 0;
-        long viewsProfile = 0;
-        long viewsNews = 0;
-        long viewsWP = 0;
-        long viewsPodcast = 0;
-        long viewsVideo = 0;
-        try {
-            viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
-        } catch (NullPointerException ignored) {
-        }
-
-        List<Post> posts = postRepository.findByAuthor(id.intValue());
-
-        for (Post post : posts) {
-            if (statRepository.existsByArtId(post.getId())) {
-                int stat = statRepository.getSumClicks(post.getId()) == null ? 0 : statRepository.getSumClicks(post.getId());
-                switch(postController.getType(post.getId())) {
-                    case "blog" -> viewsBlog += stat;
-                    case "artikel" -> viewsArtikel += stat;
-                    case "news" -> viewsNews += stat;
-                    case "whitepaper" -> viewsWP += stat;
-                    case "podcast" -> viewsPodcast += stat;
-                    case "videos" -> viewsVideo += stat;
-                }
-            }
-        }
-        JSONObject obj = new JSONObject();
-        obj.put("viewsBlog", viewsBlog);
-        obj.put("viewsArtikel", viewsArtikel);
-        obj.put("viewsNews", viewsNews);
-        obj.put("viewsWhitepaper", viewsWP);
-        obj.put("viewsPodcast", viewsPodcast);
-        obj.put("viewsVideo", viewsVideo);
-        obj.put("viewsProfile", viewsProfile);
-        return obj.toString();
-
+        return userService.getViewsBrokenDown(id);
     }
 
     @GetMapping("/getUserProfileViewsAveragesByTypeAndPosts")
     public String getUserProfileViewsAveragesByTypeAndPosts() throws JSONException {
-        JSONArray array = new JSONArray();
-        array.put(new JSONObject(getUserAveragesWithoutPosts()));
-        array.put(new JSONObject(getUserAveragesByType()));
-        array.put(new JSONObject(getUserAveragesWithPostsWithoutPostClicks()));
-        return array.toString();
+        return userService.getUserProfileViewsAveragesByTypeAndPosts();
     }
 
     @GetMapping("/getUserProfileAndPostViewsAveragesByType")
     public String getUserProfileAndPostViewsAveragesByType() throws JSONException {
-        JSONArray array = new JSONArray();
-        array.put(new JSONObject(getUserAveragesWithPostsWithoutPostClicks()));
-        array.put(new JSONObject(getUserAveragesWithPostsOnlyPostClicks()));
-        return array.toString();
+        return userService.getUserProfileAndPostViewsAveragesByType();
     }
 
     /**
@@ -704,9 +239,9 @@ public class UserController {
 
         for(WPUser u : userRepository.findAll()) {
             boolean stats = userStatsRepository.existsByUserId(u.getId());
-            addCountAndProfileViewsByType(counts, clicks, u, stats, hasPost(Math.toIntExact(u.getId())));
+            userService.addCountAndProfileViewsByType(counts, clicks, u, stats, hasPost(Math.toIntExact(u.getId())));
         }
-        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        userService.buildAveragesFromCountsAndClicks(counts, clicks, averages);
         return averages.toString();
     }
 
@@ -735,44 +270,12 @@ public class UserController {
         for(WPUser u : userRepository.findAll()) {
             boolean stats = userStatsRepository.existsByUserId(u.getId());
             if(hasPost(Math.toIntExact(u.getId()))) {
-                addCountAndProfileViewsByType(counts, clicks, u, stats);
+                userService.addCountAndProfileViewsByType(counts, clicks, u, stats);
             }
         }
-        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        userService.buildAveragesFromCountsAndClicks(counts, clicks, averages);
         return averages + " ProfileViews";
     }
-
-    /**
-     * This accounts for ONLY users that have posts, counting ONLY their profile views.
-     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
-     * @throws JSONException .
-     */
-    private String getUserAveragesWithPostsWithoutPostClicks() throws JSONException {
-        JSONObject counts = new JSONObject();
-        JSONObject clicks = new JSONObject();
-        JSONObject averages = new JSONObject();
-
-        counts.put("basis", 0);
-        counts.put("basis-plus", 0);
-        counts.put("plus", 0);
-        counts.put("premium", 0);
-        counts.put("sponsor", 0);
-
-        clicks.put("basis", 0);
-        clicks.put("basis-plus", 0);
-        clicks.put("plus", 0);
-        clicks.put("premium", 0);
-        clicks.put("sponsor", 0);
-        for(WPUser u : userRepository.findAll()) {
-            boolean stats = userStatsRepository.existsByUserId(u.getId());
-            if(hasPost(Math.toIntExact(u.getId()))) {
-                addCountAndProfileViewsByType(counts, clicks, u, stats);
-            }
-        }
-        buildAveragesFromCountsAndClicks(counts, clicks, averages);
-        return averages.toString();
-    }
-
 
     /**
      * This accounts for ONLY users that have posts, counting ONLY their post's views.
@@ -798,42 +301,13 @@ public class UserController {
         clicks.put("sponsor", 0);
         for(WPUser u : userRepository.findAll()) {
             if(hasPost(Math.toIntExact(u.getId()))) {
-                addCountAndProfileViewsByType(counts, clicks, u, false, true);
+                userService.addCountAndProfileViewsByType(counts, clicks, u, false, true);
             }
         }
-        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        userService.buildAveragesFromCountsAndClicks(counts, clicks, averages);
         return averages + " -PostClicks";
     }
 
-    /**
-     * This accounts for ONLY users that have posts, counting ONLY their post's views.
-     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
-     * @throws JSONException .
-     */
-    private String getUserAveragesWithPostsOnlyPostClicks() throws JSONException {
-        JSONObject counts = new JSONObject();
-        JSONObject clicks = new JSONObject();
-        JSONObject averages = new JSONObject();
-
-        counts.put("basis", 0);
-        counts.put("basis-plus", 0);
-        counts.put("plus", 0);
-        counts.put("premium", 0);
-        counts.put("sponsor", 0);
-
-        clicks.put("basis", 0);
-        clicks.put("basis-plus", 0);
-        clicks.put("plus", 0);
-        clicks.put("premium", 0);
-        clicks.put("sponsor", 0);
-        for(WPUser u : userRepository.findAll()) {
-            if(hasPost(Math.toIntExact(u.getId()))) {
-                addCountAndProfileViewsByType(counts, clicks, u, false, true);
-            }
-        }
-        buildAveragesFromCountsAndClicks(counts, clicks, averages);
-        return averages.toString();
-    }
 
     /**
      * This accounts for ONLY users that do not have posts, counting ONLY their profile views.
@@ -842,30 +316,7 @@ public class UserController {
      */
     @GetMapping("/getUserAveragesWithoutPosts")
     public String getUserAveragesWithoutPosts() throws JSONException {
-        JSONObject counts = new JSONObject();
-        JSONObject clicks = new JSONObject();
-        JSONObject averages = new JSONObject();
-
-        counts.put("basis", 0);
-        counts.put("basis-plus", 0);
-        counts.put("plus", 0);
-        counts.put("premium", 0);
-        counts.put("sponsor", 0);
-
-        clicks.put("basis", 0);
-        clicks.put("basis-plus", 0);
-        clicks.put("plus", 0);
-        clicks.put("premium", 0);
-        clicks.put("sponsor", 0);
-
-        for(WPUser u : userRepository.findAll()) {
-            boolean stats = userStatsRepository.existsByUserId(u.getId());
-            if(!hasPost(Math.toIntExact(u.getId()))) {
-                addCountAndProfileViewsByType(counts, clicks, u, stats);
-            }
-        }
-        buildAveragesFromCountsAndClicks(counts, clicks, averages);
-        return averages.toString();
+        return userService.getUserAveragesWithoutPosts();
     }
 
     /**
@@ -875,150 +326,13 @@ public class UserController {
      */
     @GetMapping("/getUserAveragesByType")
     public String getUserAveragesByType() throws JSONException {
-        JSONObject counts = new JSONObject();
-        JSONObject clicks = new JSONObject();
-        JSONObject averages = new JSONObject();
-
-        counts.put("basis", 0);
-        counts.put("basis-plus", 0);
-        counts.put("plus", 0);
-        counts.put("premium", 0);
-        counts.put("sponsor", 0);
-
-        clicks.put("basis", 0);
-        clicks.put("basis-plus", 0);
-        clicks.put("plus", 0);
-        clicks.put("premium", 0);
-        clicks.put("sponsor", 0);
-
-        for(WPUser u : userRepository.findAll()) {
-            boolean stats = userStatsRepository.existsByUserId(u.getId());
-            addCountAndProfileViewsByType(counts, clicks, u, stats);
-        }
-        buildAveragesFromCountsAndClicks(counts, clicks, averages);
-
-        return averages.toString();
+        return userService.getUserAveragesByType();
     }
 
-    private void buildAveragesFromCountsAndClicks(JSONObject counts, JSONObject clicks, JSONObject averages) throws JSONException {
-        if(counts.getInt("basis") != 0) {
-            averages.put("basis", clicks.getInt("basis") / counts.getInt("basis"));
-        } else {
-            averages.put("basis", 0);
-        }
-        if(counts.getInt("basis-plus") != 0) {
-            averages.put("basis-plus", clicks.getInt("basis-plus") / counts.getInt("basis-plus"));
-        } else {
-            averages.put("basis-plus", 0);
-        }
-        if(counts.getInt("plus") != 0) {
-            averages.put("plus", clicks.getInt("plus") / counts.getInt("plus"));
-        } else {
-            averages.put("plus", 0);
-        }
-        if(counts.getInt("premium") != 0) {
-            averages.put("premium", clicks.getInt("premium") / counts.getInt("premium"));
-        } else {
-            averages.put("premium", 0);
-        }
-    }
-
-    private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews) throws JSONException {
-        switch(getType(Math.toIntExact((u.getId())))) {
-            case "basis" -> {
-                if(profileViews) {
-                    clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(u.getId()).getProfileView());
-                }
-                counts.put("basis", counts.getInt("basis") + 1);
-            }
-            case "basis-plus" -> {
-                if(profileViews) {
-                    clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
-                }
-                counts.put("basis-plus", counts.getInt("basis-plus") + 1);
-            }
-            case "plus" -> {
-                if(profileViews) {
-                    clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
-                }
-                counts.put("plus", counts.getInt("plus") + 1);
-            }
-            case "premium" -> {
-                if(profileViews) {
-                    clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(u.getId()).getProfileView());
-                }
-                counts.put("premium", counts.getInt("premium") + 1);
-            }
-            case "sponsor" -> {
-                if(profileViews) {
-                    clicks.put("sponsor", clicks.getInt("sponsor") + userStatsRepository.findByUserId(u.getId()).getProfileView());
-                }
-                counts.put("sponsor", counts.getInt("sponsor") + 1);
-            }
-        }
-    }
-
-    private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews, boolean postViews) throws JSONException {
-        switch(getType(Math.toIntExact((u.getId())))) {
-            case "basis" -> {
-                if(profileViews) {
-                    clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(u.getId()).getProfileView());
-                }
-                if(postViews) {
-                    clicks.put("basis", clicks.getInt("basis") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
-                }
-                counts.put("basis", counts.getInt("basis") + 1);
-            }
-            case "basis-plus" -> {
-                if(profileViews) {
-                    clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
-                }
-                if(postViews) {
-                    clicks.put("basis-plus", clicks.getInt("basis-plus") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
-                }
-                counts.put("basis-plus", counts.getInt("basis-plus") + 1);
-            }
-            case "plus" -> {
-                if(profileViews) {
-                    clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
-                }
-                if(postViews) {
-                    clicks.put("plus", clicks.getInt("plus") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
-                }
-                counts.put("plus", counts.getInt("plus") + 1);
-            }
-            case "premium" -> {
-                if(profileViews) {
-                    clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(u.getId()).getProfileView());
-                }
-                if(postViews) {
-                    clicks.put("premium", clicks.getInt("premium") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
-                }
-                counts.put("premium", counts.getInt("premium") + 1);
-            }
-            case "sponsor" -> {
-                if(profileViews) {
-                    clicks.put("sponsor", clicks.getInt("sponsor") + userStatsRepository.findByUserId(u.getId()).getProfileView());
-                }
-                if(postViews) {
-                    clicks.put("sponsor", clicks.getInt("sponsor") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
-                }
-                counts.put("sponsor", counts.getInt("sponsor") + 1);
-            }
-        }
-    }
 
     @GetMapping("/getClickTotalOnPostsOfUser")
     public int getClickTotalOnPostsOfUser (int uid){
-        List<Post> posts= postRepository.findByAuthor(uid);
-        int clicks = 0;
-        for(Post post : posts) {
-            if(post != null) {
-                clicks += statRepository.getSumClicks(post.getId()) != null ? statRepository.getSumClicks(post.getId()) : 0;
-            }
-        }
-
-        return clicks;
+        return userService.getClickTotalOnPostsOfUser(uid);
     }
 
     @GetMapping("/getAccountTypeAll")
@@ -1224,13 +538,6 @@ public class UserController {
     }
 
 
-    public boolean isModerator(long userId) {
-        if(wpUserMetaRepository.existsByUserId(userId)) {
-            return wpUserMetaRepository.getWPUserMetaValueByUserId(userId).contains("editor");
-        }
-        return false;
-    }
-
     /**
      *
      * @param id user id to fetch an account type for.
@@ -1269,7 +576,7 @@ public class UserController {
 
     @GetMapping("/hasPost")
     public boolean hasPost(@RequestParam int id) {
-        return !postRepository.findByAuthor(id).isEmpty();
+        return userService.hasPost(id);
     }
 
     @GetMapping("/hasPostByType")

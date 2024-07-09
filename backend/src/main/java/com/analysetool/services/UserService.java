@@ -1,10 +1,8 @@
 package com.analysetool.services;
 
+import com.analysetool.api.EventsController;
 import com.analysetool.api.PostController;
-import com.analysetool.modells.StatMails;
-import com.analysetool.modells.UserStats;
-import com.analysetool.modells.UserViewsByHourDLC;
-import com.analysetool.modells.WPUser;
+import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
 import com.analysetool.util.DashConfig;
@@ -12,13 +10,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,124 +59,133 @@ public class UserService {
     private RankingTotalProfileRepository rankingTotalProfileRepo;
     @Autowired
     private PostClicksByHourDLCRepository postClicksRepo;
+    @Autowired
+    private NewsletterRepository newsletterRepo;
+    @Autowired
+    private universalStatsRepository uniRepo;
+    @Autowired
+    private PostStatsRepository statRepository;
+    @Autowired
+    private PostRepository postRepo;
+    @Autowired
+    private EventsRepository eventsRepo;
+    @Autowired
+    private EventsController eventsController;
 
     private final DashConfig config;
 
-    private String imageProfile = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA3QAAAN0BcFOiBwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAIASURBVFiFvdY/a5RBEMfxz5MLRIwRFRtRAioIgn8CsbKwM2KnFhEbCytfhJ2IlWCjIIgWCmqrBHwBFiKEWFgoGBSxSKGFaKLBxLG4S1juLnf73D2XgYFnH57Z33efnZndIiKUsaIoTuIiJnAc3zCHN7gbEYulJoyILMcW3MIqYgOfx6ncOSMiDwAjmO0gnPo/XK4a4Gam+Jr/wHglADiBlZIAgZc5AEMZaXIOtcyUSm2qKIqxbh/lAEz0IA6FepX0DXC0R4Cs2ByAhT4AusbmAMz1AdA1NgfgdY/iCxHxuetXGWVYU2+zZctwuspGdBi/S4g/q7QTNiCm8DVD/DG2Vw7QgNiBh1hqIzyP82XmiwhFY+K2VhTFfkziIGYi4l3jfQ2HJMdxRHxP4iZxGh8wGxFfSiUhduKe+smWrvIBdnf4Q3vwtClmBbcxlrUF6uf+2w57vIT7mMYRHMMlPMJyh7hXGM4BuNMlyfrxGx0BsA9/BwiwiF2djuOrGG6bLNXYVlxJXzQDnBmgeHuN5PeP6u3mU9Z/YajdFhzQ282nrI1i79ogBRjfBPEWrRRg2yYCrGulADl3g6psqOUB7zcR4OP6U1IFI/hj8FXwE7WWKoiIZVwf0IpTuxYRq+ujplY8jBc9rCrXn0h6wIYXElzADD5pPZLL+Kr6ReU5zrbT+g/lp72yFoh52gAAAABJRU5ErkJggg==";
-    private String imageContent = "iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAABFNAAARTQHAOWBjAAAB/0lEQVRIiWL4//8/xZiBgcGAgYHhAQMDA4gDwgcYGBgEwGb//88AAAAA//+ilgUfkCyA4Qtgi/7/ZwAAAAD//6KVBQiLGBgEAAAAAP//otSSCXgsgGAGhgMAAAAA//+ixAcToOwFeC1hYPgPAAAA//+iNIgWELSIgeE/AAAA//+iRhzgt4iB4QAAAAD//6JWJOOy6AMDA4MBAAAA//8i1wIQOwCaenBZBLbg////DAAAAAD//yLXApAYvqADpTqwBf///2cAAAAA//+ipgUwDE51cPz/PwMAAAD//6K2BfAgguP//xkAAAAA//+iuQX///9nAAAAAP//orkF////ZwAAAAD//6K5Bf///2cAAAAA//8ilA8aKLXg////DAAAAAD//0K2BFQHECrsSLbg////DAAAAAD//4JZkIBWPCNXQBRZ8P//fwYAAAAA//+CWYJcHCgQ8BVJFvz//58BAAAA//+CWQIL8wtI8QOyCN1HJFvw//9/BgAAAAD//wIZ6IAtt0J9hFw2kWXB////GQAAAAD//2KBFnQw8IGRkRFU7oDE5JHEP4Ic8///f5ClpAEGBgYAAAAA//8CYWTXYq8PGBgUyPEBGP//zwAAAAD//wJZgityQYkB5HqyDQfj//8ZAAAAAP//Qs4fIB+BMx81DIbj//8ZAAAAAP//AwARtZXpaOI3DgAAAABJRU5ErkJggg==";
-    private String imageDaily = "iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJYSURBVEhLvZbNS1ZBFIevhRYq2BcE0sYKJALXFS2Lighatq+V0K7+CAP/CME/oIWgEAVtCzLcRRD0qdEHRZuorJ7nOkeO876YmvWDh/vemXPOnTlzZubtadbXEFwojMEh2A8f4BUswCzMwSfYlHbBTXgBvzaAdtrrtyEdh4cQAZ7ABJyB66XNp++22x+2+um/rk7De9DhDVyF3RA6Ad/LM2S/dtrrp79xusoRxAfug/mvtROOlGct7fWLD3XMyFxGijQcgK1Iv/iQ8daskYtmh1PuNoPNSP9InXFb7YGXYKO5rTUI9cxyunaUZ5ZxjGfVuQ2aK6XBKsmLrPM0OCqNb8MBOAiPwMrS/i5ol/ec7VF1xm+myotOWX2QS1km4WT5/RhcXH+7Oc1IlvHsm3K07mR1pzxD3+AcHIbI7VGI9Nj/FX6AZV0r4o3pEAt9DKz/nO+PMAyn2reVgI5OOXI3pDGiTelvHOOpNv5P0EgckfsgNA7RJy6oa/IltYnrFunS3zjRtwzNu/LiUZFnYo0/Bftc2IsQugT3wAOy/kjMJI4g4zfz5cWpZ+2Ft+BMz8MI5OpTo2AKl6BeeOMZd958Ohp1tjyzHJWl6XH+DKyuWtr0rvxco4i34EcMoC5DHqn3wwyYiuewCH4o6zWYNmN8tqHIOMZTbXx3ZNwb3Xa8u13627dORUlnXQPjre54dQNsdNTbeXYZd1X/5RRW//w+CdU3o7nNxWD9/9XNGHIED0AH8TS9BZbkttzxIXPpoRhV9ye0075jDdRW/nftAw/O/L+r3idJTfMbUfvNNr3flUgAAAAASUVORK5CYII=";
-    private String imageRedirect = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAALPSURBVFhH1ZfL6w1RHMCvZwhRFBbkLWEjr9hIoSjPlNfSwubHgqWNWPkDSMpCLBTlsfDIjrxKIiulEAsboizx+cycuc0998zv3hkkn/p0z8w553vOPXMeM63/nQPBxgwNv02ZEWzMsPBbh5m4AbfhJpyDU3AafsfP2Dd1RmA73sWbuA9H47fgKNyLN9Aylv1jzMd7+BRteAIWHA8WmGeZJ2gd6/4Wm/EdHsUh3og4EoyxrHWsa4xGWPE9rs2u0owMVmFdY9TuhENn7wdrXHp1QIxhrFqPw+fnEFYxCc/i86DpyViFsYzZF85gJ1zqmctYfIxncEHQtPfMS2EsY7p0e+IyciZXcQiv5ckOvHc4TybZj8buIN4H3GTcUFzrVSxH13uM95blySTmG9s22sQdMPgb/JJdpfmEs/NkB7PQvCqMaWzbaBN3YB6+yJOVnMMtuCK7yjG9Fc0bjJc4N0/mODnsxB6ciLvQnt5B9/RL+APLOIxXcCXe9gZ4Nrj7OYE/eKNEOf56dLe8jFl8M9XnshAt5HIy7b14hHbgA7Sx3XghaPoR3sedWKYc39h2oCp+6xiezJNdLMK3uDq7SmOeZRZnV90Y2zbaxD14jUvyZBcuv/PoCFRhnmUsm8LYtlGJM/kVlk+8Aod3TZ4cFEfBsjHGNLZttIlHwGXyEePDo5isvnD0wjKWjXdSYxrbNtp0TQI4jQMYBxiO03Fq+E1Z5I3AMsbysRi7g7iRAg+OW3gqu8q5iEvRf1hV7yeOwWfo0ivwMNqI67KrPkgdx/6r8ZHjgvH98gg0Oo6lnxeSXli30QtJgRXtvUOYGvaq7wLLWse6jRsvcOiKl1KP1PISPREsMM+j3LJ9vZRWTaYU7vMH0bPApeShtQrlIbrJuMZdas72q9iTOh0ocA/3SPVU81SU6+gO5xnRsc7/NvF3QW1SG1Edvgb/GX6SaUNarV8yHYTxxkCURwAAAABJRU5ErkJggg==";
+    private final String imageProfile = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA3QAAAN0BcFOiBwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAIASURBVFiFvdY/a5RBEMfxz5MLRIwRFRtRAioIgn8CsbKwM2KnFhEbCytfhJ2IlWCjIIgWCmqrBHwBFiKEWFgoGBSxSKGFaKLBxLG4S1juLnf73D2XgYFnH57Z33efnZndIiKUsaIoTuIiJnAc3zCHN7gbEYulJoyILMcW3MIqYgOfx6ncOSMiDwAjmO0gnPo/XK4a4Gam+Jr/wHglADiBlZIAgZc5AEMZaXIOtcyUSm2qKIqxbh/lAEz0IA6FepX0DXC0R4Cs2ByAhT4AusbmAMz1AdA1NgfgdY/iCxHxuetXGWVYU2+zZctwuspGdBi/S4g/q7QTNiCm8DVD/DG2Vw7QgNiBh1hqIzyP82XmiwhFY+K2VhTFfkziIGYi4l3jfQ2HJMdxRHxP4iZxGh8wGxFfSiUhduKe+smWrvIBdnf4Q3vwtClmBbcxlrUF6uf+2w57vIT7mMYRHMMlPMJyh7hXGM4BuNMlyfrxGx0BsA9/BwiwiF2djuOrGG6bLNXYVlxJXzQDnBmgeHuN5PeP6u3mU9Z/YajdFhzQ282nrI1i79ogBRjfBPEWrRRg2yYCrGulADl3g6psqOUB7zcR4OP6U1IFI/hj8FXwE7WWKoiIZVwf0IpTuxYRq+ujplY8jBc9rCrXn0h6wIYXElzADD5pPZLL+Kr6ReU5zrbT+g/lp72yFoh52gAAAABJRU5ErkJggg==";
+    private final String imageContent = "iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAABFNAAARTQHAOWBjAAAB/0lEQVRIiWL4//8/xZiBgcGAgYHhAQMDA4gDwgcYGBgEwGb//88AAAAA//+ilgUfkCyA4Qtgi/7/ZwAAAAD//6KVBQiLGBgEAAAAAP//otSSCXgsgGAGhgMAAAAA//+ixAcToOwFeC1hYPgPAAAA//+iNIgWELSIgeE/AAAA//+iRhzgt4iB4QAAAAD//6JWJOOy6AMDA4MBAAAA//8i1wIQOwCaenBZBLbg////DAAAAAD//yLXApAYvqADpTqwBf///2cAAAAA//+ipgUwDE51cPz/PwMAAAD//6K2BfAgguP//xkAAAAA//+iuQX///9nAAAAAP//orkF////ZwAAAAD//6K5Bf///2cAAAAA//8ilA8aKLXg////DAAAAAD//0K2BFQHECrsSLbg////DAAAAAD//4JZkIBWPCNXQBRZ8P//fwYAAAAA//+CWYJcHCgQ8BVJFvz//58BAAAA//+CWQIL8wtI8QOyCN1HJFvw//9/BgAAAAD//wIZ6IAtt0J9hFw2kWXB////GQAAAAD//2KBFnQw8IGRkRFU7oDE5JHEP4Ic8///f5ClpAEGBgYAAAAA//8CYWTXYq8PGBgUyPEBGP//zwAAAAD//wJZgityQYkB5HqyDQfj//8ZAAAAAP//Qs4fIB+BMx81DIbj//8ZAAAAAP//AwARtZXpaOI3DgAAAABJRU5ErkJggg==";
+    private final String imageDaily = "iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJYSURBVEhLvZbNS1ZBFIevhRYq2BcE0sYKJALXFS2Lighatq+V0K7+CAP/CME/oIWgEAVtCzLcRRD0qdEHRZuorJ7nOkeO876YmvWDh/vemXPOnTlzZubtadbXEFwojMEh2A8f4BUswCzMwSfYlHbBTXgBvzaAdtrrtyEdh4cQAZ7ABJyB66XNp++22x+2+um/rk7De9DhDVyF3RA6Ad/LM2S/dtrrp79xusoRxAfug/mvtROOlGct7fWLD3XMyFxGijQcgK1Iv/iQ8daskYtmh1PuNoPNSP9InXFb7YGXYKO5rTUI9cxyunaUZ5ZxjGfVuQ2aK6XBKsmLrPM0OCqNb8MBOAiPwMrS/i5ol/ec7VF1xm+myotOWX2QS1km4WT5/RhcXH+7Oc1IlvHsm3K07mR1pzxD3+AcHIbI7VGI9Nj/FX6AZV0r4o3pEAt9DKz/nO+PMAyn2reVgI5OOXI3pDGiTelvHOOpNv5P0EgckfsgNA7RJy6oa/IltYnrFunS3zjRtwzNu/LiUZFnYo0/Bftc2IsQugT3wAOy/kjMJI4g4zfz5cWpZ+2Ft+BMz8MI5OpTo2AKl6BeeOMZd958Ohp1tjyzHJWl6XH+DKyuWtr0rvxco4i34EcMoC5DHqn3wwyYiuewCH4o6zWYNmN8tqHIOMZTbXx3ZNwb3Xa8u13627dORUlnXQPjre54dQNsdNTbeXYZd1X/5RRW//w+CdU3o7nNxWD9/9XNGHIED0AH8TS9BZbkttzxIXPpoRhV9ye0075jDdRW/nftAw/O/L+r3idJTfMbUfvNNr3flUgAAAAASUVORK5CYII=";
+    private final String imageRedirect = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAALPSURBVFhH1ZfL6w1RHMCvZwhRFBbkLWEjr9hIoSjPlNfSwubHgqWNWPkDSMpCLBTlsfDIjrxKIiulEAsboizx+cycuc0998zv3hkkn/p0z8w553vOPXMeM63/nQPBxgwNv02ZEWzMsPBbh5m4AbfhJpyDU3AafsfP2Dd1RmA73sWbuA9H47fgKNyLN9Aylv1jzMd7+BRteAIWHA8WmGeZJ2gd6/4Wm/EdHsUh3og4EoyxrHWsa4xGWPE9rs2u0owMVmFdY9TuhENn7wdrXHp1QIxhrFqPw+fnEFYxCc/i86DpyViFsYzZF85gJ1zqmctYfIxncEHQtPfMS2EsY7p0e+IyciZXcQiv5ckOvHc4TybZj8buIN4H3GTcUFzrVSxH13uM95blySTmG9s22sQdMPgb/JJdpfmEs/NkB7PQvCqMaWzbaBN3YB6+yJOVnMMtuCK7yjG9Fc0bjJc4N0/mODnsxB6ciLvQnt5B9/RL+APLOIxXcCXe9gZ4Nrj7OYE/eKNEOf56dLe8jFl8M9XnshAt5HIy7b14hHbgA7Sx3XghaPoR3sedWKYc39h2oCp+6xiezJNdLMK3uDq7SmOeZRZnV90Y2zbaxD14jUvyZBcuv/PoCFRhnmUsm8LYtlGJM/kVlk+8Aod3TZ4cFEfBsjHGNLZttIlHwGXyEePDo5isvnD0wjKWjXdSYxrbNtp0TQI4jQMYBxiO03Fq+E1Z5I3AMsbysRi7g7iRAg+OW3gqu8q5iEvRf1hV7yeOwWfo0ivwMNqI67KrPkgdx/6r8ZHjgvH98gg0Oo6lnxeSXli30QtJgRXtvUOYGvaq7wLLWse6jRsvcOiKl1KP1PISPREsMM+j3LJ9vZRWTaYU7vMH0bPApeShtQrlIbrJuMZdas72q9iTOh0ocA/3SPVU81SU6+gO5xnRsc7/NvF3QW1SG1Edvgb/GX6SaUNarV8yHYTxxkCURwAAAABJRU5ErkJggg==";
 
     public UserService(DashConfig config) {
         this.config = config;
     }
 
 
-
-
-
-
     private final String tableBase = "<!DOCTYPE html>\n" +
             "<html lang=\"en\">\n" +
             "<head>\n" +
             "    <meta charset=\"UTF-8\">\n" +
+            "    <meta http-equiv=\"Content-Type\" content=\"text/html charset=UTF-8\" />\n" +
             "    <title>Analyse ihrer Marktplatz Präsens</title>\n" +
-            "    <style>\n" +
-            "        html, body{\n" +
-            "            width: 100%;\n" +
-            "            display: flex;\n" +
-            "            flex-direction: column;\n" +
-            "            align-items: center;\n" +
-            "            background: #cccccc;\n" +
-            "        }\n" +
-            "        .chapter{\n" +
-            "            width: 95%;\n" +
-            "            background: white;\n" +
-            "            display: flex;\n" +
-            "            flex-direction: column;\n" +
-            "            align-items: center;\n" +
-            "        }\n" +
-            "        .chapter-title{\n" +
-            "            text-align: center;\n" +
-            "            font-size: x-large;\n" +
-            "        }\n" +
-            "        ul{\n" +
-            "            list-style: none;\n" +
-            "            padding-left: 0;\n" +
-            "            min-width: 50%;\n" +
-            "        }\n" +
-            "        ul ul{\n" +
-            "            padding-left: 40px;\n" +
-            "\n" +
-            "        }\n" +
-            "        li{\n" +
-            "            list-style: none;\n" +
-            "        }\n" +
-            "        img{\n" +
-            "            height: 1em;\n" +
-            "            width: auto;\n" +
-            "            aspect-ratio: 1/1;\n" +
-            "        }\n" +
-            "        table{\n" +
-            "            border-collapse: collapse;\n" +
-            "        }\n" +
-            "        tr{\n" +
-            "            border-bottom: 1px solid #ddd;\n" +
-            "        }\n" +
-            "        .rankings-2, .rankings-3{\n" +
-            "            text-align: center;\n" +
-            "        }\n" +
+            "    <style type=\"text/css\">\n" +
+            "        .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td {line-height: 100%;}\n" +
+            "        .ExternalClass {width: 100%;}\n" +
             "    </style>\n" +
             "</head>\n" +
-            "<body style=\"width: 100%;display: flex;flex-direction: column;align-items: center;background: #cccccc;\">\n" +
-            "    <div id=\"quarterStats\" class=\"chapter\" style=\"width: 95%;background: white;display: flex;flex-direction: column;align-items: center;\">\n" +
-            "        <p class=\"chapter-title\" style=\"text-align: center;font-size: x-large;\">Ihr Zuwachs im letzten Quartal:</p>\n" +
-            "        <ul id=\"quarterStatsList\" style=\"list-style: none;padding-left: 0;min-width: 50%;\">\n" +
-            "            <li style=\"list-style: none;\" id=\"qs-1\">Profilaufrufe: {{PROFILEVIEWSQUARTER}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA3QAAAN0BcFOiBwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAIASURBVFiFvdY/a5RBEMfxz5MLRIwRFRtRAioIgn8CsbKwM2KnFhEbCytfhJ2IlWCjIIgWCmqrBHwBFiKEWFgoGBSxSKGFaKLBxLG4S1juLnf73D2XgYFnH57Z33efnZndIiKUsaIoTuIiJnAc3zCHN7gbEYulJoyILMcW3MIqYgOfx6ncOSMiDwAjmO0gnPo/XK4a4Gam+Jr/wHglADiBlZIAgZc5AEMZaXIOtcyUSm2qKIqxbh/lAEz0IA6FepX0DXC0R4Cs2ByAhT4AusbmAMz1AdA1NgfgdY/iCxHxuetXGWVYU2+zZctwuspGdBi/S4g/q7QTNiCm8DVD/DG2Vw7QgNiBh1hqIzyP82XmiwhFY+K2VhTFfkziIGYi4l3jfQ2HJMdxRHxP4iZxGh8wGxFfSiUhduKe+smWrvIBdnf4Q3vwtClmBbcxlrUF6uf+2w57vIT7mMYRHMMlPMJyh7hXGM4BuNMlyfrxGx0BsA9/BwiwiF2djuOrGG6bLNXYVlxJXzQDnBmgeHuN5PeP6u3mU9Z/YajdFhzQ282nrI1i79ogBRjfBPEWrRRg2yYCrGulADl3g6psqOUB7zcR4OP6U1IFI/hj8FXwE7WWKoiIZVwf0IpTuxYRq+ujplY8jBc9rCrXn0h6wIYXElzADD5pPZLL+Kr6ReU5zrbT+g/lp72yFoh52gAAAABJRU5ErkJggg==\"/><br>\n" +
-            "            <li style=\"list-style: none;\" id=\"qs-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTSQUARTER}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAALPSURBVFhH1ZfL6w1RHMCvZwhRFBbkLWEjr9hIoSjPlNfSwubHgqWNWPkDSMpCLBTlsfDIjrxKIiulEAsboizx+cycuc0998zv3hkkn/p0z8w553vOPXMeM63/nQPBxgwNv02ZEWzMsPBbh5m4AbfhJpyDU3AafsfP2Dd1RmA73sWbuA9H47fgKNyLN9Aylv1jzMd7+BRteAIWHA8WmGeZJ2gd6/4Wm/EdHsUh3og4EoyxrHWsa4xGWPE9rs2u0owMVmFdY9TuhENn7wdrXHp1QIxhrFqPw+fnEFYxCc/i86DpyViFsYzZF85gJ1zqmctYfIxncEHQtPfMS2EsY7p0e+IyciZXcQiv5ckOvHc4TybZj8buIN4H3GTcUFzrVSxH13uM95blySTmG9s22sQdMPgb/JJdpfmEs/NkB7PQvCqMaWzbaBN3YB6+yJOVnMMtuCK7yjG9Fc0bjJc4N0/mODnsxB6ciLvQnt5B9/RL+APLOIxXcCXe9gZ4Nrj7OYE/eKNEOf56dLe8jFl8M9XnshAt5HIy7b14hHbgA7Sx3XghaPoR3sedWKYc39h2oCp+6xiezJNdLMK3uDq7SmOeZRZnV90Y2zbaxD14jUvyZBcuv/PoCFRhnmUsm8LYtlGJM/kVlk+8Aod3TZ4cFEfBsjHGNLZttIlHwGXyEePDo5isvnD0wjKWjXdSYxrbNtp0TQI4jQMYBxiO03Fq+E1Z5I3AMsbysRi7g7iRAg+OW3gqu8q5iEvRf1hV7yeOwWfo0ivwMNqI67KrPkgdx/6r8ZHjgvH98gg0Oo6lnxeSXli30QtJgRXtvUOYGvaq7wLLWse6jRsvcOiKl1KP1PISPREsMM+j3LJ9vZRWTaYU7vMH0bPApeShtQrlIbrJuMZdas72q9iTOh0ocA/3SPVU81SU6+gO5xnRsc7/NvF3QW1SG1Edvgb/GX6SaUNarV8yHYTxxkCURwAAAABJRU5ErkJggg==\"/></li>\n" +
-            "            <li style=\"list-style: none;\" id=\"qs-3\">Inhaltsaufrufe: {{CONTENTVIEWSQUARTER}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAABFNAAARTQHAOWBjAAAB/0lEQVRIiWL4//8/xZiBgcGAgYHhAQMDA4gDwgcYGBgEwGb//88AAAAA//+ilgUfkCyA4Qtgi/7/ZwAAAAD//6KVBQiLGBgEAAAAAP//otSSCXgsgGAGhgMAAAAA//+ixAcToOwFeC1hYPgPAAAA//+iNIgWELSIgeE/AAAA//+iRhzgt4iB4QAAAAD//6JWJOOy6AMDA4MBAAAA//8i1wIQOwCaenBZBLbg////DAAAAAD//yLXApAYvqADpTqwBf///2cAAAAA//+ipgUwDE51cPz/PwMAAAD//6K2BfAgguP//xkAAAAA//+iuQX///9nAAAAAP//orkF////ZwAAAAD//6K5Bf///2cAAAAA//8ilA8aKLXg////DAAAAAD//0K2BFQHECrsSLbg////DAAAAAD//4JZkIBWPCNXQBRZ8P//fwYAAAAA//+CWYJcHCgQ8BVJFvz//58BAAAA//+CWQIL8wtI8QOyCN1HJFvw//9/BgAAAAD//wIZ6IAtt0J9hFw2kWXB////GQAAAAD//2KBFnQw8IGRkRFU7oDE5JHEP4Ic8///f5ClpAEGBgYAAAAA//8CYWTXYq8PGBgUyPEBGP//zwAAAAD//wJZgityQYkB5HqyDQfj//8ZAAAAAP//Qs4fIB+BMx81DIbj//8ZAAAAAP//AwARtZXpaOI3DgAAAABJRU5ErkJggg==\"/></li>\n" +
-            "        </ul>\n" +
-            "    </div>\n" +
-            "    <div id=\"baseStats\" class=\"chapter\" style=\"width: 95%;background: white;display: flex;flex-direction: column;align-items: center;\">\n" +
-            "        <p class=\"chapter-title\" style=\"text-align: center;font-size: x-large;\">Ihre Gesamtübersicht:</p>\n" +
-            "        <ul id=\"baseStatsList\" style=\"list-style: none;padding-left: 0;min-width: 50%;\">\n" +
-            "            <li style=\"list-style: none;\" id=\"bs-1\">Profilaufrufe: {{PROFILEVIEWS}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA3QAAAN0BcFOiBwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAIASURBVFiFvdY/a5RBEMfxz5MLRIwRFRtRAioIgn8CsbKwM2KnFhEbCytfhJ2IlWCjIIgWCmqrBHwBFiKEWFgoGBSxSKGFaKLBxLG4S1juLnf73D2XgYFnH57Z33efnZndIiKUsaIoTuIiJnAc3zCHN7gbEYulJoyILMcW3MIqYgOfx6ncOSMiDwAjmO0gnPo/XK4a4Gam+Jr/wHglADiBlZIAgZc5AEMZaXIOtcyUSm2qKIqxbh/lAEz0IA6FepX0DXC0R4Cs2ByAhT4AusbmAMz1AdA1NgfgdY/iCxHxuetXGWVYU2+zZctwuspGdBi/S4g/q7QTNiCm8DVD/DG2Vw7QgNiBh1hqIzyP82XmiwhFY+K2VhTFfkziIGYi4l3jfQ2HJMdxRHxP4iZxGh8wGxFfSiUhduKe+smWrvIBdnf4Q3vwtClmBbcxlrUF6uf+2w57vIT7mMYRHMMlPMJyh7hXGM4BuNMlyfrxGx0BsA9/BwiwiF2djuOrGG6bLNXYVlxJXzQDnBmgeHuN5PeP6u3mU9Z/YajdFhzQ282nrI1i79ogBRjfBPEWrRRg2yYCrGulADl3g6psqOUB7zcR4OP6U1IFI/hj8FXwE7WWKoiIZVwf0IpTuxYRq+ujplY8jBc9rCrXn0h6wIYXElzADD5pPZLL+Kr6ReU5zrbT+g/lp72yFoh52gAAAABJRU5ErkJggg==\"/><br>\n" +
-            "                <ul style=\"padding-left: 40px;list-style: none;\">\n" +
-            "                    <li style=\"list-style: none;\" id=\"bs-1-1\">Tägliche Aufrufe: {{DAILYVIEWS}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJYSURBVEhLvZbNS1ZBFIevhRYq2BcE0sYKJALXFS2Lighatq+V0K7+CAP/CME/oIWgEAVtCzLcRRD0qdEHRZuorJ7nOkeO876YmvWDh/vemXPOnTlzZubtadbXEFwojMEh2A8f4BUswCzMwSfYlHbBTXgBvzaAdtrrtyEdh4cQAZ7ABJyB66XNp++22x+2+um/rk7De9DhDVyF3RA6Ad/LM2S/dtrrp79xusoRxAfug/mvtROOlGct7fWLD3XMyFxGijQcgK1Iv/iQ8daskYtmh1PuNoPNSP9InXFb7YGXYKO5rTUI9cxyunaUZ5ZxjGfVuQ2aK6XBKsmLrPM0OCqNb8MBOAiPwMrS/i5ol/ec7VF1xm+myotOWX2QS1km4WT5/RhcXH+7Oc1IlvHsm3K07mR1pzxD3+AcHIbI7VGI9Nj/FX6AZV0r4o3pEAt9DKz/nO+PMAyn2reVgI5OOXI3pDGiTelvHOOpNv5P0EgckfsgNA7RJy6oa/IltYnrFunS3zjRtwzNu/LiUZFnYo0/Bftc2IsQugT3wAOy/kjMJI4g4zfz5cWpZ+2Ft+BMz8MI5OpTo2AKl6BeeOMZd958Ohp1tjyzHJWl6XH+DKyuWtr0rvxco4i34EcMoC5DHqn3wwyYiuewCH4o6zWYNmN8tqHIOMZTbXx3ZNwb3Xa8u13627dORUlnXQPjre54dQNsdNTbeXYZd1X/5RRW//w+CdU3o7nNxWD9/9XNGHIED0AH8TS9BZbkttzxIXPpoRhV9ye0075jDdRW/nftAw/O/L+r3idJTfMbUfvNNr3flUgAAAAASUVORK5CYII=\"/></li>\n" +
-            "                    <li style=\"list-style: none;\" id=\"bs-1-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTS}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAALPSURBVFhH1ZfL6w1RHMCvZwhRFBbkLWEjr9hIoSjPlNfSwubHgqWNWPkDSMpCLBTlsfDIjrxKIiulEAsboizx+cycuc0998zv3hkkn/p0z8w553vOPXMeM63/nQPBxgwNv02ZEWzMsPBbh5m4AbfhJpyDU3AafsfP2Dd1RmA73sWbuA9H47fgKNyLN9Aylv1jzMd7+BRteAIWHA8WmGeZJ2gd6/4Wm/EdHsUh3og4EoyxrHWsa4xGWPE9rs2u0owMVmFdY9TuhENn7wdrXHp1QIxhrFqPw+fnEFYxCc/i86DpyViFsYzZF85gJ1zqmctYfIxncEHQtPfMS2EsY7p0e+IyciZXcQiv5ckOvHc4TybZj8buIN4H3GTcUFzrVSxH13uM95blySTmG9s22sQdMPgb/JJdpfmEs/NkB7PQvCqMaWzbaBN3YB6+yJOVnMMtuCK7yjG9Fc0bjJc4N0/mODnsxB6ciLvQnt5B9/RL+APLOIxXcCXe9gZ4Nrj7OYE/eKNEOf56dLe8jFl8M9XnshAt5HIy7b14hHbgA7Sx3XghaPoR3sedWKYc39h2oCp+6xiezJNdLMK3uDq7SmOeZRZnV90Y2zbaxD14jUvyZBcuv/PoCFRhnmUsm8LYtlGJM/kVlk+8Aod3TZ4cFEfBsjHGNLZttIlHwGXyEePDo5isvnD0wjKWjXdSYxrbNtp0TQI4jQMYBxiO03Fq+E1Z5I3AMsbysRi7g7iRAg+OW3gqu8q5iEvRf1hV7yeOwWfo0ivwMNqI67KrPkgdx/6r8ZHjgvH98gg0Oo6lnxeSXli30QtJgRXtvUOYGvaq7wLLWse6jRsvcOiKl1KP1PISPREsMM+j3LJ9vZRWTaYU7vMH0bPApeShtQrlIbrJuMZdas72q9iTOh0ocA/3SPVU81SU6+gO5xnRsc7/NvF3QW1SG1Edvgb/GX6SaUNarV8yHYTxxkCURwAAAABJRU5ErkJggg==\"/></li>\n" +
-            "                </ul>\n" +
-            "            </li>\n" +
-            "            <li style=\"list-style: none;\" id=\"bs-2\">Inhaltsaufrufe: {{CONTENTVIEWS}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAABFNAAARTQHAOWBjAAAB/0lEQVRIiWL4//8/xZiBgcGAgYHhAQMDA4gDwgcYGBgEwGb//88AAAAA//+ilgUfkCyA4Qtgi/7/ZwAAAAD//6KVBQiLGBgEAAAAAP//otSSCXgsgGAGhgMAAAAA//+ixAcToOwFeC1hYPgPAAAA//+iNIgWELSIgeE/AAAA//+iRhzgt4iB4QAAAAD//6JWJOOy6AMDA4MBAAAA//8i1wIQOwCaenBZBLbg////DAAAAAD//yLXApAYvqADpTqwBf///2cAAAAA//+ipgUwDE51cPz/PwMAAAD//6K2BfAgguP//xkAAAAA//+iuQX///9nAAAAAP//orkF////ZwAAAAD//6K5Bf///2cAAAAA//8ilA8aKLXg////DAAAAAD//0K2BFQHECrsSLbg////DAAAAAD//4JZkIBWPCNXQBRZ8P//fwYAAAAA//+CWYJcHCgQ8BVJFvz//58BAAAA//+CWQIL8wtI8QOyCN1HJFvw//9/BgAAAAD//wIZ6IAtt0J9hFw2kWXB////GQAAAAD//2KBFnQw8IGRkRFU7oDE5JHEP4Ic8///f5ClpAEGBgYAAAAA//8CYWTXYq8PGBgUyPEBGP//zwAAAAD//wJZgityQYkB5HqyDQfj//8ZAAAAAP//Qs4fIB+BMx81DIbj//8ZAAAAAP//AwARtZXpaOI3DgAAAABJRU5ErkJggg==\"/></li>\n" +
-            "        </ul>\n" +
-            "    </div>\n" +
-            "    <div id=\"rankings\" class=\"chapter\" style=\"width: 95%;background: white;display: flex;flex-direction: column;align-items: center;\">\n" +
-            "        <ul id=\"rankingsList\" style=\"list-style: none;padding-left: 0;min-width: 50%;\">\n" +
-            "            <li style=\"list-style: none;\" id=\"rs-1\">Ihre Platzierung nach Profilaufrufen: #{{PROFILERANK}}<br>\n" +
-            "                Innerhalb des gleichen Packets: #{{GROUPPROFILERANK}}</li><br>\n" +
-            "            <li style=\"list-style: none;\" id=\"rs-2\">Ihre Platzierung nach Inhaltsaufrufen: #{{CONTENTRANK}}<br>\n" +
-            "                Innerhalb des gleichen Packets: #{{GROUPCONTENTRANK}}</li>\n" +
-            "        </ul>\n" +
-            "        <table id=\"rankingsTable\" style=\"border-collapse: collapse;\">\n" +
-            "            <thead>\n" +
-            "            <tr>\n" +
-            "                <th>Gewählte Themen</th>\n" +
-            "                <th>Ihre Platzierung</th>\n" +
-            "                <th>Globale Nutzungshäufigkeit</th>\n" +
+            "    <body style=\"width: 100%; margin: 5px 0; background: #cccccc;\">\n" +
+            "        <table style=\"width: 100%\">\n" +
+            "            <tr style=\"width: 100%\">\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                <td id=\"quarterStats\" class=\"chapter\" style=\"background: white;\">\n" +
+            "                    <p class=\"chapter-title\" style=\"text-align: center;font-size: x-large;width: 100%;margin:0;\">Ihr Zuwachs im letzten Quartal:</p><br>\n" +
+            "                    <table id=\"quarterStatsList\" >\n" +
+            "                        <tr id=\"qs-1\">\n" +
+            "                            <td>Profilaufrufe: {{PROFILEVIEWSQUARTER}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAANwAAADcAaIUQOMAAAGaSURBVEhLrda/K0VhHMfx68cgigih/JgMEkosshqU8icwGm0Wm1gYDP4AdoMio0FRioFBlJKFQX4TIt6fe3447v2e0znn3k+9ep7cc5/vved8n+fKxMwI1nCOe+xjAe0oOBWYwzN+DKcYRUGZhrV40DW6kSpduIO1cK5NpEqcb+F5QyPMlLqjlV53jJMy9DnT/EQVKXHHONG1oddHFTlxxzj5xrEzTZYexH3w20idGViLBt2gH6lTjiW8wypwiXFERl0RlkpUYQOHqIZa9QEX2MIkDlAPFf1CXqyOqMUEhtz5DlagM0uF9LcraNEmTGEYt9jFKp4QmhroEwZviRxBz0f3vgWDmIU6KvfadegOhGYZuW8KesWjO1qve+ZhphP6ytabktKh2YZsgptRXVLnTAtOA8ac6f8iut9JjpKoqGsHnOlfET2o0FM0ZZqR3SJeEXVVZEekiNbTun4R7WwpZvw1vSLqKv2OFzMv0AHrF9FxoQ1XzOgoyjtmWqEXrL5Pag86csx0YBFn+IS1QJgP6F8k7XZ9YDeZzC9m57j6lJJIgQAAAABJRU5ErkJggg==\"/></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr id=\"qs-2\">\n" +
+            "                            <td style=\"padding-left: 4em;\">Weiterleitungen zur eigenen Homepage: {{REDIRECTSQUARTER}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAALPSURBVFhH1ZfL6w1RHMCvZwhRFBbkLWEjr9hIoSjPlNfSwubHgqWNWPkDSMpCLBTlsfDIjrxKIiulEAsboizx+cycuc0998zv3hkkn/p0z8w553vOPXMeM63/nQPBxgwNv02ZEWzMsPBbh5m4AbfhJpyDU3AafsfP2Dd1RmA73sWbuA9H47fgKNyLN9Aylv1jzMd7+BRteAIWHA8WmGeZJ2gd6/4Wm/EdHsUh3og4EoyxrHWsa4xGWPE9rs2u0owMVmFdY9TuhENn7wdrXHp1QIxhrFqPw+fnEFYxCc/i86DpyViFsYzZF85gJ1zqmctYfIxncEHQtPfMS2EsY7p0e+IyciZXcQiv5ckOvHc4TybZj8buIN4H3GTcUFzrVSxH13uM95blySTmG9s22sQdMPgb/JJdpfmEs/NkB7PQvCqMaWzbaBN3YB6+yJOVnMMtuCK7yjG9Fc0bjJc4N0/mODnsxB6ciLvQnt5B9/RL+APLOIxXcCXe9gZ4Nrj7OYE/eKNEOf56dLe8jFl8M9XnshAt5HIy7b14hHbgA7Sx3XghaPoR3sedWKYc39h2oCp+6xiezJNdLMK3uDq7SmOeZRZnV90Y2zbaxD14jUvyZBcuv/PoCFRhnmUsm8LYtlGJM/kVlk+8Aod3TZ4cFEfBsjHGNLZttIlHwGXyEePDo5isvnD0wjKWjXdSYxrbNtp0TQI4jQMYBxiO03Fq+E1Z5I3AMsbysRi7g7iRAg+OW3gqu8q5iEvRf1hV7yeOwWfo0ivwMNqI67KrPkgdx/6r8ZHjgvH98gg0Oo6lnxeSXli30QtJgRXtvUOYGvaq7wLLWse6jRsvcOiKl1KP1PISPREsMM+j3LJ9vZRWTaYU7vMH0bPApeShtQrlIbrJuMZdas72q9iTOh0ocA/3SPVU81SU6+gO5xnRsc7/NvF3QW1SG1Edvgb/GX6SaUNarV8yHYTxxkCURwAAAABJRU5ErkJggg==\"/></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr id=\"qs-3\">\n" +
+            "                            <td>Inhaltsaufrufe: {{CONTENTVIEWSQUARTER}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAABFNAAARTQHAOWBjAAAB/0lEQVRIiWL4//8/xZiBgcGAgYHhAQMDA4gDwgcYGBgEwGb//88AAAAA//+ilgUfkCyA4Qtgi/7/ZwAAAAD//6KVBQiLGBgEAAAAAP//otSSCXgsgGAGhgMAAAAA//+ixAcToOwFeC1hYPgPAAAA//+iNIgWELSIgeE/AAAA//+iRhzgt4iB4QAAAAD//6JWJOOy6AMDA4MBAAAA//8i1wIQOwCaenBZBLbg////DAAAAAD//yLXApAYvqADpTqwBf///2cAAAAA//+ipgUwDE51cPz/PwMAAAD//6K2BfAgguP//xkAAAAA//+iuQX///9nAAAAAP//orkF////ZwAAAAD//6K5Bf///2cAAAAA//8ilA8aKLXg////DAAAAAD//0K2BFQHECrsSLbg////DAAAAAD//4JZkIBWPCNXQBRZ8P//fwYAAAAA//+CWYJcHCgQ8BVJFvz//58BAAAA//+CWQIL8wtI8QOyCN1HJFvw//9/BgAAAAD//wIZ6IAtt0J9hFw2kWXB////GQAAAAD//2KBFnQw8IGRkRFU7oDE5JHEP4Ic8///f5ClpAEGBgYAAAAA//8CYWTXYq8PGBgUyPEBGP//zwAAAAD//wJZgityQYkB5HqyDQfj//8ZAAAAAP//Qs4fIB+BMx81DIbj//8ZAAAAAP//AwARtZXpaOI3DgAAAABJRU5ErkJggg==\"/></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                </td>\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
             "            </tr>\n" +
-            "            </thead>\n" +
-            "            <tbody>\n" +
-            "            <tr><td class=\"rankings-1\">-</td><td class=\"rankings-2\">-</td><td class=\"rankings-3\">-</td></tr>\n" +
-            "            {{TABLEROW}}\n" +
-            "            </tbody>\n" +
-            "        </table>\n" +
-            "    </div>\n" +
+            "            <tr style=\"width: 100%\">\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                <td id=\"baseStats\" class=\"chapter\" style=\"background: white;\">\n" +
+            "                    <p class=\"chapter-title\" style=\"text-align: center;font-size: x-large;width: 100%;margin:0;\">Ihre Gesamtübersicht:</p><br>\n" +
+            "                    <table id=\"baseStatsList\">\n" +
+            "                        <tr id=\"bs-1\">\n" +
+            "                            <td>Profilaufrufe: {{PROFILEVIEWS}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAANwAAADcAaIUQOMAAAGaSURBVEhLrda/K0VhHMfx68cgigih/JgMEkosshqU8icwGm0Wm1gYDP4AdoMio0FRioFBlJKFQX4TIt6fe3447v2e0znn3k+9ep7cc5/vved8n+fKxMwI1nCOe+xjAe0oOBWYwzN+DKcYRUGZhrV40DW6kSpduIO1cK5NpEqcb+F5QyPMlLqjlV53jJMy9DnT/EQVKXHHONG1oddHFTlxxzj5xrEzTZYexH3w20idGViLBt2gH6lTjiW8wypwiXFERl0RlkpUYQOHqIZa9QEX2MIkDlAPFf1CXqyOqMUEhtz5DlagM0uF9LcraNEmTGEYt9jFKp4QmhroEwZviRxBz0f3vgWDmIU6KvfadegOhGYZuW8KesWjO1qve+ZhphP6ytabktKh2YZsgptRXVLnTAtOA8ac6f8iut9JjpKoqGsHnOlfET2o0FM0ZZqR3SJeEXVVZEekiNbTun4R7WwpZvw1vSLqKv2OFzMv0AHrF9FxoQ1XzOgoyjtmWqEXrL5Pag86csx0YBFn+IS1QJgP6F8k7XZ9YDeZzC9m57j6lJJIgQAAAABJRU5ErkJggg==\"/></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td style=\"padding-left: 4em;\" id=\"bs-1-1\">Tägliche Aufrufe: {{DAILYVIEWS}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJYSURBVEhLvZbNS1ZBFIevhRYq2BcE0sYKJALXFS2Lighatq+V0K7+CAP/CME/oIWgEAVtCzLcRRD0qdEHRZuorJ7nOkeO876YmvWDh/vemXPOnTlzZubtadbXEFwojMEh2A8f4BUswCzMwSfYlHbBTXgBvzaAdtrrtyEdh4cQAZ7ABJyB66XNp++22x+2+um/rk7De9DhDVyF3RA6Ad/LM2S/dtrrp79xusoRxAfug/mvtROOlGct7fWLD3XMyFxGijQcgK1Iv/iQ8daskYtmh1PuNoPNSP9InXFb7YGXYKO5rTUI9cxyunaUZ5ZxjGfVuQ2aK6XBKsmLrPM0OCqNb8MBOAiPwMrS/i5ol/ec7VF1xm+myotOWX2QS1km4WT5/RhcXH+7Oc1IlvHsm3K07mR1pzxD3+AcHIbI7VGI9Nj/FX6AZV0r4o3pEAt9DKz/nO+PMAyn2reVgI5OOXI3pDGiTelvHOOpNv5P0EgckfsgNA7RJy6oa/IltYnrFunS3zjRtwzNu/LiUZFnYo0/Bftc2IsQugT3wAOy/kjMJI4g4zfz5cWpZ+2Ft+BMz8MI5OpTo2AKl6BeeOMZd958Ohp1tjyzHJWl6XH+DKyuWtr0rvxco4i34EcMoC5DHqn3wwyYiuewCH4o6zWYNmN8tqHIOMZTbXx3ZNwb3Xa8u13627dORUlnXQPjre54dQNsdNTbeXYZd1X/5RRW//w+CdU3o7nNxWD9/9XNGHIED0AH8TS9BZbkttzxIXPpoRhV9ye0075jDdRW/nftAw/O/L+r3idJTfMbUfvNNr3flUgAAAAASUVORK5CYII=\"/></td>\n" +
+            "                        </tr>\n" +
+            "                        <tr>\n" +
+            "                            <td style=\"padding-left: 4em;\" id=\"bs-1-2\">Weiterleitungen zur eigenen Homepage: {{REDIRECTS}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAALPSURBVFhH1ZfL6w1RHMCvZwhRFBbkLWEjr9hIoSjPlNfSwubHgqWNWPkDSMpCLBTlsfDIjrxKIiulEAsboizx+cycuc0998zv3hkkn/p0z8w553vOPXMeM63/nQPBxgwNv02ZEWzMsPBbh5m4AbfhJpyDU3AafsfP2Dd1RmA73sWbuA9H47fgKNyLN9Aylv1jzMd7+BRteAIWHA8WmGeZJ2gd6/4Wm/EdHsUh3og4EoyxrHWsa4xGWPE9rs2u0owMVmFdY9TuhENn7wdrXHp1QIxhrFqPw+fnEFYxCc/i86DpyViFsYzZF85gJ1zqmctYfIxncEHQtPfMS2EsY7p0e+IyciZXcQiv5ckOvHc4TybZj8buIN4H3GTcUFzrVSxH13uM95blySTmG9s22sQdMPgb/JJdpfmEs/NkB7PQvCqMaWzbaBN3YB6+yJOVnMMtuCK7yjG9Fc0bjJc4N0/mODnsxB6ciLvQnt5B9/RL+APLOIxXcCXe9gZ4Nrj7OYE/eKNEOf56dLe8jFl8M9XnshAt5HIy7b14hHbgA7Sx3XghaPoR3sedWKYc39h2oCp+6xiezJNdLMK3uDq7SmOeZRZnV90Y2zbaxD14jUvyZBcuv/PoCFRhnmUsm8LYtlGJM/kVlk+8Aod3TZ4cFEfBsjHGNLZttIlHwGXyEePDo5isvnD0wjKWjXdSYxrbNtp0TQI4jQMYBxiO03Fq+E1Z5I3AMsbysRi7g7iRAg+OW3gqu8q5iEvRf1hV7yeOwWfo0ivwMNqI67KrPkgdx/6r8ZHjgvH98gg0Oo6lnxeSXli30QtJgRXtvUOYGvaq7wLLWse6jRsvcOiKl1KP1PISPREsMM+j3LJ9vZRWTaYU7vMH0bPApeShtQrlIbrJuMZdas72q9iTOh0ocA/3SPVU81SU6+gO5xnRsc7/NvF3QW1SG1Edvgb/GX6SaUNarV8yHYTxxkCURwAAAABJRU5ErkJggg==\"/></td>\n" +
+            "                        </tr>\n" +
             "\n" +
-            "</body>\n" +
+            "                        <tr id=\"bs-2\">\n" +
+            "                            <td>Inhaltsaufrufe: {{CONTENTVIEWS}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAABFNAAARTQHAOWBjAAAB/0lEQVRIiWL4//8/xZiBgcGAgYHhAQMDA4gDwgcYGBgEwGb//88AAAAA//+ilgUfkCyA4Qtgi/7/ZwAAAAD//6KVBQiLGBgEAAAAAP//otSSCXgsgGAGhgMAAAAA//+ixAcToOwFeC1hYPgPAAAA//+iNIgWELSIgeE/AAAA//+iRhzgt4iB4QAAAAD//6JWJOOy6AMDA4MBAAAA//8i1wIQOwCaenBZBLbg////DAAAAAD//yLXApAYvqADpTqwBf///2cAAAAA//+ipgUwDE51cPz/PwMAAAD//6K2BfAgguP//xkAAAAA//+iuQX///9nAAAAAP//orkF////ZwAAAAD//6K5Bf///2cAAAAA//8ilA8aKLXg////DAAAAAD//0K2BFQHECrsSLbg////DAAAAAD//4JZkIBWPCNXQBRZ8P//fwYAAAAA//+CWYJcHCgQ8BVJFvz//58BAAAA//+CWQIL8wtI8QOyCN1HJFvw//9/BgAAAAD//wIZ6IAtt0J9hFw2kWXB////GQAAAAD//2KBFnQw8IGRkRFU7oDE5JHEP4Ic8///f5ClpAEGBgYAAAAA//8CYWTXYq8PGBgUyPEBGP//zwAAAAD//wJZgityQYkB5HqyDQfj//8ZAAAAAP//Qs4fIB+BMx81DIbj//8ZAAAAAP//AwARtZXpaOI3DgAAAABJRU5ErkJggg==\"/></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                </td>\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "            </tr>\n" +
+            "            <tr style=\"width: 100%\">\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                <td id=\"rankings\" class=\"chapter\" style=\"background: white;\">\n" +
+            "                    <table id=\"rankingsList\">\n" +
+            "                        <tr id=\"rs-1\">\n" +
+            "                            <td>Ihre Platzierung nach Profilaufrufen: #{{PROFILERANK}}</td>\n" +
+            "                        </tr>\n" +
+            "                        <tr id=\"rs-2\">\n" +
+            "                            <td>Innerhalb des gleichen Packets: #{{GROUPPROFILERANK}}</td>\n" +
+            "                        </tr>\n" +
+            "                        <tr><td style=\"height: 1em\"></td></tr>\n" +
+            "                        <tr id=\"rs-3\">\n" +
+            "                            <td>Platzierung nach Inhaltsaufrufen: #{{CONTENTRANK}}</td>\n" +
+            "                        </tr>\n" +
+            "                        <tr id=\"rs-4\">\n" +
+            "                            <td>Innerhalb des gleichen Packets: #{{GROUPCONTENTRANK}}</td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                    <table style=\"width: 100%\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 5%\"></td>\n" +
+            "                            <td>\n" +
+            "                                <table id=\"rankingsTable\" style=\"border-collapse: collapse;width: 100%\">\n" +
+            "                                    <thead>\n" +
+            "                                    <tr>\n" +
+            "                                        <th>Gewählte Themen</th>\n" +
+            "                                        <th>Ihre Platzierung</th>\n" +
+            "                                        <th>Globale Nutzungshäufigkeit</th>\n" +
+            "                                    </tr>\n" +
+            "                                    </thead>\n" +
+            "                                    <tbody>\n" +
+            "                                    <!--<tr><td class=\"rankings-1\">-</td><td class=\"rankings-2\" style=\"text-align: center;\">-</td><td class=\"rankings-3\" style=\"text-align: center;\">-</td></tr> -->\n" +
+            "                                    {{TABLEROW}}\n" +
+            "                                    </tbody>\n" +
+            "                                </table>\n" +
+            "                            </td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 5%\"></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                </td>\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "            </tr>\n" +
+            "        </table>\n" +
+            "    </body>\n" +
             "</html>";
 
     private final String tablerowBase = "<tr><td class='rankings-1'>REPLACE1</td><td style=\"text-align:center;\" class='rankings-2'>REPLACE2</td><td style=\"text-align:center;\" class='rankings-3'>REPLACE3</td></tr>";
 
-    private String tablerowCSS = "border-bottom: 1px solid #ddd;";
+    private final String tablerowCSS = "border-bottom: 1px solid #ddd;";
 
 
     @Scheduled(cron = "0 0 0 1 */3 ?")
@@ -824,5 +842,772 @@ public class UserService {
         return rankingTotalContentRepo.getRankById(id).isPresent() ? rankingTotalContentRepo.getRankById(id).get() : -1;
     }
 
+    /**
+     *
+     * @param page which page of results in the given size you want to fetch.
+     * @param size the number of results you want per page.
+     * @param search the search-term you want results for, give empty string for none.
+     * @param filterAbo "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
+     * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
+     * @return a JSON String containing information about all users in the specified page, and the number of users loaded.
+     * @throws JSONException .
+     */
+    public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
+        List<WPUser> list;
 
+
+        if(sorter != null) {
+            //Both filters unused, sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAll(search, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAll(search, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAll(search, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAll(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAbo(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAbo(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAbo(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAbo(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Type Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsCompany(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsCompany(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeCompany(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingCompany(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else {
+                //Abo, Company type and sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            }
+        } else {
+            //Neither filters nor sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                list = userRepo.getAllByNicenameContainingAll(search, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used.
+                list = userRepo.getAllByNicenameContainingAbo(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Filter used.
+                list = userRepo.getAllByNicenameContainingCompany(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else {
+                //Both filters used, no sorter used.
+                list = userRepo.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+            }
+        }
+
+        JSONArray response = new JSONArray();
+
+        for(WPUser user : list) {
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
+            response.put(obj);
+        }
+        return new JSONObject().put("users", response).put("count", list.size()).toString();
+    }
+
+
+    public String getAllWithTagsTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String tag, String sorter) throws JSONException {
+        List<WPUser> list;
+
+
+        if(sorter != null) {
+            //Both filters unused, sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAllWithTags(search, tag, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAllWithTags(search, tag, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAllWithTags(search, tag, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAllWithTags(search, tag, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAboWithTags(search, filterAbo, tag, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAboWithTags(search, filterAbo, tag, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Type Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else {
+                //Abo, Company type and sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            }
+        } else {
+            //Neither filters nor sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                list = userRepo.getAllByNicenameContainingAllWithTags(search, tag, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used.
+                list = userRepo.getAllByNicenameContainingAboWithTags(search, filterAbo, tag, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Filter used.
+                list = userRepo.getAllByNicenameContainingCompanyWithTags(search, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else {
+                //Both filters used, no sorter used.
+                list = userRepo.getAllByNicenameContainingAboAndCompanyWithTags(search, filterAbo, filterTyp, tag, PageRequest.of(page, size, Sort.by("id").descending()));
+            }
+        }
+
+        JSONArray response = new JSONArray();
+
+        for(WPUser user : list) {
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
+            response.put(obj);
+        }
+        return new JSONObject().put("users", response).put("count", list.size()).toString();
+    }
+
+    public String getUserById(int id) throws JSONException {
+        JSONObject obj = new JSONObject();
+        WPUser user = userRepo.findById((long) id).orElseThrow();
+
+        obj.put("id", user.getId());
+        obj.put("displayName", user.getDisplayName());
+        obj.put("accountType", getType(Math.toIntExact(user.getId())));
+        obj.put("accessLevel", getAccessLevel(user.getId()));
+
+        return obj.toString();
+    }
+
+    public String getAccessLevel(long userId) {
+        if(getType((int) userId).equals("admin")) {
+            return "admin";
+        } else if(isModerator(userId)) {
+            return "mod";
+        } else if(getType((int) userId).equals("premium")) {
+            return "user";
+        } else {
+            return "none";
+        }
+    }
+
+    public String getUserByLogin(@RequestParam String u) throws JSONException {
+        JSONObject obj = new JSONObject();
+        var user = userRepo.findByLogin(u);
+        if (user.isPresent()){
+            obj.put("id", user.get().getId());
+            obj.put("displayName",user.get().getDisplayName());
+            obj.put("accountType", getType(Math.toIntExact(user.get().getId())));
+            obj.put("accessLevel", getAccessLevel(user.get().getId()));
+        }
+        return obj.toString();
+    }
+
+    public String getAllSingleUserNewsletter(long id) {
+        JSONObject obj = new JSONObject();
+        try {
+            id = newsletterRepo.getWpUserIdById(id);
+            WPUser user = userRepo.findById(id).isPresent() ? userRepo.findById(id).get() : null;
+            if (user != null) {
+                obj.put("id", user.getId());
+                obj.put("email", user.getEmail());
+                obj.put("displayName", user.getDisplayName());
+                obj.put("niceName", user.getNicename());
+                obj.put("creationDate", user.getRegistered().toLocalDate().toString());
+            }
+        } catch (Exception e) {
+            return "Error, user kaputt";
+        }
+        return obj.toString();
+    }
+
+    public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) {
+
+        try {
+            String path = String.valueOf(Paths.get(config.getProfilephotos() + "/" + id + "/profile_photo.png"));
+            String path2 = String.valueOf(Paths.get(config.getProfilephotos() + "/" + id + "/profile_photo.jpg"));
+
+            File cutePic = new File(path);
+            if (!cutePic.exists())
+            {
+                cutePic = new File(path2);
+            }
+            byte[] imageBytes = Files.readAllBytes(cutePic.toPath());
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
+        } catch (Exception e) {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+
+    public String getUserClicksChartData(long id, String start, String end) throws JSONException {
+        java.sql.Date startDate = java.sql.Date.valueOf(start);
+        java.sql.Date endDate  = java.sql.Date.valueOf(end);
+
+        //If the beginning is after the end (good manhwa), swap them.
+        if(startDate.after(endDate)) {
+            java.sql.Date puffer = startDate;
+            startDate = endDate;
+            endDate = puffer;
+        }
+
+        JSONArray json = new JSONArray();
+        //For all dates selected, add data
+        for(LocalDate date : startDate.toLocalDate().datesUntil(endDate.toLocalDate().plusDays(1)).toList()) {
+            int uniId = 0;
+            //Check if we have stats for the day
+            if (uniRepo.findByDatum(java.sql.Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).isPresent()) {
+                uniId = uniRepo.findByDatum(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant())).get().getId();
+            }
+
+            if(uniId != 0 && uniRepo.findById(uniId).isPresent()) {
+                //Since we have data, add date and profileViews
+                JSONObject day = new JSONObject();
+                JSONArray dailyPosts = new JSONArray();
+                JSONObject biggestPost = new JSONObject();
+
+                day.put("date", uniRepo.findById(uniId).get().getDatum());
+                if(userViewsRepo.existsByUserId(id)) {
+                    day.put("profileViews", userViewsRepo.getSumByUniIdAndUserId(uniId, id) != null ? userViewsRepo.getSumByUniIdAndUserId(uniId, id) : 0);
+                } else {
+                    day.put("profileViews", 0);
+                }
+
+                Post biggestPostbuffer = null;
+                for(Post post : postRepo.getPostsByAuthorAndDate(id, date)) {
+                    //Add data for all posts
+                    JSONObject postToday = new JSONObject();
+                    if(biggestPostbuffer == null) {
+                        biggestPostbuffer = post;
+                    } else {
+                        if((statRepository.getSumClicks(post.getId())) != null) {
+                            if(statRepository.getSumClicks(post.getId()) > statRepository.getSumClicks(biggestPostbuffer.getId())) {
+                                biggestPostbuffer = post;
+                            }
+                        }
+                    }
+                    postToday.put("id", post.getId());
+                    postToday.put("title", post.getTitle());
+                    postToday.put("type", postController.getType(Math.toIntExact(post.getId())));
+                    postToday.put("clicks", statRepository.getSumClicks(post.getId()) != null ? statRepository.getSumClicks(post.getId()) : 0);
+                    dailyPosts.put(postToday);
+                }
+                day.put("posts", dailyPosts);
+                if(biggestPostbuffer != null) {
+                    biggestPost.put("id", biggestPostbuffer.getId());
+                    biggestPost.put("title", biggestPostbuffer.getTitle());
+                    biggestPost.put("type", postController.getType(Math.toIntExact(biggestPostbuffer.getId())));
+                    biggestPost.put("clicks", statRepository.getSumClicks(biggestPostbuffer.getId()) != null ? statRepository.getSumClicks(biggestPostbuffer.getId()) : 0);
+                } else {
+                    biggestPost.put("id", 0);
+                    biggestPost.put("title", 0);
+                    biggestPost.put("type", 0);
+                    biggestPost.put("clicks", 0);
+                }
+                day.put("biggestPost", biggestPost);
+
+                json.put(day);
+            }
+
+        }
+        return  json.toString();
+    }
+
+    /**
+     *
+     * @return a JSON-String containing a list of Events (newEvents) starting with u| for upcoming, c| for current and their type,
+     * the count of events in the past for this user (countOldEvents)
+     * and a count of all events by this user that are active (countTotal).
+     */
+    public String getCountEvents(long id) throws JSONException {
+
+        JSONObject json = new JSONObject();
+
+        List<String> events = new ArrayList<>();
+        List<Events> allEvents = eventsRepo.getAllByOwnerID(id);
+        int countOld = 0;
+
+        for (Events e : allEvents) {
+            if(eventsController.isActive(e)) {
+                if (eventsController.isCurrent(e)) {
+                    events.add("c|" + eventsController.getEventType(e));
+                } else if (eventsController.isUpcoming(e)) {
+                    events.add("u|" + eventsController.getEventType(e));
+                } else {
+                    countOld++;
+                }
+            }
+
+        }
+        json.put("newEvents", new JSONArray(events));
+        json.put("countOldEvents", countOld);
+        json.put("countTotal", countOld + events.size());
+
+        return json.toString();
+    }
+
+    public String getPostCountByType(long id) throws JSONException {
+        List<Post> posts = postRepo.findByAuthorPageable(id, "", PageRequest.of(0, postController.getCountTotalPosts()));
+
+        int countArtikel = 0;
+        int countBlogs = 0;
+        int countNews = 0;
+        int countWhitepaper = 0;
+        int countPodcasts = 0;
+
+        for(Post post : posts) {
+            switch(postController.getType(post.getId())) {
+                case "artikel" -> {
+                    countArtikel++;
+                }
+                case "blog" -> {
+                    countBlogs++;
+                }
+                case "news" -> {
+                    countNews++;
+                }
+                case "podcast" -> {
+                    countPodcasts++;
+                }
+                case "whitepaper" -> {
+                    countWhitepaper++;
+                }
+            }
+        }
+
+        JSONObject json = new JSONObject();
+        json.put("Whitepaper", countWhitepaper);
+        json.put("Blogs", countBlogs);
+        json.put("News", countNews);
+        json.put("Podcasts", countPodcasts);
+        json.put("Artikel", countArtikel);
+
+        return json.toString();
+    }
+
+    public List<String> getAmountOfEventsCreatedYesterday(long id) {
+        List<String> events = new ArrayList<>();
+        List<Events> allEvents = eventsRepo.getAllByOwnerID(id);
+        LocalDate today = LocalDate.now();
+
+        for (Events e : allEvents) {
+            LocalDate createdDate = e.getEventDateCreated().toLocalDate();
+
+            if (createdDate.isBefore(today) && eventsController.isActive(e)) {
+                if(eventsController.isCurrent(e)) {
+                    events.add("c|" + eventsController.getEventType(e));
+                } else if(eventsController.isUpcoming(e)) {
+                    events.add("u|" + eventsController.getEventType(e));
+                }
+
+            }
+        }
+        return events;
+    }
+
+    public String getEventsWithStats(Integer page, Integer size,  String filter, String search, long id) throws JSONException, ParseException {
+        List<Post> list;
+
+        if(filter.isBlank()) {
+            list = postRepo.getAllEventsWithSearchAndAuthor(search, id, PageRequest.of(page, size));
+        } else {
+            list = postRepo.getAllEventsWithTypeAndSearchAndAuthor(eventsController.getTermIdFromFrontendType(filter), search, id, PageRequest.of(page, size));
+        }
+
+        List<JSONObject> stats = new ArrayList<>();
+
+        for(Post post : list) {
+            stats.add(new JSONObject(postController.PostStatsByIdForFrontend(post.getId())));
+        }
+
+        return new JSONArray(stats).toString();
+    }
+
+    public UserStats getUserStats(@PathVariable("userId") Long userId) {
+        return userStatsRepository.findByUserId(userId);
+    }
+
+    public String getUserStat(@RequestParam Long id) throws JSONException {
+        JSONObject obj = new JSONObject();
+        UserStats user = userStatsRepository.findByUserId(id);
+        obj.put("Profilaufrufe",user.getProfileView());
+        return obj.toString();
+    }
+
+    public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
+        long viewsBlog = 0;
+        long viewsArtikel = 0;
+        long viewsProfile = 0;
+        long viewsNews = 0;
+        long viewsWP = 0;
+        long viewsPodcast = 0;
+        long viewsVideo = 0;
+        try {
+            viewsProfile = userStatsRepository.findByUserId(id).getProfileView();
+        } catch (NullPointerException ignored) {
+        }
+
+        List<Post> posts = postRepo.findByAuthor(id.intValue());
+
+        for (Post post : posts) {
+            if (statRepository.existsByArtId(post.getId())) {
+                int stat = statRepository.getSumClicks(post.getId()) == null ? 0 : statRepository.getSumClicks(post.getId());
+                switch(postController.getType(post.getId())) {
+                    case "blog" -> viewsBlog += stat;
+                    case "artikel" -> viewsArtikel += stat;
+                    case "news" -> viewsNews += stat;
+                    case "whitepaper" -> viewsWP += stat;
+                    case "podcast" -> viewsPodcast += stat;
+                    case "videos" -> viewsVideo += stat;
+                }
+            }
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("viewsBlog", viewsBlog);
+        obj.put("viewsArtikel", viewsArtikel);
+        obj.put("viewsNews", viewsNews);
+        obj.put("viewsWhitepaper", viewsWP);
+        obj.put("viewsPodcast", viewsPodcast);
+        obj.put("viewsVideo", viewsVideo);
+        obj.put("viewsProfile", viewsProfile);
+        return obj.toString();
+
+    }
+
+    public String getUserProfileViewsAveragesByTypeAndPosts() throws JSONException {
+        JSONArray array = new JSONArray();
+        array.put(new JSONObject(getUserAveragesWithoutPosts()));
+        array.put(new JSONObject(getUserAveragesByType()));
+        array.put(new JSONObject(getUserAveragesWithPostsWithoutPostClicks()));
+        return array.toString();
+    }
+
+    public String getUserProfileAndPostViewsAveragesByType() throws JSONException {
+        JSONArray array = new JSONArray();
+        array.put(new JSONObject(getUserAveragesWithPostsWithoutPostClicks()));
+        array.put(new JSONObject(getUserAveragesWithPostsOnlyPostClicks()));
+        return array.toString();
+    }
+
+    public String getUserAveragesWithoutPosts() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+        counts.put("sponsor", 0);
+
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
+
+        for(WPUser u : userRepo.findAll()) {
+            boolean stats = userStatsRepository.existsByUserId(u.getId());
+            if(!hasPost(Math.toIntExact(u.getId()))) {
+                addCountAndProfileViewsByType(counts, clicks, u, stats);
+            }
+        }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        return averages.toString();
+    }
+
+    public String getUserAveragesByType() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+        counts.put("sponsor", 0);
+
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
+
+        for(WPUser u : userRepo.findAll()) {
+            boolean stats = userStatsRepository.existsByUserId(u.getId());
+            addCountAndProfileViewsByType(counts, clicks, u, stats);
+        }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+
+        return averages.toString();
+    }
+
+    /**
+     * This accounts for ONLY users that have posts, counting ONLY their profile views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
+    private String getUserAveragesWithPostsWithoutPostClicks() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+        counts.put("sponsor", 0);
+
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
+        for(WPUser u : userRepo.findAll()) {
+            boolean stats = userStatsRepository.existsByUserId(u.getId());
+            if(hasPost(Math.toIntExact(u.getId()))) {
+                addCountAndProfileViewsByType(counts, clicks, u, stats);
+            }
+        }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        return averages.toString();
+    }
+
+    /**
+     * This accounts for ONLY users that have posts, counting ONLY their post's views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
+    private String getUserAveragesWithPostsOnlyPostClicks() throws JSONException {
+        JSONObject counts = new JSONObject();
+        JSONObject clicks = new JSONObject();
+        JSONObject averages = new JSONObject();
+
+        counts.put("basis", 0);
+        counts.put("basis-plus", 0);
+        counts.put("plus", 0);
+        counts.put("premium", 0);
+        counts.put("sponsor", 0);
+
+        clicks.put("basis", 0);
+        clicks.put("basis-plus", 0);
+        clicks.put("plus", 0);
+        clicks.put("premium", 0);
+        clicks.put("sponsor", 0);
+        for(WPUser u : userRepo.findAll()) {
+            if(hasPost(Math.toIntExact(u.getId()))) {
+                addCountAndProfileViewsByType(counts, clicks, u, false, true);
+            }
+        }
+        buildAveragesFromCountsAndClicks(counts, clicks, averages);
+        return averages.toString();
+    }
+
+    public boolean hasPost(@RequestParam int id) {
+        return !postRepo.findByAuthor(id).isEmpty();
+    }
+
+    public boolean isModerator(long userId) {
+        if(wpUserMetaRepository.existsByUserId(userId)) {
+            return wpUserMetaRepository.getWPUserMetaValueByUserId(userId).contains("editor");
+        }
+        return false;
+    }
+
+    public void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews) throws JSONException {
+        switch(getType(Math.toIntExact((u.getId())))) {
+            case "basis" -> {
+                if(profileViews) {
+                    clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("basis", counts.getInt("basis") + 1);
+            }
+            case "basis-plus" -> {
+                if(profileViews) {
+                    clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("basis-plus", counts.getInt("basis-plus") + 1);
+            }
+            case "plus" -> {
+                if(profileViews) {
+                    clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("plus", counts.getInt("plus") + 1);
+            }
+            case "premium" -> {
+                if(profileViews) {
+                    clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("premium", counts.getInt("premium") + 1);
+            }
+            case "sponsor" -> {
+                if(profileViews) {
+                    clicks.put("sponsor", clicks.getInt("sponsor") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("sponsor", counts.getInt("sponsor") + 1);
+            }
+        }
+    }
+
+    public void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews, boolean postViews) throws JSONException {
+        switch(getType(Math.toIntExact((u.getId())))) {
+            case "basis" -> {
+                if(profileViews) {
+                    clicks.put("basis", clicks.getInt("basis") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(postViews) {
+                    clicks.put("basis", clicks.getInt("basis") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("basis", counts.getInt("basis") + 1);
+            }
+            case "basis-plus" -> {
+                if(profileViews) {
+                    clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(postViews) {
+                    clicks.put("basis-plus", clicks.getInt("basis-plus") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("basis-plus", counts.getInt("basis-plus") + 1);
+            }
+            case "plus" -> {
+                if(profileViews) {
+                    clicks.put("plus", clicks.getInt("plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(postViews) {
+                    clicks.put("plus", clicks.getInt("plus") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("plus", counts.getInt("plus") + 1);
+            }
+            case "premium" -> {
+                if(profileViews) {
+                    clicks.put("premium", clicks.getInt("premium") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(postViews) {
+                    clicks.put("premium", clicks.getInt("premium") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("premium", counts.getInt("premium") + 1);
+            }
+            case "sponsor" -> {
+                if(profileViews) {
+                    clicks.put("sponsor", clicks.getInt("sponsor") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(postViews) {
+                    clicks.put("sponsor", clicks.getInt("sponsor") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("sponsor", counts.getInt("sponsor") + 1);
+            }
+        }
+    }
+
+    public void buildAveragesFromCountsAndClicks(JSONObject counts, JSONObject clicks, JSONObject averages) throws JSONException {
+        if(counts.getInt("basis") != 0) {
+            averages.put("basis", clicks.getInt("basis") / counts.getInt("basis"));
+        } else {
+            averages.put("basis", 0);
+        }
+        if(counts.getInt("basis-plus") != 0) {
+            averages.put("basis-plus", clicks.getInt("basis-plus") / counts.getInt("basis-plus"));
+        } else {
+            averages.put("basis-plus", 0);
+        }
+        if(counts.getInt("plus") != 0) {
+            averages.put("plus", clicks.getInt("plus") / counts.getInt("plus"));
+        } else {
+            averages.put("plus", 0);
+        }
+        if(counts.getInt("premium") != 0) {
+            averages.put("premium", clicks.getInt("premium") / counts.getInt("premium"));
+        } else {
+            averages.put("premium", 0);
+        }
+    }
+
+    public int getClickTotalOnPostsOfUser (int uid){
+        List<Post> posts= postRepo.findByAuthor(uid);
+        int clicks = 0;
+        for(Post post : posts) {
+            if(post != null) {
+                clicks += statRepository.getSumClicks(post.getId()) != null ? statRepository.getSumClicks(post.getId()) : 0;
+            }
+        }
+
+        return clicks;
+    }
 }
+

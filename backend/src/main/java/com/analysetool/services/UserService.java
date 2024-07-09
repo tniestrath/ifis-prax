@@ -217,6 +217,27 @@ public class UserService {
             statMail = statMailsRepo.findByUserId(user.getId());
         }
 
+        String profileViewsQuarter;
+        if(userViewsRepo.getSumForUserThisQuarter(userId) != 0 && userViewsRepo.getSumForUserPreviousQuarter(userId) != 0) {
+            profileViewsQuarter = (userViewsRepo.getSumForUserThisQuarter(userId) - userViewsRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (userViewsRepo.getSumForUserThisQuarter(userId) - userViewsRepo.getSumForUserPreviousQuarter(userId)) + "(" + userViewsRepo.getSumForUserThisQuarter(userId) + " - " + userViewsRepo.getSumForUserPreviousQuarter(userId) + ")";
+        } else {
+            profileViewsQuarter = "0";
+        }
+
+        String redirectsQuarter;
+        if(userRedirectsRepo.getSumForUserThisQuarter(userId) != 0 && userRedirectsRepo.getSumForUserPreviousQuarter(userId) != 0) {
+            redirectsQuarter = (userRedirectsRepo.getSumForUserThisQuarter(userId) - userRedirectsRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (userRedirectsRepo.getSumForUserThisQuarter(userId) - userRedirectsRepo.getSumForUserPreviousQuarter(userId)) + "(" + userRedirectsRepo.getSumForUserThisQuarter(userId) + " - " + userRedirectsRepo.getSumForUserPreviousQuarter(userId) + ")";
+        } else {
+            redirectsQuarter = "0";
+        }
+
+        String contentViewsQuarter;
+        if(postClicksRepo.getSumForUserThisQuarter(userId) != 0 && postClicksRepo.getSumForUserPreviousQuarter(userId) != 0) {
+            contentViewsQuarter = (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId)) + "(" + postClicksRepo.getSumForUserThisQuarter(userId) + " - " + postClicksRepo.getSumForUserPreviousQuarter(userId) + ")";
+        } else {
+            contentViewsQuarter = "0";
+        }
+
         //Add Ranking Table Data
         String content = tableBase.replace("{{TABLEROW}}",  makeRankingTable("plus", Math.toIntExact(user.getId())))
                 .replace("{{PROFILEVIEWS}}", obj.getString("profileViews"))
@@ -227,9 +248,9 @@ public class UserService {
                 .replace("{{GROUPPROFILERANK}}", obj.getString("rankingProfileByGroup"))
                 .replace("{{CONTENTRANK}}", obj.getString("rankingContent"))
                 .replace("{{GROUPCONTENTRANK}}", obj.getString("rankingContentByGroup"))
-                .replace("{{PROFILEVIEWSQUARTER}}", ((userViewsRepo.getSumForUserThisQuarter(userId) - userViewsRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (userViewsRepo.getSumForUserThisQuarter(userId) - userViewsRepo.getSumForUserPreviousQuarter(userId)) + "(" + userViewsRepo.getSumForUserThisQuarter(userId) + " - " + userViewsRepo.getSumForUserPreviousQuarter(userId) + ")"))
-                .replace("{{REDIRECTSQUARTER}}", (userRedirectsRepo.getSumForUserThisQuarter(userId) - userRedirectsRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (userRedirectsRepo.getSumForUserThisQuarter(userId) - userRedirectsRepo.getSumForUserPreviousQuarter(userId)) + "(" + userRedirectsRepo.getSumForUserThisQuarter(userId) + " - " + userRedirectsRepo.getSumForUserPreviousQuarter(userId) + ")")
-                .replace("{{CONTENTVIEWSQUARTER}}", (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId) > 0 ? "+" : "") + (postClicksRepo.getSumForUserThisQuarter(userId) - postClicksRepo.getSumForUserPreviousQuarter(userId)) + "(" + postClicksRepo.getSumForUserThisQuarter(userId) + " - " + postClicksRepo.getSumForUserPreviousQuarter(userId) + ")")
+                .replace("{{PROFILEVIEWSQUARTER}}", profileViewsQuarter)
+                .replace("{{REDIRECTSQUARTER}}", redirectsQuarter)
+                .replace("{{CONTENTVIEWSQUARTER}}", contentViewsQuarter)
                 .replace("{{IMAGEDAILY}}", imageDaily)
                 .replace("{{IMAGEPROFILE}}", imageProfile)
                 .replace("{{IMAGEREDIRECTS}}", imageRedirect)

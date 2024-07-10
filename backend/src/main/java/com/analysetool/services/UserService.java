@@ -194,9 +194,9 @@ public class UserService {
         generateMailsPremium();
     }
 
-    private void generateMailsPremium() {
+    private void generateMailsPremium() throws JSONException {
         for(WPUser user : userRepo.getByAboType("premium")) {
-
+            generateMailSingle(Math.toIntExact(user.getId()));
         }
     }
 
@@ -1631,5 +1631,22 @@ public class UserService {
 
         return clicks;
     }
+
+    public String getJSONForEmailListAll() throws JSONException {
+        JSONArray array = new JSONArray();
+        for(StatMails mail : statMailsRepo.findAll()) {
+            JSONObject json = new JSONObject();
+
+            json.put("id", mail.getUserId());
+            json.put("content", !mail.getContent().isBlank());
+            json.put("sent", mail.getSent() == 1);
+
+            array.put(json);
+        }
+
+        return array.toString();
+    }
+
+
 }
 

@@ -982,6 +982,10 @@ public class UserController {
         return true;
     }
 
+    @GetMapping("/getJSONForEmailListAll")
+    public String getJSONForEmailListAll() throws JSONException {
+        return userService.getJSONForEmailListAll();
+    }
 
     public void updateRankGroups() {
 

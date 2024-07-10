@@ -238,29 +238,53 @@ public class UserService {
             contentViewsQuarter = "0";
         }
 
-        //Add Ranking Table Data
-        String content = tableBase.replace("{{TABLEROW}}",  makeRankingTable("plus", Math.toIntExact(user.getId())))
-                .replace("{{PROFILEVIEWS}}", obj.getString("profileViews"))
-                .replace("{{DAILYVIEWS}}", obj.getString("viewsPerDay"))
-                .replace("{{REDIRECTS}}", obj.getString("redirects"))
-                .replace("{{CONTENTVIEWS}}", obj.getString("postViews"))
-                .replace("{{PROFILERANK}}", obj.getString("rankingProfile"))
-                .replace("{{GROUPPROFILERANK}}", obj.getString("rankingProfileByGroup"))
-                .replace("{{CONTENTRANK}}", obj.getString("rankingContent"))
-                .replace("{{GROUPCONTENTRANK}}", obj.getString("rankingContentByGroup"))
-                .replace("{{PROFILEVIEWSQUARTER}}", profileViewsQuarter)
-                .replace("{{REDIRECTSQUARTER}}", redirectsQuarter)
-                .replace("{{CONTENTVIEWSQUARTER}}", contentViewsQuarter)
-                .replace("{{IMAGEDAILY}}", imageDaily)
-                .replace("{{IMAGEPROFILE}}", imageProfile)
-                .replace("{{IMAGEREDIRECTS}}", imageRedirect)
-                .replace("{{IMAGECONTENT}}", imageContent)
-                .replace("<tr>", "<tr style=\"" + tablerowCSS + "\">")
-                ;
+        String rankingTable = makeRankingTable("plus", Math.toIntExact(user.getId()));
+        String content;
+        if(rankingTable.isBlank()) {
+             content = tableBase.replace("{{TABLEROW}}",  rankingTable)
+                    .replace("{{PROFILEVIEWS}}", obj.getString("profileViews"))
+                    .replace("{{DAILYVIEWS}}", obj.getString("viewsPerDay"))
+                    .replace("{{REDIRECTS}}", obj.getString("redirects"))
+                    .replace("{{CONTENTVIEWS}}", obj.getString("postViews"))
+                    .replace("{{PROFILERANK}}", obj.getString("rankingProfile"))
+                    .replace("{{GROUPPROFILERANK}}", obj.getString("rankingProfileByGroup"))
+                    .replace("{{CONTENTRANK}}", obj.getString("rankingContent"))
+                    .replace("{{GROUPCONTENTRANK}}", obj.getString("rankingContentByGroup"))
+                    .replace("{{PROFILEVIEWSQUARTER}}", profileViewsQuarter)
+                    .replace("{{REDIRECTSQUARTER}}", redirectsQuarter)
+                    .replace("{{CONTENTVIEWSQUARTER}}", contentViewsQuarter)
+                    .replace("{{IMAGEDAILY}}", imageDaily)
+                    .replace("{{IMAGEPROFILE}}", imageProfile)
+                    .replace("{{IMAGEREDIRECTS}}", imageRedirect)
+                    .replace("{{IMAGECONTENT}}", imageContent)
+                    .replace("<tr>", "<tr style=\"" + tablerowCSS + "\">")
+                    ;
+        } else {
+            //Add Ranking Table Data
+            content = tableBase.replace("{{TABLEROW}}", rankingTable)
+                    .replace("{{PROFILEVIEWS}}", obj.getString("profileViews"))
+                    .replace("{{DAILYVIEWS}}", obj.getString("viewsPerDay"))
+                    .replace("{{REDIRECTS}}", obj.getString("redirects"))
+                    .replace("{{CONTENTVIEWS}}", obj.getString("postViews"))
+                    .replace("{{PROFILERANK}}", obj.getString("rankingProfile"))
+                    .replace("{{GROUPPROFILERANK}}", obj.getString("rankingProfileByGroup"))
+                    .replace("{{CONTENTRANK}}", obj.getString("rankingContent"))
+                    .replace("{{GROUPCONTENTRANK}}", obj.getString("rankingContentByGroup"))
+                    .replace("{{PROFILEVIEWSQUARTER}}", profileViewsQuarter)
+                    .replace("{{REDIRECTSQUARTER}}", redirectsQuarter)
+                    .replace("{{CONTENTVIEWSQUARTER}}", contentViewsQuarter)
+                    .replace("{{IMAGEDAILY}}", imageDaily)
+                    .replace("{{IMAGEPROFILE}}", imageProfile)
+                    .replace("{{IMAGEREDIRECTS}}", imageRedirect)
+                    .replace("{{IMAGECONTENT}}", imageContent)
+                    .replace("<tr>", "<tr style=\"" + tablerowCSS + "\">");
 
+        }
 
+        StringBuilder cutter = new StringBuilder(content);
+        cutter.replace(content.indexOf("<table id=\"rankingsTable\""), content.indexOf("<!--rankingsTable-->"), "");
 
-        statMail.setContent(content);
+        statMail.setContent(cutter.toString());
         statMail.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
         statMail.setSent(0);
 
@@ -271,11 +295,13 @@ public class UserService {
     private String makeRankingTable(String accType, int userId) throws JSONException {
         StringBuilder content = new StringBuilder();
 
+        String row = tablerowBase;
+
         JSONArray array = new JSONArray(getSingleUserTagsData(userId, "profile"));
 
         for(int i = 0; i < array.length(); i++) {
             JSONObject obj = array.getJSONObject(i);
-            String row = tablerowBase;
+
             row = row.replace("REPLACE1", obj.getString("name")).replace("REPLACE2", obj.getString("ranking")).replace("REPLACE3", obj.getString("count"));
             content.append(row);
         }

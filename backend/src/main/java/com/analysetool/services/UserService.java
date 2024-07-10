@@ -2045,7 +2045,13 @@ public class UserService {
      * @return a List of Strings, containing all Tags in this String.
      */
     public List<String> decryptTags(String cryptedTag) {
-        return decryptTags(cryptedTag);
+        Pattern cleaner = Pattern.compile("\"([^\"]+)\"");
+        Matcher matcher = cleaner.matcher(cryptedTag);
+        List<String> tags = new ArrayList<>();
+        while(matcher.find()) {
+            tags.add(matcher.group(1));
+        }
+        return tags;
     }
 
     /**
@@ -2054,11 +2060,29 @@ public class UserService {
      * @return a List of a List of Strings, containing all Tags in this String.
      */
     public List<List<String>> decryptTagsStringInList(List<String> cryptedTags) {
-        return decryptTagsStringInList(cryptedTags);
+        List<List<String>> list = new ArrayList<>();
+        for(String tags : cryptedTags) {
+            list.add(decryptTags(tags));
+        }
+        return list;
     }
 
     public Optional<String> getTags(long userId, String type) {
-        return getTags(userId, type);
+        switch (type) {
+            case "basis" -> {
+                return wpUserMetaRepository.getTagsBasis(userId);
+            }
+            case "basis_plus" -> {
+                return wpUserMetaRepository.getTagsBasisPlus(userId);
+            }
+            case "plus" -> {
+                return wpUserMetaRepository.getTagsPlus(userId);
+            }
+            case "premium" -> {
+                return wpUserMetaRepository.getTagsPremium(userId);
+            }
+        }
+        return Optional.empty();
     }
 
     public List<Long> getAllUserIdsWithTags() {

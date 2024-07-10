@@ -20,6 +20,9 @@ public class DashConfig {
     @Value("{profilephotos}")
     private String profilephotos;
 
+    @Value("{newslettersend}")
+    private String newslettersend;
+
 
     public String getProfilephotos() {
         return profilephotos;
@@ -51,5 +54,13 @@ public class DashConfig {
 
     public void setAccess(String access) {
         this.access = access;
+    }
+
+    public String getNewslettersend() {
+        return newslettersend;
+    }
+
+    public void setNewslettersend(String newslettersend) {
+        this.newslettersend = newslettersend;
     }
 }

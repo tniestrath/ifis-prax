@@ -6,6 +6,10 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
 import com.analysetool.util.DashConfig;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Date;
@@ -189,10 +194,30 @@ public class UserService {
     private final String tablerowCSS = "border-bottom: 1px solid #ddd;";
 
 
+    /**
+     * Generates Newsletters and automatically sends them.
+     * @throws JSONException .
+     */
     @Scheduled(cron = "0 0 0 1 */3 ?")
     public void generateMails() throws JSONException {
         generateMailsPlus();
         generateMailsPremium();
+
+        sendNewsletters();
+    }
+
+
+    public boolean sendNewsletters() {
+        try {
+            HttpClient httpClient = HttpClients.createDefault();
+            HttpPost httpPost = new HttpPost(config.getNewslettersend());
+            HttpResponse response2 = httpClient.execute(httpPost);
+            System.out.println(response2);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private void generateMailsPremium() throws JSONException {

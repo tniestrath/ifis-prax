@@ -987,6 +987,11 @@ public class UserController {
         return userService.getJSONForEmailListAll();
     }
 
+    @GetMapping("/sendNewsletters")
+    public boolean sendNewsletters() {
+        return userService.sendNewsletters();
+    }
+
     public void updateRankGroups() {
 
         //Reset all

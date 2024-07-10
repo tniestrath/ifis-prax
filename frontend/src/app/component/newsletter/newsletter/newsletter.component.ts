@@ -23,10 +23,11 @@ export class NewsletterComponent extends DashBaseComponent implements OnInit{
       this.data = res;
       this.interactionTimeMax = this.data.interactionTimes.indexOf(Math.max(...this.data.interactionTimes, 1));
       this.createChart("newsletter-stats-chart", this.labels, this.data.interactionTimes, undefined);
+      SysVars.SELECTED_NEWSLETTER.next(res);
     });
 
-
     SysVars.SELECTED_NEWSLETTER.subscribe( nl => {
+      if (this.data == nl) return;
       this.data = nl;
       this.title = "Ausgewählter Newsletter";
       this.createChart("newsletter-stats-chart", this.labels, this.data.interactionTimes, undefined);

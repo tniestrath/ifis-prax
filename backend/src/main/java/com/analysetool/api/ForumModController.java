@@ -3,6 +3,7 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.ForumService;
+import com.analysetool.services.UserService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +40,7 @@ public class ForumModController {
     @Autowired
     private ModLockRepository modLockRepo;
     @Autowired
-    private UserController userController;
+    private UserService userService;
     @Autowired
     private WPWPForoModsModsRepositoryRepo wpForoModsRepo;
     @Autowired
@@ -72,7 +73,7 @@ public class ForumModController {
      * admin = admin
      * */
     private boolean isAdmin(int userId){
-        return userController.getType(userId).equals("admin");
+        return userService.getType(userId).equals("admin");
     }
 
     @GetMapping("/getUnmoderatedWithFilter")
@@ -842,7 +843,7 @@ public class ForumModController {
         JSONArray catList = new JSONArray();
 
         List<WPWPForoForum> forums;
-        if(userController.getType(userId).equals("admin")) {
+        if(userService.getType(userId).equals("admin")) {
             forums = wpForoForumRepo.getAllNotCatAdmin();
         } else {
             forums = wpForoForumRepo.getAllNotCat(userId);

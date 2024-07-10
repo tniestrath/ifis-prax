@@ -20,6 +20,7 @@ import java.util.Map;
 @RequestMapping(value = { "/users", "/0wB4P2mly-xaRmeeDOj0_g/users"}, method = RequestMethod.GET, produces = "application/json")
 public class UserController {
 
+    @Autowired
     private SocialsImpressionsService soziImp;
     @Autowired
     private UserService userService;

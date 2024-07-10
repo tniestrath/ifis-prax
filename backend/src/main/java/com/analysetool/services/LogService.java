@@ -3,7 +3,6 @@ package com.analysetool.services;
 import com.analysetool.api.ForumModController;
 import com.analysetool.api.IPController;
 import com.analysetool.api.PostController;
-import com.analysetool.api.UserController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
@@ -92,7 +91,7 @@ public class LogService {
     private PostController postController;
 
     @Autowired
-    private UserController userController;
+    private UserService userService;
 
     @Autowired
     private UniversalAverageClicksDLCRepository uniAverageClicksRepo;
@@ -1886,7 +1885,7 @@ public class LogService {
         HashMap<String, Integer> counts = new HashMap<>();
 
         for(WPUser user : wpUserRepo.findAll()) {
-            switch(userController.getType(Math.toIntExact(user.getId()))) {
+            switch(userService.getType(Math.toIntExact(user.getId()))) {
                 case "basis" -> {
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
                 }
@@ -2389,7 +2388,7 @@ public class LogService {
         HashMap<String, Integer> counts = new HashMap<>();
 
         for(WPUser user : wpUserRepo.findAll()) {
-            switch(userController.getType(Math.toIntExact(user.getId()))) {
+            switch(userService.getType(Math.toIntExact(user.getId()))) {
                 case "basis" -> {
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
                 }
@@ -3292,16 +3291,16 @@ public class LogService {
     }
 
     public void updateRankings() {
-        userController.updateUserRankingBuffer();
+        userService.updateUserRankingBuffer();
     }
 
     private void updateMemberBuffer() {
 
         for(WPUser user : wpUserRepo.findAll()) {
-            if(memberRepo.getLastByUserId(user.getId()) == null || !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted") && (!userController.getType(Math.toIntExact(user.getId())).equals(memberRepo.getLastByUserId(user.getId()).getMembership()))) {
+            if(memberRepo.getLastByUserId(user.getId()) == null || !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted") && (!userService.getType(Math.toIntExact(user.getId())).equals(memberRepo.getLastByUserId(user.getId()).getMembership()))) {
                 MembershipsBuffer newMembership = new MembershipsBuffer();
                 newMembership.setUserId(user.getId());
-                newMembership.setMembership(userController.getType(Math.toIntExact(user.getId())));
+                newMembership.setMembership(userService.getType(Math.toIntExact(user.getId())));
                 newMembership.setTimestamp(new Timestamp(new Date().getTime()));
                 memberRepo.save(newMembership);
             }

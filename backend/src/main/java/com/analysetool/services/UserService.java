@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Date;
@@ -203,7 +202,8 @@ public class UserService {
         generateMailsPlus();
         generateMailsPremium();
 
-        sendNewsletters();
+        //Automatic sending disabled until final version
+        //sendNewsletters();
     }
 
 

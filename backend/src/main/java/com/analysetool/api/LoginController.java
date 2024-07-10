@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.LastPing;
 import com.analysetool.repositories.LastPingRepository;
+import com.analysetool.services.UserService;
 import com.analysetool.util.DashConfig;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +34,8 @@ import java.util.*;
 
 public class LoginController {
 
-    @Autowired UserController userController;
+    @Autowired
+    UserService userService;
     @Autowired
     private LastPingRepository lpRepo;
 
@@ -154,7 +156,7 @@ public class LoginController {
                     responseCookie = h.getValue();
                 }
             }
-            String userData = userController.getUserByLogin(user);
+            String userData = userService.getUserByLogin(user);
             if (responseCookie.isEmpty() || !(new JSONObject(userData).get("accountType").equals("admin"))){
                 responseCookie = "LOGIN REJECTED";
             }
@@ -196,7 +198,7 @@ public class LoginController {
                     responseCookie = h.getValue();
                 }
             }
-            String userData = userController.getUserByLogin(loginForm.username);
+            String userData = userService.getUserByLogin(loginForm.username);
             if (responseCookie.isEmpty()){
                 responseCookie = "LOGIN REJECTED";
             }

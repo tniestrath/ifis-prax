@@ -421,7 +421,6 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
   ]
 })
 export class OriginMapNewsletterComponent extends OriginMapComponent{
-  @Input("emailId") emailId : string = "0";
 
   override ngOnInit() {
     this.setToolTip("Dies ist eine Karte, die durch Färbung die Orte angibt, von denen am meisten auf den Newsletter zugegriffen wird. " +
@@ -440,21 +439,15 @@ export class OriginMapNewsletterComponent extends OriginMapComponent{
     let titleElement = document.getElementsByClassName("origin-map-title")[0] as HTMLDivElement;
     titleElement.remove();
 
-    setTimeout(() => {
-      this.isScaled = true;
+    setTimeout(() => {this.isScaled = true}, 100);
+
+    SysVars.SELECTED_NEWSLETTER.subscribe(nl => {
       if (svgElement) {
-        this.api.getNewsletterGeo(Number.parseInt(this.emailId)).then(res => {
+        this.api.getNewsletterGeo(Number.parseInt(nl.id)).then(res => {
           this.readData(res, svgElement);
           this.cdr.detectChanges();
         });
       }
-    }, 100);
-
-    SysVars.SELECTED_NEWSLETTER.subscribe(nl => {
-      this.api.getNewsletterGeo(Number.parseInt(nl.id)).then(res => {
-        this.readData(res, svgElement);
-        this.cdr.detectChanges();
-      });
     });
   }
 

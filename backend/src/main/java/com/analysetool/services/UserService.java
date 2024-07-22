@@ -1405,6 +1405,28 @@ public class UserService {
         return array.toString();
     }
 
+    public String getUserProfileAndPostViewsAveragesByTypeSkewed() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        for(String type : Constants.getInstance().getListOfUserTypes()) {
+            JSONObject obj = new JSONObject();
+
+            if(type.contains("basis")) {
+                //For low-end users, add profile-views for only those without posts and a 0 for post-clicks for format.
+                obj.put("profile", new JSONObject(getUserAveragesWithoutPosts()).getDouble(type));
+                obj.put("posts", 0);
+            } else {
+                //For high-end users, add both profile views for users with posts, and their respective posts clicks.
+                obj.put("profile", new JSONObject(getUserAveragesWithPostsWithoutPostClicks()).getDouble(type));
+                obj.put("posts", new JSONObject(getUserAveragesWithPostsOnlyPostClicks()).getDouble(type));
+            }
+
+            json.put(type, obj);
+        }
+        return json.toString();
+    }
+
+
     public String getUserAveragesWithoutPosts() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();

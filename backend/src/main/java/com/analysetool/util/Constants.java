@@ -188,4 +188,14 @@ public class Constants {
         list.add(premiumAnbieter);
         return list;
     }
+
+    public List<String> getListOfUserTypes() {
+        List<String> list = new ArrayList<>();
+        list.add("basis");
+        list.add("basis-plus");
+        list.add("plus");
+        list.add("premium");
+        return list;
+    }
+
 }

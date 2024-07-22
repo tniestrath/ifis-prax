@@ -72,6 +72,12 @@ public class PostService {
         return obj.toString();
     }
 
+    /**
+     * Calculates and returns the average click counts for each post category,
+     * sorted by average clicks in descending order.
+     *
+     * @return a JSON string representing the average click counts for each category
+     */
     public String getAverageClicksOfCategoriesRanked() throws JSONException {
 
 

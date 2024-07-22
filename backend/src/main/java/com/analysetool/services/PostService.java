@@ -2,6 +2,7 @@ package com.analysetool.services;
 
 import com.analysetool.modells.wp_term_relationships;
 import com.analysetool.repositories.*;
+import com.analysetool.util.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,15 +74,11 @@ public class PostService {
 
     public String getAverageClicksOfCategoriesRanked() throws JSONException {
 
-        String[] categories = {
-                "blogeintrag", "artikel", "whitepaper", "podcast", "news", "videos", "ratgeber", "cyber-risk-check"
-        };
-
 
         Map<String, Double> meanClicksMap = new HashMap<>();
 
 
-        for (String category : categories) {
+        for (String category : Constants.getInstance().getListOfPostTypes()) {
             List<Integer> postIds = postTypeRepo.getPostsByType(category);
             List<Long> postClicks = new ArrayList<>();
 

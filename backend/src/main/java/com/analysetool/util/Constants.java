@@ -198,4 +198,18 @@ public class Constants {
         return list;
     }
 
+    public List<String> getListOfPostTypes() {
+        List<String> list = new ArrayList<>();
+        list.add("blogeintrag");
+        list.add("artikel");
+        list.add("whitepaper");
+        list.add("podcast");
+        list.add("news");
+        list.add("videos");
+        list.add("ratgeber");
+        list.add("cyber-risk-check");
+
+        return list;
+    }
+
 }

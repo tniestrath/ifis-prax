@@ -1,13 +1,14 @@
 package com.analysetool.services;
 
 import com.analysetool.modells.wp_term_relationships;
-import com.analysetool.repositories.PostRepository;
-import com.analysetool.repositories.PostStatsRepository;
-import com.analysetool.repositories.WpTermRelationshipsRepository;
-import com.analysetool.repositories.WpTermTaxonomyRepository;
+import com.analysetool.repositories.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.analysetool.util.MathHelper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,9 @@ public class PostService {
     PostRepository postRepo;
     @Autowired
     PostStatsRepository postStatRepo;
+    @Autowired
+    PostTypeRepository postTypeRepo;
+
     private List<Long> getTagsForPost(long postId) {
         List<Long> termTaxonomyIds = termRelRepo.getTaxIdByObject(postId);
         return taxTermRepo.getTermIdByTaxId(termTaxonomyIds);
@@ -55,6 +59,55 @@ public class PostService {
         return (commonTagsCount * 1.0f / tagsOfPostOne.size()) * 100;
     }
 
+    public String getAverageClicksOfCategoriesaa(){
+        JSONObject obj = new JSONObject();
+        List<Integer> artikelIds = postTypeRepo.getPostsByType("artikel");
+        List<Long> artikelClicks = new ArrayList<>();
+        for (Integer c : artikelIds) {
+            Long id = Integer.toUnsignedLong(c);
+            postStatRepo.getSumClicksLong(c);
+        }
+        double meanArtikel = MathHelper.getMeanLong(artikelClicks);
+        return obj.toString();
+    }
+
+    public String getAverageClicksOfCategoriesRanked() throws JSONException {
+
+        String[] categories = {
+                "blogeintrag", "artikel", "whitepaper", "podcast", "news", "videos", "ratgeber", "cyber-risk-check"
+        };
+
+
+        Map<String, Double> meanClicksMap = new HashMap<>();
+
+
+        for (String category : categories) {
+            List<Integer> postIds = postTypeRepo.getPostsByType(category);
+            List<Long> postClicks = new ArrayList<>();
+
+            for (Integer postId : postIds) {
+                Long clicks = postStatRepo.getSumClicksLong(postId);
+                if (clicks != null) {
+                    postClicks.add(clicks);
+                }
+            }
+
+            double meanClicks = postClicks.isEmpty() ? 0 : MathHelper.getMeanLong(postClicks);
+            meanClicksMap.put(category, meanClicks);
+        }
+
+
+        List<Map.Entry<String, Double>> sortedMeanClicks = new ArrayList<>(meanClicksMap.entrySet());
+        sortedMeanClicks.sort((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()));
+
+
+        JSONObject result = new JSONObject();
+        for (Map.Entry<String, Double> entry : sortedMeanClicks) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+
+        return result.toString();
+    }
 
 
 }

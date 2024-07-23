@@ -4,6 +4,7 @@ import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.ContentDownloadsHourlyService;
 import com.analysetool.services.PostClicksByHourDLCService;
+import com.analysetool.services.PostService;
 import com.analysetool.services.SocialsImpressionsService;
 import com.analysetool.util.Constants;
 import com.analysetool.util.MathHelper;
@@ -71,6 +72,8 @@ public class PostController {
     private ContentDownloadsHourlyRepository contentDownloadsRepo;
     @Autowired
     private SocialsImpressionsService soziImp;
+    @Autowired
+    private PostService postService;
 
     PostRepository postRepository;
     PostStatsRepository statsRepo;
@@ -1589,6 +1592,15 @@ public class PostController {
     public String getBestPostImpressionToday(){
         List<SocialsImpressions>imps = soziImp.filterOutUserImpressions(soziImp.findAllToday());
         return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
+    }
+
+    @GetMapping("/rankPostTypesAllTime")
+    public String rankPostTypesAllTime(){
+        try{
+        return postService.getAverageClicksOfCategoriesRanked();}catch(Exception e){
+            e.printStackTrace();
+            return "error";
+        }
     }
 }
 

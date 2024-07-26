@@ -311,7 +311,7 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsBlogByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPodcastByUniStatId(id));
-        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsVideosByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsVideoByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsEventsByUniStatId(id));
         //Ratgeber
@@ -950,8 +950,6 @@ public class uniStatController {
 
     /**
      * Retrieves the hourly server error ranking for today.
-     *
-     * @param uniStatId the universal statistic ID for which the server error ranking is to be retrieved
      * @return a JSON string containing the hourly server error ranking
      */
     @GetMapping("/server-error-ranking-today")

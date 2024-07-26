@@ -26,7 +26,7 @@ public class Constants {
     private final String podastSlug = "podcast";
     private final String newsSlug = "news";
 
-    private final String videoSlug = "videos";
+    private final String videoSlug = "video";
 
 
     private final String basisAnbieter = "um_basis";
@@ -205,7 +205,7 @@ public class Constants {
         list.add("whitepaper");
         list.add("podcast");
         list.add("news");
-        list.add("videos");
+        list.add("video");
         list.add("ratgeber");
         list.add("cyber-risk-check");
 

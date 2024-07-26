@@ -598,6 +598,9 @@ public class PostController {
                 }
             }
 
+            if(postRepo.findById(id).get().getType().equals("video") || type.contains("video")) {
+                return "video";
+            }
 
             if(type.equals("blogeintrag")) {
                 return "blog";

@@ -16,10 +16,11 @@ export class PostTypesAverageViewsComponent extends DashBaseComponent implements
 
   getData(){
     this.api.getPostViewsAverageByType().then(res => {
+      let map : Map<string, number> = new Map(Object.entries(res));
       let labels: string[] = [];
       let data: number[] = [];
       let color: string[] = [];
-      this.readMap(res, labels, data, color);
+      this.readMap(map, labels, data, color);
       this.createChart(labels, data, color);
     });
   }
@@ -52,14 +53,14 @@ export class PostTypesAverageViewsComponent extends DashBaseComponent implements
         color[4] = DashColors.PODCAST;
       }
       if (key == "video") {
-        labels[4] = Util.firstToUpperCase(key);
-        data[4] = (value == 0 || value == undefined ? 0 : value);
-        color[4] = DashColors.PODCAST;
+        labels[5] = Util.firstToUpperCase(key);
+        data[5] = (value == 0 || value == undefined ? 0 : value);
+        color[5] = DashColors.VIDEO;
       }
       if (key == "ratgeber") {
-        labels[4] = Util.firstToUpperCase(key);
-        data[4] = (value == 0 || value == undefined ? 0 : value);
-        color[4] = DashColors.RATGEBER;
+        labels[6] = Util.firstToUpperCase(key);
+        data[6] = (value == 0 || value == undefined ? 0 : value);
+        color[6] = DashColors.RATGEBER;
       }
     })
   }

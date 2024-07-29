@@ -55,6 +55,7 @@ export enum apiUrl {
   GET_USERS_CLICKS_AVERAGE_BY_VIEWTYPE = "/users/getUserProfileAndPostViewsAveragesByType",
   GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING = "/users/getUserProfileViewsAveragesByTypeAndPosts",
   GET_USERS_PROFILE_VIEWS_BY_PLAN_SKEWED = "/users/getUserProfileAndPostViewsAveragesByTypeSkewed",
+  GET_USERS_REDIRECTS_BY_PLAN = "/users/getAverageRedirectsByPlan",
   GET_USERS_TAG_DISTRIBUTION_PRECENTAGE = "/users/getAllUserTagsData",
 
   /**
@@ -651,6 +652,11 @@ export class ApiService {
   async getUserProfileViewsByPlanSkewed() {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_PROFILE_VIEWS_BY_PLAN_SKEWED), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_PROFILE_VIEWS_BY_PLAN_SKEWED)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getUserRedirectsByPlan() {
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_REDIRECTS_BY_PLAN), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_REDIRECTS_BY_PLAN)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserTagsDistributionPercentage() {

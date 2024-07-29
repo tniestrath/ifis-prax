@@ -268,3 +268,27 @@ export class UserStatsByPlanShortViewComponent extends UserStatsByPlanComponent 
     })
   }
 }
+
+@Component({
+  selector: 'dash-user-stats-by-plan-redirects',
+  templateUrl: './user-stats-by-plan.component.html',
+  styleUrls: ['./user-stats-by-plan.component.css', "../../dash-base/dash-base.component.css"]
+})
+export class UserStatsByPlanRedirectsComponent extends UserStatsByPlanShortViewComponent implements  OnInit {
+  override title: string = "Durchschnittliche Weiterleitungen nach Abomodell";
+  override datasetLabels: string[] = ["Weiterleitungen"];
+
+
+  override ngOnInit(): void {
+    this.setToolTip("", 1);
+    this.element.nativeElement.querySelector(".comparator-child").classList.remove("comparator-child");
+    this.getData();
+  }
+
+  override getData() {
+    this.api.getUserRedirectsByPlan().then(res => {
+      let map: Map<string, number> = new Map(Object.entries<number>(res));
+      this.createChart(map);
+    });
+  }
+}

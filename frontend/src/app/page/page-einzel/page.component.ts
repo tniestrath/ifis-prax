@@ -32,7 +32,7 @@ import {PostTypeComponent} from "../../component/post/post-type/post-type.compon
 import {ProfileCompletionComponent} from "../../component/user/profile-completion/profile-completion.component";
 import {UserComparatorComponent} from "../../component/user/user-comparator/user-comparator.component";
 import {
-  UserStatsByPlanComponent,
+  UserStatsByPlanComponent, UserStatsByPlanRedirectsComponent,
   UserStatsByPlanShortViewComponent,
   UserStatsByPlanViewTypeCompareComponent
 } from "../../component/user/user-stats-by-plan/user-stats-by-plan.component";
@@ -152,8 +152,10 @@ export class PageComponent implements OnInit {
       {type: PostTypeComponent, row: 3, col: 1, height: 2, width: 1},
       {type: OriginMapComponent, row: 3, col: 2, height: 2, width: 3},
       {type: EventsStatsComponent, row: 2, col: 6, height: 1, width: 1},
-      {type: UserStatsByPlanShortViewComponent, row: 5, col: 1, height: 1, width: 2},
-      {type: PostTypesAverageViewsComponent, row: 5, col: 3, height: 1, width: 2}
+      {type: PostTypesAverageViewsComponent, row: 5, col: 1, height: 1, width: 2},
+      {type: UserStatsByPlanShortViewComponent, row: 5, col: 3, height: 1, width: 2},
+      {type: UserStatsByPlanRedirectsComponent, row: 5, col: 5, height: 1, width: 2},
+
     ];
   }
 

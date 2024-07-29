@@ -31,7 +31,11 @@ import {EventsStatsComponent, UserEventsStatsComponent} from "../../component/ev
 import {PostTypeComponent} from "../../component/post/post-type/post-type.component";
 import {ProfileCompletionComponent} from "../../component/user/profile-completion/profile-completion.component";
 import {UserComparatorComponent} from "../../component/user/user-comparator/user-comparator.component";
-import {UserStatsByPlanComponent, UserStatsByPlanViewTypeCompareComponent} from "../../component/user/user-stats-by-plan/user-stats-by-plan.component";
+import {
+  UserStatsByPlanComponent,
+  UserStatsByPlanShortViewComponent,
+  UserStatsByPlanViewTypeCompareComponent
+} from "../../component/user/user-stats-by-plan/user-stats-by-plan.component";
 import {UserDisplayComponent} from "../../component/user/user-display-component/user-display.component";
 import {UserClicksChartComponent} from "../../component/user/user-clicks-chart/user-clicks-chart.component";
 import {SingleUserTagsDistComponent, UserTagsDistComponent} from "../../component/user/user-tags-dist/user-tags-dist.component";
@@ -62,6 +66,9 @@ import {
 } from "../../component/system/external-services-list/external-services-list.component";
 import {UserPlanLogComponent} from "../../component/user/user-plan-log/user-plan-log.component";
 import {ForumStats, ForumStatsComponent} from "../../component/forum/forum-stats/forum-stats.component";
+import {
+  PostTypesAverageViewsComponent
+} from "../../component/post/post-types-avarage-views/post-types-average-views.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -144,7 +151,9 @@ export class PageComponent implements OnInit {
       {type: ExternalServicesListComponent, row: 3, col: 6, height: 2, width: 1},
       {type: PostTypeComponent, row: 3, col: 1, height: 2, width: 1},
       {type: OriginMapComponent, row: 3, col: 2, height: 2, width: 3},
-      {type: EventsStatsComponent, row: 2, col: 6, height: 1, width: 1}
+      {type: EventsStatsComponent, row: 2, col: 6, height: 1, width: 1},
+      {type: UserStatsByPlanShortViewComponent, row: 5, col: 1, height: 1, width: 2},
+      {type: PostTypesAverageViewsComponent, row: 5, col: 3, height: 1, width: 2}
     ];
   }
 

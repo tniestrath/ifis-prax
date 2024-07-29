@@ -54,6 +54,7 @@ export enum apiUrl {
   GET_USERS_ALL_VIEWS_PER_HOUR = "/users/getAllViewsPerHour",
   GET_USERS_CLICKS_AVERAGE_BY_VIEWTYPE = "/users/getUserProfileAndPostViewsAveragesByType",
   GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING = "/users/getUserProfileViewsAveragesByTypeAndPosts",
+  GET_USERS_PROFILE_VIEWS_BY_PLAN_SKEWED = "/users/getUserProfileAndPostViewsAveragesByTypeSkewed",
   GET_USERS_TAG_DISTRIBUTION_PRECENTAGE = "/users/getAllUserTagsData",
 
   /**
@@ -91,6 +92,7 @@ export enum apiUrl {
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_BY_AUTHOR = "/posts/getPostsByAuthor?authorId=ID&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH",
   GET_POSTS_BY_IDS = "/posts/getPostStatsForList?list=LIST",
+  GET_POSTS_BY_TYPE_VIEWS_AVERAGE = "/posts/rankPostTypesAllTime",
   GET_POSTS_PER_TYPE = "/bericht/getPostsByType",
   GET_POSTS_PER_TYPE_YESTERDAY = "/bericht/getPostsByTypeYesterday",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
@@ -305,6 +307,10 @@ export class ApiService {
   async getPostsByIDs(list : string){
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_BY_IDS).replace("LIST", list), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_BY_IDS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getPostViewsAverageByType(){
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_BY_TYPE_VIEWS_AVERAGE), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_BY_TYPE_VIEWS_AVERAGE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserImgSrc(id : string){
@@ -640,6 +646,11 @@ export class ApiService {
   async getUserProfileViewsAverageByType() {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_PROFILE_VIEWS_AVERAGE_BY_TYPE_BY_POSTHAVING)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getUserProfileViewsByPlanSkewed() {
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_PROFILE_VIEWS_BY_PLAN_SKEWED), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_PROFILE_VIEWS_BY_PLAN_SKEWED)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserTagsDistributionPercentage() {

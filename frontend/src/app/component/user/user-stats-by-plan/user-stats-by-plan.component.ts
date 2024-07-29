@@ -161,3 +161,110 @@ export class UserStatsByPlanViewTypeCompareComponent extends UserStatsByPlanComp
   }
 }
 
+@Component({
+  selector: 'dash-user-stats-by-plan-shortView',
+  templateUrl: './user-stats-by-plan.component.html',
+  styleUrls: ['./user-stats-by-plan.component.css', "../../dash-base/dash-base.component.css"]
+})
+export class UserStatsByPlanShortViewComponent extends UserStatsByPlanComponent implements  OnInit{
+  override title : string = "Durchschnittliche Profilaufrufe nach Abomodell";
+  override datasetLabels : string[] = ["Profilaufrufe"];
+
+
+  override ngOnInit(): void {
+    this.setToolTip("", 1,false);
+    this.element.nativeElement.querySelector(".comparator-child").classList.remove("comparator-child");
+    this.getData();
+  }
+  override getData(){
+    this.api.getUserProfileViewsAverageByType().then(res => {
+      let map : Map<string, number> = new Map(Object.entries<number>(res[0]).sort((a ,b) => this.sorter(a, b)));
+      let map2 : Map<string, number> = new Map(Object.entries<number>(res[2]).sort((a,b) => this.sorter(a, b)));
+
+      map.delete("plus");
+      map.delete("premium");
+
+      map2.delete("basis");
+      map2.delete("basis-plus");
+
+      map = new Map<string, number>([...map, ...map2]);
+
+      this.createChart(map);
+    });
+  }
+
+  override createChart(map : Map<string, number>) {
+    if (this.chart){
+      this.chart.destroy();
+    }
+    let datasets = [];
+    datasets = [{
+      label: this.datasetLabels[0],
+      data: Array.from(map.values()),
+      backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
+    }];
+
+    // @ts-ignore
+    this.chart = new Chart(this.element.nativeElement.querySelector("#stat_chart"), {
+      type: "bar",
+      data: {
+        labels: Array.from(map.keys()),
+        datasets: datasets
+      },
+      options: {
+        maintainAspectRatio: false,
+        clip: false,
+        layout: {
+          padding: {
+            bottom: 0
+          }
+        },
+        scales: {
+          y: {
+            display: false
+          },
+          x: {
+            display: true,
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          datalabels: {
+            display: true
+          },
+          title: {
+            display: false,
+            text: "",
+            position: "top",
+            fullSize: true,
+            font: {
+              size: 18,
+              weight: "bold",
+              family: "'Helvetica Neue', sans-serif"
+            }
+          },
+          legend: {
+            display: true,
+            position: "bottom"
+          },
+          tooltip: {
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            },
+            callbacks: {
+            }
+          }
+        },
+        interaction: {
+          mode: "nearest",
+          intersect: true
+        }
+      }
+    })
+  }
+}

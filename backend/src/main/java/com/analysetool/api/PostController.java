@@ -674,88 +674,6 @@ public class PostController {
         return count;
     }
 
-    @GetMapping("/getAveragesByTypesAll")
-    public String getAverageByTypesAll() throws JSONException {
-        JSONObject counts = new JSONObject();
-        JSONObject clicks = new JSONObject();
-        JSONObject averages = new JSONObject();
-
-        counts.put("news", 0);
-        counts.put("artikel", 0);
-        counts.put("blog", 0);
-        counts.put("whitepaper", 0);
-        counts.put("ratgeber", 0);
-        counts.put("podcast", 0);
-
-        clicks.put("news", 0);
-        clicks.put("artikel", 0);
-        clicks.put("blog", 0);
-        clicks.put("whitepaper", 0);
-        clicks.put("ratgeber", 0);
-        clicks.put("podcast", 0);
-
-        for(Post post : postRepo.findAll()) {
-            switch (getType(post.getId())) {
-                case "news" -> {
-                    counts.put("news", counts.getInt("news") + 1);
-                    try {
-                        clicks.put("news", clicks.getInt("news") + statsRepo.getSumClicks(post.getId()));
-                    } catch (Exception ignored) {}
-                }
-                case "artikel" -> {
-                    counts.put("artikel", counts.getInt("artikel") + 1);
-                    try {
-                    clicks.put("artikel", clicks.getInt("artikel") + statsRepo.getSumClicks(post.getId()));
-                    } catch (Exception ignored) {}
-                }
-                case "blog" -> {
-                    counts.put("blog", counts.getInt("blog") + 1);
-                    try {
-                        clicks.put("blog", clicks.getInt("blog") + statsRepo.getSumClicks(post.getId()));
-                    } catch (Exception ignored) {}
-                }
-                case "whitepaper" -> {
-                    counts.put("whitepaper", counts.getInt("whitepaper") + 1);
-                    try {
-                        clicks.put("whitepaper", clicks.getInt("whitepaper") + statsRepo.getSumClicks(post.getId()));
-                    } catch (Exception ignored) {}
-                }
-                case "ratgeber" -> {
-                    counts.put("ratgeber", counts.getInt("ratgeber") + 1);
-                    try {
-                        clicks.put("ratgeber", clicks.getInt("ratgeber") + statsRepo.getSumClicks(post.getId()));
-                    } catch (Exception ignored) {}
-                }
-                case "podcast" -> {
-                    counts.put("podcast", counts.getInt("podcast") + 1);
-                    clicks.put("podcast", clicks.getInt("podcast") + 1);
-                }
-
-            }
-        }
-        if(counts.getInt("news") != 0) {
-            averages.put("news", clicks.getInt("news") / counts.getInt("news"));
-        }
-        if(counts.getInt("artikel") != 0) {
-            averages.put("artikel", clicks.getInt("artikel") / counts.getInt("artikel"));
-        }
-        if(counts.getInt("blog") != 0) {
-            averages.put("blog", clicks.getInt("blog") / counts.getInt("blog"));
-        }
-        if(counts.getInt("whitepaper") != 0) {
-            averages.put("whitepaper", clicks.getInt("whitepaper") / counts.getInt("whitepaper"));
-        }
-        if(counts.getInt("ratgeber") != 0) {
-            averages.put("ratgeber", clicks.getInt("ratgeber") / counts.getInt("ratgeber"));
-        }
-        if(counts.getInt("podcast") != 0) {
-            averages.put("podcast", clicks.getInt("podcast") / counts.getInt("podcast"));
-        }
-
-        return averages.toString();
-
-    }
-
 
     @GetMapping("/getPostViewsByTime")
     public String getPostViewsByTime(long id) throws JSONException {
@@ -1600,7 +1518,8 @@ public class PostController {
     @GetMapping("/rankPostTypesAllTime")
     public String rankPostTypesAllTime(){
         try{
-        return postService.getAverageClicksOfCategoriesRanked();}catch(Exception e){
+        return postService.getAverageClicksOfCategoriesRanked();
+        } catch(Exception e) {
             e.printStackTrace();
             return "error";
         }

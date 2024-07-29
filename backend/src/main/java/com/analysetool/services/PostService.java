@@ -80,9 +80,7 @@ public class PostService {
      */
     public String getAverageClicksOfCategoriesRanked() throws JSONException {
 
-
         Map<String, Double> meanClicksMap = new HashMap<>();
-
 
         for (String category : Constants.getInstance().getListOfPostTypes()) {
             List<Integer> postIds = postTypeRepo.getPostsByType(category);
@@ -99,10 +97,8 @@ public class PostService {
             meanClicksMap.put(category, meanClicks);
         }
 
-
         List<Map.Entry<String, Double>> sortedMeanClicks = new ArrayList<>(meanClicksMap.entrySet());
         sortedMeanClicks.sort((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()));
-
 
         JSONObject result = new JSONObject();
         for (Map.Entry<String, Double> entry : sortedMeanClicks) {

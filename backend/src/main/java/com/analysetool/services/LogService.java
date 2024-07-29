@@ -3,7 +3,6 @@ package com.analysetool.services;
 import com.analysetool.api.ForumModController;
 import com.analysetool.api.IPController;
 import com.analysetool.api.PostController;
-import com.analysetool.api.UserController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
@@ -92,7 +91,7 @@ public class LogService {
     private PostController postController;
 
     @Autowired
-    private UserController userController;
+    private UserService userService;
 
     @Autowired
     private UniversalAverageClicksDLCRepository uniAverageClicksRepo;
@@ -192,7 +191,7 @@ public class LogService {
 
     private final String PodcastViewPattern = "^.*GET /podcast/(\\S+)/";
 
-    private final String videoViewPatter = "^.*GET /videos/(\\S+)/";
+    private final String videoViewPatter = "^.*GET /video/(\\S+)/";
 
 
     // private String ReffererPattern="^(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}) - - \\[([\\d]{2})/([a-zA-Z]{3})/([\\d]{4}):([\\d]{2}:[\\d]{2}:[\\d]{2}).*GET.*\"https?:/.*/artikel|blog|pressemitteilung/(\\S*)/";
@@ -1288,7 +1287,7 @@ public class LogService {
      * Updates respective data from UniversalStats table.
      * @throws ParseException .
      */
-    private void updateUniStats(int totalClicks, int internalClicks, int sensibleClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsVideos, int viewsWhitepaper, int viewsEvents, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsAnbieter, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userVideos, int userWhitepaper, int userEvents, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userAnbieter, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
+    private void updateUniStats(int totalClicks, int internalClicks, int sensibleClicks, int viewsArticle, int viewsNews, int viewsBlog, int viewsPodcast, int viewsVideo, int viewsWhitepaper, int viewsEvents, int viewsRatgeber, int viewsRatgeberPost, int viewsRatgeberGlossar, int viewsRatgeberBuch, int viewsRatgeberSelf,  int viewsMain, int viewsAnbieter, int viewsUeber, int viewsAGBS, int viewsImpressum, int viewsPreisliste, int viewsPartner, int viewsDatenschutz, int viewsNewsletter, int viewsImage, int uniqueUsers, int userArticle, int userNews, int userBlog, int userPodcast, int userVideo, int userWhitepaper, int userEvents, int userRatgeber, int userRatgeberPost, int userRatgeberGlossar, int userRatgeberBuch, int userRatgeberSelf, int userMain, int userAnbieter, int userUeber, int userAGBS, int userImpressum, int userPreisliste, int userPartner, int userDatenschutz, int userNewsletter, int userImage, int serverErrors) throws ParseException {
         Date dateTime = Calendar.getInstance().getTime();
         String dateStirng = Calendar.getInstance().get(Calendar.YEAR) + "-";
         dateStirng += Calendar.getInstance().get(Calendar.MONTH) + 1  < 10 ? "0" + (Calendar.getInstance().get(Calendar.MONTH) + 1) : Calendar.getInstance().get(Calendar.MONTH) + 1;
@@ -1455,7 +1454,7 @@ public class LogService {
                         cat.setBesucherNews(userNews / 4);
                         cat.setBesucherBlog(userBlog / 4);
                         cat.setBesucherPodcast(userPodcast / 4);
-                        cat.setBesucherVideos(userVideos / 4);
+                        cat.setBesucherVideo(userVideo / 4);
                         cat.setBesucherWhitepaper(userWhitepaper / 4);
                         cat.setBesucherEvents(userEvents / 4);
                         cat.setBesucherRatgeber(userRatgeber / 4);
@@ -1479,7 +1478,7 @@ public class LogService {
                         cat.setViewsNews(viewsNews / 4);
                         cat.setViewsBlog(viewsBlog / 4);
                         cat.setViewsPodcast(viewsPodcast / 4);
-                        cat.setViewsVideos(viewsVideos / 4);
+                        cat.setViewsVideo(viewsVideo / 4);
                         cat.setViewsWhitepaper(viewsWhitepaper / 4);
                         cat.setViewsEvents(viewsEvents / 4);
                         cat.setViewsRatgeber(viewsRatgeber / 4);
@@ -1509,7 +1508,7 @@ public class LogService {
                     uniCategories.setBesucherNews(userNews);
                     uniCategories.setBesucherBlog(userBlog);
                     uniCategories.setBesucherPodcast(userPodcast);
-                    uniCategories.setBesucherVideos(userVideos);
+                    uniCategories.setBesucherVideo(userVideo);
                     uniCategories.setBesucherWhitepaper(userWhitepaper);
                     uniCategories.setBesucherEvents(userEvents);
                     uniCategories.setBesucherRatgeber(userRatgeber);
@@ -1533,7 +1532,7 @@ public class LogService {
                     uniCategories.setViewsNews(viewsNews);
                     uniCategories.setViewsBlog(viewsBlog);
                     uniCategories.setViewsPodcast(viewsPodcast);
-                    uniCategories.setViewsVideos(viewsVideos);
+                    uniCategories.setViewsVideo(viewsVideo);
                     uniCategories.setViewsWhitepaper(viewsWhitepaper);
                     uniCategories.setViewsEvents(viewsEvents);
                     uniCategories.setViewsRatgeber(viewsRatgeber);
@@ -1564,7 +1563,7 @@ public class LogService {
                 uniCategories.setBesucherNews(uniCategories.getBesucherNews() + userNews);
                 uniCategories.setBesucherBlog(uniCategories.getBesucherBlog() + userBlog);
                 uniCategories.setBesucherPodcast(uniCategories.getBesucherPodcast() + userPodcast);
-                uniCategories.setBesucherVideos(uniCategories.getBesucherVideos() + userVideos);
+                uniCategories.setBesucherVideo(uniCategories.getBesucherVideo() + userVideo);
                 uniCategories.setBesucherWhitepaper(uniCategories.getBesucherWhitepaper() + userWhitepaper);
                 uniCategories.setBesucherEvents(uniCategories.getBesucherEvents() + userEvents);
                 uniCategories.setBesucherRatgeber(uniCategories.getBesucherRatgeber() + userRatgeber);
@@ -1588,7 +1587,7 @@ public class LogService {
                 uniCategories.setViewsNews(viewsNews + uniCategories.getViewsNews());
                 uniCategories.setViewsBlog(viewsBlog + uniCategories.getViewsBlog());
                 uniCategories.setViewsPodcast(viewsPodcast + uniCategories.getViewsPodcast());
-                uniCategories.setViewsVideos(viewsVideos + uniCategories.getViewsVideos());
+                uniCategories.setViewsVideo(viewsVideo + uniCategories.getViewsVideo());
                 uniCategories.setViewsWhitepaper(viewsWhitepaper + uniCategories.getViewsWhitepaper());
                 uniCategories.setViewsEvents(viewsEvents + uniCategories.getViewsEvents());
                 uniCategories.setViewsRatgeber(viewsRatgeber + uniCategories.getViewsRatgeber());
@@ -1666,8 +1665,8 @@ public class LogService {
                         uniCat.setBesucherPodcast(uniCat.getBesucherPodcast() + (isUnique ? 1 : 0));
                     }
                     case "videoView" -> {
-                        uniCat.setViewsVideos(uniCat.getViewsVideos() + 1);
-                        uniCat.setBesucherVideos(uniCat.getBesucherVideos() + (isUnique ? 1 : 0));
+                        uniCat.setViewsVideo(uniCat.getViewsVideo() + 1);
+                        uniCat.setBesucherVideo(uniCat.getBesucherVideo() + (isUnique ? 1 : 0));
                     }
                     case "wpView", "wpSS" -> {
                         uniCat.setViewsWhitepaper(uniCat.getViewsWhitepaper() + 1);
@@ -1886,7 +1885,7 @@ public class LogService {
         HashMap<String, Integer> counts = new HashMap<>();
 
         for(WPUser user : wpUserRepo.findAll()) {
-            switch(userController.getType(Math.toIntExact(user.getId()))) {
+            switch(userService.getType(Math.toIntExact(user.getId()))) {
                 case "basis" -> {
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
                 }
@@ -2389,7 +2388,7 @@ public class LogService {
         HashMap<String, Integer> counts = new HashMap<>();
 
         for(WPUser user : wpUserRepo.findAll()) {
-            switch(userController.getType(Math.toIntExact(user.getId()))) {
+            switch(userService.getType(Math.toIntExact(user.getId()))) {
                 case "basis" -> {
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
                 }
@@ -3292,16 +3291,16 @@ public class LogService {
     }
 
     public void updateRankings() {
-        userController.updateUserRankingBuffer();
+        userService.updateUserRankingBuffer();
     }
 
     private void updateMemberBuffer() {
 
         for(WPUser user : wpUserRepo.findAll()) {
-            if(memberRepo.getLastByUserId(user.getId()) == null || !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted") && (!userController.getType(Math.toIntExact(user.getId())).equals(memberRepo.getLastByUserId(user.getId()).getMembership()))) {
+            if(memberRepo.getLastByUserId(user.getId()) == null || !memberRepo.getLastByUserId(user.getId()).getMembership().equals("deleted") && (!userService.getType(Math.toIntExact(user.getId())).equals(memberRepo.getLastByUserId(user.getId()).getMembership()))) {
                 MembershipsBuffer newMembership = new MembershipsBuffer();
                 newMembership.setUserId(user.getId());
-                newMembership.setMembership(userController.getType(Math.toIntExact(user.getId())));
+                newMembership.setMembership(userService.getType(Math.toIntExact(user.getId())));
                 newMembership.setTimestamp(new Timestamp(new Date().getTime()));
                 memberRepo.save(newMembership);
             }

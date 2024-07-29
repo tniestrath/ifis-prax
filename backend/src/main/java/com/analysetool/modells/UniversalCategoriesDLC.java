@@ -32,7 +32,7 @@ public class UniversalCategoriesDLC {
     private int besucherPodcast;
 
     @Column(name = "besucher_videos")
-    private int besucherVideos;
+    private int besucherVideo;
 
     @Column(name="besucher_whitepaper")
     private int besucherWhitepaper;
@@ -112,7 +112,7 @@ public class UniversalCategoriesDLC {
     private int viewsPodcast;
 
     @Column(name = "views_videos")
-    private int viewsVideos;
+    private int viewsVideo;
 
     @Column(name="views_whitepaper")
     private int viewsWhitepaper;
@@ -520,12 +520,12 @@ public class UniversalCategoriesDLC {
         this.viewsRatgeberSelf = viewsRatgeberSelf;
     }
 
-    public int getBesucherVideos() {
-        return besucherVideos;
+    public int getBesucherVideo() {
+        return besucherVideo;
     }
 
-    public void setBesucherVideos(int besucherVideos) {
-        this.besucherVideos = besucherVideos;
+    public void setBesucherVideo(int besucherVideo) {
+        this.besucherVideo = besucherVideo;
     }
 
     public int getBesucherEvents() {
@@ -544,12 +544,12 @@ public class UniversalCategoriesDLC {
         this.besucherAnbieter = besucherAnbieter;
     }
 
-    public int getViewsVideos() {
-        return viewsVideos;
+    public int getViewsVideo() {
+        return viewsVideo;
     }
 
-    public void setViewsVideos(int viewsVideos) {
-        this.viewsVideos = viewsVideos;
+    public void setViewsVideo(int viewsVideo) {
+        this.viewsVideo = viewsVideo;
     }
 
     public int getViewsEvents() {

@@ -34,8 +34,8 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.viewsPodcast) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      int getSumViewsPodcastByUniStatId(int uniID);
 
-     @Query("SELECT SUM(u.viewsVideos) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     int getSumViewsVideosByUniStatId(int uniID);
+     @Query("SELECT SUM(u.viewsVideo) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     int getSumViewsVideoByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.viewsWhitepaper) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      int getSumViewsWhitepaperByUniStatId(int uniID);
@@ -106,8 +106,8 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.besucherPodcast) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      int getSumUserPodcastByUniStatId(int uniID);
 
-     @Query("SELECT SUM(u.besucherVideos) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
-     int getSumUserVideosByUniStatId(int uniID);
+     @Query("SELECT SUM(u.besucherVideo) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     int getSumUserVideoByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherWhitepaper) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      int getSumUserWhitepaperByUniStatId(int uniID);
@@ -182,8 +182,8 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.viewsPodcast) FROM UniversalCategoriesDLC u")
      int getSumViewsPodcastAllTime();
 
-     @Query("SELECT SUM(u.viewsVideos) FROM UniversalCategoriesDLC u")
-     int getSumViewsVideosAllTime();
+     @Query("SELECT SUM(u.viewsVideo) FROM UniversalCategoriesDLC u")
+     int getSumViewsVideoAllTime();
 
      @Query("SELECT SUM(u.viewsWhitepaper) FROM UniversalCategoriesDLC u")
      int getSumViewsWhitepaperAllTime();
@@ -253,8 +253,8 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.besucherPodcast) FROM UniversalCategoriesDLC u")
      int getSumUserPodcastAllTime();
 
-     @Query("SELECT SUM(u.besucherVideos) FROM UniversalCategoriesDLC u")
-     int getSumUserVideosAllTime();
+     @Query("SELECT SUM(u.besucherVideo) FROM UniversalCategoriesDLC u")
+     int getSumUserVideoAllTime();
 
      @Query("SELECT SUM(u.besucherWhitepaper) FROM UniversalCategoriesDLC u")
      int getSumUserWhitepaperAllTime();

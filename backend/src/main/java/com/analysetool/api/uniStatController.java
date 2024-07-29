@@ -311,7 +311,7 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsBlogByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPodcastByUniStatId(id));
-        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsVideosByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsVideoByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsEventsByUniStatId(id));
         //Ratgeber
@@ -341,7 +341,7 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNewsByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserBlogByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPodcastByUniStatId(id));
-        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserVideosByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserVideoByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserEventsByUniStatId(id));
         //Ratgeber
@@ -407,7 +407,7 @@ public class uniStatController {
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNewsAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsBlogAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPodcastAllTime());
-        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsVideosAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsVideoAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsWhitepaperAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsEventsAllTime());
         //Ratgeber
@@ -436,7 +436,7 @@ public class uniStatController {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNewsAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserBlogAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPodcastAllTime());
-        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserVideosAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserVideoAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserWhitepaperAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserEventsAllTime());
         //Ratgeber
@@ -950,8 +950,6 @@ public class uniStatController {
 
     /**
      * Retrieves the hourly server error ranking for today.
-     *
-     * @param uniStatId the universal statistic ID for which the server error ranking is to be retrieved
      * @return a JSON string containing the hourly server error ranking
      */
     @GetMapping("/server-error-ranking-today")

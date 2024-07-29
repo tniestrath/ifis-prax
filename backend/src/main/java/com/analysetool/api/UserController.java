@@ -20,6 +20,7 @@ import java.util.Map;
 @RequestMapping(value = { "/users", "/0wB4P2mly-xaRmeeDOj0_g/users"}, method = RequestMethod.GET, produces = "application/json")
 public class UserController {
 
+    @Autowired
     private SocialsImpressionsService soziImp;
     @Autowired
     private UserService userService;
@@ -129,6 +130,11 @@ public class UserController {
     @GetMapping("/getUserProfileAndPostViewsAveragesByType")
     public String getUserProfileAndPostViewsAveragesByType() throws JSONException {
         return userService.getUserProfileAndPostViewsAveragesByType();
+    }
+
+    @GetMapping("/getUserProfileAndPostViewsAveragesByTypeSkewed")
+    public String getUserProfileAndPostViewsAveragesByTypeSkewed() throws JSONException {
+        return userService.getUserProfileAndPostViewsAveragesByTypeSkewed();
     }
 
     /**
@@ -434,4 +440,6 @@ public class UserController {
         return userService.sendNewsletters();
     }
 
+    @GetMapping("/getAverageRedirectsByPlan")
+    public String getAverageRedirectsByPlan() throws JSONException {return userService.getAverageRedirectsByPlan();}
 }

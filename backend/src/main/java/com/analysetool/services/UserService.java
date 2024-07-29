@@ -1405,6 +1405,28 @@ public class UserService {
         return array.toString();
     }
 
+    public String getUserProfileAndPostViewsAveragesByTypeSkewed() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        for(String type : Constants.getInstance().getListOfUserTypes()) {
+            JSONObject obj = new JSONObject();
+
+            if(type.contains("basis")) {
+                //For low-end users, add profile-views for only those without posts and a zero for post-clicks for format.
+                obj.put("profile", new JSONObject(getUserAveragesWithoutPosts()).getDouble(type));
+                obj.put("posts", 0);
+            } else {
+                //For high-end users, add both profile views for users with posts, and their respective posts clicks.
+                obj.put("profile", new JSONObject(getUserAveragesWithPostsWithoutPostClicks()).getDouble(type));
+                obj.put("posts", new JSONObject(getUserAveragesWithPostsOnlyPostClicks()).getDouble(type));
+            }
+
+            json.put(type, obj);
+        }
+        return json.toString();
+    }
+
+
     public String getUserAveragesWithoutPosts() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();
@@ -2045,7 +2067,13 @@ public class UserService {
      * @return a List of Strings, containing all Tags in this String.
      */
     public List<String> decryptTags(String cryptedTag) {
-        return decryptTags(cryptedTag);
+        Pattern cleaner = Pattern.compile("\"([^\"]+)\"");
+        Matcher matcher = cleaner.matcher(cryptedTag);
+        List<String> tags = new ArrayList<>();
+        while(matcher.find()) {
+            tags.add(matcher.group(1));
+        }
+        return tags;
     }
 
     /**
@@ -2054,11 +2082,29 @@ public class UserService {
      * @return a List of a List of Strings, containing all Tags in this String.
      */
     public List<List<String>> decryptTagsStringInList(List<String> cryptedTags) {
-        return decryptTagsStringInList(cryptedTags);
+        List<List<String>> list = new ArrayList<>();
+        for(String tags : cryptedTags) {
+            list.add(decryptTags(tags));
+        }
+        return list;
     }
 
     public Optional<String> getTags(long userId, String type) {
-        return getTags(userId, type);
+        switch (type) {
+            case "basis" -> {
+                return wpUserMetaRepository.getTagsBasis(userId);
+            }
+            case "basis_plus" -> {
+                return wpUserMetaRepository.getTagsBasisPlus(userId);
+            }
+            case "plus" -> {
+                return wpUserMetaRepository.getTagsPlus(userId);
+            }
+            case "premium" -> {
+                return wpUserMetaRepository.getTagsPremium(userId);
+            }
+        }
+        return Optional.empty();
     }
 
     public List<Long> getAllUserIdsWithTags() {
@@ -2235,6 +2281,21 @@ public class UserService {
             contentRank.setUserId(Math.toIntExact(user.getId()));
             rankingTotalContentRepo.save(contentRank);
         }
+    }
+
+    public String getAverageRedirectsByPlan() throws JSONException {
+        JSONObject obj = new JSONObject();
+        for(String type : Constants.getInstance().getListOfUserTypesDirty()) {
+            List<WPUser> users = userRepo.getByAboType(type);
+            List<Long> userIds = new ArrayList<>();
+            for(WPUser user : users) {
+                userIds.add(user.getId());
+            }
+
+            obj.put(type.replace("um_", ""), userRedirectsRepo.getSumRedirectsOfUsersInList(userIds) / userIds.size());
+        }
+
+        return obj.toString();
     }
 }
 

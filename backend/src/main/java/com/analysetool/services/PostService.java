@@ -1,13 +1,15 @@
 package com.analysetool.services;
 
 import com.analysetool.modells.wp_term_relationships;
-import com.analysetool.repositories.PostRepository;
-import com.analysetool.repositories.PostStatsRepository;
-import com.analysetool.repositories.WpTermRelationshipsRepository;
-import com.analysetool.repositories.WpTermTaxonomyRepository;
+import com.analysetool.repositories.*;
+import com.analysetool.util.Constants;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.analysetool.util.MathHelper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,9 @@ public class PostService {
     PostRepository postRepo;
     @Autowired
     PostStatsRepository postStatRepo;
+    @Autowired
+    PostTypeRepository postTypeRepo;
+
     private List<Long> getTagsForPost(long postId) {
         List<Long> termTaxonomyIds = termRelRepo.getTaxIdByObject(postId);
         return taxTermRepo.getTermIdByTaxId(termTaxonomyIds);
@@ -55,6 +60,36 @@ public class PostService {
         return (commonTagsCount * 1.0f / tagsOfPostOne.size()) * 100;
     }
 
+    public String getAverageClicksOfCategoriesaa(){
+        JSONObject obj = new JSONObject();
+        List<Integer> artikelIds = postTypeRepo.getPostsByType("artikel");
+        List<Long> artikelClicks = new ArrayList<>();
+        for (Integer c : artikelIds) {
+            Long id = Integer.toUnsignedLong(c);
+            postStatRepo.getSumClicksLong(c);
+        }
+        double meanArtikel = MathHelper.getMeanLong(artikelClicks);
+        return obj.toString();
+    }
+
+    /**
+     * Calculates and returns the average click counts for each post category,
+     * sorted by average clicks in descending order.
+     *
+     * @return a JSON string representing the average click counts for each category
+     */
+    public String getAverageClicksOfCategoriesRanked() throws JSONException {
+        JSONObject result = new JSONObject();
+        for(String type : Constants.getInstance().getListOfPostTypesNoEvents()) {
+            switch(type) {
+                case "blog" -> result.put("Blogs", postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
+                case "podcast" -> result.put("Podcasts", postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
+                default -> result.put(type, postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
+            }
+        }
+
+        return result.toString();
+    }
 
 
 }

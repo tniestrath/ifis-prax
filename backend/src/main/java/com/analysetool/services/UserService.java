@@ -2292,7 +2292,7 @@ public class UserService {
                 userIds.add(user.getId());
             }
 
-            obj.put(type.replace("um_", ""), userRedirectsRepo.getSumRedirectsOfUsersInList(userIds) / userIds.size());
+            obj.put(type.replace("um_", ""), userRedirectsRepo.getSumRedirectsOfUsersInList(userIds) == null ? 0 :  userRedirectsRepo.getSumRedirectsOfUsersInList(userIds) / userIds.size());
         }
 
         return obj.toString();

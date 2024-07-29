@@ -8,7 +8,6 @@ import com.analysetool.util.DashConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -441,4 +440,6 @@ public class UserController {
         return userService.sendNewsletters();
     }
 
+    @GetMapping("/getAverageRedirectsByPlan")
+    public String getAverageRedirectsByPlan() throws JSONException {return userService.getAverageRedirectsByPlan();}
 }

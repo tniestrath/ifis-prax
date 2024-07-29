@@ -1412,7 +1412,7 @@ public class UserService {
             JSONObject obj = new JSONObject();
 
             if(type.contains("basis")) {
-                //For low-end users, add profile-views for only those without posts and a 0 for post-clicks for format.
+                //For low-end users, add profile-views for only those without posts and a zero for post-clicks for format.
                 obj.put("profile", new JSONObject(getUserAveragesWithoutPosts()).getDouble(type));
                 obj.put("posts", 0);
             } else {
@@ -2281,6 +2281,21 @@ public class UserService {
             contentRank.setUserId(Math.toIntExact(user.getId()));
             rankingTotalContentRepo.save(contentRank);
         }
+    }
+
+    public String getAverageRedirectsByPlan() throws JSONException {
+        JSONObject obj = new JSONObject();
+        for(String type : Constants.getInstance().getListOfUserTypesDirty()) {
+            List<WPUser> users = userRepo.getByAboType(type);
+            List<Long> userIds = new ArrayList<>();
+            for(WPUser user : users) {
+                userIds.add(user.getId());
+            }
+
+            obj.put(type.replace("um_", ""), userRedirectsRepo.getSumRedirectsOfUsersInList(userIds) / userIds.size());
+        }
+
+        return obj.toString();
     }
 }
 

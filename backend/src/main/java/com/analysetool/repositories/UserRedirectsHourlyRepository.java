@@ -40,4 +40,7 @@ public interface UserRedirectsHourlyRepository extends JpaRepository<UserRedirec
     @Query("SELECT SUM(u.redirects) FROM UserRedirectsHourly u WHERE u.userId=:userId AND u.uniId < (SELECT uh.uniId - 91 FROM UserViewsByHourDLC uh ORDER BY uh.uniId DESC LIMIT 1) AND u.uniId > (SELECT uh.uniId - 182 FROM UserViewsByHourDLC uh ORDER BY uh.uniId DESC LIMIT 1)")
     Long getSumForUserPreviousQuarter(int userId);
 
+    @Query("SELECT SUM(u.redirects) FROM UserRedirectsHourly u WHERE u.userId IN (:userIds)")
+    int getSumRedirectsOfUsersInList(List<Long> userIds);
+
 }

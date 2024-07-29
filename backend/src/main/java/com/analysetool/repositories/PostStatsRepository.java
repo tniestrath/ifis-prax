@@ -91,6 +91,8 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
     @Query("UPDATE PostStats s SET s.wordcount =:wordcount WHERE s.artId =:artId")
     void updateWordCount(int wordcount, long artId);
 
+    @Query("SELECT SUM(p.clicks) FROM PostStats p WHERE p.artId IN (:postIds)")
+    int getSumClicksPostsInList(List<Long> postIds);
 
     List<PostStats> findAllByOrderByPerformanceDesc();
 

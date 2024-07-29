@@ -79,30 +79,13 @@ public class PostService {
      * @return a JSON string representing the average click counts for each category
      */
     public String getAverageClicksOfCategoriesRanked() throws JSONException {
-
-        Map<String, Double> meanClicksMap = new HashMap<>();
-
-        for (String category : Constants.getInstance().getListOfPostTypes()) {
-            List<Integer> postIds = postTypeRepo.getPostsByType(category);
-            List<Long> postClicks = new ArrayList<>();
-
-            for (Integer postId : postIds) {
-                Long clicks = postStatRepo.getSumClicksLong(postId);
-                if (clicks != null) {
-                    postClicks.add(clicks);
-                }
-            }
-
-            double meanClicks = postClicks.isEmpty() ? 0 : MathHelper.getMeanLong(postClicks);
-            meanClicksMap.put(category, meanClicks);
-        }
-
-        List<Map.Entry<String, Double>> sortedMeanClicks = new ArrayList<>(meanClicksMap.entrySet());
-        sortedMeanClicks.sort((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()));
-
         JSONObject result = new JSONObject();
-        for (Map.Entry<String, Double> entry : sortedMeanClicks) {
-            result.put(entry.getKey(), entry.getValue());
+        for(String type : Constants.getInstance().getListOfPostTypesNoEvents()) {
+            switch(type) {
+                case "blog" -> result.put("Blogs", postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
+                case "podcast" -> result.put("Podcasts", postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
+                default -> result.put(type, postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
+            }
         }
 
         return result.toString();

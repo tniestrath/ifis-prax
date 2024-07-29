@@ -202,4 +202,8 @@ public class Constants {
         return ptRepo.getDistinctTypes();
     }
 
+    public List<String> getListOfPostTypesNoEvents() {
+        return ptRepo.getDistinctTypes().stream().filter(s -> !s.startsWith("Event")).toList();
+    }
+
 }

@@ -119,6 +119,7 @@ import { UserPlanLogItemComponent } from './component/user/user-plan-log/user-pl
 import {UserPlanChip} from "./component/user/user";
 import {AreYouSureDialog, DialogDirective} from "./util/Dialog";
 import {ForumStatsComponent} from "./component/forum/forum-stats/forum-stats.component";
+import { PostTypesAverageViewsComponent } from './component/post/post-types-avarage-views/post-types-average-views.component';
 
 @NgModule({
   declarations: [
@@ -219,7 +220,8 @@ import {ForumStatsComponent} from "./component/forum/forum-stats/forum-stats.com
     PlusListDirective,
     PremiumListDirective,
     AreYouSureDialog,
-    DialogDirective
+    DialogDirective,
+    PostTypesAverageViewsComponent
   ],
     imports: [
         BrowserModule,

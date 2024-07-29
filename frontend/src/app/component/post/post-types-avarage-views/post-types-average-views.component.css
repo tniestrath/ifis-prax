@@ -1,8 +1,5 @@
-.comparator-child{
-  margin-top: 55px;
 
-}
-.user-stats-by-plan-title{
+.post-types-average-views-title{
   display: flex;
   width: calc(100% - 10px);
   height: 30px;
@@ -15,7 +12,7 @@
   top: 5px;
 
 }
-.user-stats-by-plan-title > p{
+.post-types-average-views-title > p{
   margin: 0;
   padding: 5px 15px;
   text-align: center;

@@ -256,6 +256,10 @@ public class LogService {
 
    private final String itNotfall= "^.*GET /ratgeber/(it-notfall)/";
    private final String itNotfallSub = "^.*GET /ratgeber/it-notfall/(?!\\s)([^ ]+)";
+
+   private final String referrerForRedirects = "https://it-sicherheit.de/user/(\\S+)/";
+
+   final Pattern referrerForRedirectsPattern = Pattern.compile(referrerForRedirects);
     final Pattern forumDiskussionsthemenPattern = Pattern.compile(forumDiskussionsthemen);
     final Pattern forumTopicPattern = Pattern.compile(forumTopic);
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -1094,15 +1098,32 @@ public class LogService {
             }
             case "userRedirect" -> {
                 try {
-                    if (wpUserMetaRepository.getUserByURL(patternMatcher.group(1)) != null) {
+                    if (wpUserMetaRepository.getUserByURL(patternMatcher.group(1)).isEmpty()) {
                         UserRedirectsHourly redirects;
-                        if (userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).isPresent()) {
-                            redirects = userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), wpUserMetaRepository.getUserByURL(patternMatcher.group(1))).get();
+
+                        Long user;
+                        if(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)).size() == 1) {
+                            user = wpUserMetaRepository.getUserByURL(patternMatcher.group(1)).get(0);
+                        } else {
+                            Matcher referrer = referrerForRedirectsPattern.matcher(line);
+                            if(referrer.find()) {
+                                if(wpUserRepo.findByNicename(referrer.group(1).replace("+", "-").replace(".", "-").replace("--", "-")).isPresent()) {
+                                    user = wpUserRepo.findByNicename(referrer.group(1).replace("+", "-").replace(".", "-").replace("--", "-")).get().getId();
+                                } else {
+                                    return;
+                                }
+                            } else {
+                                return;
+                            }
+                        }
+
+                        if (userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), user).isPresent()) {
+                            redirects = userRedirectRepo.getByUniIdAndHourAndUserId(uniRepo.getLatestUniStat().getId(), dateLog.getHour(), user).get();
                         } else {
                             redirects = new UserRedirectsHourly();
                             redirects.setHour(dateLog.getHour());
                             redirects.setUniId(uniRepo.getLatestUniStat().getId());
-                            redirects.setUserId(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)));
+                            redirects.setUserId(user);
                             redirects.setRedirects(0L);
                         }
                         redirects.setRedirects(redirects.getRedirects() + 1);

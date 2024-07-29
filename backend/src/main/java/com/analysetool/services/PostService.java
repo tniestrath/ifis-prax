@@ -82,9 +82,9 @@ public class PostService {
         JSONObject result = new JSONObject();
         for(String type : Constants.getInstance().getListOfPostTypesNoEvents()) {
             switch(type) {
-                case "blog" -> result.put("Blogs", postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
-                case "podcast" -> result.put("Podcasts", postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
-                default -> result.put(type, postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
+                case "blog" -> result.put("Blogs", postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) == null ? 0 : postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
+                case "podcast" -> result.put("Podcasts", postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) == null ? 0 : postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
+                default -> result.put(type, postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) == null ? 0 : postStatRepo.getSumClicksPostsInList(postTypeRepo.getPostsByTypeLong(type)) / postTypeRepo.getPostsByTypeLong(type).size());
             }
         }
 

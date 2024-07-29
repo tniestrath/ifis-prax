@@ -2,9 +2,13 @@
   margin-top: 55px;
 
 }
+.comparator-child .user-stats-by-plan-title {
+  width: calc(100% - 10px);
+}
+
 .user-stats-by-plan-title{
   display: flex;
-  width: calc(100% - 10px);
+  width: calc(100% - 45px);
   height: 30px;
   position: relative;
   box-sizing: border-box;

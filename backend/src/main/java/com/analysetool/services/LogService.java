@@ -1102,8 +1102,8 @@ public class LogService {
                         UserRedirectsHourly redirects;
 
                         Long user;
-                        if(wpUserMetaRepository.getUserByURL(patternMatcher.group(1)).size() == 1) {
-                            user = wpUserMetaRepository.getUserByURL(patternMatcher.group(1)).get(0);
+                        if(wpUserRepo.getUserByURL(patternMatcher.group(1)).size() == 1) {
+                            user = wpUserRepo.getUserByURL(patternMatcher.group(1)).get(0);
                         } else {
                             Matcher referrer = referrerForRedirectsPattern.matcher(line);
                             if(referrer.find()) {

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
-import {Chart} from "chart.js/auto";
-import {DashColors} from "../../../util/Util";
+import {Chart, ChartEvent, LegendElement, LegendItem} from "chart.js/auto";
+import Util, {DashColors} from "../../../util/Util";
 
 @Component({
   selector: 'dash-user-stats-by-plan',
@@ -121,7 +121,10 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
           },
           legend: {
             display: true,
-            position: "bottom"
+            position: "bottom",
+            //@ts-ignore
+            onClick(e: ChartEvent, legendItem: LegendItem, legend: LegendElement<TType>) {
+            }
           },
           tooltip: {
             titleFont: {
@@ -204,7 +207,6 @@ export class UserStatsByPlanShortViewComponent extends UserStatsByPlanComponent 
       backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
     }];
 
-    // @ts-ignore
     this.chart = new Chart(this.element.nativeElement.querySelector("#stat_chart"), {
       type: "bar",
       data: {
@@ -247,7 +249,10 @@ export class UserStatsByPlanShortViewComponent extends UserStatsByPlanComponent 
           },
           legend: {
             display: true,
-            position: "bottom"
+            position: "bottom",
+            //@ts-ignore
+            onClick(e: ChartEvent, legendItem: LegendItem, legend: LegendElement<TType>) {
+            }
           },
           tooltip: {
             titleFont: {
@@ -287,7 +292,7 @@ export class UserStatsByPlanRedirectsComponent extends UserStatsByPlanShortViewC
 
   override getData() {
     this.api.getUserRedirectsByPlan().then(res => {
-      let map: Map<string, number> = new Map(Object.entries<number>(res));
+      let map : Map<string, number> = new Map(Object.entries<number>(res).sort((a ,b) => this.sorter(a, b)));
       this.createChart(map);
     });
   }

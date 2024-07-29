@@ -7,9 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.analysetool.util.MathHelper;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,18 +56,6 @@ public class PostService {
     private float calculateTagSimilarity(List<Long> tagsOfPostOne, List<Long> tagsOfPostTwo) {
         int commonTagsCount = (int) tagsOfPostOne.stream().filter(tagsOfPostTwo::contains).count();
         return (commonTagsCount * 1.0f / tagsOfPostOne.size()) * 100;
-    }
-
-    public String getAverageClicksOfCategoriesaa(){
-        JSONObject obj = new JSONObject();
-        List<Integer> artikelIds = postTypeRepo.getPostsByType("artikel");
-        List<Long> artikelClicks = new ArrayList<>();
-        for (Integer c : artikelIds) {
-            Long id = Integer.toUnsignedLong(c);
-            postStatRepo.getSumClicksLong(c);
-        }
-        double meanArtikel = MathHelper.getMeanLong(artikelClicks);
-        return obj.toString();
     }
 
     /**

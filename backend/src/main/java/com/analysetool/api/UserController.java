@@ -445,8 +445,4 @@ public class UserController {
     @GetMapping("/getAverageRedirectsByPlan")
     public String getAverageRedirectsByPlan() throws JSONException {return userService.getAverageRedirectsByPlan();}
 
-    @GetMapping("/callJavascript")
-    public String callJavascript() throws ScriptException, FileNotFoundException, NoSuchMethodException {
-        return userService.callJavascript();
-    }
 }

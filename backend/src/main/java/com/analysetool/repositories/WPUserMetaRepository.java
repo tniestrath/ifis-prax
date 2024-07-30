@@ -192,7 +192,7 @@ public interface WPUserMetaRepository extends JpaRepository<WPUserMeta, Long> {
     @Query("SELECT u.userId FROM WPUserMeta u WHERE (u.key = 'user_url' AND u.value =:url) OR u.key = '_wpf_member_obj' AND u.value LIKE %:url%")
     List<Long> getUserByURL(String url);
 
-    @Query("SELECT u FROM WPUserMeta u WHERE u.key = 'um_user_profile_url_slug_user_login' AND u.value=:subpageURL")
+    @Query("SELECT u.userId FROM WPUserMeta u WHERE u.key = 'um_user_profile_url_slug_user_login' AND u.value=:subpageURL")
     Long getUserByLinkToSubpage(String subpageURL);
 
 }

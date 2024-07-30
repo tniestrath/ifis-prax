@@ -130,6 +130,8 @@ public class LogService {
     private MembershipBufferRepository memberRepo;
     @Autowired
     private IPController ipController;
+    @Autowired
+    private IncomingSocialsRedirectsRepository incomingRepo;
 
     @Autowired
     private RankingTotalProfileRepository rankingTotalProfileRepo;
@@ -605,6 +607,10 @@ public class LogService {
                 String responseCode = pre_Matched.group(4);
                 String userAgent = pre_Matched.group(5);
 
+
+                checkIncomingRedirect(line);
+
+
                 //Bilde filternde Variablen aus der Zeile.
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
 
@@ -1000,6 +1006,32 @@ public class LogService {
         //maps clearen nur um sicher zu gehen
         cleanMaps();
         updateFinalSearchStatsAndTemporarySearchStats();
+    }
+
+    private void checkIncomingRedirect(String line) {
+        if(line.contains("https://t.co/") || line.contains("https://www.linkedin.com/") || line.contains("https://www.youtube.com/") || line.contains("https://l.facebook.com/")) {
+            IncomingSocialsRedirects redirect;
+            if (incomingRepo.findByUniIdAndHour(uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).isPresent()) {
+                redirect = incomingRepo.findByUniIdAndHour(uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).get();
+            } else {
+                redirect = new IncomingSocialsRedirects();
+                redirect.setFacebook(0L);
+                redirect.setLinkedin(0L);
+                redirect.setYoutube(0L);
+                redirect.setTwitter(0L);
+                redirect.setUniId(uniRepo.getLatestUniStat().getId());
+                redirect.setHour(LocalDateTime.now().getHour());
+            }
+            if (line.contains("https://t.co/")) {
+                redirect.setTwitter(redirect.getTwitter() + 1);
+            } else if(line.contains("https://www.linkedin.com/")) {
+                redirect.setLinkedin(redirect.getLinkedin() + 1);
+            } else if(line.contains("https://www.youtube.com/")) {
+                redirect.setYoutube(redirect.getYoutube() + 1);
+            } else {
+                redirect.setFacebook(redirect.getFacebook() + 1);
+            }
+        }
     }
 
     /**

@@ -63,12 +63,12 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
 
   }
 
-  onScrollEnd() {
+  onScrollEnd(response : Promise<T[]>, component : Type<C>) {
     if (!this.pagesComplete){
       let scroll = Date.now();
       if (scroll >= (this.lastScroll + 100)){
         // @ts-ignore
-        this.load(this.response, this.component);
+        this.load(response, component);
       }
       else {}
       this.lastScroll = scroll;

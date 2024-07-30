@@ -285,7 +285,7 @@ export class UserStatsByPlanRedirectsComponent extends UserStatsByPlanShortViewC
 
 
   override ngOnInit(): void {
-    this.setToolTip("", 1);
+    this.setToolTip("Hier ", 1);
     this.element.nativeElement.querySelector(".comparator-child").classList.remove("comparator-child");
     this.getData();
   }

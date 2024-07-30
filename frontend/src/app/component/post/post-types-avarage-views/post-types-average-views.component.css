@@ -13,6 +13,7 @@
 
 }
 .post-types-average-views-title > p{
+  width: 100%;
   margin: 0;
   padding: 5px 15px;
   text-align: center;

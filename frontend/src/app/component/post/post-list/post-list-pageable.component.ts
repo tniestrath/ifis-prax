@@ -39,39 +39,44 @@ export class PostListPageableComponent extends DashListPageableComponent<Post, P
     this.input_search_cb = (event: { target: { value: string; }; }) => {
       this.pageIndex = 0;
       this.search_text = event.target.value;
-      this.reload(this.api.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     };
     this.input_all_cb = () => {
       this.pageIndex = 0;
       this.active_filter = " ";
-      this.reload(this.api.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     };
     this.input_filter_1_cb = () => {
       this.pageIndex = 0;
       this.active_filter = "artikel";
-      this.reload(this.api.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     };
     this.input_filter_2_cb = () => {
       this.pageIndex = 0;
       this.active_filter = "blog";
-      this.reload(this.api.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_3_cb = () => {
       this.pageIndex = 0;
       this.active_filter = "news";
-      this.reload(this.api.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_4_cb = () => {
       this.pageIndex = 0;
       this.active_filter = "podcast";
-      this.reload(this.api.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_5_cb = () => {
       this.pageIndex = 0;
       this.active_filter = "whitepaper";
-      this.reload(this.api.getPostsAllPaged(0, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
+      this.reload(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
     }
   }
+
+  override onScrollEnd() {
+    this.onScrollEndWithPromise(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text));
+  }
+
 }
 export class PostListComponent extends DashListComponent<Post, PostListItemComponent>{
   /**
@@ -247,6 +252,10 @@ export class EventListComponent extends PostListPageableComponent{
       this.reload(this.api.getEventsLikePostsPaged( 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
   }
+
+  override onScrollEnd() {
+    this.onScrollEndWithPromise(this.api.getEventsLikePostsPaged( this.pageIndex, this.pageSize, " ", ""));
+  }
 }
 
 @Component({
@@ -275,5 +284,9 @@ export class UserEventListComponent extends PostListPageableComponent{
       this.selectorItems.sort((a, b) => Number((b.data as Post).clicks) - Number((a.data as Post).clicks));
       this.selectorItemsLoaded.next(this.selectorItems);
     }
+  }
+
+  override onScrollEnd() {
+    this.onScrollEndWithPromise(this.api.getUserEventsLikePostsPaged(SysVars.USER_ID, this.pageIndex, 20, " ", ""))
   }
 }

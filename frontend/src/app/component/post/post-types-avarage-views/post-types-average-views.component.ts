@@ -11,6 +11,7 @@ import {Chart} from "chart.js/auto";
 export class PostTypesAverageViewsComponent extends DashBaseComponent implements OnInit{
 
   ngOnInit(): void {
+    this.setToolTip("", 1)
     this.getData();
   }
 

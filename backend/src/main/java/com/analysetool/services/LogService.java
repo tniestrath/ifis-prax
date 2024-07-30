@@ -1049,8 +1049,8 @@ public class LogService {
             }
             case "userSS" -> {
                 try {
-                    if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).get().getId();
+                    if (wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1)) != null) {
+                        Long userId = wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1));
                         updateSearchDLCMap(ip, patternMatcher.group(2), userId, dateLog, "user");
                         updateUserStats(userId, dateLog);
                         updateIPsByUser(ip, userId);
@@ -1062,8 +1062,8 @@ public class LogService {
             }
             case "userView" -> {
                 try {
-                    if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-").replace(".", "-").replace("--", "-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-").replace(".", "-").replace("--", "-")).get().getId();
+                    if (wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1)) != null) {
+                        Long userId = wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1));
                         updateUserStats(userId, dateLog);
                         updateIPsByUser(ip, userId);
                     }
@@ -1107,8 +1107,8 @@ public class LogService {
                         } else {
                             Matcher referrer = referrerForRedirectsPattern.matcher(line);
                             if(referrer.find()) {
-                                if(wpUserRepo.findByNicename(referrer.group(1).replace("+", "-").replace(".", "-").replace("--", "-")).isPresent()) {
-                                    user = wpUserRepo.findByNicename(referrer.group(1).replace("+", "-").replace(".", "-").replace("--", "-")).get().getId();
+                                if(wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1)) != null) {
+                                    user = wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1));
                                 } else {
                                     return;
                                 }
@@ -1183,8 +1183,8 @@ public class LogService {
             }
             case "userImpressionFacebook", "userImpressionTwitter", "userImpressionLinkedIn", "userImpressionFacebookTwitterCombo" -> {
                 try {
-                    if (wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).isPresent()) {
-                        Long userId = wpUserRepo.findByNicename(patternMatcher.group(1).replace("+", "-")).get().getId();
+                    if (wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1)) != null) {
+                        Long userId = wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1));
                         socialsImpressionsService.updateSocialsImpressionsUser(whatMatched, dateLog, userId);
                     }
                 } catch (Exception e) {

@@ -275,6 +275,119 @@ export class UserStatsByPlanShortViewComponent extends UserStatsByPlanComponent 
 }
 
 @Component({
+  selector: 'dash-user-stats-by-plan-plus-premium',
+  templateUrl: './user-stats-by-plan.component.html',
+  styleUrls: ['./user-stats-by-plan.component.css', "../../dash-base/dash-base.component.css"]
+})
+export class UserStatsByPlanPlusPremiumComponent extends UserStatsByPlanComponent implements OnInit{
+  protected override title : string = "Durchschn. Profilaufrufe nach Abomodell und Beitragsbesitz";
+  protected override datasetLabels : string[] = ["Profile ohne Beiträge", "Profile mit Beiträgen"]
+
+
+  override ngOnInit(): void {
+    this.setToolTip("Hier ", 1);
+    this.element.nativeElement.querySelector(".comparator-child").classList.remove("comparator-child");
+    this.getData();
+  }
+  override getData(){
+    this.api.getUserProfileViewsAverageByType().then(res => {
+      let map : Map<string, number> = new Map(Object.entries<number>(res[0]).sort((a ,b) => this.sorter(a, b)));
+      let map2 : Map<string, number> = new Map(Object.entries<number>(res[2]).sort((a,b) => this.sorter(a, b)));
+
+      map.delete("basis");
+      map.delete("basis-plus");
+
+      map2.delete("basis");
+      map2.delete("basis-plus");
+
+      this.createChart(map, map2);
+    });
+  }
+
+  override createChart(map : Map<string, number>, map2 : Map<string, number> ) {
+    if (this.chart){
+      this.chart.destroy();
+    }
+    let datasets = [{
+      label: this.datasetLabels[0],
+      data: Array.from(map.values()),
+      backgroundColor: [DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
+    },{
+      label: this.datasetLabels[1],
+      // @ts-ignore
+      data: Array.from(map2.values()),
+      backgroundColor: [DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
+    }];
+
+    // @ts-ignore
+    this.chart = new Chart(this.element.nativeElement.querySelector("#stat_chart"), {
+      type: "bar",
+      data: {
+        labels: Array.from(map.keys()),
+        datasets: datasets
+      },
+      options: {
+        maintainAspectRatio: false,
+        clip: false,
+        layout: {
+          padding: {
+            bottom: 0
+          }
+        },
+        scales: {
+          y: {
+            display: false
+          },
+          x: {
+            display: true,
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          datalabels: {
+            display: true
+          },
+          title: {
+            display: false,
+            text: "",
+            position: "top",
+            fullSize: true,
+            font: {
+              size: 18,
+              weight: "bold",
+              family: "'Helvetica Neue', sans-serif"
+            }
+          },
+          legend: {
+            display: true,
+            position: "bottom",
+            //@ts-ignore
+            onClick(e: ChartEvent, legendItem: LegendItem, legend: LegendElement<TType>) {
+            }
+          },
+          tooltip: {
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            },
+            callbacks: {
+            }
+          }
+        },
+        interaction: {
+          mode: "nearest",
+          intersect: true
+        }
+      }
+    })
+  }
+}
+
+@Component({
   selector: 'dash-user-stats-by-plan-redirects',
   templateUrl: './user-stats-by-plan.component.html',
   styleUrls: ['./user-stats-by-plan.component.css', "../../dash-base/dash-base.component.css"]

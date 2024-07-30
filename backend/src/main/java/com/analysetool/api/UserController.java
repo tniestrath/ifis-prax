@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.script.ScriptException;
+import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -442,4 +444,9 @@ public class UserController {
 
     @GetMapping("/getAverageRedirectsByPlan")
     public String getAverageRedirectsByPlan() throws JSONException {return userService.getAverageRedirectsByPlan();}
+
+    @GetMapping("/callJavascript")
+    public String callJavascript() throws ScriptException, FileNotFoundException, NoSuchMethodException {
+        return userService.callJavascript();
+    }
 }

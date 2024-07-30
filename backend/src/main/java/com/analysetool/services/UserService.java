@@ -329,7 +329,7 @@ public class UserService {
 
 
     public String callJavascript() throws FileNotFoundException, ScriptException, NoSuchMethodException {
-        ScriptEngineManager karen = new ScriptEngineManager();
+        ScriptEngineManager karen = new ScriptEngineManager(null);
         ScriptEngine engina = karen.getEngineByName("JavaScript");
         engina.eval("import {Component, OnInit} from '@angular/core';\n" +
                 "import {DashBaseComponent} from \"../../dash-base/dash-base.component\";\n" +

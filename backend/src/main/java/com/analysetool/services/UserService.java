@@ -26,13 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Date;
@@ -41,7 +35,6 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -325,162 +318,6 @@ public class UserService {
         statMail.setSent(0);
 
         statMailsRepo.save(statMail);
-    }
-
-
-    public String callJavascript() throws FileNotFoundException, ScriptException, NoSuchMethodException {
-        ScriptEngineManager karen = new ScriptEngineManager(null);
-        ScriptEngine engina = karen.getEngineByName("JavaScript");
-        engina.eval("import {Component, OnInit} from '@angular/core';\n" +
-                "import {DashBaseComponent} from \"../../dash-base/dash-base.component\";\n" +
-                "import Util, {DashColors} from \"../../../util/Util\";\n" +
-                "import {Chart} from \"chart.js/auto\";\n" +
-                "\n" +
-                "@Component({\n" +
-                "  selector: 'dash-post-types-average-views',\n" +
-                "  templateUrl: './post-types-average-views.component.html',\n" +
-                "  styleUrls: ['./post-types-average-views.component.css', \"../../dash-base/dash-base.component.css\"]\n" +
-                "})\n" +
-                "export class PostTypesAverageViewsComponent extends DashBaseComponent implements OnInit{\n" +
-                "\n" +
-                "  ngOnInit(): void {\n" +
-                "    this.setToolTip(\"\", 1)\n" +
-                "    this.getData();\n" +
-                "  }\n" +
-                "\n" +
-                "  getData(){\n" +
-                "    this.api.getPostViewsAverageByType().then(res => {\n" +
-                "      let map : Map<string, number> = new Map(Object.entries(res));\n" +
-                "      let labels: string[] = [];\n" +
-                "      let data: number[] = [];\n" +
-                "      let color: string[] = [];\n" +
-                "      this.readMap(map, labels, data, color);\n" +
-                "      this.createChart(labels, data, color);\n" +
-                "    });\n" +
-                "  }\n" +
-                "  \n" +
-                "  drawImage(labels : string[], data : number[], color : string[]){\n" +
-                "    this.createChart(labels, data, color);\n" +
-                "    return this.chart.toBase64Image(\"image/png\");\n" +
-                "  }\n" +
-                "\n" +
-                "  private readMap(map: Map<string, number>, labels: string[], data: number[], color : string[]) {\n" +
-                "    map.forEach((value, key) => {\n" +
-                "      if (key == \"news\") {\n" +
-                "        labels[0] = Util.firstToUpperCase(key);\n" +
-                "        data[0] = (value == 0 || value == undefined ? 0 : value);\n" +
-                "        color[0] = DashColors.NEWS;\n" +
-                "      }\n" +
-                "      if (key == \"Blogs\") {\n" +
-                "        labels[1] = Util.firstToUpperCase(key);\n" +
-                "        data[1] = (value == 0 || value == undefined ? 0 : value);\n" +
-                "        color[1] = DashColors.BLOG;\n" +
-                "      }\n" +
-                "      if (key == \"artikel\") {\n" +
-                "        labels[2] = Util.firstToUpperCase(key);\n" +
-                "        data[2] = (value == 0 || value == undefined ? 0 : value);\n" +
-                "        color[2] = DashColors.ARTICLE;\n" +
-                "      }\n" +
-                "      if (key == \"whitepaper\") {\n" +
-                "        labels[3] = Util.firstToUpperCase(key);\n" +
-                "        data[3] = (value == 0 || value == undefined ? 0 : value);\n" +
-                "        color[3] = DashColors.WHITEPAPER;\n" +
-                "      }\n" +
-                "      if (key == \"Podcasts\") {\n" +
-                "        labels[4] = Util.firstToUpperCase(key);\n" +
-                "        data[4] = (value == 0 || value == undefined ? 0 : value);\n" +
-                "        color[4] = DashColors.PODCAST;\n" +
-                "      }\n" +
-                "      if (key == \"video\") {\n" +
-                "        labels[5] = Util.firstToUpperCase(key);\n" +
-                "        data[5] = (value == 0 || value == undefined ? 0 : value);\n" +
-                "        color[5] = DashColors.VIDEO;\n" +
-                "      }\n" +
-                "      if (key == \"ratgeber\") {\n" +
-                "        labels[6] = Util.firstToUpperCase(key);\n" +
-                "        data[6] = (value == 0 || value == undefined ? 0 : value);\n" +
-                "        color[6] = DashColors.RATGEBER;\n" +
-                "      }\n" +
-                "    })\n" +
-                "  }\n" +
-                "\n" +
-                "  createChart(labels : string[], data: number[], colors : string[]) {\n" +
-                "    if (this.chart){\n" +
-                "      this.chart.destroy();\n" +
-                "    }\n" +
-                "\n" +
-                "    // @ts-ignore\n" +
-                "    this.chart = new Chart(this.element.nativeElement.querySelector(\"#stat_chart\"), {\n" +
-                "      type: \"bar\",\n" +
-                "      data: {\n" +
-                "        labels: labels,\n" +
-                "        datasets: [{\n" +
-                "          label: \"Durchschnittliche Aufrufe\",\n" +
-                "          data: data,\n" +
-                "          backgroundColor: colors,\n" +
-                "        }]\n" +
-                "      },\n" +
-                "      options: {\n" +
-                "        maintainAspectRatio: false,\n" +
-                "        clip: false,\n" +
-                "        layout: {\n" +
-                "          padding: {\n" +
-                "            bottom: 0\n" +
-                "          }\n" +
-                "        },\n" +
-                "        scales: {\n" +
-                "          y: {\n" +
-                "            display: false\n" +
-                "          },\n" +
-                "          x: {\n" +
-                "            display: true,\n" +
-                "            grid: {\n" +
-                "              display: false\n" +
-                "            }\n" +
-                "          }\n" +
-                "        },\n" +
-                "        plugins: {\n" +
-                "          datalabels: {\n" +
-                "            display: true\n" +
-                "          },\n" +
-                "          title: {\n" +
-                "            display: false,\n" +
-                "            text: \"\",\n" +
-                "            position: \"top\",\n" +
-                "            fullSize: true,\n" +
-                "            font: {\n" +
-                "              size: 18,\n" +
-                "              weight: \"bold\",\n" +
-                "              family: \"'Helvetica Neue', sans-serif\"\n" +
-                "            }\n" +
-                "          },\n" +
-                "          legend: {\n" +
-                "            display: true,\n" +
-                "            position: \"bottom\"\n" +
-                "          },\n" +
-                "          tooltip: {\n" +
-                "            titleFont: {\n" +
-                "              size: 20\n" +
-                "            },\n" +
-                "            bodyFont: {\n" +
-                "              size: 15\n" +
-                "            },\n" +
-                "            callbacks: {\n" +
-                "            }\n" +
-                "          }\n" +
-                "        },\n" +
-                "        interaction: {\n" +
-                "          mode: \"nearest\",\n" +
-                "          intersect: true\n" +
-                "        }\n" +
-                "      }\n" +
-                "    })\n" +
-                "  }\n" +
-                "\n" +
-                "}\n");
-
-        Invocable inv = (Invocable) engina;
-        return (String) inv.invokeFunction("drawImage", new String[]{"7", "7", "7", "7"}, new int[]{7, 42, 69, 420}, new Color[]{Color.BLACK, Color.cyan, Color.LIGHT_GRAY, Color.darkGray});
     }
 
     private String makeRankingTable(String accType, int userId) throws JSONException {

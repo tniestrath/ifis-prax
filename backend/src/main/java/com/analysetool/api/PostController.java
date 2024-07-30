@@ -849,19 +849,6 @@ public class PostController {
         return new JSONObject(answer).toString();
     }
 
-
-    @GetMapping("/page")
-    public String getPostsPageable(Integer page, Integer size, String sortBy) throws JSONException, ParseException {
-        List<Long> list = postRepo.findByTypeOrderByDateDesc(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC , sortBy)));
-        List<JSONObject> stats = new ArrayList<>();
-        for(Long id : list) {
-            if(getType(id).equals("article") || getType(id).equals("news") || getType(id).equals("blog") || getType(id).equals("whitepaper")) {
-                stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
-            }
-        }
-        return new JSONObject().put("posts", new JSONArray(stats)).put("count", list.size()).toString();
-    }
-
     /**
      * Fetches size amount of Post-Stats from only those that MATCH the filter and include the search in their title.
      * @param sortBy what criteria the result should be listed in.

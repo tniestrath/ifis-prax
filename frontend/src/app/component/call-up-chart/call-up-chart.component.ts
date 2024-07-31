@@ -292,6 +292,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           backgroundColor: DashColors.RED,
           borderColor: DashColors.RED,
           borderJoinStyle: 'round',
+          pointHoverRadius: 10,
           borderWidth: 5
         },
         {
@@ -300,6 +301,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           backgroundColor: DashColors.BLUE,
           borderColor: DashColors.BLUE,
           borderJoinStyle: 'round',
+          pointHoverRadius: 10,
           borderWidth: 5
         }]
       },
@@ -404,7 +406,7 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
         },
         interaction: {
           mode: "x",
-          intersect: true
+          intersect: true,
         },
         onClick: this.onClickHandler.bind(this, this.timeSpan, this.time_filtered)
       }

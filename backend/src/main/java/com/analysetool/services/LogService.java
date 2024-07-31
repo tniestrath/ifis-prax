@@ -608,9 +608,6 @@ public class LogService {
                 String userAgent = pre_Matched.group(5);
 
 
-                checkIncomingRedirect(line);
-
-
                 //Bilde filternde Variablen aus der Zeile.
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
 
@@ -664,6 +661,9 @@ public class LogService {
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
                 //isInternal ist kurzzeitig entfernt als test.
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isServerError && !isBlacklisted && isSuccessfulRequest && !isSpam && isGet) {
+
+
+                    checkIncomingRedirect(line);
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
 

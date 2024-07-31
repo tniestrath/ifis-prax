@@ -159,6 +159,7 @@ export enum apiUrl {
   FORUM_ADD_BAD_WORD = "/forum/addBadWord?word=WORD",
   FORUM_REMOVE_BAD_WORD = "/forum/removeBadWord?word=WORD",
 
+  GET_SOCIALS_SUMS = "/socials/getSumAllTime",
 
   GET_SYSTEM_USAGE = "/systemLoad/systemLive",
   GET_SYSTEM_USAGE_NOW = "/systemLoad/current",
@@ -898,5 +899,10 @@ export class ApiService {
   async removeForumBadWord(word: string) : Promise<boolean> {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.FORUM_REMOVE_BAD_WORD).replace("WORD", word)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getSocialsSums() {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.GET_SOCIALS_SUMS)) , {credentials: "include", method: "get", signal: ApiService.setupController(apiUrl.GET_SOCIALS_SUMS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 }

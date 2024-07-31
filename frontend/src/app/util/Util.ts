@@ -243,6 +243,11 @@ export enum DashColors {
 
   DARK_GREY = "rgb(128,128,128)",
 
+  LINKEDIN = "rgb(10,102,194)",
+  TWITTER = "rgb(0,0,0)",
+  FACEBOOK = "rgb(24, 119, 242)",
+  YOUTUBE = "rgb(255,0,0)",
+
   WHITE = "rgb(255,255,255)",
   BASEPAINT = "rgb(255,255,255)",
 

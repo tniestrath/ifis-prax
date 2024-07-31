@@ -117,7 +117,7 @@ export class PostTypesAverageViewsComponent extends DashBaseComponent implements
             }
           },
           legend: {
-            display: true,
+            display: false,
             position: "bottom"
           },
           tooltip: {

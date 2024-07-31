@@ -34,8 +34,9 @@ export class SocialsSumsComponent extends DashBaseComponent implements OnInit{
       data: {
         labels: labels,
         datasets: [{
+          label: "Platform",
           data: data,
-          backgroundColor: [DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
+          backgroundColor: [DashColors.LINKEDIN, DashColors.TWITTER, DashColors.FACEBOOK, DashColors.YOUTUBE],
         }]
       },
       options: {
@@ -73,7 +74,7 @@ export class SocialsSumsComponent extends DashBaseComponent implements OnInit{
             }
           },
           legend: {
-            display: true,
+            display: false,
             position: "bottom",
             //@ts-ignore
             onClick(e: ChartEvent, legendItem: LegendItem, legend: LegendElement<TType>) {

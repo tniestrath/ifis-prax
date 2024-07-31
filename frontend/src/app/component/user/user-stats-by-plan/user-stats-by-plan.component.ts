@@ -120,7 +120,7 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
             }
           },
           legend: {
-            display: true,
+            display: false,
             position: "bottom",
             //@ts-ignore
             onClick(e: ChartEvent, legendItem: LegendItem, legend: LegendElement<TType>) {
@@ -248,7 +248,7 @@ export class UserStatsByPlanShortViewComponent extends UserStatsByPlanComponent 
             }
           },
           legend: {
-            display: true,
+            display: false,
             position: "bottom",
             //@ts-ignore
             onClick(e: ChartEvent, legendItem: LegendItem, legend: LegendElement<TType>) {
@@ -361,7 +361,7 @@ export class UserStatsByPlanPlusPremiumComponent extends UserStatsByPlanComponen
             }
           },
           legend: {
-            display: true,
+            display: false,
             position: "bottom",
             //@ts-ignore
             onClick(e: ChartEvent, legendItem: LegendItem, legend: LegendElement<TType>) {

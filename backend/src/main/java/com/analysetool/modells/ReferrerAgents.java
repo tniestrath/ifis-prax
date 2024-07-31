@@ -15,7 +15,7 @@ public class ReferrerAgents implements Serializable {
     @Column(name="target_id")
     private long targetId;
 
-    @Column(name="target_id")
+    @Column(name="agent")
     private String agent;
 
     @Column(name="count")

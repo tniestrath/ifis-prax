@@ -132,7 +132,10 @@ public class LogService {
     private IPController ipController;
     @Autowired
     private IncomingSocialsRedirectsRepository incomingRepo;
-
+    @Autowired
+    private ReferrerTargetsRepository referrerTargetsRepo;
+    @Autowired
+    private ReferrerAgentsRepository referrerAgentsRepo;
     @Autowired
     private RankingTotalProfileRepository rankingTotalProfileRepo;
     @Autowired
@@ -977,7 +980,7 @@ public class LogService {
                     }
 
                     updateUniSingleLine(whatMatched, isUnique, dateLog);
-                    processLine(line, ip, whatMatched, dateLog, patternMatcher);
+                    processLine(line, ip, whatMatched, dateLog, patternMatcher, request, userAgent);
 
                 } else if((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead))) {
                     //noinspection StatementWithEmptyBody
@@ -1031,9 +1034,37 @@ public class LogService {
             } else {
                 redirect.setFacebook(redirect.getFacebook() + 1);
             }
-
             incomingRepo.save(redirect);
+        }
+    }
 
+    private void checkTargetAndAgentForRedirect(String line, String request, String cat, Long objectId, String objectType, String agent) {
+        if(line.contains("\"https://t.co/") || line.contains("\"https://www.linkedin.com/") || line.contains("\"https://www.youtube.com/") || line.contains("\"https://l.facebook.com/")) {
+            ReferrerTargets target;
+            if (referrerTargetsRepo.getReferrerTargetsByLink(request).isPresent()) {
+                target = referrerTargetsRepo.getReferrerTargetsByLink(request).get();
+            } else {
+                target = new ReferrerTargets();
+                target.setCat(cat);
+                target.setCount(0);
+                target.setLink(request);
+                target.setObjectId(objectId);
+                target.setObjectType(objectType);
+            }
+            target.setCount(target.getCount() + 1);
+            referrerTargetsRepo.save(target);
+
+            ReferrerAgents agentRow;
+            if (referrerAgentsRepo.getReferrerAgentsByTargetIdAndAgent(target.getId(), agent).isPresent()) {
+                agentRow = referrerAgentsRepo.getReferrerAgentsByTargetIdAndAgent(target.getId(), agent).get();
+            } else {
+                agentRow = new ReferrerAgents();
+                agentRow.setAgent(agent);
+                agentRow.setCount(0);
+                agentRow.setTargetId(target.getId());;
+            }
+            agentRow.setCount(agentRow.getCount() + 1);
+            referrerAgentsRepo.save(agentRow);
         }
     }
 
@@ -1045,15 +1076,18 @@ public class LogService {
      * @param dateLog the dateTime of the access.log line.
      * @param patternMatcher the regex-matcher that has found the "best" result.
      */
-    public void processLine(String line, String ip, String whatMatched, LocalDateTime dateLog, Matcher patternMatcher) {
+    public void processLine(String line, String ip, String whatMatched, LocalDateTime dateLog, Matcher patternMatcher, String request, String agent) {
         lastLine = line;
-
+        Long id;
         switch(whatMatched) {
             case "articleView", "blogView", "newsView", "wpView", "ratgeberPost", "podView", "videoView" -> {
                 try {
-                    UpdatePerformanceAndViews(dateLog, postRepository.getIdByName(patternMatcher.group(1)));
+                    id = postRepository.getIdByName(patternMatcher.group(1));
+                    UpdatePerformanceAndViews(dateLog, id);
                     updateIPsByPost(ip, postRepository.getIdByName(patternMatcher.group(1)));
                     updatePostClicksMap(postRepository.getIdByName(patternMatcher.group(1)), dateLog);
+
+                    checkTargetAndAgentForRedirect(line, request, whatMatched, id, "post", agent);
                 } catch (Exception e) {
                     System.out.println("VIEW PROCESS LINE EXCEPTION " + line);
                 }
@@ -1098,9 +1132,11 @@ public class LogService {
             case "userView" -> {
                 try {
                     if (wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1)) != null) {
-                        Long userId = wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1));
-                        updateUserStats(userId, dateLog);
-                        updateIPsByUser(ip, userId);
+                        id = wpUserMetaRepository.getUserByLinkToSubpage(patternMatcher.group(1));
+                        updateUserStats(id, dateLog);
+                        updateIPsByUser(ip, id);
+
+                        checkTargetAndAgentForRedirect(line, request, whatMatched, id, "user", agent);
                     }
                 } catch (Exception e) {
                     System.out.println("USERVIEW EXCEPTION BEI: " + line);
@@ -1113,7 +1149,7 @@ public class LogService {
                     //Edit Filename to make sure very similar files still work as intended
                     String filename = "/" + patternMatcher.group(1) + ".pdf";
                     if (postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).isPresent()) {
-                        long id = postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).get();
+                        id = postRepository.getParentFromListAnd(postMetaRepo.getAllWhitepaperFileAttachmentPostIds(), filename).get();
                         ContentDownloadsHourly download;
                         if (contentDownloadsHourlyRepo.getByPostIdUniIdHour(id, uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).isEmpty()) {
                             download = new ContentDownloadsHourly();
@@ -1198,10 +1234,12 @@ public class LogService {
             case "eventView" -> {
                 try {
                     if (eventRepo.getActiveEventBySlug(patternMatcher.group(1)).isPresent()) {
-                        long postId = eventRepo.getActiveEventBySlug(patternMatcher.group(1)).get().getPostID();
-                        UpdatePerformanceAndViews(dateLog, postId);
-                        updateIPsByPost(ip, postId);
-                        updatePostClicksMap(postId, dateLog);
+                        id = eventRepo.getActiveEventBySlug(patternMatcher.group(1)).get().getPostID();
+                        UpdatePerformanceAndViews(dateLog, id);
+                        updateIPsByPost(ip, id);
+                        updatePostClicksMap(id, dateLog);
+
+                        checkTargetAndAgentForRedirect(line, request, whatMatched, id, "event", agent);
                     }
                 } catch (Exception e) {
                     System.out.println("EVENTVIEW EXCEPTION BEI: " + line);
@@ -1210,7 +1248,7 @@ public class LogService {
             }
             case "postImpressionFacebook", "postImpressionTwitter", "postImpressionLinkedIn", "postImpressionFacebookTwitterCombo" -> {
                 try {
-                    long id = postRepository.getIdByName(patternMatcher.group(2));
+                    id = postRepository.getIdByName(patternMatcher.group(2));
                     socialsImpressionsService.updateSocialsImpressionsPost(whatMatched, dateLog, id);
                 } catch (Exception e) {
                     System.out.println("POST-SOCIAL EXCEPTION" + line);
@@ -1276,10 +1314,12 @@ public class LogService {
                     Optional<Post> postOptional = postRepository.findPageByPostName(patternMatcher.group(1));
                     if( postOptional.isPresent()){
                         Post post = postOptional.get();
-                        Long postId = post.getId();
-                        UpdatePerformanceAndViews(dateLog, postId);
-                        updateIPsByPost(ip, postId);
-                        updatePostClicksMap(postId, dateLog);
+                        id = post.getId();
+                        UpdatePerformanceAndViews(dateLog, id);
+                        updateIPsByPost(ip, id);
+                        updatePostClicksMap(id, dateLog);
+
+                        checkTargetAndAgentForRedirect(line, request, whatMatched, id, "otherContent", agent);
                     }
                 }catch (Exception e){
                     System.out.println("Page Tracking Exception: " + line);

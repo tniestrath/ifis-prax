@@ -1031,6 +1031,9 @@ public class LogService {
             } else {
                 redirect.setFacebook(redirect.getFacebook() + 1);
             }
+
+            incomingRepo.save(redirect);
+
         }
     }
 

@@ -69,6 +69,7 @@ import {ForumStats, ForumStatsComponent} from "../../component/forum/forum-stats
 import {
   PostTypesAverageViewsComponent
 } from "../../component/post/post-types-avarage-views/post-types-average-views.component";
+import {SocialsSumsComponent} from "../../component/socials/socials-sums/socials-sums.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -155,6 +156,7 @@ export class PageComponent implements OnInit {
       {type: PostTypesAverageViewsComponent, row: 5, col: 1, height: 1, width: 2},
       {type: UserStatsByPlanShortViewComponent, row: 5, col: 3, height: 1, width: 2},
       {type: UserStatsByPlanRedirectsComponent, row: 5, col: 5, height: 1, width: 2},
+      {type: SocialsSumsComponent, row: 6, col: 1, height: 1, width: 2},
       {type: UserStatsByPlanPlusPremiumComponent, row: 6, col: 3, height: 1, width: 2},
     ];
   }

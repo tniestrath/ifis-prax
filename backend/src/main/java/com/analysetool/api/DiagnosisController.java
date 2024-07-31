@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
+import com.analysetool.services.LogService;
 import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Problem;
 import org.json.JSONArray;
@@ -43,7 +44,8 @@ public class DiagnosisController {
     WPOptionsRepository wpOpRepo;
     @Autowired
     ExternalServiceRepository externalServiceRepo;
-
+    @Autowired
+    LogService logService;
     int MAX_CLICKS_IN_CAT_UNTIL_BOT = 5;
     final int MAX_NONSENSE_UNTIL_BOT = 10;
 
@@ -635,6 +637,17 @@ public class DiagnosisController {
         } else {
             return false;
         }
+    }
+
+    @GetMapping("/run")
+    public boolean updateStats() {
+        try {
+            logService.runScheduled();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 }

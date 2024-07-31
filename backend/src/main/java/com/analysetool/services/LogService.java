@@ -608,9 +608,6 @@ public class LogService {
                 String userAgent = pre_Matched.group(5);
 
 
-                checkIncomingRedirect(line);
-
-
                 //Bilde filternde Variablen aus der Zeile.
                 LocalDateTime dateLastRead = LocalDateTime.from(dateFormatter.parse(sysVar.getLastTimeStamp()));
 
@@ -664,6 +661,9 @@ public class LogService {
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
                 //isInternal ist kurzzeitig entfernt als test.
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isServerError && !isBlacklisted && isSuccessfulRequest && !isSpam && isGet) {
+
+
+                    checkIncomingRedirect(line);
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
 
@@ -1009,7 +1009,7 @@ public class LogService {
     }
 
     private void checkIncomingRedirect(String line) {
-        if(line.contains("https://t.co/") || line.contains("https://www.linkedin.com/") || line.contains("https://www.youtube.com/") || line.contains("https://l.facebook.com/")) {
+        if(line.contains("\"https://t.co/") || line.contains("\"https://www.linkedin.com/") || line.contains("\"https://www.youtube.com/") || line.contains("\"https://l.facebook.com/")) {
             IncomingSocialsRedirects redirect;
             if (incomingRepo.findByUniIdAndHour(uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).isPresent()) {
                 redirect = incomingRepo.findByUniIdAndHour(uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).get();
@@ -1031,6 +1031,9 @@ public class LogService {
             } else {
                 redirect.setFacebook(redirect.getFacebook() + 1);
             }
+
+            incomingRepo.save(redirect);
+
         }
     }
 

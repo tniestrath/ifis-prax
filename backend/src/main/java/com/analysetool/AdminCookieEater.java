@@ -4,6 +4,7 @@ import com.analysetool.api.LoginController;
 import com.analysetool.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,13 @@ public class AdminCookieEater implements HandlerInterceptor {
 
 
         if (!result.contains("INVALID") && !result.contains("kaputt")) {
-            int userid = new JSONObject(result).getInt("user_id");
+            int userid;
+            try {
+                userid = new JSONObject(result).getInt("user_id");
+            } catch (JSONException e) {
+                return false;
+            }
+
             String accessLevel = userService.getAccessLevel(userid);
             if (accessLevel.equals("none")) response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             if(accessLevel.equals("admin")) return true;

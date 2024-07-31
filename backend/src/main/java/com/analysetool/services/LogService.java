@@ -1009,7 +1009,7 @@ public class LogService {
     }
 
     private void checkIncomingRedirect(String line) {
-        if(line.contains("https://t.co/") || line.contains("https://www.linkedin.com/") || line.contains("https://www.youtube.com/") || line.contains("https://l.facebook.com/")) {
+        if(line.contains("\"https://t.co/") || line.contains("\"https://www.linkedin.com/") || line.contains("\"https://www.youtube.com/") || line.contains("\"https://l.facebook.com/")) {
             IncomingSocialsRedirects redirect;
             if (incomingRepo.findByUniIdAndHour(uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).isPresent()) {
                 redirect = incomingRepo.findByUniIdAndHour(uniRepo.getLatestUniStat().getId(), LocalDateTime.now().getHour()).get();

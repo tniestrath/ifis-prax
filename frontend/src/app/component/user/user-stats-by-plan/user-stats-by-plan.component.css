@@ -26,9 +26,9 @@
 }
 
 .chart-box{
-  padding-top: 5px;
+  padding-top: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: calc(100% - 35px);
+  height: calc(100% - 40px);
 }

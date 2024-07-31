@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping(value = {"/socials", "/0wB4P2mly-xaRmeeDOj0_g/geo"}, method = RequestMethod.GET, produces = "application/json")
+@RequestMapping(value = {"/socials", "/0wB4P2mly-xaRmeeDOj0_g/socials"}, method = RequestMethod.GET, produces = "application/json")
 public class SocialsController {
 
     @Autowired

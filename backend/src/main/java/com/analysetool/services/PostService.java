@@ -486,7 +486,11 @@ public class PostService {
     }
 
 
-
+    /**
+     * Fetches a post-views by their daytime, given as hours.
+     * @param PostId the post to fetch for.
+     * @return a map from hour to the number of clicks.
+     */
     public Map<String,Long> getViewsDistributedByHour(@RequestParam Long PostId){
         PostStats postStats= statsRepo.findByArtIdAndYear(PostId,aktuellesJahr);
         Map<String,Long>viewsPerHour=postStats.getViewsPerHour();
@@ -661,12 +665,22 @@ public class PostService {
         return json.toString();
     }
 
+    /**
+     * Fetches all tag-ids this post has.
+     * @param postId the post to fetch for.
+     * @return a List of tag-ids.
+     */
     private List<Long> getTagsForPost(long postId) {
         List<Long> termTaxonomyIds = termRelRepo.getTaxIdByObject(postId);
         return taxTermRepo.getTermIdByTaxId(termTaxonomyIds);
     }
 
-
+    /**
+     * Fetches similar posts.
+     * @param postId the post to fetch from.
+     * @param similarityPercentage how similar the other posts have to be.
+     * @return ??
+     */
     public Map<Long, Float> getSimilarPosts(long postId, float similarityPercentage) {
         // Retrieve tags for the given post
         List<Long> tagIdsForPostGiven = getTagsForPost(postId);
@@ -688,6 +702,12 @@ public class PostService {
         return postAndSimilarityMap;
     }
 
+    /**
+     * Calculate the similarity two posts have to each other in tags.
+     * @param tagsOfPostOne the tags of a post.
+     * @param tagsOfPostTwo the tags of a post.
+     * @return the percentage of their similarity.
+     */
     private float calculateTagSimilarity(List<Long> tagsOfPostOne, List<Long> tagsOfPostTwo) {
         int commonTagsCount = (int) tagsOfPostOne.stream().filter(tagsOfPostTwo::contains).count();
         return (commonTagsCount * 1.0f / tagsOfPostOne.size()) * 100;
@@ -923,15 +943,11 @@ public class PostService {
         return new JSONArray(stats).toString();
     }
 
-    public List<Post> getPostsByTermId(Long termId) {
-        List<Long> postIds = termRelRepo.findByTermTaxonomyId(termId)
-                .stream()
-                .map(wp_term_relationships::getObjectId)
-                .collect(Collectors.toList());
-
-        return postRepo.findAllById(postIds);
-    }
-
+    /**
+     * Fetches stats-rows from table for posts of a specific term.
+     * @param termId the term to fetch for.
+     * @return a List of PostStats
+     */
     public List<PostStats> getPostStatsByTermId(Long termId){
         List<Long> postIds = termRelRepo.findByTermTaxonomyId(termId)
                 .stream()
@@ -1368,18 +1384,6 @@ public class PostService {
         }
     }
 
-    public double getAudioDuration(String filePath) throws IOException, UnsupportedAudioFileException {
-
-        File audioFile = new File(filePath);
-
-        // Get the audio file format
-        AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(audioFile);
-
-        // Get the audio file duration in seconds
-        long microsecondDuration = (Long) fileFormat.properties().get("duration");
-
-        return microsecondDuration / 1_000_000.0;
-    }
 
     /**
      * Remaps one of our type-names to the corresponding website definition.
@@ -1423,6 +1427,12 @@ public class PostService {
         return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
     }
 
+    /**
+     * Fetches the given posts-views by time, lined with dates and clicks.
+     * @param id the post to fetch for.
+     * @return a JSON-Object with date-labels and click values.
+     * @throws JSONException .
+     */
     public String getPostViewsByTime(long id) throws JSONException {
         JSONArray dates = new JSONArray();
         JSONArray views = new JSONArray();

@@ -126,7 +126,10 @@ public class NewsletterService {
         return counter;
     }
 
-
+    /**
+     * Fetches the amount of new subscribers since yesterday.
+     * @return a List of Characters, corresponding to their confirmed-status.
+     */
     public List<Character> getAmountofSubsYesterday() {
         List<Character> subs = new ArrayList<>();
         List<Newsletter> allSubs = newsRepo.findAll();
@@ -143,7 +146,10 @@ public class NewsletterService {
         return subs;
     }
 
-
+    /**
+     * Fetches the amount of subscribers since today at 00:00.
+     * @return the number of new subscribers.
+     */
     public Integer getAmountofSubsToday() {
         List<Character> subs = new ArrayList<>();
         List<Newsletter> allSubs = newsRepo.findAll();

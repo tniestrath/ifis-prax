@@ -17,14 +17,31 @@ public class SearchStatsController {
     @Autowired
     private FinalSearchStatService fSearchStatService;
 
+    /**
+     * Fetches all rows from Search-Stats.
+     * @return a List of SearchStats.
+     */
     @GetMapping("/getAll")
     public List<SearchStats> getAllSearchStats() {
         return fSearchStatService.getAllSearchStats();
     }
 
+    /**
+     * Fetches (limit) amount of Search Stats as JSON.
+     * @param limit the amount of SearchStats to fetch.
+     * @return a JSON-Array of Search-Stats representations.
+     * @throws JSONException .
+     */
     @GetMapping("/getSearchStats")
     public String getSearchStats(@RequestParam int limit) throws JSONException {return fSearchStatService.getSearchStats(limit);}
 
+    /**
+     * Fetches (limit) amount of Search Stats as JSON.
+     * @param PostId the postId to fetch from.
+     * @param limit the amount of SearchStats to fetch.
+     * @return a JSON-Array of Search-Stats representations.
+     * @throws JSONException .
+     */
     @GetMapping("/getSearchStatsByPostWithLimit")
     public String getSearchStatsByPostWithLimit(@RequestParam Long PostId,@RequestParam int limit) throws JSONException {return fSearchStatService.getSearchStatsByPostWithLimit(PostId, limit);}
 
@@ -62,14 +79,28 @@ public class SearchStatsController {
     @GetMapping("/badOutliersEventSearch")
     public String findBadOutliersEventSearch(@RequestParam int limit) {return fSearchStatService.findBadOutliersEventSearch(limit);}
 
+    /**
+     * Fetches all searches for events that had no results.
+     * @return .
+     */
     @GetMapping("/getZeroCountEventSearches")
     public String getZeroCountEventSearches(){return fSearchStatService.getZeroCountEventSearches();}
 
+    /**
+     * Fetches all Search Stats that have lead to the post.
+     * @param postId the post that has to have been reached.
+     * @return a String containing all SearchStats that have been found.
+     */
     @GetMapping("/getSearchStatsByPostId")
     public String getSearchStatsByPostId(@RequestParam Long postId){
        return fSearchStatService.getSearchStatsByPostId(postId).toString();
     }
 
+    /**
+     * Fetches all Search Stats that have lead to the user.
+     * @param userId the post that has to have been reached.
+     * @return a String containing all SearchStats that have been found.
+     */
     @GetMapping("/getSearchStatsByUserId")
     public String getSearchStatsByUserId(@RequestParam Long userId){
         return fSearchStatService.getSearchStatsByUserId(userId).toString();

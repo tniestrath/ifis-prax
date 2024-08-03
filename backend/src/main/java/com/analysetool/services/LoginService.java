@@ -135,8 +135,6 @@ public class LoginService {
      * @param pass password.
      * @return String representation of the WordPress-login-cookie value
      */
-
-
     public String login(@RequestParam String user, String pass) {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getWplogin());
@@ -179,6 +177,11 @@ public class LoginService {
         return responseCookie;
     }
 
+    /**
+     * Attempts to log in a user via request body for security-reasons.
+     * @param loginForm the login data, given in the request-body.
+     * @return the wordpress_logged_in cookie.
+     */
     public String login2(@RequestBody LoginService.LoginForm loginForm){
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getWplogin());
@@ -220,6 +223,11 @@ public class LoginService {
         return responseCookie;
     }
 
+    /**
+     * Validates a cookie for correctness.
+     * @param request the request to validate the cookie for.
+     * @return ??
+     */
     public String validateCookie(HttpServletRequest request){
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getValidate());
@@ -251,6 +259,11 @@ public class LoginService {
         return responseBody;
     }
 
+    /**
+     * Validates a cookie.
+     * @param cookie the cookie to validate.
+     * @return a JSON-String containing the found user_id from the cookie.
+     */
     public String validateCookie(@RequestParam("value") String cookie){
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(config.getValidate());
@@ -279,6 +292,10 @@ public class LoginService {
         return responseBody;
     }
 
+    /**
+     * Pings the server to check whether its up and running.
+     * @return true.
+     */
     public boolean ping() {
         LastPing ping;
         if(lpRepo.findById(1L).isPresent()) {

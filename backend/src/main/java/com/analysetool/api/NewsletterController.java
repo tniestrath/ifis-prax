@@ -85,9 +85,17 @@ public class NewsletterController {
     @GetMapping("/getAmountOfSubsByDateRange")
     public long getAmountofSubsByDateRange(@RequestParam int daysBackFrom, @RequestParam int daysBackTo) {return newsletterService.getAmountofSubsByDateRange(daysBackFrom, daysBackTo);}
 
+    /**
+     * Fetches the amount of new subscribers since yesterday.
+     * @return a List of Characters, corresponding to their confirmed-status.
+     */
     @GetMapping("/getAmountOfSubsYesterday")
     public List<Character> getAmountofSubsYesterday() {return newsletterService.getAmountofSubsYesterday();}
 
+    /**
+     * Fetches the amount of subscribers since today at 00:00.
+     * @return the number of new subscribers.
+     */
     @GetMapping("/getAmountOfSubsToday")
     public Integer getAmountofSubsToday() {return newsletterService.getAmountofSubsToday();}
 

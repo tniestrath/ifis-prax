@@ -61,11 +61,20 @@ public class FinalSearchStatService {
     }
 
 
-
+    /**
+     * Fetches all rows from Search-Stats.
+     * @return a List of SearchStats.
+     */
     public List<SearchStats> getAllSearchStats() {
         return searchStatsRepository.findAll();
     }
 
+    /**
+     * Fetches (limit) amount of Search Stats as JSON.
+     * @param limit the amount of SearchStats to fetch.
+     * @return a JSON-Array of Search-Stats representations.
+     * @throws JSONException .
+     */
     public String getSearchStats(@RequestParam int limit) throws JSONException {
         JSONArray response = new JSONArray();
         List<SearchStats> alleStats = searchStatsRepository.findAll();
@@ -86,6 +95,13 @@ public class FinalSearchStatService {
         return response.toString();
     }
 
+    /**
+     * Fetches (limit) amount of Search Stats as JSON.
+     * @param PostId the postId to fetch from.
+     * @param limit the amount of SearchStats to fetch.
+     * @return a JSON-Array of Search-Stats representations.
+     * @throws JSONException .
+     */
     public String getSearchStatsByPostWithLimit(@RequestParam Long PostId,@RequestParam int limit) throws JSONException {
         JSONArray response = new JSONArray();
         List<SearchStats> alleStats = searchStatsRepository.findByClickedPost(PostId.toString());
@@ -226,57 +242,18 @@ public class FinalSearchStatService {
         }
     }
 
-
+    /**
+     * Fetches all searches for events that had no results.
+     * @return .
+     */
     public String getZeroCountEventSearches(){
         return eventSearchRepo.getEventSearchesWithCountZero().toString();
-    }
-
-    public void saveAll(List<FinalSearchStat> stats) {
-        repository.saveAll(stats);
     }
 
     @Transactional
     public Boolean saveAllBoolean(List<FinalSearchStat> stats) {
         try{
             repository.saveAll(stats);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
-    }
-
-    @Transactional
-    public Boolean saveAllBooleanNotBatch(List<FinalSearchStat> stats) {
-        boolean savedAll = false;
-        for(FinalSearchStat stat:stats){
-          try{
-              repository.save(stat);
-              savedAll = true;
-          }catch(Exception e){
-              savedAll=false;
-          }
-      }
-        return savedAll;
-    }
-
-    @Transactional
-    public Boolean saveAllDLCBooleanNotBatch(List<FinalSearchStatDLC> stats) {
-        boolean savedAll = false;
-        for(FinalSearchStatDLC stat:stats){
-            try{
-                DLCRepo.save(stat);
-                savedAll = true;
-            }catch(Exception e){
-                savedAll=false;
-            }
-        }
-        return savedAll;
-    }
-
-    @Transactional
-    public Boolean saveAllDLCBoolean(List<FinalSearchStatDLC> stats) {
-        try{
-            DLCRepo.saveAll(stats);
             return true;
         }catch (Exception e){
             return false;
@@ -912,8 +889,6 @@ public class FinalSearchStatService {
             finalDLCRepo.deleteById(id);
         }
     }
-
-
 
     public String getAnbieterNoneFound(int page, int size) throws JSONException {
         JSONArray array = new JSONArray();

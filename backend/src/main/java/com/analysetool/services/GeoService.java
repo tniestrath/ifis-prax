@@ -721,7 +721,10 @@ public class GeoService {
         json.put("Ausland", ausland + json.getInt("Ausland"));
     }
 
-
+    /**
+     * Fetches the 5 most clicked cities.
+     * @return a JSON-String.
+     */
     public String getTop5CitiesByClicks() {
         try {
             int uniId = uniStatRepo.getLatestUniStat().getId();

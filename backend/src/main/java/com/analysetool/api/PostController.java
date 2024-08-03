@@ -498,6 +498,10 @@ public class PostController {
     @GetMapping("/getBestPostImpressionToday")
     public String getBestPostImpressionToday(){return postService.getBestPostImpressionToday();}
 
+    /**
+     * Ranks all post-types by their total clicks.
+     * @return a JSON-String containing the rankings.
+     */
     @GetMapping("/rankPostTypesAllTime")
     public String rankPostTypesAllTime(){
         try{

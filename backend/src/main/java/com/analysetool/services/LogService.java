@@ -2,7 +2,6 @@ package com.analysetool.services;
 
 import com.analysetool.api.ForumModController;
 import com.analysetool.api.IPController;
-import com.analysetool.api.PostController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
@@ -88,7 +87,7 @@ public class LogService {
     private PostTypeRepository postTypeRepo;
 
     @Autowired
-    private PostController postController;
+    private PostService postService;
 
     @Autowired
     private UserService userService;
@@ -2843,7 +2842,7 @@ public class LogService {
         for(Integer id : postRepository.getIdsOfUntyped()) {
             PostTypes type = new PostTypes();
             type.setPost_id(Long.valueOf(id));
-            type.setType(postController.getType(id));
+            type.setType(postService.getType(id));
             postTypeRepo.save(type);
         }
     }

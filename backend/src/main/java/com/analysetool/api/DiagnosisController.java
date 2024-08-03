@@ -3,6 +3,7 @@ package com.analysetool.api;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.services.LogService;
+import com.analysetool.services.PostService;
 import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Problem;
 import org.json.JSONArray;
@@ -39,7 +40,7 @@ public class DiagnosisController {
     @Autowired
     TrackingBlacklistRepository tbRepo;
     @Autowired
-    PostController postController;
+    PostService postService;
     @Autowired
     WPOptionsRepository wpOpRepo;
     @Autowired
@@ -475,8 +476,8 @@ public class DiagnosisController {
         String solutionLink = "analyse.it-sicherheit.de/api/posts/deletePostTypesById?id=";
 
         for(PostTypes type : postTypeRepo.findAll()) {
-            if(!postController.getType(type.getPost_id()).equals(type.getType())) {
-                list.add(new Problem(severityError, (descriptionChangedType + type.getType() + desPart2 + postController.getType(type.getPost_id())), area, solutions, solutionLink + type.getPost_id()));
+            if(!postService.getType(type.getPost_id()).equals(type.getType())) {
+                list.add(new Problem(severityError, (descriptionChangedType + type.getType() + desPart2 + postService.getType(type.getPost_id())), area, solutions, solutionLink + type.getPost_id()));
             }
         }
 

@@ -1,7 +1,6 @@
 package com.analysetool.services;
 
 import com.analysetool.api.EventsController;
-import com.analysetool.api.PostController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
@@ -47,7 +46,7 @@ public class UserService {
     @Autowired
     private WPUserRepository userRepo;
     @Autowired
-    private PostController postController;
+    private PostService postService;
     @Autowired
     private UserStatsRepository userStatsRepository;
     @Autowired
@@ -439,9 +438,9 @@ public class UserService {
         }
         try {
             allCompaniesList.sort((o1, o2) -> Math.toIntExact((int)(userRepo.findByDisplayName(o2).isPresent() ?
-                    postController.getPostViewsOfUserById(userRepo.findByDisplayName(o2).get().getId()) : 0)
+                    postService.getPostViewsOfUserById(userRepo.findByDisplayName(o2).get().getId()) : 0)
                     - (userRepo.findByDisplayName(o1).isPresent() ?
-                    postController.getPostViewsOfUserById(userRepo.findByDisplayName(o1).get().getId()) : 0)));
+                    postService.getPostViewsOfUserById(userRepo.findByDisplayName(o1).get().getId()) : 0)));
 
             return allCompaniesList.indexOf(companyName) + 1;
         } catch (Exception e) {
@@ -532,8 +531,8 @@ public class UserService {
             if (userStatsRepository.existsByUserId(user.getId())) {
                 UserStats statsUser = userStatsRepository.findByUserId(user.getId());
                 obj.put("profileViews", statsUser.getProfileView());
-                obj.put("postViews", postController.getPostViewsOfUserById(user.getId()));
-                obj.put("postCount", postController.getPostCountOfUserById(user.getId()));
+                obj.put("postViews", postService.getPostViewsOfUserById(user.getId()));
+                obj.put("postCount", postService.getPostCountOfUserById(user.getId()));
             } else {
                 obj.put("profileViews", 0);
                 obj.put("postViews", 0);
@@ -1203,7 +1202,7 @@ public class UserService {
                     }
                     postToday.put("id", post.getId());
                     postToday.put("title", post.getTitle());
-                    postToday.put("type", postController.getType(Math.toIntExact(post.getId())));
+                    postToday.put("type", postService.getType(Math.toIntExact(post.getId())));
                     postToday.put("clicks", statRepository.getSumClicks(post.getId()) != null ? statRepository.getSumClicks(post.getId()) : 0);
                     dailyPosts.put(postToday);
                 }
@@ -1211,7 +1210,7 @@ public class UserService {
                 if(biggestPostbuffer != null) {
                     biggestPost.put("id", biggestPostbuffer.getId());
                     biggestPost.put("title", biggestPostbuffer.getTitle());
-                    biggestPost.put("type", postController.getType(Math.toIntExact(biggestPostbuffer.getId())));
+                    biggestPost.put("type", postService.getType(Math.toIntExact(biggestPostbuffer.getId())));
                     biggestPost.put("clicks", statRepository.getSumClicks(biggestPostbuffer.getId()) != null ? statRepository.getSumClicks(biggestPostbuffer.getId()) : 0);
                 } else {
                     biggestPost.put("id", 0);
@@ -1262,7 +1261,7 @@ public class UserService {
     }
 
     public String getPostCountByType(long id) throws JSONException {
-        List<Post> posts = postRepo.findByAuthorPageable(id, "", PageRequest.of(0, postController.getCountTotalPosts()));
+        List<Post> posts = postRepo.findByAuthorPageable(id, "", PageRequest.of(0, postService.getCountTotalPosts()));
 
         int countArtikel = 0;
         int countBlogs = 0;
@@ -1271,7 +1270,7 @@ public class UserService {
         int countPodcasts = 0;
 
         for(Post post : posts) {
-            switch(postController.getType(post.getId())) {
+            switch(postService.getType(post.getId())) {
                 case "artikel" -> {
                     countArtikel++;
                 }
@@ -1332,7 +1331,7 @@ public class UserService {
         List<JSONObject> stats = new ArrayList<>();
 
         for(Post post : list) {
-            stats.add(new JSONObject(postController.PostStatsByIdForFrontend(post.getId())));
+            stats.add(new JSONObject(postService.PostStatsByIdForFrontend(post.getId())));
         }
 
         return new JSONArray(stats).toString();
@@ -1367,7 +1366,7 @@ public class UserService {
         for (Post post : posts) {
             if (statRepository.existsByArtId(post.getId())) {
                 int stat = statRepository.getSumClicks(post.getId()) == null ? 0 : statRepository.getSumClicks(post.getId());
-                switch(postController.getType(post.getId())) {
+                switch(postService.getType(post.getId())) {
                     case "blog" -> viewsBlog += stat;
                     case "artikel" -> viewsArtikel += stat;
                     case "news" -> viewsNews += stat;
@@ -1973,7 +1972,7 @@ public class UserService {
         JSONObject jsonTypes = new JSONObject();
         boolean news = false, artikel = false, blog = false, podcast = false, whitepaper= false;
         for(Post p : postRepo.findByAuthor(id)) {
-            switch(postController.getType(p.getId())) {
+            switch(postService.getType(p.getId())) {
                 case "news" -> news = true;
                 case "artikel" -> artikel = true;
                 case "blog" -> blog = true;
@@ -2234,7 +2233,7 @@ public class UserService {
             rank = 1;
 
             //Sort for content-view rankings
-            users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
+            users.sort((o1, o2) -> Math.toIntExact(postService.getPostViewsOfUserById(o2.getId()) - postService.getPostViewsOfUserById(o1.getId())));
             //Make entries for content-view rankings.
             for(WPUser user : users) {
                 RankingGroupContent contentRank = new RankingGroupContent();
@@ -2271,7 +2270,7 @@ public class UserService {
         rank = 1;
 
         //Sort for content-view rankings
-        users.sort((o1, o2) -> Math.toIntExact(postController.getPostViewsOfUserById(o2.getId()) - postController.getPostViewsOfUserById(o1.getId())));
+        users.sort((o1, o2) -> Math.toIntExact(postService.getPostViewsOfUserById(o2.getId()) - postService.getPostViewsOfUserById(o1.getId())));
         //Make entries for content-view rankings.
         for(WPUser user : users) {
             RankingTotalContent contentRank = new RankingTotalContent();

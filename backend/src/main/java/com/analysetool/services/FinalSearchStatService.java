@@ -250,6 +250,11 @@ public class FinalSearchStatService {
         return eventSearchRepo.getEventSearchesWithCountZero().toString();
     }
 
+    /**
+     * Save all entries in a list of FinalSearchStat.
+     * @param stats the list to save from.
+     * @return whether the saving was successful.
+     */
     @Transactional
     public Boolean saveAllBoolean(List<FinalSearchStat> stats) {
         try{
@@ -260,8 +265,11 @@ public class FinalSearchStatService {
         }
     }
 
-
-
+    /**
+     * Saves all FinalSearchStatsDLC entries to database.
+     * @param statsMap the map to save entries from.
+     * @return whether the saving was successful.
+     */
     @Transactional
     public Boolean saveAllDLCBooleanFromMap(Map<String, List<FinalSearchStatDLC>> statsMap) {
         try {
@@ -280,6 +288,11 @@ public class FinalSearchStatService {
         }
     }
 
+    /**
+     * Fetch all SearchStats that lead to a specific post.
+     * @param postId the post to fetch for.
+     * @return a List of FinalSearchStats.
+     */
     public List<FinalSearchStat> getSearchStatsByPostId(Long postId){
         List<Long> FinalSearchStatIds=DLCRepo.getFinalSearchStatIdsByPostId(postId);
         List<FinalSearchStat> stats = repository.findAllById(FinalSearchStatIds);
@@ -287,6 +300,11 @@ public class FinalSearchStatService {
         return stats;
     }
 
+    /**
+     * Fetch all SearchStats that lead to a specific user.
+     * @param userId the user to fetch for.
+     * @return a List of FinalSearchStats.
+     */
     public List<FinalSearchStat> getSearchStatsByUserId(Long userId){
         List<Long> FinalSearchStatIds=DLCRepo.getFinalSearchStatIdsByUserId(userId);
         List<FinalSearchStat> stats = repository.findAllById(FinalSearchStatIds);
@@ -294,9 +312,12 @@ public class FinalSearchStatService {
         return stats;
     }
 
-
-
-
+    /**
+     * Fetches search-stats for a specific location.
+     * @param location the location.
+     * @param locationType the tyspe of location (city, state or country).
+     * @return a map of FinalSearchStats and their DLCs.
+     */
     public Map<FinalSearchStat,List<FinalSearchStatDLC>> getSearchStatsByLocation(String location, String locationType){
         Map<FinalSearchStat,List<FinalSearchStatDLC>> response = new HashMap<>();
         List<FinalSearchStat> allSearchesOfLocation = switch (locationType) {
@@ -315,45 +336,6 @@ public class FinalSearchStatService {
 
         return response;
     }
-
-    public List<Map.Entry<String, Integer>> getRankingTopNSearchQueriesInMapBySS(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap, int topN) {
-        Map<String, Integer> searchQueryClicks = new HashMap<>();
-
-        // Zusammenführen der Klicks aller Suchanfragen
-        searchStatsMap.forEach((searchStat, dlcs) -> {
-            String searchQuery = searchStat.getSearchQuery();
-            searchQueryClicks.merge(searchQuery, dlcs.size(), Integer::sum);
-        });
-
-        // Sortierung und Ermittlung der Top-N-Suchanfragen
-        List<Map.Entry<String, Integer>> topSearchQueries = searchQueryClicks.entrySet().stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .limit(topN)
-                .collect(Collectors.toList());
-
-        return topSearchQueries;
-    }
-
-    public List<Map.Entry<String, Long>> getRankingTopNSearchedQueries(Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap, int topN) {
-        // Erstellen einer Map zur Speicherung der Häufigkeit jeder Suchanfrage
-        Map<String, Long> searchQueryFrequencies = new HashMap<>();
-
-        // Zählen, wie oft jede Suchanfrage vorkommt
-        searchStatsMap.keySet().forEach(searchStat -> {
-            String searchQuery = searchStat.getSearchQuery();
-            // Erhöhen der Anzahl für jede Suchanfrage
-            searchQueryFrequencies.merge(searchQuery, 1L, Long::sum);
-        });
-
-        // Sortierung der Map nach Häufigkeit der Suchanfragen und Ermittlung der Top-N
-        List<Map.Entry<String, Long>> topSearchedQueries = searchQueryFrequencies.entrySet().stream()
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                .limit(topN)
-                .collect(Collectors.toList());
-
-        return topSearchedQueries;
-    }
-
 
     /**
      * Ermittelt Suchanfragen, die häufig durchgeführt werden, aber nur wenige oder keine Ergebnisse liefern.
@@ -523,38 +505,11 @@ public class FinalSearchStatService {
         return frequentSearches;
     }
 
-    // Generische Methode zur Analyse von Suchanfragen
-    public Map<String, Integer> analyzeSearchQueries(
-            Map<FinalSearchStat, List<FinalSearchStatDLC>> searchStatsMap,
-            int searchThreshold,
-            int resultThreshold,
-            Function<FinalSearchStat, Integer> resultCounter) {
 
-        // Erzeugen einer Map von searchQuery zu deren DLCs
-        Map<String, Integer> queryToResultsCount = searchStatsMap.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey().getSearchQuery(),
-                        e -> resultCounter.apply(e.getKey()) // Anwendung der resultCounter Funktion auf jeden FinalSearchStat
-                ));
-
-        // Filtern der Ergebnisse basierend auf den Schwellenwerten
-        return queryToResultsCount.entrySet().stream()
-                .filter(e -> e.getValue() >= searchThreshold && e.getValue() <= resultThreshold)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    // Methode zur Berechnung der Gesamtanzahl der Ergebnisse für einen FinalSearchStat
-    private int getTotalResultCount(FinalSearchStat stat) {
-        return stat.getFoundArtikelCount() +
-                stat.getFoundBlogCount() +
-                stat.getFoundNewsCount() +
-                stat.getFoundWhitepaperCount() +
-                stat.getFoundRatgeberCount() +
-                stat.getFoundPodcastCount() +
-                stat.getFoundAnbieterCount() +
-                stat.getFoundEventsCount();
-    }
-
+    /**
+     * Fetches the distribution of search-counts by days (mapped by uni_ids).
+     * @return a map of uni_id to search-counts.
+     */
     public Map<Integer,Long> getSearchCountDistributedByUniId(){
         Map<Integer,Long> response = new HashMap<>();
         List<Object[]> obj = repository.findUniIdCounts();
@@ -566,6 +521,12 @@ public class FinalSearchStatService {
         }
         return response;
     }
+
+    /**
+     * Converts a list of FinalSearchStat row to a string representation.
+     * @param stats the rows to convert.
+     * @return the string representation.
+     */
     public String toStringList(List<FinalSearchStat>stats){
         StringBuilder response = new StringBuilder();
 
@@ -576,6 +537,11 @@ public class FinalSearchStatService {
         return response.toString();
     }
 
+    /**
+     * Converts a FinalSearchStat row to a string representation.
+     * @param stat the row to convert.
+     * @return the string representation.
+     */
     public String toString(FinalSearchStat stat){
         int uniId = stat.getUniId();
         int newestUniId = uniRepo.getLatestUniStat().getId();
@@ -694,6 +660,11 @@ public class FinalSearchStatService {
         return array.toString();
     }
 
+    /**
+     * Unblocks the given search from tracking.
+     * @param search the search to block.
+     * @return whether the block was successful.
+     */
     public boolean unblockSearch(long search) {
         boolean unblocked = false;
         //noinspection OptionalGetWithoutIsPresent
@@ -706,6 +677,11 @@ public class FinalSearchStatService {
         return unblocked;
     }
 
+    /**
+     * Blocks the given search from tracking.
+     * @param search the search to block.
+     * @return whether the block was successful.
+     */
     public boolean blockSearch(long search) {
         boolean deleted = false;
         //noinspection OptionalGetWithoutIsPresent
@@ -720,6 +696,11 @@ public class FinalSearchStatService {
         return deleted;
     }
 
+    /**
+     * Flips whether the search is blocked. Blocked to unblocked, unblocked to blocked.
+     * @param search the search to flip for.
+     * @return whether it is deleted or not.
+     */
     public String flipSearch(long search) {
         //noinspection OptionalGetWithoutIsPresent
         if(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isPresent()) {
@@ -764,7 +745,13 @@ public class FinalSearchStatService {
         return response.toString();
     }
 
-
+    /**
+     * Get the most successful queries.
+     * @param page page-number.
+     * @param size amount of result.
+     * @param dir direction to sort in.
+     * @return JSON-String.
+     */
     private String getTopSearchQueriesBySS(int page, int size, String dir){
         JSONArray response = new JSONArray();
         List<Tuple> pairs;
@@ -793,6 +780,13 @@ public class FinalSearchStatService {
         return response.toString();
     }
 
+    /**
+     * Get the most searched queries.
+     * @param page page-number.
+     * @param size amount of result.
+     * @param dir direction to sort in.
+     * @return JSON-String.
+     */
     private String getTopSearchQueriesBySearchedCount(int page, int size, String dir){
         JSONArray response = new JSONArray();
         List<Tuple> pairs;
@@ -821,7 +815,11 @@ public class FinalSearchStatService {
         return response.toString();
     }
 
-
+    /**
+     * Flips whether the search is blocked. Blocked to unblocked, unblocked to blocked.
+     * @param search the search to flip for.
+     * @return whether it is deleted or not.
+     */
     public String flipAnbieterSearch(long search) throws JSONException {
         @SuppressWarnings("OptionalGetWithoutIsPresent") AnbieterFailedSearchBuffer afb = anbieterFailRepo.findById(search).get();
         JSONObject json = new JSONObject();
@@ -839,7 +837,12 @@ public class FinalSearchStatService {
         return json.toString();
     }
 
-
+    /**
+     * Flips whether the search is blocked. Blocked to unblocked, unblocked to blocked.
+     * @param search the search to flip for.
+     * @param place the place to flip for.
+     * @return whether it is deleted or not.
+     */
     public String flipAnbieterSearch(String search, String place) throws JSONException {
         @SuppressWarnings("OptionalGetWithoutIsPresent") AnbieterFailedSearchBuffer afb = anbieterFailRepo.findByCityAndSearch(place, search).get();
         JSONObject json = new JSONObject();
@@ -857,7 +860,11 @@ public class FinalSearchStatService {
         return json.toString();
     }
 
-
+    /**
+     * Fetches all blocked searches.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     public String getAllBlocked() throws JSONException {
         JSONArray array = new JSONArray();
         for(BlockedSearches blocked : blockedRepo.findAll()) {
@@ -870,7 +877,11 @@ public class FinalSearchStatService {
         return array.toString();
     }
 
-
+    /**
+     * Fetches all blocked anbieter-searches.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     public String getAllAnbieterBlocked() throws JSONException {
         JSONArray array = new JSONArray();
         for(BlockedSearchesAnbieter blocked : baSearchRepo.findAll()) {
@@ -883,13 +894,23 @@ public class FinalSearchStatService {
         return array.toString();
     }
 
-
+    /**
+     * Deletes a row from final_search_stat_dlc
+     * @param id the id of the search to delete.
+     */
     public void deleteDLCById(long id) {
         if(finalDLCRepo.existsById(id)) {
             finalDLCRepo.deleteById(id);
         }
     }
 
+    /**
+     * Fetches all searches for anbieters that got no results.
+     * @param page the page number of results.
+     * @param size the amount of results to fetch.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     public String getAnbieterNoneFound(int page, int size) throws JSONException {
         JSONArray array = new JSONArray();
 
@@ -905,6 +926,11 @@ public class FinalSearchStatService {
         return array.toString();
     }
 
+    /**
+     * Checks whether the text contains a possible injection.
+     * @param text the text to check.
+     * @return whether the text contains a possible injection.
+     */
     boolean isHack(String text) {
         return text.contains("&") && text.contains(";");
     }

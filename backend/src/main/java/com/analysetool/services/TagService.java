@@ -38,6 +38,11 @@ public class TagService {
     @Autowired
     private universalStatsRepository uniRepo;
 
+    /**
+     * Fetches a term by its id.
+     * @param id the id to fetch for.
+     * @return a WPTerm Representation.
+     */
     public ResponseEntity<WPTerm> getTermById(@PathVariable Long id) {
         Optional<WPTerm> term = termRepository.findById(id);
         if (term.isPresent()) {
@@ -47,12 +52,18 @@ public class TagService {
         }
     }
 
-
+    /**
+     * Fetches a list of all terms.
+     * @return a list of all terms.
+     */
     public List<WPTerm> getAll(){return termRepository.findAll();}
 
     // weitere REST-Endpunkte, falls benötigt
 
-
+    /**
+     * Fetches all tags that have been attached to posts.
+     * @return a list of terms.
+     */
     public List<WPTerm>getPostTags(){
         List<Long> li = termTaxonomyRepository.getAllPostTags();
         List<WPTerm> list = new ArrayList<>();
@@ -65,7 +76,11 @@ public class TagService {
         return list;
     }
 
-
+    /**
+     * Fetches all Terms attached to posts with their id and name.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     public String getPostTagsIdName() throws JSONException {
         List<Long> li = termTaxonomyRepository.getAllPostTags();
         JSONArray list = new JSONArray();
@@ -84,12 +99,20 @@ public class TagService {
         return list.toString();
     }
 
-
+    /**
+     * Fetches the number of posts using the specified tag.
+     * @param id the term id of the tag to fetch for.
+     * @return a String, containing the number of posts.
+     */
     public String getPostCount(@RequestParam String id) {
         return Long.toString(termRepository.getPostCount(id));
     }
 
-
+    /**
+     * Fetch a ranked list of all terms, sorted by their post-count.
+     * @return a JSON-String of ranked terms.
+     * @throws JSONException .
+     */
     public String getTermRanking() throws JSONException {
         List<WpTermTaxonomy> list= termTaxonomyRepository.findTop10TermIdsByCount();
         JSONArray Antwort = new JSONArray();
@@ -105,7 +128,12 @@ public class TagService {
 
     }
 
-
+    /**
+     * Fetches stats for the specified tag.
+     * @param id the term id to fetch for-
+     * @return a JSON-String of the terms stats.
+     * @throws JSONException .
+     */
     public String getTagStat(@RequestParam Long id)throws JSONException{
         TagStat tagStat = tagStatRepo.getStatById(id.intValue()).get(0);
         JSONObject obj = new JSONObject();
@@ -116,7 +144,11 @@ public class TagService {
         return obj.toString();
     }
 
-
+    /**
+     * Fetch Relevance and Post count for all tags.
+     * @return a JSON-String of all terms, with their relevance and post-counts.
+     * @throws JSONException .
+     */
     public String getTermsRelevanceCount() throws JSONException {
         List<WpTermTaxonomy> termTaxs = termTaxonomyRepository.findAll();
         JSONArray response = new JSONArray();
@@ -136,8 +168,11 @@ public class TagService {
 
     }
 
-
-
+    /**
+     * Fetch relevance and performance for all tags.
+     * @return a JSON-String of all terms, with their relevance and performance.
+     * @throws JSONException .
+     */
     public String getTermsRelevanceAndPerformance() throws JSONException {
         List<WpTermTaxonomy> termTaxs = termTaxonomyRepository.findAll();
         JSONArray response = new JSONArray();
@@ -160,7 +195,11 @@ public class TagService {
         return response.toString();
     }
 
-
+    /**
+     * Fetches all terms with more posts than the given percentage.
+     * @param percentage the percentage of all posts that have to be in the term.
+     * @return a JSON-String of all terms that fulfill the condition.
+     */
     public String getPostCountAbove(int percentage) {
         HashMap<String, Long> map = new HashMap<>();
 
@@ -174,7 +213,11 @@ public class TagService {
     }
 
 
-
+    /**
+     * Fetch the top3 of all terms, sorted.
+     * @param sorter what to sort by (relevance).
+     * @return a JSON-String containing the top3 terms.
+     */
     public String getTop3(String sorter) {
         List<Long> top3 = null;
         String errorString = "";
@@ -200,6 +243,11 @@ public class TagService {
 
     }
 
+    /**
+     * Fetch all terms with their relevance and posts views.
+     * @return a JSON-String containing all terms with their relevance and views.
+     * @throws JSONException .
+     */
     public String getTermsRelevanceAndViews() throws JSONException {
         List<WpTermTaxonomy> termTaxs = termTaxonomyRepository.findAll();
         JSONArray response = new JSONArray();
@@ -224,47 +272,12 @@ public class TagService {
         return response.toString();
     }
 
-    public static float getRelevance2(HashMap<String, Long> viewsLastYear, String currentDateString, int time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd.MM");
-
-        // Add the current year to the date string
-        String year = String.valueOf(LocalDate.now().getYear());
-        LocalDate currentDate = LocalDate.parse(year + "-" + currentDateString, formatter);
-
-        long views = 0;
-
-        for (int i = 0; i < time; i++) {
-            String dateKey = currentDate.minusDays(i).format(DateTimeFormatter.ofPattern("dd.MM"));
-            views += viewsLastYear.getOrDefault(dateKey, 0L);
-        }
-
-        return (float) views / time;
-    }
-
-
-
-    public float getRelevance(HashMap<String,Long>viewsLastYear,int currentDayOfYear,int time){
-        int counter =currentDayOfYear-time;
-        long views=0;
-        while(counter<=currentDayOfYear){
-            if (viewsLastYear.containsKey(Integer.toString(counter))){
-                views=views+(viewsLastYear.get(Integer.toString(counter)));
-            }
-            counter++;
-        }
-        return (float)views/time;
-    }
-
-    public static Date getDate(int zuruek) throws ParseException {
-        String dateString = LocalDate.now(ZoneId.systemDefault()).minusDays(zuruek).format(DateTimeFormatter.ISO_DATE);
-        Date vortag = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
-        return vortag;
-    }
-    public static int getDayOfYear(){
-        LocalDate today = LocalDate.now();
-        int dayOfYear = today.getDayOfYear();
-        return dayOfYear;
-    }
+    /**
+     * Fetch the number of posts released within the term and the date limit.
+     * @param tagId the term to fetch for.
+     * @param dateLimit the date-limit (earliest valid date).
+     * @return the amount of posts.
+     */
     public int getCount(int tagId,Date dateLimit){
         Long termTaxId= termTaxonomyRepository.findByTermId(tagId).getTermTaxonomyId();
         List<wp_term_relationships> termRel = termRelRepo.findByTermTaxonomyId(termTaxId);
@@ -279,7 +292,14 @@ public class TagService {
         return posts.size();
     }
 
-
+    /**
+     * Fetch a specific terms stats, in a specific date range.
+     * @param tagId the term to fetch for.
+     * @param start the start of the time period to fetch in.
+     * @param end the end of the time period to fetch in.
+     * @return a JSON-String containing Tag-Stats.
+     * @throws JSONException .
+     */
     public String getTagStatsSingle(int tagId, String start, String end) throws JSONException {
 
         java.sql.Date dateStart;
@@ -328,13 +348,24 @@ public class TagService {
         return array.toString();
     }
 
-
+    /**
+     * Fetch a specific terms stats, in a specific date range.
+     * @param tagId the term to fetch for.
+     * @param daysBack how many days back from today to start tracking.
+     * @return a JSON-String containing Tag-Stats.
+     * @throws JSONException .
+     */
     public String getTagStatsSingle(int tagId, int daysBack) throws JSONException {
         LocalDate dateEnd = LocalDate.now();
         return getTagStatsSingle(tagId, dateEnd.minusDays(daysBack).toString(), dateEnd.toString());
     }
 
-
+    /**
+     * Fetch a shortened representation of a terms stats.
+     * @param tagId the term to fetch for.
+     * @return a JSON-Object containing the tags stats (count, name, viewsPosts, viewsCat, id).
+     * @throws JSONException .
+     */
     public JSONObject getTagStatsShort(int tagId) throws JSONException {
         JSONObject json = new JSONObject();
 
@@ -347,7 +378,12 @@ public class TagService {
         return json;
     }
 
-
+    /**
+     * Fetch all TagStats, sorted.
+     * @param sorter what to sort by.
+     * @return a JSON String containing Tag-Stats.
+     * @throws JSONException .
+     */
     public String getTagStatsAll(String sorter) throws JSONException {
         List<JSONObject> array = new ArrayList<>();
 
@@ -397,12 +433,19 @@ public class TagService {
         return jsonArray.toString();
     }
 
-
+    /**
+     * Fetch relevance of a specific term.
+     * @param id the term to fetch for.
+     * @return the relevance of the term.
+     */
     public double getRelevance(int id) {
         return tagStatRepo.getRelevance(id);
     }
 
-
+    /**
+     * Fetch the highest relevance of all terms
+     * @return the relevance of the term.
+     */
     public double getMaxRelevance() {
         return tagStatRepo.getMaxRelevance();
     }

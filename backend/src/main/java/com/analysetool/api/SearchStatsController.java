@@ -146,7 +146,6 @@ public class SearchStatsController {
     public String getCoolSearchList(int page, int size, String sorter, String dir) {return fSearchStatService.getCoolSearchList(page, size, sorter, dir);}
 
 
-
     /**
      * Gibt die Verteilung der Suchanfragen über einen bestimmten Zeitraum zurück.
      * Diese Methode berechnet die Anzahl der Suchanfragen pro Tag für die letzte Woche, den letzten Monat oder das letzte Jahr,
@@ -176,37 +175,83 @@ public class SearchStatsController {
     @GetMapping("/getAllThreats")
     public String getAllThreats() throws JSONException {return fSearchStatService.getAllThreats();}
 
+    /**
+     * Unblocks a specific search.
+     * @param search the search to unblock from tracking.
+     * @return whether it has been correctly unblocked.
+     */
     @PostMapping("/unblockSearch")
     @Modifying
     public boolean unblockSearch(long search) {return fSearchStatService.unblockSearch(search);}
 
+    /**
+     * Blocks a specific search.
+     * @param search the search to unblock from tracking.
+     * @return whether it has been correctly blocked.
+     */
     @PostMapping("/blockSearch")
     @Modifying
     public boolean blockSearch(long search) {return fSearchStatService.blockSearch(search);}
 
+    /**
+     * Flips whether the search is blocked. Blocked to unblocked, unblocked to blocked.
+     * @param search the search to flip for.
+     * @return whether it is deleted or not.
+     */
     @GetMapping("/flipSearch")
     @Modifying
     public String flipSearch(long search) {return fSearchStatService.flipSearch(search);}
 
+    /**
+     * Flips whether the search is blocked. Blocked to unblocked, unblocked to blocked.
+     * @param search the search to flip for.
+     * @return whether it is deleted or not.
+     */
     @GetMapping("/flipAnbieterSearch")
     @Modifying
     public String flipAnbieterSearch(long search) throws JSONException {return fSearchStatService.flipAnbieterSearch(search);}
 
+    /**
+     * Flips whether the search is blocked. Blocked to unblocked, unblocked to blocked.
+     * @param search the search to flip for.
+     * @param place the place to flip for.
+     * @return whether it is deleted or not.
+     */
     @GetMapping("/flipAnbieterSearchByData")
     @Modifying
     public String flipAnbieterSearch(String search, String place) throws JSONException {return fSearchStatService.flipAnbieterSearch(search, place);}
 
+    /**
+     * Fetches all blocked searches.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     @GetMapping("/getAllBlocked")
     public String getAllBlocked() throws JSONException {return fSearchStatService.getAllBlocked();}
 
+    /**
+     * Fetches all blocked anbieter-searches.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     @GetMapping("/getAllAnbieterBlocked")
     public String getAllAnbieterBlocked() throws JSONException {return fSearchStatService.getAllAnbieterBlocked();}
 
+    /**
+     * Deletes a row from final_search_stat_dlc
+     * @param id the id of the search to delete.
+     */
     @PostMapping("/deleteDLCById")
     @Modifying
     public void deleteDLCById(long id) {fSearchStatService.deleteDLCById(id);}
 
-
+    /**
+     * Fetches all searches for anbieters that got no results.
+     * @param page the page number of results.
+     * @param size the amount of results to fetch.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     @GetMapping("/getAnbieterNoneFound")
     public String getAnbieterNoneFound(int page, int size) throws JSONException {return fSearchStatService.getAnbieterNoneFound(page, size);}
 

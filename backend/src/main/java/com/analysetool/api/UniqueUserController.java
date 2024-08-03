@@ -18,12 +18,18 @@ public class UniqueUserController {
     UniqueUserService uniqueUserService;
 
 
-    // Endpoint, um die durchschnittliche Verweildauer aller Nutzer als String zurückzugeben
+    /**
+     * Fetch the average time spent by users in table.
+     * @return a String representation of the average time spent.
+     */
     @GetMapping("/average-time-spent")
     public String getAverageTimeSpent() {return uniqueUserService.getAverageTimeSpent();}
 
 
-    // Endpoint, um die durchschnittliche Verweildauer der Nutzer für den heutigen Tag als String zurückzugeben
+    /**
+     * Fetch the average time spent by users in table today.
+     * @return a String representation of the average time spent.
+     */
     @GetMapping("/average-time-spent-today")
     public String getTodayAverageTimeSpent() {return uniqueUserService.getTodayAverageTimeSpent();}
 
@@ -46,11 +52,19 @@ public class UniqueUserController {
         return uniqueUserService.getUserPaths(limit);
     }
 
+    /**
+     * Fetches all user click-paths.
+     * @return a String representation of all user-click-paths.
+     */
     @GetMapping("/all-paths")
     public String getAllUserPaths() {
         return uniqueUserService.getAllUserPaths();
     }
 
+    /**
+     * Fetch the bounce-rate in the current day.
+     * @return a String representation of the bounce-rate today.
+     */
     @GetMapping("/getBounceRateToday")
     public String getBounceRate(){
         return String.valueOf(uniqueUserService.getBounceRateToday());
@@ -73,7 +87,10 @@ public class UniqueUserController {
         }
     }
 
-
+    /**
+     * Fetch click depths of users in segments, mapped to the amount of users in the depth-segment.
+     * @return a JSON-Object mapping depth-segments to amount of users in depth-segment.
+     */
     @GetMapping("/getClickDepthSegmented")
     public String getClickDepthSegmented(){
         try {

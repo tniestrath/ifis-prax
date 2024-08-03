@@ -36,6 +36,9 @@ public class SystemLoadService {
         this.systemLoadRepository = systemLoadRepository;
     }
 
+    /**
+     * Records a row of System-Load by looking at the system.
+     */
     @Scheduled(fixedRate = 60000) // 1 Minute
     public void recordSystemLoad() {
         HardwareAbstractionLayer hal = systemInfo.getHardware();
@@ -72,15 +75,26 @@ public class SystemLoadService {
 
         systemLoadRepository.save(systemLoad);
     }
+
+    /**
+     * Deletes all entries older than 3 days.
+     */
     @Scheduled(cron = "0 0 0 * * ?") // Jeden Tag um Mitternacht
     @Transactional
     public void deleteOldRecords() {
         systemLoadRepository.deleteByTimestampBefore(System.currentTimeMillis() - (72 * 60 * 60 * 1000));// 72 Stunden in Millisekunden
     }
 
-
+    /**
+     * Fetch the current system-load.
+     * @return the current system-load.
+     */
     public SystemLoad getNow() { return systemLoadRepository.getNetworkNow();}
 
+    /**
+     * Fetch all system loads in memory.
+     * @return a List of all SystemLoad entries.
+     */
     public List<SystemLoad> getAllSystemLoads() {
         return systemLoadRepository.findAll();
     }
@@ -145,12 +159,18 @@ public class SystemLoadService {
                 .sum();
     }
 
-
+    /**
+     * Fetches the current hour of the system.
+     * @return the hour as int.
+     */
     public int getHour() {
         return LocalDateTime.now().getHour();
     }
 
-
+    /**
+     * Fetch average System-Load of memory and cpu.
+     * @return a String representation of cpu and memory usage on average.
+     */
     public String getAverageLoad() {
         List<SystemLoad> allSystemLoads = getAllSystemLoads();
         OptionalDouble averageCpuLoad = allSystemLoads.stream().mapToDouble(SystemLoad::getCpuLoad).average();
@@ -159,6 +179,11 @@ public class SystemLoadService {
         return String.format("{\"cpu\": %s, \"memory\": %s}", averageCpuLoad.orElse(0), averageMemoryLoad.orElse(0));
     }
 
+    /**
+     * Fetch the current System-Load (memnory and cpu)
+     * @return a String representation of cpu and memory usage on average.
+     * @throws JSONException .
+     */
     public String getCurrentLoad() throws JSONException {
         SystemLoad systemLoadNow = getNow();
         if (systemLoadNow == null) return "{}";
@@ -172,7 +197,10 @@ public class SystemLoadService {
         return jsonObject.toString();
     }
 
-
+    /**
+     * Fetch the highest system load for memory and cpu.
+     * @return a String representation of cpu and memory usage on average.
+     */
     public String getPeakLoad() {
         List<SystemLoad> allSystemLoads = getAllSystemLoads();
         if (allSystemLoads.isEmpty()) return "{}";
@@ -185,7 +213,11 @@ public class SystemLoadService {
                 peakLoad.getCpuLoad(), peakLoad.getMemoryLoad(), peakLoad.getTimestamp());
     }
 
-
+    /**
+     * Fetch a complete representation of system load data.
+     * @return a JSON-String representation of cpu and memory usage.
+     * @throws JSONException .
+     */
     public String getComplete() throws JSONException {
         List<SystemLoad> allSystemLoads = getTop60ByTimeDesc();
         Collections.reverse(allSystemLoads);

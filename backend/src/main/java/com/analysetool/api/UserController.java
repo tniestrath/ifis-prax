@@ -33,26 +33,65 @@ public class UserController {
         this.config = config;
     }
 
+    /**
+     * Fetch some user-data by id.
+     * @param id the users' id.
+     * @return a JSON-String containing some userdata.
+     * @throws JSONException .
+     */
     @GetMapping("/getById")
     public String getUserById(int id) throws JSONException {
         return userService.getUserById(id);
     }
 
+    /**
+     * Fetch a users data by their login-name.
+     * @param u the login-name to fetch for.
+     * @return a JSON-String containing some userdata.
+     * @throws JSONException .
+     */
     @GetMapping("/getByLogin")
     public String getUserByLogin(@RequestParam String u) throws JSONException {
         return userService.getUserByLogin(u);
     }
 
+    /**
+     * Fetch stats for all users that match the given criteria.
+     * @param page the page of results.
+     * @param size the amount of results to fetch .
+     * @param search searches in name and id for matches.
+     * @param filterAbo only displays users of the given membership (leave empty for no filter).
+     * @param filterTyp only displays users of the given category (leave empty for no filter).
+     * @param sorter what to sort users by.
+     * @return a JSON-Array of JSON-Objects containing userdata.
+     * @throws JSONException .
+     */
     @GetMapping("/getAll")
     public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
         return userService.getAll(page, size, search, filterAbo, filterTyp, sorter);
     }
 
+    /**
+     * Fetch all users with tags associated with their profile.
+     * @param page the page of results.
+     * @param size the amount of results to fetch .
+     * @param search searches in name and id for matches.
+     * @param filterAbo only displays users of the given membership (leave empty for no filter).
+     * @param filterTyp only displays users of the given category (leave empty for no filter).
+     * @param sorter what to sort users by.
+     * @return a JSON-Array of JSON-Objects containing userdata.
+     * @throws JSONException .
+     */
     @GetMapping("/getAllWithTagsTest")
     public String getAllWithTagsTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String tag, String sorter) throws JSONException {
         return userService.getAllWithTagsTest(page, size, search, filterAbo, filterTyp, tag, sorter);
     }
 
+    /**
+     * Generate a stat-update mail for the specified user.
+     * @param userId the users' id.
+     * @return whether the generation was successful.
+     */
     @GetMapping("/generateMailSingle")
     public boolean generateMailSingle(int userId) {
         try {
@@ -64,32 +103,67 @@ public class UserController {
         }
     }
 
+    /**
+     * Fetch all stats for a single user.
+     * @param id the users' id.
+     * @return a JSON-Object containing detailed userdata.
+     * @throws JSONException .
+     */
     @GetMapping("/getAllSingleUser")
     public String getAllSingleUser(long id) throws JSONException {
         return userService.getAllSingleUser(id);
     }
 
-
+    /**
+     * Fetch stats of a user specific for newsletter usage.
+     * @param id the users' id.
+     * @return a JSON-Object containing userdata.
+     */
     @GetMapping("/getAllSingleUserForNewsletter")
     public String getAllSingleUserNewsletter(long id) {
         return userService.getAllSingleUserNewsletter(id);
     }
 
+    /**
+     * Fetch a users profile picture.
+     * @param id the users' id.
+     * @return the users profile-picture as bytes.
+     */
     @GetMapping("/profilePic")
     public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) {
         return userService.getProfilePic(id);
     }
 
+    /**
+     * Fetch data for the user-clicks chart.
+     * @param id the users' id.
+     * @param start the start of the time frame to show.
+     * @param end the end of the time frame to show.
+     * @return a JSON-String containing user-clicks-chart data.
+     * @throws JSONException .
+     */
     @GetMapping("/getUserClicksChartData")
     public String getUserClicksChartData(long id, String start, String end) throws JSONException {
         return userService.getUserClicksChartData(id, start, end);
     }
 
+    /**
+     * Fetches the total amount of events the user has registered.
+     * @param id the users' id.
+     * @return the amount of events as a String.
+     * @throws JSONException .
+     */
     @GetMapping("/getAmountOfEvents")
     public String getCountEvents(long id) throws JSONException {
         return userService.getCountEvents(id);
     }
 
+    /**
+     * Fetch posts by their type that were made by the user.
+     * @param id the users' id.
+     * @return a JSON-String containing post by their types with the users as author.
+     * @throws JSONException .
+     */
     @GetMapping("/getPostCountByType")
     public String getPostCountByType(long id) throws JSONException {
         return userService.getPostCountByType(id);
@@ -104,36 +178,78 @@ public class UserController {
         return userService.getAmountOfEventsCreatedYesterday(id);
     }
 
+    /**
+     * Fetch Events made by the user.
+     * @param page the page of results.
+     * @param size the amount of results.
+     * @param filter what Events shall be fetched.
+     * @param search a search in events, only displaying matching events.
+     * @param id the authors userid.
+     * @return a JSON-String containing Events with their stats.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     @GetMapping("/getEventsWithStatsAndId")
     public String getEventsWithStats(Integer page, Integer size,  String filter, String search, long id) throws JSONException, ParseException {
         return userService.getEventsWithStats(page, size, filter, search, id);
     }
 
+    /**
+     * Fetch a users stats.
+     * @param userId the user to fetch stats for.
+     * @return a JSON-String of userdata.
+     */
     @GetMapping("/{userId}")
     public UserStats getUserStats(@PathVariable("userId") Long userId) {
         return userService.getUserStats(userId);
     }
 
+    /**
+     * Fetch a users stats as string.
+     * @param id the user to fetch stats for.
+     * @return a JSON-String of userdata.
+     */
     @GetMapping("/getUserStats")
     public String getUserStat(@RequestParam Long id) throws JSONException {
         return userService.getUserStat(id);
     }
 
+    /**
+     * Fetch a users views broken down.
+     * @param id the users' id.
+     * @return a JSON-String of userdata.
+     * @throws JSONException .
+     */
     @GetMapping("/getViewsBrokenDown")
     public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
         return userService.getViewsBrokenDown(id);
     }
 
+    /**
+     * Fetch a users profile views averages by membership and post-posession.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     @GetMapping("/getUserProfileViewsAveragesByTypeAndPosts")
     public String getUserProfileViewsAveragesByTypeAndPosts() throws JSONException {
         return userService.getUserProfileViewsAveragesByTypeAndPosts();
     }
 
+    /**
+     * Fetch a users profile views averages by membership.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     @GetMapping("/getUserProfileAndPostViewsAveragesByType")
     public String getUserProfileAndPostViewsAveragesByType() throws JSONException {
         return userService.getUserProfileAndPostViewsAveragesByType();
     }
 
+    /**
+     * Fetch a users profile views averages by membership and post-possesions, skewed towards higher memberships.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     @GetMapping("/getUserProfileAndPostViewsAveragesByTypeSkewed")
     public String getUserProfileAndPostViewsAveragesByTypeSkewed() throws JSONException {
         return userService.getUserProfileAndPostViewsAveragesByTypeSkewed();
@@ -201,12 +317,20 @@ public class UserController {
         return userService.getUserAveragesByType();
     }
 
-
+    /**
+     * Fetch all clicks on posts of this user.
+     * @param uid the authors id to fetch for.
+     * @return total amount of clicks on this user's posts.
+     */
     @GetMapping("/getClickTotalOnPostsOfUser")
     public int getClickTotalOnPostsOfUser (int uid){
         return userService.getClickTotalOnPostsOfUser(uid);
     }
 
+    /**
+     * Fetches the account types of all users.
+     * @return a JSON-String containing the account types of all users as counts.
+     */
     @GetMapping("/getAccountTypeAll")
     public String getAccountTypeAll(){
         return userService.getAccountTypeAll();
@@ -232,7 +356,14 @@ public class UserController {
         return userService.getNewUsersAll();
     }
 
-
+    /**
+     * Fetch the full log of changes in memberships of this user.
+     * @param page the page of results.
+     * @param size the amount of results.
+     * @param userId the user to fetch for.
+     * @return a  String representation of all membership changes.
+     * @throws JSONException .
+     */
     @GetMapping("/getFullLog")
     public String getFullLog(int page, int size, String userId) throws JSONException {
         return userService.getFullLog(page, size, userId);
@@ -248,12 +379,22 @@ public class UserController {
         return userService.getType(id);
     }
 
-
+    /**
+     * Checks whether a user has a post.
+     * @param id the users' id.
+     * @return whether the user has authored a post.
+     */
     @GetMapping("/hasPost")
     public boolean hasPost(@RequestParam int id) {
         return userService.hasPost(id);
     }
 
+    /**
+     * Checks whether the user has posts in each specific post-type.
+     * @param id the users' id.
+     * @return a JSON-String containing whether each post-type has a post by this author.
+     * @throws JSONException .
+     */
     @GetMapping("/hasPostByType")
     public String hasPostByType(int id) throws JSONException {
         return userService.hasPostByType(id);
@@ -269,6 +410,10 @@ public class UserController {
         return userService.getPotentialByID(userId);
     }
 
+    /**
+     * Fetch how much of the anbieterprofilvervollständigung has been fulfilled on average globally.
+     * @return percentage.
+     */
     @GetMapping("/getPotentialPercentGlobal")
     public double getPotentialPercentGlobal(){
         return userService.getPotentialPercentGlobal();
@@ -284,12 +429,22 @@ public class UserController {
         return userService.getUserClicksPerDay(userId);
     }
 
+    /**
+     * Checks whether the tendency of profile views is growing or falling for this user.
+     * @param userId the users' id.
+     * @return whether the tendency is growth.
+     */
     @GetMapping("/tendencyUp")
     public Boolean tendencyUp(long userId) {
         return userService.tendencyUp(userId);
     }
 
-
+    /**
+     * Fetch this user's rankings in content and profile by group and total.
+     * @param id the users' id.
+     * @return a JSON-String of this user's rankings in content and profile views by group and total.
+     * @throws JSONException .
+     */
     @GetMapping("/getRankings")
     public String getRankings(long id) throws JSONException {
         return userService.getRankings(id);
@@ -328,7 +483,6 @@ public class UserController {
      *
      * @return Eine Map von Tags zu ihrem jeweiligen prozentualen Anteil an der Gesamtzahl der Benutzer.
      */
-
     @GetMapping("/userCountForAllTagsInPercentage")
     public String getUserCountForAllTagsInPercentageString() throws JSONException {
         return userService.getUserCountForAllTagsInPercentage().toString();
@@ -340,7 +494,6 @@ public class UserController {
      * @param userId Die ID des Benutzers, dessen Tag-Prozentsätze abgerufen werden sollen.
      * @return Eine Map von Tags zu ihrem jeweiligen prozentualen Anteil an der Gesamtzahl der Benutzer.
      */
-
     @GetMapping("/getPercentageForTagsByUserId")
     public String getPercentageForTagsByUserIdString(Long userId) throws JSONException {
         return userService.getPercentageForTagsByUserId(userId).toString();
@@ -370,25 +523,45 @@ public class UserController {
         return userService.getCompetitionByTags(userId).toString();
     }
 
-
+    /**
+     * Fetch all tags data for all users.
+     * @return a JSON-String containing all tag-data of user-profiles.
+     * @throws JSONException .
+     */
     @GetMapping("/getAllUserTagsData")
     public String getAllUserTagsDataFusion() throws JSONException {
         return userService.getAllUserTagsDataFusion();
     }
 
+    /**
+     * Fetches tags data for a single user.
+     * @param id the users' id to fetch for.
+     * @param sorter what to sort the data with.
+     * @return a JSON-String containing tags-data.
+     * @throws JSONException .
+     */
     @GetMapping("/getSingleUserTagsData")
     public String getSingleUserTagsData(long id, String sorter) throws JSONException {
         return userService.getSingleUserTagsData(id, sorter);
     }
 
+    /**
+     * Fetch the rankings of this user in their defined tags.
+     * @param id the users' id.
+     * @param sorter what to sort the rankings by.
+     * @return a JSON-String containing rankings by term.
+     * @throws JSONException .
+     */
     @GetMapping("/getRankingInTag")
     public String getRankingsInTagsForUserBySorter(long id, String sorter) throws JSONException {
         return userService.getRankingsInTagsForUserBySorter(id, sorter);
     }
 
-
-    //Aggregate Queries for profile tags
-
+    /**
+     * Count the users in the given tag.
+     * @param tag the tag to search in.
+     * @return amount of users with this tag.
+     */
     @GetMapping("/countUsersByTag")
     public Integer countUsersByTag(String tag) {
         return userService.countUsersByTag(tag);
@@ -427,21 +600,39 @@ public class UserController {
         return soziImp.impToJSON(soziImp.getMostImpressionsFromList(imps));
     }
 
+    /**
+     * Updates the user-rankings buffer table.
+     * @return whether the update was successful.
+     */
     @GetMapping("/updateUserRankingBuffer")
     public boolean updateUserRankingBuffer() {
         return userService.updateUserRankingBuffer();
     }
 
+    /**
+     * Fetches a JSON for all Users in Email-List.
+     * @return a JSON-String containing data on all mails to users.
+     * @throws JSONException .
+     */
     @GetMapping("/getJSONForEmailListAll")
     public String getJSONForEmailListAll() throws JSONException {
         return userService.getJSONForEmailListAll();
     }
 
+    /**
+     * Sends the stat-newsletters via the wordpress plugin.
+     * @return whether the sending worked.
+     */
     @GetMapping("/sendNewsletters")
     public boolean sendNewsletters() {
         return userService.sendNewsletters();
     }
 
+    /**
+     * Fetches the average redirects by profile membership.
+     * @return JSON-String containing the average redirects by profile membership.
+     * @throws JSONException .
+     */
     @GetMapping("/getAverageRedirectsByPlan")
     public String getAverageRedirectsByPlan() throws JSONException {return userService.getAverageRedirectsByPlan();}
 

@@ -12,6 +12,11 @@ public class SocialsService {
     @Autowired
     private IncomingSocialsRedirectsRepository incomingRepo;
 
+    /**
+     * Fetch the sum of all incoming social media redirects.
+     * @return JSON-String of social media platform to redirect-count.
+     * @throws JSONException .
+     */
     public String getSumsOfIncoming() throws JSONException {
         JSONObject json = new JSONObject();
 

@@ -13,6 +13,11 @@ public class SocialsController {
     @Autowired
     SocialsService socialsService;
 
+    /**
+     * Fetch the sum of all incoming social media redirects.
+     * @return JSON-String of social media platform to redirect-count.
+     * @throws JSONException .
+     */
     @GetMapping("/getSumAllTime")
     public String getSumAllTime() throws JSONException {return socialsService.getSumsOfIncoming();}
 }

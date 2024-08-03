@@ -22,20 +22,42 @@ public class SystemLoadController {
         this.systemLoadService = systemLoadService;
     }
 
+    /**
+     * Fetches the current hour of the system.
+     * @return the hour as int.
+     */
     @GetMapping("/getHour")
     public int getHour() {
         return systemLoadService.getHour();
     }
 
+    /**
+     * Fetch average System-Load of memory and cpu.
+     * @return a String representation of cpu and memory usage on average.
+     */
     @GetMapping("/average")
     public String getAverageLoad() {return systemLoadService.getAverageLoad();}
 
+    /**
+     * Fetch the current System-Load (memnory and cpu)
+     * @return a String representation of cpu and memory usage on average.
+     * @throws JSONException .
+     */
     @GetMapping("/current")
     public String getCurrentLoad() throws JSONException {return systemLoadService.getCurrentLoad();}
 
+    /**
+     * Fetch the highest system load for memory and cpu.
+     * @return a String representation of cpu and memory usage on average.
+     */
     @GetMapping("/peak")
     public String getPeakLoad() {return systemLoadService.getPeakLoad();}
 
+    /**
+     * Fetch a complete representation of system load data.
+     * @return a JSON-String representation of cpu and memory usage.
+     * @throws JSONException .
+     */
     @GetMapping("/systemLive")
     public String getComplete() throws JSONException {return systemLoadService.getComplete();}
 

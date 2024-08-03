@@ -61,16 +61,29 @@ public class UniStatController {
     @GetMapping("getCallupByCategoryDate")
     public String getCallupByCategoryDaily(String date) throws ParseException, JSONException {return uniService.getCallupByCategoryDaily(date);}
 
-
+    /**
+     * Fetches a callup of all categories since beginning of tracking.
+     * @return a JSON-String containing categories, clicks in the category and visitors in the category.
+     * @throws JSONException -
+     */
     @GetMapping("getCallupByCategoryAllTime")
     public String getCallupByCategoryAllTime() throws JSONException {return uniService.getCallupByCategoryAllTime();}
 
-
-
+    /**
+     * Fetch detailed data for Ratgeber views.
+     * @param date the date to fetch details for.
+     * @return a JSON-String containing detailed Ratgeber_Views.
+     * @throws ParseException .
+     * @throws JSONException .
+     */
     @GetMapping("/getRatgeberDetailedDaily")
     public String getRatgeberDetailedByDate(String date) throws ParseException, JSONException {return uniService.getRatgeberDetailedByDate(date);}
 
-
+    /**
+     * Fetch detailed data for Ratgeber views since beginning of tracking.
+     * @return a JSON-String containing detailed Ratgeber_Views since beginning of tracking.
+     * @throws JSONException .
+     */
     @GetMapping("/getRatgeberDetailedAllTime")
     public String getRatgeberDetailedAllTime() throws JSONException {return uniService.getRatgeberDetailedAllTime();}
 
@@ -101,9 +114,17 @@ public class UniStatController {
     @GetMapping("/getTop5ByClicksAndDaysBackAndType")
     public String getTop5ByClicks(@RequestParam String type, @RequestParam int daysBack) throws JSONException {return uniService.getTop5ByClicks(type, daysBack);}
 
+    /**
+     * Fetch posts mapped by their type.
+     * @return a JSON-String mapping posts to their types.
+     */
     @GetMapping("/getPostsByType")
     public String getPostsByType() {return uniService.getPostsByType();}
 
+    /**
+     * Fetch posts mapped by their type for yesterday.
+     * @return a JSON-String mapping posts to their types.
+     */
     @GetMapping("/getPostsByTypeYesterday")
     public String getPostsByTypeYesterday(){return uniService.getPostsByTypeYesterday();}
 

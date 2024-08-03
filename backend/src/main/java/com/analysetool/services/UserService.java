@@ -208,6 +208,10 @@ public class UserService {
         //sendNewsletters();
     }
 
+    /**
+     * Sends the stat-newsletters via the wordpress plugin.
+     * @return whether the sending worked.
+     */
     public boolean sendNewsletters() {
         try {
             HttpClient httpClient = HttpClients.createDefault();
@@ -233,6 +237,11 @@ public class UserService {
         }
     }
 
+    /**
+     * Generate a stat-update mail for the specified user.
+     * @param userId the users' id.
+     * @return whether the generation was successful.
+     */
     public void generateMailSingle(int userId) throws JSONException {
         WPUser user = userRepo.findById((long) userId).get();
         JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
@@ -335,6 +344,13 @@ public class UserService {
         return content.toString();
     }
 
+    /**
+     * Fetches tags data for a single user.
+     * @param id the users' id to fetch for.
+     * @param sorter what to sort the data with.
+     * @return a JSON-String containing tags-data.
+     * @throws JSONException .
+     */
     public String getSingleUserTagsData(long id, String sorter) throws JSONException {
         JSONObject ranking = new JSONObject(getRankingsInTagsForUserBySorter(id, sorter));
         JSONObject percentage = getPercentageForTagsByUserId(id);
@@ -365,6 +381,13 @@ public class UserService {
 
     }
 
+    /**
+     * Fetch the rankings of this user in their defined tags.
+     * @param id the users' id.
+     * @param sorter what to sort the rankings by.
+     * @return a JSON-String containing rankings by term.
+     * @throws JSONException .
+     */
     public String getRankingsInTagsForUserBySorter(long id, String sorter) throws JSONException {
         Map<String, String> competition = getCompetitionByTags(id);
         String thisCompanyName = userRepo.getDisplayNameById(id);
@@ -393,6 +416,12 @@ public class UserService {
 
     }
 
+    /**
+     * Berechnet den prozentualen Anteil der Anbieter für die Tags eines spezifischen Benutzers.
+     *
+     * @param userId Die ID des Benutzers, dessen Tag-Prozentsätze abgerufen werden sollen.
+     * @return Eine Map von Tags zu ihrem jeweiligen prozentualen Anteil an der Gesamtzahl der Benutzer.
+     */
     public JSONObject getPercentageForTagsByUserId(Long userId) throws JSONException {
         JSONObject tagPercentages = new JSONObject();
         Optional<String> tagData = getTags(userId, getTypeProfileTags(Math.toIntExact(userId)));
@@ -410,6 +439,13 @@ public class UserService {
         return tagPercentages;
     }
 
+    /**
+     * Ruft eine Zuordnung von Tags zu konkurrierenden Benutzern basierend auf den Tags eines gegebenen Benutzers ab.
+     * Diese Methode findet konkurrierende Benutzer für jeden Tag. Konkurrierende Benutzer werden anhand ihrer Anzeigenamen identifiziert.
+     *
+     * @param userId Die ID des Benutzers, dessen Tags verwendet werden, um Konkurrenz zu finden.
+     * @return Eine Map, bei der Schlüssel Tags und Werte Zeichenketten sind, die Listen von Anzeigenamen konkurrierender Benutzer darstellen.
+     */
     public Map<String,String> getCompetitionByTags(Long userId){
         Map<String, String> tagsWithCompetingUsers = new HashMap<>();
         Optional<String> tagData = getTags(userId, getTypeProfileTags(Math.toIntExact(userId)));
@@ -473,7 +509,7 @@ public class UserService {
 
     }
 
-    public String getTypeProfileTags(int id) {
+    private String getTypeProfileTags(int id) {
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
             if (wpUserMeta.contains("customer")) return "none";
@@ -489,7 +525,7 @@ public class UserService {
         return "none";
     }
 
-    public double getUserCountAsPercentageForSingleTag(String tag) {
+    private double getUserCountAsPercentageForSingleTag(String tag) {
         int totalUsersWithTag = getTotalCountOfUsersWithTags();
         int countForTag = countUsersByTag(tag);
 
@@ -500,7 +536,7 @@ public class UserService {
         return (double) countForTag / totalUsersWithTag * 100;
     }
 
-    public List<Long> getUserIdsByTag(String tag) {
+    private List<Long> getUserIdsByTag(String tag) {
         List<Long> list = new ArrayList<>();
         list.addAll(wpUserMetaRepository.getUserIdsByTagBasis("\"" + tag + "\""));
         list.addAll(wpUserMetaRepository.getUserIdsByTagBasisPlus("\"" + tag + "\""));
@@ -509,15 +545,25 @@ public class UserService {
         return list;
     }
 
-    public Integer getTotalCountOfUsersWithTags() {
+    private Integer getTotalCountOfUsersWithTags() {
         return wpUserMetaRepository.getTotalCountOfUsersWithTagBasis() + wpUserMetaRepository.getTotalCountOfUsersWithTagBasisPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPlus() + wpUserMetaRepository.getTotalCountOfUsersWithTagPremium();
     }
 
+    /**
+     * Count the users in the given tag.
+     * @param tag the tag to search in.
+     * @return amount of users with this tag.
+     */
     public Integer countUsersByTag(String tag) {
         return wpUserMetaRepository.countUsersByTagBasis("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagBasisPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPlus("\"" + tag + "\"") + wpUserMetaRepository.countUsersByTagPremium("\"" + tag + "\"");
     }
 
-
+    /**
+     * Fetch all stats for a single user.
+     * @param id the users' id.
+     * @return a JSON-Object containing detailed userdata.
+     * @throws JSONException .
+     */
     public String getAllSingleUser(long id) throws JSONException {
         JSONObject obj = new JSONObject();
         WPUser user = userRepo.findById(id).isPresent() ? userRepo.findById(id).get() : null;
@@ -648,6 +694,10 @@ public class UserService {
         }
     }
 
+    /**
+     * @param userId the user you want to fetch data for.
+     * @return a double representing the amount of clicks a user had for each day of tracking (arithmetic average) or zero if user has not been tracked.
+     */
     public double getUserClicksPerDay(long userId) {
         int countDays = getDaysSinceTracking(userId);
         long totalClicks = 0;
@@ -665,6 +715,11 @@ public class UserService {
         }
     }
 
+    /**
+     * Checks whether the tendency of profile views is growing or falling for this user.
+     * @param userId the users' id.
+     * @return whether the tendency is growth.
+     */
     public Boolean tendencyUp(long userId) {
         int count = 7;
         int clicks = 0;
@@ -695,7 +750,7 @@ public class UserService {
     }
 
 
-    public double getPotentialPercent(int userId) throws JSONException {
+    private double getPotentialPercent(int userId) throws JSONException {
         JSONObject json = new JSONObject(getPotentialByID(userId));
 
         int countFulfilled = 0; int countPossible = 0;
@@ -708,6 +763,10 @@ public class UserService {
         return (double) countFulfilled / countPossible;
     }
 
+    /**
+     * @param id user id to fetch an account type for.
+     * @return "basis" "plus" "premium" "sponsor" "basis-plus" "admin" "none"
+     */
     public String getType(int id) {
         if (wpUserMetaRepository.existsByUserId((long) id)){
             String wpUserMeta = wpUserMetaRepository.getWPUserMetaValueByUserId((long) id);
@@ -739,6 +798,10 @@ public class UserService {
         }
     }
 
+    /**
+     * @param userId  id des users.
+     * @return a collection of maximum and actual values for a user's completion status of their profile.
+     */
     public String getPotentialByID(int userId) throws JSONException {
 
         String type = this.getType(userId);
@@ -863,19 +926,19 @@ public class UserService {
         return json.toString();
     }
 
-    public int getRankingInTypeProfileViews(long id) {
+    private int getRankingInTypeProfileViews(long id) {
         return rankingGroupProfileRepo.getRankById(id).isPresent() ? rankingGroupProfileRepo.getRankById(id).get() : -1;
     }
 
-    public int getRankingInTypeContentViews(long id) {
+    private int getRankingInTypeContentViews(long id) {
         return rankingGroupContentRepo.getRankById(id).isPresent() ? rankingGroupContentRepo.getRankById(id).get() : -1;
     }
 
-    public int getRankingTotalProfileViews(long id) {
+    private int getRankingTotalProfileViews(long id) {
         return rankingTotalProfileRepo.getRankById(id).isPresent() ? rankingTotalProfileRepo.getRankById(id).get() : -1;
     }
 
-    public int getRankingTotalContentViews(long id)  {
+    private int getRankingTotalContentViews(long id)  {
         return rankingTotalContentRepo.getRankById(id).isPresent() ? rankingTotalContentRepo.getRankById(id).get() : -1;
     }
 
@@ -984,7 +1047,17 @@ public class UserService {
         return new JSONObject().put("users", response).put("count", list.size()).toString();
     }
 
-
+    /**
+     * Fetch all users with tags associated with their profile.
+     * @param page the page of results.
+     * @param size the amount of results to fetch .
+     * @param search searches in name and id for matches.
+     * @param filterAbo only displays users of the given membership (leave empty for no filter).
+     * @param filterTyp only displays users of the given category (leave empty for no filter).
+     * @param sorter what to sort users by.
+     * @return a JSON-Array of JSON-Objects containing userdata.
+     * @throws JSONException .
+     */
     public String getAllWithTagsTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String tag, String sorter) throws JSONException {
         List<WPUser> list;
 
@@ -1080,6 +1153,12 @@ public class UserService {
         return new JSONObject().put("users", response).put("count", list.size()).toString();
     }
 
+    /**
+     * Fetch some user-data by id.
+     * @param id the users' id.
+     * @return a JSON-String containing some userdata.
+     * @throws JSONException .
+     */
     public String getUserById(int id) throws JSONException {
         JSONObject obj = new JSONObject();
         WPUser user = userRepo.findById((long) id).orElseThrow();
@@ -1092,6 +1171,11 @@ public class UserService {
         return obj.toString();
     }
 
+    /**
+     * Checks the given users access level (admin | mod | premium).
+     * @param userId the users' id.
+     * @return the access-level (admin | mod | premium).
+     */
     public String getAccessLevel(long userId) {
         if(getType((int) userId).equals("admin")) {
             return "admin";
@@ -1104,6 +1188,12 @@ public class UserService {
         }
     }
 
+    /**
+     * Fetch a users data by their login-name.
+     * @param u the login-name to fetch for.
+     * @return a JSON-String containing some userdata.
+     * @throws JSONException .
+     */
     public String getUserByLogin(@RequestParam String u) throws JSONException {
         JSONObject obj = new JSONObject();
         var user = userRepo.findByLogin(u);
@@ -1116,6 +1206,11 @@ public class UserService {
         return obj.toString();
     }
 
+    /**
+     * Fetch stats of a user specific for newsletter usage.
+     * @param id the users' id.
+     * @return a JSON-Object containing userdata.
+     */
     public String getAllSingleUserNewsletter(long id) {
         JSONObject obj = new JSONObject();
         try {
@@ -1134,6 +1229,11 @@ public class UserService {
         return obj.toString();
     }
 
+    /**
+     * Fetch a users profile picture.
+     * @param id the users' id.
+     * @return the users profile-picture as bytes.
+     */
     public ResponseEntity<byte[]> getProfilePic(@RequestParam long id) {
 
         try {
@@ -1152,7 +1252,14 @@ public class UserService {
         }
     }
 
-
+    /**
+     * Fetch data for the user-clicks chart.
+     * @param id the users' id.
+     * @param start the start of the time frame to show.
+     * @param end the end of the time frame to show.
+     * @return a JSON-String containing user-clicks-chart data.
+     * @throws JSONException .
+     */
     public String getUserClicksChartData(long id, String start, String end) throws JSONException {
         java.sql.Date startDate = java.sql.Date.valueOf(start);
         java.sql.Date endDate  = java.sql.Date.valueOf(end);
@@ -1259,6 +1366,12 @@ public class UserService {
         return json.toString();
     }
 
+    /**
+     * Fetch posts by their type that were made by the user.
+     * @param id the users' id.
+     * @return a JSON-String containing post by their types with the users as author.
+     * @throws JSONException .
+     */
     public String getPostCountByType(long id) throws JSONException {
         List<Post> posts = postRepo.findByAuthorPageable(id, "", PageRequest.of(0, postService.getCountTotalPosts()));
 
@@ -1298,6 +1411,10 @@ public class UserService {
         return json.toString();
     }
 
+    /**
+     *
+     * @return a List of Strings, each starting with c| (current) or u| (upcoming) and then the name of the event for all events created within the last day, by the given User.
+     */
     public List<String> getAmountOfEventsCreatedYesterday(long id) {
         List<String> events = new ArrayList<>();
         List<Events> allEvents = eventsRepo.getAllByOwnerID(id);
@@ -1318,6 +1435,17 @@ public class UserService {
         return events;
     }
 
+    /**
+     * Fetch Events made by the user.
+     * @param page the page of results.
+     * @param size the amount of results.
+     * @param filter what Events shall be fetched.
+     * @param search a search in events, only displaying matching events.
+     * @param id the authors userid.
+     * @return a JSON-String containing Events with their stats.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
     public String getEventsWithStats(Integer page, Integer size,  String filter, String search, long id) throws JSONException, ParseException {
         List<Post> list;
 
@@ -1336,10 +1464,20 @@ public class UserService {
         return new JSONArray(stats).toString();
     }
 
+    /**
+     * Fetch a users stats.
+     * @param userId the user to fetch stats for.
+     * @return a JSON-String of userdata.
+     */
     public UserStats getUserStats(@PathVariable("userId") Long userId) {
         return userStatsRepository.findByUserId(userId);
     }
 
+    /**
+     * Fetch a users stats as string.
+     * @param id the user to fetch stats for.
+     * @return a JSON-String of userdata.
+     */
     public String getUserStat(@RequestParam Long id) throws JSONException {
         JSONObject obj = new JSONObject();
         UserStats user = userStatsRepository.findByUserId(id);
@@ -1347,6 +1485,12 @@ public class UserService {
         return obj.toString();
     }
 
+    /**
+     * Fetch a users views broken down.
+     * @param id the users' id.
+     * @return a JSON-String of userdata.
+     * @throws JSONException .
+     */
     public String getViewsBrokenDown(@RequestParam Long id) throws JSONException {
         long viewsBlog = 0;
         long viewsArtikel = 0;
@@ -1387,6 +1531,11 @@ public class UserService {
 
     }
 
+    /**
+     * Fetch a users profile views averages by membership and post-posession.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     public String getUserProfileViewsAveragesByTypeAndPosts() throws JSONException {
         JSONArray array = new JSONArray();
         array.put(new JSONObject(getUserAveragesWithoutPosts()));
@@ -1395,6 +1544,11 @@ public class UserService {
         return array.toString();
     }
 
+    /**
+     * Fetch a users profile views averages by membership.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     public String getUserProfileAndPostViewsAveragesByType() throws JSONException {
         JSONArray array = new JSONArray();
         array.put(new JSONObject(getUserAveragesWithPostsWithoutPostClicks()));
@@ -1402,6 +1556,11 @@ public class UserService {
         return array.toString();
     }
 
+    /**
+     * Fetch a users profile views averages by membership and post-possesions, skewed towards higher memberships.
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     public String getUserProfileAndPostViewsAveragesByTypeSkewed() throws JSONException {
         JSONObject json = new JSONObject();
 
@@ -1423,7 +1582,11 @@ public class UserService {
         return json.toString();
     }
 
-
+    /**
+     * This accounts for ONLY users that do not have posts, counting ONLY their profile views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
     public String getUserAveragesWithoutPosts() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();
@@ -1451,6 +1614,11 @@ public class UserService {
         return averages.toString();
     }
 
+    /**
+     * This accounts for all users, whether they have posts or not and ONLY counts profile views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
     public String getUserAveragesByType() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();
@@ -1538,10 +1706,20 @@ public class UserService {
         return averages.toString();
     }
 
+    /**
+     * Checks whether a user has a post.
+     * @param id the users' id.
+     * @return whether the user has authored a post.
+     */
     public boolean hasPost(@RequestParam int id) {
         return !postRepo.findByAuthor(id).isEmpty();
     }
 
+    /**
+     * Checks whether the given user has moderator capabilities.
+     * @param userId the users' id.
+     * @return whether the user has moderator capabilities.
+     */
     public boolean isModerator(long userId) {
         if(wpUserMetaRepository.existsByUserId(userId)) {
             return wpUserMetaRepository.getWPUserMetaValueByUserId(userId).contains("editor");
@@ -1549,7 +1727,7 @@ public class UserService {
         return false;
     }
 
-    public void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews) throws JSONException {
+    private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews) throws JSONException {
         switch(getType(Math.toIntExact((u.getId())))) {
             case "basis" -> {
                 if(profileViews) {
@@ -1584,7 +1762,7 @@ public class UserService {
         }
     }
 
-    public void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews, boolean postViews) throws JSONException {
+    private void addCountAndProfileViewsByType(JSONObject counts, JSONObject clicks, WPUser u, boolean profileViews, boolean postViews) throws JSONException {
         switch(getType(Math.toIntExact((u.getId())))) {
             case "basis" -> {
                 if(profileViews) {
@@ -1634,7 +1812,7 @@ public class UserService {
         }
     }
 
-    public void buildAveragesFromCountsAndClicks(JSONObject counts, JSONObject clicks, JSONObject averages) throws JSONException {
+    private void buildAveragesFromCountsAndClicks(JSONObject counts, JSONObject clicks, JSONObject averages) throws JSONException {
         if(counts.getInt("basis") != 0) {
             averages.put("basis", clicks.getInt("basis") / counts.getInt("basis"));
         } else {
@@ -1657,6 +1835,11 @@ public class UserService {
         }
     }
 
+    /**
+     * Fetch all clicks on posts of this user.
+     * @param uid the authors id to fetch for.
+     * @return total amount of clicks on this user's posts.
+     */
     public int getClickTotalOnPostsOfUser (int uid){
         List<Post> posts= postRepo.findByAuthor(uid);
         int clicks = 0;
@@ -1669,6 +1852,11 @@ public class UserService {
         return clicks;
     }
 
+    /**
+     * Fetches a JSON for all Users in Email-List.
+     * @return a JSON-String containing data on all mails to users.
+     * @throws JSONException .
+     */
     public String getJSONForEmailListAll() throws JSONException {
         JSONArray array = new JSONArray();
         for(StatMails mail : statMailsRepo.findAll()) {
@@ -1684,6 +1872,12 @@ public class UserService {
         return array.toString();
     }
 
+    /**
+     * Method finds all dates user had views in, and adds the date and the views on that day into one list each.
+     * @param userId the id of the user you are fetching for.
+     * @return a JSON-String of a JSON-Object containing JSON-Array-Strings under the labels "dates" and "views".
+     * @throws JSONException .
+     */
     public String getProfileViewsByTime(Long userId) throws JSONException {
         JSONArray dates = new JSONArray();
         JSONArray views = new JSONArray();
@@ -1704,6 +1898,11 @@ public class UserService {
         return new JSONObject().put("dates", dates.toString()).put("views", views.toString()).toString();
     }
 
+    /**
+     * This accounts for users with and without posts, but does count post-views towards their averages. Hence, users with posts will seem better here.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type.
+     * @throws JSONException .
+     */
     public String getUserAveragesWithPostClicks() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();
@@ -1729,6 +1928,11 @@ public class UserService {
         return averages.toString();
     }
 
+    /**
+     * This accounts for ONLY users that have posts, counting ONLY their profile views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type. With a debug-label.
+     * @throws JSONException .
+     */
     public String getUserAveragesWithPostsWithoutPostClicksDebug() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();
@@ -1755,6 +1959,11 @@ public class UserService {
         return averages + " ProfileViews";
     }
 
+    /**
+     * This accounts for ONLY users that have posts, counting ONLY their post's views.
+     * @return a JSON-String containing averages of profile-views keyed by their Account-Type. With a debug-label.
+     * @throws JSONException .
+     */
     public String getUserAveragesWithPostsOnlyPostClicksDebug() throws JSONException {
         JSONObject counts = new JSONObject();
         JSONObject clicks = new JSONObject();
@@ -1780,6 +1989,10 @@ public class UserService {
         return averages + " -PostClicks";
     }
 
+    /**
+     * Fetches the account types of all users.
+     * @return a JSON-String containing the account types of all users as counts.
+     */
     public String getAccountTypeAll(){
         HashMap<String, Integer> counts = new HashMap<>();
 
@@ -1811,6 +2024,10 @@ public class UserService {
         return new JSONObject(counts).toString();
     }
 
+    /**
+     *
+     * @return ein JSON-String, der die Anzahl der Accounts pro Account-Typ enthält.
+     */
     public String getAccTypes() {
         HashMap<String, Long> map = new HashMap<>();
         UniversalStats uni = uniRepo.findAll().get(uniRepo.findAll().size() -2);
@@ -1826,6 +2043,11 @@ public class UserService {
         return new JSONObject(map).toString();
     }
 
+    /**
+     * Fetches a representation of all user-plan changes within the last week.
+     * @return a JSON-Object containing Lists of Strings and counts of items for those lists.
+     * @throws JSONException .
+     */
     public String getNewUsersAll() throws JSONException {
         JSONObject obj = new JSONObject();
 
@@ -1942,6 +2164,14 @@ public class UserService {
         return total;
     }
 
+    /**
+     * Fetch the full log of changes in memberships of this user.
+     * @param page the page of results.
+     * @param size the amount of results.
+     * @param userId the user to fetch for.
+     * @return a  String representation of all membership changes.
+     * @throws JSONException .
+     */
     public String getFullLog(int page, int size, String userId) throws JSONException {
 
         JSONArray array = new JSONArray();
@@ -1967,6 +2197,12 @@ public class UserService {
         return array.toString();
     }
 
+    /**
+     * Checks whether the user has posts in each specific post-type.
+     * @param id the users' id.
+     * @return a JSON-String containing whether each post-type has a post by this author.
+     * @throws JSONException .
+     */
     public String hasPostByType(int id) throws JSONException {
         JSONObject jsonTypes = new JSONObject();
         boolean news = false, artikel = false, blog = false, podcast = false, whitepaper= false;
@@ -1988,6 +2224,10 @@ public class UserService {
         return jsonTypes.toString();
     }
 
+    /**
+     * Fetch how much of the anbieterprofilvervollständigung has been fulfilled on average globally.
+     * @return percentage.
+     */
     public double getPotentialPercentGlobal(){
         List<WPUser> users = userRepo.findAll();
         int countUsers = users.size();
@@ -2001,6 +2241,12 @@ public class UserService {
         return potentialPercentCollector / countUsers;
     }
 
+    /**
+     * Fetch this user's rankings in content and profile by group and total.
+     * @param id the users' id.
+     * @return a JSON-String of this user's rankings in content and profile views by group and total.
+     * @throws JSONException .
+     */
     public String getRankings(long id) throws JSONException {
         JSONObject obj = new JSONObject();
         obj.put("rankingContent", getRankingTotalContentViews(id));
@@ -2010,6 +2256,19 @@ public class UserService {
         return obj.toString();
     }
 
+    /**
+     * Gibt die verteilten Ansichten (Views) eines Benutzers über die letzten 24 Stunden als JSON-String zurück.
+     * Die Methode berechnet die Ansichten basierend auf den Daten der letzten zwei Tage (basierend auf uniId)
+     * für den angegebenen Benutzer (userId). Für jede Stunde der letzten 24 Stunden werden die Ansichten ermittelt.
+     * Falls für eine bestimmte Stunde keine Daten vorhanden sind, wird der Wert 0 angenommen.
+     *
+     * @param userId   Die ID des Benutzers, für den die Ansichten abgerufen werden sollen.
+     * @param daysback Gibt an, wie viele Tage zurückliegend die Daten berücksichtigt werden sollen.
+     *                 Ein Wert von 0 bedeutet, dass die Daten für heute und gestern berücksichtigt werden.
+     * @return Ein JSON-String, der eine Map darstellt, wobei jeder Schlüssel eine Stunde (0-23) und jeder Wert
+     *         die Anzahl der Ansichten (Views) für diese Stunde ist. Das Format ist {"Stunde": Ansichten, ...}.
+     * @throws JsonProcessingException Wenn beim Verarbeiten der Daten zu einem JSON-String ein Fehler auftritt.
+     */
     public String getUserViewsDistributedByHours(@RequestParam Long userId,@RequestParam int daysback) throws JsonProcessingException {
         int latestUniId = uniRepo.getLatestUniStat().getId() - daysback;
         int previousUniId = latestUniId - 1;
@@ -2034,28 +2293,6 @@ public class UserService {
 
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(hourlyViews);
-    }
-
-
-    private Map<Long, Double> processAndConvertToDouble(String performanceData) {
-        Map<Long, Double> performanceScores = new HashMap<>();
-        // Entfernen der Anfangs- und Endklammern und Aufteilen der Einträge
-        String[] entries = performanceData.substring(1, performanceData.length() - 1).split(", ");
-
-        for (String entry : entries) {
-            String[] parts = entry.split("=");
-            if (parts.length == 2) {
-                try {
-                    Long id = Long.parseLong(parts[0].trim());
-                    Double score = Double.parseDouble(parts[1].trim());
-                    performanceScores.put(id, score);
-                } catch (NumberFormatException ignored) {
-
-                }
-            }
-        }
-
-        return performanceScores;
     }
 
     /**
@@ -2086,6 +2323,12 @@ public class UserService {
         return list;
     }
 
+    /**
+     * Fetch all tags for a specific user, set for a specific membership.
+     * @param userId the users' id.
+     * @param type the membership to fetch for.
+     * @return a php-array of all tags the user has set for this membership.
+     */
     public Optional<String> getTags(long userId, String type) {
         switch (type) {
             case "basis" -> {
@@ -2104,6 +2347,10 @@ public class UserService {
         return Optional.empty();
     }
 
+    /**
+     * Fetch all users' ids that have set tags.
+     * @return a list of user ids.
+     */
     public List<Long> getAllUserIdsWithTags() {
         List<Long> list = new ArrayList<>();
         list.addAll(wpUserMetaRepository.getAllUserIdsWithTagsBasis());
@@ -2113,6 +2360,11 @@ public class UserService {
         return list;
     }
 
+    /**
+     * Fetch how many users have set each tag.
+     * @return a JSON-Object mapping tags to their counts.
+     * @throws JSONException .
+     */
     public JSONObject getUserCountForAllTags() throws JSONException {
         List<String> allTags = getAllUserTagRowsInList(getAllUserIdsWithTags());
         List<List<String>> decryptedAndCleanedTags= decryptTagsStringInList(allTags);
@@ -2131,6 +2383,11 @@ public class UserService {
         return json;
     }
 
+    /**
+     * Fetches all User-Tags for all memberships, for all users in list.
+     * @param list a list of user-ids.
+     * @return a list of all tags of all users in list.
+     */
     public List<String> getAllUserTagRowsInList(List<Long> list) {
         List<String> listOfTags = new ArrayList<>();
         listOfTags.addAll(wpUserMetaRepository.getAllUserTagRowsInListBasis(list));
@@ -2140,6 +2397,11 @@ public class UserService {
         return listOfTags;
     }
 
+    /**
+     * Berechnet den prozentualen Anteil der Anbieter für alle Tags.
+     *
+     * @return Eine Map von Tags zu ihrem jeweiligen prozentualen Anteil an der Gesamtzahl der Benutzer.
+     */
     public JSONArray getUserCountForAllTagsInPercentage() throws JSONException {
         // Gesamtzahl der Benutzer mit mindestens einem Tag ermitteln
         int totalUsersWithTag = getTotalCountOfUsersWithTags();
@@ -2176,6 +2438,11 @@ public class UserService {
         return new JSONArray(array);
     }
 
+    /**
+     * Fetch all tags data for all users.
+     * @return a JSON-String containing all tag-data of user-profiles.
+     * @throws JSONException .
+     */
     public String getAllUserTagsDataFusion() throws JSONException {
         JSONObject json = getUserCountForAllTags();
         var jsonKeys = json.keys();
@@ -2188,6 +2455,10 @@ public class UserService {
         return array.toString();
     }
 
+    /**
+     * Updates the user-rankings buffer table.
+     * @return whether the update was successful.
+     */
     public boolean updateUserRankingBuffer() {
         try {
             updateRanksTotal();
@@ -2204,6 +2475,9 @@ public class UserService {
         return true;
     }
 
+    /**
+     * Updates all rankings in group (as opposed to total).
+     */
     public void updateRankGroups() {
 
         //Reset all
@@ -2246,6 +2520,9 @@ public class UserService {
         }
     }
 
+    /**
+     * Updates all rankings in total (as opposed to group).
+     */
     public void updateRanksTotal() {
         if(!rankingTotalContentRepo.findAll().isEmpty()) {
             rankingTotalContentRepo.deleteAll();
@@ -2280,6 +2557,11 @@ public class UserService {
         }
     }
 
+    /**
+     * Fetches the average redirects by profile membership.
+     * @return JSON-String containing the average redirects by profile membership.
+     * @throws JSONException .
+     */
     public String getAverageRedirectsByPlan() throws JSONException {
         JSONObject obj = new JSONObject();
         for(String type : Constants.getInstance().getListOfUserTypesDirty()) {

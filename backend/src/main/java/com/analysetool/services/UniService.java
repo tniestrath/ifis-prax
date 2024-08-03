@@ -362,7 +362,11 @@ public class UniService {
         return obj.toString();
     }
 
-
+    /**
+     * Fetches a callup of all categories since beginning of tracking.
+     * @return a JSON-String containing categories, clicks in the category and visitors in the category.
+     * @throws JSONException -
+     */
     public String getCallupByCategoryAllTime() throws JSONException {
         List<String> labelsForCategory = new ArrayList<>();
 
@@ -455,9 +459,13 @@ public class UniService {
         return obj.toString();
     }
 
-
-
-
+    /**
+     * Fetch detailed data for Ratgeber views.
+     * @param date the date to fetch details for.
+     * @return a JSON-String containing detailed Ratgeber_Views.
+     * @throws ParseException .
+     * @throws JSONException .
+     */
     public String getRatgeberDetailedByDate(String date) throws ParseException, JSONException {
         List<String> labelsForCategory = new ArrayList<>();
 
@@ -484,8 +492,11 @@ public class UniService {
         return obj.toString();
     }
 
-
-
+    /**
+     * Fetch detailed data for Ratgeber views since beginning of tracking.
+     * @return a JSON-String containing detailed Ratgeber_Views since beginning of tracking.
+     * @throws JSONException .
+     */
     public String getRatgeberDetailedAllTime() throws JSONException {
         List<String> labelsForCategory = new ArrayList<>();
 
@@ -721,14 +732,20 @@ public class UniService {
         return top5JsonArray.toString();
     }
 
-
+    /**
+     * Fetch posts mapped by their type.
+     * @return a JSON-String mapping posts to their types.
+     */
     public String getPostsByType() {
         HashMap<String, Integer> map = new HashMap<>();
         UniversalStats uniStat = uniRepo.getLatestUniStat();
         return makeTypeMap(map, uniStat);
     }
 
-
+    /**
+     * Fetch posts mapped by their type for yesterday.
+     * @return a JSON-String mapping posts to their types.
+     */
     public String getPostsByTypeYesterday(){
         HashMap<String, Integer> map = new HashMap<>();
         UniversalStats uniStat = uniRepo.getSecondLastUniStats().get(1);
@@ -745,10 +762,6 @@ public class UniService {
         return new JSONObject(map).toString();
     }
 
-/**
- * Provides conversion rate calculation APIs for different subscription types without including blocked IPs in the count.
- * Each method calculates the conversion rate based on the difference in subscription counts (of various types) between today and yesterday, divided by the count of unique IPs accessed today after excluding blocked IPs.
- */
 
     /**
      * Calculates and returns the conversion rate for non-subscribers.
@@ -797,7 +810,6 @@ public class UniService {
 
         return (double)noSubDiffTodayYesterday/uniqueIps.size();
     }
-
 
     /**
      * Calculates and returns the conversion rate for plus subscribers.
@@ -894,9 +906,6 @@ public class UniService {
 
         return jsonArray.toString();
     }
-    ///////////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    //////////////////////////////AB HIER UNIVERSAL STATS HOURLY \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
 
 
     private String convertObjectArrayToJson(List<Object[]> results, String key1, String key2) {

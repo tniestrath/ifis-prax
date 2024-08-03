@@ -53,7 +53,7 @@ public class UniqueUserService {
 
 
 
-    public String reconstructClickPath(UniqueUser user) {
+    private String reconstructClickPath(UniqueUser user) {
         Map<Integer, String> clickMap = new TreeMap<>();
         try{
             processAllCategoryClicks(user, clickMap);
@@ -82,16 +82,7 @@ public class UniqueUserService {
         processCategoryClicks(user.getNonsense(), "nonsense", clickMap);
     }
 
-    private Boolean isConsumer(Map<String,Long> cliokMap,Integer dwellTime){
-        Boolean dwellTimeOver5min = (dwellTime >= 300);
-        if (dwellTimeOver5min){
-            Boolean clickInConsumingCategory =
-                    (cliokMap.get("article")>=1) || (cliokMap.get("blog")>=1) || (cliokMap.get("news")>=1) || (cliokMap.get("whitepaper")>=1) || (cliokMap.get("podcast")>=1) || (cliokMap.get("ratgeber")>=1);
-            return clickInConsumingCategory;
-        }else{return false;}
-    }
-
-    public void processCategoryClicks(String categoryData, String categoryName, Map<Integer, String> clickMap) throws JSONException {
+    private void processCategoryClicks(String categoryData, String categoryName, Map<Integer, String> clickMap) throws JSONException {
         if (categoryData != null && !categoryData.isEmpty()) {
             JSONArray clicksArray = new JSONArray(categoryData);
             for (int i = 0; i < clicksArray.length(); i++) {
@@ -103,7 +94,12 @@ public class UniqueUserService {
         }
     }
 
-
+    /**
+     * Checks whether a user is potentially a bot.
+     * @param user the user to check for.
+     * @param repeatedClicks how many repeated clicks in a single category are allowed.
+     * @return whether the user is potentially a bot.
+     */
     public boolean isPotentialBot(UniqueUser user, int repeatedClicks) {
         Map<Integer, String> clickMap = new TreeMap<>();
         try {
@@ -116,6 +112,12 @@ public class UniqueUserService {
         return hasSuspiciousClickPattern(clickMap,repeatedClicks) || hasNumberOverNonsense(clickMap, repeatedClicks);
     }
 
+    /**
+     * Checks whether the user-click-pattern is suspicious.
+     * @param clickMap a click map.
+     * @param repeatedClicks how many repeated clicks are allowed.
+     * @return whether the user is suspicious.
+     */
     public boolean hasSuspiciousClickPattern(Map<Integer, String> clickMap, int repeatedClicks) {
         String lastCategory = "";
         int repeatCount = 0;
@@ -135,6 +137,12 @@ public class UniqueUserService {
         return false;
     }
 
+    /**
+     * Checks whether a user has more clicks than accepted in "nonsense".
+     * @param clickMap the map to check in.
+     * @param nonsenseClicks the amount of nonsense-clicks that are allowed.
+     * @return whether the user is over the limit.
+     */
     public boolean hasNumberOverNonsense(Map<Integer, String> clickMap, int nonsenseClicks) {
         int repeatCount = 0;
 
@@ -150,6 +158,11 @@ public class UniqueUserService {
         return false;
     }
 
+    /**
+     * Retrieves a list of users who are potentially bots, by checking their click behavior.
+     * @return a List of IPs.
+     * @throws JSONException .
+     */
     public List<String> getIpsOfPotBots() throws JSONException {
         List<String> potBots = new ArrayList<>();
         for(UniqueUser u : uniqueUserRepo.findAllByMoreThanTwoClicks()) {
@@ -165,6 +178,11 @@ public class UniqueUserService {
         return potBots;
     }
 
+    /**
+     * Fetches a String representation of user-click-paths, that have had more than 2 clicks.
+     * @param limit the amount of users to fetch at most.
+     * @return String representation of user-click-paths.
+     */
     public String getUserPaths(int limit) {
         Pageable topLimit = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
         List<UniqueUser> users = uniqueUserRepo.findTopByMoreThanTwoClicks(topLimit);
@@ -174,6 +192,10 @@ public class UniqueUserService {
                 .collect(Collectors.joining(", "));
     }
 
+    /**
+     * Fetches all user click-paths.
+     * @return a String representation of all user-click-paths.
+     */
     public String getAllUserPaths() {
         List<UniqueUser> users = uniqueUserRepo.findAllByMoreThanTwoClicks();
 
@@ -199,7 +221,10 @@ public class UniqueUserService {
                 .collect(Collectors.toList());
     }
 
-
+    /**
+     * Finds all Users that have been clicking more often than once per second.
+     * @return a List of UniqueUsers.
+     */
     public List<UniqueUser> getBotsByClicksOverTime() {
         List<UniqueUser> users = uniqueUserRepo.findAll();
         List<UniqueUser> bots = new ArrayList<>();
@@ -212,7 +237,11 @@ public class UniqueUserService {
         return bots;
     }
 
-
+    /**
+     * Fetch the category the clicks of a user have been tracked in.
+     * @param user the user to look for.
+     * @return ??
+     */
     public Map<String, Long> getClicksCategory(UniqueUser user) throws JSONException {
         Map<Integer, String> clickMap = new TreeMap<>();
         // Wiederholung des Prozesses, um die Klicks in Kategorien zu erfassen
@@ -225,6 +254,11 @@ public class UniqueUserService {
         return categoryClicksCount;
     }
 
+    /**
+     * Checks whether all clicks in a map have been in a single category.
+     * @param clickMap the map to look in.
+     * @return whether all clicks have been in a single category.
+     */
     public boolean areClicksInSingleCategory(Map<String, Long> clickMap) {
 
         Set<String> uniqueCategories = new HashSet<>(clickMap.keySet());
@@ -233,6 +267,11 @@ public class UniqueUserService {
         return uniqueCategories.size() == 1;
     }
 
+    /**
+     * Fetch the category the clicks in a map have been tracked in.
+     * @param clickMap the map to look in.
+     * @return ??
+     */
     public String getCategoryOfClicks(Map<String, Long> clickMap) {
         Set<String> uniqueCategories = new HashSet<>(clickMap.keySet());
 
@@ -241,7 +280,10 @@ public class UniqueUserService {
 
     }
 
-
+    /**
+     * Fetch the bounce-rate in the current day.
+     * @return a String representation of the bounce-rate today.
+     */
     public double getBounceRateToday(){
 
         Long allUserCount = uniqueUserRepo.getCountOfAllUser();
@@ -250,6 +292,10 @@ public class UniqueUserService {
         return (double)zeroClicksUserCount/allUserCount;
     }
 
+    /**
+     * Fetch all IPs today.
+     * @return a List of IP Addresses as String.
+     */
     public List<String> getIpsToday(){
        return uniqueUserRepo.getAllIps();
     }
@@ -319,6 +365,10 @@ public class UniqueUserService {
         return obj.toString();
     }
 
+    /**
+     * Fetch click depths of users in segments, mapped to the amount of users in the depth-segment.
+     * @return a JSON-Object mapping depth-segments to amount of users in depth-segment.
+     */
     public String getVisitorsDepthInSegments() throws JSONException {
         List<UniqueUser> allUniques = uniqueUserRepo.findAll();
         List<TrackingBlacklist> allBlocked = trackBlackRepo.findAll();
@@ -355,28 +405,4 @@ public class UniqueUserService {
         return obj.toString();
     }
 
-    public String getVisitorAndConsumerAndProsumerCounts() throws JSONException {
-        List<UniqueUser> allUniques = uniqueUserRepo.findAll();
-        List<TrackingBlacklist> allBlocked = trackBlackRepo.findAll();
-
-        List<UniqueUser> filteredUniques = filterOutBlocked(allUniques, allBlocked);
-        JSONObject obj = new JSONObject();
-
-        Long visitorCount = 0L;
-        Long consumerCount = 0L;
-        //prosumer anhand von unique temporäre Suchen (kommt noch)
-        Long prosumerCount = 0L;
-
-        for(UniqueUser u : filteredUniques) {
-            Map<String,Long> clicksMap = getClicksCategory(u);
-            if(isConsumer(clicksMap,u.getTime_spent())){
-                consumerCount++;
-            }else{visitorCount++;}
-        }
-
-        obj.put("Visitors",visitorCount);
-        obj.put("Consumers",consumerCount);
-
-        return obj.toString();
-    }
 }

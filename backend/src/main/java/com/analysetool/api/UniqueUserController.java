@@ -20,20 +20,12 @@ public class UniqueUserController {
 
     // Endpoint, um die durchschnittliche Verweildauer aller Nutzer als String zurückzugeben
     @GetMapping("/average-time-spent")
-    public String getAverageTimeSpent() {
-        Double averageTimeSpent = uniqueUserRepo.getAverageTimeSpent();
-        return averageTimeSpent != null ? String.format("%.2f", averageTimeSpent) : "Daten nicht verfügbar";
-    }
+    public String getAverageTimeSpent() {return uniqueUserService.getAverageTimeSpent();}
 
 
     // Endpoint, um die durchschnittliche Verweildauer der Nutzer für den heutigen Tag als String zurückzugeben
     @GetMapping("/average-time-spent-today")
-    public String getTodayAverageTimeSpent() {
-        LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
-        LocalDateTime endOfDay = LocalDateTime.now().toLocalDate().atTime(23, 59, 59);
-        Double todayAverageTimeSpent = uniqueUserRepo.getAverageTimeSpentBetweenDates(startOfDay, endOfDay);
-        return todayAverageTimeSpent != null ? String.format("%.2f", todayAverageTimeSpent) : "Daten nicht verfügbar";
-    }
+    public String getTodayAverageTimeSpent() {return uniqueUserService.getTodayAverageTimeSpent();}
 
 
 

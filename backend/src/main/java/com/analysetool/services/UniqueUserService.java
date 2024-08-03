@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -23,12 +24,34 @@ public class UniqueUserService {
 
     @Autowired
     UniqueUserRepository uniqueUserRepo;
-
     @Autowired
     universalStatsRepository uniRepo;
-
     @Autowired
     TrackingBlacklistRepository trackBlackRepo;
+    @Autowired
+    UniqueUserService uniqueUserService;
+
+    /**
+     * Fetches the average time spent of all users.
+     * @return .
+     */
+    public String getAverageTimeSpent() {
+        Double averageTimeSpent = uniqueUserRepo.getAverageTimeSpent();
+        return averageTimeSpent != null ? String.format("%.2f", averageTimeSpent) : "Daten nicht verfügbar";
+    }
+
+    /**
+     * Fetches the average time spent of all users today.
+     * @return .
+     */
+    public String getTodayAverageTimeSpent() {
+        LocalDateTime startOfDay = LocalDateTime.now().toLocalDate().atStartOfDay();
+        LocalDateTime endOfDay = LocalDateTime.now().toLocalDate().atTime(23, 59, 59);
+        Double todayAverageTimeSpent = uniqueUserRepo.getAverageTimeSpentBetweenDates(startOfDay, endOfDay);
+        return todayAverageTimeSpent != null ? String.format("%.2f", todayAverageTimeSpent) : "Daten nicht verfügbar";
+    }
+
+
 
     public String reconstructClickPath(UniqueUser user) {
         Map<Integer, String> clickMap = new TreeMap<>();

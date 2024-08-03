@@ -1,6 +1,5 @@
 package com.analysetool.services;
 
-import com.analysetool.api.IPController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
@@ -127,7 +126,7 @@ public class LogService {
     @Autowired
     private MembershipBufferRepository memberRepo;
     @Autowired
-    private IPController ipController;
+    private IPService ipService;
     @Autowired
     private IncomingSocialsRedirectsRepository incomingRepo;
     @Autowired
@@ -3410,7 +3409,7 @@ public class LogService {
 
     private void banBots() {
         for(UniqueUser user : uniqueUserService.getPossibleBots(15)) {
-            ipController.blockIp(user.getIp());
+            ipService.blockIp(user.getIp());
             System.out.println("BLOCKED SOMEONE");
         }
         for(UniqueUser user : uniqueUserService.getPossibleBots(10)) {
@@ -3420,13 +3419,13 @@ public class LogService {
                     || IPHelper.getCountryISO(user.getIp()).equals("CH")
                     || IPHelper.getCountryISO(user.getIp()).equals("AT")
                     || IPHelper.getCountryISO(user.getIp()).equals("LU")) {
-                ipController.blockIp(user.getIp());
+                ipService.blockIp(user.getIp());
                 System.out.println("BLOCKED SOMEONE");
             }
         }
 
         for(UniqueUser bot : uniqueUserService.getBotsByClicksOverTime()) {
-            ipController.blockIp(bot.getIp());
+            ipService.blockIp(bot.getIp());
             System.out.println("BLOCKED SOMEONE");
         }
 

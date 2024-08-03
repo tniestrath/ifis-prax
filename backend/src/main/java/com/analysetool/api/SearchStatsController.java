@@ -1,25 +1,13 @@
 package com.analysetool.api;
 
 import com.analysetool.modells.*;
-import com.analysetool.repositories.*;
 import com.analysetool.services.FinalSearchStatService;
-import com.analysetool.services.PostService;
-import com.analysetool.util.MathHelper;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.Tuple;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -27,93 +15,18 @@ import java.util.stream.Collectors;
 public class SearchStatsController {
 
     @Autowired
-    private SearchStatsRepository searchStatsRepository;
-    @Autowired
-    AnbieterSearchRepository anbieterSearchRepo;
-    @Autowired
-    private EventSearchRepository eventSearchRepo;
-    @Autowired
     private FinalSearchStatService fSearchStatService;
-    @Autowired
-    private PostService postService;
-    @Autowired
-    private universalStatsRepository uniRepo;
-    @Autowired
-    private FinalSearchStatRepository finalSearchStatRepo;
-    @Autowired
-    private FinalSearchStatDLCRepository finalDLCRepo;
-    @Autowired
-    private BlockedSearchesRepository blockedRepo;
-    @Autowired
-    private GeoNamesPostalRepository geoNamesRepo;
-    @Autowired
-    private AnbieterFailedSearchBufferRepository anbieterFailRepo;
-    @Autowired
-    private BlockedSearchesAnbieterRepository baSearchRepo;
-
-    @Autowired
-    public SearchStatsController(SearchStatsRepository searchStatsRepository) {
-        this.searchStatsRepository = searchStatsRepository;}
-
 
     @GetMapping("/getAll")
     public List<SearchStats> getAllSearchStats() {
-        return searchStatsRepository.findAll();
+        return fSearchStatService.getAllSearchStats();
     }
 
     @GetMapping("/getSearchStats")
-    public String getSearchStats(@RequestParam int limit) throws JSONException {
-        JSONArray response = new JSONArray();
-        List<SearchStats> alleStats = searchStatsRepository.findAll();
-        for (int i = alleStats.size() - 1; i != alleStats.size() - limit; i--) {
-
-            JSONObject obj = new JSONObject();
-            obj.put("search_string", alleStats.get(i).getSearchString());
-            obj.put("search_success", alleStats.get(i).getSearchSuccessFlag());
-            if (alleStats.get(i).getClickedPost() != null) {
-
-                obj.put("clicked_post", alleStats.get(i).getClickedPost());
-
-            }
-            obj.put("location", alleStats.get(i).getLocation());
-            response.put(obj);
-        }
-
-        return response.toString();
-    }
+    public String getSearchStats(@RequestParam int limit) throws JSONException {return fSearchStatService.getSearchStats(limit);}
 
     @GetMapping("/getSearchStatsByPostWithLimit")
-    public String getSearchStatsByPostWithLimit(@RequestParam Long PostId,@RequestParam int limit) throws JSONException {
-        JSONArray response = new JSONArray();
-        List<SearchStats> alleStats = searchStatsRepository.findByClickedPost(PostId.toString());
-        for (int i = alleStats.size() - 1; i != alleStats.size() - limit; i--) {
-
-            JSONObject obj = new JSONObject();
-            obj.put("search_string", alleStats.get(i).getSearchString());
-            obj.put("search_succes", alleStats.get(i).getSearchSuccessFlag());
-            if (alleStats.get(i).getClickedPost() != null) {
-
-                obj.put("clicked_post", alleStats.get(i).getClickedPost());
-
-            }
-            if (alleStats.get(i).getSearchTime() != null) {
-
-                obj.put("search_time", alleStats.get(i).getSearchTime());
-
-            }
-            if (alleStats.get(i).getDwell_time() != null) {
-
-                obj.put("dwell_time", alleStats.get(i).getDwell_time());
-
-            }
-            obj.put("location", alleStats.get(i).getLocation());
-            obj.put("search_success_time",alleStats.get(i).getSearch_success_time());
-
-
-            response.put(obj);
-        }
-        return response.toString();
-    }
+    public String getSearchStatsByPostWithLimit(@RequestParam Long PostId,@RequestParam int limit) throws JSONException {return fSearchStatService.getSearchStatsByPostWithLimit(PostId, limit);}
 
 
     /**
@@ -122,39 +35,8 @@ public class SearchStatsController {
      * @return Ein JSON-String, der schlechte Ausreißer repräsentiert (nur wenige oder keine Anbieter).
      * @throws JSONException Falls ein Problem mit der JSON-Verarbeitung auftritt.
      */
-
     @GetMapping("/getBadOutlierAllProviderSearches")
-    public String getBadOutlierAllProviderSearches() throws JSONException {
-        JSONArray Ergebnis = new JSONArray();
-
-        CopyOnWriteArrayList<AnbieterSearch> anbieterSearches = new CopyOnWriteArrayList<>(anbieterSearchRepo.findAll());
-
-        CopyOnWriteArrayList<Integer> counts=new CopyOnWriteArrayList<>();
-
-        for(AnbieterSearch a:anbieterSearches){
-            counts.add(a.getCount_found());}
-        double mittelwert = MathHelper.getMeanInt(counts);
-        //alle Ausreißer
-        List<Integer> Outlier =  MathHelper.getOutliersInt(counts);
-
-        for(Integer i:Outlier) {
-
-            //schlechte Ausreißer ermitteln
-            if (i < mittelwert) {
-                JSONObject obj = new JSONObject();
-                for(AnbieterSearch a:anbieterSearches) {
-                    if (a.getCount_found() == i) {
-                        obj.put("Ort", a.getCity_name());
-                        obj.put("Umkreis", a.getUmkreis());
-                        obj.put("Count",a.getCount_found());
-                    }
-                    anbieterSearches.remove(a);
-                }
-                Ergebnis.put(obj);
-            }
-        }
-        return Ergebnis.toString();
-    }
+    public String getBadOutlierAllProviderSearches() throws JSONException {return fSearchStatService.getBadOutlierAllProviderSearches();}
 
     /**
      * Endpoint, schlechte Ausreißer basierend auf den gefundenen Anbietern innerhalb eines Radius einer gewissen Anzahl an Anbietersuchen zu ermitteln.
@@ -162,32 +44,7 @@ public class SearchStatsController {
      * @return Ein JSON-String, der schlechte Ausreißer repräsentiert (nur wenige oder keine Anbieter).
      */
     @GetMapping("/getBadOutlierForXProviderSearches")
-    public String getBadOutlierForXProviderSearches(@RequestParam int limit) {
-        try {
-            List<AnbieterSearch> anbieterSearches = new ArrayList<>();
-            if (limit > 0) {
-                Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
-                anbieterSearches = anbieterSearchRepo.findAllByOrderByIdDesc(pageable).getContent();
-            } else if (limit == 0) {
-                anbieterSearches = anbieterSearchRepo.findAll();
-            }
-
-            List<Integer> counts = anbieterSearches.stream()
-                    .map(AnbieterSearch::getCount_found)
-                    .collect(Collectors.toList());
-
-            List<Integer> lowerBoundOutliers = MathHelper.getLowerBoundOutliersInt(counts);
-
-            List<AnbieterSearch> filteredAnbieterSearches = anbieterSearches.stream()
-                    .filter(anbieterSearch -> lowerBoundOutliers.contains(anbieterSearch.getCount_found()))
-                    .collect(Collectors.toList());
-
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(filteredAnbieterSearches);
-        } catch (Exception e) {
-            return "Fehler beim Verarbeiten der Daten: " + e.getMessage();
-        }
-    }
+    public String getBadOutlierForXProviderSearches(@RequestParam int limit) {return fSearchStatService.getBadOutlierForXProviderSearches(limit);}
 
 
     /**
@@ -203,34 +60,10 @@ public class SearchStatsController {
      *         Bei einem Fehler in der Verarbeitung wird eine Fehlermeldung zurückgegeben.
      */
     @GetMapping("/badOutliersEventSearch")
-    public String findBadOutliersEventSearch(@RequestParam int limit) {
-        try {
-            List<EventSearch> latestEventSearches = new ArrayList<>();
-            if (limit > 0) {
-                Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"));
-                latestEventSearches = eventSearchRepo.findAllByOrderByIdDesc(pageable).getContent();
-            } else if (limit == 0) {
-                latestEventSearches = eventSearchRepo.findAll();
-            }
-            List<Integer> resultCounts = latestEventSearches.stream()
-                    .map(EventSearch::getResultCount)
-                    .collect(Collectors.toList());
-            List<Integer> lowerBoundOutliers = MathHelper.getLowerBoundOutliersInt(resultCounts);
-            List<EventSearch> filteredEventSearches = latestEventSearches.stream()
-                    .filter(eventSearch -> lowerBoundOutliers.contains(eventSearch.getResultCount()))
-                    .collect(Collectors.toList());
-
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(filteredEventSearches);
-        } catch (Exception e) {
-            return "Fehler beim Verarbeiten der Daten";
-        }
-    }
+    public String findBadOutliersEventSearch(@RequestParam int limit) {return fSearchStatService.findBadOutliersEventSearch(limit);}
 
     @GetMapping("/getZeroCountEventSearches")
-    public String getZeroCountEventSearches(){
-        return eventSearchRepo.getEventSearchesWithCountZero().toString();
-    }
+    public String getZeroCountEventSearches(){return fSearchStatService.getZeroCountEventSearches();}
 
     @GetMapping("/getSearchStatsByPostId")
     public String getSearchStatsByPostId(@RequestParam Long postId){
@@ -255,25 +88,7 @@ public class SearchStatsController {
      * @throws JSONException If an issue occurs during JSON processing.
      */
     @GetMapping("/getSearchStatsForSimilarPostsByTags")
-    public String getSearchStatsForSimilarPostsByTags(@RequestParam Long postId,@RequestParam float similarityPercentage) throws JSONException {
-        JSONArray ergebnis = new JSONArray();
-        Map<Long,Float> similarityMap = postService.getSimilarPosts(postId,similarityPercentage);
-        List< FinalSearchStat> searchStats;
-
-        for(Long postIds : similarityMap.keySet()){
-            JSONObject obj = new JSONObject();
-           searchStats = fSearchStatService.getSearchStatsByPostId(postIds);
-           if((!(searchStats==null))&& (!searchStats.isEmpty())){
-
-               obj.put("searchStats",fSearchStatService.toStringList(searchStats));
-               obj.put("similarity",similarityMap.get(postIds));
-               obj.put("postId",postIds);
-
-               ergebnis.put(obj);
-           }
-        }
-        return ergebnis.toString();
-    }
+    public String getSearchStatsForSimilarPostsByTags(@RequestParam Long postId,@RequestParam float similarityPercentage) throws JSONException {return fSearchStatService.getSearchStatsForSimilarPostsByTags(postId, similarityPercentage);}
 
     /**
      * Retrieves demand data based on a location and analysis type.
@@ -286,35 +101,7 @@ public class SearchStatsController {
      * @return A map containing frequent searches with few results based on the given thresholds.
      */
     @GetMapping("/getDemandByLocation")
-    public String getDemandByLocation(@RequestParam String location, @RequestParam String locationType, @RequestParam int searchThreshold, @RequestParam int resultThreshold, @RequestParam String analysisType) {
-        Map<FinalSearchStat, List<FinalSearchStatDLC>> dataPool = fSearchStatService.getSearchStatsByLocation(location, locationType);
-        Map<String, Integer> responseMap = switch (analysisType) {
-            case "searchSuccess" ->
-                    fSearchStatService.findFrequentSearchesWithFewSearchSuccesses(dataPool, searchThreshold, resultThreshold);
-            case "resultCount" ->
-                    fSearchStatService.findFrequentSearchesWithFewResults(dataPool, searchThreshold, resultThreshold);
-            default -> new HashMap<>();
-        };
-
-        try {
-            // Konvertieren der Map in eine Liste von Objekten für eine einfachere JSON-Struktur
-            List<Map<String, Object>> responseList = responseMap.entrySet().stream()
-                    .map(entry -> {
-                        Map<String, Object> item = new HashMap<>();
-                        item.put("searchQuery", entry.getKey());
-                        item.put("count", entry.getValue());
-                        return item;
-                    })
-                    .collect(Collectors.toList());
-
-            // Konvertieren der Liste in einen JSON-String
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(responseList);
-        } catch (Exception e) {
-            // Rückgabe eines Fehler-JSON-Strings im Fehlerfall
-            return "{\"error\":\"Error processing request\"}";
-        }
-    }
+    public String getDemandByLocation(@RequestParam String location, @RequestParam String locationType, @RequestParam int searchThreshold, @RequestParam int resultThreshold, @RequestParam String analysisType) {return fSearchStatService.getDemandByLocation(location, locationType, searchThreshold, resultThreshold, analysisType);}
 
     /**
      *
@@ -325,107 +112,9 @@ public class SearchStatsController {
      * @return a collection of Search-Stats-Data-Entries.
      */
     @GetMapping("/getCoolSearchList")
-    public String getCoolSearchList(int page, int size, String sorter, String dir) {
-        switch (sorter) {
-            case "count" -> {
-                return getTopSearchQueriesBySearchedCount(page, size, dir);
-            }
-            case "found" -> {
-                return getSearchQueriesByFoundCount(page, size, dir);
-            }
-            case "ss" -> {
-                return getTopSearchQueriesBySS(page, size, dir);
-            }
-            default -> {
-                return "Du banause musst n sorter angeben sonst setzt es was";
-            }
-        }
-    }
-
-    private String getSearchQueriesByFoundCount(int page, int size, String dir) {
-        JSONArray response = new JSONArray();
-        List<Tuple> pairs;
-        if(dir != null && dir.equals("ASC")) {
-            pairs = finalSearchStatRepo.getQueryAndFoundCountAverageASC(PageRequest.of(page, size));
-        } else {
-            pairs = finalSearchStatRepo.getQueryAndFoundCountAverageDESC(PageRequest.of(page, size));
-        }
-
-        for(Tuple pair : pairs) {
-            JSONObject obj = new JSONObject();
-            try {
-                //noinspection RedundantCast
-                obj.put("query", (String) pair.get(0));
-                obj.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
-                obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery((String) pair.get(0)));
-                obj.put("sSCount", finalSearchStatRepo.getCountSearchSuccessForQuery((String) pair.get(0)));
-                obj.put("foundCount", (int) pair.get(1));
-                response.put(obj);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return response.toString();
-    }
+    public String getCoolSearchList(int page, int size, String sorter, String dir) {return fSearchStatService.getCoolSearchList(page, size, sorter, dir);}
 
 
-    private String getTopSearchQueriesBySS(int page, int size, String dir){
-        JSONArray response = new JSONArray();
-        List<Tuple> pairs;
-        if(dir != null && dir.equals("ASC")) {
-            pairs = finalSearchStatRepo.getQueriesAndCountsSSASC(PageRequest.of(page, size));
-        } else {
-            pairs = finalSearchStatRepo.getQueriesAndCountsSSDESC(PageRequest.of(page, size));
-        }
-
-        for(Tuple pair :  pairs) {
-            JSONObject obj = new JSONObject();
-            try {
-                //noinspection RedundantCast
-                obj.put("query", (String) pair.get(0));
-                obj.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
-                obj.put("sSCount", (long) pair.get(1));
-                obj.put("searchedCount", finalSearchStatRepo.getCountSearchedByQuery((String) pair.get(0)));
-                obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
-                response.put(obj);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return response.toString();
-    }
-
-    private String getTopSearchQueriesBySearchedCount(int page, int size, String dir){
-        JSONArray response = new JSONArray();
-        List<Tuple> pairs;
-        if(dir != null && dir.equals("ASC")) {
-            pairs = finalSearchStatRepo.getQueriesAndCountsASC(PageRequest.of(page, size));
-        } else {
-            pairs = finalSearchStatRepo.getQueriesAndCountsDESC(PageRequest.of(page, size));
-        }
-
-            for(Tuple pair : pairs) {
-                JSONObject obj = new JSONObject();
-                try {
-                    //noinspection RedundantCast
-                    obj.put("query", (String) pair.get(0));
-                    obj.put("searchedCount", (long) pair.get(1));
-                    obj.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
-                    obj.put("sSCount", finalSearchStatRepo.getCountSearchSuccessForQuery((String) pair.get(0)));
-                    obj.put("foundCount", finalSearchStatRepo.getSumFoundLastSearchOfQuery((String) pair.get(0)));
-                    response.put(obj);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        return response.toString();
-    }
 
     /**
      * Gibt die Verteilung der Suchanfragen über einen bestimmten Zeitraum zurück.
@@ -438,36 +127,7 @@ public class SearchStatsController {
      * @throws JSONException Falls beim Erstellen der JSON-Objekte ein Fehler auftritt.
      */
     @GetMapping("/getSearchCountDistributedByTime")
-    public String getSearchCountDistributedByTime(@RequestParam String distributionType) throws JSONException {
-        int latestUniId = uniRepo.getLatestUniStat().getId();
-        int lowerBoundUniId=0;
-        Map<Integer,Long> allSearchCountsByUniId= fSearchStatService.getSearchCountDistributedByUniId();
-        Calendar cal = Calendar.getInstance();
-
-        JSONArray response = new JSONArray();
-
-        switch (distributionType) {
-            case "week" -> lowerBoundUniId = latestUniId - 7;
-            case "month" -> lowerBoundUniId = latestUniId - 30;
-            case "year" -> lowerBoundUniId = latestUniId - 365;
-        }
-
-        cal.add(Calendar.DAY_OF_YEAR, -(latestUniId-lowerBoundUniId ));
-
-        for(int lowerBound = lowerBoundUniId; lowerBound<=latestUniId; lowerBound++){
-            JSONObject obj = new JSONObject();
-
-            Long count = allSearchCountsByUniId.getOrDefault(lowerBound,0L);
-            String date = String.format("%1$td-%1$tm-%1$tY", cal.getTime());
-
-            obj.put("date",date);
-            obj.put("count",count);
-            response.put(obj);
-            cal.add(Calendar.DAY_OF_YEAR, 1);
-        }
-
-        return response.toString();
-    }
+    public String getSearchCountDistributedByTime(@RequestParam String distributionType) throws JSONException {return fSearchStatService.getSearchCountDistributedByTime(distributionType);}
 
     /**
      * Finds all Search-Queries and the number of times they have been searched.
@@ -476,185 +136,48 @@ public class SearchStatsController {
      * @return a JSONArray-String, containing JSON-Objects with 'search' and 'count'
      */
     @GetMapping("/getAllUnfixedSearches")
-    public String getAllUnfixedZeroCountSearches(int page, int size) throws JSONException {
-        JSONArray array = new JSONArray();
-
-        for(Tuple pair : finalSearchStatRepo.getAllUnfixedSearchesWithZeroFound("%&%;%", PageRequest.of(page, size))) {
-            JSONObject json = new JSONObject();
-            //noinspection RedundantCast
-            json.put("search", (String) pair.get(0));
-            json.put("id", finalSearchStatRepo.getIdsBySearch((String) pair.get(0)).get(0));
-            json.put("count", (long) pair.get(1));
-            array.put(json);
-        }
-
-        return array.toString();
-    }
+    public String getAllUnfixedZeroCountSearches(int page, int size) throws JSONException {return fSearchStatService.getAllUnfixedZeroCountSearches(page, size);}
 
     /**
      * Gets all potentially threatening queries.
      * @return a JSONArray-String, containing JSON-Objects with 'search' and 'count'
      */
     @GetMapping("/getAllThreats")
-    public String getAllThreats() throws JSONException {
-        Map<String, Integer> searchesAndCounts = new HashMap<>();
-        JSONArray array = new JSONArray();
-        for(FinalSearchStat f : finalSearchStatRepo.getAllSearchesOrderedByFoundAscending()) {
-            if(isHack(f.getSearchQuery()) && blockedRepo.getBySearch(f.getSearchQuery()).isEmpty()) {
-                searchesAndCounts.merge(f.getSearchQuery(), 1, Integer::sum);
-            }
-        }
-
-        for(String key : searchesAndCounts.keySet()) {
-            JSONObject json = new JSONObject();
-            json.put("search", key);
-            json.put("count", searchesAndCounts.get(key));
-            array.put(json);
-        }
-
-        return array.toString();
-    }
+    public String getAllThreats() throws JSONException {return fSearchStatService.getAllThreats();}
 
     @PostMapping("/unblockSearch")
     @Modifying
-    public boolean unblockSearch(long search) {
-        boolean unblocked = false;
-        //noinspection OptionalGetWithoutIsPresent
-        if(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isPresent()) {
-            //noinspection OptionalGetWithoutIsPresent
-            blockedRepo.delete(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).get());
-            unblocked = true;
-        }
-
-        return unblocked;
-    }
+    public boolean unblockSearch(long search) {return fSearchStatService.unblockSearch(search);}
 
     @PostMapping("/blockSearch")
     @Modifying
-    public boolean blockSearch(long search) {
-        boolean deleted = false;
-        //noinspection OptionalGetWithoutIsPresent
-        if(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isEmpty()) {
-            BlockedSearches b = new BlockedSearches();
-            //noinspection OptionalGetWithoutIsPresent
-            b.setSearch(finalSearchStatRepo.findById(search).get().getSearchQuery());
-            blockedRepo.save(b);
-            deleted = true;
-        }
-
-        return deleted;
-    }
+    public boolean blockSearch(long search) {return fSearchStatService.blockSearch(search);}
 
     @GetMapping("/flipSearch")
     @Modifying
-    public String flipSearch(long search) {
-        //noinspection OptionalGetWithoutIsPresent
-        if(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).isPresent()) {
-            //noinspection OptionalGetWithoutIsPresent
-            blockedRepo.delete(blockedRepo.getBySearch(finalSearchStatRepo.findById(search).get().getSearchQuery()).get());
-            //noinspection OptionalGetWithoutIsPresent
-            return finalSearchStatRepo.findById(search).get().getSearchQuery();
-        } else {
-            BlockedSearches bs = new BlockedSearches();
-            //noinspection OptionalGetWithoutIsPresent
-            bs.setSearch(finalSearchStatRepo.findById(search).get().getSearchQuery());
-            blockedRepo.save(bs);
-            return "DELETED";
-        }
-    }
+    public String flipSearch(long search) {return fSearchStatService.flipSearch(search);}
 
     @GetMapping("/flipAnbieterSearch")
     @Modifying
-    public String flipAnbieterSearch(long search) throws JSONException {
-        @SuppressWarnings("OptionalGetWithoutIsPresent") AnbieterFailedSearchBuffer afb = anbieterFailRepo.findById(search).get();
-        JSONObject json = new JSONObject();
-        if(baSearchRepo.getBySearchAndPlace(afb.getSearch(), afb.getCity()).isPresent()) {
-            baSearchRepo.delete(baSearchRepo.getBySearchAndPlace(afb.getSearch(), afb.getCity()).get());
-            json.put("city", afb.getCity());
-            json.put("query", afb.getSearch());
-        } else {
-            BlockedSearchesAnbieter bs = new BlockedSearchesAnbieter();
-            bs.setSearch(afb.getSearch());
-            bs.setPlace(afb.getCity());
-            baSearchRepo.save(bs);
-            json.put("query", "DELETED");
-        }
-        return json.toString();
-    }
+    public String flipAnbieterSearch(long search) throws JSONException {return fSearchStatService.flipAnbieterSearch(search);}
 
     @GetMapping("/flipAnbieterSearchByData")
     @Modifying
-    public String flipAnbieterSearch(String search, String place) throws JSONException {
-        @SuppressWarnings("OptionalGetWithoutIsPresent") AnbieterFailedSearchBuffer afb = anbieterFailRepo.findByCityAndSearch(place, search).get();
-        JSONObject json = new JSONObject();
-        if(baSearchRepo.getBySearchAndPlace(afb.getSearch(), afb.getCity()).isPresent()) {
-            baSearchRepo.delete(baSearchRepo.getBySearchAndPlace(afb.getSearch(), afb.getCity()).get());
-            json.put("city", afb.getCity());
-            json.put("query", afb.getSearch());
-        } else {
-            BlockedSearchesAnbieter bs = new BlockedSearchesAnbieter();
-            bs.setSearch(search);
-            bs.setPlace(afb.getCity());
-            baSearchRepo.save(bs);
-            json.put("query", "DELETED");
-        }
-        return json.toString();
-    }
+    public String flipAnbieterSearch(String search, String place) throws JSONException {return fSearchStatService.flipAnbieterSearch(search, place);}
 
     @GetMapping("/getAllBlocked")
-    public String getAllBlocked() throws JSONException {
-        JSONArray array = new JSONArray();
-        for(BlockedSearches blocked : blockedRepo.findAll()) {
-            JSONObject json = new JSONObject();
-            json.put("search", blocked.getSearch());
-            json.put("id", finalSearchStatRepo.getIdsBySearch(blocked.getSearch()).get(0));
-            array.put(json);
-        }
-
-        return array.toString();
-    }
+    public String getAllBlocked() throws JSONException {return fSearchStatService.getAllBlocked();}
 
     @GetMapping("/getAllAnbieterBlocked")
-    public String getAllAnbieterBlocked() throws JSONException {
-        JSONArray array = new JSONArray();
-        for(BlockedSearchesAnbieter blocked : baSearchRepo.findAll()) {
-            JSONObject json = new JSONObject();
-            json.put("search", blocked.getSearch());
-            json.put("place", blocked.getPlace());
-            array.put(json);
-        }
-
-        return array.toString();
-    }
+    public String getAllAnbieterBlocked() throws JSONException {return fSearchStatService.getAllAnbieterBlocked();}
 
     @PostMapping("/deleteDLCById")
     @Modifying
-    public void deleteDLCById(long id) {
-        if(finalDLCRepo.existsById(id)) {
-            finalDLCRepo.deleteById(id);
-        }
-    }
+    public void deleteDLCById(long id) {fSearchStatService.deleteDLCById(id);}
 
 
     @GetMapping("/getAnbieterNoneFound")
-    public String getAnbieterNoneFound(int page, int size) throws JSONException {
-        JSONArray array = new JSONArray();
-
-        for(AnbieterFailedSearchBuffer a : anbieterFailRepo.getPageable(PageRequest.of(page, size))) {
-            JSONObject json = new JSONObject();
-            json.put("search", a.getSearch());
-            json.put("count", a.getCount());
-            json.put("city", a.getCity().equals("") ? "none" : a.getCity());
-            json.put("id", a.getId());
-            array.put(json);
-        }
-
-        return array.toString();
-    }
-
-    boolean isHack(String text) {
-        return text.contains("&") && text.contains(";");
-    }
+    public String getAnbieterNoneFound(int page, int size) throws JSONException {return fSearchStatService.getAnbieterNoneFound(page, size);}
 
 }
 

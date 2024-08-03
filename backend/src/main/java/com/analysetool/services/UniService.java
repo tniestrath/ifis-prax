@@ -1,16 +1,15 @@
-package com.analysetool.api;
+package com.analysetool.services;
 
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
-import com.analysetool.services.UniqueUserService;
 import com.analysetool.util.Constants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,10 +19,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@RestController
-@CrossOrigin(originPatterns = "*" , allowCredentials = "true")
-@RequestMapping(value =  {"/bericht", "/0wB4P2mly-xaRmeeDOj0_g/bericht"}, method = RequestMethod.GET, produces = "application/json")
-public class uniStatController {
+@Service
+public class UniService {
+
 
     @Autowired
     UniversalCategoriesDLCRepository universalCategoriesDLCRepo;
@@ -69,7 +67,6 @@ public class uniStatController {
      * @throws JSONException .
      * @throws ParseException .
      */
-    @GetMapping(value = "/callups")
     public String getCallupsByTime(@RequestParam() int days) throws JSONException, ParseException {
         JSONArray response = new JSONArray();
 
@@ -107,7 +104,6 @@ public class uniStatController {
      * @return ein HTML Code, der eine Tabelle mit Statistiken enthält.
      * @throws JSONException .
      */
-    @GetMapping(value = "/today", produces = MediaType.TEXT_HTML_VALUE)
     public String getLetzte() throws JSONException {
         JSONObject obj = new JSONObject();
         UniversalStats uniStat=uniRepo.findAll().get(uniRepo.findAll().size()-1);
@@ -183,7 +179,6 @@ public class uniStatController {
      * @return eine Liste der Anzahl von Clicks und Besucher nach Category des letzten abgeschlossenen Tages.
      *
      */
-    @GetMapping("getCallupByCategoryDateAndHour")
     public String getCallupByCategoryHourly(String date, int hour) throws ParseException, JSONException {
 
         List<String> labelsForCategory = new ArrayList<>();
@@ -271,7 +266,6 @@ public class uniStatController {
      * @return eine Liste der Anzahl von Clicks und Besucher nach Category des letzten abgeschlossenen Tages.
      *
      */
-    @GetMapping("getCallupByCategoryDate")
     public String getCallupByCategoryDaily(String date) throws ParseException, JSONException {
         List<String> labelsForCategory = new ArrayList<>();
 
@@ -369,7 +363,6 @@ public class uniStatController {
     }
 
 
-    @GetMapping("getCallupByCategoryAllTime")
     public String getCallupByCategoryAllTime() throws JSONException {
         List<String> labelsForCategory = new ArrayList<>();
 
@@ -464,7 +457,7 @@ public class uniStatController {
 
 
 
-    @GetMapping("/getRatgeberDetailedDaily")
+
     public String getRatgeberDetailedByDate(String date) throws ParseException, JSONException {
         List<String> labelsForCategory = new ArrayList<>();
 
@@ -492,7 +485,7 @@ public class uniStatController {
     }
 
 
-    @GetMapping("/getRatgeberDetailedAllTime")
+
     public String getRatgeberDetailedAllTime() throws JSONException {
         List<String> labelsForCategory = new ArrayList<>();
 
@@ -522,7 +515,6 @@ public class uniStatController {
      * @return eine HTML-Seite, die den Bericht wie in der Methode getLetzte, nur für die letzten 7 Tage erstellt.
      * @throws JSONException .
      */
-    @GetMapping(value = "/letzte7Tage", produces = MediaType.TEXT_HTML_VALUE)
     public String getLast7Days() throws JSONException {
         List<UniversalStats> last7DaysStats = uniRepo.findTop7ByOrderByDatumDesc();
         Collections.reverse(last7DaysStats);
@@ -576,7 +568,7 @@ public class uniStatController {
             tableRows.append("<td>").append(obj.get("veröffentlichte Artikel")).append("</td>\n");
             tableRows.append("<td>").append(obj.get("veröffentlichte Blogs")).append("</td>\n");
             tableRows.append("<td>").append(obj.get("veröffentlichte News")).append("</td>\n");
-           // tableRows.append("<td>").append(obj.get("aktueller jährlicher Umsatz")).append("</td>\n");
+            // tableRows.append("<td>").append(obj.get("aktueller jährlicher Umsatz")).append("</td>\n");
             tableRows.append("</tr>\n");
         }
 
@@ -645,7 +637,6 @@ public class uniStatController {
      * @return a JSON String.
      * @throws JSONException .
      */
-    @GetMapping("/getTop5ByClicksAndDaysBackAndType")
     public String getTop5ByClicks(@RequestParam String type, @RequestParam int daysBack) throws JSONException {
         JSONArray ergebnis = new JSONArray();
 
@@ -661,48 +652,48 @@ public class uniStatController {
         for (Post post : posts) {
 
 
-                for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
+            for (Long l : termRelRepo.getTaxIdByObject(post.getId())) {
 
-                    for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
+                for (WpTermTaxonomy termTax : termTaxRepo.findByTermTaxonomyId(l)) {
 
-                        if (termTax.getTermId() == tagIdBlog && type.equals("blog")) {
-                            JSONObject obj;
+                    if (termTax.getTermId() == tagIdBlog && type.equals("blog")) {
+                        JSONObject obj;
 
-                            obj = getClickOfDayAsJson(post.getId(),daysBack);
-                            ergebnis.put(obj);
-                        }
+                        obj = getClickOfDayAsJson(post.getId(),daysBack);
+                        ergebnis.put(obj);
+                    }
 
-                        if (termTax.getTermId() == tagIdArtikel && type.equals("artikel") ) {
-                            JSONObject obj;
-                            obj = getClickOfDayAsJson(post.getId(),daysBack);
-                            ergebnis.put(obj);
-                        }
+                    if (termTax.getTermId() == tagIdArtikel && type.equals("artikel") ) {
+                        JSONObject obj;
+                        obj = getClickOfDayAsJson(post.getId(),daysBack);
+                        ergebnis.put(obj);
+                    }
 
-                        if (termTax.getTermId() == tagIdNews && type.equals("news")) {
-                            JSONObject obj;
-                            obj = getClickOfDayAsJson(post.getId(),daysBack);
-                            ergebnis.put(obj);
-                        }
+                    if (termTax.getTermId() == tagIdNews && type.equals("news")) {
+                        JSONObject obj;
+                        obj = getClickOfDayAsJson(post.getId(),daysBack);
+                        ergebnis.put(obj);
+                    }
 
-                        if (termTax.getTermId() == tagIdWhitepaper && type.equals("whitepaper")) {
-                            JSONObject obj;
-                            obj = getClickOfDayAsJson(post.getId(),daysBack);
-                            ergebnis.put(obj);
-                        }
+                    if (termTax.getTermId() == tagIdWhitepaper && type.equals("whitepaper")) {
+                        JSONObject obj;
+                        obj = getClickOfDayAsJson(post.getId(),daysBack);
+                        ergebnis.put(obj);
+                    }
 
-                        if (termTax.getTermId() == tagIdPodcast && type.equals("podcast")) {
-                            JSONObject obj;
-                            obj = getClickOfDayAsJson(post.getId(),daysBack);
-                            ergebnis.put(obj);
-                        }
+                    if (termTax.getTermId() == tagIdPodcast && type.equals("podcast")) {
+                        JSONObject obj;
+                        obj = getClickOfDayAsJson(post.getId(),daysBack);
+                        ergebnis.put(obj);
+                    }
 
-                        if (termTax.getTermId() == tagIdVideos && type.equals("videos")) {
-                            JSONObject obj;
-                            obj = getClickOfDayAsJson(post.getId(),daysBack);
-                            ergebnis.put(obj);
-                        }
+                    if (termTax.getTermId() == tagIdVideos && type.equals("videos")) {
+                        JSONObject obj;
+                        obj = getClickOfDayAsJson(post.getId(),daysBack);
+                        ergebnis.put(obj);
                     }
                 }
+            }
 
         }
         ArrayList<JSONObject> jsonObjects = new ArrayList<>();
@@ -730,14 +721,14 @@ public class uniStatController {
         return top5JsonArray.toString();
     }
 
-    @GetMapping("/getPostsByType")
+
     public String getPostsByType() {
         HashMap<String, Integer> map = new HashMap<>();
         UniversalStats uniStat = uniRepo.getLatestUniStat();
         return makeTypeMap(map, uniStat);
     }
 
-    @GetMapping("/getPostsByTypeYesterday")
+
     public String getPostsByTypeYesterday(){
         HashMap<String, Integer> map = new HashMap<>();
         UniversalStats uniStat = uniRepo.getSecondLastUniStats().get(1);
@@ -764,7 +755,6 @@ public class uniStatController {
      *
      * @return the conversion rate for non-subscribers as a double. It's calculated by subtracting the number of non-subscribers yesterday from today, divided by today's unique, non-blocked IP count.
      */
-    @GetMapping("/getConversionRateNoSub")
     public double getConversionRateNoSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
         long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieter_abolos_anzahl() - lastTwoDays.get(1).getAnbieter_abolos_anzahl();
@@ -781,7 +771,6 @@ public class uniStatController {
      *
      * @return the conversion rate for basic subscribers as a double. It's determined by the difference in basic subscriber counts between today and yesterday, divided by today's unique, non-blocked IP count.
      */
-    @GetMapping("/getConversionRateBasicSub")
     public double getConversionRateBasicSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
         long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterBasicAnzahl() - lastTwoDays.get(1).getAnbieterBasicAnzahl();
@@ -798,7 +787,6 @@ public class uniStatController {
      *
      * @return the conversion rate for basic plus subscribers as a double. It's computed by the difference in basic plus subscriber counts between today and yesterday, divided by today's unique, non-blocked IP count.
      */
-    @GetMapping("/getConversionRateBasicPlusSub")
     public double getConversionRateBasicPlusSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
         long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterBasicPlusAnzahl() - lastTwoDays.get(1).getAnbieterBasicPlusAnzahl();
@@ -816,7 +804,6 @@ public class uniStatController {
      *
      * @return the conversion rate for plus subscribers as a double. This rate is calculated by subtracting yesterday's plus subscriber count from today's, divided by the count of today's unique, non-blocked IPs.
      */
-    @GetMapping("/getConversionRatePlusSub")
     public double getConversionRatePlusSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
         long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPlusAnzahl() - lastTwoDays.get(1).getAnbieterPlusAnzahl();
@@ -833,7 +820,6 @@ public class uniStatController {
      *
      * @return the conversion rate for premium subscribers as a double. It's the difference in premium subscriber counts between today and yesterday, divided by today's unique, non-blocked IP count.
      */
-    @GetMapping("/getConversionRatePremiumSub")
     public double getConversionRatePremiumSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
         long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPremiumAnzahl() - lastTwoDays.get(1).getAnbieterPremiumAnzahl();
@@ -850,7 +836,6 @@ public class uniStatController {
      *
      * @return the conversion rate for premium sponsor subscribers as a double. This is based on the difference in premium sponsor subscriber counts between today and yesterday, divided by today's unique, non-blocked IP count.
      */
-    @GetMapping("/getConversionRatePremiumSponsorSub")
     public double getConversionRatePremiumSponsorSub(){
         List<UniversalStats> lastTwoDays = uniRepo.getSecondLastUniStats();
         long noSubDiffTodayYesterday = lastTwoDays.get(0).getAnbieterPremiumSponsorenAnzahl() - lastTwoDays.get(1).getAnbieterPremiumSponsorenAnzahl();
@@ -867,7 +852,6 @@ public class uniStatController {
      *
      * @return the overall conversion rate as a double.
      */
-    @GetMapping("/getTotalConversionRateMembership")
     public double getTotalConversionRateMembership() {
         return (getConversionRateNoSub() + getConversionRateBasicSub() + getConversionRateBasicPlusSub() +
                 getConversionRatePlusSub() + getConversionRatePremiumSub() + getConversionRatePremiumSponsorSub()) / 6;
@@ -879,7 +863,6 @@ public class uniStatController {
      *
      * @return A JSON string that represents the conversion rate ranking of subscription types.
      */
-    @GetMapping("/getSubscriptionRateRanking")
     public String getSubscriptionRateRanking() throws JSONException {
         Map<String, Double> rates = new LinkedHashMap<>();
         rates.put("Non-Subscriber", getConversionRateNoSub());
@@ -942,7 +925,6 @@ public class uniStatController {
      * @param uniStatId the universal statistic ID for which the server error ranking is to be retrieved
      * @return a JSON string containing the hourly server error ranking
      */
-    @GetMapping("/server-error-ranking")
     public String getHourlyServerErrorRanking(@RequestParam int uniStatId) {
         List<Object[]> results = universalStatsHourlyRepo.getHourlyServerErrorRanking(uniStatId);
         return convertObjectArrayToJson(results, "Stunde", "value");
@@ -952,7 +934,6 @@ public class uniStatController {
      * Retrieves the hourly server error ranking for today.
      * @return a JSON string containing the hourly server error ranking
      */
-    @GetMapping("/server-error-ranking-today")
     public String getHourlyServerErrorRankingToday() {
         int uniId = uniRepo.getLatestUniStat().getId();
         List<Object[]> results = universalStatsHourlyRepo.getHourlyServerErrorRanking(uniId);
@@ -964,7 +945,6 @@ public class uniStatController {
      *
      * @return a JSON string containing the total clicks, total errors, and error rate for the current day
      */
-    @GetMapping("/error-rate-today")
     public String getErrorRateForToday() {
         int uniId = uniRepo.getLatestUniStat().getId();
         List<Object[]> results = universalStatsHourlyRepo.getTotalClicksAndErrorsForDay(uniId);
@@ -991,4 +971,6 @@ public class uniStatController {
             return "Data processing Error";
         }
     }
+
+
 }

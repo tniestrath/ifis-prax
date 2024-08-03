@@ -44,16 +44,38 @@ public class DiagnosisController {
     @GetMapping("/getBlackHoleData")
     public String getAllBlockedBotsBlackHole() throws JSONException {return diagnosisService.getAllBlockedBotsBlackHole();}
 
-
+    /**
+     * Fetches external-services from table.
+     * @param page page number.
+     * @param size page size.
+     * @return a JSON-String containing sets of external services.
+     * @throws JSONException .
+     */
     @GetMapping("/getServices")
     public String getServices(int page, int size) throws JSONException {return diagnosisService.getServices(page, size);}
 
+    /**
+     * Add an external service to database.
+     * @param name the name of the service.
+     * @param link the link to the service (iframe source).
+     * @return a boolean whether the addition worked correctly.
+     */
     @PostMapping("/addService")
     public boolean addService(String name, String link) {return diagnosisService.addService(name, link);}
 
+    /**
+     * Removes an external service to database.
+     * @param name the name of the service.
+     * @param link the link to the service (iframe source).
+     * @return a boolean whether the addition worked correctly.
+     */
     @PostMapping("/removeService")
     public boolean removeService(String name, String link) {return diagnosisService.removeService(name, link);}
 
+    /**
+     * Manually runs the stat-updating procedure.
+     * @return boolean whether the procedure ended correctly, a Time-Out does NOT mean it did not work.
+     */
     @GetMapping("/run")
     public boolean updateStats() {
         try {

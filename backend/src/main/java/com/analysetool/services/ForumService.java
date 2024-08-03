@@ -284,6 +284,13 @@ public class ForumService {
         return wpForoPostRepo.existsById(id) ? getSinglePostData(wpForoPostRepo.findById(id).get(), true).toString() : "no";
     }
 
+    /**
+     * Sets the moderation status of the selected post, using the given users' authority.
+     * @param id the id of the post.
+     * @param status the status to set (0 | 1)
+     * @param userId the id of the user.
+     * @return whether the method worked as intended.
+     */
     public boolean setStatus(int id, int status, int userId) {
 
         if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId)) {
@@ -308,6 +315,11 @@ public class ForumService {
         return false;
     }
 
+    /**
+     * Fetches all forum posts that are currently in the trash-can.
+     * @return a JSON-String representation of all trashed posts.
+     * @throws JSONException .
+     */
     public String getAllTrashed() throws JSONException {
         JSONArray array = new JSONArray();
         for (WPWPForoTrashcan post : wpTrashRepo.findAll()) {
@@ -317,6 +329,12 @@ public class ForumService {
         return array.toString();
     }
 
+    /**
+     * Deletes the specified forum post by the authority of the given user.
+     * @param id the id of the forum post to delete.
+     * @param userId the userId exercising their authority.
+     * @return whether the deletion worked as intended.
+     */
     public boolean deleteById(int id, int userId) {
 
         if(wpForoPostRepo.findById((long) id).isPresent() && !isLockedForUser(id, userId) && getAllForumsWithChildrenForUser(userId).contains(wpForoPostRepo.findById((long) id).get().getForumId())) {
@@ -330,6 +348,11 @@ public class ForumService {
         return false;
     }
 
+    /**
+     * Restores a post from trashcan.
+     * @param postId the postId to restore.
+     * @return whether the restoring worked as intended.
+     */
     public boolean restoreById(int postId) {
         try {
             restore(wpTrashRepo.findById((long) postId).get());
@@ -339,8 +362,12 @@ public class ForumService {
         }
     }
 
+    /**
+     * Fetches all Forums that the specified user has access to, and their children.
+     * @param userId the user to fetch for.
+     * @return a List of Forum-Ids.
+     */
     public List<Integer> getAllForumsWithChildrenForUser(int userId) {
-
         if(isAdmin(userId)) {
             return wpForoForumRepo.getAllForumIds();
         }
@@ -352,16 +379,30 @@ public class ForumService {
         return filterForums;
     }
 
+    /**
+     * Checks whether a posts email emulates a users specified email.
+     * @param post the post to check for.
+     * @return whether a posts given email was specified without harmful impersonation.
+     */
     public boolean isUserMailFake(WPWPForoPosts post) {
         return userRepo.getAllEmails().contains(post.getEmail()) && post.getUserId() == 0;
     }
 
+    /**
+     * Rates an Email-Address for legit-ness and swearing.
+     * @param post the post to check the mail address for.
+     * @return a String containg "badEmail" or "good".
+     */
     public String getRatingEmail(WPWPForoPosts post) {
         if(isUserMailFake(post)) return "badEmail";
 
         return "good";
     }
 
+    /**
+     * Fetches a JSON-String representation of all bad words from table.
+     * @return a JSON-String.
+     */
     public String getAllBadWords() {
         JSONArray array = new JSONArray();
         for(Badwords bad : badWordRepo.findAll()) {
@@ -370,6 +411,11 @@ public class ForumService {
         return array.toString();
     }
 
+    /**
+     * Adds a bad word to table.
+     * @param word the word to add.
+     * @return whether the word was correctly added.
+     */
     public boolean addBadWord(String word) {
         if(badWordRepo.getByWord(word).isEmpty() && !word.isBlank()) {
             Badwords badWordNew = new Badwords();
@@ -381,6 +427,11 @@ public class ForumService {
         return false;
     }
 
+    /**
+     * Removes a bad word from table.
+     * @param word the word to remove.
+     * @return whether the word was found and removed.
+     */
     public boolean removeBadWord(String word) {
         if(badWordRepo.getByWord(word.toLowerCase()).isPresent()) {
             badWordRepo.delete(badWordRepo.getByWord(word.toLowerCase()).get());
@@ -453,14 +504,6 @@ public class ForumService {
         }
     }
 
-    public String getUserName(WPWPForoPosts post) {
-        if(!post.getName().isBlank()) {
-            return post.getName();
-        } else if(post.getUserId() != 0) {
-            return userRepo.findById((long) post.getUserId()).isPresent() ? userRepo.findById((long) post.getUserId()).get().getDisplayName() : "none";
-        }
-        return "Anonym";
-    }
 
     /**
      * Deletes post from wp_wpforo_posts, and adds it to trashcan
@@ -509,6 +552,10 @@ public class ForumService {
         wpForoPostRepo.delete(post);
     }
 
+    /**
+     * Deletes topic from wp_wpforo_topics and adds it to trashcan.
+     * @param topic the topic to toss.
+     */
     public void throwTrashcan(WPWPForoTopics topic) {
         WPWPForoTopicsTrash trash = new WPWPForoTopicsTrash();
         trash.setAnswers(topic.getAnswers());
@@ -546,7 +593,10 @@ public class ForumService {
         wpForoTopicsRepo.delete(topic);
     }
 
-
+    /**
+     * Restores a post from the trashcan.
+     * @param trash the post to restore from trash.
+     */
     public void restore(WPWPForoTrashcan trash) {
         WPWPForoPosts post = new WPWPForoPosts();
         post.setCreated(trash.getCreated());
@@ -595,6 +645,10 @@ public class ForumService {
         wpTrashRepo.delete(trash);
     }
 
+    /**
+     * Restores a topic from the trashcan.
+     * @param trash the topic to restore from trash.
+     */
     public void restore(WPWPForoTopicsTrash trash) {
         WPWPForoTopics topic = new WPWPForoTopics();
         topic.setAnswers(trash.getAnswers());
@@ -636,6 +690,10 @@ public class ForumService {
         wpTopicTrashRepo.delete(trash);
     }
 
+    /**
+     * Unlocks all forum posts, making them open to any editing.
+     * @return whether unlock worked correctly.
+     */
     public boolean unlockAll() {
         try {
             modLockRepo.deleteAll(modLockRepo.findAll());
@@ -645,6 +703,14 @@ public class ForumService {
         }
     }
 
+    /**
+     * Saves edits to a posts contents.
+     * @param hson the entire, edited posts as a JSON-String.
+     * @param accepted whether the post is now shown.
+     * @param userId the userId exercising their authority.
+     * @return whether the post was updated.
+     * @throws JSONException .
+     */
     public boolean updatePost(@RequestBody String hson, boolean accepted, int userId) throws JSONException {
         JSONObject json = new JSONObject(hson);
         try {
@@ -679,6 +745,11 @@ public class ForumService {
 
     }
 
+    /**
+     * Fetches the link to the forum-post on the website, for the specified post.
+     * @param postId the post to fetch for.
+     * @return the URL to the specified post.
+     */
     public String getLinkToPost(long postId) {
         String link = "https://it-sicherheit.de/forum-it-sicherheit/";
 
@@ -694,6 +765,11 @@ public class ForumService {
         return link;
     }
 
+    /**
+     * Fetches the link to the forum-topic on the website, for the specified post.
+     * @param postId the post to fetch for.
+     * @return the URL to the specified posts' topic.
+     */
     public String getLinkToTopic(long postId) {
         String link = "https://it-sicherheit.de/forum-it-sicherheit/";
 
@@ -714,6 +790,11 @@ public class ForumService {
         return link;
     }
 
+    /**
+     * Fetches the link to the forum on the website, for the specified post.
+     * @param postId the post to fetch for.
+     * @return the URL to the specified posts' forum.
+     */
     public String getLinkToForum(long postId) {
         String link = "https://it-sicherheit.de/forum-it-sicherheit/";
 
@@ -731,6 +812,11 @@ public class ForumService {
         return link;
     }
 
+    /**
+     * Fetches links to a posts forum, topic and post on the forum itself.
+     * @param id the id of the post.
+     * @return a JSON-Array-String containing links to forum, topic and post in order.
+     */
     public String getLinksAll(long id) {
         JSONArray array = new JSONArray();
 
@@ -741,6 +827,11 @@ public class ForumService {
         return array.toString();
     }
 
+    /**
+     * Fetches overarching, general statistics of the forum.
+     * @return a JSON-Object-String containing the amount of posts in different kinds of areas.
+     * @throws JSONException .
+     */
     public String getCounts() throws JSONException {
         JSONObject json = new JSONObject();
 
@@ -755,6 +846,12 @@ public class ForumService {
 
     }
 
+    /**
+     * Locks a post from edit for all except the specified user.
+     * @param postId the post to lock.
+     * @param userId the user to remain access to the post.
+     * @return whether the post was correctly locked.
+     */
     public boolean lock(int postId, int userId) {
         //If Post is locked and not locked by this user, tell user to fk off
         if(modLockRepo.findByPostId(postId).isPresent() && (modLockRepo.findByPostId(postId).get().getLocked() == 1 && modLockRepo.findByPostId(postId).get().getByUserId() != userId)) {
@@ -774,6 +871,12 @@ public class ForumService {
         }
     }
 
+    /**
+     * Unlocks a post, making it open to edit for everyone.
+     * @param postId the post to unlock.
+     * @param userId the user to unlock the post with.
+     * @return whether the post was correctly unlocked.
+     */
     public boolean unlock(int postId, int userId) {
         if(modLockRepo.findByPostId(postId).isPresent() && modLockRepo.findByPostId(postId).get().getByUserId() == userId) {
             ModLock modLock = modLockRepo.findByPostId(postId).get();
@@ -784,6 +887,11 @@ public class ForumService {
         return false;
     }
 
+    /**
+     * Checks whether a post is locked.
+     * @param postId the postId to check for.
+     * @return whether the post is locked (True means locked).
+     */
     public boolean isLocked(int postId) {
         if(modLockRepo.findByPostId(postId).isPresent()) {
             return modLockRepo.findByPostId(postId).get().getLocked() == 1;
@@ -791,6 +899,12 @@ public class ForumService {
         return false;
     }
 
+    /**
+     * Checks whether a post is inaccessible to the given user.
+     * @param postId the post to check for.
+     * @param userId the user to check for.
+     * @return whether the post is inaccessible for the user (true meaning no access).
+     */
     public boolean isLockedForUser(int postId, int userId) {
         if(isLocked(postId)) {
             return modLockRepo.findByPostId(postId).get().getByUserId() != userId;
@@ -798,6 +912,11 @@ public class ForumService {
         return false;
     }
 
+    /**
+     * Unlocks all posts currently locked by the user.
+     * @param userId the user to unlock all for.
+     * @return whether the posts were correctly unlocked.
+     */
     public boolean unlockAllForUser(int userId) {
         try {
             for (ModLock modLock : modLockRepo.findByUserId(userId)) {
@@ -810,6 +929,12 @@ public class ForumService {
         }
     }
 
+    /**
+     * Fetches the amount of unmoderated posts in all forums and all their subcategories.
+     * @param userId the user to fetch for (also acts as a filter, users only see their forums).
+     * @return a JSON-String.
+     * @throws JSONException .
+     */
     public String getModCounts(Integer userId) throws JSONException {
 
         JSONObject obj = new JSONObject();
@@ -872,9 +997,10 @@ public class ForumService {
         return obj.toString();
     }
 
-
-
-
+    /**
+     * Saves all ForumDiscussionsClicks in the corresponding table.
+     * @param forumDiskussionsClicksMap the map to save.
+     */
     @Transactional
     public void persistAllForumDiscussionsClicksHour(Map<Integer, ForumDiskussionsthemenClicksByHour> forumDiskussionsClicksMap) {
         if (!forumDiskussionsClicksMap.isEmpty()) {
@@ -882,6 +1008,10 @@ public class ForumService {
         }
     }
 
+    /**
+     * Saves all ForumTopicsClicks in the corresponding table.
+     * @param forumTopicsClicksMap the map to save.
+     */
     @Transactional
     public void persistAllForumTopicsClicksHour(Map<Integer, ForumTopicsClicksByHour> forumTopicsClicksMap) {
         if (!forumTopicsClicksMap.isEmpty()) {
@@ -889,25 +1019,30 @@ public class ForumService {
         }
     }
 
+    /**
+     * Saves a ForumSearch to table.
+     * @param forumSearch the search to save.
+     */
     public void saveSearchData(ForumSearch forumSearch) {
         searchRepo.save(forumSearch);
     }
 
+    /**
+     * Fetches a forum by its slug.
+     * @param slug the slug to fetch for.
+     * @return the forums id, if found, else null.
+     */
     public Integer getForumIdBySlug(String slug){
         return forumRepo.getForumIdBySlug(slug);
     }
 
+    /**
+     * Fetches a topics id by its slug.
+     * @param slug the slug to fetch for.
+     * @return the TopicsId if found, else null.
+     */
     public Integer getTopicIdBySlug(String slug){
         return topicRepo.getTopicIdBySlug(slug);
-    }
-
-    public Long getViewsByIdAllTime(Long id){
-        return clicksByHourRepo.getClicksAllTimeById(id);
-    }
-
-    public Long getViewsByIdToday(Long id){
-        Integer uniId = uniRepo.getLatestUniStat().getId();
-        return clicksByHourRepo.getClicksOfDay(id,uniId);
     }
 
     /**
@@ -998,6 +1133,11 @@ public class ForumService {
         return jsonArray.toString();
     }
 
+    /**
+     * Fetches the Top 15 searched terms.
+     * @return a JSON-String containing the values of the fetched terms.
+     * @throws JSONException .
+     */
     public String getRankedSearchTop15(){
         List<ForumSearch> allsearches = searchRepo.findAll();
         Map<String,Long> termCount = new ConcurrentHashMap<>();

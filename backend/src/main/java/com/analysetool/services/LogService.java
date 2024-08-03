@@ -1,6 +1,5 @@
 package com.analysetool.services;
 
-import com.analysetool.api.ForumModController;
 import com.analysetool.api.IPController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
@@ -147,8 +146,7 @@ public class LogService {
     private UniqueUserService uniqueUserService;
     @Autowired
     private LastPingRepository lpRepo;
-    @Autowired
-    private ForumModController forumModController;
+
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
 
@@ -3439,7 +3437,7 @@ public class LogService {
             LastPing ping = lpRepo.findById(1L).get();
 
             if(ping.getTimestamp().toLocalDateTime().plusMinutes(15).isBefore(LocalDateTime.now())) {
-                forumModController.unlockAll();
+                forumService.unlockAll();
             }
         }
 

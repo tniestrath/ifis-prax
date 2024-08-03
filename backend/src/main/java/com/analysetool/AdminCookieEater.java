@@ -1,6 +1,6 @@
 package com.analysetool;
 
-import com.analysetool.api.LoginController;
+import com.analysetool.services.LoginService;
 import com.analysetool.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,13 +14,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class AdminCookieEater implements HandlerInterceptor {
 
     @Autowired
-    LoginController loginController;
+    LoginService loginService;
     @Autowired
     UserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String result = loginController.validateCookie(request);
+        String result = loginService.validateCookie(request);
 
         if(request.getRequestURL().toString().contains("0wB4P2mly-xaRmeeDOj0_g")) return true;
         if(request.getRequestURL().toString().contains("api/users/getByLogin")) return true;

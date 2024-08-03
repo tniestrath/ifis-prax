@@ -1,6 +1,6 @@
 package com.analysetool;
 
-import com.analysetool.api.LoginController;
+import com.analysetool.services.LoginService;
 import com.analysetool.util.DashConfig;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ public class AuthenticationService {
             "27"
     };
 
-    private static final LoginController loginController = new LoginController(new DashConfig());
+    private static final LoginService loginService = new LoginService(new DashConfig());
 
     public static Authentication getAuthentication(HttpServletRequest request) {
         var cookie = "";
@@ -29,7 +29,7 @@ public class AuthenticationService {
         }
         String user_id;
         if(!cookie.equals("")) {
-            user_id = loginController.validateCookie(cookie);
+            user_id = loginService.validateCookie(cookie);
         } else {
             user_id = "";
         }

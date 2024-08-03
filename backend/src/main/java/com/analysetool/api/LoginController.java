@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.LastPing;
 import com.analysetool.repositories.LastPingRepository;
+import com.analysetool.services.LoginService;
 import com.analysetool.services.UserService;
 import com.analysetool.util.DashConfig;
 import jakarta.servlet.http.Cookie;
@@ -35,95 +36,7 @@ import java.util.*;
 public class LoginController {
 
     @Autowired
-    UserService userService;
-    @Autowired
-    private LastPingRepository lpRepo;
-
-    public Authentication adminAuthentication = new Authentication() {
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return Collections.singleton(new SimpleGrantedAuthority("ADMIN"));
-        }
-
-        @Override
-        public Object getCredentials() {
-            return null;
-        }
-
-        @Override
-        public Object getDetails() {
-            return null;
-        }
-
-        @Override
-        public Object getPrincipal() {
-            return null;
-        }
-
-        @Override
-        public boolean isAuthenticated() {
-            return true;
-        }
-
-        @Override
-        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-        }
-
-        @Override
-        public String getName() {
-            return "Admin";
-        }
-    };
-
-    public Authentication userAuthentication = new Authentication() {
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return Collections.singleton(new SimpleGrantedAuthority("USER"));
-        }
-
-        @Override
-        public Object getCredentials() {
-            return null;
-        }
-
-        @Override
-        public Object getDetails() {
-            return null;
-        }
-
-        @Override
-        public Object getPrincipal() {
-            return null;
-        }
-
-        @Override
-        public boolean isAuthenticated() {
-            return true;
-        }
-
-        @Override
-        public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-        }
-
-        @Override
-        public String getName() {
-            return "User";
-        }
-    };
-
-
-    private final DashConfig config;
-    private static class LoginForm {
-        public String username;
-        public String password;
-    }
-
-
-    public LoginController(DashConfig config) {
-        this.config = config;
-    }
+    LoginService loginService;
 
     /**
      * Attempts to log in a user.
@@ -133,160 +46,17 @@ public class LoginController {
      */
 
     @GetMapping(value = {"/login", "/0wB4P2mly-xaRmeeDOj0_g/login"})
-    public String login(@RequestParam String user, String pass) {
-        HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(config.getWplogin());
+    public String login(@RequestParam String user, String pass) {return loginService.login(user, pass);}
 
-        String responseCookie = "";
-
-        try {
-            List<NameValuePair> params = new ArrayList<>();
-            params.add(new BasicNameValuePair("log", user));
-            params.add(new BasicNameValuePair("pwd", pass));
-
-            httpPost.setEntity(new UrlEncodedFormEntity(params));
-
-            HttpResponse response = httpClient.execute(httpPost);
-            HttpEntity entity = response.getEntity();
-            //Header[] headers = response.getAllHeaders();
-
-            Header[] allSetCookie = response.getHeaders("Set-Cookie");
-            for (Header h: allSetCookie) {
-                if (h.getValue().contains("wordpress_logged_in")){
-                    responseCookie = h.getValue();
-                }
-            }
-            String userData = userService.getUserByLogin(user);
-            if (responseCookie.isEmpty() || !(new JSONObject(userData).get("accountType").equals("admin"))){
-                responseCookie = "LOGIN REJECTED";
-            }
-
-            // Process the response
-            String responseBody = EntityUtils.toString(entity);
-            for (int i = 0; i < allSetCookie.length; i++) {
-                //System.out.println(responseCookie);
-            }
-
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-        //System.out.println("USERNAME: " +  user + " PASSWORT: " + pass);
-
-        return responseCookie;
-    }
     @PostMapping(value = {"/login2", "/0wB4P2mly-xaRmeeDOj0_g/login2"})
-    public String login2(@RequestBody LoginForm loginForm){
-        HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(config.getWplogin());
-
-        String responseCookie = "";
-
-        try {
-            List<NameValuePair> params = new ArrayList<>();
-            params.add(new BasicNameValuePair("log", loginForm.username));
-            params.add(new BasicNameValuePair("pwd", loginForm.password));
-
-            httpPost.setEntity(new UrlEncodedFormEntity(params));
-
-            HttpResponse response = httpClient.execute(httpPost);
-            HttpEntity entity = response.getEntity();
-            //Header[] headers = response.getAllHeaders();
-
-            Header[] allSetCookie = response.getHeaders("Set-Cookie");
-            for (Header h: allSetCookie) {
-                if (h.getValue().contains("wordpress_logged_in")){
-                    responseCookie = h.getValue();
-                }
-            }
-            String userData = userService.getUserByLogin(loginForm.username);
-            if (responseCookie.isEmpty()){
-                responseCookie = "LOGIN REJECTED";
-            }
-
-            // Process the response
-            String responseBody = EntityUtils.toString(entity);
-            for (int i = 0; i < allSetCookie.length; i++) {
-                //System.out.println(responseCookie);
-            }
-
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-
-        return responseCookie;
-    }
+    public String login2(@RequestBody LoginService.LoginForm loginForm){return loginService.login2(loginForm);}
 
     @GetMapping(value = {"/validate", "/0wB4P2mly-xaRmeeDOj0_g/validate"})
-    public String validateCookie(HttpServletRequest request){
-        HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(config.getValidate());
-        //System.out.println("Cookie Validation in progress");
-
-        String responseBody = "INVALID";
-        try {
-            String cookieValue = "";
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().contains("wordpress_logged_in")) {
-                    cookieValue = java.net.URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
-                    //System.out.println(cookieValue);
-                }
-            }
-
-            String jsonPayload = "{\"log\":\""+ cookieValue +"\"}";
-            StringEntity strEntity = new StringEntity(jsonPayload, "UTF-8");
-            strEntity.setContentType("application/json");
-            httpPost.setEntity(strEntity);
-
-            HttpResponse response2 = httpClient.execute(httpPost);
-            HttpEntity entity = response2.getEntity();
-
-            responseBody = EntityUtils.toString(entity);
-
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-        return responseBody;
-    }
+    public String validateCookie(HttpServletRequest request){return loginService.validateCookie(request);}
 
     @GetMapping(value = {"/validateCookie", "/0wB4P2mly-xaRmeeDOj0_g/validateCookie"})
-    public String validateCookie(@RequestParam("value") String cookie){
-        HttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(config.getValidate());
-        //System.out.println("Manual Cookie Validation in progress");
-
-
-        String responseBody = "INVALID";
-        try {
-            String cookieValue;
-            cookieValue = java.net.URLDecoder.decode(cookie, StandardCharsets.UTF_8);
-            //System.out.println(cookieValue);
-
-            String jsonPayload = "{\"log\":\""+ cookieValue +"\"}";
-            StringEntity strEntity = new StringEntity(jsonPayload, "UTF-8");
-            strEntity.setContentType("application/json");
-            httpPost.setEntity(strEntity);
-
-            HttpResponse response2 = httpClient.execute(httpPost);
-            HttpEntity entity = response2.getEntity();
-
-            responseBody = new JSONObject(EntityUtils.toString(entity)).getString("user_id");
-
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-        return responseBody;
-    }
+    public String validateCookie(@RequestParam("value") String cookie){return loginService.validateCookie(cookie);}
 
     @GetMapping(value = {"/ping", "/0wB4P2mly-xaRmeeDOj0_g/ping"})
-    public boolean ping() {
-        LastPing ping;
-        if(lpRepo.findById(1L).isPresent()) {
-            ping = lpRepo.findById(1L).get();
-        } else {
-            ping = new LastPing();
-        }
-        ping.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
-        lpRepo.save(ping);
-        return true;
-    }
+    public boolean ping() {return loginService.ping();}
 }

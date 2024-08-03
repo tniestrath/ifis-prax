@@ -1,20 +1,11 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.TrackingBlacklist;
-import com.analysetool.repositories.TrackingBlacklistRepository;
+
 import com.analysetool.services.IPService;
-import com.analysetool.util.DashConfig;
-import com.analysetool.util.IPHelper;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.HashSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")

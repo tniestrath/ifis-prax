@@ -1,27 +1,10 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.*;
-import com.analysetool.repositories.*;
 import com.analysetool.services.DiagnosisService;
 import com.analysetool.services.LogService;
-import com.analysetool.services.PostService;
-import com.analysetool.services.UniqueUserService;
-import com.analysetool.util.Problem;
-import com.mysql.cj.log.Log;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")

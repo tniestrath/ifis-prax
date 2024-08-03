@@ -1,20 +1,11 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.*;
-import com.analysetool.repositories.*;
+
 import com.analysetool.services.GeoService;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

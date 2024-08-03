@@ -1,22 +1,11 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.*;
-import com.analysetool.repositories.*;
+
 import com.analysetool.services.ForumService;
-import com.analysetool.services.UserService;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")

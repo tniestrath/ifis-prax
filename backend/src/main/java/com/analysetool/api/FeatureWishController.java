@@ -1,7 +1,5 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.FeatureWishes;
-import com.analysetool.repositories.FeatureWishesRepository;
 import com.analysetool.services.WishCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;

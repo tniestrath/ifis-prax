@@ -798,7 +798,6 @@ public class ForumService {
         return false;
     }
 
-    @GetMapping("/unlockAll")
     public boolean unlockAllForUser(int userId) {
         try {
             for (ModLock modLock : modLockRepo.findByUserId(userId)) {
@@ -811,7 +810,6 @@ public class ForumService {
         }
     }
 
-    @GetMapping("/getModCounts")
     public String getModCounts(Integer userId) throws JSONException {
 
         JSONObject obj = new JSONObject();
@@ -873,7 +871,6 @@ public class ForumService {
 
         return obj.toString();
     }
-
 
 
 

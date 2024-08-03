@@ -40,9 +40,6 @@ public class ForumModController {
     @GetMapping("/getModeratedWithFilter")
     public String getModeratedWithFilter(int userId, int filterForum, int filterCat, int filterTopic, String search) throws JSONException {return forumService.getModeratedWithFilter(userId, filterForum, filterCat, filterTopic, search);}
 
-
-
-
     @GetMapping("/getPostById")
     public String getPostById(long id) throws JSONException {return forumService.getPostById(id);}
 

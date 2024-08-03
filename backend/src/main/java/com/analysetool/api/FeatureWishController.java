@@ -15,9 +15,6 @@ public class FeatureWishController {
     @Autowired
     private WishCustomerService wishService;
 
-    /**
-     * A hardcoded HTML-File, containing necessary features and CSS.
-     */
 
     /**
      * Adds a new Wish to the database.

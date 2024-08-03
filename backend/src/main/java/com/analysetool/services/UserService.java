@@ -1,6 +1,5 @@
 package com.analysetool.services;
 
-import com.analysetool.api.EventsController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
@@ -76,7 +75,7 @@ public class UserService {
     @Autowired
     private EventsRepository eventsRepo;
     @Autowired
-    private EventsController eventsController;
+    private EventsService eventsService;
     @Autowired
     private MembershipBufferRepository memberRepo;
 
@@ -1242,11 +1241,11 @@ public class UserService {
         int countOld = 0;
 
         for (Events e : allEvents) {
-            if(eventsController.isActive(e)) {
-                if (eventsController.isCurrent(e)) {
-                    events.add("c|" + eventsController.getEventType(e));
-                } else if (eventsController.isUpcoming(e)) {
-                    events.add("u|" + eventsController.getEventType(e));
+            if(eventsService.isActive(e)) {
+                if (eventsService.isCurrent(e)) {
+                    events.add("c|" + eventsService.getEventType(e));
+                } else if (eventsService.isUpcoming(e)) {
+                    events.add("u|" + eventsService.getEventType(e));
                 } else {
                     countOld++;
                 }
@@ -1307,11 +1306,11 @@ public class UserService {
         for (Events e : allEvents) {
             LocalDate createdDate = e.getEventDateCreated().toLocalDate();
 
-            if (createdDate.isBefore(today) && eventsController.isActive(e)) {
-                if(eventsController.isCurrent(e)) {
-                    events.add("c|" + eventsController.getEventType(e));
-                } else if(eventsController.isUpcoming(e)) {
-                    events.add("u|" + eventsController.getEventType(e));
+            if (createdDate.isBefore(today) && eventsService.isActive(e)) {
+                if(eventsService.isCurrent(e)) {
+                    events.add("c|" + eventsService.getEventType(e));
+                } else if(eventsService.isUpcoming(e)) {
+                    events.add("u|" + eventsService.getEventType(e));
                 }
 
             }
@@ -1325,7 +1324,7 @@ public class UserService {
         if(filter.isBlank()) {
             list = postRepo.getAllEventsWithSearchAndAuthor(search, id, PageRequest.of(page, size));
         } else {
-            list = postRepo.getAllEventsWithTypeAndSearchAndAuthor(eventsController.getTermIdFromFrontendType(filter), search, id, PageRequest.of(page, size));
+            list = postRepo.getAllEventsWithTypeAndSearchAndAuthor(eventsService.getTermIdFromFrontendType(filter), search, id, PageRequest.of(page, size));
         }
 
         List<JSONObject> stats = new ArrayList<>();

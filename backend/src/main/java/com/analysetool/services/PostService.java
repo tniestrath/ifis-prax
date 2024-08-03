@@ -1,6 +1,5 @@
 package com.analysetool.services;
 
-import com.analysetool.api.EventsController;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.analysetool.util.Constants;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -62,7 +60,7 @@ public class PostService {
     @Autowired
     private ContentDownloadsHourlyService contentDownloadsService;
     @Autowired
-    private EventsController eventsController;
+    private EventsService eventsService;
     @Autowired
     private EventsRepository eventsRepo;
     @Autowired
@@ -633,7 +631,7 @@ public class PostService {
         } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("event")){
             String type = "Event: ";
             //noinspection OptionalGetWithoutIsPresent
-            switch(eventsController.getEventType(eventsRepo.findByPostID(id).get())) {
+            switch(eventsService.getEventType(eventsRepo.findByPostID(id).get())) {
                 case "o", "r" ->  type += "Sonstige";
                 case "k" -> type += "Kongress";
                 case "m" -> type += "Messe";
@@ -838,7 +836,7 @@ public class PostService {
         if(filter.isBlank()) {
             list = postRepo.getAllEventsWithSearch(search, PageRequest.of(page, size));
         } else {
-            list = postRepo.getAllEventsWithTypeAndSearch(eventsController.getTermIdFromFrontendType(filter), search, PageRequest.of(page, size));
+            list = postRepo.getAllEventsWithTypeAndSearch(eventsService.getTermIdFromFrontendType(filter), search, PageRequest.of(page, size));
         }
         List<JSONObject> stats = new ArrayList<>();
 

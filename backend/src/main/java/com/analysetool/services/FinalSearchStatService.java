@@ -39,8 +39,6 @@ public class FinalSearchStatService {
     @Autowired
     private EventSearchRepository eventSearchRepo;
     @Autowired
-    private FinalSearchStatService fSearchStatService;
-    @Autowired
     private PostService postService;
     @Autowired
     private FinalSearchStatRepository finalSearchStatRepo;

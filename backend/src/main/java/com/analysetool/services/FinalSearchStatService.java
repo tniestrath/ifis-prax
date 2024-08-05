@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("DuplicatedCode")
@@ -407,10 +406,10 @@ public class FinalSearchStatService {
 
         for(Long postIds : similarityMap.keySet()){
             JSONObject obj = new JSONObject();
-            searchStats = fSearchStatService.getSearchStatsByPostId(postIds);
+            searchStats = getSearchStatsByPostId(postIds);
             if((!(searchStats==null))&& (!searchStats.isEmpty())){
 
-                obj.put("searchStats",fSearchStatService.toStringList(searchStats));
+                obj.put("searchStats", toStringList(searchStats));
                 obj.put("similarity",similarityMap.get(postIds));
                 obj.put("postId",postIds);
 
@@ -431,12 +430,12 @@ public class FinalSearchStatService {
      * @return A map containing frequent searches with few results based on the given thresholds.
      */
     public String getDemandByLocation(@RequestParam String location, @RequestParam String locationType, @RequestParam int searchThreshold, @RequestParam int resultThreshold, @RequestParam String analysisType) {
-        Map<FinalSearchStat, List<FinalSearchStatDLC>> dataPool = fSearchStatService.getSearchStatsByLocation(location, locationType);
+        Map<FinalSearchStat, List<FinalSearchStatDLC>> dataPool = getSearchStatsByLocation(location, locationType);
         Map<String, Integer> responseMap = switch (analysisType) {
             case "searchSuccess" ->
-                    fSearchStatService.findFrequentSearchesWithFewSearchSuccesses(dataPool, searchThreshold, resultThreshold);
+                    findFrequentSearchesWithFewSearchSuccesses(dataPool, searchThreshold, resultThreshold);
             case "resultCount" ->
-                    fSearchStatService.findFrequentSearchesWithFewResults(dataPool, searchThreshold, resultThreshold);
+                    findFrequentSearchesWithFewResults(dataPool, searchThreshold, resultThreshold);
             default -> new HashMap<>();
         };
 
@@ -586,7 +585,7 @@ public class FinalSearchStatService {
     public String getSearchCountDistributedByTime(@RequestParam String distributionType) throws JSONException {
         int latestUniId = uniRepo.getLatestUniStat().getId();
         int lowerBoundUniId=0;
-        Map<Integer,Long> allSearchCountsByUniId= fSearchStatService.getSearchCountDistributedByUniId();
+        Map<Integer,Long> allSearchCountsByUniId= getSearchCountDistributedByUniId();
         Calendar cal = Calendar.getInstance();
 
         JSONArray response = new JSONArray();

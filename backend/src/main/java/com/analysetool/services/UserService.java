@@ -2576,5 +2576,12 @@ public class UserService {
 
         return obj.toString();
     }
+
+    /**
+     * Fetches all anbieter names that contain the given search.
+     * @param search .
+     * @return a JSON-Array-String of Anbieter-names.
+     */
+    public String getUsernamesByStart(String search, String abo, String typ) {return new JSONArray(userRepo.getUsernamesBySearch(search, abo, typ)).toString();}
 }
 

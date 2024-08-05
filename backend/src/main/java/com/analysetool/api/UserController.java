@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.script.ScriptException;
-import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -636,4 +634,11 @@ public class UserController {
     @GetMapping("/getAverageRedirectsByPlan")
     public String getAverageRedirectsByPlan() throws JSONException {return userService.getAverageRedirectsByPlan();}
 
+    /**
+     * Fetches all anbieter names that contain the given search.
+     * @param search .
+     * @return a JSON-Array-String of Anbieter-names.
+     */
+    @GetMapping("/getPossibleAnbieter")
+    public String getPossibleAnbieter(String search, String abo, String typ) {return userService.getUsernamesByStart(search, abo, typ);}
 }

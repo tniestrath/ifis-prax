@@ -15,11 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,17 +43,7 @@ public class PostService {
     @Autowired
     private PostStatsRepository statRepository;
     @Autowired
-    private PostClicksByHourDLCService postClicksService;
-    @Autowired
-    private UserStatsRepository userStatsRepo;
-    @Autowired
-    private TagStatRepository tagStatRepo;
-    @Autowired
     private WPTermRepository termRepo;
-    @Autowired
-    private WPUserRepository userRepo;
-    @Autowired
-    private ContentDownloadsHourlyService contentDownloadsService;
     @Autowired
     private EventsService eventsService;
     @Autowired
@@ -71,8 +56,6 @@ public class PostService {
     private ContentDownloadsHourlyRepository contentDownloadsRepo;
     @Autowired
     private SocialsImpressionsService soziImp;
-    @Autowired
-    private PostService postService;
     @Autowired
     private PostMetaRepository postMetaRepo;
     @Autowired

@@ -244,5 +244,8 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
     @Query("SELECT u.id FROM WPUser u WHERE u.url =:url")
     List<Long> getUserByURL(String url);
 
+    @Query("SELECT u.nicename FROM WPUser u WHERE u.nicename LIKE %:search% ORDER BY u.nicename DESC")
+    List<String> getUsernamesBySearch(String search);
+
 }
 

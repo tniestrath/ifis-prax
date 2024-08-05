@@ -4,7 +4,10 @@
     <div class="searchbar-filter" id="searchbar-compare-button" (click)="onCompareClick()">
       <img src="assets/filter_icon.png">
     </div>
-    <input #search class="searchbar" type="text" (input)="onKey(search.value)" placeholder="Suchen">
+    <input #search search class="searchbar" type="text" (keydown)="onEnter($event.key)" (input)="onKey(search.value)" placeholder="Suchen"><br>
+    <div id="searchSuggestions">
+      <div class="searchSuggestion" (click)="onSuggestionClick(user)" *ngFor="let user of getSuggestions(search.value, this.selected_account_filter, this.selected_user_filter)">{{user}}</div>
+    </div>
   </div>
 
   <div id="searchbar-filter-box">

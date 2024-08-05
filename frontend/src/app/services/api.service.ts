@@ -77,6 +77,7 @@ export enum apiUrl {
   GET_USER_EVENTCOUNT_CREATED_YESTERDAY = "/users/getAmountOfEventsCreatedYesterday?id=ID",
   GET_USER_EVENTS_LIKE_POSTS = "/users/getEventsWithStatsAndId?&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH&id=ID",
   GET_USER_TAG_DISTRIBUTION_PRECENTAGE = "/users/getSingleUserTagsData?id=ID&sorter=SORTER",
+  GET_USERS_SUGGESTIONS = "/users/getPossibleAnbieter?search=SEARCH&abo=ABO&typ=TYP",
 
   GET_POST = "/posts/getPostStatsByIdWithAuthor?id=ID",
   GET_POST_WITH_CONTENT = "/posts/getPostStatsWithContent?id=ID",
@@ -667,6 +668,11 @@ export class ApiService {
   async getUserTagsRanking(id : string, sorter: string){
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_USER_TAG_DISTRIBUTION_PRECENTAGE).replace("ID", id).replace("SORTER", sorter), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USER_TAG_DISTRIBUTION_PRECENTAGE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getUserSearchSuggestions(search: string, abo: string, typ: string) : Promise<string[]>{
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_SUGGESTIONS).replace("SEARCH", search).replace("ABO", abo).replace("TYP", typ), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_SUGGESTIONS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserClicksAverageByViewType() {

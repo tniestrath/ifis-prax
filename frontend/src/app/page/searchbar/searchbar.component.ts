@@ -1,32 +1,32 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {CookieService} from "ngx-cookie-service";
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DbObject} from "../../services/DbObject";
-import {ApiService} from "../../services/api.service";
 import {SafeUrl} from "@angular/platform-browser";
 import {SysVars} from "../../services/sys-vars-service";
 import {Subject} from "rxjs";
 import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
-import {PdfService} from "../../services/pdf.service";
 import {DashColors} from "../../util/Util";
 
 
 @Component({
   selector: 'dash-searchbar',
   templateUrl: './searchbar.component.html',
-  styleUrls: ['./searchbar.component.css']
+  styleUrls: ['./searchbar.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
   @Output() searchInput :string = "";
+  lastSearchInput : string = "";
   @Output() currentSearch = new EventEmitter<string>();
   @Output() selected = new EventEmitter<DbObject>();
   @Output() filter = new EventEmitter<{ accType : string, usrType : string, sort : string }>();
   @Output() compare = new EventEmitter<void>();
   @Input('reset') reset = new Subject<boolean>();
-
+  @ViewChild(HTMLInputElement, {static : true}) search!: HTMLInputElement;
   page : string = "user";
 
   selectedSearch : DbObject = new DbObject("0", "");
+  searchSuggestions : string[] = [];
   displaySearchBox: string = "";
   imgSrc: SafeUrl = "";
 
@@ -34,6 +34,9 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
   selectedAccFilterString : string = "Alle";
   selectedUsrFilterString : string = "Alle";
+
+  selected_account_filter = "";
+  selected_user_filter = "";
 
   ngOnInit(): void {
     this.setupFilter();
@@ -45,7 +48,14 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
   onKey(value? : string) {
     if (value == null){return}
     this.searchInput = value;
-    this.currentSearch.emit(value);
+  }
+  onEnter(value : string){
+    console.log(value)
+    if (value == "Enter"){
+      this.currentSearch.emit(this.searchInput);
+      this.searchSuggestions = [];
+      this.cdr.detectChanges();
+    }
   }
 
   onDbObjectSelected(id: string, name: string){
@@ -92,8 +102,8 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
   }
 
   setupFilter() {
-    let selected_account_filter = " ";
-    let selected_user_filter = " ";
+    this.selected_account_filter = "";
+    this.selected_user_filter = "";
 
     let selected_sort = "userId";
 
@@ -133,34 +143,34 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
         filter.style.fontWeight = "bold";
         switch (filter.id) {
           case "searchbar-filter-accountType-without-plan":
-            selected_account_filter = "\"um_anbieter\"";
+            this.selected_account_filter = "\"um_anbieter\"";
             this.selectedAccFilterString = "Ohne Abo";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-accountType-basic":
-            selected_account_filter = "\"um_basis\"";
+            this.selected_account_filter = "\"um_basis\"";
             this.selectedAccFilterString = "Basis";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-accountType-basicPlus":
-            selected_account_filter = "\"um_basis-plus\"";
+            this.selected_account_filter = "\"um_basis-plus\"";
             this.selectedAccFilterString = "Basis+";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-accountType-plus":
-            selected_account_filter = "\"um_plus\"";
+            this.selected_account_filter = "\"um_plus\"";
             this.selectedAccFilterString = "Plus";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-accountType-premium":
-            selected_account_filter = "\"um_premium\"";
+            this.selected_account_filter = "\"um_premium\"";
             this.selectedAccFilterString = "Premium";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-accountType-all":
-            selected_account_filter = " ";
+            this.selected_account_filter = "";
             this.selectedAccFilterString = "Alle";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
         }
       });
@@ -176,34 +186,34 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
         filter.style.fontWeight = "bold";
         switch (filter.id) {
           case "searchbar-filter-userType-startup":
-            selected_user_filter = "Startup";
+            this.selected_user_filter = "Startup";
             this.selectedUsrFilterString = "Startup";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-userType-middle":
-            selected_user_filter = "Mittelstand";
+            this.selected_user_filter = "Mittelstand";
             this.selectedUsrFilterString = "Mittelstand";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-userType-corporate":
-            selected_user_filter = "Großkonzern";
+            this.selected_user_filter = "Großkonzern";
             this.selectedUsrFilterString = "Großkonzern";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-userType-uni":
-            selected_user_filter = "Hochschule";
+            this.selected_user_filter = "Hochschule";
             this.selectedUsrFilterString = "Hochschule";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-userType-collective":
-            selected_user_filter = "Verband";
+            this.selected_user_filter = "Verband";
             this.selectedUsrFilterString = "Verband";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
           case "searchbar-filter-userType-all":
-            selected_user_filter = " ";
+            this.selected_user_filter = "";
             this.selectedUsrFilterString = "Alle";
-            this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+            this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
             break;
         }
       });
@@ -221,7 +231,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_sort_uid.style.fontWeight = "normal";
       selected_sort = "profileView";
 
-      this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+      this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
     })
 
     filter_sort_contentViews.addEventListener("click", () => {
@@ -237,7 +247,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_sort_uid.style.fontWeight = "normal";
       selected_sort = "contentView";
 
-      this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+      this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
     })
 
     filter_sort_viewsByTime.addEventListener("click", () => {
@@ -253,7 +263,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_sort_uid.style.fontWeight = "normal";
       selected_sort = "viewsByTime";
 
-      this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+      this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
     })
 
     filter_sort_uid.addEventListener("click", () => {
@@ -268,7 +278,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       filter_sort_uid.style.fontWeight = "bold";
       selected_sort = "userId";
 
-      this.filter.emit({accType: selected_account_filter, usrType: selected_user_filter, sort: selected_sort});
+      this.filter.emit({accType: this.selected_account_filter, usrType: this.selected_user_filter, sort: selected_sort});
     })
     filter_sort_uid.style.color = "#951D40";
     filter_sort_uid.style.fontWeight = "bold";
@@ -278,5 +288,21 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 
   onCompareClick() {
     this.compare.emit();
+  }
+
+  getSuggestions(value: string, abo : string, typ : string) {
+    if (value == this.lastSearchInput){return this.searchSuggestions}
+    if (value == ""){this.searchSuggestions = []; return [];}
+    this.api.getUserSearchSuggestions(value, abo, typ).then(res => {
+      this.searchSuggestions = res;
+      this.cdr.detectChanges();
+    });
+    this.lastSearchInput = value;
+    return this.searchSuggestions;
+  }
+
+  onSuggestionClick(user : string){
+    this.currentSearch.emit(user);
+    this.searchSuggestions = [];
   }
 }

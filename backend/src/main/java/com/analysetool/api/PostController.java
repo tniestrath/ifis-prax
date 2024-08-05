@@ -1,36 +1,16 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.*;
-import com.analysetool.repositories.*;
-import com.analysetool.services.ContentDownloadsHourlyService;
+import com.analysetool.modells.Post;
 import com.analysetool.services.PostClicksByHourDLCService;
 import com.analysetool.services.PostService;
-import com.analysetool.services.SocialsImpressionsService;
-import com.analysetool.util.Constants;
 import com.analysetool.util.MathHelper;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
@@ -296,6 +276,19 @@ public class PostController {
      */
     @GetMapping("/pageByTitle")
     public String pageTitleFinder(Integer page, Integer size, String sortBy, String filter, String search) throws JSONException, ParseException {return postService.pageTitleFinder(page, size, sortBy, filter, search);}
+
+    /**
+     * Fetches size amount of Post-Stats from only those that MATCH the filter and include the search in their title, they are also sorted by the "sorter" and ASCending or DESCending.
+     * @param sorter what criteria the result should be listed in.
+     * @param filter the type of post to look for.
+     * @param search what titles to look for.
+     * @return a JSON-String containing several PostStatsByIdForFrontend entries.
+     * @throws JSONException .
+     * @throws ParseException .
+     */
+    @GetMapping("/postPage")
+    public String postPage(Integer page, Integer size, String filter, String search, String sorter, String dir) throws JSONException, ParseException {return postService.postPage(page, size, filter, search, sorter, dir);}
+
 
     /**
      * Fetches a page of events with their respective stat-JSON-strings.

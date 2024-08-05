@@ -661,9 +661,6 @@ public class LogService {
                 //isInternal ist kurzzeitig entfernt als test.
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isServerError && !isBlacklisted && isSuccessfulRequest && !isSpam && isGet) {
 
-
-                    checkIncomingRedirect(line);
-
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
 
                     //Does it match a forum discussion view
@@ -955,6 +952,10 @@ public class LogService {
                     } else if (matched_it_notfall.find()) {
                         whatMatched = "notfall";
                         patternMatcher = matched_it_notfall;
+                    }
+
+                    if(!whatMatched.isBlank()) {
+                        checkIncomingRedirect(line);
                     }
 
                     //If the user is new, initialize them.

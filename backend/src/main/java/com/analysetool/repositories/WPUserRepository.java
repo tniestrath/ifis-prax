@@ -245,7 +245,7 @@ public interface WPUserRepository extends JpaRepository<WPUser, Long> {
     List<Long> getUserByURL(String url);
 
     @Query("SELECT u.nicename FROM WPUser u JOIN WPUserMeta um ON u.id=um.userId JOIN WPUserMeta wum ON u.id = wum.userId WHERE " +
-            "um.key='wp_capabilities' AND um.value LIKE CONCAT('%', :abo, '\"%') " +
+            "um.key='wp_capabilities' AND um.value LIKE CONCAT('%', :abo, '%') " +
             "AND (wum.key ='company_category' AND wum.value LIKE %:typ%)" +
             "AND u.nicename LIKE %:search% ORDER BY u.nicename ASC LIMIT 5")
     List<String> getUsernamesBySearch(String search, String abo, String typ);

@@ -2582,6 +2582,6 @@ public class UserService {
      * @param search .
      * @return a JSON-Array-String of Anbieter-names.
      */
-    public String getUsernamesByStart(String search) {return new JSONArray(userRepo.getUsernamesBySearch(search)).toString();}
+    public String getUsernamesByStart(String search, String abo, String typ) {return new JSONArray(userRepo.getUsernamesBySearch(search, abo, typ)).toString();}
 }
 

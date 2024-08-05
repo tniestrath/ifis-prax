@@ -640,5 +640,5 @@ public class UserController {
      * @return a JSON-Array-String of Anbieter-names.
      */
     @GetMapping("/getPossibleAnbieter")
-    public String getPossibleAnbieter(String search) {return userService.getUsernamesByStart(search);}
+    public String getPossibleAnbieter(String search, String abo, String typ) {return userService.getUsernamesByStart(search, abo, typ);}
 }

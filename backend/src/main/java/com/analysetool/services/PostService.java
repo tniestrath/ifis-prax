@@ -1455,28 +1455,28 @@ public class PostService {
         if(sorter.isBlank()) {
             if(dir.isBlank() || dir.equalsIgnoreCase("DESC")) {
                 if(!filter.isBlank()) {
-                    list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
+                    list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "")));
                 } else {
-                    list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
+                    list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "")));
                 }
             } else {
                 if(!filter.isBlank()) {
-                    list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")));
+                    list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
                 } else {
-                    list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")));
+                    list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
                 }
             }
         } else {
             if(dir.isBlank() || dir.equalsIgnoreCase("DESC")) {
                 if(!filter.isBlank()) {
                     if(sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicks(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
+                        list = postRepo.postPageByClicks(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "")));
                     } else {
-                        list = postRepo.postPageByCreation(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
+                        list = postRepo.postPageByCreation(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "")));
                     }
                 } else {
                     if(sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicks(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
+                        list = postRepo.postPageByClicks(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "")));
                     } else {
                         list = postRepo.postPageByCreation(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC)));
                     }
@@ -1484,15 +1484,15 @@ public class PostService {
             } else {
                 if (!filter.isBlank()) {
                     if (sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicks(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")));
+                        list = postRepo.postPageByClicks(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
                     } else {
-                        list = postRepo.postPageByCreation(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")));
+                        list = postRepo.postPageByCreation(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
                     }
                 } else {
                     if (sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicks(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")));
+                        list = postRepo.postPageByClicks(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
                     } else {
-                        list = postRepo.postPageByCreation(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")));
+                        list = postRepo.postPageByCreation(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
                     }
                 }
             }
@@ -1504,7 +1504,5 @@ public class PostService {
             stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
         }
         return new JSONArray(stats).toString();
-
-
     }
 }

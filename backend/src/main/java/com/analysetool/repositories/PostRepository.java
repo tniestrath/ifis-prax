@@ -71,6 +71,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter%")
    List<Post> pageByTitleWithTypeQueryWithFilter(String title, String status, String type, String filter, Pageable pageable);
 
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY SUM(ps.clicks)")
+   List<Post> postPageByClicks(String title, String status, String type, String filter, Pageable pageable);
+
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY p.date")
+   List<Post> postPageByCreation(String title, String status, String type, String filter, Pageable pageable);
+
+
+   @Query("SELECT p FROM Post p JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type ORDER BY SUM(ps.clicks)")
+   List<Post> postPageByClicks(String title, String status, String type, Pageable pageable);
+
+   @Query("SELECT p FROM Post p WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type ORDER BY p.date")
+   List<Post> postPageByCreation(String title, String status, String type, Pageable pageable);
+
    List<Post> findByAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(long authorId, String status, String type, Pageable pageable);
 
    List<Post> findByTitleContainingAndAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(String title, long authorId, String status, String type, Pageable pageable);

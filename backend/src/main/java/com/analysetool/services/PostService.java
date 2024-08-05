@@ -15,11 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,17 +43,7 @@ public class PostService {
     @Autowired
     private PostStatsRepository statRepository;
     @Autowired
-    private PostClicksByHourDLCService postClicksService;
-    @Autowired
-    private UserStatsRepository userStatsRepo;
-    @Autowired
-    private TagStatRepository tagStatRepo;
-    @Autowired
     private WPTermRepository termRepo;
-    @Autowired
-    private WPUserRepository userRepo;
-    @Autowired
-    private ContentDownloadsHourlyService contentDownloadsService;
     @Autowired
     private EventsService eventsService;
     @Autowired
@@ -71,8 +56,6 @@ public class PostService {
     private ContentDownloadsHourlyRepository contentDownloadsRepo;
     @Autowired
     private SocialsImpressionsService soziImp;
-    @Autowired
-    private PostService postService;
     @Autowired
     private PostMetaRepository postMetaRepo;
     @Autowired
@@ -1460,5 +1443,66 @@ public class PostService {
         }
 
         return new JSONObject().put("dates", dates).put("views", views).toString();
+    }
+
+    public String postPage(Integer page, Integer size, String filter, String search, String sorter, String dir) throws JSONException, ParseException {
+        List<Post> list;
+
+        if(search == null) {
+            search = "";
+        }
+
+        if(sorter.isBlank()) {
+            if(dir.isBlank() || dir.equalsIgnoreCase("DESC")) {
+                if(!filter.isBlank()) {
+                    list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "")));
+                } else {
+                    list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "")));
+                }
+            } else {
+                if(!filter.isBlank()) {
+                    list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
+                } else {
+                    list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
+                }
+            }
+        } else {
+            if(dir.isBlank() || dir.equalsIgnoreCase("DESC")) {
+                if(!filter.isBlank()) {
+                    if(sorter.equals("clicks")) {
+                        list = postRepo.postPageByClicks(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "")));
+                    } else {
+                        list = postRepo.postPageByCreation(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "")));
+                    }
+                } else {
+                    if(sorter.equals("clicks")) {
+                        list = postRepo.postPageByClicks(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "")));
+                    } else {
+                        list = postRepo.postPageByCreation(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC)));
+                    }
+                }
+            } else {
+                if (!filter.isBlank()) {
+                    if (sorter.equals("clicks")) {
+                        list = postRepo.postPageByClicks(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
+                    } else {
+                        list = postRepo.postPageByCreation(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
+                    }
+                } else {
+                    if (sorter.equals("clicks")) {
+                        list = postRepo.postPageByClicks(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
+                    } else {
+                        list = postRepo.postPageByCreation(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "")));
+                    }
+                }
+            }
+        }
+
+        List<JSONObject> stats = new ArrayList<>();
+        for(Post post : list) {
+            long id = post.getId();
+            stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
+        }
+        return new JSONArray(stats).toString();
     }
 }

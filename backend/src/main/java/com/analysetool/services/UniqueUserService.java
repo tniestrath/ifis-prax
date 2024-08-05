@@ -28,8 +28,6 @@ public class UniqueUserService {
     universalStatsRepository uniRepo;
     @Autowired
     TrackingBlacklistRepository trackBlackRepo;
-    @Autowired
-    UniqueUserService uniqueUserService;
 
     /**
      * Fetches the average time spent of all users.

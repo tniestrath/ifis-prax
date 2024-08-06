@@ -19,7 +19,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p WHERE p.status = 'publish'")
    List<Post> findPublishedPosts();
 
-   @Query("SELECT p FROM Post p where :userId IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug) AND p.status='publish' AND (p.type='post' OR p.type='video')")
+   @Query("SELECT p FROM Post p where :id IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug) AND p.status='publish' AND (p.type='post' OR p.type='video')")
    List<Post> findByAuthor(int id);
 
    @Query("SELECT p.id FROM Post p where :id IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug) AND p.status='publish' AND (p.type='post' OR p.type='video')")

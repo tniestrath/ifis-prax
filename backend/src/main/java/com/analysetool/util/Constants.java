@@ -33,6 +33,7 @@ public class Constants {
     private final String basisPlusAnbieter = "um_basis-plus";
     private final String plusAnbieter = "um_plus";
     private final String premiumAnbieter = "um_premium";
+    private final String mod = "editor";
 
     private final String thumbnailLocationStart = "https://it-sicherheit.de/wp-content/uploads/";
     private final String profilePhotoStart = "https://it-sicherheit.de/wp-content/uploads/ultimatemember/";
@@ -178,6 +179,10 @@ public class Constants {
             }
         }
         return ids;
+    }
+
+    public String getMod() {
+        return mod;
     }
 
     public List<String> getListOfUserTypesDirty() {

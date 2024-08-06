@@ -776,6 +776,7 @@ public class UserService {
             if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "basis-plus";
             if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium";
             if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "basis";
+            if(wpUserMeta.contains(Constants.getInstance().getMod())) return "moderator";
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 

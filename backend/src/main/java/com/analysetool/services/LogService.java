@@ -3133,8 +3133,7 @@ public class LogService {
 
             //  Ersetzen von mehreren aufeinanderfolgenden Leerzeichen durch ein einzelnes Leerzeichen
             cleanedQuery = cleanedQuery.replaceAll("\\s+", " ").trim();
-        } catch (Exception e) {
-            System.out.println("Fehler beim Decodieren des URL-Strings, weiter mit codierter Suchanfrage :" + e.getMessage());
+        } catch (Exception ignored) {
         }
 
         String key = ip + "_" + cleanedQuery;
@@ -3158,7 +3157,6 @@ public class LogService {
      */
     public void linkSearchSuccessesWithSearches(List<TemporarySearchStat> tempSearches, List<FinalSearchStat> finalSearches) {
         // Erstelle zuerst eine Map für die Zuordnung von TempID zu FinalSearchStat
-        System.out.println(searchDLCMap);
         Map<Long, FinalSearchStat> tempIdToFinalSearchMap = new ConcurrentHashMap<>();
         for (FinalSearchStat finalSearch : finalSearches) {
             tempIdToFinalSearchMap.put(finalSearch.getTempId(), finalSearch);
@@ -3176,7 +3174,6 @@ public class LogService {
 
             String key = tempSearch.getSearchIp() + "_" + cleanedQuery;
             List<FinalSearchStatDLC> searchDLCList = searchDLCMap.get(key);
-            System.out.println(key);
             if (searchDLCList != null) {
                 for (FinalSearchStatDLC searchDLC : searchDLCList) {
                     FinalSearchStat matchingFinalSearch = tempIdToFinalSearchMap.get(tempSearch.getId());
@@ -3187,7 +3184,6 @@ public class LogService {
             }
         }
         Boolean saveSuccess = finalSearchService.saveAllDLCBooleanFromMap(searchDLCMap);
-        System.out.println("SearchDLC save success: " + saveSuccess);
     }
 
     /**
@@ -3216,19 +3212,11 @@ public class LogService {
            zuSpeicherndeFinalSearches.add(search);
            }else{zuEntfernendeTemSearches.add(stat);}
         }
-        System.out.println(zuSpeicherndeFinalSearches);
         Boolean saveSuccess = finalSearchService.saveAllBoolean(zuSpeicherndeFinalSearches);
-        System.out.println(saveSuccess);
         if(saveSuccess){
             alleTempSearches.removeAll(zuEntfernendeTemSearches);
             linkSearchSuccessesWithSearches(alleTempSearches,zuSpeicherndeFinalSearches);
             Boolean deleteSuccess =temporarySearchService.deleteAllSearchStatBooleanIn(alleTempSearches);
-            if(!deleteSuccess){
-                System.out.println("Löschen von TemporarySearch mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
-            }
-            System.out.println("Final Search Stats saved ! Temporary Search Stats deleted !");
-        }else{
-            System.out.println("Erstellen/Speichern von FinalSearch der TemporarySearches mit Ids zwischen "+alleTempSearches.get(0).getId()+" und "+alleTempSearches.get(alleTempSearches.size()-1).getId()+" nicht Möglich!");
         }
     }
 
@@ -3411,7 +3399,6 @@ public class LogService {
     private void banBots() {
         for(UniqueUser user : uniqueUserService.getPossibleBots(15)) {
             ipService.blockIp(user.getIp());
-            System.out.println("BLOCKED SOMEONE");
         }
         for(UniqueUser user : uniqueUserService.getPossibleBots(10)) {
             if(IPHelper.getCountryISO(user.getIp()).equals("DE")
@@ -3421,13 +3408,11 @@ public class LogService {
                     || IPHelper.getCountryISO(user.getIp()).equals("AT")
                     || IPHelper.getCountryISO(user.getIp()).equals("LU")) {
                 ipService.blockIp(user.getIp());
-                System.out.println("BLOCKED SOMEONE");
             }
         }
 
         for(UniqueUser bot : uniqueUserService.getBotsByClicksOverTime()) {
             ipService.blockIp(bot.getIp());
-            System.out.println("BLOCKED SOMEONE");
         }
 
     }

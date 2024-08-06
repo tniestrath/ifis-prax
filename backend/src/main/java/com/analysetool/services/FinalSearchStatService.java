@@ -513,7 +513,6 @@ public class FinalSearchStatService {
         for(Object[] object:obj){
             Integer uniId = ((Number) object[0]).intValue();
             Long count = ((Number) object[1]).longValue();
-            System.out.println("uniId : "+uniId+" count: "+count);
             response.put(uniId,count);
         }
         return response;

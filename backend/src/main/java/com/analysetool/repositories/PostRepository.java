@@ -19,22 +19,48 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p WHERE p.status = 'publish'")
    List<Post> findPublishedPosts();
 
-   @Query("SELECT p FROM Post p where :id IN (SELECT user.id FROM AuthorsRelationships a JOIN Post p ON p.id = a.postId JOIN WPTerm term ON a.authorTerm = term.id JOIN WPUser user ON user.nicename = term.slug WHERE user.id=:id) AND p.status='publish' AND (p.type='post' OR p.type='video')")
+   @Query("SELECT p FROM AuthorsRelationships a " +
+           "JOIN Post p ON a.postId=p.id " +
+           "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
+           "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
+           "JOIN WPTerm  t ON t.id=wtt.termId " +
+           "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:id) " +
+           "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
+           "ORDER BY p.date DESC")
    List<Post> findByAuthor(long id);
 
-   @Query("SELECT p.id FROM Post p where :id IN (SELECT user.id FROM AuthorsRelationships a JOIN Post p ON p.id = a.postId JOIN WPTerm term ON a.authorTerm = term.id JOIN WPUser user ON user.nicename = term.slug WHERE user.id=:id) AND p.status='publish' AND (p.type='post' OR p.type='video')")
+   @Query("SELECT p.id FROM AuthorsRelationships a " +
+           "JOIN Post p ON a.postId=p.id " +
+           "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
+           "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
+           "JOIN WPTerm  t ON t.id=wtt.termId " +
+           "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:id) " +
+           "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
+           "ORDER BY p.date DESC")
    List<Long> findPostIdsByUserId(Long id);
 
-   @Query("SELECT p.id FROM Post p WHERE :userId IN (SELECT user.id FROM AuthorsRelationships a JOIN Post p ON p.id = a.postId JOIN WPTerm term ON a.authorTerm = term.id JOIN WPUser user ON user.nicename = term.slug WHERE user.id=:userId) AND p.status = 'publish' AND (p.type='post' OR p.type='video')")
-   List<Long> findPostIdsByAuthor(long userId, Pageable pageable);
+   @Query("SELECT p FROM AuthorsRelationships a " +
+           "JOIN Post p ON a.postId=p.id " +
+           "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
+           "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
+           "JOIN WPTerm t ON t.id=wtt.termId " +
+           "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
+           "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
+           "AND (p.title LIKE %:search% OR p.content LIKE %:search%) " +
+           "AND t.slug=:filter" +
+           " BY p.date DESC")   List<Post> findByAuthorPageable(long userId, String search, String filter, Pageable pageable);
 
-   List<Post> findByAuthorIdAndStatusAndType(long userId, String status, String type, Pageable pageable);
-
-   @Query("SELECT p FROM Post p LEFT JOIN wp_term_relationships wtr ON wtr.objectId = p.id LEFT JOIN WpTermTaxonomy wtt ON wtr.termTaxonomyId = wtt.termTaxonomyId LEFT JOIN WPTerm wpt ON wpt.id = wtt.termId WHERE p.status= 'publish' AND (p.type='post' OR p.type='video') AND :userId IN (SELECT user.id FROM AuthorsRelationships a JOIN Post p ON p.id = a.postId JOIN WPTerm term ON a.authorTerm = term.id JOIN WPUser user ON user.nicename = term.slug WHERE user.id=:userId) AND (p.title LIKE %:search% OR p.content LIKE %:search%) AND wpt.slug =:filter ORDER BY p.date DESC")
-   List<Post> findByAuthorPageable(long userId, String search, String filter, Pageable pageable);
-
-   @Query("SELECT p FROM Post p WHERE p.status= 'publish' AND (p.type='post' OR p.type='video') AND :userId IN (SELECT user.id FROM AuthorsRelationships a JOIN Post p ON p.id = a.postId JOIN WPTerm term ON a.authorTerm = term.id JOIN WPUser user ON user.nicename = term.slug WHERE user.id=:userId) AND (p.title LIKE %:search% OR p.content LIKE %:search%) ORDER BY p.date DESC")
+   @Query("SELECT p FROM AuthorsRelationships a " +
+           "JOIN Post p ON a.postId=p.id " +
+           "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
+           "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
+           "JOIN WPTerm  t ON t.id=wtt.termId " +
+           "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
+           "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
+           "AND (p.title LIKE %:search% OR p.content LIKE %:search%)" +
+           "ORDER BY p.date DESC")
    List<Post> findByAuthorPageable(long userId, String search, Pageable pageable);
+
 
    @Query("SELECT p.id from Post p where p.title =:title")
    List<Long> getIdByTitle(String title);
@@ -84,14 +110,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type ORDER BY p.date")
    List<Post> postPageByCreation(String title, String status, String type, Pageable pageable);
 
-   List<Post> findByAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(long authorId, String status, String type, Pageable pageable);
 
-   List<Post> findByTitleContainingAndAuthorIdAndStatusIsAndTypeIsOrderByModifiedDesc(String title, long authorId, String status, String type, Pageable pageable);
-
-   @Query("SELECT p.id FROM Post p WHERE p.title LIKE %:title% AND p.status='inherit' AND p.type='attachment'")
-   Optional<Long> findByTitleLike(String title);
-
-   @Query("SELECT p FROM Post p WHERE :authorId IN (SELECT user.id FROM AuthorsRelationships a JOIN Post p ON p.id = a.postId JOIN WPTerm term ON a.authorTerm = term.id JOIN WPUser user ON user.nicename = term.slug WHERE user.id=:authorId) AND DATE(p.date) = DATE(:date) AND p.status='publish' AND p.type='post'")
+   @Query("SELECT p FROM AuthorsRelationships a " +
+           "JOIN Post p ON a.postId=p.id " +
+           "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
+           "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
+           "JOIN WPTerm  t ON t.id=wtt.termId " +
+           "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:id) " +
+           "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
+           "AND DATE(p.date) = DATE(:date)" +
+           "ORDER BY p.date DESC")
    List<Post> getPostsByAuthorAndDate(long authorId, LocalDate date);
 
    @Query("SELECT p.id FROM Post p WHERE p.id NOT IN (SELECT u.post_id FROM PostTypes u) AND p.status='publish' AND p.type='post'")
@@ -109,10 +137,27 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p WHERE p.type='event' AND p.status='publish' AND p.title LIKE %:search%")
    List<Post> getAllEventsWithSearch(String search, Pageable pageable);
 
-   @Query("SELECT p FROM Post p JOIN wp_term_relationships wtr ON p.id= wtr.objectId JOIN WpTermTaxonomy wpt ON wtr.termTaxonomyId=wpt.termTaxonomyId WHERE p.type='event' AND p.status='publish' AND wpt.termId=:typeId AND p.title LIKE %:search% AND p.authorId=:authorId")
+   @Query("SELECT p FROM AuthorsRelationships a " +
+           "JOIN Post p ON a.postId=p.id " +
+           "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
+           "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
+           "JOIN WPTerm  t ON t.id=wtt.termId " +
+           "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:id) " +
+           "AND p.status= 'publish' AND p.type='event' " +
+           "AND p.title LIKE %:search% " +
+           "AND t.id=:typeId " +
+           "ORDER BY p.date DESC")
    List<Post> getAllEventsWithTypeAndSearchAndAuthor(long typeId, String search, long authorId, Pageable pageable);
 
-   @Query("SELECT p FROM Post p WHERE p.type='event' AND p.status='publish' AND p.title LIKE %:search% AND :authorId IN (SELECT user.id FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post p ON p.id = a.postId JOIN WPUser user ON user.nicename = term.slug WHERE user.id=:authorId)")
+   @Query("SELECT p FROM AuthorsRelationships a " +
+           "JOIN Post p ON a.postId=p.id " +
+           "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
+           "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
+           "JOIN WPTerm  t ON t.id=wtt.termId " +
+           "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:id) " +
+           "AND p.status= 'publish' AND p.type='event' " +
+           "AND p.title LIKE %:search%" +
+           "ORDER BY p.date DESC")
    List<Post> getAllEventsWithSearchAndAuthor(String search, long authorId, Pageable pageable);
 
    @Query("Select p FROM Post p WHERE p.slug =:postName AND p.type = 'page' ")

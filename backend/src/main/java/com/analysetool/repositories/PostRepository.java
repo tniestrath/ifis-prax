@@ -47,8 +47,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
            "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
            "AND (p.title LIKE %:search% OR p.content LIKE %:search%) " +
-           "AND t.slug=:filter" +
-           " BY p.date DESC")   List<Post> findByAuthorPageable(long userId, String search, String filter, Pageable pageable);
+           "AND t.slug=:filter " +
+           "ORDER BY p.date DESC")   List<Post> findByAuthorPageable(long userId, String search, String filter, Pageable pageable);
 
    @Query("SELECT p FROM AuthorsRelationships a " +
            "JOIN Post p ON a.postId=p.id " +

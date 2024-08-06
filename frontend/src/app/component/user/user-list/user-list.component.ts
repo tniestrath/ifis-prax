@@ -20,15 +20,14 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
   private lastScroll: number = 0;
   private pageSize: number = 5;
 
-  private searchText: string = "";
-  private selectedFilter = {accType : "", usrType : " ", sort : "userId"};
+  private selectedConfiguration = {accType : "", usrType : " ", sort : "userId", query: ""};
   private isSearching: boolean = false;
   private abortController: AbortController[] = [];
 
   ngOnInit(): void {
     this.setToolTip("", 1,false);
     if (this.parentListItems.length <= 0){
-      this.api.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, new AbortController().signal).then(res => {
+      this.api.getAllUsers(this.pageIndex, this.pageSize, this.selectedConfiguration, new AbortController().signal).then(res => {
         this.pageIndex++;
         this.listItems = res.users.map(value => new SelectorItem(UserComponent, value));
         this.selectorItemsLoaded.next(this.listItems);
@@ -44,7 +43,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
         console.log(this.pageIndex)
         let abort = new AbortController();
         this.abortController.push(abort)
-        this.api.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then((res : {users:  any[], count : number}) => {
+        this.api.getAllUsers(this.pageIndex, this.pageSize, this.selectedConfiguration, abort.signal).then((res : {users:  any[], count : number}) => {
           this.listItems.push(...res.users.map(value => new SelectorItem(UserComponent, value)));
           this.selectorItemsLoaded.next(this.listItems);
           if (res.count <= 0){
@@ -58,9 +57,12 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
     }
   }
 
-
-  onSearchInput($event: string) {
-    this.searchText = $event;
+  executeSearch($event: { accType: string; usrType: string; sort: string; query : string} | string) {
+    if (typeof $event == "string"){
+      this.selectedConfiguration.query = $event;
+    } else {
+      this.selectedConfiguration = $event;
+    }
     this.pageIndex = 0;
     this.pagesComplete = false;
     for (let controller of this.abortController) {
@@ -68,26 +70,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
     }
     let abort = new AbortController();
     this.abortController.push(abort);
-    this.api.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then(res => {
-      this.pageIndex++;
-      this.listItems = res.users.map(value => new SelectorItem(UserComponent, value));
-      this.selectorItemsLoaded.next(this.listItems);
-      if (res.count <= 0){
-        this.pagesComplete = true;
-      }
-    });
-  }
-
-  onFilterClick($event: { accType: string; usrType: string; sort: string }) {
-    this.selectedFilter = $event;
-    this.pageIndex = 0;
-    this.pagesComplete = false;
-    for (let controller of this.abortController) {
-      controller.abort("newer request ahead");
-    }
-    let abort = new AbortController();
-    this.abortController.push(abort);
-    this.api.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then(res => {
+    this.api.getAllUsers(this.pageIndex, this.pageSize, this.selectedConfiguration, abort.signal).then(res => {
       this.pageIndex++;
       this.listItems = res.users.map(value => new SelectorItem(UserComponent, value));
       this.selectorItemsLoaded.next(this.listItems);
@@ -102,7 +85,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
       if (!this.pagesComplete){
         let abort = new AbortController();
         this.abortController.push(abort)
-        this.api.getAllUsers(this.pageIndex, this.pageSize, this.searchText, this.selectedFilter, abort.signal).then((res : {users:  any[], count : number}) => {
+        this.api.getAllUsers(this.pageIndex, this.pageSize, this.selectedConfiguration, abort.signal).then((res : {users:  any[], count : number}) => {
           this.listItems.push(...res.users.map(value => new SelectorItem(UserComponent, value)));
           this.selectorItemsLoaded.next(this.listItems);
           if (res.count <= 0){

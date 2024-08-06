@@ -157,7 +157,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN WPTerm  t ON t.id=wtt.termId " +
            "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
            "AND p.status= 'publish' AND p.type='event' " +
-           "AND p.title LIKE %:search%" +
+           "AND p.title LIKE %:search% " +
            "ORDER BY p.date DESC")
    List<Post> getAllEventsWithSearchAndAuthor(String search, long userId, Pageable pageable);
 

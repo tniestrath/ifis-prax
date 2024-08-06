@@ -54,7 +54,7 @@ public interface PostStatsRepository extends JpaRepository<PostStats, Long> {
         updateClicksSearchSuccessAndRatePerformance(artId, clicks, searchSuccess, performance, searchSuccessRate);
     }
 
-    @Query("select s.performance from PostStats s where s.artId=:artId")
+    @Query("select MAX(s.performance) from PostStats s where s.artId=:artId")
     float getPerformanceByArtID(int artId);
 
     @Query("SELECT MAX(s.performance) FROM PostStats s")

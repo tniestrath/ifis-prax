@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p where :userId IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug) AND p.status='publish' AND (p.type='post' OR p.type='video')")
    List<Post> findByAuthor(int id);
 
-   @Query("SELECT p.id FROM Post p where :userId IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug) AND p.status='publish' AND (p.type='post' OR p.type='video')")
+   @Query("SELECT p.id FROM Post p where :id IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug) AND p.status='publish' AND (p.type='post' OR p.type='video')")
    List<Long> findPostIdsByUserId(Long id);
 
    @Query("SELECT p.id FROM Post p WHERE :userId IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug) AND p.status = 'publish' AND (p.type='post' OR p.type='video')")
@@ -91,7 +91,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p.id FROM Post p WHERE p.title LIKE %:title% AND p.status='inherit' AND p.type='attachment'")
    Optional<Long> findByTitleLike(String title);
 
-   @Query("SELECT p FROM Post p WHERE :userId IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug) AND DATE(p.date) = DATE(:date) AND p.status='publish' AND p.type='post'")
+   @Query("SELECT p FROM Post p WHERE :authorId IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug) AND DATE(p.date) = DATE(:date) AND p.status='publish' AND p.type='post'")
    List<Post> getPostsByAuthorAndDate(long authorId, LocalDate date);
 
    @Query("SELECT p.id FROM Post p WHERE p.id NOT IN (SELECT u.post_id FROM PostTypes u) AND p.status='publish' AND p.type='post'")
@@ -112,7 +112,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p JOIN wp_term_relationships wtr ON p.id= wtr.objectId JOIN WpTermTaxonomy wpt ON wtr.termTaxonomyId=wpt.termTaxonomyId WHERE p.type='event' AND p.status='publish' AND wpt.termId=:typeId AND p.title LIKE %:search% AND p.authorId=:authorId")
    List<Post> getAllEventsWithTypeAndSearchAndAuthor(long typeId, String search, long authorId, Pageable pageable);
 
-   @Query("SELECT p FROM Post p WHERE p.type='event' AND p.status='publish' AND p.title LIKE %:search% AND :userId IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug)")
+   @Query("SELECT p FROM Post p WHERE p.type='event' AND p.status='publish' AND p.title LIKE %:search% AND :authorId IN (SELECT a FROM AuthorsRelationships a JOIN WPTerm term ON a.authorTerm = term.id JOIN Post post ON p.slug = term.slug)")
    List<Post> getAllEventsWithSearchAndAuthor(String search, long authorId, Pageable pageable);
 
    @Query("Select p FROM Post p WHERE p.slug =:postName AND p.type = 'page' ")

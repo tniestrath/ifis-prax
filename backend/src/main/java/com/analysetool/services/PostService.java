@@ -178,10 +178,6 @@ public class PostService {
         List<Long> tagIds = new ArrayList<>();
         String type;
 
-        PostStats postStats = null;
-        if(statsRepo.existsByArtId(post.getId())){
-            postStats = statsRepo.getStatByArtIDLatestYear(post.getId());
-        }
         List<Long> tagIDs = null;
         if(termRelRepo.existsByObjectId(post.getId())){
             tagIDs = termRelRepo.getTaxIdByObject(post.getId());
@@ -237,14 +233,14 @@ public class PostService {
 
         obj.put("tags", array);
         obj.put("type", type);
-        if(postStats != null){
-            float maxPerformance =   statsRepo.getMaxPerformance();
+        if(statRepository.existsByArtId(id)) {
+            float maxPerformance = statsRepo.getMaxPerformance();
             float maxRelevance = statsRepo.getMaxRelevance();
-            obj.put("performance", (postStats.getPerformance() /maxPerformance));
-            obj.put("relevance", (postStats.getRelevance() /maxRelevance));
-            obj.put("clicks", postStats.getClicks().toString());
-            obj.put("lettercount", postStats.getLettercount());
-        }else {
+            obj.put("performance", (statRepository.getPerformanceByArtID((int) id) / maxPerformance));
+            obj.put("relevance", (statRepository.getRelevanceById(id) / maxRelevance));
+            obj.put("clicks", statRepository.getSumClicks(id).toString());
+            obj.put("lettercount", statRepository.getLetterCount(id));
+        }
             obj.put("performance",0);
             obj.put("relevance",0);
             obj.put("clicks", "0");
@@ -253,7 +249,7 @@ public class PostService {
             obj.put("referrings",0);
             obj.put("lettercount", 0);
             obj.put("articleReferringRate",0);
-        }
+
         if(type.equalsIgnoreCase("whitepaper")) {
             if(contentDownloadsRepo.existsByPostId(id)) {
                 obj.put("downloads", contentDownloadsRepo.getAllDownloadsOfPostIdSummed(id));

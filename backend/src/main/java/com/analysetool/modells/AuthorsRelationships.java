@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "wp_ppma_authors_relationships")
+@Table(name = "wp_ppma_author_relationships")
 public class AuthorsRelationships implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -45,15 +45,18 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
     });
   }
 
-  onKey(value? : string) {
+  onInput(value? : string) {
     if (value == null){return}
     this.searchInput = value;
   }
-  onEnter(value : string){
-    console.log(value)
+  onKey(value : string){
     if (value == "Enter"){
       this.currentSearch.emit(this.searchInput);
       this.searchSuggestions = [];
+      this.cdr.detectChanges();
+    }
+    if (value == "Delete"){
+      this.searchInput = this.search.value;
       this.cdr.detectChanges();
     }
   }
@@ -83,14 +86,14 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
   onReset(){
     this.selectedSearch = new DbObject("0", "");
     this.displaySearchBox = "50px";
-    this.onKey();
+    this.onInput();
     this.onDbObjectSelected("0", "");
   }
 
   onCancelClick() {
     this.selectedSearch = new DbObject("0", "");
     this.displaySearchBox = "50px";
-    this.onKey();
+    this.onInput();
     this.onDbObjectSelected("0", "");
     SysVars.CURRENT_PAGE = "Anbieter";
   }

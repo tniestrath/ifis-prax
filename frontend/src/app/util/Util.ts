@@ -109,6 +109,8 @@ export default class Util {
           case "premium":
           case "sponsor":
             return DashColors.PLAN_PREMIUM;
+          case "moderator":
+            return DashColors.MODERATOR;
           case "none":
             return DashColors.BLACK;
           case "registered":
@@ -228,6 +230,7 @@ export enum DashColors {
 
   NEWSLETTER = "rgb(34,106,130)",
 
+  MODERATOR = "rgb(130,34,106)",
   EVENT = "rgb(130,34,106)",
 
   VIDEO = "rgb(106,34,130)",

@@ -244,12 +244,12 @@ public class PostService {
             obj.put("performance", 0);
             obj.put("relevance", 0);
             obj.put("clicks", "0");
-            obj.put("searchSuccesses", 0);
-            obj.put("searchSuccessRate", 0);
-            obj.put("referrings", 0);
             obj.put("lettercount", 0);
-            obj.put("articleReferringRate", 0);
         }
+        obj.put("searchSuccesses", 0);
+        obj.put("searchSuccessRate", 0);
+        obj.put("articleReferringRate", 0);
+        obj.put("referrings", 0);
 
         if(type.equalsIgnoreCase("whitepaper")) {
             if(contentDownloadsRepo.existsByPostId(id)) {

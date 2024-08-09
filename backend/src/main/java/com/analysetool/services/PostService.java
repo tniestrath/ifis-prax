@@ -1444,53 +1444,36 @@ public class PostService {
 
     public String postPage(Integer page, Integer size, String filter, String search, String sorter, String dir) throws JSONException, ParseException {
         List<Post> list;
+        Sort sortBy;
 
         if(search == null) {
             search = "";
         }
 
+        if(dir.equalsIgnoreCase("DESC") || dir.isBlank()) {
+             sortBy = Sort.by(Sort.Direction.DESC, "date");
+        } else {
+            sortBy = Sort.by(Sort.Direction.ASC, "date");
+        }
+
         if(sorter.isBlank()) {
-            if(dir.isBlank() || dir.equalsIgnoreCase("DESC")) {
-                if(!filter.isBlank()) {
-                    list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
-                } else {
-                    list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
-                }
+            if(!filter.isBlank()) {
+                list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, sortBy));
             } else {
-                if(!filter.isBlank()) {
-                    list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "date")));
-                } else {
-                    list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "date")));
-                }
+                list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, sortBy));
             }
         } else {
-            if(dir.isBlank() || dir.equalsIgnoreCase("DESC")) {
-                if(!filter.isBlank()) {
-                    if(sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicks(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
-                    } else {
-                        list = postRepo.postPageByCreation(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
-                    }
+            if(!filter.isBlank()) {
+                if(sorter.equals("clicks")) {
+                    list = postRepo.postPageByClicks(search, "publish", "post", filter, PageRequest.of(page, size, sortBy));
                 } else {
-                    if(sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicks(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
-                    } else {
-                        list = postRepo.postPageByCreation(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
-                    }
+                    list = postRepo.postPageByCreation(search, "publish", "post", filter, PageRequest.of(page, size, sortBy));
                 }
             } else {
-                if (!filter.isBlank()) {
-                    if (sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicks(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "date")));
-                    } else {
-                        list = postRepo.postPageByCreation(search, "publish", "post", filter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "date")));
-                    }
+                if(sorter.equals("clicks")) {
+                    list = postRepo.postPageByClicks(search, "publish", "post", PageRequest.of(page, size, sortBy));
                 } else {
-                    if (sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicks(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "date")));
-                    } else {
-                        list = postRepo.postPageByCreation(search, "publish", "post", PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "date")));
-                    }
+                    list = postRepo.postPageByCreation(search, "publish", "post", PageRequest.of(page, size, sortBy));
                 }
             }
         }

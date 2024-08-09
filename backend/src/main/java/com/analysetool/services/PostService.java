@@ -1456,24 +1456,26 @@ public class PostService {
             sortBy = Sort.by(Sort.Direction.ASC, "date");
         }
 
+        PageRequest request = PageRequest.of(page, size, sortBy);
+
         if(sorter.isBlank()) {
             if(!filter.isBlank()) {
-                list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, PageRequest.of(page, size, sortBy));
+                list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, request);
             } else {
-                list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", PageRequest.of(page, size, sortBy));
+                list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", request);
             }
         } else {
             if(!filter.isBlank()) {
                 if(sorter.equals("clicks")) {
-                    list = postRepo.postPageByClicks(search, "publish", "post", filter, PageRequest.of(page, size, sortBy));
+                    list = postRepo.postPageByClicks(search, "publish", "post", filter, request);
                 } else {
-                    list = postRepo.postPageByCreation(search, "publish", "post", filter, PageRequest.of(page, size, sortBy));
+                    list = postRepo.postPageByCreation(search, "publish", "post", filter, request);
                 }
             } else {
                 if(sorter.equals("clicks")) {
-                    list = postRepo.postPageByClicks(search, "publish", "post", PageRequest.of(page, size, sortBy));
+                    list = postRepo.postPageByClicks(search, "publish", "post", request);
                 } else {
-                    list = postRepo.postPageByCreation(search, "publish", "post", PageRequest.of(page, size, sortBy));
+                    list = postRepo.postPageByCreation(search, "publish", "post", request);
                 }
             }
         }

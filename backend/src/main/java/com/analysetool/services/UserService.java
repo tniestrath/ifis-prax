@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -1047,6 +1048,121 @@ public class UserService {
         }
         return new JSONObject().put("users", response).put("count", list.size()).toString();
     }
+
+
+    /**
+     *
+     * @param page which page of results in the given size you want to fetch.
+     * @param size the number of results you want per page.
+     * @param search the search-term you want results for, give empty string for none.
+     * @param filterAbo "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
+     * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
+     * @param dir the direction to sort in "DESC" or "ASC".
+     * @return a JSON String containing information about all users in the specified page, and the number of users loaded.
+     * @throws JSONException .
+     */
+    public String getAllDirectionTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter, String dir) throws JSONException {
+        List<WPUser> list;
+
+        PageRequest pageRequest;
+        if(dir.isBlank() || dir.equalsIgnoreCase("DESC")) {
+            pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
+        } else {
+            pageRequest = PageRequest.of(page, size, Sort.by("id").ascending());
+        }
+
+
+        if(sorter != null) {
+            //Both filters unused, sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAll(search, pageRequest);
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAll(search, pageRequest);
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAll(search,  pageRequest);
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAll(search,  pageRequest);
+                    }
+                }
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAbo(search, filterAbo, pageRequest);
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAbo(search, filterAbo, pageRequest);
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAbo(search, filterAbo, pageRequest);
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAbo(search, filterAbo, pageRequest);
+                    }
+                }
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Type Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsCompany(search, filterTyp, pageRequest);
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsCompany(search, filterTyp, pageRequest);
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeCompany(search, filterTyp, pageRequest);
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingCompany(search, filterTyp, pageRequest);
+                    }
+                }
+            } else {
+                //Abo, Company type and sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAboAndCompany(search, filterAbo, filterTyp, pageRequest);
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAboAndCompany(search, filterAbo, filterTyp, pageRequest);
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAboAndCompany(search, filterAbo, filterTyp, pageRequest);
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, pageRequest);
+                    }
+                }
+            }
+        } else {
+            //Neither filters nor sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                list = userRepo.getAllByNicenameContainingAll(search, pageRequest);
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used.
+                list = userRepo.getAllByNicenameContainingAbo(search, filterAbo, pageRequest);
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Filter used.
+                list = userRepo.getAllByNicenameContainingCompany(search, filterTyp, pageRequest);
+            } else {
+                //Both filters used, no sorter used.
+                list = userRepo.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, pageRequest);
+            }
+        }
+
+        JSONArray response = new JSONArray();
+
+        for(WPUser user : list) {
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
+            response.put(obj);
+        }
+        return new JSONObject().put("users", response).put("count", list.size()).toString();
+    }
+
 
     /**
      * Fetch all users with tags associated with their profile.

@@ -70,6 +70,22 @@ public class UserController {
     }
 
     /**
+     * Fetch stats for all users that match the given criteria.
+     * @param page the page of results.
+     * @param size the amount of results to fetch .
+     * @param search searches in name and id for matches.
+     * @param filterAbo only displays users of the given membership (leave empty for no filter).
+     * @param filterTyp only displays users of the given category (leave empty for no filter).
+     * @param sorter what to sort users by.
+     * @return a JSON-Array of JSON-Objects containing userdata.
+     * @throws JSONException .
+     */
+    @GetMapping("/getAllDir")
+    public String getAllDir(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter, String dir) throws JSONException {
+        return userService.getAllDirectionTest(page, size, search, filterAbo, filterTyp, sorter, dir);
+    }
+
+    /**
      * Fetch all users with tags associated with their profile.
      * @param page the page of results.
      * @param size the amount of results to fetch .

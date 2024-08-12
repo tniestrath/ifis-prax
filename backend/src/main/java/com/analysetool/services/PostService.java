@@ -1418,7 +1418,7 @@ public class PostService {
         JSONArray views = new JSONArray();
 
         LocalDate now = LocalDate.now();
-        @SuppressWarnings("OptionalGetWithoutIsPresent") java.sql.Date oldest = new java.sql.Date(uniRepo.findById(Math.toIntExact(postClicksByHourRepo.findOldestUni())).get().getDatum().getTime());
+        java.sql.Date oldest = java.sql.Date.valueOf(postRepo.getPostDateById(id).toLocalDate());
 
         for(LocalDate date : oldest.toLocalDate().datesUntil(now.plusDays(1)).toList()) {
             int uniId = 0;

@@ -47,6 +47,8 @@ public class UniService {
     TrackingBlacklistRepository trackBlackRepo;
     @Autowired
     UniqueUserService uniqueService;
+    @Autowired
+    BounceRepository bounceRepo;
 
     /**
      *
@@ -1005,4 +1007,10 @@ public class UniService {
     }
 
 
+    public String getBounce() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("bounceRate", bounceRepo.getPercentageBounceAllTime());
+        json.put("totalBounces", bounceRepo.getAllBounceAllTime());
+        return json.toString();
+    }
 }

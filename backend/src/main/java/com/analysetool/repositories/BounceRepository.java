@@ -13,4 +13,10 @@ public interface BounceRepository extends JpaRepository<Bounce, Long> {
     @Query("SELECT b FROM Bounce b WHERE b.uniId=:uniId")
     Optional<Bounce> findByUniId(long uniId);
 
+    @Query("SELECT AVG(b.bounceRate) FROM Bounce b")
+    double getPercentageBounceAllTime();
+
+    @Query("SELECT SUM(b.totalBounces) FROM Bounce b")
+    int getAllBounceAllTime();
+
 }

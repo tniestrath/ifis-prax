@@ -3092,7 +3092,7 @@ public class LogService {
                 }
 
                 bounce.setTotalBounces(bounce.getTotalBounces() + 1);
-                bounce.setBounceRate(bounce.getTotalBounces() / uniRepo.getLatestUniStat().getTotalClicks());
+                bounce.setBounceRate((double) bounce.getTotalBounces() / uniRepo.getLatestUniStat().getTotalClicks());
 
                 bounceRepo.save(bounce);
             }

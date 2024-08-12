@@ -21,6 +21,8 @@ public class Bounce implements Serializable {
     @Column(name="total_bounces")
     private int totalBounces;
 
+    public Bounce(){}
+
     public Bounce (int uniId, double bounceRate, int totalBounces) {
         this.uniId = uniId;
         this.totalBounces = totalBounces;
@@ -51,11 +53,11 @@ public class Bounce implements Serializable {
         this.bounceRate = bounceRate;
     }
 
-    public double getTotalBounces() {
+    public int getTotalBounces() {
         return totalBounces;
     }
 
-    public void setTotalBounces(double totalBounces) {
+    public void setTotalBounces(int totalBounces) {
         this.totalBounces = totalBounces;
     }
 }

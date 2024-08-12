@@ -506,7 +506,7 @@ public class PostController {
         }
     }
 
-    @GetMapping("/getSuggestions")
+    @GetMapping("/getPossiblePosts")
     public String getSuggestions(String search, String filter) {return new JSONArray(postService.getSuggestions(search, filter)).toString();}
 
 }

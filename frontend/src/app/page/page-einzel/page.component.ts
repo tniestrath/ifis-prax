@@ -70,6 +70,7 @@ import {
   PostTypesAverageViewsComponent
 } from "../../component/post/post-types-avarage-views/post-types-average-views.component";
 import {SocialsSumsComponent} from "../../component/socials/socials-sums/socials-sums.component";
+import {BounceComponent} from "../../component/bounce/bounce.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -149,10 +150,11 @@ export class PageComponent implements OnInit {
       {type: CallUpChartComponent, row: 1, col: 2, height: 2, width: 4},
       {type: NewsletterStatsComponent, row: 1, col: 6, height: 1, width: 1},
       {type: SystemloadComponent, row: 3, col: 5, height: 2, width: 1},
-      {type: ExternalServicesListComponent, row: 3, col: 6, height: 2, width: 1},
+      {type: ExternalServicesListComponent, row: 4, col: 6, height: 1, width: 1},
       {type: PostTypeComponent, row: 3, col: 1, height: 2, width: 1},
       {type: OriginMapComponent, row: 3, col: 2, height: 2, width: 3},
       {type: EventsStatsComponent, row: 2, col: 6, height: 1, width: 1},
+      {type: BounceComponent, row: 3, col: 6, height: 1, width: 1},
       {type: PostTypesAverageViewsComponent, row: 5, col: 1, height: 1, width: 2},
       {type: UserStatsByPlanShortViewComponent, row: 5, col: 3, height: 1, width: 2},
       {type: UserStatsByPlanRedirectsComponent, row: 5, col: 5, height: 1, width: 2},

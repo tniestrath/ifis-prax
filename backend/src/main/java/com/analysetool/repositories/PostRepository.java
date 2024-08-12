@@ -188,8 +188,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("Select p FROM Post p WHERE p.slug =:postName AND p.type = 'page' ")
    Optional<Post> findPageByPostName(String postName);
 
-   @Query("SELECT p FROM AuthorsRelationships a " +
-           "JOIN Post p ON a.postId=p.id " +
+   @Query("SELECT p FROM Post p " +
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm  t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
@@ -198,12 +197,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "ORDER BY p.date DESC")
    List<String> getSuggestions(String search, String filter);
 
-   @Query("SELECT p FROM AuthorsRelationships a " +
-           "JOIN Post p ON a.postId=p.id " +
+   @Query("SELECT p FROM Post p " +
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm  t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
-           "p.status= 'publish' AND p.type='post' " +
+           "p.status = 'publish' AND p.type='post' " +
            "AND p.title LIKE %:search%" +
            "ORDER BY p.date DESC")
    List<String> getSuggestions(String search);

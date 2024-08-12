@@ -137,7 +137,7 @@ export default class Util {
             return DashColors.RATGEBER;
           case "newsletter":
             return DashColors.NEWSLETTER;
-          case "videos":
+          case "video":
             return DashColors.VIDEO;
           default:
             return DashColors.GREY;

@@ -29,7 +29,6 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
     this.getData();
 
     SysVars.SELECTED_POST.subscribe(post => {
-      console.log(post)
       this.selectedPost = post;
       this.isPostSelected = true;
       (document.querySelector("#post-type-select-view") as HTMLOptionElement).innerText = "Ausgew. Beitrag";

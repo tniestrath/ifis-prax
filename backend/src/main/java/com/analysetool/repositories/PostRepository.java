@@ -192,9 +192,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN Post p ON a.postId=p.id " +
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
-           "JOIN WPTerm  t ON t.id=wtt.termId " +
-           "WHERE p.status= 'publish' AND p.type='post' " +
-           "AND p.title LIKE %:search% " +
+           "JOIN WPTerm  t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
+           "p.status= 'publish' AND p.type='post' " +
+           "AND p.title LIKE %:search% AND pt.type=:filter " +
+           "ORDER BY p.date DESC")
+   List<String> getSuggestions(String search, String filter);
+
+   @Query("SELECT p FROM AuthorsRelationships a " +
+           "JOIN Post p ON a.postId=p.id " +
+           "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
+           "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
+           "JOIN WPTerm  t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
+           "p.status= 'publish' AND p.type='post' " +
+           "AND p.title LIKE %:search%" +
            "ORDER BY p.date DESC")
    List<String> getSuggestions(String search);
 

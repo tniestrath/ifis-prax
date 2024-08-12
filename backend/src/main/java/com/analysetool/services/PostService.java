@@ -1450,10 +1450,18 @@ public class PostService {
             search = "";
         }
 
-        if(dir.equalsIgnoreCase("DESC") || dir.isBlank()) {
-             sortBy = Sort.by(Sort.Direction.DESC, "date");
+        if(!sorter.equals("clicks")) {
+            if (dir.equalsIgnoreCase("ASC") && !dir.isBlank()) {
+                sortBy = Sort.by(Sort.Direction.ASC, "date");
+            } else {
+                sortBy = Sort.by(Sort.Direction.DESC, "date");
+            }
         } else {
-            sortBy = Sort.by(Sort.Direction.ASC, "date");
+            if (dir.equalsIgnoreCase("ASC") && !dir.isBlank()) {
+                sortBy = Sort.by(Sort.Direction.ASC);
+            } else {
+                sortBy = Sort.by(Sort.Direction.DESC);
+            }
         }
 
         PageRequest request = PageRequest.of(page, size, sortBy);

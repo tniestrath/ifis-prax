@@ -145,6 +145,8 @@ public class LogService {
     private UniqueUserService uniqueUserService;
     @Autowired
     private LastPingRepository lpRepo;
+    @Autowired
+    private BounceRepository bounceRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -3078,6 +3080,23 @@ public class LogService {
                 }
             }
             uniqueUserRepo.delete(uniqueUserRepo.findByIP(ip));
+
+
+            //Update bounce if applicable
+            if(user.getAmount_of_clicks() == 1) {
+                Bounce bounce;
+                if (bounceRepo.findByUniId(uniRepo.getLatestUniStat().getId()).isPresent()) {
+                    bounce = bounceRepo.findByUniId(uniRepo.getLatestUniStat().getId()).get();
+                } else {
+                    bounce = new Bounce(uniRepo.getLatestUniStat().getId(), 0, 0);
+                }
+
+                bounce.setTotalBounces(bounce.getTotalBounces() + 1);
+                bounce.setBounceRate(bounce.getTotalBounces() / uniRepo.getLatestUniStat().getTotalClicks());
+
+                bounceRepo.save(bounce);
+            }
+
         }
     }
 

@@ -480,7 +480,7 @@ public class PostService {
     /**
      *
      * @param sorter sorter "relevance" | "performance" | "clicks" - chooses what statistic you want to sort by.
-     * @param type "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber"
+     * @param type "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber" | "video"
      * @return a JSON String of the Top Posts (as many as Limit) with a post-type being type and sorted by sorter.
      */
     public String getTopWithType(@RequestParam String sorter, String type, int limit) throws JSONException, ParseException {

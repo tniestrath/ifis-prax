@@ -209,6 +209,10 @@ export class UserPostListComponent extends PostListPageableComponent{
     }
   }
 
+  override onScrollEnd() {
+    this.onScrollEndWithPromise(this.api.getUserPostsPaged(SysVars.USER_ID, this.pageIndex, this.pageSize, this.active_filter, this.search_text));
+  }
+
 }
 
 @Component({

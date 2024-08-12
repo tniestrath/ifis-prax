@@ -1458,9 +1458,9 @@ public class PostService {
             }
         } else {
             if (dir.equalsIgnoreCase("ASC") && !dir.isBlank()) {
-                sortBy = Sort.by(Sort.Direction.ASC);
+                sortBy = Sort.by(Sort.Direction.ASC, "id");
             } else {
-                sortBy = Sort.by(Sort.Direction.DESC);
+                sortBy = Sort.by(Sort.Direction.DESC, "id");
             }
         }
 

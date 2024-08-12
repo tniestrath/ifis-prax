@@ -58,6 +58,11 @@ public class UniversalCategoriesDLC {
     @Column(name = "besucher_ratgeber_self_sub")
     private int besucherRatgeberSelfSub;
 
+    @Column(name = "besucher_pentest")
+    private int besucherPenTest;
+
+    @Column(name = "besucher_cert")
+    private int besucherCert;
 
     @Column(name="besucher_main")
     private int besucherMain;
@@ -139,6 +144,11 @@ public class UniversalCategoriesDLC {
     @Column(name = "views_ratgeber_self_sub")
     private int viewsRatgeberSelfSub;
 
+    @Column(name = "views_pentest")
+    private int viewsPenTest;
+
+    @Column(name = "views_cert")
+    private int viewsCert;
 
     @Column(name="views_main")
     private int viewsMain;
@@ -166,6 +176,15 @@ public class UniversalCategoriesDLC {
 
     @Column(name = "views_notfall_sub")
     private int viewsNotfallSub;
+
+    @Column(name="views_datenschutz")
+    private int viewsDatenschutz;
+
+    @Column(name="views_newsletter")
+    private int viewsNewsletter;
+
+    @Column(name="views_image")
+    private int viewsImage;
 
     public int getBesucherMain() {
         return besucherMain;
@@ -295,14 +314,6 @@ public class UniversalCategoriesDLC {
         this.viewsImage = viewsImage;
     }
 
-    @Column(name="views_datenschutz")
-    private int viewsDatenschutz;
-
-    @Column(name="views_newsletter")
-    private int viewsNewsletter;
-
-    @Column(name="views_image")
-    private int viewsImage;
 
     public int getId() {
         return id;
@@ -615,6 +626,38 @@ public class UniversalCategoriesDLC {
 
     public void setViewsNotfallSub(int viewsNotfallSub) {
         this.viewsNotfallSub = viewsNotfallSub;
+    }
+
+    public int getBesucherPenTest() {
+        return besucherPenTest;
+    }
+
+    public void setBesucherPenTest(int besucherPenTest) {
+        this.besucherPenTest = besucherPenTest;
+    }
+
+    public int getBesucherCert() {
+        return besucherCert;
+    }
+
+    public void setBesucherCert(int besucherCert) {
+        this.besucherCert = besucherCert;
+    }
+
+    public int getViewsPenTest() {
+        return viewsPenTest;
+    }
+
+    public void setViewsPenTest(int viewsPenTest) {
+        this.viewsPenTest = viewsPenTest;
+    }
+
+    public int getViewsCert() {
+        return viewsCert;
+    }
+
+    public void setViewsCert(int viewsCert) {
+        this.viewsCert = viewsCert;
     }
 }
 

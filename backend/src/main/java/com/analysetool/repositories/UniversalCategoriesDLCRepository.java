@@ -61,6 +61,12 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.viewsNotfall) + SUM(u.viewsNotfallSub) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      int getSumViewsNotfallByUniStatId(int uniID);
 
+     @Query("SELECT SUM(u.viewsPenTest) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     int getSumViewsPenTestByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.viewsCert) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     int getSumViewsCertByUniStatId(int uniID);
+
      @Query("SELECT SUM(u.viewsMain) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      int getSumViewsMainByUniStatId(int uniID);
 
@@ -132,6 +138,12 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      @Query("SELECT SUM(u.besucherNotfall) + SUM(u.besucherNotfallSub) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      int getSumUserNotfallByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherPenTest) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     int getSumUserPenTestByUniStatId(int uniID);
+
+     @Query("SELECT SUM(u.besucherCert) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
+     int getSumUserCertByUniStatId(int uniID);
 
      @Query("SELECT SUM(u.besucherMain) FROM UniversalCategoriesDLC u WHERE u.uniStatId = :uniID")
      int getSumUserMainByUniStatId(int uniID);
@@ -206,6 +218,15 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
      @Query("SELECT SUM(u.viewsRatgeberSelf) FROM UniversalCategoriesDLC u")
      int getSumViewsRatgeberSelfAllTime();
 
+     @Query("SELECT SUM(u.viewsNotfall) + SUM(u.viewsNotfallSub) FROM UniversalCategoriesDLC u")
+     int getSumViewsNotfallAllTime();
+
+     @Query("SELECT SUM(u.viewsPenTest) FROM UniversalCategoriesDLC u")
+     int getSumViewsPenTestAllTime();
+
+     @Query("SELECT SUM(u.viewsCert) FROM UniversalCategoriesDLC u")
+     int getSumViewsCertAllTime();
+
      @Query("SELECT SUM(u.viewsMain) FROM UniversalCategoriesDLC u")
      int getSumViewsMainAllTime();
 
@@ -276,6 +297,15 @@ public interface UniversalCategoriesDLCRepository extends JpaRepository<Universa
 
      @Query("SELECT SUM(u.besucherRatgeberSelf) FROM UniversalCategoriesDLC u")
      int getSumUserRatgeberSelfAllTime();
+
+     @Query("SELECT SUM(u.besucherNotfall) + SUM(u.besucherNotfallSub) FROM UniversalCategoriesDLC u")
+     int getSumBesucherNotfallAllTime();
+
+     @Query("SELECT SUM(u.besucherPenTest) FROM UniversalCategoriesDLC u")
+     int getSumUserPenTestAllTime();
+
+     @Query("SELECT SUM(u.besucherCert) FROM UniversalCategoriesDLC u")
+     int getSumUserCertAllTime();
 
      @Query("SELECT SUM(u.besucherMain) FROM UniversalCategoriesDLC u")
      int getSumUserMainAllTime();

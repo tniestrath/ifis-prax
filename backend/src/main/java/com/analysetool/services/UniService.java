@@ -195,6 +195,8 @@ public class UniService {
         labelsForCategory.add("Ratgeber-Glossar");
         labelsForCategory.add("Ratgeber-Selbstlernangebot");
         labelsForCategory.add("IT-Notfall");
+        labelsForCategory.add("Pen-Tests");
+        labelsForCategory.add("Zertifikate");
         labelsForCategory.add("Ueber");
         labelsForCategory.add("Impressum");
         labelsForCategory.add("Preisliste");
@@ -208,51 +210,57 @@ public class UniService {
 
         @SuppressWarnings("OptionalGetWithoutIsPresent") int id = uniRepo.findByDatum(new SimpleDateFormat("yyyy-MM-dd").parse(date)).get().getId();
 
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsMain());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsAnbieter());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsArticle());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsNews());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsBlog());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPodcast());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsWhitepaper());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeber());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberPost());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberBuch());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberGlossar());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsRatgeberSelf());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsNotfall() + universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsNotfallSub());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsUeber());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsImpressum());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPreisliste());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsPartner());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsDatenschutz());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsNewsletter());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsImage());
-        clicksByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getViewsAGBS());
+        UniversalCategoriesDLC cat = universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour);
+        
+        clicksByCategory.add(cat.getViewsMain());
+        clicksByCategory.add(cat.getViewsAnbieter());
+        clicksByCategory.add(cat.getViewsArticle());
+        clicksByCategory.add(cat.getViewsNews());
+        clicksByCategory.add(cat.getViewsBlog());
+        clicksByCategory.add(cat.getViewsPodcast());
+        clicksByCategory.add(cat.getViewsWhitepaper());
+        clicksByCategory.add(cat.getViewsRatgeber());
+        clicksByCategory.add(cat.getViewsRatgeberPost());
+        clicksByCategory.add(cat.getViewsRatgeberBuch());
+        clicksByCategory.add(cat.getViewsRatgeberGlossar());
+        clicksByCategory.add(cat.getViewsRatgeberSelf());
+        clicksByCategory.add(cat.getViewsNotfall() + cat.getViewsNotfallSub());
+        clicksByCategory.add(cat.getViewsPenTest());
+        clicksByCategory.add(cat.getViewsCert());
+        clicksByCategory.add(cat.getViewsUeber());
+        clicksByCategory.add(cat.getViewsImpressum());
+        clicksByCategory.add(cat.getViewsPreisliste());
+        clicksByCategory.add(cat.getViewsPartner());
+        clicksByCategory.add(cat.getViewsDatenschutz());
+        clicksByCategory.add(cat.getViewsNewsletter());
+        clicksByCategory.add(cat.getViewsImage());
+        clicksByCategory.add(cat.getViewsAGBS());
 
         List<Integer> besucherByCategory = new ArrayList<>();
 
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherMain());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherAnbieter());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherArticle());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherNews());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherBlog());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPodcast());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherWhitepaper());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeber());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberPost());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberBuch());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberGlossar());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherRatgeberSelf());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherNotfall() + universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherNotfallSub());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherUeber());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherImpressum());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPreisliste());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherPartner());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherDatenschutz());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherNewsletter());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherImage());
-        besucherByCategory.add(universalCategoriesDLCRepo.getByUniStatIdAndStunde(id, hour).getBesucherAGBS());
+        besucherByCategory.add(cat.getBesucherMain());
+        besucherByCategory.add(cat.getBesucherAnbieter());
+        besucherByCategory.add(cat.getBesucherArticle());
+        besucherByCategory.add(cat.getBesucherNews());
+        besucherByCategory.add(cat.getBesucherBlog());
+        besucherByCategory.add(cat.getBesucherPodcast());
+        besucherByCategory.add(cat.getBesucherWhitepaper());
+        besucherByCategory.add(cat.getBesucherRatgeber());
+        besucherByCategory.add(cat.getBesucherRatgeberPost());
+        besucherByCategory.add(cat.getBesucherRatgeberBuch());
+        besucherByCategory.add(cat.getBesucherRatgeberGlossar());
+        besucherByCategory.add(cat.getBesucherRatgeberSelf());
+        besucherByCategory.add(cat.getBesucherNotfall() + cat.getBesucherNotfallSub());
+        besucherByCategory.add(cat.getBesucherPenTest());
+        besucherByCategory.add(cat.getBesucherCert());
+        besucherByCategory.add(cat.getBesucherUeber());
+        besucherByCategory.add(cat.getBesucherImpressum());
+        besucherByCategory.add(cat.getBesucherPreisliste());
+        besucherByCategory.add(cat.getBesucherPartner());
+        besucherByCategory.add(cat.getBesucherDatenschutz());
+        besucherByCategory.add(cat.getBesucherNewsletter());
+        besucherByCategory.add(cat.getBesucherImage());
+        besucherByCategory.add(cat.getBesucherAGBS());
 
         JSONObject obj = new JSONObject().put("labels", new JSONArray(labelsForCategory));
         obj.put("besucher", new JSONArray(besucherByCategory));
@@ -284,6 +292,8 @@ public class UniService {
         labelsForCategory.add("Ratgeber-Glossar");
         labelsForCategory.add("Ratgeber-Self");
         labelsForCategory.add("IT-Notfall");
+        labelsForCategory.add("Pen-Tests");
+        labelsForCategory.add("Zertifikate");
         labelsForCategory.add("Ueber");
         labelsForCategory.add("Impressum");
         labelsForCategory.add("Preisliste");
@@ -315,6 +325,8 @@ public class UniService {
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberGlossarByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberSelfByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNotfallByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPenTestByUniStatId(id));
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsCertByUniStatId(id));
         //Footer
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsUeberByUniStatId(id));
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImpressumByUniStatId(id));
@@ -345,6 +357,8 @@ public class UniService {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberGlossarByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberSelfByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserNotfallByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPenTestByUniStatId(id));
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserCertByUniStatId(id));
         //Footer
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserUeberByUniStatId(id));
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImpressumByUniStatId(id));
@@ -384,6 +398,9 @@ public class UniService {
         labelsForCategory.add("Ratgeber-Buch");
         labelsForCategory.add("Ratgeber-Glossar");
         labelsForCategory.add("Ratgeber-Self");
+        labelsForCategory.add("IT-Notfall");
+        labelsForCategory.add("Pen-Tests");
+        labelsForCategory.add("Zertifikate");
         labelsForCategory.add("Ueber");
         labelsForCategory.add("Impressum");
         labelsForCategory.add("Preisliste");
@@ -413,6 +430,9 @@ public class UniService {
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberBuchAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberGlossarAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsRatgeberSelfAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsNotfallAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsPenTestAllTime());
+        clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsCertAllTime());
         //Footer
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsUeberAllTime());
         clicksByCategory.add(universalCategoriesDLCRepo.getSumViewsImpressumAllTime());
@@ -442,6 +462,9 @@ public class UniService {
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberBuchAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberGlossarAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserRatgeberSelfAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumBesucherNotfallAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserPenTestAllTime());
+        besucherByCategory.add(universalCategoriesDLCRepo.getSumUserCertAllTime());
         //Footer
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserUeberAllTime());
         besucherByCategory.add(universalCategoriesDLCRepo.getSumUserImpressumAllTime());

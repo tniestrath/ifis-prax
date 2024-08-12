@@ -258,9 +258,16 @@ public class LogService {
    private final String itNotfall= "^.*GET /ratgeber/(it-notfall)/";
    private final String itNotfallSub = "^.*GET /ratgeber/it-notfall/(?!\\s)([^ ]+)";
 
+   private final String itCert = "^.*GET /ratgeber/standards-im-bereich-it-sicherheit/personenzertifikate/";
+
+   private final String itPenTest = "https://it-sicherheit.de/ratgeber/penetrationstests/";
+
    private final String referrerForRedirects = "https://it-sicherheit.de/user/(\\S+)/";
 
-   final Pattern referrerForRedirectsPattern = Pattern.compile(referrerForRedirects);
+    final Pattern itCertPattern = Pattern.compile(itCert);
+
+    final Pattern itPenTestPattern = Pattern.compile(itPenTest);
+    final Pattern referrerForRedirectsPattern = Pattern.compile(referrerForRedirects);
     final Pattern forumDiskussionsthemenPattern = Pattern.compile(forumDiskussionsthemen);
     final Pattern forumTopicPattern = Pattern.compile(forumTopic);
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
@@ -791,6 +798,10 @@ public class LogService {
                     Matcher matched_it_notfall_sub = itNotfallSubPattern.matcher(request);
                     // Does it match ratgeber-self-sub ?
                     Matcher matched_ratgeber_self_sub = ratgeberSelfSub.matcher(request);
+                    //Ratgeber Pen-Test
+                    Matcher matched_pen = itPenTestPattern.matcher(request);
+                    //Ratgeber Certificates
+                    Matcher matched_cert = itCertPattern.matcher(request);
 
                     //Find out which pattern matched
                     String whatMatched = "";
@@ -952,6 +963,12 @@ public class LogService {
                     } else if (matched_it_notfall.find()) {
                         whatMatched = "notfall";
                         patternMatcher = matched_it_notfall;
+                    } else if(matched_pen.find()) {
+                        whatMatched = "pentest";
+                        patternMatcher = matched_pen;
+                    } else if(matched_cert.find()) {
+                        whatMatched = "cert";
+                        patternMatcher = matched_cert;
                     }
 
                     if(!whatMatched.isBlank()) {
@@ -1841,6 +1858,14 @@ public class LogService {
                     case "notfallSub" -> {
                         uniCat.setViewsNotfallSub(uniCat.getViewsNotfallSub() + 1);
                         uniCat.setBesucherNotfallSub(uniCat.getBesucherNotfallSub() + (isUnique ? 1 : 0));
+                    }
+                    case "pentest" -> {
+                        uniCat.setViewsPenTest(uniCat.getViewsPenTest() + 1);
+                        uniCat.setBesucherPenTest(uniCat.getBesucherPenTest() + (isUnique ? 1 : 0));
+                    }
+                    case "cert" -> {
+                        uniCat.setViewsCert(uniCat.getViewsPenTest() + 1);
+                        uniCat.setBesucherCert(uniCat.getBesucherPenTest() + (isUnique ? 1 : 0));
                     }
                 }
             } else {
@@ -2917,7 +2942,7 @@ public class LogService {
             case "agb" -> {
                 user.setAgb(new JSONArray(user.getAgb()).put(clicks).toString());
             }
-            case "anbieter" -> {
+            case "anbieter", "userView", "anbieterCat" -> {
                 user.setAnbieter(new JSONArray(user.getAnbieter()).put(clicks).toString());
             }
             case "videoView" -> {

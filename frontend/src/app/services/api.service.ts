@@ -105,6 +105,8 @@ export enum apiUrl {
   GET_CALLUP_CATEGORIES_BY_DATETIME = "/bericht/getCallupByCategoryDateAndHour?date=DATE&hour=HOUR",
   GET_CALLUP_CATEGORIES_ALL_TIME = "/bericht/getCallupByCategoryAllTime",
 
+  GET_BOUNCES = "/bericht/bounce",
+
   GET_NEWSLETTER = "/newsletter/getNewsletterCallup?emailId=ID",
   GET_NEWSLETTER_LATEST = "/newsletter/getLatestNewsletterCallup",
   GET_NEWSLETTER_SUBS = "/newsletter/getStatusAll",
@@ -529,6 +531,11 @@ export class ApiService {
   async getCallpusByCategoriesAllTime() : Promise<CategoriesData> {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_ALL_TIME), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_CALLUP_CATEGORIES_ALL_TIME)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async getBounces() : Promise<{ bounceRate : number, totalBounces : number }> {
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.GET_BOUNCES), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_BOUNCES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserAccountTypesLastWeek() {

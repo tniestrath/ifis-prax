@@ -1,5 +1,5 @@
 <div class="component-box post-list-box">
-  <form class="post-type-form">
+  <form *ngIf="showSearchAndFilters" class="post-type-form">
     <input type="text" id="post-search" [placeholder]="placeholder" (input)="input_search_cb($event)">
     <input type="radio" id="post-type-all" name="type" value="O" checked (change)="input_all_cb()">
     <input type="radio" id="post-type-article" name="type" value="A" (change)="input_filter_1_cb()">
@@ -8,7 +8,7 @@
     <input type="radio" id="post-type-podcast" name="type" value="P" (change)="input_filter_4_cb()">
     <input type="radio" id="post-type-whitepaper" name="type" value="W" (change)="input_filter_5_cb()">
   </form>
-  <div class="post-list-selector-container">
+  <div class="post-list-selector-container" [ngClass]="{'fullsize' : showSearchAndFilters == false}">
     <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded" (scrollEnd)="onScrollEnd()"></dash-selector>
   </div>
   <div id="shadow"></div>

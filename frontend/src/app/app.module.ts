@@ -12,7 +12,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatInputModule} from "@angular/material/input";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { TagComponent } from './component/tag/tag/tag.component';
-import { SearchbarComponent } from './page/searchbar/searchbar.component';
+import {PostSearchbarComponent, SearchbarComponent} from './page/searchbar/searchbar.component';
 import { PageComponent } from './page/page-einzel/page.component';
 import {CookieService} from "ngx-cookie-service";
 import { SelectorComponent } from './page/selector/selector.component';
@@ -122,6 +122,7 @@ import {ForumStatsComponent} from "./component/forum/forum-stats/forum-stats.com
 import { PostTypesAverageViewsComponent } from './component/post/post-types-avarage-views/post-types-average-views.component';
 import { SocialsSumsComponent } from './component/socials/socials-sums/socials-sums.component';
 import { BounceComponent } from './component/bounce/bounce.component';
+import { PostComparatorComponent } from './component/post/post-comparator/post-comparator.component';
 
 @NgModule({
   declarations: [
@@ -225,7 +226,9 @@ import { BounceComponent } from './component/bounce/bounce.component';
     DialogDirective,
     PostTypesAverageViewsComponent,
     SocialsSumsComponent,
-    BounceComponent
+    BounceComponent,
+    PostComparatorComponent,
+    PostSearchbarComponent
   ],
     imports: [
         BrowserModule,

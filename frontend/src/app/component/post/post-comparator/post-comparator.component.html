@@ -1,0 +1,5 @@
+<div class="component-box post-comparator-box">
+  <dash-post-searchbar id="searchbar" (currentPostSearch)="postList.executeSearch($event)"></dash-post-searchbar>
+  <dash-post-list [showSearchAndFilters]="false" id="postList" #postList></dash-post-list>
+  <dash-post-display id="postDisplay"></dash-post-display>
+</div>

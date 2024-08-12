@@ -99,6 +99,7 @@ export enum apiUrl {
   GET_POSTS_PER_TYPE_YESTERDAY = "/bericht/getPostsByTypeYesterday",
   GET_POSTS_NEWEST_BY_USER_WITH_STATS = "/posts/getNewestPostWithStatsByAuthor?id=",
   GET_POSTS_TOP_BY_SORTER = "/posts/getTopWithType?sorter=SORTER&type=TYPE&limit=LIMIT",
+  GET_POSTS_SUGGESTIONS = "/posts/getPossiblePosts?search=SEARCH&filter=TYP",
 
   GET_CALLUPS_BY_TIME = "/bericht/callups?days=DAYS",
   GET_CALLUP_CATEGORIES_BY_DATE = "/bericht/getCallupByCategoryDate?date=DATE",
@@ -680,6 +681,10 @@ export class ApiService {
   async getUserSearchSuggestions(search: string, abo: string, typ: string) : Promise<string[]>{
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_SUGGESTIONS).replace("SEARCH", search).replace("ABO", abo).replace("TYP", typ), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_SUGGESTIONS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getPostSearchSuggestions(search: string, typ: string) : Promise<string[]>{
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_SUGGESTIONS).replace("SEARCH", search).replace("TYP", typ), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_SUGGESTIONS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getUserClicksAverageByViewType() {

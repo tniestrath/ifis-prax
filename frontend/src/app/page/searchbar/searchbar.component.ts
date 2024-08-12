@@ -50,7 +50,7 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
     this.searchInput = value;
   }
 
-  onKey(value: KeyboardEvent){
+  onKey(value: any){
     if (value.key == "Enter"){
       if (this.selectedIndex == 0){
         this.currentSearch.emit(this.searchInput);
@@ -92,7 +92,6 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
       this.displaySearchBox = "0";
     }
     this.selected.emit(new DbObject(id, name));
-    this.cs.set(this.page, object.id + ":" + object.name, {expires : 2});
 
     this.getImgSrc(this.selectedSearch.id);
 
@@ -336,3 +335,32 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
     this.selectedIndex = i;
   }
 }
+@Component({
+  selector: 'dash-post-searchbar',
+  templateUrl: './post-searchbar.component.html',
+  styleUrls: ['./searchbar.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class PostSearchbarComponent extends SearchbarComponent{
+  @Output() currentPostSearch = new EventEmitter<{ postType : string, dir : string, sort : string, query : string } | string>()
+  selected_post_type: string = "";
+
+  override getSuggestions(value: string, type : string) {
+    if (value == this.lastSearchInput){
+      let copy = structuredClone(this.searchSuggestions);
+      copy.shift();
+      return copy;
+    }
+    if (value == ""){this.searchSuggestions = []; return [];}
+    this.api.getPostSearchSuggestions(value, type).then(res => {
+      res.unshift("");
+      this.searchSuggestions =  res;
+      this.cdr.detectChanges();
+    });
+    this.lastSearchInput = value;
+    let copy = structuredClone(this.searchSuggestions);
+    copy.shift();
+    return copy;
+  }
+}
+

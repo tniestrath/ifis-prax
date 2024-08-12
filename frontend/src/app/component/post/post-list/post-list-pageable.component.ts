@@ -1,4 +1,4 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, Component, Input} from '@angular/core';
 import {PostListItemComponent} from "./post-list-item/post-list-item.component";
 import {Post} from "../Post";
 import {SysVars} from "../../../services/sys-vars-service";
@@ -31,9 +31,15 @@ export class PostListPageableComponent extends DashListPageableComponent<Post, P
 
   search_text: string = "";
   active_filter: string = " ";
+  active_sorter: string = "";
+  active_direction: string = "";
+
+  @Input() showSearchAndFilters : boolean = true;
+
+
 
   override ngOnInit(): void {
-    this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen");
+    this.setToolTip("Auflistung aller Posts, sie können nach den Beitrags-Typen filtern oder nach Schlagwörtern in Titel oder Tags suchen", 1, false);
     this.load(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text), PostListItemComponent);
 
     this.input_search_cb = (event: { target: { value: string; }; }) => {
@@ -73,10 +79,21 @@ export class PostListPageableComponent extends DashListPageableComponent<Post, P
     }
   }
 
+
   override onScrollEnd() {
     this.onScrollEndWithPromise(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text));
   }
 
+  executeSearch($event: {postType: string; dir: string; sort: string; query: string} | string) {
+    if (typeof $event !== "string") {
+      this.active_filter = $event.postType;
+      this.search_text = $event.query;
+      this.active_sorter = $event.sort;
+      this.active_direction = $event.dir;
+    } else{
+      this.search_text = $event;
+    }
+  }
 }
 export class PostListComponent extends DashListComponent<Post, PostListItemComponent>{
   /**
@@ -96,6 +113,7 @@ export class PostListComponent extends DashListComponent<Post, PostListItemCompo
 
   search_text: string = "";
   active_filter: string = " ";
+
 }
 
 
@@ -137,6 +155,7 @@ export class PodcastListComponent extends PostListPageableComponent{
 })
 export class RatgeberListComponent extends PostListComponent{
   override placeholder = "Ratgeber suchen";
+  @Input() showSearchAndFilters : boolean = true;
 
   override ngOnInit() {
     this.setToolTip("Auflistung aller Ratgeber-Inhalte, sie können nach Datum oder Clicks sortieren oder nach Schlagwörtern in Titel oder Tags suchen");

@@ -71,6 +71,7 @@ import {
 } from "../../component/post/post-types-avarage-views/post-types-average-views.component";
 import {SocialsSumsComponent} from "../../component/socials/socials-sums/socials-sums.component";
 import {BounceComponent} from "../../component/bounce/bounce.component";
+import {PostComparatorComponent} from "../../component/post/post-comparator/post-comparator.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -134,8 +135,7 @@ export class PageComponent implements OnInit {
   }
   getPostsPageCards() {
     return [
-      {type: PostListPageableComponent, row: 1, col: 1, height: 4, width: 3},
-      {type: PostDisplayComponent, row: 1, col: 4, height: 4, width: 3},
+      {type: PostComparatorComponent, row: 1, col: 1, height: 4, width: 6},
 
       {type: Top5ArticleComponent, row: 5, col: 1, height: 1, width: 6},
       {type: Top5BlogComponent, row: 6, col: 1, height: 1, width: 6},

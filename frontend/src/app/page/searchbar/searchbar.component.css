@@ -191,3 +191,47 @@ button {
 #searchbar-sorter-by-label:hover{
   border: none !important;
 }
+
+
+input[type="checkbox"]{
+  margin-top: 5px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: white;
+  border: 1px solid #808080;
+  width: 100%;
+  height: calc(100% - 10px);
+  display: grid;
+  place-content: center;
+}
+input[type="checkbox"]:hover{
+  border: 1px solid black;
+}
+input[type="checkbox"]::before{
+  content: "ᐁ";
+  color: #808080;
+  transform: scale(1);
+  transition: 120ms transform ease-in-out;
+}
+input[type="checkbox"]::after{
+  content: "ᐃ";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
+}
+input[type="checkbox"]:checked::before{
+  color: #808080;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  position: fixed;
+  bottom: 0;
+}
+input[type="checkbox"]:checked::after{
+  color: #951D40;
+  transform: scale(1) !important;
+  transition: 120ms transform ease-in-out;
+  position: inherit !important;
+}

@@ -21,7 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -955,6 +954,18 @@ public class UserService {
      * @throws JSONException .
      */
     public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
+
+        JSONArray response = new JSONArray();
+        List<WPUser> list = fetchUserListByCriteria(page, size, search, filterAbo, filterTyp, sorter);
+
+        for(WPUser user : list) {
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
+            response.put(obj);
+        }
+        return new JSONObject().put("users", response).put("count", list.size()).toString();
+    }
+
+    private List<WPUser> fetchUserListByCriteria(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) {
         List<WPUser> list;
 
 
@@ -1039,17 +1050,8 @@ public class UserService {
                 list = userRepo.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
             }
         }
-
-        JSONArray response = new JSONArray();
-
-        for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
-            response.put(obj);
-        }
-        return new JSONObject().put("users", response).put("count", list.size()).toString();
+        return list;
     }
-
-
 
     /**
      * Fetch all users with tags associated with their profile.

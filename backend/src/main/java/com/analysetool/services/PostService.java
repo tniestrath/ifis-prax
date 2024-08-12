@@ -1443,56 +1443,74 @@ public class PostService {
     }
 
     public String postPage(Integer page, Integer size, String filter, String search, String sorter, String dir) throws JSONException, ParseException {
-        List<Post> list;
-        Sort sortBy;
-
-        if(search == null) {
-            search = "";
-        }
-
-        if(!sorter.equals("clicks")) {
-            if (dir.equalsIgnoreCase("ASC") && !dir.isBlank()) {
-                sortBy = Sort.by(Sort.Direction.ASC, "date");
-            } else {
-                sortBy = Sort.by(Sort.Direction.DESC, "date");
-            }
-        } else {
-            if (dir.equalsIgnoreCase("ASC") && !dir.isBlank()) {
-                sortBy = Sort.by(Sort.Direction.ASC, "id");
-            } else {
-                sortBy = Sort.by(Sort.Direction.DESC, "id");
-            }
-        }
-
-        PageRequest request = PageRequest.of(page, size, sortBy);
-
-        if(sorter.isBlank()) {
-            if(!filter.isBlank()) {
-                list = postRepo.pageByTitleWithTypeQueryWithFilter(search, "publish", "post", filter, request);
-            } else {
-                list = postRepo.pageByTitleWithTypeQuery(search, "publish", "post", request);
-            }
-        } else {
-            if(!filter.isBlank()) {
-                if(sorter.equals("clicks")) {
-                    list = postRepo.postPageByClicks(search, "publish", "post", filter, request);
-                } else {
-                    list = postRepo.postPageByCreation(search, "publish", "post", filter, request);
-                }
-            } else {
-                if(sorter.equals("clicks")) {
-                    list = postRepo.postPageByClicks(search, "publish", "post", request);
-                } else {
-                    list = postRepo.postPageByCreation(search, "publish", "post", request);
-                }
-            }
-        }
 
         List<JSONObject> stats = new ArrayList<>();
-        for(Post post : list) {
+        for(Post post : fetchPostPageByCriteria(page, size, filter, search, sorter, dir)) {
             long id = post.getId();
             stats.add(new JSONObject(PostStatsByIdForFrontend(id)));
         }
         return new JSONArray(stats).toString();
     }
+
+    private List<Post> fetchPostPageByCriteria(Integer page, Integer size, String filter, String search, String sorter, String dir) {
+        List<Post> list;
+
+        if(search == null) {
+            search = "";
+        }
+
+        PageRequest request = PageRequest.of(page, size);
+
+        if(dir.equals("ASC")) {
+            if (sorter.isBlank()) {
+                if (!filter.isBlank()) {
+                    list = postRepo.pageByTitleWithTypeQueryWithFilterIdASC(search, "publish", "post", filter, request);
+                } else {
+                    list = postRepo.pageByTitleWithTypeQueryByIdASC(search, "publish", "post", request);
+                }
+            } else {
+                if (!filter.isBlank()) {
+                    if (sorter.equals("clicks")) {
+                        list = postRepo.postPageByClicksASC(search, "publish", "post", filter, request);
+                    } else {
+                        list = postRepo.postPageByCreationByIdASC(search, "publish", "post", filter, request);
+                    }
+                } else {
+                    if (sorter.equals("clicks")) {
+                        list = postRepo.postPageByClicksASC(search, "publish", "post", request);
+                    } else {
+                        list = postRepo.postPageByCreationByIdASC(search, "publish", "post", request);
+                    }
+                }
+            }
+        } else {
+            if (sorter.isBlank()) {
+                if (!filter.isBlank()) {
+                    list = postRepo.pageByTitleWithTypeQueryWithFilterIdDESC(search, "publish", "post", filter, request);
+                } else {
+                    list = postRepo.pageByTitleWithTypeQueryByIdDESC(search, "publish", "post", request);
+                }
+            } else {
+                if (!filter.isBlank()) {
+                    if (sorter.equals("clicks")) {
+                        list = postRepo.postPageByClicksDESC(search, "publish", "post", filter, request);
+                    } else {
+                        list = postRepo.postPageByCreationByIdDESC(search, "publish", "post", filter, request);
+                    }
+                } else {
+                    if (sorter.equals("clicks")) {
+                        list = postRepo.postPageByClicksDESC(search, "publish", "post", request);
+                    } else {
+                        list = postRepo.postPageByCreationByIdDESC(search, "publish", "post", request);
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    public List<String> getSuggestions(String search) {
+        return postRepo.getSuggestions(search);
+    }
+
 }

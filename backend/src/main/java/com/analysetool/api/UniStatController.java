@@ -220,4 +220,8 @@ public class UniStatController {
      */
     @GetMapping("/error-rate-today")
     public String getErrorRateForToday() {return uniService.getErrorRateForToday();}
+
+    @GetMapping("/bounce")
+    public String getBounce() throws JSONException {return uniService.getBounce();}
+
 }

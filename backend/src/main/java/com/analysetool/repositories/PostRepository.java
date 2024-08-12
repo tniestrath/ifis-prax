@@ -202,7 +202,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
            "p.status = 'publish' AND p.type='post' " +
-           "AND p.title LIKE %:search%" +
+           "AND p.title LIKE %:search% " +
            "ORDER BY p.date DESC")
    List<String> getSuggestions(String search);
 

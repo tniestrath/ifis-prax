@@ -12,6 +12,11 @@
   display: flex;
   align-items: center;
 }
+.external-service-timer{
+  text-align: right;
+  display: flex;
+  align-items: center;
+}
 .external-services-list-item-check{
   display: flex;
   width: 32px;

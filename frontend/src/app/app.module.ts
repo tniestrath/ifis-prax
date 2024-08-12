@@ -121,6 +121,7 @@ import {AreYouSureDialog, DialogDirective} from "./util/Dialog";
 import {ForumStatsComponent} from "./component/forum/forum-stats/forum-stats.component";
 import { PostTypesAverageViewsComponent } from './component/post/post-types-avarage-views/post-types-average-views.component';
 import { SocialsSumsComponent } from './component/socials/socials-sums/socials-sums.component';
+import { BounceComponent } from './component/bounce/bounce.component';
 
 @NgModule({
   declarations: [
@@ -223,7 +224,8 @@ import { SocialsSumsComponent } from './component/socials/socials-sums/socials-s
     AreYouSureDialog,
     DialogDirective,
     PostTypesAverageViewsComponent,
-    SocialsSumsComponent
+    SocialsSumsComponent,
+    BounceComponent
   ],
     imports: [
         BrowserModule,

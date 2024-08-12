@@ -34,7 +34,7 @@ export class SocialsSumsComponent extends DashBaseComponent implements OnInit{
       data: {
         labels: labels,
         datasets: [{
-          label: "Platform",
+          label: "Aufrufe",
           data: data,
           backgroundColor: [DashColors.LINKEDIN, DashColors.TWITTER, DashColors.FACEBOOK, DashColors.YOUTUBE],
         }]

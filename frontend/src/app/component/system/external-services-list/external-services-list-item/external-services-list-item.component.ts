@@ -36,6 +36,8 @@ export class ExternalServicesListItemComponent extends DashListItemComponent{
   override data : ExternalService = new ExternalService("", "", "" , 2);
   @ViewChild('iframe', { static: true }) iframe: ElementRef<HTMLDivElement> | undefined;
 
+  serviceTimer : number = 0;
+
   private evListener = (ev: KeyboardEvent) => {
     if (ev.key == "Escape"){
           this.onClick()
@@ -57,8 +59,19 @@ export class ExternalServicesListItemComponent extends DashListItemComponent{
   }
 
   onLoad($event: Event){
-    this.data.check = 0;
+    this.serviceTimer = Date.now() - this.serviceTimer;
+    if (this.serviceTimer > 1000){
+      this.data.check = 1;
+    } else if (this.serviceTimer > 2000){
+      this.data.check = 2;
+    } else {
+      this.data.check = 0;
+    }
   }
 
+  onLoadStart() {
+    this.serviceTimer = Date.now();
+  }
 
+  protected readonly Date = Date;
 }

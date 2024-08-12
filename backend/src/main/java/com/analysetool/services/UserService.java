@@ -102,8 +102,36 @@ public class UserService {
             "        .ExternalClass {width: 100%;}\n" +
             "    </style>\n" +
             "</head>\n" +
-            "    <body style=\"width: 100%; margin: 5px 0; background: #cccccc;\">\n" +
+            "    <body style=\"width: 100%\">\n" +
             "        <table style=\"width: 100%\">\n" +
+            "            <tr>\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                <td style=\"background: white;\">\n" +
+            "                    <table>\n" +
+            "                        <tr>\n" +
+            "                            <td><img src=\"../frontend/src/assets/it-sicherheit-logo_w300.png\"/></td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 100%\"></td>\n" +
+            "                            <td><p style=\"white-space: nowrap\"><b>Das Maktplatz IT-Sicherheit Analyse-Team</b></p></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"divider\" style=\"width: 100%\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                            <td>\n" +
+            "                                <table style=\"border-collapse: collapse;width: 100%\">\n" +
+            "                                    <thead>\n" +
+            "                                    <tr style=\"border-bottom: 1px solid #cccccc\">\n" +
+            "                                        <td></td>\n" +
+            "                                    </tr>\n" +
+            "                                    </thead>\n" +
+            "                                </table>\n" +
+            "                            </td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                </td>\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "            </tr>\n" +
             "            <tr style=\"width: 100%\">\n" +
             "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
             "                <td id=\"quarterStats\" class=\"chapter\" style=\"background: white;\">\n" +
@@ -117,6 +145,21 @@ public class UserService {
             "                        </tr>\n" +
             "                        <tr id=\"qs-3\">\n" +
             "                            <td>Inhaltsaufrufe: {{CONTENTVIEWSQUARTER}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"https://analyse.it-sicherheit.de/assets/pencil-solid.png\"/></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"divider\" style=\"width: 100%\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                            <td>\n" +
+            "                                <table style=\"border-collapse: collapse;width: 100%\">\n" +
+            "                                    <thead>\n" +
+            "                                    <tr style=\"border-bottom: 1px solid #cccccc\">\n" +
+            "                                        <td></td>\n" +
+            "                                    </tr>\n" +
+            "                                    </thead>\n" +
+            "                                </table>\n" +
+            "                            </td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
             "                        </tr>\n" +
             "                    </table>\n" +
             "                </td>\n" +
@@ -139,6 +182,21 @@ public class UserService {
             "\n" +
             "                        <tr id=\"bs-2\">\n" +
             "                            <td>Inhaltsaufrufe: {{CONTENTVIEWS}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"https://analyse.it-sicherheit.de/assets/pencil-solid.png\"/></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"divider\" style=\"width: 100%\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                            <td>\n" +
+            "                                <table style=\"border-collapse: collapse;width: 100%\">\n" +
+            "                                    <thead>\n" +
+            "                                    <tr style=\"border-bottom: 1px solid #cccccc\">\n" +
+            "                                        <td></td>\n" +
+            "                                    </tr>\n" +
+            "                                    </thead>\n" +
+            "                                </table>\n" +
+            "                            </td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
             "                        </tr>\n" +
             "                    </table>\n" +
             "                </td>\n" +
@@ -184,6 +242,36 @@ public class UserService {
             "                        </tr>\n" +
             "                    </table>\n" +
             "                    <!--rankingsTable-->\n" +
+            "                    <table class=\"divider\" style=\"width: 100%\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                            <td>\n" +
+            "                                <table style=\"border-collapse: collapse;width: 100%\">\n" +
+            "                                    <thead>\n" +
+            "                                    <tr style=\"border-bottom: 1px solid #cccccc\">\n" +
+            "                                        <td></td>\n" +
+            "                                    </tr>\n" +
+            "                                    </thead>\n" +
+            "                                </table>\n" +
+            "                            </td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                </td>\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "            </tr>\n" +
+            "            <tr style=\"width: 100%\">\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                <td style=\"background: white;\">\n" +
+            "                    <table style=\"width: 100%;\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 10%\"></td>\n" +
+            "                            <td style=\"width: 80%\"><p style=\"text-align: center\">Der Marktplatz IT-Sicherheit\n" +
+            "                                Westfälische Hochschule Neidenburger Straße 43 D-45897 Gelsenkirchen<br>\n" +
+            "                                © 2022 - 2024 Marktplatz IT-Sicherheit. Alle Rechte vorbehalten</p></td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 10%\"></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
             "                </td>\n" +
             "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
             "            </tr>\n" +

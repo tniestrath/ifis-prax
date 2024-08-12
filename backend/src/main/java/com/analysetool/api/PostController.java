@@ -4,6 +4,7 @@ import com.analysetool.modells.Post;
 import com.analysetool.services.PostClicksByHourDLCService;
 import com.analysetool.services.PostService;
 import com.analysetool.util.MathHelper;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -504,5 +505,9 @@ public class PostController {
             return "error";
         }
     }
+
+    @GetMapping("/getPossiblePosts")
+    public String getSuggestions(String search, String filter) {return new JSONArray(postService.getSuggestions(search, filter)).toString();}
+
 }
 

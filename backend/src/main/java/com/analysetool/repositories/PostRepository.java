@@ -95,21 +95,45 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND (pt.type='blog' OR pt.type='news' OR pt.type='artikel' OR pt.type LIKE '%podcast%' OR pt.type='whitepaper')")
    List<Post> pageByTitleWithTypeQuery(String title, String status, String type, Pageable pageable);
 
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND (pt.type='blog' OR pt.type='news' OR pt.type='artikel' OR pt.type LIKE '%podcast%' OR pt.type='whitepaper') ORDER BY p.id ASC")
+   List<Post> pageByTitleWithTypeQueryByIdASC(String title, String status, String type, Pageable pageable);
+
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND (pt.type='blog' OR pt.type='news' OR pt.type='artikel' OR pt.type LIKE '%podcast%' OR pt.type='whitepaper') ORDER BY p.id DESC")
+   List<Post> pageByTitleWithTypeQueryByIdDESC(String title, String status, String type, Pageable pageable);
+
    @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter%")
    List<Post> pageByTitleWithTypeQueryWithFilter(String title, String status, String type, String filter, Pageable pageable);
 
-   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY ps.clicks")
-   List<Post> postPageByClicks(String title, String status, String type, String filter, Pageable pageable);
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY p.id ASC")
+   List<Post> pageByTitleWithTypeQueryWithFilterIdASC(String title, String status, String type, String filter, Pageable pageable);
 
-   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY p.date")
-   List<Post> postPageByCreation(String title, String status, String type, String filter, Pageable pageable);
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY p.id DESC")
+   List<Post> pageByTitleWithTypeQueryWithFilterIdDESC(String title, String status, String type, String filter, Pageable pageable);
+
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY ps.clicks ASC")
+   List<Post> postPageByClicksASC(String title, String status, String type, String filter, Pageable pageable);
+
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY ps.clicks DESC")
+   List<Post> postPageByClicksDESC(String title, String status, String type, String filter, Pageable pageable);
+
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY p.id ASC")
+   List<Post> postPageByCreationByIdASC(String title, String status, String type, String filter, Pageable pageable);
+
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY p.id DESC")
+   List<Post> postPageByCreationByIdDESC(String title, String status, String type, String filter, Pageable pageable);
 
 
-   @Query("SELECT p FROM Post p JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type ORDER BY ps.clicks")
-   List<Post> postPageByClicks(String title, String status, String type, Pageable pageable);
+   @Query("SELECT p FROM Post p JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type ORDER BY ps.clicks ASC")
+   List<Post> postPageByClicksASC(String title, String status, String type, Pageable pageable);
 
-   @Query("SELECT p FROM Post p WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type ORDER BY p.date")
-   List<Post> postPageByCreation(String title, String status, String type, Pageable pageable);
+   @Query("SELECT p FROM Post p JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type ORDER BY ps.clicks DESC")
+   List<Post> postPageByClicksDESC(String title, String status, String type, Pageable pageable);
+
+   @Query("SELECT p FROM Post p WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type ORDER BY p.id ASC")
+   List<Post> postPageByCreationByIdASC(String title, String status, String type, Pageable pageable);
+
+   @Query("SELECT p FROM Post p WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type ORDER BY p.id DESC")
+   List<Post> postPageByCreationByIdDESC(String title, String status, String type, Pageable pageable);
 
 
    @Query("SELECT p FROM AuthorsRelationships a " +
@@ -163,5 +187,26 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    @Query("Select p FROM Post p WHERE p.slug =:postName AND p.type = 'page' ")
    Optional<Post> findPageByPostName(String postName);
+
+   @Query("SELECT p FROM AuthorsRelationships a " +
+           "JOIN Post p ON a.postId=p.id " +
+           "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
+           "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
+           "JOIN WPTerm  t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
+           "p.status= 'publish' AND p.type='post' " +
+           "AND p.title LIKE %:search% AND pt.type=:filter " +
+           "ORDER BY p.date DESC")
+   List<String> getSuggestions(String search, String filter);
+
+   @Query("SELECT p FROM AuthorsRelationships a " +
+           "JOIN Post p ON a.postId=p.id " +
+           "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
+           "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
+           "JOIN WPTerm  t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
+           "p.status= 'publish' AND p.type='post' " +
+           "AND p.title LIKE %:search%" +
+           "ORDER BY p.date DESC")
+   List<String> getSuggestions(String search);
+
 }
 

@@ -21,7 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -103,8 +102,36 @@ public class UserService {
             "        .ExternalClass {width: 100%;}\n" +
             "    </style>\n" +
             "</head>\n" +
-            "    <body style=\"width: 100%; margin: 5px 0; background: #cccccc;\">\n" +
+            "    <body style=\"width: 100%\">\n" +
             "        <table style=\"width: 100%\">\n" +
+            "            <tr>\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                <td style=\"background: white;\">\n" +
+            "                    <table>\n" +
+            "                        <tr>\n" +
+            "                            <td><img src=\"../frontend/src/assets/it-sicherheit-logo_w300.png\"/></td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 100%\"></td>\n" +
+            "                            <td><p style=\"white-space: nowrap\"><b>Das Maktplatz IT-Sicherheit Analyse-Team</b></p></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"divider\" style=\"width: 100%\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                            <td>\n" +
+            "                                <table style=\"border-collapse: collapse;width: 100%\">\n" +
+            "                                    <thead>\n" +
+            "                                    <tr style=\"border-bottom: 1px solid #cccccc\">\n" +
+            "                                        <td></td>\n" +
+            "                                    </tr>\n" +
+            "                                    </thead>\n" +
+            "                                </table>\n" +
+            "                            </td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                </td>\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "            </tr>\n" +
             "            <tr style=\"width: 100%\">\n" +
             "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
             "                <td id=\"quarterStats\" class=\"chapter\" style=\"background: white;\">\n" +
@@ -118,6 +145,21 @@ public class UserService {
             "                        </tr>\n" +
             "                        <tr id=\"qs-3\">\n" +
             "                            <td>Inhaltsaufrufe: {{CONTENTVIEWSQUARTER}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"https://analyse.it-sicherheit.de/assets/pencil-solid.png\"/></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"divider\" style=\"width: 100%\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                            <td>\n" +
+            "                                <table style=\"border-collapse: collapse;width: 100%\">\n" +
+            "                                    <thead>\n" +
+            "                                    <tr style=\"border-bottom: 1px solid #cccccc\">\n" +
+            "                                        <td></td>\n" +
+            "                                    </tr>\n" +
+            "                                    </thead>\n" +
+            "                                </table>\n" +
+            "                            </td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
             "                        </tr>\n" +
             "                    </table>\n" +
             "                </td>\n" +
@@ -140,6 +182,21 @@ public class UserService {
             "\n" +
             "                        <tr id=\"bs-2\">\n" +
             "                            <td>Inhaltsaufrufe: {{CONTENTVIEWS}}<img style=\"height: 1em;width: auto;aspect-ratio: 1/1;\" height=\"25\" width=\"25\" src=\"https://analyse.it-sicherheit.de/assets/pencil-solid.png\"/></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                    <table class=\"divider\" style=\"width: 100%\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                            <td>\n" +
+            "                                <table style=\"border-collapse: collapse;width: 100%\">\n" +
+            "                                    <thead>\n" +
+            "                                    <tr style=\"border-bottom: 1px solid #cccccc\">\n" +
+            "                                        <td></td>\n" +
+            "                                    </tr>\n" +
+            "                                    </thead>\n" +
+            "                                </table>\n" +
+            "                            </td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
             "                        </tr>\n" +
             "                    </table>\n" +
             "                </td>\n" +
@@ -185,6 +242,36 @@ public class UserService {
             "                        </tr>\n" +
             "                    </table>\n" +
             "                    <!--rankingsTable-->\n" +
+            "                    <table class=\"divider\" style=\"width: 100%\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                            <td>\n" +
+            "                                <table style=\"border-collapse: collapse;width: 100%\">\n" +
+            "                                    <thead>\n" +
+            "                                    <tr style=\"border-bottom: 1px solid #cccccc\">\n" +
+            "                                        <td></td>\n" +
+            "                                    </tr>\n" +
+            "                                    </thead>\n" +
+            "                                </table>\n" +
+            "                            </td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
+            "                </td>\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "            </tr>\n" +
+            "            <tr style=\"width: 100%\">\n" +
+            "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
+            "                <td style=\"background: white;\">\n" +
+            "                    <table style=\"width: 100%;\">\n" +
+            "                        <tr>\n" +
+            "                            <td class=\"spacer\" style=\"width: 10%\"></td>\n" +
+            "                            <td style=\"width: 80%\"><p style=\"text-align: center\">Der Marktplatz IT-Sicherheit\n" +
+            "                                Westfälische Hochschule Neidenburger Straße 43 D-45897 Gelsenkirchen<br>\n" +
+            "                                © 2022 - 2024 Marktplatz IT-Sicherheit. Alle Rechte vorbehalten</p></td>\n" +
+            "                            <td class=\"spacer\" style=\"width: 10%\"></td>\n" +
+            "                        </tr>\n" +
+            "                    </table>\n" +
             "                </td>\n" +
             "                <td class=\"spacer\" style=\"width: 2.5%\"></td>\n" +
             "            </tr>\n" +
@@ -955,6 +1042,18 @@ public class UserService {
      * @throws JSONException .
      */
     public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
+
+        JSONArray response = new JSONArray();
+        List<WPUser> list = fetchUserListByCriteria(page, size, search, filterAbo, filterTyp, sorter);
+
+        for(WPUser user : list) {
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
+            response.put(obj);
+        }
+        return new JSONObject().put("users", response).put("count", list.size()).toString();
+    }
+
+    private List<WPUser> fetchUserListByCriteria(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) {
         List<WPUser> list;
 
 
@@ -1039,130 +1138,8 @@ public class UserService {
                 list = userRepo.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
             }
         }
-
-        JSONArray response = new JSONArray();
-
-        for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
-            response.put(obj);
-        }
-        return new JSONObject().put("users", response).put("count", list.size()).toString();
+        return list;
     }
-
-
-    /**
-     *
-     * @param page which page of results in the given size you want to fetch.
-     * @param size the number of results you want per page.
-     * @param search the search-term you want results for, give empty string for none.
-     * @param filterAbo "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
-     * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
-     * @param dir the direction to sort in "DESC" or "ASC".
-     * @return a JSON String containing information about all users in the specified page, and the number of users loaded.
-     * @throws JSONException .
-     */
-    public String getAllDirectionTest(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter, String dir) throws JSONException {
-        List<WPUser> list;
-
-        PageRequest pageRequest;
-        if(dir.isBlank() || dir.equalsIgnoreCase("DESC")) {
-            pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
-        } else {
-            pageRequest = PageRequest.of(page, size, Sort.by("id").ascending());
-        }
-
-
-        if(sorter != null) {
-            //Both filters unused, sorter used.
-            if(filterAbo.isBlank() && filterTyp.isBlank()) {
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepo.getAllNameLikeAndProfileViewsAll(search, pageRequest);
-                    }
-                    case "contentView" -> {
-                        list = userRepo.getAllNameLikeAndContentViewsAll(search, pageRequest);
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAll(search,  pageRequest);
-                    }
-                    default -> {
-                        list = userRepo.getAllByNicenameContainingAll(search,  pageRequest);
-                    }
-                }
-            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
-                //Abo-Filter used, sorter used.
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepo.getAllNameLikeAndProfileViewsAbo(search, filterAbo, pageRequest);
-                    }
-                    case "contentView" -> {
-                        list = userRepo.getAllNameLikeAndContentViewsAbo(search, filterAbo, pageRequest);
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAbo(search, filterAbo, pageRequest);
-                    }
-                    default -> {
-                        list = userRepo.getAllByNicenameContainingAbo(search, filterAbo, pageRequest);
-                    }
-                }
-            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
-                //Company-Type Filter used, sorter used.
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepo.getAllNameLikeAndProfileViewsCompany(search, filterTyp, pageRequest);
-                    }
-                    case "contentView" -> {
-                        list = userRepo.getAllNameLikeAndContentViewsCompany(search, filterTyp, pageRequest);
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepo.getAllNameLikeAndProfileViewsByTimeCompany(search, filterTyp, pageRequest);
-                    }
-                    default -> {
-                        list = userRepo.getAllByNicenameContainingCompany(search, filterTyp, pageRequest);
-                    }
-                }
-            } else {
-                //Abo, Company type and sorter used.
-                switch (sorter) {
-                    case "profileView" -> {
-                        list = userRepo.getAllNameLikeAndProfileViewsAboAndCompany(search, filterAbo, filterTyp, pageRequest);
-                    }
-                    case "contentView" -> {
-                        list = userRepo.getAllNameLikeAndContentViewsAboAndCompany(search, filterAbo, filterTyp, pageRequest);
-                    }
-                    case "viewsByTime" -> {
-                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAboAndCompany(search, filterAbo, filterTyp, pageRequest);
-                    }
-                    default -> {
-                        list = userRepo.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, pageRequest);
-                    }
-                }
-            }
-        } else {
-            //Neither filters nor sorter used.
-            if(filterAbo.isBlank() && filterTyp.isBlank()) {
-                list = userRepo.getAllByNicenameContainingAll(search, pageRequest);
-            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
-                //Abo-Filter used.
-                list = userRepo.getAllByNicenameContainingAbo(search, filterAbo, pageRequest);
-            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
-                //Company-Filter used.
-                list = userRepo.getAllByNicenameContainingCompany(search, filterTyp, pageRequest);
-            } else {
-                //Both filters used, no sorter used.
-                list = userRepo.getAllByNicenameContainingAboAndCompany(search, filterAbo, filterTyp, pageRequest);
-            }
-        }
-
-        JSONArray response = new JSONArray();
-
-        for(WPUser user : list) {
-            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
-            response.put(obj);
-        }
-        return new JSONObject().put("users", response).put("count", list.size()).toString();
-    }
-
 
     /**
      * Fetch all users with tags associated with their profile.

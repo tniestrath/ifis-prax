@@ -1461,7 +1461,7 @@ public class PostService {
 
         PageRequest request = PageRequest.of(page, size);
 
-        if(dir.equals("ASC")) {
+        if(!dir.equals("DESC")) {
             if (sorter.isBlank()) {
                 if (!filter.isBlank()) {
                     list = postRepo.pageByTitleWithTypeQueryWithFilterIdASC(search, "publish", "post", filter, request);

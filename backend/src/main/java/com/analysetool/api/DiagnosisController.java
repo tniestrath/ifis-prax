@@ -90,4 +90,9 @@ public class DiagnosisController {
     @GetMapping("/updateServiceBuffer")
     public boolean updateServiceBuffer(String name, String link, int buffer) {return diagnosisService.updateServiceBuffer(name, link, buffer);}
 
+    @GetMapping("/getRunningStatus")
+    public boolean isRunning() {
+        return logService.isRunning();
+    }
+
 }

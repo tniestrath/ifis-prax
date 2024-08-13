@@ -28,7 +28,7 @@
       <div id="searchbar-sorter-views">Aufrufe</div>
       <div id="searchbar-sorter-uid">Erstellungsdatum</div>
     </div>
-    <input type="checkbox" name="search-list-dir" value="DESC">
+    <input id="searchbar-dir" type="checkbox" name="search-dir" value="DESC" (change)="onDirSwitched($event)">
   </div>
 
 </div>

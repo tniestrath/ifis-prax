@@ -584,8 +584,8 @@ public class LogService {
                 endDay();
             }
             sysVarRepo.save(SystemVariabeln);
+            isRunning = false;
         }
-        isRunning = false;
     }
 
 

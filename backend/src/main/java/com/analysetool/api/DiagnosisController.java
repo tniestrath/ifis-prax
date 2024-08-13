@@ -77,14 +77,20 @@ public class DiagnosisController {
      * @return boolean whether the procedure ended correctly, a Time-Out does NOT mean it did not work.
      */
     @GetMapping("/run")
-    public boolean updateStats() {
+    public void updateStats() {
         try {
             logService.runScheduled();
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
-        return true;
+    }
+
+    @GetMapping("/updateServiceBuffer")
+    public boolean updateServiceBuffer(String name, String link, int buffer) {return diagnosisService.updateServiceBuffer(name, link, buffer);}
+
+    @GetMapping("/getRunningStatus")
+    public boolean isRunning() {
+        return logService.isRunning();
     }
 
 }

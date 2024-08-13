@@ -404,6 +404,8 @@ public class LogService {
 
     private final Map<Integer,ForumTopicsClicksByHour> forumTopicsClicksMap = new ConcurrentHashMap<>();
 
+    private boolean isRunning = false;
+
     @Autowired
     public LogService(PostRepository postRepository, PostStatsRepository PostStatsRepository, TagStatRepository tagStatRepo, WpTermRelationshipsRepository termRelRepo, WPTermRepository termRepo, WpTermTaxonomyRepository termTaxRepo, WPUserRepository wpUserRepo, UserStatsRepository userStatsRepo, CommentsRepository commentRepo, SysVarRepository sysVarRepo, DashConfig config) {
         this.postRepository = postRepository;
@@ -529,6 +531,7 @@ public class LogService {
      * @throws ParseException if parsing the given file fails.
      */
     public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws ParseException {
+        isRunning = true;
         this.liveScanning = liveScanning;
         this.path = path;
         lastLineCounter=SystemVariabeln.getLastLineCount();
@@ -580,6 +583,7 @@ public class LogService {
             endDay();
         }
         sysVarRepo.save(SystemVariabeln);
+        isRunning = false;
     }
 
 
@@ -3472,4 +3476,7 @@ public class LogService {
 
     }
 
+    public boolean isRunning() {
+        return isRunning;
+    }
 }

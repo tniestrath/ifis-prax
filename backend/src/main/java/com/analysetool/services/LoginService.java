@@ -16,14 +16,13 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -42,6 +41,8 @@ public class LoginService {
     UserService userService;
     @Autowired
     private LastPingRepository lpRepo;
+    @Autowired
+    private LogService logService;
 
     public Authentication adminAuthentication = new Authentication() {
         @Override
@@ -296,7 +297,9 @@ public class LoginService {
      * Pings the server to check whether its up and running.
      * @return true.
      */
-    public boolean ping() {
+    public String ping() throws JSONException {
+        JSONObject json = new JSONObject();
+
         LastPing ping;
         if(lpRepo.findById(1L).isPresent()) {
             ping = lpRepo.findById(1L).get();
@@ -305,6 +308,9 @@ public class LoginService {
         }
         ping.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
         lpRepo.save(ping);
-        return true;
+        json.put("isOn", true);
+        json.put("isUpdating", logService.isRunning());
+
+        return json.toString();
     }
 }

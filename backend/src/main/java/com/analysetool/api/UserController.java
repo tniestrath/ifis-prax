@@ -65,8 +65,12 @@ public class UserController {
      * @throws JSONException .
      */
     @GetMapping("/getAll")
-    public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) throws JSONException {
-        return userService.getAll(page, size, search, filterAbo, filterTyp, sorter);
+    public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter, String dir) throws JSONException {
+        if(dir == null || dir.isBlank()) {
+            return userService.getAll(page, size, search, filterAbo, filterTyp, sorter);
+        } else {
+            return userService.getAll(page, size, search, filterAbo, filterTyp, sorter, dir);
+        }
     }
 
     /**

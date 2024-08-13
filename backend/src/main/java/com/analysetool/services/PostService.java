@@ -1512,9 +1512,9 @@ public class PostService {
 
     public List<String> getSuggestions(String search, String filter) {
         if(filter == null || filter.isBlank()) {
-            return postRepo.getSuggestions(search);
+            return postRepo.titlesOfPosts(postRepo.getSuggestions(search));
         } else {
-            return postRepo.getSuggestions(search, filter);
+            return postRepo.titlesOfPosts(postRepo.getSuggestions(search, filter));
         }
     }
 

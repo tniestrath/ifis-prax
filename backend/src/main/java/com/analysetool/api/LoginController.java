@@ -3,6 +3,7 @@ package com.analysetool.api;
 
 import com.analysetool.services.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,5 +54,5 @@ public class LoginController {
      * @return true.
      */
     @GetMapping(value = {"/ping", "/0wB4P2mly-xaRmeeDOj0_g/ping"})
-    public boolean ping() {return loginService.ping();}
+    public String ping() throws JSONException {return loginService.ping();}
 }

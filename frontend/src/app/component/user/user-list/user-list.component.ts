@@ -20,7 +20,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
   private lastScroll: number = 0;
   private pageSize: number = 5;
 
-  private selectedConfiguration = {accType : "", usrType : " ", sort : "userId", query: ""};
+  private selectedConfiguration = {accType : "", usrType : " ", sort : "userId", query: "", dir: "DESC"};
   private isSearching: boolean = false;
   private abortController: AbortController[] = [];
 
@@ -57,7 +57,7 @@ export class UserListComponent extends DashBaseComponent implements OnInit{
     }
   }
 
-  executeSearch($event: { accType: string; usrType: string; sort: string; query : string} | string) {
+  executeSearch($event: { accType: string; usrType: string; sort: string; query : string, dir : string} | string) {
     if (typeof $event == "string"){
       this.selectedConfiguration.query = $event;
     } else {

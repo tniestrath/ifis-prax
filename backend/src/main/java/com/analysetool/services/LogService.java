@@ -531,58 +531,60 @@ public class LogService {
      * @throws ParseException if parsing the given file fails.
      */
     public void run(boolean liveScanning, String path,SysVar SystemVariabeln) throws ParseException {
-        isRunning = true;
-        this.liveScanning = liveScanning;
-        this.path = path;
-        lastLineCounter=SystemVariabeln.getLastLineCount();
-        lastLine = SystemVariabeln.getLastLine();
-        lineCounter = 0;
-        new Constants(postTypeRepo, termRepo);
-        try  {
-            br = new BufferedReader(new FileReader(path));
-            findAMatch(SystemVariabeln);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //setUniversalStats(SystemVariabeln);
-        SystemVariabeln.setLastLineCount(lastLineCounter);
-        SystemVariabeln.setLastLine(lastLine);
-        try {
-            updateWordCountForAll();
-        } catch(Exception e) {
-            System.out.println("FEHLER AT updateWordCount");
-            e.printStackTrace();
-        }
-        try {
-            updatePostTypes();
-        } catch(Exception e) {
-            System.out.println("FEHLER AT updatePostTypes");
-            e.printStackTrace();
-        }
-        try {
-            doAutoClean();
-        } catch(Exception e) {
-            System.out.println("FEHLER AT autoclean");
-            e.printStackTrace();
-        }
-        try {
-            updateMemberBuffer();
-        } catch(Exception e) {
-            System.out.println("FEHLER AT updateMemberBuffer");
-            e.printStackTrace();
-        }
-        try {
-            checkLastPingTimer();
-        } catch(Exception e) {
-            System.out.println("FEHLER AT checkLastPingTimer");
-            e.printStackTrace();
-        }
+        if(!isRunning) {
+            isRunning = true;
+            this.liveScanning = liveScanning;
+            this.path = path;
+            lastLineCounter = SystemVariabeln.getLastLineCount();
+            lastLine = SystemVariabeln.getLastLine();
+            lineCounter = 0;
+            new Constants(postTypeRepo, termRepo);
+            try {
+                br = new BufferedReader(new FileReader(path));
+                findAMatch(SystemVariabeln);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //setUniversalStats(SystemVariabeln);
+            SystemVariabeln.setLastLineCount(lastLineCounter);
+            SystemVariabeln.setLastLine(lastLine);
+            try {
+                updateWordCountForAll();
+            } catch (Exception e) {
+                System.out.println("FEHLER AT updateWordCount");
+                e.printStackTrace();
+            }
+            try {
+                updatePostTypes();
+            } catch (Exception e) {
+                System.out.println("FEHLER AT updatePostTypes");
+                e.printStackTrace();
+            }
+            try {
+                doAutoClean();
+            } catch (Exception e) {
+                System.out.println("FEHLER AT autoclean");
+                e.printStackTrace();
+            }
+            try {
+                updateMemberBuffer();
+            } catch (Exception e) {
+                System.out.println("FEHLER AT updateMemberBuffer");
+                e.printStackTrace();
+            }
+            try {
+                checkLastPingTimer();
+            } catch (Exception e) {
+                System.out.println("FEHLER AT checkLastPingTimer");
+                e.printStackTrace();
+            }
 
 
-        if(LocalDateTime.now().getHour() == 5) {
-            endDay();
+            if (LocalDateTime.now().getHour() == 5) {
+                endDay();
+            }
+            sysVarRepo.save(SystemVariabeln);
         }
-        sysVarRepo.save(SystemVariabeln);
         isRunning = false;
     }
 

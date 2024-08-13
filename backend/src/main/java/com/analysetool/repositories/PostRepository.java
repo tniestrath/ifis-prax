@@ -194,7 +194,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
            "p.status= 'publish' AND p.type='post' " +
            "AND p.title LIKE %:search% AND pt.type=:filter " +
-           "ORDER BY p.date DESC")
+           "ORDER BY p.date DESC LIMIT 5")
    List<String> getSuggestions(String search, String filter);
 
    @Query("SELECT p.title FROM Post p " +
@@ -203,7 +203,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
            "p.status = 'publish' AND p.type='post' " +
            "AND p.title LIKE %:search% " +
-           "ORDER BY p.date DESC")
+           "ORDER BY p.date DESC LIMIT 5")
    List<String> getSuggestions(String search);
 
 }

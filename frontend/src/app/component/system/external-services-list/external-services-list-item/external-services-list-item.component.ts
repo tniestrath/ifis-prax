@@ -71,6 +71,7 @@ export class ExternalServicesListItemComponent extends DashListItemComponent{
 
   onLoadStart() {
     this.serviceTimer = Date.now();
+    console.log("LOADSTART " + this.data.name)
   }
 
   protected readonly Date = Date;

@@ -12,16 +12,19 @@
   <div id="loading-bar-progress"></div>
   {{html_err_code}}
 </div>
-<div *ngIf="SysVars.CURRENT_PAGE == 'UserDetail'" class="print-box" (click)="setSelected('PRINT')">
+<div *ngIf="SysVars.CURRENT_PAGE == 'UserDetail'" class="print-box button-box" (click)="setSelected('PRINT')">
   <img src="../../../assets/preview.png"/>
 </div>
-<div *ngIf="SysVars.CURRENT_PAGE == 'PRINT'" class="print-box" (click)="window.print()">
+<div *ngIf="SysVars.CURRENT_PAGE == 'PRINT'" class="print-box button-box" (click)="window.print()">
   <img src="../../../assets/pdf-file.png"/>
 </div>
-<div *ngIf="SysVars.CURRENT_PAGE == 'System'" class="spider-box" (click)="window.open('http://analyse.it-sicherheit.de/api/diagnosis/doCheckUpSite', '_blank')">
+<div *ngIf="SysVars.CURRENT_PAGE == 'System'" class="spider-box button-box" (click)="window.open('http://analyse.it-sicherheit.de/api/diagnosis/doCheckUpSite', '_blank')">
   <img src="../../../assets/spider.png"/>
 </div>
-<div class="logout-box" (click)="onLogoutClick()">
+<div *ngIf="SysVars.ADMIN" class="reload-box button-box" (click)="onReloadClick()">
+  <img src="assets/repeat.png" [ngClass]="{'spinning' : SysVars.UPDATING == true}">
+</div>
+<div class="logout-box button-box" (click)="onLogoutClick()">
   <img src="../../../assets/logout.png"/>
 </div>
 

@@ -55,9 +55,11 @@ export class HeaderComponent implements AfterViewInit{
 
       var ping = setInterval(() => {
         this.api.ping().then(res => {
-          if (!res){
+          if (!res.isOn){
             clearInterval(ping);
             this.onLogoutClick();
+          } else{
+            SysVars.UPDATING = res.isUpdating;
           }
         }).catch(reason => {
           clearInterval(ping);
@@ -160,5 +162,9 @@ export class HeaderComponent implements AfterViewInit{
     if (SysVars.ACCOUNT.accountType != "user"){
       window.open("http://analyse.it-sicherheit.de/api/feature/feedbackSite", "_feedBack");
     }
+  }
+
+  onReloadClick() {
+    this.api.reload();
   }
 }

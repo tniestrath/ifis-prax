@@ -53,7 +53,7 @@ export class LoginComponent extends DashBaseComponent implements OnInit{
       this.styleLogin(Reason.ERR_502);
       var ping = setInterval(() => {
         this.api.ping().then(res => {
-          if (res){
+          if (res.isOn){
             clearInterval(ping);
             this.api.loginWithBody(username, userpass).then(res => {
               res.text().then(ans => {

@@ -119,3 +119,15 @@
 .spinning{
   animation: rotation 2s infinite linear;
 }
+.disabled{
+  background-color: #7C7C7C;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}

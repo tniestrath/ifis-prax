@@ -165,6 +165,9 @@ export class HeaderComponent implements AfterViewInit{
   }
 
   onReloadClick() {
-    this.api.reload();
+    if (!SysVars.UPDATING){
+      this.api.reload();
+      SysVars.UPDATING = true;
+    }
   }
 }

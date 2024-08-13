@@ -89,7 +89,7 @@ export enum apiUrl {
   GET_POST_VIEWS_BY_TIME = "/posts/getPostViewsByTime?id=ID",
 
   GET_POSTS_ALL = "/posts/getAllPostsWithStats",
-  GET_POSTS_ALL_PAGED = "/posts/pageByTitle?page=PAGE&size=SIZE&sortBy=SORTER&filter=FILTER&search=SEARCH",
+  GET_POSTS_ALL_PAGED = "/posts/postPage?page=PAGE&size=SIZE&sorter=SORTER&filter=FILTER&search=SEARCH&dir=DIR",
   GET_POSTS_PER_USER_PER_DAY = "/posts/getPostsByAuthorLine?id=",
   GET_POSTS_PER_USER_WITH_STATS = "/posts/getPostsByAuthorLine2?id=",
   GET_POSTS_BY_AUTHOR = "/posts/getPostsByAuthor?authorId=ID&page=PAGE&size=SIZE&filter=FILTER&search=SEARCH",
@@ -419,9 +419,9 @@ export class ApiService {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_ALL), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_ALL)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async getPostsAllPaged(page : number, size : number, sorter : string, filter : string, search : string){
+  async getPostsAllPaged(page : number, size : number, sorter : string, filter : string, search : string, dir : string){
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_ALL_PAGED).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("FILTER", filter).replace("SEARCH", search), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_ALL_PAGED)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_ALL_PAGED).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SORTER", sorter).replace("FILTER", filter).replace("SEARCH", search).replace("DIR", dir), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_ALL_PAGED)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getPostByIdWithContent(id: string) : Promise<Post> {
     this.setLoading();

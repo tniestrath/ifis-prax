@@ -5,6 +5,10 @@ import {SysVars} from "../../services/sys-vars-service";
 import {Subject} from "rxjs";
 import {DashBaseComponent} from "../../component/dash-base/dash-base.component";
 import {DashColors} from "../../util/Util";
+import {SelectorItem} from "../selector/selector.component";
+import {
+  SearchListSSItemComponent
+} from "../../component/search/search-no-results-list/search-list-item/search-list-item.component";
 
 
 @Component({
@@ -344,6 +348,8 @@ export class SearchbarComponent extends DashBaseComponent implements OnInit{
 export class PostSearchbarComponent extends SearchbarComponent{
   @Output() currentPostSearch = new EventEmitter<{ postType : string, dir : string, sort : string, query : string } | string>()
   selected_post_type: string = "";
+  selected_sort: string = "";
+  selected_dir: string = "DESC";
 
   override getSuggestions(value: string, type : string) {
     if (value == this.lastSearchInput){
@@ -361,6 +367,120 @@ export class PostSearchbarComponent extends SearchbarComponent{
     let copy = structuredClone(this.searchSuggestions);
     copy.shift();
     return copy;
+  }
+
+  override onSuggestionClick(post : string){
+    this.currentPostSearch.emit(post);
+    this.searchSuggestions = [];
+  }
+
+  onDirSwitched(dir : any){
+    if((dir.target as HTMLInputElement).checked){
+      this.selected_dir = "ASC"
+      this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+    }
+    else {
+      this.selected_dir = "DESC"
+      this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+    }
+
+
+  }
+
+  override onReset(){
+  }
+
+  override setupFilter() {
+    this.selected_post_type = "";
+
+    this.selected_sort = "date";
+
+    let filterBoxes = (this.element.nativeElement as HTMLElement).querySelectorAll(".searchbar-filter-type") as NodeListOf<HTMLDivElement>;
+    let accFilters = (this.element.nativeElement as HTMLElement).querySelectorAll(".searchbar-filter-acc-type") as NodeListOf<HTMLDivElement>;
+
+    let filter_sort_views = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-views") as HTMLDivElement;
+    let filter_sort_uid = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-uid") as HTMLDivElement;
+
+    let selected_dir = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-dir") as HTMLInputElement;
+
+    filterBoxes.forEach(item => {
+      item.addEventListener("mouseenter", ev => {
+        item.childNodes.forEach(item => {
+          if (item.nodeType == 1){
+            (item as HTMLDivElement).style.display = "block";
+          }
+        });
+      });
+      item.addEventListener("mouseleave", ev => {
+        item.childNodes.forEach(item => {
+          if (item.nodeType == 1){
+            (item as HTMLDivElement).style.display = "none";
+          }
+        });
+      });
+    });
+
+    accFilters.forEach(filter => {
+      filter.addEventListener("click", () => {
+        accFilters.forEach(otherFilter => {
+          otherFilter.style.color = "black";
+          otherFilter.style.fontWeight = "normal";
+        });
+        filter.style.color = DashColors.RED;
+        filter.style.fontWeight = "bold";
+        switch (filter.id) {
+          case "searchbar-filter-accountType-without-plan":
+            this.selected_post_type = "news";
+            this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+            break;
+          case "searchbar-filter-accountType-basic":
+            this.selected_post_type = "blog";
+            this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+            break;
+          case "searchbar-filter-accountType-basicPlus":
+            this.selected_post_type = "artikel";
+            this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+            break;
+          case "searchbar-filter-accountType-plus":
+            this.selected_post_type = "whitepaper";
+            this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+            break;
+          case "searchbar-filter-accountType-premium":
+            this.selected_post_type = "podcast";
+            this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+            break;
+          case "searchbar-filter-accountType-all":
+            this.selected_post_type = "";
+            this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+            break;
+        }
+      });
+    });
+
+    filter_sort_views.addEventListener("click", () => {
+      filter_sort_views.style.color = "#951D40";
+      filter_sort_views.style.fontWeight = "bold";
+
+      filter_sort_uid.style.color = "black";
+      filter_sort_uid.style.fontWeight = "normal";
+      this.selected_sort = "clicks";
+
+      this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+    })
+
+
+    filter_sort_uid.addEventListener("click", () => {
+      filter_sort_views.style.color = "black";
+      filter_sort_views.style.fontWeight = "normal";
+
+      filter_sort_uid.style.color = "#951D40";
+      filter_sort_uid.style.fontWeight = "bold";
+      this.selected_sort = "date";
+
+      this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+    })
+    filter_sort_uid.style.color = "#951D40";
+    filter_sort_uid.style.fontWeight = "bold";
   }
 }
 

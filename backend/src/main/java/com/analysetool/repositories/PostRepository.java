@@ -188,7 +188,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("Select p FROM Post p WHERE p.slug =:postName AND p.type = 'page' ")
    Optional<Post> findPageByPostName(String postName);
 
-   @Query("SELECT p.title FROM Post p " +
+   @Query("SELECT DISTINCT p.title FROM Post p " +
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
@@ -197,7 +197,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "ORDER BY p.date DESC LIMIT 5")
    List<String> getSuggestions(String search, String filter);
 
-   @Query("SELECT p.title FROM Post p " +
+   @Query("SELECT DISTINCT p.title FROM Post p " +
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +

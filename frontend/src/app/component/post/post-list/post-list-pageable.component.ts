@@ -93,7 +93,7 @@ export class PostListPageableComponent extends DashListPageableComponent<Post, P
     } else{
       this.search_text = $event;
     }
-    this.reload(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, this.active_sorter, this.active_filter, this.search_text, this.active_direction), PostListItemComponent);
+    this.reload(this.api.getPostsAllPaged(0, this.pageSize, this.active_sorter, this.active_filter, this.search_text, this.active_direction), PostListItemComponent);
   }
 }
 export class PostListComponent extends DashListComponent<Post, PostListItemComponent>{

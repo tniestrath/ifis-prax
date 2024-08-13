@@ -235,3 +235,7 @@ input[type="checkbox"]:checked::after{
   transition: 120ms transform ease-in-out;
   position: inherit !important;
 }
+
+#searchbar-dir{
+  max-width: 5%;
+}

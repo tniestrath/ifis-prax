@@ -46,7 +46,7 @@ export enum apiUrl {
   /**
    * User related requests
    */
-  GET_USERS_ALL = "/users/getAll?page=PAGE&size=SIZE&search=SEARCH&filterAbo=ACCFILTER&filterTyp=USRFILTER&sorter=SORTER",
+  GET_USERS_ALL = "/users/getAll?page=PAGE&size=SIZE&search=SEARCH&filterAbo=ACCFILTER&filterTyp=USRFILTER&sorter=SORTER&dir=DIR",
   GET_USERS_ACCOUNTTYPES_ALL = "/users/getAccountTypeAll",
   GET_USERS_ACCOUNTTYPES_LAST_WEEK = "/users/getAccountTypeAllLastWeek",
   GET_USERS_ACCOUNTTYPES_CHANGED = "/users/getNewUsersAll",
@@ -292,9 +292,9 @@ export class ApiService {
     return await fetch(ApiService.setupRequest((apiUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL) + percentage) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getAllUsers(page: number, size: number, filter: { sort: string, accType: string, usrType: string, query : string }, signal: AbortSignal) {
+  async getAllUsers(page: number, size: number, filter: { sort: string, accType: string, usrType: string, query : string, dir : string }, signal: AbortSignal) {
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", filter.query).replace("ACCFILTER", filter.accType).replace("USRFILTER", filter.usrType).replace("SORTER", filter.sort), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ALL)}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then((res : {users: any[], count : number}) => {
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ALL).replace("PAGE", String(page)).replace("SIZE", String(size)).replace("SEARCH", filter.query).replace("ACCFILTER", filter.accType).replace("USRFILTER", filter.usrType).replace("SORTER", filter.sort).replace("DIR", filter.dir), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ALL)}).then(res =>{this.setFinished(res.status, res.url); return res.json()}).then((res : {users: any[], count : number}) => {
       ApiService.Users = res.users;
       return res;
     }, reason => {

@@ -25,7 +25,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm  t ON t.id=wtt.termId " +
            "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
-           "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
+           "AND p.status= 'publish' AND (p.type='post' OR p.type='podcast'  OR p.type='video') " +
            "ORDER BY p.date DESC")
    List<Post> findByAuthor(long userId);
 
@@ -35,7 +35,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm  t ON t.id=wtt.termId " +
            "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
-           "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
+           "AND p.status= 'publish' AND (p.type='post' OR p.type='podcast'  OR p.type='video') " +
            "ORDER BY p.date DESC")
    List<Long> findPostIdsByUserId(long userId);
 
@@ -45,7 +45,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm t ON t.id=wtt.termId " +
            "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
-           "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
+           "AND p.status= 'publish' AND (p.type='post' OR p.type='podcast' OR p.type='video') " +
            "AND (p.title LIKE %:search% OR p.content LIKE %:search%) " +
            "AND t.slug=:filter " +
            "ORDER BY p.date DESC")
@@ -57,7 +57,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm  t ON t.id=wtt.termId " +
            "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
-           "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
+           "AND p.status= 'publish' AND (p.type='post' OR p.type='podcast' OR p.type='video') " +
            "AND (p.title LIKE %:search% OR p.content LIKE %:search%)" +
            "ORDER BY p.date DESC")
    List<Post> findByAuthorPageable(long userId, String search, Pageable pageable);
@@ -66,21 +66,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p.id from Post p where p.title =:title")
    List<Long> getIdByTitle(String title);
 
-   @Query("SELECT p.id from Post p where p.slug =:name AND p.status='publish' AND ((p.type='post' OR p.type='video') OR p.type='page' OR p.type='event')")
+   @Query("SELECT p.id from Post p where p.slug =:name AND p.status='publish' AND ((p.type='post' OR p.type='podcast' OR p.type='video') OR p.type='page' OR p.type='event')")
    Long getIdByName(String name);
 
-   @Query("select p.date from Post p where p.id =:Id AND p.status= 'publish' AND (p.type='post' OR p.type='page' OR p.type='event')")
+   @Query("select p.date from Post p where p.id =:Id AND p.status= 'publish' AND (p.type='post' OR p.type='podcast' OR p.type='page' OR p.type='event')")
    LocalDateTime getPostDateById(long Id);
 
-   @Query("SELECT p.content FROM Post p WHERE p.id =:pId AND (p.type='post' OR p.type='video')")
+   @Query("SELECT p.content FROM Post p WHERE p.id =:pId AND (p.type='post' OR p.type='podcast' OR p.type='video')")
    String getContentById(long pId);
 
 
-   @Query("SELECT p FROM Post p WHERE p.status = 'publish' AND (p.type='post' OR p.type='video') ORDER BY p.date DESC")
+   @Query("SELECT p FROM Post p WHERE p.status = 'publish' AND (p.type='post' OR p.type='podcast' OR p.type='video') ORDER BY p.date DESC")
    List<Post> findAllUserPosts();
 
 
-   @Query("SELECT p.date FROM Post p WHERE p.id =:pId AND p.status = 'publish' AND (p.type='post' OR p.type='video')")
+   @Query("SELECT p.date FROM Post p WHERE p.id =:pId AND p.status = 'publish' AND (p.type='post' OR p.type='podcast' OR p.type='video')")
    LocalDateTime getDateById(long pId);
 
    @Query("SELECT e.id FROM Post e WHERE e.status = 'publish' AND e.type = 'post' ORDER BY e.date DESC")
@@ -142,18 +142,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm  t ON t.id=wtt.termId " +
            "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
-           "AND p.status= 'publish' AND (p.type='post' OR p.type='video') " +
+           "AND p.status= 'publish' AND (p.type='post' OR p.type='podcast' OR p.type='video') " +
            "AND DATE(p.date) = DATE(:date)" +
            "ORDER BY p.date DESC")
    List<Post> getPostsByAuthorAndDate(long userId, LocalDate date);
 
-   @Query("SELECT p.id FROM Post p WHERE p.id NOT IN (SELECT u.post_id FROM PostTypes u) AND p.status='publish' AND p.type='post'")
+   @Query("SELECT p.id FROM Post p WHERE p.id NOT IN (SELECT u.post_id FROM PostTypes u) AND p.status='publish' AND (p.type='post' OR p.type='podcast') ")
    List<Integer> getIdsOfUntyped();
 
    @Query("SELECT p.parentId FROM Post p WHERE p.type='attachment' AND p.status='inherit' AND p.id IN :postIds AND p.guid LIKE %:filename")
    Optional<Long> getParentFromListAnd(List<Long> postIds, String filename);
 
-   @Query("SELECT p FROM Post p WHERE p.type='post' AND p.status='publish' ORDER BY p.date DESC LIMIT 1")
+   @Query("SELECT p FROM Post p WHERE p.type='post' OR p.type='podcast'  AND p.status='publish' ORDER BY p.date DESC LIMIT 1")
    Post getNewestPost();
 
    @Query("SELECT p FROM Post p JOIN wp_term_relationships wtr ON p.id= wtr.objectId JOIN WpTermTaxonomy wpt ON wtr.termTaxonomyId=wpt.termTaxonomyId WHERE p.type='event' AND p.status='publish' AND wpt.termId=:typeId AND p.title LIKE %:search%")
@@ -188,24 +188,26 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("Select p FROM Post p WHERE p.slug =:postName AND p.type = 'page' ")
    Optional<Post> findPageByPostName(String postName);
 
-   @Query("SELECT DISTINCT p.title FROM Post p " +
+   @Query("SELECT DISTINCT p FROM Post p " +
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
-           "p.status= 'publish' AND p.type='post' " +
-           "AND p.title LIKE %:search% AND pt.type=:filter " +
+           "p.status= 'publish' AND (p.type='post' OR p.type='podcast)')  " +
+           "AND (p.title LIKE %:search% OR t.name LIKE %:search%) AND pt.type=:filter " +
            "ORDER BY p.date DESC LIMIT 5")
-   List<String> getSuggestions(String search, String filter);
+   List<Post> getSuggestions(String search, String filter);
 
-   @Query("SELECT DISTINCT p.title FROM Post p " +
+   @Query("SELECT DISTINCT p FROM Post p " +
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
-           "p.status = 'publish' AND p.type='post' " +
-           "AND p.title LIKE %:search% " +
+           "p.status = 'publish' AND (p.type='post' OR p.type='podcast') " +
+           "AND (p.title LIKE %:search% OR t.name LIKE %:search%) " +
            "ORDER BY p.date DESC LIMIT 5")
-   List<String> getSuggestions(String search);
+   List<Post> getSuggestions(String search);
 
+   @Query("SELECT DISTINCT p.title FROM Post p WHERE p IN (:posts)")
+   List<String> titlesOfPosts(List<Post> posts);
 }
 
 

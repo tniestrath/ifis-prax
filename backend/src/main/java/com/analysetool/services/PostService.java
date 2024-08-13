@@ -606,7 +606,7 @@ public class PostService {
                 return "ratgeber";
             }
 
-            if(type.contains("podcast")) {
+            if(postRepo.findById(id).get().getType().equals("podcast") || type.contains("podcast")) {
                 return "podcast";
             }
 
@@ -1458,10 +1458,11 @@ public class PostService {
         if(search == null) {
             search = "";
         }
+        if(dir == null) dir = "";
 
         PageRequest request = PageRequest.of(page, size);
 
-        if(!dir.equals("DESC")) {
+        if(dir.equals("ASC")) {
             if (sorter.isBlank()) {
                 if (!filter.isBlank()) {
                     list = postRepo.pageByTitleWithTypeQueryWithFilterIdASC(search, "publish", "post", filter, request);
@@ -1511,9 +1512,9 @@ public class PostService {
 
     public List<String> getSuggestions(String search, String filter) {
         if(filter == null || filter.isBlank()) {
-            return postRepo.getSuggestions(search);
+            return postRepo.titlesOfPosts(postRepo.getSuggestions(search));
         } else {
-            return postRepo.getSuggestions(search, filter);
+            return postRepo.titlesOfPosts(postRepo.getSuggestions(search, filter));
         }
     }
 

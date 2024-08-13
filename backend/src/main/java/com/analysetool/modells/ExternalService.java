@@ -16,6 +16,8 @@ public class ExternalService {
     @Column(name="link")
     private String link;
 
+    @Column(name="time_buffer")
+    private double buffer;
 
     public Long getId() {
         return id;
@@ -39,5 +41,13 @@ public class ExternalService {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public double getBuffer() {
+        return buffer;
+    }
+
+    public void setBuffer(double buffer) {
+        this.buffer = buffer;
     }
 }

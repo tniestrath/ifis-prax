@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -604,6 +603,7 @@ public class DiagnosisService {
             obj.put("id", e.getId());
             obj.put("name", e.getName());
             obj.put("link", e.getLink());
+            obj.put("buffer", e.getBuffer());
 
             array.put(obj);
         }
@@ -630,5 +630,15 @@ public class DiagnosisService {
         } else {
             return false;
         }
+    }
+
+    public boolean updateServiceBuffer(String name, String link, double buffer) {
+        if(externalServiceRepo.findByLinkOrName(link, name).isPresent()) {
+            ExternalService service = externalServiceRepo.findByLinkOrName(link, name).get();
+            service.setBuffer(buffer);
+            externalServiceRepo.save(service);
+            return true;
+        }
+        return false;
     }
 }

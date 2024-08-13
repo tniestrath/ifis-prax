@@ -87,4 +87,7 @@ public class DiagnosisController {
         return true;
     }
 
+    @GetMapping("/updateServiceBuffer")
+    public boolean updateServiceBuffer(String name, String link, int buffer) {return diagnosisService.updateServiceBuffer(name, link, buffer);}
+
 }

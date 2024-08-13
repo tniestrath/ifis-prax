@@ -192,7 +192,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
-           "p.status= 'publish' AND p.type='post' OR p.type='podcast'  " +
+           "p.status= 'publish' AND (p.type='post' OR p.type='podcast)')  " +
            "AND p.title LIKE %:search% AND pt.type=:filter " +
            "ORDER BY p.date DESC LIMIT 5")
    List<String> getSuggestions(String search, String filter);
@@ -201,7 +201,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
            "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
-           "p.status = 'publish' AND p.type='post' OR p.type='podcast' " +
+           "p.status = 'publish' AND (p.type='post' OR p.type='podcast') " +
            "AND p.title LIKE %:search% " +
            "ORDER BY p.date DESC LIMIT 5")
    List<String> getSuggestions(String search);

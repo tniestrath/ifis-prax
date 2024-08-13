@@ -172,6 +172,9 @@ export enum apiUrl {
 
   GET_EXTERNAL_SERVICES = "/diagnosis/getServices?page=PAGE&size=SIZE",
 
+  RELOAD = "/diagnosis/run",
+  CHECK_RELOAD_STATUS = "/diagnosis/getRunningStatus",
+
   LOGIN = "/login?user=USERNAME&pass=PASSWORD",
   LOGIN_WITH_BODY = "/login2",
   VALIDATE = "/validate",
@@ -277,7 +280,7 @@ export class ApiService {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.MANUAL_VALIDATE).replace("VALUE", value), {credentials: "include", signal: ApiService.setupController(apiUrl.MANUAL_VALIDATE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async ping() : Promise<boolean> {
+  async ping() : Promise<{ isOn : boolean, isUpdating : boolean }> {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.PING), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
@@ -635,6 +638,14 @@ export class ApiService {
   async getServices(page : number, size : number) : Promise<ExternalService[]>{
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_EXTERNAL_SERVICES).replace("PAGE", String(page)).replace("SIZE", String(size)), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_EXTERNAL_SERVICES)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async reload() : Promise<void>{
+    await fetch(ApiService.setupRequest(apiUrl.RELOAD), {credentials: "include", signal: ApiService.setupController(apiUrl.RELOAD)});
+  }
+
+  async getReloadStatus() : Promise<boolean>{
+    return await fetch(ApiService.setupRequest(apiUrl.CHECK_RELOAD_STATUS), {credentials: "include", signal: ApiService.setupController(apiUrl.CHECK_RELOAD_STATUS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getEvents() : Promise<string[]> {

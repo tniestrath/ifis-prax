@@ -35,6 +35,8 @@ export class SysVars {
   public static CURRENT_PAGE : string = "landing";
   public static Cookie : string = "";
 
+  public static UPDATING : boolean = false;
+
   public static SELECTED_PAGE : EventEmitter<string> = new EventEmitter<string>();
 
   public static SELECTED_POST_ID : EventEmitter<number> = new EventEmitter<number>();

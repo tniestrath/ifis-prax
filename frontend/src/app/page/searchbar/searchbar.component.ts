@@ -350,6 +350,7 @@ export class PostSearchbarComponent extends SearchbarComponent{
   selected_post_type: string = "";
   selected_sort: string = "";
   selected_dir: string = "DESC";
+  selectedPostTypeString: string = "Alle";
 
   override getSuggestions(value: string, type : string) {
     if (value == this.lastSearchInput){
@@ -383,8 +384,33 @@ export class PostSearchbarComponent extends SearchbarComponent{
       this.selected_dir = "DESC"
       this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
     }
+  }
 
-
+  override onKey(value: any){
+    if (value.key == "Enter"){
+      if (this.selectedIndex == 0){
+        this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+      }
+      else {
+        this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchSuggestions[this.selectedIndex+1]});
+        this.selectedIndex = 0;
+      }
+      this.searchSuggestions = [];
+      this.cdr.detectChanges();
+    }
+    if (value.key == "Delete" || value.key == "Backspace"){
+      value.preventDefault();
+      // @ts-ignore
+      this.searchInput = (document.getElementById("userSearch").value as string) = (document.getElementById("userSearch").value as string).slice(0, -1);
+      this.cdr.detectChanges();
+    }
+    if (value.key == "ArrowUp" && this.selectedIndex > 0){
+      value.preventDefault();
+      this.selectedIndex--;
+    } else if (value.key == "ArrowDown" && this.selectedIndex < (this.searchSuggestions.length -2)){
+      value.preventDefault();
+      this.selectedIndex++;
+    }
   }
 
   override onReset(){
@@ -392,6 +418,7 @@ export class PostSearchbarComponent extends SearchbarComponent{
 
   override setupFilter() {
     this.selected_post_type = "";
+    this.selectedPostTypeString = "Alle";
 
     this.selected_sort = "date";
 
@@ -400,8 +427,6 @@ export class PostSearchbarComponent extends SearchbarComponent{
 
     let filter_sort_views = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-views") as HTMLDivElement;
     let filter_sort_uid = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-uid") as HTMLDivElement;
-
-    let selected_dir = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-dir") as HTMLInputElement;
 
     filterBoxes.forEach(item => {
       item.addEventListener("mouseenter", ev => {
@@ -431,26 +456,32 @@ export class PostSearchbarComponent extends SearchbarComponent{
         switch (filter.id) {
           case "searchbar-filter-accountType-without-plan":
             this.selected_post_type = "news";
+            this.selectedPostTypeString = "News";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
           case "searchbar-filter-accountType-basic":
             this.selected_post_type = "blog";
+            this.selectedPostTypeString = "Blog";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
           case "searchbar-filter-accountType-basicPlus":
             this.selected_post_type = "artikel";
+            this.selectedPostTypeString = "Artikel";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
           case "searchbar-filter-accountType-plus":
             this.selected_post_type = "whitepaper";
+            this.selectedPostTypeString = "Whitepaper";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
           case "searchbar-filter-accountType-premium":
             this.selected_post_type = "podcast";
+            this.selectedPostTypeString = "Podcasts";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
           case "searchbar-filter-accountType-all":
             this.selected_post_type = "";
+            this.selectedPostTypeString = "Alle";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
         }

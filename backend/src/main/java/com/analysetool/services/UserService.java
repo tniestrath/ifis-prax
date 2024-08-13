@@ -1053,6 +1053,35 @@ public class UserService {
         return new JSONObject().put("users", response).put("count", list.size()).toString();
     }
 
+
+    /**
+     *
+     * @param page which page of results in the given size you want to fetch.
+     * @param size the number of results you want per page.
+     * @param search the search-term you want results for, give empty string for none.
+     * @param filterAbo "basis" "basis-plus" "plus" "premium" "sponsor" "none" "admin"
+     * @param sorter "profileView" "contentView" "viewsByTime", any other String searches by user id.
+     * @return a JSON String containing information about all users in the specified page, and the number of users loaded.
+     * @throws JSONException .
+     */
+    public String getAll(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter, String dir) throws JSONException {
+        List<WPUser> list;
+
+        JSONArray response = new JSONArray();
+
+        if(dir.equals("DESC")) {
+            list = fetchUserListByCriteria(page, size, search, filterAbo, filterTyp, sorter);
+        } else {
+            list = fetchUserListByCriteriaASC(page, size, search, filterAbo, filterTyp, sorter);
+        }
+
+        for(WPUser user : list) {
+            JSONObject obj = new JSONObject(getAllSingleUser(user.getId()));
+            response.put(obj);
+        }
+        return new JSONObject().put("users", response).put("count", list.size()).toString();
+    }
+
     private List<WPUser> fetchUserListByCriteria(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) {
         List<WPUser> list;
 
@@ -1140,6 +1169,95 @@ public class UserService {
         }
         return list;
     }
+
+    private List<WPUser> fetchUserListByCriteriaASC(Integer page, Integer size, String search, String filterAbo, String filterTyp, String sorter) {
+        List<WPUser> list;
+
+
+        if(sorter != null) {
+            //Both filters unused, sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAllASC(search, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAllASC(search, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAllASC(search, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAllASC(search, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAboASC(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAboASC(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAboASC(search, filterAbo, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAboASC(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Type Filter used, sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsCompanyASC(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsCompanyASC(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeCompanyASC(search, filterTyp, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingCompanyASC(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            } else {
+                //Abo, Company type and sorter used.
+                switch (sorter) {
+                    case "profileView" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsAboAndCompanyASC(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "contentView" -> {
+                        list = userRepo.getAllNameLikeAndContentViewsAboAndCompanyASC(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    case "viewsByTime" -> {
+                        list = userRepo.getAllNameLikeAndProfileViewsByTimeAboAndCompanyASC(search, filterAbo, filterTyp, PageRequest.of(page, size));
+                    }
+                    default -> {
+                        list = userRepo.getAllByNicenameContainingAboAndCompanyASC(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+                    }
+                }
+            }
+        } else {
+            //Neither filters nor sorter used.
+            if(filterAbo.isBlank() && filterTyp.isBlank()) {
+                list = userRepo.getAllByNicenameContainingAllASC(search, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else if(!filterAbo.isBlank() && filterTyp.isBlank()) {
+                //Abo-Filter used.
+                list = userRepo.getAllByNicenameContainingAboASC(search, filterAbo, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else if(filterAbo.isBlank() && !filterTyp.isBlank()) {
+                //Company-Filter used.
+                list = userRepo.getAllByNicenameContainingCompanyASC(search, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+            } else {
+                //Both filters used, no sorter used.
+                list = userRepo.getAllByNicenameContainingAboAndCompanyASC(search, filterAbo, filterTyp, PageRequest.of(page, size, Sort.by("id").descending()));
+            }
+        }
+        return list;
+    }
+
 
     /**
      * Fetch all users with tags associated with their profile.

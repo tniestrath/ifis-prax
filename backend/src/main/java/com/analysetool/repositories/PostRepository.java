@@ -188,25 +188,25 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("Select p FROM Post p WHERE p.slug =:postName AND p.type = 'page' ")
    Optional<Post> findPageByPostName(String postName);
 
-   @Query("SELECT p FROM AuthorsRelationships a " +
-           "JOIN Post p ON a.postId=p.id " +
+   @Query("SELECT DISTINCT p.title FROM Post p " +
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
-           "JOIN WPTerm  t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
+           "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
            "p.status= 'publish' AND p.type='post' " +
            "AND p.title LIKE %:search% AND pt.type=:filter " +
-           "ORDER BY p.date DESC")
+           "ORDER BY p.date DESC LIMIT 5")
    List<String> getSuggestions(String search, String filter);
 
-   @Query("SELECT p FROM AuthorsRelationships a " +
-           "JOIN Post p ON a.postId=p.id " +
+   @Query("SELECT DISTINCT p.title FROM Post p " +
            "JOIN wp_term_relationships wtr ON wtr.objectId=p.id " +
            "JOIN WpTermTaxonomy wtt ON wtt.termTaxonomyId=wtr.termTaxonomyId " +
-           "JOIN WPTerm  t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
-           "p.status= 'publish' AND p.type='post' " +
-           "AND p.title LIKE %:search%" +
-           "ORDER BY p.date DESC")
+           "JOIN WPTerm t ON t.id=wtt.termId JOIN PostTypes pt ON p.id = pt.post_id WHERE " +
+           "p.status = 'publish' AND p.type='post' " +
+           "AND p.title LIKE %:search% " +
+           "ORDER BY p.date DESC LIMIT 5")
    List<String> getSuggestions(String search);
 
 }
+
+
 

@@ -54,6 +54,9 @@ public class DiagnosisController {
     @GetMapping("/getServices")
     public String getServices(int page, int size) throws JSONException {return diagnosisService.getServices(page, size);}
 
+    @GetMapping("/getAmountServices")
+    public int getAmountServices() throws JSONException {return diagnosisService.getAmountServices();}
+
     /**
      * Add an external service to database.
      * @param name the name of the service.

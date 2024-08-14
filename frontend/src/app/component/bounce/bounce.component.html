@@ -10,7 +10,7 @@
   <div class="bounce-count-box">
     <div class="number-box" [style]="{color: DashColors.BLUE}">
       <p class="number-s"></p>
-      <p class="number-m" [style]="{width: 'fit-content'}">{{totalBounces}}</p>
+      <p class="number-m" [style]="{width: 'fit-content'}">{{Util.formatNumbers(totalBounces)}}</p>
       <p class="number-s" [style]="{textAlign: 'start'}"></p>
     </div>
     <p>Absprünge gesamt</p>

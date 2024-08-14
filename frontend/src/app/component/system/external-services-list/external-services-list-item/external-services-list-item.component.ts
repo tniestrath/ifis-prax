@@ -32,7 +32,7 @@ export class SafeUrlPipe implements PipeTransform {
   templateUrl: './external-services-list-item.component.html',
   styleUrls: ['./external-services-list-item.component.css']
 })
-export class ExternalServicesListItemComponent extends DashListItemComponent{
+export class ExternalServicesListItemComponent extends DashListItemComponent {
   override data : ExternalService = new ExternalService("", "", "" , 2);
   @ViewChild('iframe', { static: true }) iframe: ElementRef<HTMLDivElement> | undefined;
 
@@ -71,8 +71,11 @@ export class ExternalServicesListItemComponent extends DashListItemComponent{
 
   onLoadStart() {
     this.serviceTimer = Date.now();
-    console.log("LOADSTART " + this.data.name)
+    console.log("LOADSTART " + this.data.name);
   }
 
   protected readonly Date = Date;
+
+
+
 }

@@ -262,7 +262,7 @@ public class LogService {
 
    private final String itCert = "^.*GET /ratgeber/standards-im-bereich-it-sicherheit/personenzertifikate/";
 
-   private final String itPenTest = "https://it-sicherheit.de/ratgeber/penetrationstests/";
+   private final String itPenTest = "^.*GET /ratgeber/penetrationstests/";
 
    private final String referrerForRedirects = "https://it-sicherheit.de/user/(\\S+)/";
 
@@ -587,7 +587,6 @@ public class LogService {
             isRunning = false;
         }
     }
-
 
     /**
      * Reads through all eligible lines, filters out the unusable, then prepares and continues evaluating data from each line.
@@ -2107,11 +2106,15 @@ public class LogService {
             System.out.println("FEHLER BEI PERMANENTIFY ALL USERS");
             e.printStackTrace();
         }
+        try {
+            updateUserStatsBuffer();
+        } catch(Exception e) {
+            System.out.println("FEHLER AT updateUserStatsBuffer");
+            e.printStackTrace();
+        }
+
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
 
-
-        List<UserStats> userStats = userStatsRepo.findAll();
-        userStatsRepo.saveAll(userStats);
 
         //Update the ranking-buffer
         try {
@@ -3481,4 +3484,18 @@ public class LogService {
     public boolean isRunning() {
         return isRunning;
     }
+
+    public void updateUserStatsBuffer() {
+        for(UserStats user : userStatsRepo.findAll()) {
+            user.setContentView(postService.getPostViewsOfUserById(user.getUserId()));
+            userStatsRepo.save(user);
+        }
+    }
+
+    public void updateUserStatsBufferSingle(long userId) {
+        UserStats user = userStatsRepo.findByUserId(userId);
+        user.setContentView(postService.getPostViewsOfUserById(user.getUserId()));
+        userStatsRepo.save(user);
+    }
+
 }

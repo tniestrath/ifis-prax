@@ -664,7 +664,7 @@ public class UserService {
             if (userStatsRepository.existsByUserId(user.getId())) {
                 UserStats statsUser = userStatsRepository.findByUserId(user.getId());
                 obj.put("profileViews", statsUser.getProfileView());
-                obj.put("postViews", postService.getPostViewsOfUserById(user.getId()));
+                obj.put("postViews", statsUser.getContentView());
                 obj.put("postCount", postService.getPostCountOfUserById(user.getId()));
             } else {
                 obj.put("profileViews", 0);

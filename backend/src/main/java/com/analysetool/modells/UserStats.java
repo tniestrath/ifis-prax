@@ -14,6 +14,9 @@ public class UserStats {
     @Column(name = "profile_view")
     private long profileView;
 
+    @Column(name="content_view")
+    private long contentView;
+
     public UserStats(long userId, long profileView) {
         this.userId = userId;
         this.profileView = profileView;
@@ -42,6 +45,14 @@ public class UserStats {
 
     public void setProfileView(long profileView) {
         this.profileView = profileView;
+    }
+
+    public long getContentView() {
+        return contentView;
+    }
+
+    public void setContentView(long contentView) {
+        this.contentView = contentView;
     }
 }
 

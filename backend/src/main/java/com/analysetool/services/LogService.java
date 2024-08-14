@@ -262,7 +262,7 @@ public class LogService {
 
    private final String itCert = "^.*GET /ratgeber/standards-im-bereich-it-sicherheit/personenzertifikate/";
 
-   private final String itPenTest = "https://it-sicherheit.de/ratgeber/penetrationstests/";
+   private final String itPenTest = "^.*GET /ratgeber/penetrationstests/";
 
    private final String referrerForRedirects = "https://it-sicherheit.de/user/(\\S+)/";
 

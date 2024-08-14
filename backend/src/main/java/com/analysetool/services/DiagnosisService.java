@@ -641,4 +641,8 @@ public class DiagnosisService {
         }
         return false;
     }
+
+    public int getAmountServices() {
+        return externalServiceRepo.findAll().size();
+    }
 }

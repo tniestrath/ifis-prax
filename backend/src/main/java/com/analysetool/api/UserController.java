@@ -116,7 +116,6 @@ public class UserController {
      */
     @GetMapping("/getAllSingleUser")
     public String getAllSingleUser(long id) throws JSONException {
-        logService.updateUserStatsBufferSingle(id);
         return userService.getAllSingleUser(id);
     }
 

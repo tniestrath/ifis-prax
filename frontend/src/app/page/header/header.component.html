@@ -21,7 +21,7 @@
 <div *ngIf="SysVars.CURRENT_PAGE == 'System'" class="spider-box button-box" (click)="window.open('http://analyse.it-sicherheit.de/api/diagnosis/doCheckUpSite', '_blank')">
   <img src="../../../assets/spider.png"/>
 </div>
-<div *ngIf="SysVars.ADMIN" class="reload-box button-box" (click)="onReloadClick()">
+<div *ngIf="SysVars.ADMIN" class="reload-box button-box" (click)="onReloadClick()" [ngClass]="{'disabled' : SysVars.UPDATING == true}">
   <img src="assets/repeat.png" [ngClass]="{'spinning' : SysVars.UPDATING == true}">
 </div>
 <div class="logout-box button-box" (click)="onLogoutClick()">

@@ -86,7 +86,7 @@
   right: 10px !important;
   height: 40px;
   width: 40px;
-  background-color: #951D40;
+  background-color: #951D40 !important;
   border: 1px solid #951D40;
   border-radius: 5px;
 }
@@ -104,6 +104,7 @@
   width: 40px;
   border: 1px solid #951D40;
   border-radius: 5px;
+  background-color: #FFFFFF;
 }
 .button-box:hover{
   filter: brightness(85%);
@@ -118,4 +119,16 @@
 
 .spinning{
   animation: rotation 2s infinite linear;
+}
+.disabled{
+  background-color: #7C7C7C;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
 }

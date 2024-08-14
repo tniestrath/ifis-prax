@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import {DashListItemComponent} from "../../../dash-list/dash-list-item/dash-list-item.component";
 import {ExternalService} from "../external-services-list.component";
-import {ForumModerationListComponent} from "../../../forum/forum-moderation-list/forum-moderation-list.component";
 import {DomSanitizer} from "@angular/platform-browser";
 import {SysVars} from "../../../../services/sys-vars-service";
 

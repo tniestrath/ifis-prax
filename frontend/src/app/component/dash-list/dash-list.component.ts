@@ -1,7 +1,7 @@
 import {Component, OnInit, Type} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {SelectorItem} from "../../page/selector/selector.component";
-import {Subject} from "rxjs";
+import {Subject, tap} from "rxjs";
 import {Post} from "../post/Post";
 import {PostListItemComponent} from "../post/post-list/post-list-item/post-list-item.component";
 import {DbObject} from "../../services/DbObject";
@@ -59,6 +59,14 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
     });
   }
 
+  add(object: DbObject, component: Type<C>): void {
+    this.component = component;
+    let item  = new SelectorItem(component, object)
+    this.selectorItems.push(item);
+    this.selectorItemsLoaded.next(this.selectorItems);
+  }
+
+
   onItemCLick(item : SelectorItem, index : number){
 
   }
@@ -103,6 +111,7 @@ export class DashListPageableComponent<T extends DbObject, C extends DashListIte
       this.selectorItemsLoaded.next(this.selectorItems);
     });
   }
+
 
   override reload<T extends DbObject, C extends DashListItemComponent>(response: Promise<T[]>, component: Type<C>): void {
     this.selectorItems = [];

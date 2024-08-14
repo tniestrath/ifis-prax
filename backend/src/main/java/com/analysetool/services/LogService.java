@@ -3492,4 +3492,10 @@ public class LogService {
         }
     }
 
+    public void updateUserStatsBufferSingle(long userId) {
+        UserStats user = userStatsRepo.findByUserId(userId);
+        user.setContentView(postService.getPostViewsOfUserById(user.getUserId()));
+        userStatsRepo.save(user);
+    }
+
 }

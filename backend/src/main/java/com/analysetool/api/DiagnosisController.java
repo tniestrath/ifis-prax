@@ -79,6 +79,7 @@ public class DiagnosisController {
     @GetMapping("/run")
     public void updateStats() {
         try {
+            logService.updateUserStatsBuffer();
             logService.runScheduled();
         } catch (Exception e) {
             e.printStackTrace();

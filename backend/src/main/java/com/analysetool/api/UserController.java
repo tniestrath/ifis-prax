@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.SocialsImpressions;
 import com.analysetool.modells.UserStats;
+import com.analysetool.services.LogService;
 import com.analysetool.services.SocialsImpressionsService;
 import com.analysetool.services.UserService;
 import com.analysetool.util.DashConfig;
@@ -24,6 +25,8 @@ public class UserController {
     private SocialsImpressionsService soziImp;
     @Autowired
     private UserService userService;
+    @Autowired
+    private LogService logService;
 
     private final DashConfig config;
 
@@ -645,4 +648,14 @@ public class UserController {
      */
     @GetMapping("/getPossibleAnbieter")
     public String getPossibleAnbieter(String search, String abo, String typ) {return userService.getUsernamesByStart(search, abo, typ);}
+
+    @GetMapping("/updateUserStatsBufferContent")
+    public boolean updateUserStatBuffer(){
+        try {
+            logService.updateUserStatsBuffer();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

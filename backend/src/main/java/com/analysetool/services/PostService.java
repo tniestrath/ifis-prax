@@ -538,7 +538,6 @@ public class PostService {
 
 
         if(postRepo.findById(id).isPresent() && (postRepo.findById(id).get().getType().equals("post")
-                || postRepo.findById(id).get().getType().equals("event")
                 || postRepo.findById(id).get().getType().equals("podcast")
                 || postRepo.findById(id).get().getType().equals("video"))) {
 

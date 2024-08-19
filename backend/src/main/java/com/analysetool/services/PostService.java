@@ -537,7 +537,10 @@ public class PostService {
         if(postRepo.findById(id).isEmpty()) {return "errorPostNotFound";}
 
 
-        if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("post")) {
+        if(postRepo.findById(id).isPresent() && (postRepo.findById(id).get().getType().equals("post"))
+                || postRepo.findById(id).get().getType().equals("event")
+                || postRepo.findById(id).get().getType().equals("podcast")
+                || postRepo.findById(id).get().getType().equals("video")) {
 
             if (postTypeRepo.getType((int) id) != null) {
                 if (!postTypeRepo.getType((int) id).contains("cyber-risk")) {
@@ -547,11 +550,11 @@ public class PostService {
                 }
             }
 
-            if(postRepo.findById(id).get().getType().equals("video")) {
+            if(postRepo.findById(id).get().getType().equalsIgnoreCase("video")) {
                 return "video";
             }
 
-            if(postRepo.findById(id).get().getType().equals("podcast")) {
+            if(postRepo.findById(id).get().getType().equalsIgnoreCase("podcast")) {
                 return "podcast";
             }
 

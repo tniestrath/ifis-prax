@@ -147,7 +147,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "ORDER BY p.date DESC")
    List<Post> getPostsByAuthorAndDate(long userId, LocalDate date);
 
-   @Query("SELECT p.id FROM Post p WHERE p.id NOT IN (SELECT u.post_id FROM PostTypes u) AND p.status='publish' AND (p.type='post' OR p.type='podcast') ")
+   @Query("SELECT p.id FROM Post p WHERE p.id NOT IN (SELECT u.post_id FROM PostTypes u) AND p.status='publish' AND (p.type='post' OR p.type='podcast' OR p.type='video' OR p.type='event') ")
    List<Integer> getIdsOfUntyped();
 
    @Query("SELECT p.parentId FROM Post p WHERE p.type='attachment' AND p.status='inherit' AND p.id IN :postIds AND p.guid LIKE %:filename")

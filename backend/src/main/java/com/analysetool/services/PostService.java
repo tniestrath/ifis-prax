@@ -547,6 +547,15 @@ public class PostService {
                 }
             }
 
+            if(postRepo.findById(id).get().getType().equals("video")) {
+                return "video";
+            }
+
+            if(postRepo.findById(id).get().getType().equals("podcast")) {
+                return "podcast";
+            }
+
+
             if (postTypeRepo.getType((int) id) != null) {
                 if (!postTypeRepo.getType((int) id).contains("podcast")) {
                     return postTypeRepo.getType((int) id);
@@ -594,10 +603,6 @@ public class PostService {
                 }
             }
 
-            if(postRepo.findById(id).get().getType().equals("video") || type.contains("video")) {
-                return "video";
-            }
-
             if(type.equals("blogeintrag")) {
                 return "blog";
             }
@@ -606,9 +611,6 @@ public class PostService {
                 return "ratgeber";
             }
 
-            if(postRepo.findById(id).get().getType().equals("podcast") || type.contains("podcast")) {
-                return "podcast";
-            }
 
             return type;
 

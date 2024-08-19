@@ -534,7 +534,7 @@ public class PostService {
      * @return the type of Post "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber" | "video"
      */
     public String getType(@RequestParam long id) {
-        if(postRepo.findById(id).isEmpty()) {return "error";}
+        if(postRepo.findById(id).isEmpty()) {return "errorPostNotFound";}
 
 
         if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("post")) {

@@ -2184,15 +2184,13 @@ public class LogService {
                         if (termTax.getTermId() == tagIdWhitepaper) {
                             whiteCounter++;
                         }
-
-                        if (post.getType().equals(Constants.getInstance().getPodastSlug())) {
-                            podCounter++;
-                        }
-                        if(post.getType().equals(Constants.getInstance().getVideoSlug())) {
-                            videoCounter++;
-                        }
-
                     }
+                }
+                if (post.getType().equals(Constants.getInstance().getPodastSlug())) {
+                    podCounter++;
+                }
+                if(post.getType().equals(Constants.getInstance().getVideoSlug())) {
+                    videoCounter++;
                 }
             }
         }

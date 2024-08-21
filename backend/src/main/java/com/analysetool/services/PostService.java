@@ -85,7 +85,7 @@ public class PostService {
         if(filter.isBlank()) {
             list = postRepo.findByAuthorPageable(authorId, search, PageRequest.of(page, size));
         } else {
-            list = postRepo.findByAuthorPageable(authorId, search, remapTypeToWebsiteStandard(filter), PageRequest.of(page, size));
+            list = postRepo.findByAuthorPageable(authorId, search, filter, PageRequest.of(page, size));
         }
 
         for(Post post : list) {

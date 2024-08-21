@@ -47,7 +47,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
            "AND p.status= 'publish' AND (p.type='post' OR p.type='podcast' OR p.type='video') " +
            "AND (p.title LIKE %:search% OR p.content LIKE %:search%) " +
-           "AND t.slug=:filter " +
+           "AND (p.type=:filter OR p.id IN (SELECT pt.post_id FROM PostTypes  pt WHERE pt.type=:filter))" +
            "ORDER BY p.date DESC")
    List<Post> findByAuthorPageable(long userId, String search, String filter, Pageable pageable);
 
@@ -58,7 +58,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "JOIN WPTerm  t ON t.id=wtt.termId " +
            "WHERE t.slug IN (SELECT u.nicename FROM WPUser u WHERE u.id=:userId) " +
            "AND p.status= 'publish' AND (p.type='post' OR p.type='podcast' OR p.type='video') " +
-           "AND (p.title LIKE %:search% OR p.content LIKE %:search%)" +
+           "AND (p.title LIKE %:search% OR p.content LIKE %:search%) " +
            "ORDER BY p.date DESC")
    List<Post> findByAuthorPageable(long userId, String search, Pageable pageable);
 
@@ -147,7 +147,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "ORDER BY p.date DESC")
    List<Post> getPostsByAuthorAndDate(long userId, LocalDate date);
 
-   @Query("SELECT p.id FROM Post p WHERE p.id NOT IN (SELECT u.post_id FROM PostTypes u) AND p.status='publish' AND (p.type='post' OR p.type='podcast') ")
+   @Query("SELECT p.id FROM Post p WHERE p.id NOT IN (SELECT u.post_id FROM PostTypes u) AND p.status='publish' AND (p.type='post' OR p.type='podcast' OR p.type='video' OR p.type='event') ")
    List<Integer> getIdsOfUntyped();
 
    @Query("SELECT p.parentId FROM Post p WHERE p.type='attachment' AND p.status='inherit' AND p.id IN :postIds AND p.guid LIKE %:filename")

@@ -534,7 +534,7 @@ public class PostService {
      * @return the type of Post "news" | "artikel" | "blog" | "podcast" | "whitepaper" | "ratgeber" | "video"
      */
     public String getType(@RequestParam long id) {
-        if(postRepo.findById(id).isEmpty()) {return "error";}
+        if(postRepo.findById(id).isEmpty()) {return "errorPostNotFound";}
 
 
         if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("post")) {
@@ -546,6 +546,7 @@ public class PostService {
                     return "ratgeber";
                 }
             }
+
 
             if (postTypeRepo.getType((int) id) != null) {
                 if (!postTypeRepo.getType((int) id).contains("podcast")) {
@@ -594,10 +595,6 @@ public class PostService {
                 }
             }
 
-            if(postRepo.findById(id).get().getType().equals("video") || type.contains("video")) {
-                return "video";
-            }
-
             if(type.equals("blogeintrag")) {
                 return "blog";
             }
@@ -606,9 +603,6 @@ public class PostService {
                 return "ratgeber";
             }
 
-            if(postRepo.findById(id).get().getType().equals("podcast") || type.contains("podcast")) {
-                return "podcast";
-            }
 
             return type;
 
@@ -623,6 +617,10 @@ public class PostService {
                 case "w" -> type += "Workshop";
             }
             return type;
+        } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equalsIgnoreCase("video")) {
+            return "video";
+        } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equalsIgnoreCase("podcast")) {
+            return "podcast";
         }
 
 
@@ -1461,48 +1459,54 @@ public class PostService {
         if(dir == null) dir = "";
 
         PageRequest request = PageRequest.of(page, size);
-
+        
+        String type = "post";
+        
+        if(filter.equals("podcast") || filter.equals("video")) {
+            type=filter;
+        }
+        
         if(dir.equals("ASC")) {
             if (sorter.isBlank()) {
                 if (!filter.isBlank()) {
-                    list = postRepo.pageByTitleWithTypeQueryWithFilterIdASC(search, "publish", "post", filter, request);
+                    list = postRepo.pageByTitleWithTypeQueryWithFilterIdASC(search, "publish", type, filter, request);
                 } else {
-                    list = postRepo.pageByTitleWithTypeQueryByIdASC(search, "publish", "post", request);
+                    list = postRepo.pageByTitleWithTypeQueryByIdASC(search, "publish", type, request);
                 }
             } else {
                 if (!filter.isBlank()) {
                     if (sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicksASC(search, "publish", "post", filter, request);
+                        list = postRepo.postPageByClicksASC(search, "publish", type, filter, request);
                     } else {
-                        list = postRepo.postPageByCreationByIdASC(search, "publish", "post", filter, request);
+                        list = postRepo.postPageByCreationByIdASC(search, "publish", type, filter, request);
                     }
                 } else {
                     if (sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicksASC(search, "publish", "post", request);
+                        list = postRepo.postPageByClicksASC(search, "publish", type, request);
                     } else {
-                        list = postRepo.postPageByCreationByIdASC(search, "publish", "post", request);
+                        list = postRepo.postPageByCreationByIdASC(search, "publish", type, request);
                     }
                 }
             }
         } else {
             if (sorter.isBlank()) {
                 if (!filter.isBlank()) {
-                    list = postRepo.pageByTitleWithTypeQueryWithFilterIdDESC(search, "publish", "post", filter, request);
+                    list = postRepo.pageByTitleWithTypeQueryWithFilterIdDESC(search, "publish", type, filter, request);
                 } else {
-                    list = postRepo.pageByTitleWithTypeQueryByIdDESC(search, "publish", "post", request);
+                    list = postRepo.pageByTitleWithTypeQueryByIdDESC(search, "publish", type, request);
                 }
             } else {
                 if (!filter.isBlank()) {
                     if (sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicksDESC(search, "publish", "post", filter, request);
+                        list = postRepo.postPageByClicksDESC(search, "publish", type, filter, request);
                     } else {
-                        list = postRepo.postPageByCreationByIdDESC(search, "publish", "post", filter, request);
+                        list = postRepo.postPageByCreationByIdDESC(search, "publish", type, filter, request);
                     }
                 } else {
                     if (sorter.equals("clicks")) {
-                        list = postRepo.postPageByClicksDESC(search, "publish", "post", request);
+                        list = postRepo.postPageByClicksDESC(search, "publish", type, request);
                     } else {
-                        list = postRepo.postPageByCreationByIdDESC(search, "publish", "post", request);
+                        list = postRepo.postPageByCreationByIdDESC(search, "publish", type, request);
                     }
                 }
             }

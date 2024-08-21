@@ -28,6 +28,7 @@ export class PostListPageableComponent extends DashListPageableComponent<Post, P
   input_filter_3_cb : any;
   input_filter_4_cb : any;
   input_filter_5_cb : any;
+  input_filter_6_cb : any;
 
   search_text: string = "";
   active_filter: string = " ";
@@ -77,6 +78,11 @@ export class PostListPageableComponent extends DashListPageableComponent<Post, P
       this.active_filter = "whitepaper";
       this.reload(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text, this.active_direction), PostListItemComponent);
     }
+    this.input_filter_6_cb = () => {
+      this.pageIndex = 0;
+      this.active_filter = "video";
+      this.reload(this.api.getPostsAllPaged(this.pageIndex, this.pageSize, "date", this.active_filter, this.search_text, this.active_direction), PostListItemComponent);
+    }
   }
 
 
@@ -120,8 +126,8 @@ export class PostListComponent extends DashListComponent<Post, PostListItemCompo
 
 @Component({
   selector: 'dash-list-podcast',
-  templateUrl: './post-list-pageable.component.html',
-  styleUrls: ['./post-list-pageable.component.css', "../../dash-base/dash-base.component.css", "./podcast-list.component.css"]
+  templateUrl: './podcast/podcast-list.component.html',
+  styleUrls: ['./post-list-pageable.component.css', "../../dash-base/dash-base.component.css", "./podcast/podcast-list.component.css"]
 })
 export class PodcastListComponent extends PostListPageableComponent{
   override placeholder = "Podcast suchen";
@@ -151,8 +157,8 @@ export class PodcastListComponent extends PostListPageableComponent{
 
 @Component({
   selector: 'dash-list-ratgeber',
-  templateUrl: './post-list-pageable.component.html',
-  styleUrls: ['./post-list-pageable.component.css', "../../dash-base/dash-base.component.css", "./ratgeber-list.component.css"]
+  templateUrl: './ratgeber/ratgeber-list.component.html',
+  styleUrls: ['./post-list-pageable.component.css', "../../dash-base/dash-base.component.css", "./ratgeber/ratgeber-list.component.css"]
 })
 export class RatgeberListComponent extends PostListComponent{
   override placeholder = "Ratgeber suchen";
@@ -207,24 +213,28 @@ export class UserPostListComponent extends PostListPageableComponent{
       this.active_filter = " ";
       this.reload(this.api.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
-    this.input_filter_5_cb = () => {
-      this.active_filter = "whitepaper";
-      this.reload(this.api.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
-    }
-    this.input_filter_3_cb = () => {
-      this.active_filter = "news";
+    this.input_filter_1_cb = () => {
+      this.active_filter = "artikel";
       this.reload(this.api.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_2_cb = () => {
       this.active_filter = "blog";
       this.reload(this.api.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
-    this.input_filter_1_cb = () => {
-      this.active_filter = "artikel";
+    this.input_filter_3_cb = () => {
+      this.active_filter = "news";
       this.reload(this.api.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
     this.input_filter_4_cb = () => {
       this.active_filter = "podcast";
+      this.reload(this.api.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
+    }
+    this.input_filter_5_cb = () => {
+      this.active_filter = "whitepaper";
+      this.reload(this.api.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
+    }
+    this.input_filter_6_cb = () => {
+      this.active_filter = "video";
       this.reload(this.api.getUserPostsPaged(SysVars.USER_ID, 0, this.pageSize, this.active_filter, this.search_text), PostListItemComponent);
     }
   }
@@ -237,8 +247,8 @@ export class UserPostListComponent extends PostListPageableComponent{
 
 @Component({
   selector: 'dash-list-user-post',
-  templateUrl: './post-list-pageable.component.html',
-  styleUrls: ['./post-list-pageable.component.css', "../../dash-base/dash-base.component.css", "./event-list.component.css"]
+  templateUrl: './event/event-list.component.html',
+  styleUrls: ['./post-list-pageable.component.css', "../../dash-base/dash-base.component.css", "./event/event-list.component.css"]
 })
 export class EventListComponent extends PostListPageableComponent{
   override placeholder = "Event suchen";
@@ -284,8 +294,8 @@ export class EventListComponent extends PostListPageableComponent{
 
 @Component({
   selector: 'dash-list-user-post',
-  templateUrl: './post-list-pageable.component.html',
-  styleUrls: ['./post-list-pageable.component.css', "../../dash-base/dash-base.component.css"]
+  templateUrl: './event/event-list.component.html',
+  styleUrls: ['./post-list-pageable.component.css', "../../dash-base/dash-base.component.css", "./event/event-list.component.css"]
 })
 export class UserEventListComponent extends PostListPageableComponent{
   override placeholder = "Event suchen";

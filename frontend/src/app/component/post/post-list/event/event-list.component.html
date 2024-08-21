@@ -2,12 +2,11 @@
   <form *ngIf="showSearchAndFilters" class="post-type-form">
     <input type="text" id="post-search" [placeholder]="placeholder" (input)="input_search_cb($event)">
     <input type="radio" id="post-type-all" name="type" value="O" checked (change)="input_all_cb()">
-    <input type="radio" id="post-type-article" name="type" value="A" (change)="input_filter_1_cb()">
-    <input type="radio" id="post-type-blog" name="type" value="B" (change)="input_filter_2_cb()">
-    <input type="radio" id="post-type-news" name="type" value="N" (change)="input_filter_3_cb()">
-    <input type="radio" id="post-type-podcast" name="type" value="P" (change)="input_filter_4_cb()">
-    <input type="radio" id="post-type-whitepaper" name="type" value="W" (change)="input_filter_5_cb()">
-    <input type="radio" id="post-type-video" name="type" value="V" (change)="input_filter_6_cb()">
+    <input type="radio" id="post-type-kg" name="type" value="A" (change)="input_filter_1_cb()">
+    <input type="radio" id="post-type-me" name="type" value="B" (change)="input_filter_2_cb()">
+    <input type="radio" id="post-type-se" name="type" value="N" (change)="input_filter_3_cb()">
+    <input type="radio" id="post-type-ws" name="type" value="P" (change)="input_filter_4_cb()">
+    <input type="radio" id="post-type-so" name="type" value="W" (change)="input_filter_5_cb()">
   </form>
   <div class="post-list-selector-container" [ngClass]="{'fullsize' : showSearchAndFilters == false}">
     <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded" (scrollEnd)="onScrollEnd()"></dash-selector>

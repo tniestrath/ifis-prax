@@ -9,38 +9,41 @@ input[type="radio"]{
   content: "Alle";
 
 }
-#post-type-article::before{
+#post-type-kg::before{
   content: "KG";
 }
-#post-type-article::after{
+#post-type-kg::after{
   content: "KG";
   color: #951D40;
 }
-#post-type-blog::before{
+#post-type-me::before{
   content: "ME";
 }
-#post-type-blog::after{
+#post-type-me::after{
   content: "ME";
   color: #951D40;
 }
-#post-type-news::before{
+#post-type-se::before{
   content: "SE";
 }
-#post-type-news::after{
+#post-type-se::after{
   content: "SE";
   color: #951D40;
 }
-#post-type-podcast::before{
+#post-type-ws::before{
   content: "WS";
 }
-#post-type-podcast::after{
+#post-type-ws::after{
   content: "WS";
   color: #951D40;
 }
-#post-type-whitepaper::before{
+#post-type-so::before{
   content: "SO";
 }
-#post-type-whitepaper::after{
+#post-type-so::after{
   content: "SO";
   color: #951D40;
+}
+#post-type-so{
+  border-radius: 0 5px 5px 0;
 }

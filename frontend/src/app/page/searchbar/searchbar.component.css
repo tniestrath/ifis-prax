@@ -151,6 +151,7 @@ button {
   padding-top: 2.5px;
   padding-bottom: 2.5px;
   display: none;
+  cursor: pointer !important;
 }
 #searchbar-filter > div:hover{
   border: 1px solid black;
@@ -180,6 +181,7 @@ button {
   border-radius: 5px;
   margin: 5px 2.5px;
   padding-top: 8.5px;
+  cursor: pointer !important;
 }
 #searchbar-sorter > div:hover{
   border: 1px solid black;

@@ -47,7 +47,7 @@ export class HeaderComponent implements AfterViewInit{
         this.navElements = [];
         // @ts-ignore
         document.getElementById("feedback-panel").innerHTML = "";
-        SysVars.SELECTED_USER_ID.next(Number(user.id));
+        SysVars.SELECTED_USER_ID.next(Number(62));
       } else return;
       cs.set("user", user.id + ":" + user.displayName);
       SysVars.ACCOUNT = user;

@@ -1,25 +1,26 @@
 input[type="radio"]{
   display: none;
 }
-#post-type-all::before{
+#post-type-date::before{
   content: "Datum";
 
 }
-#post-type-all::after{
+#post-type-date::after{
   content: "Datum";
 
 }
-#post-type-whitepaper::before{
+#post-type-clicks::before{
   content: "Clicks";
 }
-#post-type-whitepaper::after{
+#post-type-clicks::after{
   content: "Clicks";
   color: #951D40;
 }
 
-#post-type-all{
+#post-type-date{
   display: grid;
 }
-#post-type-whitepaper{
+#post-type-clicks{
   display: grid;
+  border-radius: 0 5px 5px 0;
 }

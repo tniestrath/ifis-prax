@@ -70,10 +70,10 @@ input[type="radio"]::after{
   color: #951D40;
 }
 #post-type-podcast::before{
-  content: "Podcast";
+  content: "PC";
 }
 #post-type-podcast::after{
-  content: "Podcast";
+  content: "PC";
   color: #951D40;
 }
 #post-type-whitepaper::before{
@@ -81,6 +81,13 @@ input[type="radio"]::after{
 }
 #post-type-whitepaper::after{
   content: "WP";
+  color: #951D40;
+}
+#post-type-video::before{
+  content: "Video";
+}
+#post-type-video::after{
+  content: "Video";
   color: #951D40;
 }
 
@@ -98,7 +105,7 @@ input[type="radio"]:checked::after{
   position: inherit !important;
 }
 
-#post-type-whitepaper{
+#post-type-video{
   border-radius: 0 5px 5px 0;
 }
 

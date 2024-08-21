@@ -432,7 +432,7 @@ export class PostSearchbarComponent extends SearchbarComponent{
     this.selected_sort = "date";
 
     let filterBoxes = (this.element.nativeElement as HTMLElement).querySelectorAll(".searchbar-filter-type") as NodeListOf<HTMLDivElement>;
-    let accFilters = (this.element.nativeElement as HTMLElement).querySelectorAll(".searchbar-filter-acc-type") as NodeListOf<HTMLDivElement>;
+    let accFilters = (this.element.nativeElement as HTMLElement).querySelectorAll(".searchbar-filter-post-type") as NodeListOf<HTMLDivElement>;
 
     let filter_sort_views = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-views") as HTMLDivElement;
     let filter_sort_uid = (this.element.nativeElement as HTMLElement).querySelector("#searchbar-sorter-uid") as HTMLDivElement;
@@ -463,32 +463,37 @@ export class PostSearchbarComponent extends SearchbarComponent{
         filter.style.color = DashColors.RED;
         filter.style.fontWeight = "bold";
         switch (filter.id) {
-          case "searchbar-filter-accountType-without-plan":
+          case "searchbar-filter-postType-news":
             this.selected_post_type = "news";
             this.selectedPostTypeString = "News";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
-          case "searchbar-filter-accountType-basic":
+          case "searchbar-filter-postType-blog":
             this.selected_post_type = "blog";
             this.selectedPostTypeString = "Blog";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
-          case "searchbar-filter-accountType-basicPlus":
+          case "searchbar-filter-postType-article":
             this.selected_post_type = "artikel";
             this.selectedPostTypeString = "Artikel";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
-          case "searchbar-filter-accountType-plus":
+          case "searchbar-filter-postType-whitepaper":
             this.selected_post_type = "whitepaper";
             this.selectedPostTypeString = "Whitepaper";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
-          case "searchbar-filter-accountType-premium":
+          case "searchbar-filter-postType-podcast":
             this.selected_post_type = "podcast";
             this.selectedPostTypeString = "Podcasts";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
             break;
-          case "searchbar-filter-accountType-all":
+          case "searchbar-filter-postType-video":
+            this.selected_post_type = "video";
+            this.selectedPostTypeString = "Video";
+            this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});
+            break;
+          case "searchbar-filter-postType-all":
             this.selected_post_type = "";
             this.selectedPostTypeString = "Alle";
             this.currentPostSearch.emit({postType: this.selected_post_type, dir: this.selected_dir, sort: this.selected_sort, query: this.searchInput});

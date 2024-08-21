@@ -15,18 +15,19 @@
     <div id="searchbar-filter">
       <div id="searchbar-filter-accountType-label">Filtern:</div>
       <div id="searchbar-filter-accountType" class="searchbar-filter-type">Art: {{selectedPostTypeString}}
-        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-without-plan">News</div>
-        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-basic">Blog</div>
-        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-basicPlus">Artikel</div>
-        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-plus">Whitepaper</div>
-        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-premium">Podcast</div>
-        <div class="searchbar-filter-acc-type" id="searchbar-filter-accountType-all">Alle</div>
+        <div class="searchbar-filter-post-type inputButton" id="searchbar-filter-postType-news">News</div>
+        <div class="searchbar-filter-post-type inputButton" id="searchbar-filter-postType-blog">Blog</div>
+        <div class="searchbar-filter-post-type inputButton" id="searchbar-filter-postType-article">Artikel</div>
+        <div class="searchbar-filter-post-type inputButton" id="searchbar-filter-postType-whitepaper">Whitepaper</div>
+        <div class="searchbar-filter-post-type inputButton" id="searchbar-filter-postType-podcast">Podcast</div>
+        <div class="searchbar-filter-post-type inputButton" id="searchbar-filter-postType-video">Video</div>
+        <div class="searchbar-filter-post-type inputButton" id="searchbar-filter-postType-all">Alle</div>
       </div>
     </div>
     <div id="searchbar-sorter">
-      <div id="searchbar-sorter-by-label">Sortieren:</div>
-      <div id="searchbar-sorter-views">Aufrufe</div>
-      <div id="searchbar-sorter-uid">Erstellungsdatum</div>
+      <div id="searchbar-sorter-by-label inputButton">Sortieren:</div>
+      <div id="searchbar-sorter-views inputButton">Aufrufe</div>
+      <div id="searchbar-sorter-uid inputButton">Erstellungsdatum</div>
     </div>
     <input id="searchbar-dir" type="checkbox" name="search-dir" value="DESC" (change)="onDirSwitched($event)">
   </div>

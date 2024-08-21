@@ -49,6 +49,9 @@ public class UniversalStats {
     @Column(name = "anzahl_podcast")
     private Long anzahlPodcast;
 
+    @Column(name="anzahl_video")
+    private long anzahlVideo;
+
     @Column(name = "datum")
     private Date datum;
 
@@ -263,6 +266,14 @@ public class UniversalStats {
 
     public void setSensibleClicks(Long sensibleClicks) {
         this.sensibleClicks = sensibleClicks;
+    }
+
+    public long getAnzahlVideo() {
+        return anzahlVideo;
+    }
+
+    public void setAnzahlVideo(long anzahlVideo) {
+        this.anzahlVideo = anzahlVideo;
     }
 }
 

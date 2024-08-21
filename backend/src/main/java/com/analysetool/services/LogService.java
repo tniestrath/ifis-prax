@@ -2460,10 +2460,10 @@ public class LogService {
         long blogCounter = 0;
         long whiteCounter = 0;
         long podCounter = 0;
+        long videoCounter = 0;
 
         int tagIdBlog = termRepo.findBySlug(Constants.getInstance().getBlogSlug()).getId().intValue();
         int tagIdArtikel = termRepo.findBySlug(Constants.getInstance().getArtikelSlug()).getId().intValue();
-        int tagIdPodcast = termRepo.findBySlug(Constants.getInstance().getPodastSlug()).getId().intValue();
         int tagIdWhitepaper = termRepo.findBySlug(Constants.getInstance().getWhitepaperSlug()).getId().intValue();
         int tagIdPresse = termRepo.findBySlug(Constants.getInstance().getNewsSlug()).getId().intValue();
 
@@ -2489,9 +2489,13 @@ public class LogService {
                             whiteCounter++;
                         }
 
-                        if (termTax.getTermId() == tagIdPodcast) {
+                        if (post.getType().equals(Constants.getInstance().getPodastSlug())) {
                             podCounter++;
                         }
+                        if(post.getType().equals(Constants.getInstance().getVideoSlug())) {
+                            videoCounter++;
+                        }
+
                     }
                 }
             }
@@ -2503,6 +2507,7 @@ public class LogService {
         uniStats.setAnzahlBlog(blogCounter);
         uniStats.setAnzahlWhitepaper(whiteCounter);
         uniStats.setAnzahlPodcast(podCounter);
+        uniStats.setAnzahlVideo(videoCounter);
 
         return uniStats;
     }

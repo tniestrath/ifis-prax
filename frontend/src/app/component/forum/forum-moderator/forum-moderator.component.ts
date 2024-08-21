@@ -166,6 +166,8 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
               this.list.selectorItemsLoaded.next(this.list.selectorItems);
               this.list.g_cdr.detectChanges();
               this.display.resetEditButton();
+
+              SysVars.FORUM_UPDATE_STATS.next();
             }
           });
         } else {
@@ -190,6 +192,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
             this.list.g_cdr.detectChanges();
             this.display.resetEditButton();
 
+            SysVars.FORUM_UPDATE_STATS.next();
           }
         });
     }

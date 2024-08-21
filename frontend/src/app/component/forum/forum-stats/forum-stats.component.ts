@@ -1,4 +1,4 @@
-import {Component, NO_ERRORS_SCHEMA, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import Util, {DashColors} from "../../../util/Util";
 import {SysVars} from "../../../services/sys-vars-service";
@@ -35,7 +35,8 @@ export class ForumStat {
 @Component({
   selector: 'dash-forum-stats',
   templateUrl: './forum-stats.component.html',
-  styleUrls: ['./forum-stats.component.css', '../../dash-base/dash-base.component.css']
+  styleUrls: ['./forum-stats.component.css', '../../dash-base/dash-base.component.css'],
+  changeDetection : ChangeDetectionStrategy.OnPush
 })
 export class ForumStatsComponent extends DashBaseComponent implements OnInit{
   data : ForumStats = new ForumStats();
@@ -47,6 +48,13 @@ export class ForumStatsComponent extends DashBaseComponent implements OnInit{
     this.api.getForumStats().then(res => {
       this.data = res;
       this.cdr.detectChanges();
+    });
+
+    SysVars.FORUM_UPDATE_STATS.subscribe(() =>{
+      this.api.getForumStats().then(res => {
+        this.data = res;
+        this.cdr.detectChanges();
+      });
     });
   }
 

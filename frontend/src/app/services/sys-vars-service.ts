@@ -56,6 +56,7 @@ export class SysVars {
 
   public static SELECTED_FORUM_POST : Subject<ForumPost> = new Subject<ForumPost>();
   public static SELECTED_FORUM_FILTER : Subject<ForumStat> = new Subject<ForumStat>();
+  public static FORUM_UPDATE_STATS : Subject<void> = new Subject<void>();
 
   public static IS_POPUP : boolean = false;
 

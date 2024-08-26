@@ -25,6 +25,7 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
   selectorItemsLoaded = new Subject<SelectorItem[]>();
   pagesComplete: boolean = false;
   lastScroll = 0;
+  isEmpty : boolean = false;
 
   itemClick = new Subject<SelectorItem>()
 
@@ -81,6 +82,10 @@ export class DashListComponent<T extends DbObject, C extends DashListItemCompone
       else {}
       this.lastScroll = scroll;
     }
+  }
+
+  setEmpty(boolean : boolean){
+    this.isEmpty = boolean;
   }
 }
 

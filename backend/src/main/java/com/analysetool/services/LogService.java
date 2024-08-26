@@ -1568,28 +1568,28 @@ public class LogService {
                 uniHourly.setSensibleClicks(uniHourly.getSensibleClicks() + 1);
                 uniHourly.setBesucherAnzahl(uniHourly.getBesucherAnzahl() + (isUnique ? 1 : 0));
                 uniHourly.setTotalClicks(uniHourly.getTotalClicks() + 1);
+                uniHourly.setAnbieterProfileAnzahl(wpUserRepo.count());
 
                 try {
-                    uni = setNewsArticelBlogCountForUniversalStats(normalDate, uni);
+                    setAccountTypeAllUniStats(uniHourly);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 try {
-                    uni = setAccountTypeAllUniStats(uni);
+                    setNewsArticelBlogCountForUniversalStats(uniHourly);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
             } else {
                 uniHourly = new UniversalStatsHourly();
-
                 try {
-                    uni = setNewsArticelBlogCountForUniversalStats(normalDate, uni);
+                    setAccountTypeAllUniStats(uniHourly);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 try {
-                    uni = setAccountTypeAllUniStats(uni);
+                    setNewsArticelBlogCountForUniversalStats(uniHourly);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

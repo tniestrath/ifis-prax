@@ -13,6 +13,20 @@
     <input type="radio" name="search-list-sorter" value="ss" (change)="onSorterSwitched($event)">
     <input type="radio" name="search-list-sorter" value="count" checked (change)="onSorterSwitched($event)">
   </div>
+  <div class="legend" *ngIf="title.includes('Anbieter')">
+    <div>Ort</div>
+    <div>Suchbegriff</div>
+    <div>Häufigkeit</div>
+  </div>
+  <div class="legend" *ngIf="!title.includes('Anbieter')">
+    <div>Suchbegriff</div>
+    <div></div>
+    <div class="legend-inner">
+      <div>Gefunden</div>
+      <div>Geklickt</div>
+      <div>Häufigkeit</div>
+    </div>
+  </div>
   <div class="search-no-results-list-selector-container">
     <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded" (scrollEnd)="onScrollEnd()" (freeSpace)="onFreeSpace($event)"></dash-selector>
   </div>

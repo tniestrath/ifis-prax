@@ -155,7 +155,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
             display: false
           },
           legend: {
-            display: false,
+            display: true,
             position: "bottom"
           },
           tooltip: {

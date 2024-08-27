@@ -1,5 +1,7 @@
 package com.analysetool.repositories;
+
 import com.analysetool.modells.WpTermTaxonomy;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -33,4 +35,6 @@ public interface WpTermTaxonomyRepository extends JpaRepository<WpTermTaxonomy, 
     @Query("SELECT t.termId FROM WpTermTaxonomy t WHERE t.taxonomy = 'post_tag'")
     List<Long> getTermIdsOfPostTags();
 
+    @Query("SELECT wtt.termId FROM WpTermTaxonomy AS wtt JOIN wp_term_relationships AS wtr ON wtt.termTaxonomyId=wtr.termTaxonomyId WHERE wtt.taxonomy='post_tag' GROUP BY wtt.termId ORDER BY COUNT(wtr.objectId) DESC")
+    List<Long> getTagIdsByPostCount(Pageable pageable);
 }

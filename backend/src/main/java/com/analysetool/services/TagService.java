@@ -8,16 +8,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -431,6 +429,34 @@ public class TagService {
         }
         JSONArray jsonArray = new JSONArray(array);
         return jsonArray.toString();
+    }
+
+    /**
+     * Fetch a page of TagStats, sorted.
+     * @param page the page to load.
+     * @param size the amount of results to load.
+     * @param sorter what to sort by.
+     * @return a JSON String containing Tag-Stats.
+     * @throws JSONException .
+     */
+    public String getTagStatsPageable(int page, int size, String sorter) throws JSONException {
+        JSONArray array = new JSONArray();
+        List<Long> tags;
+
+        PageRequest pageable = PageRequest.of(page, size);
+
+        //Currently expecting either "viewsTotal" or "count"
+        if(sorter.equals("viewsTotal")) {
+            tags = tagStatRepo.getOrderedByTotalViews(pageable);
+        } else {
+            tags = termTaxonomyRepository.getTagIdsByPostCount(pageable);
+        }
+
+        for(Long tagId : tags) {
+            JSONObject json = getTagStatsShort(Math.toIntExact(tagId));
+            array.put(json);
+        }
+        return array.toString();
     }
 
     /**

@@ -1,23 +1,13 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.*;
-import com.analysetool.repositories.*;
+import com.analysetool.modells.WPTerm;
 import com.analysetool.services.TagService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.json.JSONObject;
-import org.json.JSONArray;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.List;
 
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RestController
@@ -153,6 +143,9 @@ public class TagsController {
      */
     @GetMapping("/getTagStatsAll")
     public String getTagStatsAll(String sorter) throws JSONException {return tagService.getTagStatsAll(sorter);}
+
+    @GetMapping("/getTagStatsPageable")
+    public String getTagStatsPageable(int page, int size, String sorter) throws JSONException {return tagService.getTagStatsPageable(page, size, sorter);}
 
     /**
      * Fetch relevance of a specific term.

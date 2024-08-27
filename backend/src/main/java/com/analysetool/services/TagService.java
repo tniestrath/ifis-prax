@@ -446,6 +446,10 @@ public class TagService {
 
         PageRequest pageable = PageRequest.of(page, size);
 
+        if(search == null) {
+            search = "";
+        }
+
         //Currently expecting either "viewsTotal" or "count"
         if(sorter.equals("viewsTotal")) {
             tags = tagStatRepo.getOrderedByTotalViews(search, pageable);

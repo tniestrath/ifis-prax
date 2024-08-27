@@ -762,7 +762,7 @@ public class UniService {
      * @return a JSON-String mapping posts to their types.
      */
     public String getPostsByType() {
-        HashMap<String, Integer> map = new HashMap<>();
+        HashMap<String, String> map = new HashMap<>();
         UniversalStats uniStat = uniRepo.getLatestUniStat();
         return makeTypeMap(map, uniStat);
     }
@@ -772,17 +772,23 @@ public class UniService {
      * @return a JSON-String mapping posts to their types.
      */
     public String getPostsByTypeYesterday(){
-        HashMap<String, Integer> map = new HashMap<>();
+        HashMap<String, String> map = new HashMap<>();
         UniversalStats uniStat = uniRepo.getSecondLastUniStats().get(1);
         return makeTypeMap(map, uniStat);
     }
 
-    private String makeTypeMap(HashMap<String, Integer> map, UniversalStats uniStat) {
-        map.put("Blogs", Math.toIntExact(uniStat.getAnzahlBlog()));
-        map.put("News", Math.toIntExact(uniStat.getAnzahlNews()));
-        map.put("Artikel", Math.toIntExact(uniStat.getAnzahlArtikel()));
-        map.put("Whitepaper", Math.toIntExact(uniStat.getAnzahlWhitepaper()));
-        map.put("Podcasts", Math.toIntExact(uniStat.getAnzahlPodcast()));
+    private String makeTypeMap(HashMap<String, String> map, UniversalStats uniStat) {
+        Constants constant = Constants.getInstance();
+        map.put("Blogs", String.valueOf(Math.toIntExact(uniStat.getAnzahlBlog())));
+        map.put("blogLink", constant.getBlogLink());
+        map.put("News", String.valueOf(Math.toIntExact(uniStat.getAnzahlNews())));
+        map.put("newsLink", constant.getNewsLink());
+        map.put("Artikel", String.valueOf(Math.toIntExact(uniStat.getAnzahlArtikel())));
+        map.put("artikelLink", constant.getArtikelLink());
+        map.put("Whitepaper", String.valueOf(Math.toIntExact(uniStat.getAnzahlWhitepaper())));
+        map.put("whitepaperLink", constant.getWpLink());
+        map.put("Podcasts", String.valueOf(Math.toIntExact(uniStat.getAnzahlPodcast())));
+        map.put("podcastLink", constant.getCouchLink());
 
         return new JSONObject(map).toString();
     }

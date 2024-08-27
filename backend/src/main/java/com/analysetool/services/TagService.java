@@ -439,7 +439,7 @@ public class TagService {
      * @return a JSON String containing Tag-Stats.
      * @throws JSONException .
      */
-    public String getTagStatsPageable(int page, int size, String sorter) throws JSONException {
+    public String getTagStatsPageable(int page, int size, String sorter, String search) throws JSONException {
         JSONArray array = new JSONArray();
         List<Long> tags;
 
@@ -447,9 +447,9 @@ public class TagService {
 
         //Currently expecting either "viewsTotal" or "count"
         if(sorter.equals("viewsTotal")) {
-            tags = tagStatRepo.getOrderedByTotalViews(pageable);
+            tags = tagStatRepo.getOrderedByTotalViews(search, pageable);
         } else {
-            tags = termTaxonomyRepository.getTagIdsByPostCount(pageable);
+            tags = termTaxonomyRepository.getTagIdsByPostCount(search, pageable);
         }
 
         for(Long tagId : tags) {

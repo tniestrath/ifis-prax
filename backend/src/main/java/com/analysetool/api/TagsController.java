@@ -145,7 +145,7 @@ public class TagsController {
     public String getTagStatsAll(String sorter) throws JSONException {return tagService.getTagStatsAll(sorter);}
 
     @GetMapping("/getTagStatsPageable")
-    public String getTagStatsPageable(int page, int size, String sorter) throws JSONException {return tagService.getTagStatsPageable(page, size, sorter);}
+    public String getTagStatsPageable(int page, int size, String sorter, String search) throws JSONException {return tagService.getTagStatsPageable(page, size, sorter, search);}
 
     /**
      * Fetch relevance of a specific term.

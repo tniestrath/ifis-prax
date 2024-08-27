@@ -42,8 +42,8 @@ public interface TagStatRepository extends JpaRepository<TagStat, Long> {
     @Query("SELECT t.uniId FROM TagStat t ORDER BY t.uniId ASC LIMIT 1")
     int getEarliestTrackingForTag(int tagId);
 
-    @Query("SELECT ts.tagId FROM TagStat AS ts LEFT JOIN TagCatStat AS tcs ON ts.tagId=tcs.tagId AND ts.uniId=tcs.uniId AND ts.hour=tcs.hour GROUP BY ts.tagId ORDER BY (SUM(ts.views) + SUM(tcs.views)) DESC")
-    List<Long> getOrderedByTotalViews(Pageable pageable);
+    @Query("SELECT ts.tagId FROM TagStat AS ts LEFT JOIN TagCatStat AS tcs ON ts.tagId=tcs.tagId AND ts.uniId=tcs.uniId AND ts.hour=tcs.hour JOIN WPTerm t ON ts.tagId=t.id WHERE (t.name LIKE %:search%) OR (t.slug LIKE %:search%) GROUP BY ts.tagId ORDER BY (SUM(ts.views) + SUM(tcs.views)) DESC")
+    List<Long> getOrderedByTotalViews(String search, Pageable pageable);
 
 }
 

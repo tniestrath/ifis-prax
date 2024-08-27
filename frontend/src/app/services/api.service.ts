@@ -285,7 +285,7 @@ export class ApiService {
     return await fetch(ApiService.setupRequest(apiUrl.PING), {credentials: "include"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getAllTagsWithStats() : Promise<TagRanking[]>{
+  async getAllTagsWithStats(pageIndex: number, pageSize: number, selected_sorter: string, search_input: string) : Promise<TagRanking[]>{
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_TAGS_WITH_STATS), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGS_WITH_STATS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }

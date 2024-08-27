@@ -37,6 +37,8 @@ export class SelectorComponent implements OnInit{
   private sub = new Subscription();
   private availableSpace : number = 0;
 
+  isEmpty : boolean = false;
+
   constructor(protected element : ElementRef) {
   }
 
@@ -46,8 +48,8 @@ export class SelectorComponent implements OnInit{
       console.log("Selector Items loaded " + s.length);
     }
     ));
-    let container = this.element.nativeElement as HTMLDivElement;
-    this.availableSpace = container.clientHeight;
+    let container = this.element.nativeElement.querySelector(".selector-box") as HTMLDivElement;
+    this.availableSpace = container.clientHeight
   }
 
   private loadItems(s : SelectorItem[], sort : boolean) {
@@ -55,6 +57,7 @@ export class SelectorComponent implements OnInit{
     var index = 0;
 
     viewContainerRef.clear();
+    this.isEmpty = s.length <= 0;
     if (sort){s.sort((a, b) => a.data.compare(b.data))}
     for (let item of s) {
       const componentRef = viewContainerRef.createComponent<SelectableComponent>(item.component);

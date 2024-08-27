@@ -23,6 +23,7 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
   data : ForumPost = new ForumPost();
   isEdited : boolean = false;
   isLocked : boolean = false;
+  isEmpty : boolean = false;
 
   postLinks : string[] = [];
   ngOnInit(): void {
@@ -116,5 +117,9 @@ export class ForumModerationDisplayComponent extends DashBaseComponent implement
   public isLockedColor(){
     if (this.isLocked) return DashColors.RED;
     else return "#00000000"
+  }
+
+  public setEmpty(boolean : boolean){
+    this.isEmpty = boolean;
   }
 }

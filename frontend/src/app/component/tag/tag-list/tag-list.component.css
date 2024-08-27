@@ -75,7 +75,7 @@ input[type="radio"]:checked::after{
 
 .tag-list-selector-container{
   margin-left: 5px;
-  height: calc(100% - 47px);
+  height: calc(100% - 67px);
   width: calc(100% - 8px);
 }
 #shadow {
@@ -100,4 +100,15 @@ input[type="radio"]:checked::after{
   flex-direction: column;
   height: 100%;
   width: 100%;
+}
+.legend{
+  width: 100%;
+  height: 20px;
+  padding-left: 10px;
+  padding-right: 25px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  font-size: small;
+  color: #808080;
 }

@@ -768,6 +768,12 @@ public class UserService {
 
             String srcUrl = Constants.getInstance().getProfilePhotoStart() + user.getId() + "/profile_photo";
 
+            if(wpUserMetaRepository.getUserLinkToSubpage(user.getId()) != null) {
+                obj.put("link", "https://it-sicherheit.de/user/" + wpUserMetaRepository.getUserLinkToSubpage(user.getId()) + "/");
+            } else {
+                obj.put("link", "https://it-sicherheit.de/");
+            }
+
             if (new File(path).exists()) {
                 obj.put("img", srcUrl + ".png");
             } else if (new File(path2).exists()) {

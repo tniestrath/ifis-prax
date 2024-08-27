@@ -15,5 +15,9 @@ public interface WPTermRepository extends JpaRepository<WPTerm, Long> {
     String getNameById(int id);
 
     WPTerm findBySlug(String slug);
+
+    @Query("SELECT t.slug FROM WPTerm t WHERE t.id=:termId")
+    String findSlugById(long tagId);
+
 }
 

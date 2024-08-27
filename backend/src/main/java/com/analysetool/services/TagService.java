@@ -372,6 +372,7 @@ public class TagService {
         json.put("viewsPosts", tagStatRepo.getSumOfViewsForTag(tagId) == null ? 0 : tagStatRepo.getSumOfViewsForTag(tagId));
         json.put("viewsCat", tagCatRepo.getSumOfViewsForTag(tagId) == null ? 0 : tagCatRepo.getSumOfViewsForTag(tagId));
         json.put("id", tagId);
+        json.put("link", "https://it-sicherheit.de/themenfeld/" + termRepository.findSlugById(tagId) + "/");
 
         return json;
     }

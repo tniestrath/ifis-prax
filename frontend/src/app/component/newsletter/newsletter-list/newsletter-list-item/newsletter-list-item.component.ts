@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Newsletter} from "../../Newsletter";
-import {DashColors} from "../../../../util/Util";
+import Util, {DashColors} from "../../../../util/Util";
 import {SysVars} from "../../../../services/sys-vars-service";
 
 @Component({
@@ -23,4 +23,6 @@ export class NewsletterListItemComponent implements AfterViewInit{
   ngAfterViewInit(): void {
     this.interactionTimeMax = this.data.interactionTimes.indexOf(Math.max(...this.data.interactionTimes, 1));
   }
+
+  protected readonly Util = Util;
 }

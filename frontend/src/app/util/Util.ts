@@ -64,6 +64,9 @@ export default class Util {
     return formatteddate;
   }
 
+  static readNewsletterTime(dateTime : string){
+    return dateTime.substring(8, 10) + "." + dateTime.substring(5, 7) + "." + dateTime.substring(0, 4) + " " + dateTime.substring(11, 16) + "Uhr";
+  }
 
 
   static readFormattedDate(date : string){

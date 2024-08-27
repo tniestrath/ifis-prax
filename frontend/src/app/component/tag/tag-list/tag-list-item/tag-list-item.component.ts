@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input} from '@angular/core';
 import {Tag, TagRanking} from "../../Tag";
 import {DbObject} from "../../../../services/DbObject";
 import {SysVars} from "../../../../services/sys-vars-service";
-import Util from "../../../../util/Util";
+import Util, {DashColors} from "../../../../util/Util";
 import {DashListItemComponent} from "../../../dash-list/dash-list-item/dash-list-item.component";
 
 @Component({

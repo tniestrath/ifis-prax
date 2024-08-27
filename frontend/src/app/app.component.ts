@@ -6,9 +6,6 @@ import Util from "./util/Util";
 import {SysVars} from "./services/sys-vars-service";
 import {AreYouSureDialog, Dialog, DialogDirective, FilterDialog} from "./util/Dialog";
 
-
-
-
 @Component({
   selector: 'dash-root',
   templateUrl: './app.component.html',

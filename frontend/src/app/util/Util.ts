@@ -21,7 +21,7 @@ export default class Util {
     return formattedN;
   }
 
-  static formatDate(date : string | Date, year? : boolean) : string{
+  static formatDate(date : string | Date, year : boolean = false, delimiter : string = ".") : string{
     let formattedDate = "";
     let parsedDate = new Date();
     if (typeof date == "string"){
@@ -31,21 +31,21 @@ export default class Util {
       parsedDate = date;
     }
     if (parsedDate.getDate() <= 9) {
-      formattedDate = formattedDate.concat("0", parsedDate.getDate().toString() + "-");
+      formattedDate = formattedDate.concat("0", parsedDate.getDate().toString() + delimiter);
     } else {
-      formattedDate = formattedDate.concat(parsedDate.getDate().toString() + "-");
+      formattedDate = formattedDate.concat(parsedDate.getDate().toString() + delimiter);
     }
     if (parsedDate.getMonth() +1 <= 9) {
       formattedDate = formattedDate.concat("0", (parsedDate.getMonth() +1).toString());
     } else {
       formattedDate = formattedDate.concat((parsedDate.getMonth() +1).toString());
     } if (year){
-      formattedDate = formattedDate.concat("-" + parsedDate.getFullYear().toString());
+      formattedDate = formattedDate.concat(delimiter + parsedDate.getFullYear().toString());
     }
     return formattedDate;
   }
 
-  static getFormattedNow(offset_day?: number){
+  static getFormattedNow(offset_day?: number, delimiter = "."){
     let now = new Date(Date.now());
     let month = "";
     let day = "";
@@ -60,7 +60,7 @@ export default class Util {
     } else {
       day = "" + now.getDate();
     }
-    let formatteddate = now.getFullYear() + "-" + month + "-" + day;
+    let formatteddate = now.getFullYear() + delimiter + month + delimiter + day;
     return formatteddate;
   }
 

@@ -21,6 +21,7 @@ import {ExternalService} from "../component/system/external-services-list/extern
 import {Environment} from "../../environment";
 import {UserPlanLogItem} from "../component/user/user-plan-log/user-plan-log-item/user-plan-log-item.component";
 import {ForumStats} from "../component/forum/forum-stats/forum-stats.component";
+import {PostType} from "../component/post/post-type/post-type.component";
 
 /**
  * @enum apiUrl
@@ -435,11 +436,11 @@ export class ApiService {
     return await fetch(ApiService.setupRequest(apiUrl.GET_POST_NEWEST), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POST_NEWEST)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getPostsPerType() : Promise<Map<string,number>> {
+  async getPostsPerType() : Promise<PostType[]> {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_PER_TYPE), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_PER_TYPE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-  async getPostsPerTypeYesterday() : Promise<Map<string,number>> {
+  async getPostsPerTypeYesterday() : Promise<PostType[]> {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_PER_TYPE_YESTERDAY), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_PER_TYPE_YESTERDAY)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }

@@ -3,7 +3,19 @@ import Util, {DashColors} from "../../../util/Util";
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Chart} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
+import {DbObject} from "../../../services/DbObject";
 
+
+export class PostType extends DbObject{
+
+  link : string;
+  count : number;
+  constructor(name : string, link : string , count : number) {
+    super(name, name);
+    this.link = link;
+    this.count = count;
+  }
+}
 @Component({
   selector: 'dash-post-type',
   templateUrl: './post-type.component.html',
@@ -30,15 +42,13 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
     }
 
     this.api.getPostsPerType().then(res => {
-      let map : Map<string, number> = new Map(Object.entries(res));
-      this.readMap(map, this.data);
+      this.readData(res, this.data);
       this.chart = this.createChart("post_type_chart", this.labels, this.data, undefined);
       this.chart_total = this.data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
       this.cdr.detectChanges();
     }).finally(()=> {
       this.api.getPostsPerTypeYesterday().then(res => {
-        let map : Map<string, number> = new Map(Object.entries(res));
-        this.readMap(map, this.prev_data);
+        this.readData(res, this.prev_data);
         for (var i = 0; i < this.data.length; i++) {
           this.prev_data[i] = this.data[i] - this.prev_data[i];
         }
@@ -136,27 +146,22 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
   }
 
 
-  private readMap(map: Map<string, number>, data: number[]) {
-    map.forEach((value, key) => {
-      if (key == "News") {
-        this.labels[0] = key;
-        data[0] = (value == 0 || value == undefined ? 0 : value)
+  private readData(postTypes: PostType[], data: number[]) {
+    postTypes.forEach((type) => {
+      if (type.name == "News") {
+        data[0] = (type.count == 0 || type.count == undefined ? 0 : type.count)
       }
-      if (key == "Blogs") {
-        this.labels[1] = key;
-        data[1] = (value == 0 || value == undefined ? 0 : value)
+      if (type.name == "Blogs") {
+        data[1] = (type.count == 0 || type.count == undefined ? 0 : type.count)
       }
-      if (key == "Artikel") {
-        this.labels[2] = key;
-        data[2] = (value == 0 || value == undefined ? 0 : value)
+      if (type.name == "Artikel") {
+        data[2] = (type.count == 0 || type.count == undefined ? 0 : type.count)
       }
-      if (key == "Whitepaper") {
-        this.labels[3] = key;
-        data[3] = (value == 0 || value == undefined ? 0 : value)
+      if (type.name == "Whitepaper") {
+        data[3] = (type.count == 0 || type.count == undefined ? 0 : type.count)
       }
-      if (key == "Podcasts") {
-        this.labels[4] = key;
-        data[4] = (value == 0 || value == undefined ? 0 : value)
+      if (type.name == "Podcasts") {
+        data[4] = (type.count == 0 || type.count == undefined ? 0 : type.count)
       }
     })
   }

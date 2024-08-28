@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../dash-base/dash-base.component";
-import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent, TooltipItem} from "chart.js/auto";
 import Util, {DashColors} from "../../util/Util";
 
 export class Callup {
@@ -279,14 +279,6 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
       data: {
         labels: timestamps,
         datasets: [{
-          label: "Aufrufe (Unbereinigt)",
-          data: clicksDataRAW,
-          backgroundColor: DashColors.GREY,
-          borderColor: DashColors.GREY,
-          borderJoinStyle: 'round',
-          borderWidth: 3,
-          hidden: true
-        },{
           label: "Aufrufe",
           data: clicksData,
           backgroundColor: DashColors.RED,
@@ -364,6 +356,9 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
                 }
                   // @ts-ignore
                 return timestamps[tooltipItems.at(0).dataIndex]
+              },
+              footer(tooltipItems): string | string[] | void {
+                return "Klicken für Detailansicht";
               }
             }
           },
@@ -408,7 +403,19 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
           mode: "x",
           intersect: true,
         },
-        onClick: this.onClickHandler.bind(this, this.timeSpan, this.time_filtered)
+        onClick: this.onClickHandler.bind(this, this.timeSpan, this.time_filtered),
+        onHover: (event: ChartEvent, elements: ActiveElement[], chart: Chart) => {
+          // @ts-ignore
+          if(event.native)
+            if(elements.length == 2)
+            { // @ts-ignore
+              event.native.target.style.cursor = "pointer"
+            }
+            else {
+              // @ts-ignore
+              event.native.target.style.cursor = "default"
+            }
+        }
       }
     })
   }
@@ -428,8 +435,8 @@ export class CallUpChartComponent extends DashBaseComponent implements OnInit {
     } else if (timespan == "day"){
       this.api.getSystemTimeHour().then(currHour => {
         let requestDate;
-        if (Number(date) > currHour) requestDate = Util.getFormattedNow(-1);
-        else requestDate = Util.getFormattedNow();
+        if (Number(date) > currHour) requestDate = Util.getFormattedNow(-1, "-");
+        else requestDate = Util.getFormattedNow(0, "-");
         this.api.getCallupsByCategoriesByDateTime(requestDate, Number(date)).then(res => {
           this.categories = res.labels;
           this.categoriesViews = res.clicks;

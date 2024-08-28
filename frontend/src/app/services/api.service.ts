@@ -34,8 +34,8 @@ export enum apiUrl {
    * Tags related requests
    */
   GET_TAGS_ALL = "/tags/getPostTagsIdName",
-  GET_TAGS_WITH_STATS = "/tags/getTagStatsAll",
-  GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL = "/tags/getPostCountAbove?percentage=",
+  GET_TAGS_WITH_STATS = "/tags/getTagStatsPageable?page=PAGE&size=SIZE&sorter=SORTER&search=SEARCH",
+  GET_TAGS_POST_COUNT = "/tags/getTagStatsPageable?page=0&size=5&sorter=count",
   /**
    * Single Tag
    */
@@ -287,12 +287,12 @@ export class ApiService {
 
   async getAllTagsWithStats(pageIndex: number, pageSize: number, selected_sorter: string, search_input: string) : Promise<TagRanking[]>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_TAGS_WITH_STATS), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGS_WITH_STATS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_TAGS_WITH_STATS).replace("PAGE", String(pageIndex)).replace("SIZE", String(pageSize)).replace("SORTER", selected_sorter).replace("SEARCH", search_input), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGS_WITH_STATS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getAllTagsPostCount(percentage : number) : Promise<Map<string, number>>{
+  async getAllTagsPostCount() : Promise<TagRanking[]>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest((apiUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL) + percentage) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGS_POST_COUNT_CLAMPED_PERCENTAGE_ALL)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_TAGS_POST_COUNT) , {credentials: "include", signal: ApiService.setupController(apiUrl.GET_TAGS_POST_COUNT)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getAllUsers(page: number, size: number, filter: { sort: string, accType: string, usrType: string, query : string, dir : string }, signal: AbortSignal) {
@@ -522,7 +522,7 @@ export class ApiService {
   }
   async getCallupsByCategoriesNewest() : Promise<CategoriesData>{
     this.setLoading();
-    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", Util.getFormattedNow()), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_CALLUP_CATEGORIES_BY_DATE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+    return await fetch(ApiService.setupRequest(apiUrl.GET_CALLUP_CATEGORIES_BY_DATE).replace("DATE", Util.getFormattedNow(0, "-")), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_CALLUP_CATEGORIES_BY_DATE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
   async getCallupsByCategoriesByDateTime(date : string, hour : number) :Promise<CategoriesData>{
     this.setLoading();
@@ -768,7 +768,7 @@ export class ApiService {
   async getSeoImpCtrNow() : Promise<{ "clicks": number, "ctr": number, "impressions": number, "keys": string[]}[]> {
     this.setLoading();
     return this.loginSeo().then(value => {
-      return fetch("https://seo.internet-sicherheit.de/api/googleSearchConsole/executeQuery?domain=sc-domain%3Ait-sicherheit.de&method=chart&startDate=" + Util.getFormattedNow(-30) + "&endDate=" + Util.getFormattedNow(), {
+      return fetch("https://seo.internet-sicherheit.de/api/googleSearchConsole/executeQuery?domain=sc-domain%3Ait-sicherheit.de&method=chart&startDate=" + Util.getFormattedNow(-30, "-") + "&endDate=" + Util.getFormattedNow(0, "-"), {
         "headers": {
           "accept": "application/json, text/plain, */*",
           "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",
@@ -800,7 +800,7 @@ export class ApiService {
   async getSeoKeywordsNow() : Promise<{ "clicks": number, "ctr": number, "impressions": number, "keys": string[]}[]> {
     this.setLoading();
     return this.loginSeo().then(value => {
-      return fetch("https://seo.internet-sicherheit.de/api/googleSearchConsole/executeQuery?domain=sc-domain%3Ait-sicherheit.de&method=keyword&startDate=" + Util.getFormattedNow(-30) + "&endDate=" + Util.getFormattedNow(), {
+      return fetch("https://seo.internet-sicherheit.de/api/googleSearchConsole/executeQuery?domain=sc-domain%3Ait-sicherheit.de&method=keyword&startDate=" + Util.getFormattedNow(-30, "-") + "&endDate=" + Util.getFormattedNow(0, "-"), {
         "headers": {
           "accept": "application/json, text/plain, */*",
           "accept-language": "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7",

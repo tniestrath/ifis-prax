@@ -147,8 +147,8 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       this.startDate = res[0].split('T')[0];
       this.endDate = res[1].split('T')[0];
 
-      startDatePicker.value = this.startDate;
-      endDatePicker.value = this.endDate;
+      startDatePicker.value = Util.getFormattedNow(-7, "-");
+      endDatePicker.value = Util.getFormattedNow(0, "-");
 
       startDatePicker.min = this.startDate;
       startDatePicker.max = this.endDate;
@@ -370,7 +370,7 @@ export class OriginMapComponent extends DashBaseComponent implements OnInit{
       fu();
     }
     if (pathElement.eventListeners().length > 0) return;
-    let fa = () => {pathElement.style.strokeWidth = "10px";}
+    let fa = () => {pathElement.style.strokeWidth = "10px";pathElement.style.cursor = "pointer"}
     let fum = () => {pathElement.style.strokeWidth = "2px";}
 
     pathElement.removeEventListener('click', fu);

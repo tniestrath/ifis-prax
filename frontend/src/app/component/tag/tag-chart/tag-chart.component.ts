@@ -24,8 +24,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
     ["all_time", 365*2],
     ["half_year", 182],
     ["month", 31],
-    ["week", 7],
-    ["day", 1]
+    ["week", 7]
   ]);
 
   getData(event?: Event) {
@@ -46,7 +45,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
         tagCount.push(Number(tagStats.count));
         tagViewsPosts.push(Number(tagStats.viewsPosts));
         tagViewsCat.push(Number(tagStats.viewsCat));
-        tagDate.push(Util.formatDate(tagStats.date));
+        tagDate.push(Util.formatDate(tagStats.date, true));
       }
       this.createChart(tagViewsPosts, tagViewsCat, tagCount, tagDate, [DashColors.RED, DashColors.DARK_RED, DashColors.BLUE]);
 
@@ -68,17 +67,9 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
     if (this.chart){
       this.chart.destroy();
     }
-    var timestamps = [];
-    for (var date of dates) {
-      if (date == "day"){
-        timestamps.push(new Date(date).getHours().toString());
-      }
-      else {
-        timestamps.push(date);
-      }
-    }
+    let timestamps : string[] = [];
+    dates.forEach((value, index) => timestamps[index] = value.substring(0, 5));
 
-    // @ts-ignore
     // @ts-ignore
     this.chart = new Chart("tag_chart", {
       type: "line",
@@ -90,6 +81,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
           backgroundColor: colors[0],
           borderColor: colors[0],
           borderJoinStyle: 'round',
+          pointHoverRadius: 10,
           borderWidth: 5
         },
         {
@@ -98,6 +90,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
           backgroundColor: colors[1],
           borderColor: colors[1],
           borderJoinStyle: 'round',
+          pointHoverRadius: 10,
           borderWidth: 5
         },
         {
@@ -106,6 +99,7 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
           backgroundColor: colors[2],
           borderColor: colors[2],
           borderJoinStyle: 'round',
+          pointHoverRadius: 10,
           borderWidth: 5,
           yAxisID: "yCount"
         }]
@@ -166,16 +160,17 @@ export class TagChartComponent extends DashBaseComponent implements OnInit{
               size: 15
             },
             callbacks: {
-
+                title(tooltipItems): string | string[] | void {
+                  // @ts-ignore
+                  return Util.getDayString(Util.readFormattedDate(dates[tooltipItems.at(0).dataIndex].replaceAll(".", "-")).getDay()) + " - " + dates[tooltipItems.at(0).dataIndex];
+                }
             }
           }
         },
         interaction: {
           mode: "x",
           intersect: true
-        },
-        onClick(event: ChartEvent, elements: ActiveElement[]) {
-        },
+        }
       }
     })
   }

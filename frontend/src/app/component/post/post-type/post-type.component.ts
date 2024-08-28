@@ -4,8 +4,6 @@ import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import {DbObject} from "../../../services/DbObject";
-import {SysVars} from "../../../services/sys-vars-service";
-import {Tag} from "../../tag/Tag";
 
 
 export class PostType extends DbObject{
@@ -101,7 +99,6 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
 
 
     // @ts-ignore
-    // @ts-ignore
     return new Chart(canvas_id, {
       type: "doughnut",
       data: {
@@ -140,6 +137,11 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
             },
             bodyFont: {
               size: 15
+            },
+            callbacks: {
+              footer(tooltipItems): string | string[] | void {
+                return "Klick:\nauf Marktplatz anzeigen";
+              }
             }
           },
         },

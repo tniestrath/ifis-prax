@@ -10,10 +10,10 @@
           <div style="height: 2vh; display: flex; align-items: center;">
               <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.NEWS}">
               </span>
-            <p style="margin: 0px;">News:</p>
+            <p style="margin: 0px;cursor: pointer;" (click)="window.open(links[0], '_blank')">News:</p>
           </div>
           <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
-            <p style="margin: 0px;">{{chart?.data.datasets[0].data[0]}}</p>
+            <p style="margin: 0px;">{{data[0]}}</p>
             <p style="margin: 0;">{{prev_data[0] >= 0 ? "+" + prev_data[0] : prev_data[0].toString()}}</p>
           </div>
         </li>
@@ -21,10 +21,10 @@
           <div style="height: 2vh; display: flex; align-items: center;">
               <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.BLOG}">
               </span>
-            <p style="margin: 0px;">Blogs:</p>
+            <p style="margin: 0px;cursor: pointer;" (click)="window.open(links[1], '_blank')">Blogs:</p>
           </div>
           <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
-            <p style="margin: 0px;">{{chart?.data.datasets[0].data[1]}}</p>
+            <p style="margin: 0px;">{{data[1]}}</p>
             <p style="margin: 0;">{{prev_data[1] >= 0 ? "+" + prev_data[1] : prev_data[1].toString()}}</p>
           </div>
         </li>
@@ -32,10 +32,10 @@
           <div style="height: 2vh; display: flex; align-items: center;">
               <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.ARTICLE}">
               </span>
-            <p style="margin: 0px;">Artikel:</p>
+            <p style="margin: 0px;cursor: pointer;" (click)="window.open(links[2], '_blank')">Artikel:</p>
           </div>
           <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
-            <p style="margin: 0px;">{{chart?.data.datasets[0].data[2]}}</p>
+            <p style="margin: 0px;">{{data[2]}}</p>
             <p style="margin: 0;">{{prev_data[2] >= 0 ? "+" + prev_data[2] : prev_data[2].toString()}}</p>
           </div>
         </li>
@@ -43,10 +43,10 @@
           <div style="height: 2vh; display: flex; align-items: center;">
               <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.WHITEPAPER}">
               </span>
-            <p style="margin: 0px;">Whitepaper:</p>
+            <p style="margin: 0px;cursor: pointer;" (click)="window.open(links[3], '_blank')">Whitepaper:</p>
           </div>
           <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
-            <p style="margin: 0px;">{{chart?.data.datasets[0].data[3]}}</p>
+            <p style="margin: 0px;">{{data[3]}}</p>
             <p style="margin: 0;">{{prev_data[3] >= 0 ? "+" + prev_data[3] : prev_data[3].toString()}}</p>
           </div>
         </li>
@@ -54,10 +54,10 @@
           <div style="height: 2vh; display: flex; align-items: center;">
               <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.PODCAST}">
               </span>
-            <p style="margin: 0px;">Podcasts:</p>
+            <p style="margin: 0px;cursor: pointer;" (click)="window.open(links[4], '_blank')">Podcasts:</p>
           </div>
           <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
-            <p style="margin: 0px;">{{chart?.data.datasets[0].data[4]}}</p>
+            <p style="margin: 0px;">{{data[4]}}</p>
             <p style="margin: 0;">{{prev_data[4] >= 0 ? "+" + prev_data[4] : prev_data[4].toString()}}</p>
           </div>
         </li>

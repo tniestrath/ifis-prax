@@ -1,9 +1,11 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import Util, {DashColors} from "../../../util/Util";
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
-import {Chart} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import {DbObject} from "../../../services/DbObject";
+import {SysVars} from "../../../services/sys-vars-service";
+import {Tag} from "../../tag/Tag";
 
 
 export class PostType extends DbObject{
@@ -31,6 +33,7 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
   prev_total_text : any;
 
   labels = ["News", "Blogs", "Artikel", "Whitepaper", "Podcasts"];
+  links = ["","","","",""]
 
   data = [0,0,0,0,0];
   prev_data = [0,0,0,0,0];
@@ -98,6 +101,7 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
 
 
     // @ts-ignore
+    // @ts-ignore
     return new Chart(canvas_id, {
       type: "doughnut",
       data: {
@@ -138,6 +142,22 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
               size: 15
             }
           },
+        },
+        onClick: (event: any, elements, chart: Chart) =>  {
+          // @ts-ignore
+          window.open(this.links[elements.at(0).index], "_blank");
+        },
+        onHover: (event: ChartEvent, elements: ActiveElement[], chart: Chart) => {
+          // @ts-ignore
+          if(event.native)
+            if(elements.length == 1)
+            { // @ts-ignore
+              event.native.target.style.cursor = "pointer"
+            }
+            else {
+              // @ts-ignore
+              event.native.target.style.cursor = "default"
+            }
         }
       },
       //@ts-ignore
@@ -145,25 +165,29 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
     })
   }
 
-
-  private readData(postTypes: PostType[], data: number[]) {
+  private readData(postTypes: PostType[], data : number[]) {
     postTypes.forEach((type) => {
       if (type.name == "News") {
-        data[0] = (type.count == 0 || type.count == undefined ? 0 : type.count)
+        data[0] = (type.count == 0 || type.count == undefined ? 0 : type.count);
+        this.links[0] = type.link;
       }
-      if (type.name == "Blogs") {
-        data[1] = (type.count == 0 || type.count == undefined ? 0 : type.count)
+      if (type.name == "Blog") {
+        data[1] = (type.count == 0 || type.count == undefined ? 0 : type.count);
+        this.links[1] = type.link;
       }
       if (type.name == "Artikel") {
-        data[2] = (type.count == 0 || type.count == undefined ? 0 : type.count)
+        data[2] = (type.count == 0 || type.count == undefined ? 0 : type.count);
+        this.links[2] = type.link;
       }
       if (type.name == "Whitepaper") {
-        data[3] = (type.count == 0 || type.count == undefined ? 0 : type.count)
+        data[3] = (type.count == 0 || type.count == undefined ? 0 : type.count);
+        this.links[3] = type.link;
       }
       if (type.name == "Podcasts") {
-        data[4] = (type.count == 0 || type.count == undefined ? 0 : type.count)
+        data[4] = (type.count == 0 || type.count == undefined ? 0 : type.count);
+        this.links[4] = type.link;
       }
     })
   }
-
+  protected readonly window = window;
 }

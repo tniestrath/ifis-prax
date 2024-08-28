@@ -790,8 +790,8 @@ public class UniService {
         bson.put("name", "News");
         json.put(bson);
         bson = new JSONObject();
-        bson.put("Artikel", Math.toIntExact(uniStat.getAnzahlArtikel()));
-        bson.put("artikelLink", constant.getArtikelLink());
+        bson.put("count", Math.toIntExact(uniStat.getAnzahlArtikel()));
+        bson.put("link", constant.getArtikelLink());
         bson.put("name", "Artikel");
         json.put(bson);
         bson = new JSONObject();
@@ -803,6 +803,7 @@ public class UniService {
         bson.put("count", Math.toIntExact(uniStat.getAnzahlPodcast()));
         bson.put("link", constant.getCouchLink());
         bson.put("name", "Podcast");
+        json.put(bson);
         return json.toString();
     }
 

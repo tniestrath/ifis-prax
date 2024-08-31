@@ -132,7 +132,7 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
 
       this.api.getUserBestPost(SysVars.USER_ID, "performance").then(data => {
         let post : Post = data;
-        this.createChart(["Score", "Grey"],[(post.performance || 0)*100 , 100-((post.performance || 0)*100)],null);
+        this.createChart(["Score", ""],[(post.performance || 0)*100 , 100-((post.performance || 0)*100)],null);
 
         if (post.title.length > 30){
           this.postName = post.title.slice(0, 25) + " ...";

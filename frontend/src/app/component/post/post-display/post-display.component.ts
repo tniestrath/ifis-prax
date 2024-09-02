@@ -45,7 +45,7 @@ export class PostDisplayComponent extends DashBaseComponent implements OnInit{
     // @ts-ignore
     authorBox.innerText = post.authors[0].substring(0, post.authors[0].lastIndexOf(",") > 0 ? post.authors[0].lastIndexOf(",") : 25);
     // @ts-ignore
-    dateBox.innerText = post.date;
+    dateBox.innerText = Util.formatDate(post.date, true);
     // @ts-ignore
     tagBox.style.backgroundColor = Util.getColor("post", post.type);
     // @ts-ignore

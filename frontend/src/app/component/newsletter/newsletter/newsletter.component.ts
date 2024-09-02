@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
-import {DashColors} from "../../../util/Util";
+import Util, { DashColors } from "../../../util/Util";
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Newsletter} from "../Newsletter";
 import {SysVars} from "../../../services/sys-vars-service";
@@ -112,4 +112,5 @@ export class NewsletterComponent extends DashBaseComponent implements OnInit{
 
   protected readonly Number = Number;
   protected readonly Math = Math;
+  protected readonly Util = Util;
 }

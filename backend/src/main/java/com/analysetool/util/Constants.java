@@ -52,6 +52,12 @@ public class Constants {
 
     private final String cyberRiskSlug = "cyber-risk-check";
 
+    private final String blogLink = "https://it-sicherheit.de/blog/";
+    private final String artikelLink = "https://it-sicherheit.de/artikel/";
+    private final String newsLink = "https://it-sicherheit.de/news/";
+    private final String wpLink = "https://it-sicherheit.de/whitepaper/";
+    private final String couchLink = "https://it-sicherheit.de/its-couch/";
+
     private static Constants instance;
 
     @Autowired
@@ -218,4 +224,35 @@ public class Constants {
         return ptRepo.getDistinctTypes().stream().filter(s -> !s.startsWith("Event")).toList();
     }
 
+    public void setPtRepo(PostTypeRepository ptRepo) {
+        this.ptRepo = ptRepo;
+    }
+
+    public void setTermRepo(WPTermRepository termRepo) {
+        this.termRepo = termRepo;
+    }
+
+    public String getBlogLink() {
+        return blogLink;
+    }
+
+    public String getArtikelLink() {
+        return artikelLink;
+    }
+
+    public String getNewsLink() {
+        return newsLink;
+    }
+
+    public String getWpLink() {
+        return wpLink;
+    }
+
+    public static void setInstance(Constants instance) {
+        Constants.instance = instance;
+    }
+
+    public String getCouchLink() {
+        return couchLink;
+    }
 }

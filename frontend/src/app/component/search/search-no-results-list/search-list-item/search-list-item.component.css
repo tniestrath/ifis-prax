@@ -65,6 +65,9 @@
   align-items: center;
   width: 5%;
 }
+.snr-ignore:hover{
+  cursor: pointer;
+}
 img{
   max-width: 90%;
   height: 20px;

@@ -70,8 +70,6 @@ export class ForumStatsComponent extends DashBaseComponent implements OnInit{
     } return "";
   }
 
-
-
   protected readonly Util = Util;
   protected readonly DashColors = DashColors;
 }

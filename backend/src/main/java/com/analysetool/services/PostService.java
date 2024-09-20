@@ -250,6 +250,7 @@ public class PostService {
         obj.put("searchSuccessRate", 0);
         obj.put("articleReferringRate", 0);
         obj.put("referrings", 0);
+        obj.put("link", post.getGuid());
 
         if(type.equalsIgnoreCase("whitepaper")) {
             if(contentDownloadsRepo.existsByPostId(id)) {

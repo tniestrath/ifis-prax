@@ -1,9 +1,21 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import Util, {DashColors} from "../../../util/Util";
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
-import {Chart} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
 import {EmptyObject} from "chart.js/dist/types/basic";
+import {DbObject} from "../../../services/DbObject";
 
+
+export class PostType extends DbObject{
+
+  link : string;
+  count : number;
+  constructor(name : string, link : string , count : number) {
+    super(name, name);
+    this.link = link;
+    this.count = count;
+  }
+}
 @Component({
   selector: 'dash-post-type',
   templateUrl: './post-type.component.html',
@@ -19,6 +31,7 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
   prev_total_text : any;
 
   labels = ["News", "Blogs", "Artikel", "Whitepaper", "Podcasts"];
+  links = ["","","","",""]
 
   data = [0,0,0,0,0];
   prev_data = [0,0,0,0,0];
@@ -30,15 +43,13 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
     }
 
     this.api.getPostsPerType().then(res => {
-      let map : Map<string, number> = new Map(Object.entries(res));
-      this.readMap(map, this.data);
+      this.readData(res, this.data);
       this.chart = this.createChart("post_type_chart", this.labels, this.data, undefined);
       this.chart_total = this.data.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
       this.cdr.detectChanges();
     }).finally(()=> {
       this.api.getPostsPerTypeYesterday().then(res => {
-        let map : Map<string, number> = new Map(Object.entries(res));
-        this.readMap(map, this.prev_data);
+        this.readData(res, this.prev_data);
         for (var i = 0; i < this.data.length; i++) {
           this.prev_data[i] = this.data[i] - this.prev_data[i];
         }
@@ -126,8 +137,29 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
             },
             bodyFont: {
               size: 15
+            },
+            callbacks: {
+              footer(tooltipItems): string | string[] | void {
+                return "Klick:\nauf Marktplatz anzeigen";
+              }
             }
           },
+        },
+        onClick: (event: any, elements, chart: Chart) =>  {
+          // @ts-ignore
+          window.open(this.links[elements.at(0).index], "_blank");
+        },
+        onHover: (event: ChartEvent, elements: ActiveElement[], chart: Chart) => {
+          // @ts-ignore
+          if(event.native)
+            if(elements.length == 1)
+            { // @ts-ignore
+              event.native.target.style.cursor = "pointer"
+            }
+            else {
+              // @ts-ignore
+              event.native.target.style.cursor = "default"
+            }
         }
       },
       //@ts-ignore
@@ -135,30 +167,29 @@ export class PostTypeComponent extends DashBaseComponent implements OnInit{
     })
   }
 
-
-  private readMap(map: Map<string, number>, data: number[]) {
-    map.forEach((value, key) => {
-      if (key == "News") {
-        this.labels[0] = key;
-        data[0] = (value == 0 || value == undefined ? 0 : value)
+  private readData(postTypes: PostType[], data : number[]) {
+    postTypes.forEach((type) => {
+      if (type.name == "News") {
+        data[0] = (type.count == 0 || type.count == undefined ? 0 : type.count);
+        this.links[0] = type.link;
       }
-      if (key == "Blogs") {
-        this.labels[1] = key;
-        data[1] = (value == 0 || value == undefined ? 0 : value)
+      if (type.name == "Blog") {
+        data[1] = (type.count == 0 || type.count == undefined ? 0 : type.count);
+        this.links[1] = type.link;
       }
-      if (key == "Artikel") {
-        this.labels[2] = key;
-        data[2] = (value == 0 || value == undefined ? 0 : value)
+      if (type.name == "Artikel") {
+        data[2] = (type.count == 0 || type.count == undefined ? 0 : type.count);
+        this.links[2] = type.link;
       }
-      if (key == "Whitepaper") {
-        this.labels[3] = key;
-        data[3] = (value == 0 || value == undefined ? 0 : value)
+      if (type.name == "Whitepaper") {
+        data[3] = (type.count == 0 || type.count == undefined ? 0 : type.count);
+        this.links[3] = type.link;
       }
-      if (key == "Podcasts") {
-        this.labels[4] = key;
-        data[4] = (value == 0 || value == undefined ? 0 : value)
+      if (type.name == "Podcasts") {
+        data[4] = (type.count == 0 || type.count == undefined ? 0 : type.count);
+        this.links[4] = type.link;
       }
     })
   }
-
+  protected readonly window = window;
 }

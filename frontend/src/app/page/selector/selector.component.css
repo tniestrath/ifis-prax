@@ -6,3 +6,14 @@
   padding: 0 5vw;
   overflow-y: auto;
 }
+.center-inner{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dead-end{
+  margin: 10px;
+  height: 2px;
+  background-color: #808080;
+}

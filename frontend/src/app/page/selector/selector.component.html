@@ -1,3 +1,11 @@
 <div class="selector-box" [ngStyle]="{ 'grid-template-columns': columnsForm, 'padding': padding}" (scroll)="onScroll($event)">
   <ng-template dashSelectable></ng-template>
+  <div class="dead-end" *ngIf="!isEmpty">
+    <div class="dead-end">
+      <div class="dead-end"></div>
+    </div>
+  </div>
+</div>
+<div class="center-inner" *ngIf="isEmpty">
+  <img src="assets/no-entries.png" width="180" height="130">
 </div>

@@ -1,9 +1,10 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
-import {ActiveElement, Chart, ChartEvent} from "chart.js/auto";
+import {ActiveElement, Chart, ChartEvent, TooltipItem} from "chart.js/auto";
 import {DashBaseComponent} from "../dash-base/dash-base.component";
 import {EmptyObject} from "chart.js/dist/types/basic";
 import {SysVars} from "../../services/sys-vars-service";
 import {Post} from "../post/Post";
+import {DashColors} from "../../util/Util";
 
 @Component({
   selector: 'dash-performance',
@@ -14,7 +15,7 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
 
   canvas_id: string = "gauge";
 
-  colors : string[] = ["rgb(149,29,64)", "#5A7995"];
+  colors : string[] = [DashColors.RED, DashColors.BLUE];
   cutout: string = "60%";
 
   type : string = "perf";
@@ -68,7 +69,6 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
           label: "",
           data: data,
           backgroundColor: this.colors,
-          //@ts-ignore
           borderWidth: 5,
           circumference: 180,
           rotation: 270,
@@ -103,18 +103,22 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
             display: false
           },
           tooltip: {
-            enabled: false
+            filter: function (tooltipItem) {
+              return tooltipItem.dataIndex != 1;
+            },
+            displayColors: false,
+            titleFont: {
+              size: 20
+            },
+            bodyFont: {
+              size: 15
+            },
+            callbacks: {
+            }
           },
         },
         interaction: {
           mode: "nearest"
-        },
-        events: [],
-        onHover(event: ChartEvent, elements: ActiveElement[], chart: Chart) {
-          return;
-        },
-        onClick(event: ChartEvent, elements: ActiveElement[], chart: Chart) {
-          onClick?.emit(elements[0].index);
         }
       },
       // @ts-ignore
@@ -128,7 +132,7 @@ export class GaugeComponent extends DashBaseComponent implements OnInit{
 
       this.api.getUserBestPost(SysVars.USER_ID, "performance").then(data => {
         let post : Post = data;
-        this.createChart(["Score", "Grey"],[(post.performance || 0)*100 , 100-((post.performance || 0)*100)],null);
+        this.createChart(["Score", ""],[(post.performance || 0)*100 , 100-((post.performance || 0)*100)],null);
 
         if (post.title.length > 30){
           this.postName = post.title.slice(0, 25) + " ...";

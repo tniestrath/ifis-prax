@@ -8,6 +8,7 @@
 }
 .newsletter-box:hover {
   border: 2px solid black;
+  cursor: pointer;
 }
 
 .newsletter-details{

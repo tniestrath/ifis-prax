@@ -6,6 +6,10 @@
   box-sizing: border-box;
   border: 1px solid #ffffff00;
 }
+.external-services-list-item-box:hover{
+  border: 1px solid black;
+  cursor: pointer;
+}
 .external-services-list-item-name{
   width: 80%;
   text-align: left;

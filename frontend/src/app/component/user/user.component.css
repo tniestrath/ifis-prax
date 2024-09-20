@@ -15,6 +15,7 @@
 }
 .user-box:hover{
   background-color: #EFEFEF;
+  cursor: pointer;
 }
 
 .user-img-box {

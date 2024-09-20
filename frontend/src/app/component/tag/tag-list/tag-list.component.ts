@@ -1,50 +1,47 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {DashBaseComponent} from "../../dash-base/dash-base.component";
-import {SelectorItem} from "../../../page/selector/selector.component";
-import {Subject} from "rxjs";
+import {Component} from '@angular/core';
 import {TagRanking} from "../Tag";
 import {TagListItemComponent} from "./tag-list-item/tag-list-item.component";
+import {DashListPageableComponent} from "../../dash-list/dash-list.component";
 
 @Component({
   selector: 'dash-tag-list',
   templateUrl: './tag-list.component.html',
   styleUrls: ['./tag-list.component.css', "../../dash-base/dash-base.component.css"]
 })
-export class TagListComponent extends DashBaseComponent{
-  selectorItems : SelectorItem[] = [];
-  selectorItemsBackup = this.selectorItems;
-  selectorItemsLoaded = new Subject<SelectorItem[]>();
+export class TagListComponent extends DashListPageableComponent<TagRanking, TagListItemComponent>{
   search_input : any;
   sorting_input_r : any;
   sorting_input_p : any;
-  ngOnInit(): void {
-    this.setToolTip("Auflistung aller #Tags, sortierbar nach Relevanz oder Views")
 
-    this.api.getAllTagsWithStats().then(res => {
-      for (var tag of res) {
-        this.selectorItems.push(new SelectorItem(TagListItemComponent, new TagRanking(tag.id, tag.name, tag.viewsPosts, tag.viewsCat, tag.count)));
-      }
-      this.selectorItemsLoaded.next(this.selectorItems);
-    })
+  selected_sorter : string = "";
+  selected_search : string = "";
+
+  override ngOnInit(): void {
+    this.setToolTip("Auflistung aller #Tags, sortierbar nach Anzahl der Beiträge oder Views")
+    this.selectorItems = [];
+    this.pagesComplete = false;
+    this.load(this.api.getAllTagsWithStats(this.pageIndex, this.pageSize, this.selected_sorter, this.selected_search), TagListItemComponent);
 
     this.search_input = document.getElementById("tag-search");
     this.sorting_input_r = document.getElementById("tag-sort-r");
     this.sorting_input_p = document.getElementById("tag-sort-p");
 
     this.search_input.addEventListener("input", (event : any) => {
-      this.selectorItems = this.selectorItemsBackup.filter((item) => {
-        return item.data.name.toUpperCase().includes(event.target.value.toUpperCase());
-      });
-      this.selectorItemsLoaded.next(this.selectorItems);
+      this.selected_search = event.target.value;
+      this.reload(this.api.getAllTagsWithStats(0, this.pageSize, this.selected_sorter, this.selected_search), TagListItemComponent);
     })
 
     this.sorting_input_r.addEventListener("change", () => {
-      this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByCount((b.data as TagRanking)));
-      this.selectorItemsLoaded.next(this.selectorItems);
+      this.selected_sorter = "count";
+      this.reload(this.api.getAllTagsWithStats(0, this.pageSize, this.selected_sorter, this.selected_search), TagListItemComponent);
     });
     this.sorting_input_p.addEventListener("change", () => {
-      this.selectorItems.sort((a, b) => (a.data as TagRanking).compareByViews((b.data as TagRanking)));
-      this.selectorItemsLoaded.next(this.selectorItems);
+      this.selected_sorter = "viewsTotal"
+      this.reload(this.api.getAllTagsWithStats(0, this.pageSize, this.selected_sorter, this.selected_search), TagListItemComponent);
     });
+  }
+
+  override onScrollEnd() {
+    this.onScrollEndWithPromise(this.api.getAllTagsWithStats(this.pageIndex, this.pageSize, this.selected_sorter, this.selected_search));
   }
 }

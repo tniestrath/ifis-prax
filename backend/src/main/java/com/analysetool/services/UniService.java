@@ -761,30 +761,50 @@ public class UniService {
      * Fetch posts mapped by their type.
      * @return a JSON-String mapping posts to their types.
      */
-    public String getPostsByType() {
-        HashMap<String, Integer> map = new HashMap<>();
+    public String getPostsByType() throws JSONException {
+        JSONArray json = new JSONArray();
         UniversalStats uniStat = uniRepo.getLatestUniStat();
-        return makeTypeMap(map, uniStat);
+        return makeTypeMap(json, uniStat);
     }
 
     /**
      * Fetch posts mapped by their type for yesterday.
      * @return a JSON-String mapping posts to their types.
      */
-    public String getPostsByTypeYesterday(){
-        HashMap<String, Integer> map = new HashMap<>();
+    public String getPostsByTypeYesterday() throws JSONException {
+        JSONArray json = new JSONArray();
         UniversalStats uniStat = uniRepo.getSecondLastUniStats().get(1);
-        return makeTypeMap(map, uniStat);
+        return makeTypeMap(json, uniStat);
     }
 
-    private String makeTypeMap(HashMap<String, Integer> map, UniversalStats uniStat) {
-        map.put("Blogs", Math.toIntExact(uniStat.getAnzahlBlog()));
-        map.put("News", Math.toIntExact(uniStat.getAnzahlNews()));
-        map.put("Artikel", Math.toIntExact(uniStat.getAnzahlArtikel()));
-        map.put("Whitepaper", Math.toIntExact(uniStat.getAnzahlWhitepaper()));
-        map.put("Podcasts", Math.toIntExact(uniStat.getAnzahlPodcast()));
-
-        return new JSONObject(map).toString();
+    private String makeTypeMap(JSONArray json, UniversalStats uniStat) throws JSONException {
+        Constants constant = Constants.getInstance();
+        JSONObject bson = new JSONObject();
+        bson.put("count", Math.toIntExact(uniStat.getAnzahlBlog()));
+        bson.put("link", constant.getBlogLink());
+        bson.put("name", "Blog");
+        json.put(bson);
+        bson = new JSONObject();
+        bson.put("count", Math.toIntExact(uniStat.getAnzahlNews()));
+        bson.put("link", constant.getNewsLink());
+        bson.put("name", "News");
+        json.put(bson);
+        bson = new JSONObject();
+        bson.put("count", Math.toIntExact(uniStat.getAnzahlArtikel()));
+        bson.put("link", constant.getArtikelLink());
+        bson.put("name", "Artikel");
+        json.put(bson);
+        bson = new JSONObject();
+        bson.put("count", Math.toIntExact(uniStat.getAnzahlWhitepaper()));
+        bson.put("link", constant.getWpLink());
+        bson.put("name", "Whitepaper");
+        json.put(bson);
+        bson = new JSONObject();
+        bson.put("count", Math.toIntExact(uniStat.getAnzahlPodcast()));
+        bson.put("link", constant.getCouchLink());
+        bson.put("name", "Podcast");
+        json.put(bson);
+        return json.toString();
     }
 
 

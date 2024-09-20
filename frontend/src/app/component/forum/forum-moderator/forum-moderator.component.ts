@@ -71,6 +71,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
 
     SysVars.SELECTED_FORUM_POST.subscribe(post => {
       if (post) {
+        this.display.setEmpty(false);
         this.api.unlockForumPost(this.display.data.id);
         this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.display.data));
         let index = this.list.selectorItems.findIndex((item: SelectorItem) => {
@@ -100,6 +101,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
       if (checked){
         this.list.reload(this.api.getModeratedForumPostsByFilter(this.selectedFilter.forumId, this.selectedFilter.catId, this.selectedFilter.topicId, "").then(data  =>{
           if (data.length > 0){
+            this.display.setEmpty(false);
             this.bulkDisplayDataMapping(data);
             this.display.data = data.splice(0, 1)[0];
             this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
@@ -109,13 +111,15 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
             this.cdr.detectChanges();
           }
           else {
-            this.display.data = new ForumPost()
+            this.display.data = new ForumPost();
+            this.display.setEmpty(true);
           }
           return data;
         }), ForumModerationListItemComponent);
       } else {
         this.list.reload(this.api.getUnmoderatedForumPostsByFilter(this.selectedFilter.forumId, this.selectedFilter.catId, this.selectedFilter.topicId, "").then(data  =>{
           if (data.length > 0){
+            this.display.setEmpty(false);
             this.bulkDisplayDataMapping(data);
             this.display.data = data.splice(0, 1)[0];
             this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
@@ -125,7 +129,8 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
             this.cdr.detectChanges();
           }
           else {
-            this.display.data = new ForumPost()
+            this.display.data = new ForumPost();
+            this.display.setEmpty(true);
           }
           return data;
         }), ForumModerationListItemComponent);
@@ -134,6 +139,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     }
     this.list.load(this.api.getUnmoderatedForumPostsByFilter(this.selectedFilter.forumId, this.selectedFilter.catId, this.selectedFilter.topicId, "").then(data  =>{
       if (data.length > 0){
+        this.display.setEmpty(false);
         this.bulkDisplayDataMapping(data);
         this.display.data = data.splice(0, 1)[0];
         this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
@@ -143,7 +149,8 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
         this.cdr.detectChanges();
       }
       else {
-        this.display.data = new ForumPost()
+        this.display.data = new ForumPost();
+        this.display.setEmpty(true);
       }
       return data;
     }), ForumModerationListItemComponent);
@@ -154,6 +161,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
           this.api.deleteForumPost(this.display.data.id).then(value => {
             if(value){
               if (this.list.selectorItems.length > 0){
+                this.display.setEmpty(false);
                 this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
                 this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
                   this.display.isLocked = res;
@@ -161,6 +169,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
                 })
               } else {
                 this.display.data = new ForumPost();
+                this.display.setEmpty(true);
               }
               this.cdr.detectChanges();
               this.list.selectorItemsLoaded.next(this.list.selectorItems);
@@ -179,6 +188,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
           if (value) {
             this.display.data = this.displayDataMapping(this.display.data);
             if (this.list.selectorItems.length > 0){
+              this.display.setEmpty(false);
               this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
               this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
                 this.display.isLocked = res;
@@ -186,6 +196,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
               })
             } else {
               this.display.data = new ForumPost();
+              this.display.setEmpty(true);
             }
             this.cdr.detectChanges();
             this.list.selectorItemsLoaded.next(this.list.selectorItems);
@@ -199,6 +210,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
     this.display.onStackClick = () => {
       this.api.modifyForumPost(this.modify(), this.list.isModeratedChecked()).then(value => {
         if (this.list.selectorItems.length > 0){
+          this.display.setEmpty(false);
           this.list.selectorItems.push(new SelectorItem(ForumModerationListItemComponent, this.displayDataMapping(this.display.data)));
           this.display.data = this.list.selectorItems.splice(0, 1)[0].data as ForumPost;
           this.api.isForumPostLocked(this.display.data.id, SysVars.ACCOUNT.id).then(res => {
@@ -207,6 +219,7 @@ export class ForumModeratorComponent extends DashBaseComponent implements OnInit
           })
         } else {
           this.display.data = new ForumPost();
+          this.display.setEmpty(true);
         }
         this.cdr.detectChanges();
         this.list.selectorItemsLoaded.next(this.list.selectorItems);

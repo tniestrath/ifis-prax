@@ -119,14 +119,14 @@ public class UniStatController {
      * @return a JSON-String mapping posts to their types.
      */
     @GetMapping("/getPostsByType")
-    public String getPostsByType() {return uniService.getPostsByType();}
+    public String getPostsByType() throws JSONException {return uniService.getPostsByType();}
 
     /**
      * Fetch posts mapped by their type for yesterday.
      * @return a JSON-String mapping posts to their types.
      */
     @GetMapping("/getPostsByTypeYesterday")
-    public String getPostsByTypeYesterday(){return uniService.getPostsByTypeYesterday();}
+    public String getPostsByTypeYesterday() throws JSONException {return uniService.getPostsByTypeYesterday();}
 
 
     /**

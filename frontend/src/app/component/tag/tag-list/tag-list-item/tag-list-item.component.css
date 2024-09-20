@@ -8,6 +8,7 @@
 }
 .tag-list-item-box:hover{
   border: 1px solid black;
+  cursor: pointer;
 }
 
 .tag-rel{

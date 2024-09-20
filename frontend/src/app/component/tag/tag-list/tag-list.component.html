@@ -4,8 +4,13 @@
   <input type="radio" id="tag-sort-r" name="sort" value="R">
   <input type="radio" id="tag-sort-p" name="sort" value="V" checked>
   </form>
+  <div class="legend">
+    <div>Anz. Beiträge</div>
+    <div>Tag</div>
+    <div>Aufrufe</div>
+  </div>
   <div class="tag-list-selector-container">
-    <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded"></dash-selector>
+    <dash-selector [columnsForm]="'1fr'" padding="0 5px" [zebraColorMode]="true" [dataLoaded]="selectorItemsLoaded" (scrollEnd)="onScrollEnd()"></dash-selector>
   </div>
   <div id="shadow"></div>
 </div>

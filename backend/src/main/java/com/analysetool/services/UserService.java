@@ -606,6 +606,7 @@ public class UserService {
             if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "basis_plus";
             if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium";
             if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "basis";
+            if(wpUserMeta.contains(Constants.getInstance().getBasisVeranstalter())) return "basis_veranstalter";
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 
@@ -853,7 +854,7 @@ public class UserService {
 
     /**
      * @param id user id to fetch an account type for.
-     * @return "basis" "plus" "premium" "sponsor" "basis-plus" "admin" "none"
+     * @return "basis" "plus" "premium" "sponsor" "basis-plus" "basis-veranstalter" "admin" "none"
      */
     public String getType(int id) {
         if (wpUserMetaRepository.existsByUserId((long) id)){
@@ -865,6 +866,7 @@ public class UserService {
             if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium";
             if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "basis";
             if(wpUserMeta.contains(Constants.getInstance().getMod())) return "moderator";
+            if(wpUserMeta.contains(Constants.getInstance().getBasisVeranstalter())) return "basis-veranstalter";
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 
@@ -1805,12 +1807,14 @@ public class UserService {
         JSONObject averages = new JSONObject();
 
         counts.put("basis", 0);
+        counts.put("basis-veranstalter", 0);
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
         counts.put("sponsor", 0);
 
         clicks.put("basis", 0);
+        clicks.put("basis-veranstalter",0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
         clicks.put("premium", 0);
@@ -1837,12 +1841,14 @@ public class UserService {
         JSONObject averages = new JSONObject();
 
         counts.put("basis", 0);
+        counts.put("basis-veranstalter", 0);
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
         counts.put("sponsor", 0);
 
         clicks.put("basis", 0);
+        clicks.put("basis-veranstalter",0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
         clicks.put("premium", 0);
@@ -1868,16 +1874,19 @@ public class UserService {
         JSONObject averages = new JSONObject();
 
         counts.put("basis", 0);
+        counts.put("basis-veranstalter", 0);
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
         counts.put("sponsor", 0);
 
         clicks.put("basis", 0);
+        clicks.put("basis-veranstalter",0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
         clicks.put("premium", 0);
         clicks.put("sponsor", 0);
+
         for(WPUser u : userRepo.findAll()) {
             boolean stats = userStatsRepository.existsByUserId(u.getId());
             if(hasPost(Math.toIntExact(u.getId()))) {
@@ -1899,16 +1908,19 @@ public class UserService {
         JSONObject averages = new JSONObject();
 
         counts.put("basis", 0);
+        counts.put("basis-veranstalter", 0);
         counts.put("basis-plus", 0);
         counts.put("plus", 0);
         counts.put("premium", 0);
         counts.put("sponsor", 0);
 
         clicks.put("basis", 0);
+        clicks.put("basis-veranstalter",0);
         clicks.put("basis-plus", 0);
         clicks.put("plus", 0);
         clicks.put("premium", 0);
         clicks.put("sponsor", 0);
+
         for(WPUser u : userRepo.findAll()) {
             if(hasPost(Math.toIntExact(u.getId()))) {
                 addCountAndProfileViewsByType(counts, clicks, u, false, true);
@@ -1947,6 +1959,12 @@ public class UserService {
                 }
                 counts.put("basis", counts.getInt("basis") + 1);
             }
+            case "basis-veranstalter" -> {
+                if(profileViews) {
+                    clicks.put("basis-veranstalter", clicks.getInt("basis-veranstalter") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                counts.put("basis-veranstalter", counts.getInt("basis-veranstalter") + 1);
+            }
             case "basis-plus" -> {
                 if(profileViews) {
                     clicks.put("basis-plus", clicks.getInt("basis-plus") + userStatsRepository.findByUserId(u.getId()).getProfileView());
@@ -1984,6 +2002,15 @@ public class UserService {
                     clicks.put("basis", clicks.getInt("basis") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
                 }
                 counts.put("basis", counts.getInt("basis") + 1);
+            }
+            case "basis-veranstalter" -> {
+                if(profileViews) {
+                    clicks.put("basis-veranstalter", clicks.getInt("basis-veranstalter") + userStatsRepository.findByUserId(u.getId()).getProfileView());
+                }
+                if(postViews) {
+                    clicks.put("basis-veranstalter", clicks.getInt("basis-veranstalter") + getClickTotalOnPostsOfUser(Math.toIntExact(u.getId())));
+                }
+                counts.put("basis-veranstalter", counts.getInt("basis-veranstalter") + 1);
             }
             case "basis-plus" -> {
                 if(profileViews) {
@@ -2029,6 +2056,11 @@ public class UserService {
             averages.put("basis", clicks.getInt("basis") / counts.getInt("basis"));
         } else {
             averages.put("basis", 0);
+        }
+        if(counts.getInt("basis-veranstalter") != 0) {
+            averages.put("basis-veranstalter", clicks.getInt("basis-veranstalter") / counts.getInt("basis-veranstalter"));
+        } else {
+            averages.put("basis-veranstalter", 0);
         }
         if(counts.getInt("basis-plus") != 0) {
             averages.put("basis-plus", clicks.getInt("basis-plus") / counts.getInt("basis-plus"));
@@ -2215,6 +2247,9 @@ public class UserService {
                 }
                 case "basis" -> {
                     counts.put("Basic", counts.get("Basic") == null ? 1 : counts.get("Basic") + 1);
+                }
+                case "basis-veranstalter" -> {
+                    counts.put("Basic-Veranstalter", counts.get("Basic-Veranstalter") == null ? 1 : counts.get("Basic-Veranstalter") + 1);
                 }
                 case "basis-plus" -> {
                     counts.put("Basic-Plus", counts.get("Basic-Plus") == null ? 1 : counts.get("Basic-Plus") + 1);

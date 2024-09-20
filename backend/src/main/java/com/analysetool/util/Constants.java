@@ -34,6 +34,7 @@ public class Constants {
     private final String plusAnbieter = "um_plus";
     private final String premiumAnbieter = "um_premium";
     private final String mod = "editor";
+    private final String basisVeranstalter = "um_basis-veranstalter";
 
     private final String thumbnailLocationStart = "https://it-sicherheit.de/wp-content/uploads/";
     private final String profilePhotoStart = "https://it-sicherheit.de/wp-content/uploads/ultimatemember/";
@@ -185,9 +186,14 @@ public class Constants {
         return mod;
     }
 
+    public String getBasisVeranstalter() {
+        return basisVeranstalter;
+    }
+
     public List<String> getListOfUserTypesDirty() {
         List<String> list = new ArrayList<>();
         list.add(basisAnbieter);
+        list.add(basisVeranstalter);
         list.add(basisPlusAnbieter);
         list.add(plusAnbieter);
         list.add(premiumAnbieter);
@@ -197,6 +203,7 @@ public class Constants {
     public List<String> getListOfUserTypes() {
         List<String> list = new ArrayList<>();
         list.add("basis");
+        list.add("basis-veranstalter");
         list.add("basis-plus");
         list.add("plus");
         list.add("premium");

@@ -660,7 +660,9 @@ public class UserService {
             obj.put("id", user.getId());
             obj.put("email", user.getEmail());
             obj.put("displayName", user.getDisplayName());
-            obj.put("niceName", user.getNicename());
+            //ToDo: Make a more permanent fix than this
+            //obj.put("niceName", user.getNicename());
+            obj.put("niceName", user.getDisplayName());
             obj.put("creationDate", user.getRegistered().toLocalDate().toString());
             if (userStatsRepository.existsByUserId(user.getId())) {
                 UserStats statsUser = userStatsRepository.findByUserId(user.getId());
@@ -2310,7 +2312,7 @@ public class UserService {
 
         LocalDateTime lastWeek = LocalDateTime.now().minusDays(7);
 
-        List<String> ohne = new ArrayList<>(), basis = new ArrayList<>(), basis_plus = new ArrayList<>(), plus = new ArrayList<>(), premium = new ArrayList<>();
+        List<String> ohne = new ArrayList<>(), basis = new ArrayList<>(), basis_veranstalter = new ArrayList<>(), basis_plus = new ArrayList<>(), plus = new ArrayList<>(), premium = new ArrayList<>();
 
         for(WPUser user : userRepo.findAll()) {
 
@@ -2337,6 +2339,9 @@ public class UserService {
                     case "basis-plus" -> {
                         newMembership = basis_plus;
                     }
+                    case "basis-veranstalter" -> {
+                        newMembership = basis_veranstalter;
+                    }
                     case "plus" -> {
                         newMembership = plus;
                     }
@@ -2352,6 +2357,9 @@ public class UserService {
                         }
                         case "basis" -> {
                             oldMembership = basis;
+                        }
+                        case "basis-veranstalter" -> {
+                            oldMembership = basis_veranstalter;
                         }
                         case "basis-plus" -> {
                             oldMembership = basis_plus;
@@ -2380,12 +2388,14 @@ public class UserService {
 
         obj.put("ohne", new JSONArray(ohne));
         obj.put("basis", new JSONArray(basis));
+        obj.put("basisVeranstalter", new JSONArray(basis_veranstalter));
         obj.put("basisPlus", new JSONArray(basis_plus));
         obj.put("plus", new JSONArray(plus));
         obj.put("premium", new JSONArray(premium));
 
         obj.put("ohneCount", getUserChangeCountFromList(ohne));
         obj.put("basisCount", getUserChangeCountFromList(basis));
+        obj.put("basisVeranstalter", getUserChangeCountFromList(basis_veranstalter));
         obj.put("basisPlusCount", getUserChangeCountFromList(basis_plus));
         obj.put("plusCount", getUserChangeCountFromList(plus));
         obj.put("premiumCount", getUserChangeCountFromList(premium));

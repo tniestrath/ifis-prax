@@ -26,6 +26,10 @@ public interface UserRedirectsHourlyRepository extends JpaRepository<UserRedirec
     List<Object[]> getUserIdAndRedirectsSum();
     @Query("SELECT SUM(u.redirects) FROM UserRedirectsHourly u WHERE u.userId=:userId")
     Long getAllRedirectsOfUserIdSummed(Long userId);
+
+    @Query("SELECT SUM(u.redirects) FROM UserRedirectsHourly u WHERE u.userId=:userId AND u.uniId >= (SELECT us.id - :daysBack FROM UniversalStats us ORDER BY us.id DESC LIMIT 1)")
+    Long getAllRedirectsOfUserIdSummed(Long userId, int daysBack);
+
     @Query("SELECT SUM(u.redirects) FROM UserRedirectsHourly u WHERE u.userId IN :userIds")
     Long findSumOfRedirectsForUserIds(List<Long> userIds);
     List<UserRedirectsHourly> findAllByUserIdInAndUniId(List<Long> userIds, Integer uniId);

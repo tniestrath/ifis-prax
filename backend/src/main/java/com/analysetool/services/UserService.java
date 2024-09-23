@@ -605,8 +605,8 @@ public class UserService {
             if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return "plus";
             if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "basis_plus";
             if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium";
-            if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "basis";
             if(wpUserMeta.contains(Constants.getInstance().getBasisVeranstalter())) return "basis_veranstalter";
+            if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "basis";
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 
@@ -712,8 +712,10 @@ public class UserService {
             //Checks how many times website has redirected to a user's homepage
             if(userRedirectsRepo.existsByUserId(user.getId())) {
                 obj.put("redirects", userRedirectsRepo.getAllRedirectsOfUserIdSummed(user.getId()));
+                obj.put("redirectsLast30", userRedirectsRepo.getAllRedirectsOfUserIdSummed(user.getId(), 30));
             } else {
                 obj.put("redirects", 0);
+                obj.put("redirectsLast30", 0);
             }
 
             Pattern pattern = Pattern.compile("\"([^\"]+)\"");
@@ -870,9 +872,9 @@ public class UserService {
             if (wpUserMeta.contains(Constants.getInstance().getPlusAnbieter())) return "plus";
             if (wpUserMeta.contains(Constants.getInstance().getBasisPlusAnbieter())) return "basis-plus";
             if (wpUserMeta.contains(Constants.getInstance().getPremiumAnbieter())) return "premium";
+            if(wpUserMeta.contains(Constants.getInstance().getBasisVeranstalter())) return "basis-veranstalter";
             if(wpUserMeta.contains(Constants.getInstance().getBasisAnbieter())) return "basis";
             if(wpUserMeta.contains(Constants.getInstance().getMod())) return "moderator";
-            if(wpUserMeta.contains(Constants.getInstance().getBasisVeranstalter())) return "basis-veranstalter";
             if (wpUserMeta.contains("anbieter")) return "none";
         }
 

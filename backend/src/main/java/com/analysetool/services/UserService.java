@@ -2395,7 +2395,7 @@ public class UserService {
 
         obj.put("ohneCount", getUserChangeCountFromList(ohne));
         obj.put("basisCount", getUserChangeCountFromList(basis));
-        obj.put("basisVeranstalter", getUserChangeCountFromList(basis_veranstalter));
+        obj.put("basisVeranstalterCount", getUserChangeCountFromList(basis_veranstalter));
         obj.put("basisPlusCount", getUserChangeCountFromList(basis_plus));
         obj.put("plusCount", getUserChangeCountFromList(plus));
         obj.put("premiumCount", getUserChangeCountFromList(premium));

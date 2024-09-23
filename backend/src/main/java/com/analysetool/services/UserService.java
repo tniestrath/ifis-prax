@@ -2382,6 +2382,7 @@ public class UserService {
 
         ohne.sort(customComparator);
         basis.sort(customComparator);
+        basis_veranstalter.sort(customComparator);
         basis_plus.sort(customComparator);
         plus.sort(customComparator);
         premium.sort(customComparator);

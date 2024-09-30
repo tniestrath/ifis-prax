@@ -15,6 +15,7 @@ export class HeaderComponent implements AfterViewInit{
   @Output() selected = new Subject<string>();
   navElementsBackup = ["Übersicht", "Beiträge", "Themen", "Anbieter", "Inhalte", "SEO", "Suche", "Newsletter", "Forum", "System"];
   navElements = this.navElementsBackup;
+  navElementsHTML : HTMLDivElement[] = [];
 
   loadingBar_process : any = null;
   html_err_code : string = "";
@@ -39,10 +40,10 @@ export class HeaderComponent implements AfterViewInit{
       console.log(user)
       if (user.accessLevel == "mod" || user.id == String(357)){
         this.navElements = ["Forum"];
-        this.selected.next("Forum");
+        this.setSelected("Forum");
       } else if(user.accessLevel == "admin" || user.accountType == "admin") {
         this.navElements = this.navElementsBackup;
-        this.selected.next("Übersicht");
+        this.setSelected("Übersicht");
       } else if (user.accessLevel == "user" || user.accountType == "user"){
         this.navElements = [];
         // @ts-ignore
@@ -78,6 +79,12 @@ export class HeaderComponent implements AfterViewInit{
   }
 
   setSelected(page : string){
+    var elements = document.querySelectorAll<HTMLDivElement>(".nav-element");
+    elements.forEach((value, key) => {
+      value.style.border = "none";
+    })
+    // @ts-ignore
+    document.getElementById(page).style.border = "2px solid #941C3EFF";
     this.selected.next(page);
   }
 

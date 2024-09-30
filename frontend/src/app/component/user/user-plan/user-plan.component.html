@@ -56,14 +56,30 @@
           </li>
           <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
             <div style="height: 2vh; display: flex; align-items: center;">
-              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.PLAN_PLUS}">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.PLAN_BASIC_HOST}">
               </span>
-              <p style="margin: 0px;">Plus:</p>
+              <p style="margin: 0px;">Basis-Veranstalter:</p>
             </div>
             <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
               <p style="margin: 0px;">{{chart?.data.datasets[0].data[3]}}</p>
               <p class="tooltip-box" style="margin: 0;">
                 {{prev_data[3] >= 0 ? "+" + prev_data[3] : prev_data[3].toString()}}
+                <span class="tooltip-text">
+                  <ng-template id="bhList" bhListDirective></ng-template>
+                </span>
+              </p>
+            </div>
+          </li>
+          <li style="display: flex; height: 2vh; align-items: center; flex-direction: row; justify-content: space-between; margin: 4px; font-size: 1.15vw;">
+            <div style="height: 2vh; display: flex; align-items: center;">
+              <span [ngStyle]="{display: 'inline-block', height: '2vh', width: '2vh', marginRight: '5px', borderRadius: '5px', backgroundColor: DashColors.PLAN_PLUS}">
+              </span>
+              <p style="margin: 0px;">Plus:</p>
+            </div>
+            <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[4]}}</p>
+              <p class="tooltip-box" style="margin: 0;">
+                {{prev_data[4] >= 0 ? "+" + prev_data[4] : prev_data[4].toString()}}
                 <span class="tooltip-text">
                   <ng-template id="plusList" plusListDirective></ng-template>
                 </span>
@@ -77,9 +93,9 @@
               <p style="margin: 0px;">Premium:</p>
             </div>
             <div style="display: flex; flex-direction: row; width: 35%; justify-content: space-between">
-              <p style="margin: 0px;">{{chart?.data.datasets[0].data[4]}}</p>
+              <p style="margin: 0px;">{{chart?.data.datasets[0].data[5]}}</p>
               <p class="tooltip-box" style="margin: 0;">
-                {{prev_data[4] >= 0 ? "+" + prev_data[4] : prev_data[4].toString()}}
+                {{prev_data[5] >= 0 ? "+" + prev_data[5] : prev_data[5].toString()}}
                 <span class="tooltip-text">
                   <ng-template id="premiumList" premiumListDirective></ng-template>
                 </span>

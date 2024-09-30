@@ -2,7 +2,7 @@
   <img src="../../assets/ifismpdashboard.png"/>
 
   <div *ngFor="let element of navElements">
-    <div class="nav-element" [innerText]="element" (click)="setSelected(element)"></div>
+    <div [id]="element" class="nav-element" [innerText]="element" (click)="setSelected(element)"></div>
   </div>
 </div>
 <div id="feedback-panel" (click)="onFeedbackClick()">

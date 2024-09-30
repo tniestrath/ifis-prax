@@ -37,6 +37,14 @@ export class BpListDirective {
 
 }
 @Directive({
+  selector: '[bhListDirective]'
+})
+export class BhListDirective {
+
+  constructor(public viewContainerRef: ViewContainerRef) { }
+
+}
+@Directive({
   selector: '[plusListDirective]'
 })
 export class PlusListDirective {
@@ -65,19 +73,21 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
   prev_total : number = 0;
   prev_total_text : any;
 
-  labels = ["Ohne Abo", "Basic", "Basic-Plus", "Plus", "Premium"];
+  labels = ["Ohne Abo", "Basic", "Basic-Plus", "Basic-Veranstalter", "Plus", "Premium"];
 
   data = [0,0,0,0,0];
   prev_data = [0,0,0,0,0];
 
   oaList: HTMLParagraphElement[] = [];
   bpList: HTMLParagraphElement[] = [];
+  bhList: HTMLParagraphElement[] = [];
   plusList: HTMLParagraphElement[] = [];
   premiumList: HTMLParagraphElement[] = [];
   sponsorList: HTMLParagraphElement[] = [];
   @ViewChild(OaListDirective, {static: true}) oaListDirective!: OaListDirective;
   @ViewChild(BasicListDirective, {static: true}) basicListDirective!: BasicListDirective;
   @ViewChild(BpListDirective, {static: true}) bpListDirective!: BpListDirective;
+  @ViewChild(BhListDirective, {static: true}) bhListDirective!: BhListDirective;
   @ViewChild(PlusListDirective, {static: true}) plusListDirective!: PlusListDirective;
   @ViewChild(PremiumListDirective, {static: true}) premiumListDirective!: PremiumListDirective;
 
@@ -105,13 +115,16 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         this.appendToList(this.bpListDirective, res.basisPlus);
         this.prev_data[2] = res.basisPlusCount;
         // @ts-ignore
+        this.appendToList(this.bhListDirective, res.basisVeranstalter);
+        this.prev_data[3] = res.basisVeranstalterCount;
+        // @ts-ignore
         this.appendToList(this.plusListDirective, res.plus);
-        this.prev_data[3] = res.plusCount;
+        this.prev_data[4] = res.plusCount;
         // @ts-ignore
         this.appendToList(this.premiumListDirective, res.premium);
-        this.prev_data[4] = res.premiumCount;
+        this.prev_data[5] = res.premiumCount;
 
-        this.prev_total = (res.ohneCount + res.basisCount + res.basisPlusCount + res.plusCount + res.premiumCount)
+        this.prev_total = (res.ohneCount + res.basisCount + res.basisPlusCount + res.basisVeranstalterCount + res.plusCount + res.premiumCount)
         this.prev_total_text = this.prev_total >= 0 ? "+" + this.prev_total : this.prev_total;
         this.cdr.detectChanges();
       })
@@ -152,13 +165,17 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
         this.labels[2] = key;
         data[2] = (value == 0 || value == undefined ? 0 : value)
       }
-      if (key == "Plus") {
+      if (key == "Basic-Veranstalter") {
         this.labels[3] = key;
         data[3] = (value == 0 || value == undefined ? 0 : value)
       }
-      if (key == "Premium") {
+      if (key == "Plus") {
         this.labels[4] = key;
         data[4] = (value == 0 || value == undefined ? 0 : value)
+      }
+      if (key == "Premium") {
+        this.labels[5] = key;
+        data[5] = (value == 0 || value == undefined ? 0 : value)
       }
     })
   }

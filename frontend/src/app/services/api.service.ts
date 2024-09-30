@@ -548,7 +548,7 @@ export class ApiService {
     return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_LAST_WEEK), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ACCOUNTTYPES_LAST_WEEK)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
-  async getUserAccountTypesAllNew() : Promise<{ohne: string[], ohneCount: number, basis: string[], basisCount: number, basisPlus: string[], basisPlusCount: number, plus: string[], plusCount: number, premium: string[], premiumCount : number}>{
+  async getUserAccountTypesAllNew() : Promise<{ohne: string[], ohneCount: number, basis: string[], basisCount: number, basisPlus: string[], basisPlusCount: number, basisVeranstalter: string[], basisVeranstalterCount: number, plus: string[], plusCount: number, premium: string[], premiumCount : number}>{
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_ACCOUNTTYPES_CHANGED), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_ACCOUNTTYPES_CHANGED)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }

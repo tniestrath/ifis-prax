@@ -89,7 +89,12 @@ export default class Util {
   }
 
   static firstToUpperCase(string : string){
-    return string[0].toUpperCase() + string.slice(1);
+    let result = string[0].toUpperCase() + string.slice(1);
+    if (result.includes('-')){
+      // @ts-ignore
+      result = result.substring(0, result.indexOf('-')+1) + result.at(result.indexOf('-')+1).toUpperCase() + result.substring(result.indexOf('-')+2);
+    }
+    return result;
   }
 
 
@@ -110,6 +115,8 @@ export default class Util {
             return DashColors.PLAN_BASIC;
           case "basis-plus":
             return DashColors.PLAN_BASIC_PLUS;
+          case "basis-veranstalter":
+            return DashColors.PLAN_BASIC_HOST;
           case "plus":
             return DashColors.PLAN_PLUS;
           case "premium":
@@ -235,6 +242,7 @@ export enum DashColors {
   RATGEBER = "rgb(130,106,34)",
 
   NEWSLETTER = "rgb(34,106,130)",
+  PLAN_BASIC_HOST = "rgb(34,106,130)",
 
   MODERATOR = "rgb(130,34,106)",
   EVENT = "rgb(130,34,106)",

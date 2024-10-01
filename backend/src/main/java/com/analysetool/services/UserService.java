@@ -828,10 +828,10 @@ public class UserService {
      * @return whether the tendency is growth.
      */
     public Boolean tendencyUp(long userId) {
-        int count = 7;
+        int count = 30;
         int clicks = 0;
-        if(getDaysSinceTracking(userId) > 7) {
-            for(Integer uni : userViewsRepo.getLast7Uni()) {
+        if(getDaysSinceTracking(userId) > 30) {
+            for(Integer uni : userViewsRepo.getLast30Uni()) {
                 for(UserViewsByHourDLC u : userViewsRepo.findByUserIdAndUniId(userId, uni)) {
                     clicks += u.getViews();
                 }

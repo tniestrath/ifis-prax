@@ -666,11 +666,15 @@ public class LogService {
                 for (String item : blacklistUserAgents) {
                     isBlacklisted = userAgent.matches("^.*" + item + ".*") && !isBlacklisted;
                 }
+
+                /*
                 if(blacklist2 != null) {
                     for (String blacklistItem : blacklist2) {
                         isBlacklisted = isBlacklisted || ip.equals(blacklistItem);
                     }
-                }
+                } */
+
+
                 //Falls keiner der Filter zutrifft und der Teil des Logs noch nicht gelesen wurde, behandle die Zeile.
                 //isInternal ist kurzzeitig entfernt als test.
                 if ((dateLog.isAfter(dateLastRead) || dateLog.isEqual(dateLastRead)) && !isDevAccess && !isServerError && !isBlacklisted && isSuccessfulRequest && !isSpam && isGet) {
@@ -3071,7 +3075,7 @@ public class LogService {
         updateAnbieterFailedSearchBuffer();
         deleteStandardSearch();
         cleanFinalSearchStatDLC();
-        banBots();
+        //banBots();
     }
 
     /**

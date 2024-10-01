@@ -119,15 +119,16 @@ export class DashListPageableComponent<T extends DbObject, C extends DashListIte
 
 
   override reload<T extends DbObject, C extends DashListItemComponent>(response: Promise<T[]>, component: Type<C>): void {
-    this.selectorItems = [];
-    this.pageIndex = 0;
     response.then((value: T[]) => {
+      this.selectorItems = [];
+      this.pageIndex = 0;
       for (const valueElement of value) {
         this.selectorItems.push(new SelectorItem(component, valueElement));
       }
       this.pageIndex++;
       this.selectorItemsLoaded.next(this.selectorItems);
     });
+    response.catch(reason => console.log(reason));
   }
 
   override onScrollEnd() {

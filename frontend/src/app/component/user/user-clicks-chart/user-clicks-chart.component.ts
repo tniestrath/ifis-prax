@@ -44,8 +44,8 @@ export class UserClicksChartComponent extends DashBaseComponent implements OnIni
       this.isPostSelected = ((event?.target as HTMLInputElement).value != "viewProfile");
       (document.querySelector("#post-type-select-view") as HTMLOptionElement).innerText = "Profilaufrufe";
     }
-    let start = Util.getFormattedNow(-this.selectedTimeSpan);
-    let end = Util.getFormattedNow();
+    let start = Util.getFormattedNow(-this.selectedTimeSpan, "-");
+    let end = Util.getFormattedNow(0, "-");
 
     if (!this.isPostSelected){
       this.api.getUserClicksChartData(SysVars.USER_ID, start, end).then(res => {

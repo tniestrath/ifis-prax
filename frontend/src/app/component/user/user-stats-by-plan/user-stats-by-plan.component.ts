@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {Chart, ChartEvent, LegendElement, LegendItem} from "chart.js/auto";
-import Util, {DashColors} from "../../../util/Util";
+import {DashColors} from "../../../util/Util";
 
 @Component({
   selector: 'dash-user-stats-by-plan',
@@ -20,36 +20,40 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
   protected sorter(a : any, b : any){
     let c = 0;
     if (a.at(0) == "basis"){
-      c = -1;
+      c = 1;
     } else if (a.at(0) == "basis-plus"){
-      c = -2;
+      c = 2;
+    } else if (a.at(0) == "basis-veranstalter"){
+      c = 3;
     } else  if (a.at(0) == "plus"){
-      c = -3;
+      c = 4;
     } else if (a.at(0) == "premium"){
-      c = -4;
+      c = 5;
     } else if (a.at(0) == "sponsor"){
-      c = -5;
+      c = 6;
     }
     let d = 0;
     if (b.at(0) == "basis"){
-      d = -1;
+      d = 1;
     } else if (b.at(0) == "basis-plus"){
-      d = -2;
+      d = 2;
+    } else if (b.at(0) == "basis-veranstalter"){
+      d = 3;
     } else  if (b.at(0) == "plus"){
-      d = -3;
+      d = 4;
     } else if (b.at(0) == "premium"){
-      d = -4;
+      d = 5;
     } else if (b.at(0) == "sponsor"){
-      d = -5;
+      d = 6;
     }
-    return d - c;
+    return c - d;
   }
 
   protected getData(){
     this.api.getUserProfileViewsAverageByType().then(res => {
-      let map : Map<string, number> = new Map(Object.entries<number>(res[0]).sort((a ,b) => this.sorter(a, b)));
-      let map1 : Map<string, number> = new Map(Object.entries<number>(res[1]).sort((a,b) => this.sorter(a, b)));
-      let map2 : Map<string, number> = new Map(Object.entries<number>(res[2]).sort((a,b) => this.sorter(a, b)));
+      let map : Map<string, number> = new Map(Object.entries<number>(res[0]).sort((a, b) =>this.sorter(a,b)));
+      let map1 : Map<string, number> = new Map(Object.entries<number>(res[1]).sort((a, b) =>this.sorter(a,b)));
+      let map2 : Map<string, number> = new Map(Object.entries<number>(res[2]).sort((a, b) =>this.sorter(a,b)));
       this.createChart(map, map1, map2);
     });
   }
@@ -62,19 +66,19 @@ export class UserStatsByPlanComponent extends DashBaseComponent implements OnIni
       datasets = [{
         label: this.datasetLabels[0],
         data: Array.from(map.values()),
-        backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
+        backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_BASIC_HOST, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
       },
         {
           label: this.datasetLabels[1],
           data: Array.from(map1.values()),
-          backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
+          backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_BASIC_HOST, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
         }];
   if (map2){
     datasets.push({
       label: this.datasetLabels[2],
       // @ts-ignore
       data: Array.from(map2.values()),
-      backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
+      backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_BASIC_HOST, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
     });
   }
 
@@ -189,6 +193,7 @@ export class UserStatsByPlanShortViewComponent extends UserStatsByPlanComponent 
 
       map2.delete("basis");
       map2.delete("basis-plus");
+      map2.delete("basis-veranstalter")
 
       map = new Map<string, number>([...map, ...map2]);
 
@@ -200,11 +205,12 @@ export class UserStatsByPlanShortViewComponent extends UserStatsByPlanComponent 
     if (this.chart){
       this.chart.destroy();
     }
+
     let datasets = [];
     datasets = [{
       label: this.datasetLabels[0],
       data: Array.from(map.values()),
-      backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
+      backgroundColor: [DashColors.PLAN_BASIC, DashColors.PLAN_BASIC_PLUS, DashColors.PLAN_BASIC_HOST, DashColors.PLAN_PLUS, DashColors.PLAN_PREMIUM],
     }];
 
     this.chart = new Chart(this.element.nativeElement.querySelector("#stat_chart"), {
@@ -296,9 +302,11 @@ export class UserStatsByPlanPlusPremiumComponent extends UserStatsByPlanComponen
 
       map.delete("basis");
       map.delete("basis-plus");
+      map.delete("basis-veranstalter");
 
       map2.delete("basis");
       map2.delete("basis-plus");
+      map2.delete("basis-veranstalter");
 
       this.createChart(map, map2);
     });
@@ -405,7 +413,7 @@ export class UserStatsByPlanRedirectsComponent extends UserStatsByPlanShortViewC
 
   override getData() {
     this.api.getUserRedirectsByPlan().then(res => {
-      let map : Map<string, number> = new Map(Object.entries<number>(res).sort((a ,b) => this.sorter(a, b)));
+      let map : Map<string, number> = new Map(Object.entries<number>(res).sort((a, b) =>this.sorter(a,b)));
       this.createChart(map);
     });
   }

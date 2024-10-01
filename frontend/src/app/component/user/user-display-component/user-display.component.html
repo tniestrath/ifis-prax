@@ -56,12 +56,30 @@
     <img alt="target" src="assets/target.png" width="25" height="25">
     <p>{{user.redirects}}</p>
   </div>
+  <div class="user-redirects30-box">
+    <img alt="calendar" src="assets/redirectsMonthly.png" width="25" height="25">
+    <p>{{user.redirectsLast30}}</p>
+  </div>
   <div class="user-ranking-content-box">
-    <p>#{{user.rankingContent}} (<b [style.color]="Util.getColor('plan', user.accountType)">#{{user.rankingContentByGroup}}</b>)</p>
+    <img *ngIf="this.user.rankingContentTendency" [style.max-height]="'50%'"  alt="Tendenz steigend" src="assets/trend_up.png">
+    <img *ngIf="!this.user.rankingContentTendency && !(this.user.rankingContentTendency == null)" [style.max-height]="'50%'" alt="Tendenz fallend" src="assets/trend_down.png">
+    <img *ngIf="this.user.rankingContentTendency == null" [style.max-height]="'50%'"  alt="Tendenz stagnierend" src="assets/trend_flat.png">
+    <p>#{{user.rankingContent}} (</p>
+      <img *ngIf="this.user.rankingContentByGroupTendency" [style.max-height]="'50%'"  alt="Tendenz steigend" src="assets/trend_up.png">
+      <img *ngIf="!this.user.rankingContentByGroupTendency && !(this.user.rankingContentByGroupTendency == null)" [style.max-height]="'50%'"  alt="Tendenz fallend" src="assets/trend_down.png">
+      <img *ngIf="this.user.rankingContentByGroupTendency == null" [style.max-height]="'50%'"  alt="Tendenz stagnierend" src="assets/trend_flat.png">
+      <p><b [style.color]="Util.getColor('plan', user.accountType)">#{{user.rankingContentByGroup}}</b>)</p>
     <img [style.max-height]="'50%'" alt="Inhalts Aufrufe" src="assets/pencil-solid.png">
   </div>
   <div class="user-ranking-profile-box">
-    <p>#{{user.rankingProfile}} (<b [style.color]="Util.getColor('plan', user.accountType)">#{{user.rankingProfileByGroup}}</b>)</p>
+    <img *ngIf="this.user.rankingProfileTendency" [style.max-height]="'50%'" alt="Tendenz steigend" src="assets/trend_up.png">
+    <img *ngIf="!this.user.rankingProfileTendency && !(this.user.rankingProfileTendency == null)" [style.max-height]="'50%'" alt="Tendenz fallend" src="assets/trend_down.png">
+    <img *ngIf="this.user.rankingProfileTendency == null" [style.max-height]="'50%'" alt="Tendenz stagnierend" src="assets/trend_flat.png">
+    <p>#{{user.rankingProfile}} (</p>
+      <img *ngIf="this.user.rankingProfileByGroupTendency" [style.max-height]="'50%'" alt="Tendenz steigend" src="assets/trend_up.png">
+      <img *ngIf="!this.user.rankingProfileByGroupTendency && !(this.user.rankingProfileByGroupTendency == null)" [style.max-height]="'50%'" alt="Tendenz fallend" src="assets/trend_down.png">
+      <img *ngIf="this.user.rankingProfileByGroupTendency == null" [style.max-height]="'50%'" alt="Tendenz stagnierend" src="assets/trend_flat.png">
+      <p><b [style.color]="Util.getColor('plan', user.accountType)">#{{user.rankingProfileByGroup}}</b>)</p>
     <img [style.max-height]="'50%'" alt="Profil Aufrufe" src="assets/profile_views.png">
   </div>
 

@@ -15,7 +15,6 @@ export class HeaderComponent implements AfterViewInit{
   @Output() selected = new Subject<string>();
   navElementsBackup = ["Übersicht", "Beiträge", "Themen", "Anbieter", "Inhalte", "SEO", "Suche", "Newsletter", "Forum", "System"];
   navElements = this.navElementsBackup;
-  navElementsHTML : HTMLDivElement[] = [];
 
   loadingBar_process : any = null;
   html_err_code : string = "";

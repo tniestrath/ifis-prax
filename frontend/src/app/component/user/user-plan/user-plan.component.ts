@@ -76,7 +76,7 @@ export class UserPlanComponent extends DashBaseComponent implements OnInit{
   labels = ["Ohne Abo", "Basic", "Basic-Plus", "Basic-Veranstalter", "Plus", "Premium"];
 
   data = [0,0,0,0,0];
-  prev_data = [0,0,0,0,0];
+  prev_data = [0,0,0,0,0,0];
 
   oaList: HTMLParagraphElement[] = [];
   bpList: HTMLParagraphElement[] = [];

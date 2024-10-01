@@ -109,35 +109,42 @@
 }
 .user-views-daily-box{
   grid-row: 7;
-  grid-column: 3 / span 2;
+  grid-column: 3;
   display: flex;
   align-items: center;
   justify-content: end;
 }
 .user-tendency-box{
   grid-row: 7;
-  grid-column: 5;
+  grid-column: 4;
   display: flex;
   align-items: center;
   justify-content: start;
 }
 .user-redirects-box{
   grid-row: 7;
-  grid-column: 6;
+  grid-column: 5;
   display: flex;
   align-items: center;
   justify-content: start;
 }
+.user-redirects30-box{
+  grid-row: 7;
+  grid-column: 6;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
 .user-ranking-content-box{
   grid-row: 8;
-  grid-column: 4 / span 3;
+  grid-column: 3 / span 2;
   display: flex;
   align-items: center;
   justify-content: start;
 }
 .user-ranking-profile-box{
   grid-row: 8;
-  grid-column: 1 / span 3;
+  grid-column: 1 / span 2;
   display: flex;
   align-items: center;
   justify-content: start;

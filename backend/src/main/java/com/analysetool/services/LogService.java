@@ -1811,11 +1811,6 @@ public class LogService {
 
         uniRepo.getSecondLastUniStats().get(1).setBesucherAnzahl((long) uniqueUserRepo.getUserCountGlobal());
 
-
-        //Update the ranking-buffer
-        try {
-            updateRankings();
-        } catch (Exception ignored) {}
         //Delete Post-Types for Posts, that no longer exist
         deleteNullPostTypes();
         //Just in case permanentify failed
@@ -3123,6 +3118,7 @@ public class LogService {
         return potentialBotsIps;
     }
 
+    @Scheduled(cron = "0 0 0 1 * ?")
     public void updateRankings() {
         userService.updateUserRankingBuffer();
     }

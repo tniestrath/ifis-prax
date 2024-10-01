@@ -63,6 +63,14 @@ public class UserService {
     @Autowired
     private RankingTotalProfileRepository rankingTotalProfileRepo;
     @Autowired
+    private RankingGroupContentRepositoryOld rankingGroupContentRepoOld;
+    @Autowired
+    private RankingGroupProfileRepositoryOld rankingGroupProfileRepoOld;
+    @Autowired
+    private RankingTotalContentRepositoryOld rankingTotalContentRepoOld;
+    @Autowired
+    private RankingTotalProfileRepositoryOld rankingTotalProfileRepoOld;
+    @Autowired
     private PostClicksByHourDLCRepository postClicksRepo;
     @Autowired
     private NewsletterRepository newsletterRepo;
@@ -714,7 +722,7 @@ public class UserService {
             //Checks how many times website has redirected to a user's homepage
             if(userRedirectsRepo.existsByUserId(user.getId())) {
                 obj.put("redirects", userRedirectsRepo.getAllRedirectsOfUserIdSummed(user.getId()));
-                obj.put("redirectsLast30", userRedirectsRepo.getAllRedirectsOfUserIdSummed(user.getId(), 30));
+                obj.put("redirectsLast30", userRedirectsRepo.getAllRedirectsOfUserIdSummed(user.getId(), 30) == null ? 0 : userRedirectsRepo.getAllRedirectsOfUserIdSummed(user.getId(), 30));
             } else {
                 obj.put("redirects", 0);
                 obj.put("redirectsLast30", 0);
@@ -886,9 +894,37 @@ public class UserService {
 
     private void putRankings(long id, JSONObject obj) throws JSONException {
         obj.put("rankingContent", getRankingTotalContentViews(id));
+        if(getRankingTotalContentViewsOld(id) < getRankingTotalContentViews(id)) {
+            obj.put("rankingContentTendency", true);
+        } else if(getRankingTotalContentViewsOld(id) == getRankingTotalContentViews(id)) {
+            obj.put("rankingContentTendency", null);
+        } else {
+            obj.put("rankingContentTendency", false);
+        }
         obj.put("rankingContentByGroup", getRankingInTypeContentViews(id));
+        if(getRankingInTypeContentViewsOld(id) < getRankingInTypeContentViews(id)) {
+            obj.put("rankingContentByGroupTendency", true);
+        } else if(getRankingInTypeContentViewsOld(id) == getRankingInTypeContentViews(id)) {
+            obj.put("rankingContentByGroupTendency", null);
+        } else {
+            obj.put("rankingContentByGroupTendency", false);
+        }
         obj.put("rankingProfile", getRankingTotalProfileViews(id));
+        if(getRankingTotalProfileViewsOld(id) < getRankingTotalProfileViews(id)) {
+            obj.put("rankingProfileTendency", true);
+        } else if(getRankingTotalProfileViewsOld(id) == getRankingTotalProfileViews(id)) {
+            obj.put("rankingProfileTendency", null);
+        } else {
+            obj.put("rankingProfileTendency", false);
+        }
         obj.put("rankingProfileByGroup", getRankingInTypeProfileViews(id));
+        if(getRankingInTypeProfileViewsOld(id) < getRankingInTypeProfileViews(id)) {
+            obj.put("rankingProfileByGroupTendency", true);
+        } else if(getRankingInTypeProfileViewsOld(id) == getRankingInTypeProfileViews(id)) {
+            obj.put("rankingProfileByGroupTendency", null);
+        } else {
+            obj.put("rankingProfileByGroupTendency", false);
+        }
     }
 
     private int getDaysSinceTracking(long userId) {
@@ -1041,6 +1077,22 @@ public class UserService {
 
     private int getRankingTotalContentViews(long id)  {
         return rankingTotalContentRepo.getRankById(id).isPresent() ? rankingTotalContentRepo.getRankById(id).get() : -1;
+    }
+
+    private int getRankingInTypeProfileViewsOld(long id) {
+        return rankingGroupProfileRepoOld.getRankById(id).isPresent() ? rankingGroupProfileRepoOld.getRankById(id).get() : -1;
+    }
+
+    private int getRankingInTypeContentViewsOld(long id) {
+        return rankingGroupContentRepoOld.getRankById(id).isPresent() ? rankingGroupContentRepoOld.getRankById(id).get() : -1;
+    }
+
+    private int getRankingTotalProfileViewsOld(long id) {
+        return rankingTotalProfileRepoOld.getRankById(id).isPresent() ? rankingTotalProfileRepoOld.getRankById(id).get() : -1;
+    }
+
+    private int getRankingTotalContentViewsOld(long id)  {
+        return rankingTotalContentRepoOld.getRankById(id).isPresent() ? rankingTotalContentRepoOld.getRankById(id).get() : -1;
     }
 
     /**
@@ -2745,7 +2797,39 @@ public class UserService {
      * Updates all rankings in group (as opposed to total).
      */
     public void updateRankGroups() {
+        //Update the table for last month's rankings with the now old ones.
+        writeOldRankingsGroup();
+        //Update the current rankings.
+        makeNewRankingsGroup();
+    }
 
+    private void writeOldRankingsGroup() {
+        //Reset all
+        if(!rankingGroupContentRepoOld.findAll().isEmpty()) {
+            rankingGroupContentRepoOld.deleteAll();
+        }
+        if(!rankingGroupProfileRepoOld.findAll().isEmpty()) {
+            rankingGroupProfileRepoOld.deleteAll();
+        }
+
+        for(RankingGroupContent rank : rankingGroupContentRepo.findAll()) {
+            RankingGroupContentOld oldRank = new RankingGroupContentOld();
+            oldRank.setRank(rank.getRank());
+            oldRank.setType(rank.getType());
+            oldRank.setUserId(rank.getUserId());
+            rankingGroupContentRepoOld.save(oldRank);
+        }
+
+        for(RankingGroupProfile rank : rankingGroupProfileRepo.findAll()) {
+            RankingGroupProfileOld oldRank = new RankingGroupProfileOld();
+            oldRank.setRank(rank.getRank());
+            oldRank.setType(rank.getType());
+            oldRank.setUserId(rank.getUserId());
+            rankingGroupProfileRepoOld.save(oldRank);
+        }
+    }
+
+    private void makeNewRankingsGroup() {
         //Reset all
         if(!rankingGroupContentRepo.findAll().isEmpty()) {
             rankingGroupContentRepo.deleteAll();
@@ -2790,6 +2874,36 @@ public class UserService {
      * Updates all rankings in total (as opposed to group).
      */
     public void updateRanksTotal() {
+        writeOldRankingsTotal();
+        makeNewRankingsTotal();
+    }
+
+
+    private void writeOldRankingsTotal() {
+        //Reset all
+        if(!rankingTotalContentRepoOld.findAll().isEmpty()) {
+            rankingTotalContentRepoOld.deleteAll();
+        }
+        if(!rankingTotalProfileRepoOld.findAll().isEmpty()) {
+            rankingTotalProfileRepoOld.deleteAll();
+        }
+
+        for(RankingTotalContent rank : rankingTotalContentRepo.findAll()) {
+            RankingTotalContentOld oldRank = new RankingTotalContentOld();
+            oldRank.setRank(rank.getRank());
+            oldRank.setUserId(rank.getUserId());
+            rankingTotalContentRepoOld.save(oldRank);
+        }
+
+        for(RankingTotalProfile rank : rankingTotalProfileRepo.findAll()) {
+            RankingTotalProfileOld oldRank = new RankingTotalProfileOld();
+            oldRank.setRank(rank.getRank());
+            oldRank.setUserId(rank.getUserId());
+            rankingTotalProfileRepoOld.save(oldRank);
+        }
+    }
+
+    private void makeNewRankingsTotal() {
         if(!rankingTotalContentRepo.findAll().isEmpty()) {
             rankingTotalContentRepo.deleteAll();
         }
@@ -2822,7 +2936,6 @@ public class UserService {
             rankingTotalContentRepo.save(contentRank);
         }
     }
-
     /**
      * Fetches the average redirects by profile membership.
      * @return JSON-String containing the average redirects by profile membership.

@@ -19,10 +19,10 @@ public class Subscriptions implements Serializable {
     private String type;
 
     @Column(name = "tag")
-    private int tag;
+    private Integer tag;
 
     @Column(name = "author")
-    private int author;
+    private Integer author;
 
     public long getId() {
         return id;
@@ -48,19 +48,19 @@ public class Subscriptions implements Serializable {
         this.type = type;
     }
 
-    public int getTag() {
+    public Integer getTag() {
         return tag;
     }
 
-    public void setTag(int tag) {
+    public void setTag(Integer tag) {
         this.tag = tag;
     }
 
-    public int getAuthor() {
+    public Integer getAuthor() {
         return author;
     }
 
-    public void setAuthor(int author) {
+    public void setAuthor(Integer author) {
         this.author = author;
     }
 }

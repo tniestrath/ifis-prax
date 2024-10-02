@@ -37,4 +37,7 @@ public interface WpTermTaxonomyRepository extends JpaRepository<WpTermTaxonomy, 
 
     @Query("SELECT wtt.termId FROM WpTermTaxonomy AS wtt JOIN wp_term_relationships AS wtr ON wtt.termTaxonomyId=wtr.termTaxonomyId JOIN WPTerm t ON t.id=wtt.termId WHERE wtt.taxonomy='post_tag' AND ((t.name LIKE %:search%) OR (t.slug LIKE %:search%)) GROUP BY wtt.termId ORDER BY COUNT(wtr.objectId) DESC")
     List<Long> getTagIdsByPostCount(String search, Pageable pageable);
+
+    @Query("SELECT t FROM WpTermTaxonomy t JOIN WPTerm wt ON wt.id=t.termId WHERE t.taxonomy='post_tag' AND wt.slug=:slug")
+    WpTermTaxonomy getPostTagBySlug(String slug);
 }

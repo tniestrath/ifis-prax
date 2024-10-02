@@ -15,4 +15,10 @@ public interface SubscriptionsRepository extends JpaRepository<Subscriptions, Lo
 
     @Query("SELECT s FROM Subscriptions s WHERE s.type=:type AND s.tag IS NULL AND s.author IS NULL AND s.word IS NULL")
     Optional<Subscriptions> findByType(String type);
+
+    @Query("SELECT s FROM Subscriptions s WHERE s.type IS NULL AND s.tag IS NULL AND s.author IS NULL AND s.word=:word")
+    Optional<Subscriptions> findByWord(String word);
+
+    @Query("SELECT s FROM Subscriptions s WHERE s.type IS NULL AND s.tag IS NULL AND s.author=:author AND s.word IS NULL")
+    Optional<Subscriptions> findByAuthor(long author);
 }

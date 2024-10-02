@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 import com.analysetool.modells.Subscriptions;
 import com.analysetool.modells.UserSubscriptions;
+import com.analysetool.repositories.AuthorRelationshipRepository;
 import com.analysetool.repositories.SubscriptionsRepository;
 import com.analysetool.repositories.UserSubscriptionsRepository;
 import com.analysetool.repositories.WpTermTaxonomyRepository;
@@ -26,6 +27,8 @@ public class SubscriptionsController {
     UserSubscriptionsRepository userSubRepo;
     @Autowired
     LoginService loginService;
+    @Autowired
+    AuthorRelationshipRepository authorRelRepo;
 
     @GetMapping("/thema")
     public boolean subscribeThema(String thema, HttpServletRequest request) {
@@ -99,6 +102,89 @@ public class SubscriptionsController {
             sub.setAuthor(null);
             sub.setTag(null);
             sub.setType(type);
+            sub.setWord(null);
+            subRepo.save(sub);
+
+            UserSubscriptions userSub = new UserSubscriptions();
+            userSub.setSubId(sub.getId());
+            userSub.setUserId(userid);
+            userSubRepo.save(userSub);
+        }
+        return true;
+    }
+
+    @GetMapping("/word")
+    public boolean subscribeWord(String word, HttpServletRequest request) {
+        String result = loginService.validateCookie(request);
+        int userid;
+
+        try {
+            userid = new JSONObject(result).getInt("user_id");
+        } catch (JSONException e) {
+            return false;
+        }
+
+        if(subRepo.findByWord(word).isPresent()) {
+            if(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByWord(word).get().getId()).isPresent()) {
+                //User already subscribed
+                return true;
+            } else {
+                //Sub exists, sub user
+                UserSubscriptions userSub = new UserSubscriptions();
+                userSub.setSubId(subRepo.findByWord(word).get().getId());
+                userSub.setUserId(userid);
+                userSubRepo.save(userSub);
+            }
+        } else {
+            //Make subscription, add user
+            Subscriptions sub = new Subscriptions();
+            sub.setAuthor(null);
+            sub.setTag(null);
+            sub.setType(null);
+            sub.setWord(word);
+            subRepo.save(sub);
+
+            UserSubscriptions userSub = new UserSubscriptions();
+            userSub.setSubId(sub.getId());
+            userSub.setUserId(userid);
+            userSubRepo.save(userSub);
+        }
+        return true;
+    }
+
+    @GetMapping("/author")
+    public boolean subscribeAuthor(String author, HttpServletRequest request) {
+        String result = loginService.validateCookie(request);
+        int userid;
+        long authorId = 0;
+        if(authorRelRepo.findByAuthorSlug(author).isPresent()) {
+            authorId = authorRelRepo.findByAuthorSlug(author).get().getAuthorTerm();
+        }
+        if(authorId == 0) return false;
+
+        try {
+            userid = new JSONObject(result).getInt("user_id");
+        } catch (JSONException e) {
+            return false;
+        }
+
+        if(subRepo.findByAuthor(authorId).isPresent()) {
+            if(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByAuthor(authorId).get().getId()).isPresent()) {
+                //User already subscribed
+                return true;
+            } else {
+                //Sub exists, sub user
+                UserSubscriptions userSub = new UserSubscriptions();
+                userSub.setSubId(subRepo.findByAuthor(authorId).get().getId());
+                userSub.setUserId(userid);
+                userSubRepo.save(userSub);
+            }
+        } else {
+            //Make subscription, add user
+            Subscriptions sub = new Subscriptions();
+            sub.setAuthor(authorId);
+            sub.setTag(null);
+            sub.setType(null);
             sub.setWord(null);
             subRepo.save(sub);
 

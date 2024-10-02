@@ -22,7 +22,7 @@ public class Subscriptions implements Serializable {
     private Integer tag;
 
     @Column(name = "author")
-    private Integer author;
+    private Long author;
 
     public long getId() {
         return id;
@@ -56,11 +56,11 @@ public class Subscriptions implements Serializable {
         this.tag = tag;
     }
 
-    public Integer getAuthor() {
+    public Long getAuthor() {
         return author;
     }
 
-    public void setAuthor(Integer author) {
+    public void setAuthor(Long author) {
         this.author = author;
     }
 }

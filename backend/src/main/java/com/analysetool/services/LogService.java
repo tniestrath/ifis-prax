@@ -1194,7 +1194,7 @@ public class LogService {
             }
             case "userRedirect" -> {
                 try {
-                    if (wpUserMetaRepository.getUserByURL(patternMatcher.group(1)).isEmpty()) {
+                    if (!wpUserMetaRepository.getUserByURL(patternMatcher.group(1)).isEmpty()) {
                         UserRedirectsHourly redirects;
 
                         Long user;

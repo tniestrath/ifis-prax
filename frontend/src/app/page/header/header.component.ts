@@ -78,12 +78,6 @@ export class HeaderComponent implements AfterViewInit{
   }
 
   setSelected(page : string){
-    var elements = document.querySelectorAll<HTMLDivElement>(".nav-element");
-    elements.forEach((value, key) => {
-      value.style.border = "none";
-    })
-    // @ts-ignore
-    document.getElementById(page).style.border = "2px solid #941C3EFF";
     this.selected.next(page);
   }
 
@@ -174,6 +168,14 @@ export class HeaderComponent implements AfterViewInit{
     if (!SysVars.UPDATING){
       this.api.reload();
       SysVars.UPDATING = true;
+    }
+  }
+
+  checkSelected(page : string) : string {
+    if (SysVars.CURRENT_PAGE == page){
+      return "2px solid #941C3EFF";
+    }else {
+      return "none";
     }
   }
 }

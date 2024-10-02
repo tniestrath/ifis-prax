@@ -282,6 +282,15 @@ export class PageComponent implements OnInit {
           break;
         }
       }
+      /*var elements = document.querySelectorAll<HTMLDivElement>(".nav-element");
+      elements.forEach((value, key) => {
+        value.style.border = "none";
+      })
+      let elem = document.getElementById(page);
+      console.log("awd: " +elem)
+      if(elem != null){
+        elem.style.border = "2px solid #941C3EFF";
+      }*/
     });
     SysVars.SELECTED_USER_ID.subscribe(id => {
       SysVars.CURRENT_PAGE = "UserDetail";

@@ -24,4 +24,5 @@ public interface SubscriptionsRepository extends JpaRepository<Subscriptions, Lo
 
     @Query("SELECT s FROM Subscriptions s WHERE s.type=:type AND s.tag=:tagId AND s.author=:author AND s.word=:word")
     Optional<Subscriptions> findByAll(String type, Integer tagId, Long author, String word);
+
 }

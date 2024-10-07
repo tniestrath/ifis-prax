@@ -207,10 +207,11 @@ public class SubscriptionsController {
         }
 
 
-
-        if(!(type.equals("Artikel") || type.equals("Blog") || type.equals("News") || type.equals("Whitepaper") || type.equals("Video") || type.equals("Podcast"))) {
-            if(type.equals("none") || type.isBlank()) type = null;
-            else return false;
+        if(type != null) {
+            if (!(type.equals("Artikel") || type.equals("Blog") || type.equals("News") || type.equals("Whitepaper") || type.equals("Video") || type.equals("Podcast"))) {
+                if (type.equals("none") || type.isBlank()) type = null;
+                else return false;
+            }
         }
 
         Integer tagId = null;

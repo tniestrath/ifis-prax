@@ -35,6 +35,9 @@ public class TagService {
     private PostRepository postRepo;
     @Autowired
     private universalStatsRepository uniRepo;
+    @Autowired
+    private UserSubscriptionsRepository userSubRepo;
+
 
     /**
      * Fetches a term by its id.
@@ -368,6 +371,7 @@ public class TagService {
         JSONObject json = new JSONObject();
 
         json.put("count", getCount(tagId, Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())));
+        json.put("subs", userSubRepo.getCountUserSubsInTag(tagId));
         json.put("name", termRepository.getNameById(tagId));
         json.put("viewsPosts", tagStatRepo.getSumOfViewsForTag(tagId) == null ? 0 : tagStatRepo.getSumOfViewsForTag(tagId));
         json.put("viewsCat", tagCatRepo.getSumOfViewsForTag(tagId) == null ? 0 : tagCatRepo.getSumOfViewsForTag(tagId));

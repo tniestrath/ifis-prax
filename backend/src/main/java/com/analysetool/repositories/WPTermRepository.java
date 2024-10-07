@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface WPTermRepository extends JpaRepository<WPTerm, Long> {
 
@@ -18,6 +20,9 @@ public interface WPTermRepository extends JpaRepository<WPTerm, Long> {
 
     @Query("SELECT t.slug FROM WPTerm t WHERE t.id=:termId")
     String findSlugById(long termId);
+
+    @Query("SELECT t.name FROM WPTerm t WHERE t.id IN :termIds")
+    List<String> getNamesFromList(List<Long> termIds);
 
 }
 

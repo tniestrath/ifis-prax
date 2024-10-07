@@ -1,14 +1,7 @@
 package com.analysetool.api;
 
-import com.analysetool.modells.Subscriptions;
-import com.analysetool.modells.UserSubscriptions;
-import com.analysetool.repositories.SubscriptionsRepository;
-import com.analysetool.repositories.UserSubscriptionsRepository;
-import com.analysetool.repositories.WpTermTaxonomyRepository;
-import com.analysetool.services.LoginService;
+import com.analysetool.services.SubscriptionService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,52 +12,13 @@ import org.springframework.web.bind.annotation.*;
 public class SubscriptionsController {
 
     @Autowired
-    WpTermTaxonomyRepository termTaxRepo;
-    @Autowired
-    SubscriptionsRepository subRepo;
-    @Autowired
-    UserSubscriptionsRepository userSubRepo;
-    @Autowired
-    LoginService loginService;
+    private SubscriptionService subService;
 
-    @GetMapping("/thema")
-    public boolean subscribeThema(String thema, HttpServletRequest request) {
-        long tagId = termTaxRepo.getPostTagBySlug(thema).getTermId();
+    @GetMapping("/custom")
+    public boolean subCustom(String type, String thema, String author, String word, HttpServletRequest request) {return subService.subCustom(type, thema, author, word, request);}
 
-        String result = loginService.validateCookie(request);
-        int userid;
-        try {
-            userid = new JSONObject(result).getInt("user_id");
-        } catch (JSONException e) {
-            return false;
-        }
+    @GetMapping("/unsubscribe")
+    public boolean unsubscribe(String type, String thema, String author, String word, HttpServletRequest request) {return subService.unsubscribe(type, thema, author, word, request);}
 
-        if(subRepo.findByTag(tagId).isPresent()) {
-            if(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByTag(tagId).get().getId()).isPresent()) {
-                //User already subscribed
-                return true;
-            } else {
-                //Sub exists, sub user
-                UserSubscriptions userSub = new UserSubscriptions();
-                userSub.setSubId(subRepo.findByTag(tagId).get().getId());
-                userSub.setUserId(userid);
-                userSubRepo.save(userSub);
-            }
-        } else {
-            //Make subscription, add user
-            Subscriptions sub = new Subscriptions();
-            sub.setAuthor(null);
-            sub.setTag((int) tagId);
-            sub.setType(null);
-            sub.setWord(null);
-            subRepo.save(sub);
-
-            UserSubscriptions userSub = new UserSubscriptions();
-            userSub.setSubId(sub.getId());
-            userSub.setUserId(userid);
-            userSubRepo.save(userSub);
-        }
-        return true;
-    }
 
 }

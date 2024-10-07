@@ -208,6 +208,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
    @Query("SELECT DISTINCT p.title FROM Post p WHERE p IN (:posts)")
    List<String> titlesOfPosts(List<Post> posts);
+
+   @Query("SELECT p FROM Post p WHERE p.status='publish' AND (p.type='post' OR p.type='podcast' OR p.type='video' OR p.type='event') AND p.id NOT IN (SELECT pn.postId FROM PostNotifications pn)")
+   List<Post> findAllUnnotified();
+
 }
 
 

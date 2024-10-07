@@ -215,7 +215,7 @@ public class SubscriptionsController {
         }
 
         Integer tagId = null;
-        if(thema != null)  tagId = Math.toIntExact(termTaxRepo.getPostTagBySlug(thema).getTermId());
+        if(thema != null && !thema.isBlank())  tagId = Math.toIntExact(termTaxRepo.getPostTagBySlug(thema).getTermId());
 
         Long authorId = 0L;
         if(authorRelRepo.findByAuthorSlugFirst(author).isPresent()) {

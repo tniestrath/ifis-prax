@@ -86,6 +86,8 @@ public class UserService {
     private EventsService eventsService;
     @Autowired
     private MembershipBufferRepository memberRepo;
+    @Autowired
+    private UserSubscriptionsRepository userSubRepo;
 
     private final DashConfig config;
 
@@ -772,6 +774,12 @@ public class UserService {
                 obj.put("slogan", wpUserMetaRepository.getSlogan(user.getId()).get());
             } else {
                 obj.put("slogan", " - ");
+            }
+
+            if(userSubRepo.getCountUserSubsOnAnbieter(user.getId()) != null) {
+                obj.put("subs", userSubRepo.getCountUserSubsOnAnbieter(user.getId()));
+            } else {
+                obj.put("subs", 0);
             }
 
             obj.put("accountType", getType(Math.toIntExact(user.getId())));

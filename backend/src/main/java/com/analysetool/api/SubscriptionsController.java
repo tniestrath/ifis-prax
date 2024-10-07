@@ -157,8 +157,8 @@ public class SubscriptionsController {
         String result = loginService.validateCookie(request);
         int userid;
         long authorId = 0;
-        if(authorRelRepo.findByAuthorSlug(author).isPresent()) {
-            authorId = authorRelRepo.findByAuthorSlug(author).get().getAuthorTerm();
+        if(authorRelRepo.findByAuthorSlugFirst(author).isPresent()) {
+            authorId = authorRelRepo.findByAuthorSlugFirst(author).get().getAuthorTerm();
         }
         if(authorId == 0) return false;
 
@@ -186,6 +186,62 @@ public class SubscriptionsController {
             sub.setTag(null);
             sub.setType(null);
             sub.setWord(null);
+            subRepo.save(sub);
+
+            UserSubscriptions userSub = new UserSubscriptions();
+            userSub.setSubId(sub.getId());
+            userSub.setUserId(userid);
+            userSubRepo.save(userSub);
+        }
+        return true;
+    }
+
+    @GetMapping("/custom")
+    public boolean subCustom(String type, String thema, String author, String word, HttpServletRequest request) {
+        String result = loginService.validateCookie(request);
+        int userid;
+        try {
+            userid = new JSONObject(result).getInt("user_id");
+        } catch (JSONException e) {
+            return false;
+        }
+
+
+
+        if(!(type.equals("Artikel") || type.equals("Blog") || type.equals("News") || type.equals("Whitepaper") || type.equals("Video") || type.equals("Podcast"))) {
+            if(type.equals("none") || type.isBlank()) type = null;
+            else return false;
+        }
+
+        Integer tagId = null;
+        if(thema != null)  tagId = Math.toIntExact(termTaxRepo.getPostTagBySlug(thema).getTermId());
+
+        Long authorId = 0L;
+        if(authorRelRepo.findByAuthorSlugFirst(author).isPresent()) {
+            authorId = authorRelRepo.findByAuthorSlugFirst(author).get().getAuthorTerm();
+        }
+        if(authorId == 0) authorId = null;
+
+        if(word.isBlank() || word.equals("none")) word = null;
+
+        if(subRepo.findByAll(type, tagId, authorId, word).isPresent()) {
+            if(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByAuthor(authorId).get().getId()).isPresent()) {
+                //User already subscribed
+                return true;
+            } else {
+                //Sub exists, sub user
+                UserSubscriptions userSub = new UserSubscriptions();
+                userSub.setSubId(subRepo.findByAuthor(authorId).get().getId());
+                userSub.setUserId(userid);
+                userSubRepo.save(userSub);
+            }
+        } else {
+            //Make subscription, add user
+            Subscriptions sub = new Subscriptions();
+            sub.setAuthor(authorId);
+            sub.setTag(tagId);
+            sub.setType(type);
+            sub.setWord(word);
             subRepo.save(sub);
 
             UserSubscriptions userSub = new UserSubscriptions();

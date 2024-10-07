@@ -13,7 +13,7 @@ public interface AuthorRelationshipRepository extends JpaRepository<AuthorsRelat
 
     List<AuthorsRelationships> findByPostId(long postId);
 
-    @Query("SELECT a FROM AuthorsRelationships a JOIN WPTerm t ON t.id=a.authorTerm WHERE t.slug=:slug LIMIT 1")
+    @Query("SELECT a FROM AuthorsRelationships a JOIN WPTerm t ON t.id=a.authorTerm WHERE t.slug=:slug ORDER BY a.id DESC LIMIT 1")
     Optional<AuthorsRelationships> findByAuthorSlugFirst(String slug);
 
 }

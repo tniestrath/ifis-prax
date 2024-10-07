@@ -9,6 +9,9 @@ import java.io.Serializable;
 public class UserSubscriptions implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
     @Column(name ="user_id")
     private long userId;
 
@@ -29,5 +32,13 @@ public class UserSubscriptions implements Serializable {
 
     public void setSubId(long subId) {
         this.subId = subId;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

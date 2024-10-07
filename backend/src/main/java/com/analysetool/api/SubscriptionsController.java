@@ -226,7 +226,7 @@ public class SubscriptionsController {
         if(word.isBlank() || word.equals("none")) word = null;
 
         if(subRepo.findByAll(type, tagId, authorId, word).isPresent()) {
-            if(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByAuthor(authorId).get().getId()).isPresent()) {
+            if(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByAll(type, tagId, authorId, word).get().getId()).isPresent()) {
                 //User already subscribed
                 return true;
             } else {
@@ -252,5 +252,51 @@ public class SubscriptionsController {
         }
         return true;
     }
+
+    @GetMapping("/unsubscribe")
+    private boolean unsubscribe(String type, String thema, String author, String word, HttpServletRequest request) {
+        String result = loginService.validateCookie(request);
+        int userid;
+        try {
+            userid = new JSONObject(result).getInt("user_id");
+        } catch (JSONException e) {
+            return false;
+        }
+
+
+        if(type != null) {
+            if (!(type.equals("Artikel") || type.equals("Blog") || type.equals("News") || type.equals("Whitepaper") || type.equals("Video") || type.equals("Podcast"))) {
+                if (type.equals("none") || type.isBlank()) type = null;
+                else return false;
+            }
+        }
+
+        Integer tagId = null;
+        if(thema != null && !thema.isBlank())  tagId = Math.toIntExact(termTaxRepo.getPostTagBySlug(thema).getTermId());
+
+        Long authorId = 0L;
+        if(authorRelRepo.findByAuthorSlugFirst(author).isPresent()) {
+            authorId = authorRelRepo.findByAuthorSlugFirst(author).get().getAuthorTerm();
+        }
+        if(authorId == 0) authorId = null;
+
+        if(word.isBlank() || word.equals("none")) word = null;
+
+        if(subRepo.findByAll(type, tagId, authorId, word).isPresent()) {
+            if(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByAll(type, tagId, authorId, word).get().getId()).isPresent()) {
+                //User is subscribed, so unsubscribe him.
+
+                userSubRepo.delete(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByAll(type, tagId, authorId, word).get().getId()).get());
+
+                if(userSubRepo.findBySubId(subRepo.findByAll(type, tagId, authorId, word).get().getId()).isEmpty()) {
+                    //If no one is subscribed to this, delete it.
+                    subRepo.delete(subRepo.findByAll(type, tagId, authorId, word).get());
+                }
+                return true;
+            }
+        }
+        return true;
+    }
+
 
 }

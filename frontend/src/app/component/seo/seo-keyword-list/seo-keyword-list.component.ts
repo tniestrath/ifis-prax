@@ -20,7 +20,7 @@ export class SeoKeywordListComponent extends DashBaseComponent implements OnInit
       this.setToolTip("Hier werden die Keywords aus dem SEO-Cockpit angezeigt.<br>" +
                            "Mit hovern über die Einträge werden die zugeordneten Unterseiten und die Klickrate angezeigt<br>" +
                            "<br>" +
-                           "<img src=\"assets/eye.png\" style=\"height: 15px; filter:invert(1)\"> Impressionen<br>" +
+                           "<img src=\"assets/shout.png\" style=\"height: 15px; filter:invert(1)\"> Impressionen<br>" +
                            "<img src=\"assets/target-click.png\" style=\"height: 15px; filter:invert(1)\"> Klicks<br>" +
                            "<img src=\"assets/target-ctr.png\" style=\"height: 15px; filter:invert(1)\"> Klickrate (CTR)")
       for (let element of value) {

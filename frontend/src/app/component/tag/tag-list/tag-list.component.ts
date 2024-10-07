@@ -17,7 +17,9 @@ export class TagListComponent extends DashListPageableComponent<TagRanking, TagL
   selected_search : string = "";
 
   override ngOnInit(): void {
-    this.setToolTip("Auflistung aller #Tags, sortierbar nach Anzahl der Beiträge oder Views")
+    this.setToolTip("Auflistung aller #Tags / Themen, sortierbar nach Anzahl der Beiträge oder Views<br><br>" +
+      "<img src=\"assets/bell.png\" style=\"height: 15px; filter:invert(1)\"> Abonenten des Themas<br>" +
+      "<img src=\"assets/eye.png\" style=\"height: 15px; filter:invert(1)\"> Aufrufe<br>");
     this.selectorItems = [];
     this.pagesComplete = false;
     this.load(this.api.getAllTagsWithStats(this.pageIndex, this.pageSize, this.selected_sorter, this.selected_search), TagListItemComponent);

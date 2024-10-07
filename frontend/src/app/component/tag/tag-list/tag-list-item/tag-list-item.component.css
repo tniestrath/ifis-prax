@@ -12,14 +12,32 @@
 }
 
 .tag-rel{
-  width: 20%;
+  display: flex;
+  width: 10%;
   text-align: left;
+  align-items: center;
 }
 .tag-name{
+  display: flex;
   width: 60%;
   text-align: center;
+  align-items: center;
+}
+.tag-subs{
+  display: flex;
+  width: 15%;
+  text-align: right;
+  align-items: center;
 }
 .tag-views{
-  width: 20%;
+  display: flex;
+  width: 15%;
   text-align: right;
+  align-items: center;
+}
+img{
+  max-width: 90%;
+  height: 20px;
+  aspect-ratio: 1;
+  padding: 2px;
 }

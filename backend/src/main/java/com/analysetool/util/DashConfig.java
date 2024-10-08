@@ -23,6 +23,9 @@ public class DashConfig {
     @Value("{newslettersend}")
     private String newslettersend;
 
+    @Value("{notificationsend}")
+    private String notificationsend;
+
 
     public String getProfilephotos() {
         return profilephotos;
@@ -62,5 +65,13 @@ public class DashConfig {
 
     public void setNewslettersend(String newslettersend) {
         this.newslettersend = newslettersend;
+    }
+
+    public String getNotificationsend() {
+        return notificationsend;
+    }
+
+    public void setNotificationsend(String notificationsend) {
+        this.notificationsend = notificationsend;
     }
 }

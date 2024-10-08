@@ -49,10 +49,10 @@ input[type="radio"]::after{
   bottom: 0;
 }
 #tag-sort-p::before{
-  content: "Views";
+  content: "Aufrufe";
 }
 #tag-sort-p::after{
-  content: "Views";
+  content: "Aufrufe";
 }
 
 input[type="radio"]:checked::before{

@@ -11,7 +11,7 @@ import {DashListItemComponent} from "../../../dash-list/dash-list-item/dash-list
   styleUrls: ['./tag-list-item.component.css']
 })
 export class TagListItemComponent extends DashListItemComponent{
-  override data : TagRanking = new TagRanking("", "", 0, 0, 0);
+  override data : TagRanking = new TagRanking("", "", 0, 0, 0, 0);
   protected readonly parseFloat = parseFloat;
 
   override onClick(){

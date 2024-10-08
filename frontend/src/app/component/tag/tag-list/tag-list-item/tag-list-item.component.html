@@ -1,5 +1,6 @@
 <div class="tag-list-item-box" (click)="onClick()" [style.background-color]="bgColor + '!important'">
   <div class="tag-rel">{{data.count}}</div>
   <div class="tag-name">{{data?.name}}</div>
-  <div class="tag-views">{{Util.formatNumbers(data.viewsPosts + data.viewsCat)}}</div>
+  <div class="tag-subs"><img src="assets/bell.png">{{Util.formatNumbers(data.subs)}}</div>
+  <div class="tag-views"><img src="assets/eye.png">{{Util.formatNumbers(data.viewsPosts + data.viewsCat)}}</div>
 </div>

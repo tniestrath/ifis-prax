@@ -274,7 +274,7 @@ public class SubscriptionService {
             }
         }
 
-        sendMailsNotifications();
+        //sendMailsNotifications();
 
     }
 

@@ -34,6 +34,11 @@ public class UserController {
         this.config = config;
     }
 
+    @GetMapping("/getCountUsersSubsAll")
+    public String getCountUsersSubsAll() throws JSONException {
+        return userService.getCountUsersSubsAll();
+    }
+
     /**
      * Fetch some user-data by id.
      * @param id the users' id.

@@ -88,6 +88,8 @@ public class UserService {
     private MembershipBufferRepository memberRepo;
     @Autowired
     private UserSubscriptionsRepository userSubRepo;
+    @Autowired
+    private UserSubscriptionCountLogRepository userSubCountRepo;
 
     private final DashConfig config;
 
@@ -2970,5 +2972,13 @@ public class UserService {
      * @return a JSON-Array-String of Anbieter-names.
      */
     public String getUsernamesByStart(String search, String abo, String typ) {return new JSONArray(userRepo.getUsernamesBySearch(search, abo, typ)).toString();}
+
+    public String getCountUsersSubsAll() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("countToday", userSubCountRepo.getCountToday() == null ? 0 : userSubCountRepo.getCountToday());
+        json.put("count", userSubCountRepo.getCountPage(PageRequest.of(1, 1)).isEmpty() ? 0 : userSubCountRepo.getCountPage(PageRequest.of(1, 1)).get(0));
+        json.put("change", json.getInt("countToday") - json.getInt("count"));
+        return json.toString();
+    }
 }
 

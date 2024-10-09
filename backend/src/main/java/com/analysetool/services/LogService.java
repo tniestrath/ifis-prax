@@ -578,6 +578,12 @@ public class LogService {
                 System.out.println("FEHLER AT checkLastPingTimer");
                 e.printStackTrace();
             }
+            try {
+
+            } catch (Exception e) {
+                System.out.println("FEHLER AT UpdateUserSubCountLog");
+                e.printStackTrace();
+            }
 
 
             if (LocalDateTime.now().getHour() == 5) {

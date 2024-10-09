@@ -3,6 +3,7 @@ package com.analysetool.modells;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "user_subscriptions")
@@ -17,6 +18,10 @@ public class UserSubscriptions implements Serializable {
 
     @Column(name="sub_id")
     private long subId;
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="time")
+    private Timestamp time;
 
     public long getUserId() {
         return userId;
@@ -40,5 +45,13 @@ public class UserSubscriptions implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp time) {
+        this.time = time;
     }
 }

@@ -8,7 +8,7 @@ import Util, {DashColors} from "../../util/Util";
 @Component({
   selector: 'dash-clicks',
   templateUrl: './clicks.component.html',
-  styleUrls: ['./clicks.component.css', "../../component/dash-base/dash-base.component.css"]
+  styleUrls: ['./clicks.component.css', "../dash-base/dash-base.component.css"]
 })
 export class ClicksComponent extends DashBaseComponent implements OnInit, AfterViewInit{
 

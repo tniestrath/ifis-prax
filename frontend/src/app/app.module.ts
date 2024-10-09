@@ -123,6 +123,7 @@ import { PostTypesAverageViewsComponent } from './component/post/post-types-avar
 import { SocialsSumsComponent } from './component/socials/socials-sums/socials-sums.component';
 import { BounceComponent } from './component/bounce/bounce.component';
 import { PostComparatorComponent } from './component/post/post-comparator/post-comparator.component';
+import { UserSubsComponent } from './component/user/user-subs/user-subs.component';
 
 @NgModule({
     declarations: [
@@ -229,7 +230,8 @@ import { PostComparatorComponent } from './component/post/post-comparator/post-c
         BounceComponent,
         PostComparatorComponent,
         PostSearchbarComponent,
-        BhListDirective
+        BhListDirective,
+        UserSubsComponent
     ],
     imports: [
         BrowserModule,

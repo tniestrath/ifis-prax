@@ -1,0 +1,19 @@
+.user-subs-box {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  height: 100%;
+}
+.user-subs-title{
+  border-radius: 5px;
+  border: 1px solid #808080;
+  padding: 5px;
+  margin: 0;
+  text-align: center;
+}
+canvas{
+  padding: 5px;
+  max-height: 30%;
+  max-width: 100%;
+}

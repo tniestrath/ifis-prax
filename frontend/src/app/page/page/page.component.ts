@@ -72,6 +72,7 @@ import {
 import {SocialsSumsComponent} from "../../component/socials/socials-sums/socials-sums.component";
 import {BounceComponent} from "../../component/bounce/bounce.component";
 import {PostComparatorComponent} from "../../component/post/post-comparator/post-comparator.component";
+import {UserSubsComponent} from "../../component/user/user-subs/user-subs.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -154,6 +155,7 @@ export class PageComponent implements OnInit {
       {type: OriginMapComponent, row: 3, col: 2, height: 2, width: 3},
       {type: EventsStatsComponent, row: 2, col: 6, height: 1, width: 1},
       {type: BounceComponent, row: 3, col: 6, height: 1, width: 1},
+      {type: UserSubsComponent, row: 4, col: 6, height: 1, width: 1},
       {type: PostTypesAverageViewsComponent, row: 5, col: 1, height: 1, width: 2},
       {type: UserStatsByPlanShortViewComponent, row: 5, col: 3, height: 1, width: 2},
       {type: UserStatsByPlanRedirectsComponent, row: 5, col: 5, height: 1, width: 2},

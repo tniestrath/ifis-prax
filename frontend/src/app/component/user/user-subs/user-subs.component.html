@@ -1,8 +1,10 @@
 <div class="component-box user-subs-box">
-  <div class="user-subs-title">
-    <p>Von Besuchern abonnierte Themen</p>
-  </div>
-  <div class="user-subs-chart-box">
-    <canvas id="subs_chart">{{chart}}</canvas>
+  <div class="subs-box">
+    <div class="number-box" [style]="{color: DashColors.RED}">
+      <p class="number-m"></p>
+      <p class="number-xl" [style]="{width: 'fit-content'}">{{Util.formatNumbers(data.countToday)}}</p>
+      <p class="number-m" [style]="{textAlign: 'start'}">{{data.change >= 0 ? "+" + data.change : "-" + data.change}}</p>
+    </div>
+    <p>aktive Benutzer Benachrichtigungen</p>
   </div>
 </div>

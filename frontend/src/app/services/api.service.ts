@@ -59,6 +59,9 @@ export enum apiUrl {
   GET_USERS_REDIRECTS_BY_PLAN = "/users/getAverageRedirectsByPlan",
   GET_USERS_TAG_DISTRIBUTION_PRECENTAGE = "/users/getAllUserTagsData",
 
+  GET_USERS_SUBS_ALL = "/users/getUsersSubsAll",
+  GET_USERS_SUBS_COUNT = "/users/getCountUsersSubsAll",
+
   /**
    * Single User related requests
    */
@@ -689,11 +692,17 @@ export class ApiService {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_USER_TAG_DISTRIBUTION_PRECENTAGE).replace("ID", id).replace("SORTER", sorter), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USER_TAG_DISTRIBUTION_PRECENTAGE)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
-
   async getUserSearchSuggestions(search: string, abo: string, typ: string) : Promise<string[]>{
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_SUGGESTIONS).replace("SEARCH", search).replace("ABO", abo).replace("TYP", typ), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_SUGGESTIONS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
+
+  async getUsersSubsCount() : Promise<{change : number, countToday : number}> {
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_SUBS_COUNT), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_SUBS_COUNT)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+
   async getPostSearchSuggestions(search: string, typ: string) : Promise<string[]>{
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_POSTS_SUGGESTIONS).replace("SEARCH", search).replace("TYP", typ), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_POSTS_SUGGESTIONS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});

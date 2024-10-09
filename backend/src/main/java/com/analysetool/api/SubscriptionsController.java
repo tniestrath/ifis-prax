@@ -20,5 +20,8 @@ public class SubscriptionsController {
     @GetMapping("/unsubscribe")
     public boolean unsubscribe(String type, String thema, String author, String word, HttpServletRequest request) {return subService.unsubscribe(type, thema, author, word, request);}
 
-
+    @GetMapping("/sendMailTest")
+    public boolean sendMailTest() {
+        return subService.sendMailsNotifications();
+    }
 }

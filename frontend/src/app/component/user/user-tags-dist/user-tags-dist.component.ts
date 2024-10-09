@@ -41,7 +41,8 @@ export class UserTagsDistComponent extends DashBaseComponent implements OnInit{
 export class SingleUserTagsDistComponent extends UserTagsDistComponent implements OnInit{
 
   override ngOnInit(): void {
-    this.setToolTip("", 1,SysVars.CURRENT_PAGE != "PRINT");
+    this.setToolTip("Hier werden ihre gewählten Themenfelder angezeigt.<br><br>" +
+      "<img src='assets/bell.png' style='height: 15px; filter:invert(1)'> Anzahl der Abonements zum Thema", 1,SysVars.CURRENT_PAGE != "PRINT");
     this.element.nativeElement.getElementsByClassName("component-box")[0].classList.add("no-margin-top");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].classList.add("no-full-width");
     this.element.nativeElement.getElementsByClassName("user-tags-dist-title")[0].children[0].innerText = "Platzierung innerhalb der gewählten Themen";

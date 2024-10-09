@@ -11,12 +11,18 @@
 }
 
 .user-tag-precentage{
-  width: 20%;
+  width: 15%;
   text-align: left;
 }
 .user-tag-name{
-  width: 60%;
+  width: 55%;
   text-align: center;
+}
+.user-tag-subs{
+  display: flex;
+  width: 10%;
+  text-align: center;
+  align-items: center;
 }
 .user-tag-count{
   width: 20%;
@@ -25,4 +31,10 @@
 .user-tag-ranking{
     width: 20%;
     text-align: right;
+}
+img{
+  max-width: 90%;
+  height: 20px;
+  aspect-ratio: 1;
+  padding: 2px;
 }

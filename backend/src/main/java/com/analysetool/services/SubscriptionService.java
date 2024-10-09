@@ -164,7 +164,7 @@ public class SubscriptionService {
         }
         if(authorId == 0) authorId = null;
 
-        if(word == null | word.isBlank() || word.equals("none")) word = null;
+        if(word == null || word.isBlank() || word.equals("none")) word = null;
 
         if(subRepo.findByAll(type, tagId, authorId, word).isPresent()) {
             if(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByAll(type, tagId, authorId, word).get().getId()).isPresent()) {
@@ -274,7 +274,7 @@ public class SubscriptionService {
             }
         }
 
-        sendMailsNotifications();
+        //sendMailsNotifications();
 
     }
 
@@ -286,7 +286,8 @@ public class SubscriptionService {
         notiMailLogRepo.save(noti);
     }
 
-    private boolean sendMailsNotifications() {
+
+    public boolean sendMailsNotifications() {
         try {
             HttpClient httpClient = HttpClients.createDefault();
             HttpPost httpPost = new HttpPost(config.getNotificationsend());

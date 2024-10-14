@@ -273,8 +273,9 @@ public class SubscriptionService {
                 }
             }
         }
-
-        sendMailsNotifications();
+        if(!notiMailLogRepo.findAllUnsent().isEmpty()) {
+            sendMailsNotifications();
+        }
 
     }
 

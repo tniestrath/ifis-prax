@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface NotificationMailLogRepository extends JpaRepository<NotificationMailLog, Long> {
 
-    @Query("SELECT n FROM NotificationMailLog n WHERE n.sent=0")
+    @Query("SELECT n FROM NotificationMailLog n WHERE n.sent=false")
     List<NotificationMailLog> findAllUnsent();
 
 }

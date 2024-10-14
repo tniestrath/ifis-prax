@@ -124,6 +124,7 @@ import { SocialsSumsComponent } from './component/socials/socials-sums/socials-s
 import { BounceComponent } from './component/bounce/bounce.component';
 import { PostComparatorComponent } from './component/post/post-comparator/post-comparator.component';
 import { UserSubsComponent } from './component/user/user-subs/user-subs.component';
+import { VisitorSubscriptionChartComponent } from './component/visitor/visitor-subscribtion-chart/visitor-subscription-chart.component';
 
 @NgModule({
     declarations: [
@@ -231,7 +232,8 @@ import { UserSubsComponent } from './component/user/user-subs/user-subs.componen
         PostComparatorComponent,
         PostSearchbarComponent,
         BhListDirective,
-        UserSubsComponent
+        UserSubsComponent,
+        VisitorSubscriptionChartComponent
     ],
     imports: [
         BrowserModule,

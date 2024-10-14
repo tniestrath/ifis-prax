@@ -73,6 +73,9 @@ import {SocialsSumsComponent} from "../../component/socials/socials-sums/socials
 import {BounceComponent} from "../../component/bounce/bounce.component";
 import {PostComparatorComponent} from "../../component/post/post-comparator/post-comparator.component";
 import {UserSubsComponent} from "../../component/user/user-subs/user-subs.component";
+import {
+  VisitorSubscriptionChartComponent
+} from "../../component/visitor/visitor-subscribtion-chart/visitor-subscription-chart.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -214,7 +217,7 @@ export class PageComponent implements OnInit {
   }
   getVisitorPageCards() {
     return [
-      {type: ForumStatsComponent, row: 1, col: 1, height: 4, width: 1},
+      {type: VisitorSubscriptionChartComponent, row: 1, col: 1, height: 2, width: 2},
     ]
   }
 

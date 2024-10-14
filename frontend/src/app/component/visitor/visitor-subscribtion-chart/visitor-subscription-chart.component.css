@@ -1,0 +1,93 @@
+.visitors-subs-sort-form{
+  display: flex;
+  width: calc(100% - 45px);
+  height: 30px;
+  padding: 5px;
+}
+.visitors-subs-title{
+  box-sizing: border-box;
+  max-width: 45%;
+  min-width: 40%;
+  border-radius: 5px 0 0 5px;
+  border: 1px solid #808080;
+  display: grid;
+  place-content: center;
+}
+.visitors-subs-title > p {
+  margin: 0;
+}
+input[type="radio"]{
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: white;
+  margin: 0;
+  border: 1px solid #808080;
+  width: 15%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+}
+input[type="radio"]:hover{
+  border: 1px solid black;
+}
+input[type="radio"]::before{
+  content: "Thema";
+  color: #808080;
+  transform: scale(1);
+  transition: 120ms transform ease-in-out;
+}
+input[type="radio"]::after{
+  content: "Thema";
+  color: #951D40;
+  transform: scale(0);
+  position: fixed;
+  bottom: 0;
+}
+#sub-sort-user::before{
+  content: "Anbieter";
+}
+#sub-sort-user::after{
+  content: "Anbieter";
+}
+#sub-sort-type::before{
+  content: "Typ";
+}
+#sub-sort-type::after{
+  content: "Typ";
+}
+#sub-sort-word::before{
+  content: "Wort";
+}
+#sub-sort-word::after{
+  content: "Wort";
+}
+
+input[type="radio"]:checked::before{
+  color: #808080;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  position: fixed;
+  bottom: 0;
+}
+input[type="radio"]:checked::after{
+  color: #951D40;
+  transform: scale(1) !important;
+  transition: 120ms transform ease-in-out;
+  position: inherit !important;
+}
+
+#sub-sort-word{
+  border-radius: 0 5px 5px 0;
+}
+
+.visitors-subs-chart-box{
+  display: flex;
+  justify-content: center;
+  height: calc(100% - 45px);
+}
+canvas{
+  padding: 5px;
+  max-height: 100%;
+  max-width: 100%;
+}

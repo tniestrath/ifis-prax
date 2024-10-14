@@ -174,7 +174,9 @@ export class HeaderComponent implements AfterViewInit{
   checkSelected(page : string) : string {
     if (SysVars.CURRENT_PAGE == page){
       return "2px solid #941C3EFF";
-    }else {
+    }else if(SysVars.CURRENT_PAGE == "UserDetail" && page == "Anbieter"){
+      return "2px solid #941C3EFF";
+    } else {
       return "none";
     }
   }

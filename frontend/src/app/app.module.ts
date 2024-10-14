@@ -13,7 +13,7 @@ import {MatInputModule} from "@angular/material/input";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { TagComponent } from './component/tag/tag/tag.component';
 import {PostSearchbarComponent, SearchbarComponent} from './page/searchbar/searchbar.component';
-import { PageComponent } from './page/page-einzel/page.component';
+import { PageComponent } from './page/page/page.component';
 import {CookieService} from "ngx-cookie-service";
 import { SelectorComponent } from './page/selector/selector.component';
 import { SelectableDirective } from './page/selector/selectable.directive';

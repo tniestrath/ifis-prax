@@ -212,6 +212,11 @@ export class PageComponent implements OnInit {
       {type: ForumProfanityFilterAdderComponent, row: 3, col: 6, height: 2, width: 1},
     ]
   }
+  getVisitorPageCards() {
+    return [
+      {type: ForumStatsComponent, row: 1, col: 1, height: 4, width: 1},
+    ]
+  }
 
   ngOnInit(): void {
     SysVars.SELECTED_PAGE.subscribe(page => {
@@ -271,6 +276,11 @@ export class PageComponent implements OnInit {
         case "Forum":{
           this.pdf.restoreStyle(this.element.nativeElement);
           this.cardsLoaded.next(this.getForumPageCards());
+          break;
+        }
+        case "Besucher":{
+          this.pdf.restoreStyle(this.element.nativeElement);
+          this.cardsLoaded.next(this.getVisitorPageCards());
           break;
         }
         case "PRINT":{

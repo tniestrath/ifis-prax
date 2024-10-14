@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, Output} from '@angular/core';
 import {Subject} from "rxjs";
 import {ApiService} from "../../services/api.service";
 import {SysVars} from "../../services/sys-vars-service";
@@ -8,12 +8,13 @@ import {CookieService} from "ngx-cookie-service";
 @Component({
   selector: 'dash-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  styleUrls: ['./header.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent implements AfterViewInit{
 
   @Output() selected = new Subject<string>();
-  navElementsBackup = ["Übersicht", "Beiträge", "Themen", "Anbieter", "Inhalte", "SEO", "Suche", "Newsletter", "Forum", "System"];
+  navElementsBackup = ["Beiträge", "Themen", "Anbieter", "Besucher", "Inhalte", "SEO", "Suche", "Newsletter", "Forum", "System"];
   navElements = this.navElementsBackup;
 
   loadingBar_process : any = null;

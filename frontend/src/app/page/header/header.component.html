@@ -1,8 +1,9 @@
 <div class="page-header">
-  <img src="../../assets/ifismpdashboard.png"/>
+  <img src="../../assets/ifismpdashboard.png" (click)="setSelected('Übersicht')" title="Übersicht" style="cursor: pointer !important;">
 
   <div *ngFor="let element of navElements">
-    <div [id]="element" class="nav-element" [style.border]="checkSelected(element)" [innerText]="element" (click)="setSelected(element)"></div>
+    <div [id]="element" class="nav-element" [style.border]="checkSelected(element)" [innerText]="element" (click)="setSelected(element)">
+    </div>
   </div>
 </div>
 <div id="feedback-panel" (click)="onFeedbackClick()">

@@ -147,6 +147,10 @@ public class LogService {
     private LastPingRepository lpRepo;
     @Autowired
     private BounceRepository bounceRepo;
+    @Autowired
+    UserSubscriptionCountLogRepository userSubCountRepo;
+    @Autowired
+    UserSubscriptionsRepository userSubRepo;
 
     private final CommentsRepository commentRepo;
     private final SysVarRepository sysVarRepo;
@@ -578,13 +582,6 @@ public class LogService {
                 System.out.println("FEHLER AT checkLastPingTimer");
                 e.printStackTrace();
             }
-            try {
-
-            } catch (Exception e) {
-                System.out.println("FEHLER AT UpdateUserSubCountLog");
-                e.printStackTrace();
-            }
-
 
             if (LocalDateTime.now().getHour() == 5) {
                 endDay();
@@ -592,6 +589,20 @@ public class LogService {
             sysVarRepo.save(SystemVariabeln);
             isRunning = false;
         }
+    }
+
+    private void updateUserSubCountLog() {
+        UserSubscriptionCountLog log;
+        if(userSubCountRepo.findByUniId(uniRepo.getLatestUniStat().getId()).isPresent()) {
+            log = userSubCountRepo.findByUniId(uniRepo.getLatestUniStat().getId()).get();
+        } else {
+            log = new UserSubscriptionCountLog();
+            log.setUniId(uniRepo.getLatestUniStat().getId());
+        }
+
+        log.setCount(userSubRepo.getCountSubsTotal() == null ? 0 : userSubRepo.getCountSubsTotal());
+
+        userSubCountRepo.save(log);
     }
 
     /**
@@ -1816,6 +1827,12 @@ public class LogService {
             updateUserStatsBuffer();
         } catch(Exception e) {
             System.out.println("FEHLER AT updateUserStatsBuffer");
+            e.printStackTrace();
+        }
+        try {
+            updateUserSubCountLog();
+        } catch (Exception e) {
+            System.out.println("FEHLER AT UpdateUserSubCountLog");
             e.printStackTrace();
         }
 

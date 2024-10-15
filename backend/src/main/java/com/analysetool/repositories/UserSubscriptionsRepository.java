@@ -25,4 +25,8 @@ public interface UserSubscriptionsRepository extends JpaRepository<UserSubscript
             "JOIN WPTerm t ON t.id=s.author " +
             "JOIN WPUser user ON user.nicename=t.slug WHERE user.id=:anbieterId")
     Integer getCountUserSubsOnAnbieter(long anbieterId);
+
+    @Query("SELECT COUNT(u) FROM UserSubscriptions u")
+    Integer getCountSubsTotal();
+
 }

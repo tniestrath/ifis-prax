@@ -173,6 +173,7 @@ public class SubscriptionService {
             } else {
                 //Sub exists, sub user
                 UserSubscriptions userSub = new UserSubscriptions();
+                userSub.setTime(Timestamp.valueOf(LocalDateTime.now()));
                 userSub.setSubId(subRepo.findByAll(type, tagId, authorId, word).get().getId());
                 userSub.setUserId(userid);
                 userSubRepo.save(userSub);
@@ -187,6 +188,7 @@ public class SubscriptionService {
             subRepo.save(sub);
 
             UserSubscriptions userSub = new UserSubscriptions();
+            userSub.setTime(Timestamp.valueOf(LocalDateTime.now()));
             userSub.setSubId(sub.getId());
             userSub.setUserId(userid);
             userSubRepo.save(userSub);

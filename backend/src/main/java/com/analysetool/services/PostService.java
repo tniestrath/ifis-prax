@@ -1463,7 +1463,7 @@ public class PostService {
         
         String type = "post";
         
-        if(filter.equals("podcast") || filter.equals("video")) {
+        if(filter.equals("podcast") || filter.equals("video") || filter.equals("it-sicherheitsstudien")) {
             type=filter;
         }
         

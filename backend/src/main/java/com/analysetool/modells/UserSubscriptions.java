@@ -19,7 +19,6 @@ public class UserSubscriptions implements Serializable {
     @Column(name="sub_id")
     private long subId;
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="time")
     private Timestamp time;
 

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserSubscriptionCountLogRepository extends JpaRepository<UserSubscriptionCountLog, Long> {
@@ -16,4 +17,7 @@ public interface UserSubscriptionCountLogRepository extends JpaRepository<UserSu
 
     @Query("SELECT u.count FROM UserSubscriptionCountLog u ORDER BY u.id DESC")
     List<Integer> getCountPage(Pageable pageable);
+
+    @Query("SELECT u FROM UserSubscriptionCountLog u WHERE u.uniId=:uniId")
+    Optional<UserSubscriptionCountLog> findByUniId(int uniId);
 }

@@ -46,6 +46,8 @@ public class SubscriptionService {
 
     private final DashConfig config;
 
+    private String subSucc = "Sie haben erfolgreich abonniert!";
+    private String subNotSucc = "Sie haben nicht erfolgreich abonniert.";
 
     private String mailPlaceholder = "<!DOCTYPE html>\n" +
             "<html lang=\"de\">\n" +
@@ -110,16 +112,123 @@ public class SubscriptionService {
             "            <h1>Neue Inhalte Verfügbar!</h1>\n" +
             "        </div>\n" +
             "        <div class=\"content\">\n" +
-            "            <h2>Hallo [Vorname Nachname],</h2>\n" +
-            "            <p>Wir freuen uns, Ihnen mitteilen zu können, dass neue Inhalte auf unserer IT-Sicherheits-Website verfügbar sind. Diese Inhalte sind speziell auf Ihre Interessen abgestimmt und wir sind sicher, dass Sie sie hilfreich und informativ finden werden.</p>\n" +
+            "            <p>Wir freuen uns, Ihnen mitteilen zu können, dass die neuesten Inhalte, für die Sie sich angemeldet haben, jetzt auf dem IT-Sicherheits Marktplatz verfügbar sind.</p>\n" +
             "            <p>Um die neuesten Inhalte anzusehen, klicken Sie bitte auf den untenstehenden Button:</p>\n" +
-            "            <p><a href=\"https://it-sicherheit.de\" class=\"button\">Jetzt ansehen</a></p>\n" +
+            "            <p><a href=\"{{LINK}}\" class=\"button\">Jetzt ansehen</a></p>\n" +
+            "            <p>Wenn Sie keine weiteren Benachrichtigungen erhalten möchten, können Sie sich hier abmelden:</p>\n" +
+            "            <p><a href=\"https://analyse.it-sicherheit.de/api/subscribe/unsubscribeAll?{{USERID}} \" class=\"button\">Abmelden</a></p>\n" +
             "            <p>Vielen Dank, dass Sie ein geschätztes Mitglied unserer Community sind!</p>\n" +
             "            <p>Mit freundlichen Grüßen,<br>Das IT-Sicherheitsteam</p>\n" +
             "        </div>\n" +
             "        <div class=\"footer\">\n" +
-            "            <p>&copy; 2024 Ihre IT-Sicherheits-Website. Alle Rechte vorbehalten.</p>\n" +
+            "            <p>&copy;</p>\n" +
             "        </div>\n" +
+            "    </div>\n" +
+            "</body>\n" +
+            "</html>\n";
+
+    private final String unsubAllSucc = "<!DOCTYPE html>\n" +
+            "<html lang=\"de\">\n" +
+            "<head>\n" +
+            "    <meta charset=\"UTF-8\">\n" +
+            "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+            "    <title>Erfolgreiche Abmeldung</title>\n" +
+            "    <style>\n" +
+            "        body {\n" +
+            "            font-family: Arial, sans-serif;\n" +
+            "            background-color: #f0f0f0;\n" +
+            "            text-align: center;\n" +
+            "            padding: 50px;\n" +
+            "        }\n" +
+            "        .container {\n" +
+            "            background-color: #fff;\n" +
+            "            padding: 20px;\n" +
+            "            border-radius: 10px;\n" +
+            "            box-shadow: 0 0 10px rgba(0,0,0,0.1);\n" +
+            "            display: inline-block;\n" +
+            "        }\n" +
+            "        h1 {\n" +
+            "            color: #4CAF50;\n" +
+            "        }\n" +
+            "        p {\n" +
+            "            font-size: 18px;\n" +
+            "            color: #333;\n" +
+            "        }\n" +
+            "        a.button {\n" +
+            "            display: inline-block;\n" +
+            "            padding: 10px 20px;\n" +
+            "            margin-top: 20px;\n" +
+            "            font-size: 16px;\n" +
+            "            color: #fff;\n" +
+            "            background-color: #4CAF50;\n" +
+            "            border: none;\n" +
+            "            border-radius: 5px;\n" +
+            "            text-decoration: none;\n" +
+            "        }\n" +
+            "        a.button:hover {\n" +
+            "            background-color: #45a049;\n" +
+            "        }\n" +
+            "    </style>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "    <div class=\"container\">\n" +
+            "        <h1>Abmeldung Erfolgreich</h1>\n" +
+            "        <p>Sie haben sich erfolgreich von allen Ihren Subscriptions abgemeldet.</p>\n" +
+            "        <p>Wenn Sie Ihre Meinung ändern, können Sie sich jederzeit wieder anmelden.</p>\n" +
+            "        <a href=\"https://it-sicherheit.de\" class=\"button\">Zurück zur Startseite</a>\n" +
+            "    </div>\n" +
+            "</body>\n" +
+            "</html>\n";
+
+    private final String unsubAllNotSucc = "<!DOCTYPE html>\n" +
+            "<html lang=\"de\">\n" +
+            "<head>\n" +
+            "    <meta charset=\"UTF-8\">\n" +
+            "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+            "    <title>Abmeldung Fehlgeschlagen</title>\n" +
+            "    <style>\n" +
+            "        body {\n" +
+            "            font-family: Arial, sans-serif;\n" +
+            "            background-color: #f0f0f0;\n" +
+            "            text-align: center;\n" +
+            "            padding: 50px;\n" +
+            "        }\n" +
+            "        .container {\n" +
+            "            background-color: #fff;\n" +
+            "            padding: 20px;\n" +
+            "            border-radius: 10px;\n" +
+            "            box-shadow: 0 0 10px rgba(0,0,0,0.1);\n" +
+            "            display: inline-block;\n" +
+            "        }\n" +
+            "        h1 {\n" +
+            "            color: #f44336;\n" +
+            "        }\n" +
+            "        p {\n" +
+            "            font-size: 18px;\n" +
+            "            color: #333;\n" +
+            "        }\n" +
+            "        a.button {\n" +
+            "            display: inline-block;\n" +
+            "            padding: 10px 20px;\n" +
+            "            margin-top: 20px;\n" +
+            "            font-size: 16px;\n" +
+            "            color: #fff;\n" +
+            "            background-color: #f44336;\n" +
+            "            border: none;\n" +
+            "            border-radius: 5px;\n" +
+            "            text-decoration: none;\n" +
+            "        }\n" +
+            "        a.button:hover {\n" +
+            "            background-color: #e53935;\n" +
+            "        }\n" +
+            "    </style>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "    <div class=\"container\">\n" +
+            "        <h1>Abmeldung Fehlgeschlagen</h1>\n" +
+            "        <p>Leider ist ein Fehler aufgetreten und Ihre Abmeldung konnte nicht durchgeführt werden.</p>\n" +
+            "        <p>Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.</p>\n" +
+            "        <a href=\"https://it-sicherheit.de/\" class=\"button\">Support kontaktieren</a>\n" +
             "    </div>\n" +
             "</body>\n" +
             "</html>\n";
@@ -138,25 +247,32 @@ public class SubscriptionService {
      * @param request not manually filled, used to validate userid.
      * @return true if successful, otherwise false.
      */
-    public boolean subCustom(String type, String thema, String author, String word, HttpServletRequest request) {
+    public String subCustom(String type, String thema, String author, String word, HttpServletRequest request) {
         String result = loginService.validateCookie(request);
         int userid;
         try {
             userid = new JSONObject(result).getInt("user_id");
         } catch (JSONException e) {
-            return false;
+            return subNotSucc + " Es scheint das wir Ihre Nutzer-Id nicht richtig verbinden konnten. Versuchen Sie es gerne später erneut.";
         }
 
 
         if(type != null) {
             if (!(type.equals("Artikel") || type.equals("Blog") || type.equals("News") || type.equals("Whitepaper") || type.equals("Video") || type.equals("Podcast"))) {
                 if (type.equals("none") || type.isBlank()) type = null;
-                else return false;
+                else return subNotSucc + " Der von Ihnen angegebene Typ ist nicht gültig. Gültig sind: Artikel, Blog, News, Whitepaper, Video oder Podcast.";
             }
         }
 
         Integer tagId = null;
-        if(thema != null && !thema.isBlank())  tagId = Math.toIntExact(termTaxRepo.getPostTagBySlug(thema).getTermId());
+        if(thema != null && !thema.isBlank())  {
+            try {
+                tagId = Math.toIntExact(termTaxRepo.getPostTagBySlug(thema).getTermId());
+            }
+            catch (Exception e) {
+                return subNotSucc + " Das von Ihnen angegebene Thema gibt es nicht, Ihr Abonnement wurde deshalb nicht übernommen.";
+            }
+        }
 
         Long authorId = 0L;
         if(authorRelRepo.findByAuthorSlugFirst(author).isPresent()) {
@@ -169,10 +285,11 @@ public class SubscriptionService {
         if(subRepo.findByAll(type, tagId, authorId, word).isPresent()) {
             if(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByAll(type, tagId, authorId, word).get().getId()).isPresent()) {
                 //User already subscribed
-                return true;
+                return subSucc;
             } else {
                 //Sub exists, sub user
                 UserSubscriptions userSub = new UserSubscriptions();
+                userSub.setTime(Timestamp.valueOf(LocalDateTime.now()));
                 userSub.setSubId(subRepo.findByAll(type, tagId, authorId, word).get().getId());
                 userSub.setUserId(userid);
                 userSubRepo.save(userSub);
@@ -187,11 +304,12 @@ public class SubscriptionService {
             subRepo.save(sub);
 
             UserSubscriptions userSub = new UserSubscriptions();
+            userSub.setTime(Timestamp.valueOf(LocalDateTime.now()));
             userSub.setSubId(sub.getId());
             userSub.setUserId(userid);
             userSubRepo.save(userSub);
         }
-        return true;
+        return subSucc;
     }
 
     public boolean unsubscribe(String type, String thema, String author, String word, HttpServletRequest request) {
@@ -262,7 +380,7 @@ public class SubscriptionService {
                         //Since the criteria fit, notify user
                         noti.setNotificationSent(true);
                         wasSent = true;
-                        generateMail(userSub.getUserId());
+                        generateMail(userSub.getUserId(), post.getId());
                     } else {
                         if(!wasSent) noti.setNotificationSent(false);
                     }
@@ -279,9 +397,16 @@ public class SubscriptionService {
 
     }
 
-    private void generateMail(long userId) {
+    private String makeContentForMail(long userId, long postId) {
+        String content = mailPlaceholder;
+        content = content.replace("{{USERID}}", String.valueOf(userId));
+        content = content.replace("{{LINK}}", postRepo.findById(postId).isPresent() ? postRepo.findById(postId).get().getGuid() : "https://it-sicherheit.de");
+        return content;
+    }
+
+    private void generateMail(long userId, long postId) {
         NotificationMailLog noti = new NotificationMailLog();
-        noti.setContent(mailPlaceholder);
+        noti.setContent(makeContentForMail(userId, postId));
         noti.setSent(false);
         noti.setUserId(userId);
         notiMailLogRepo.save(noti);
@@ -302,4 +427,13 @@ public class SubscriptionService {
 
     }
 
+    public String unsubscribeAll(long userId) {
+        try {
+            userSubRepo.deleteAll(userSubRepo.findByUserId(userId));
+            return unsubAllSucc;
+        } catch (Exception e) {
+            return unsubAllNotSucc;
+        }
+
+    }
 }

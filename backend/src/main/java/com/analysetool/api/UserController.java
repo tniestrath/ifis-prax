@@ -663,4 +663,8 @@ public class UserController {
             return false;
         }
     }
+
+
+    @GetMapping("/getUserSubsFiltered")
+    public String getCountUserSubsCategories(String filter) throws JSONException {return userService.getCountUserSubsCategories(filter);}
 }

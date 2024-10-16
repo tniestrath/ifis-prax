@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 
 import com.analysetool.services.ForumService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -149,7 +150,6 @@ public class ForumModController {
      * @param page the page number
      * @param size the size of the page
      * @return a JSON string of ranked forum topics
-     * @throws JSONException if a JSON error occurs
      */
     @GetMapping("/rankedTopics")
     public String getRankedTopics(@RequestParam int page, @RequestParam int size) {
@@ -166,7 +166,6 @@ public class ForumModController {
      * @param page the page number
      * @param size the size of the page
      * @return a JSON string of ranked search terms
-     * @throws JSONException if a JSON error occurs
      */
     @GetMapping("/rankedSearchTerms")
     public String getRankedSearchTerms(@RequestParam int page, @RequestParam int size)  {
@@ -180,10 +179,9 @@ public class ForumModController {
     /**
      * Fetches the Top 15 searched terms.
      * @return a JSON-String containing the values of the fetched terms.
-     * @throws JSONException .
      */
     @GetMapping("/rankedSearchTermsTop15")
-    public String getRankedSearchTermsTop15() throws JSONException {
+    public String getRankedSearchTermsTop15() {
         try{
             return forumService.getRankedSearchTop15();}catch(Exception e){
             e.printStackTrace();
@@ -276,5 +274,17 @@ public class ForumModController {
      */
     @GetMapping("/getModCounts")
     public String getModCounts(Integer userId) throws JSONException {return forumService.getModCounts(userId);}
+
+    /**
+     * Attempts to add a new moderator to a forum, respecting role rights.
+     * @param newModId the userId of the mod to add.
+     * @param forumId the forum to allow the moderator on.
+     * @param request automatic, for user-right scanning.
+     * @return true on success.
+     */
+    @GetMapping("/addModeratorToForum")
+    public boolean addModToForum(int newModId, int forumId, HttpServletRequest request) {
+        return forumService.addModToForum(newModId, forumId, request);
+    }
 
 }

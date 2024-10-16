@@ -90,6 +90,10 @@ public class UserService {
     private UserSubscriptionsRepository userSubRepo;
     @Autowired
     private UserSubscriptionCountLogRepository userSubCountRepo;
+    @Autowired
+    private SubscriptionsRepository subRepo;
+    @Autowired
+    private WPTermRepository termRepo;
 
     private final DashConfig config;
 
@@ -2979,6 +2983,131 @@ public class UserService {
         json.put("count", userSubCountRepo.getCountPage(PageRequest.of(1, 1)).isEmpty() ? 0 : userSubCountRepo.getCountPage(PageRequest.of(1, 1)).get(0));
         json.put("change", json.getInt("countToday") - json.getInt("count"));
         return json.toString();
+    }
+
+    public String getCountUserSubsCategories(String filter) throws JSONException {
+        String response;
+
+        switch(filter) {
+            case "tag" -> response =  getCountUserSubsTag();
+            case "type" -> response = getCountUserSubsType();
+            case "word" -> response = getCountUserSubsWord();
+            case "anbieter" -> response = getCountUserSubsAuthor();
+            default -> response =  getCountUserSubsTag();
+        }
+        return response;
+    }
+
+    private String getCountUserSubsAuthor() throws JSONException {
+        JSONArray array = new JSONArray();
+        List<Long> authors = subRepo.findAllAuthors();
+        for(Long author : authors) {
+            JSONObject fullFilter = new JSONObject();
+            int filterCount = 0;
+            JSONArray filterDetails = new JSONArray();
+            List<Subscriptions> subs = subRepo.findAllByAuthorFull(author);
+            for(Subscriptions sub : subs) {
+                JSONObject detailRow = new JSONObject();
+                detailRow.put("id", sub.getId());
+                detailRow.put("count", userSubRepo.getCountSubsBySubId(subRepo.findAllByAuthor(author)));
+                detailRow.put("type", sub.getType() == null ? "none" : sub.getType());
+                detailRow.put("tag", sub.getTag() == null ? "none" : termRepo.getNameById(sub.getTag()));
+                detailRow.put("author", sub.getAuthor() == null ? "none" : termRepo.getNameById(Math.toIntExact(sub.getAuthor())));
+                detailRow.put("word", sub.getWord());
+                filterDetails.put(detailRow);
+
+                filterCount += userSubRepo.getCountSubsBySubId(subRepo.findAllByAuthor(author));
+            }
+            fullFilter.put("count", filterCount);
+            fullFilter.put("filter", termRepo.getNameById(Math.toIntExact(author)));
+            fullFilter.put("list", filterDetails);
+            array.put(fullFilter);
+        }
+        return array.toString();
+    }
+
+    private String getCountUserSubsWord() throws JSONException {
+        JSONArray array = new JSONArray();
+        List<String> words = subRepo.findAllWords();
+        for(String word : words) {
+            JSONObject fullFilter = new JSONObject();
+            int filterCount = 0;
+            JSONArray filterDetails = new JSONArray();
+            List<Subscriptions> subs = subRepo.findAllByWordFull(word);
+            for(Subscriptions sub : subs) {
+                JSONObject detailRow = new JSONObject();
+                detailRow.put("id", sub.getId());
+                detailRow.put("count", userSubRepo.getCountSubsBySubId(subRepo.findAllByWord(word)));
+                detailRow.put("type", sub.getType() == null ? "none" : sub.getType());
+                detailRow.put("tag", sub.getTag() == null ? "none" : termRepo.getNameById(sub.getTag()));
+                detailRow.put("author", sub.getAuthor() == null ? "none" : termRepo.getNameById(Math.toIntExact(sub.getAuthor())));
+                detailRow.put("word", sub.getWord());
+                filterDetails.put(detailRow);
+
+                filterCount += userSubRepo.getCountSubsBySubId(subRepo.findAllByWord(word));
+            }
+            fullFilter.put("count", filterCount);
+            fullFilter.put("filter", word);
+            fullFilter.put("list", filterDetails);
+            array.put(fullFilter);
+        }
+        return array.toString();
+    }
+
+    private String getCountUserSubsType() throws JSONException {
+        JSONArray array = new JSONArray();
+        List<String> types = subRepo.findAllTypes();
+        for(String type : types) {
+            JSONObject fullFilter = new JSONObject();
+            int filterCount = 0;
+            JSONArray filterDetails = new JSONArray();
+            List<Subscriptions> subs = subRepo.findAllByTypeFull(type);
+            for(Subscriptions sub : subs) {
+                JSONObject detailRow = new JSONObject();
+                detailRow.put("id", sub.getId());
+                detailRow.put("count", userSubRepo.getCountSubsBySubId(subRepo.findAllByType(type)));
+                detailRow.put("type", sub.getType() == null ? "none" : sub.getType());
+                detailRow.put("tag", sub.getTag() == null ? "none" : termRepo.getNameById(sub.getTag()));
+                detailRow.put("author", sub.getAuthor() == null ? "none" : termRepo.getNameById(Math.toIntExact(sub.getAuthor())));
+                detailRow.put("word", sub.getWord());
+                filterDetails.put(detailRow);
+
+                filterCount += userSubRepo.getCountSubsBySubId(subRepo.findAllByType(type));
+            }
+            fullFilter.put("count", filterCount);
+            fullFilter.put("filter", type);
+            fullFilter.put("list", filterDetails);
+            array.put(fullFilter);
+        }
+        return array.toString();
+    }
+
+    private String getCountUserSubsTag() throws JSONException {
+        JSONArray array = new JSONArray();
+        List<Integer> tags = subRepo.findAllTags();
+        for(Integer tag : tags) {
+            JSONObject fullFilter = new JSONObject();
+            int filterCount = 0;
+            JSONArray filterDetails = new JSONArray();
+            List<Subscriptions> subs = subRepo.findAllByTagFull(tag);
+            for(Subscriptions sub : subs) {
+                JSONObject detailRow = new JSONObject();
+                detailRow.put("id", sub.getId());
+                detailRow.put("count", userSubRepo.getCountSubsBySubId(subRepo.findAllByTag(tag)));
+                detailRow.put("type", sub.getType() == null ? "none" : sub.getType());
+                detailRow.put("tag", sub.getTag() == null ? "none" : termRepo.getNameById(sub.getTag()));
+                detailRow.put("author", sub.getAuthor() == null ? "none" : termRepo.getNameById(Math.toIntExact(sub.getAuthor())));
+                detailRow.put("word", sub.getWord());
+                filterDetails.put(detailRow);
+
+                filterCount += userSubRepo.getCountSubsBySubId(subRepo.findAllByTag(tag));
+            }
+            fullFilter.put("count", filterCount);
+            fullFilter.put("filter", termRepo.getNameById(tag));
+            fullFilter.put("list", filterDetails);
+            array.put(fullFilter);
+        }
+        return array.toString();
     }
 }
 

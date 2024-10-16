@@ -3,6 +3,7 @@ package com.analysetool.services;
 import com.analysetool.modells.*;
 import com.analysetool.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,6 +66,11 @@ public class ForumService {
     private WPWPForoTrashcanRepository wpTrashRepo;
     @Autowired
     private WPWPForoTopicsTrashRepository wpTopicTrashRepo;
+    @Autowired
+    private LoginService loginService;
+    @Autowired
+    private LastPingRepository lpRepo;
+
 
     /**
      * Fetches all Unmoderated Forum posts.
@@ -1156,6 +1163,83 @@ public class ForumService {
             e.printStackTrace();
             return "{}"; // return an empty JSON object in case of an error
         }
+    }
+
+    /**
+     * Checks whether the given user has moderator rights on the given forum.
+     * @param userId the users id.
+     * @param forumId the forums id.
+     * @return true if user has rights to forum.
+     */
+    public boolean isUserModOfForum(int userId, int forumId) {
+
+        return wpForoModsRepo.getAllForumByUser(userId).contains(forumId) || userService.getType(userId).equals("admin");
+    }
+
+    /**
+     * Attempts to add a new moderator to a forum, respecting role rights.
+     * @param newModId the userId of the mod to add.
+     * @param forumId the forum to allow the moderator on.
+     * @param request automatic, for user-right scanning.
+     * @return true on success.
+     */
+    public boolean addModToForum(int newModId, int forumId, HttpServletRequest request) {
+        String result = loginService.validateCookie(request);
+        int userid;
+        try {
+            userid = new JSONObject(result).getInt("user_id");
+        } catch (JSONException e) {
+            return false;
+        }
+
+        if(isUserModOfForum(userid, forumId)) {
+            //User has the right to add a moderator to this forum.
+            if(userRepo.findById((long) newModId).isPresent()) {
+                if(wpForoModsRepo.getAllForumByUser(newModId).contains(forumId)) return true;
+                else {
+                    try {
+                        //Add the new capability to the given user.
+                        WPWPForoModsMods moderator = new WPWPForoModsMods();
+                        moderator.setForum_id(forumId);
+                        moderator.setUserId(newModId);
+                        wpForoModsRepo.save(moderator);
+                        return true;
+                    } catch (Exception e) {
+                        //Something went wrong idk shouldn't happen.
+                        return false;
+                    }
+                }
+            } else {
+                //New moderator does not exist.
+                return false;
+            }
+
+        } else {
+            //User does not have the right to give access.
+            return false;
+        }
+
+    }
+
+    @Scheduled(cron = "0 0 * * * *")
+    public void checkForUnlock() {
+        try {
+            checkLastPingTimer();
+        } catch (Exception e) {
+            System.out.println("FEHLER AT checkLastPingTimer");
+            e.printStackTrace();
+        }
+    }
+
+    private void checkLastPingTimer() {
+        if(lpRepo.findById(1L).isPresent()) {
+            LastPing ping = lpRepo.findById(1L).get();
+
+            if(ping.getTimestamp().toLocalDateTime().plusMinutes(15).isBefore(LocalDateTime.now())) {
+                unlockAll();
+            }
+        }
+
     }
 
 }

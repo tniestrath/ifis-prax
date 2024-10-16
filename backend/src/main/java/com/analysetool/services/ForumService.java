@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,6 +68,9 @@ public class ForumService {
     private WPWPForoTopicsTrashRepository wpTopicTrashRepo;
     @Autowired
     private LoginService loginService;
+    @Autowired
+    private LastPingRepository lpRepo;
+
 
     /**
      * Fetches all Unmoderated Forum posts.
@@ -1216,4 +1220,26 @@ public class ForumService {
         }
 
     }
+
+    @Scheduled(cron = "0 0 * * * *")
+    public void checkForUnlock() {
+        try {
+            checkLastPingTimer();
+        } catch (Exception e) {
+            System.out.println("FEHLER AT checkLastPingTimer");
+            e.printStackTrace();
+        }
+    }
+
+    private void checkLastPingTimer() {
+        if(lpRepo.findById(1L).isPresent()) {
+            LastPing ping = lpRepo.findById(1L).get();
+
+            if(ping.getTimestamp().toLocalDateTime().plusMinutes(15).isBefore(LocalDateTime.now())) {
+                unlockAll();
+            }
+        }
+
+    }
+
 }

@@ -576,12 +576,6 @@ public class LogService {
                 System.out.println("FEHLER AT updateMemberBuffer");
                 e.printStackTrace();
             }
-            try {
-                checkLastPingTimer();
-            } catch (Exception e) {
-                System.out.println("FEHLER AT checkLastPingTimer");
-                e.printStackTrace();
-            }
 
             if (LocalDateTime.now().getHour() == 5) {
                 endDay();
@@ -3192,16 +3186,7 @@ public class LogService {
 
     }
 
-    private void checkLastPingTimer() {
-        if(lpRepo.findById(1L).isPresent()) {
-            LastPing ping = lpRepo.findById(1L).get();
 
-            if(ping.getTimestamp().toLocalDateTime().plusMinutes(15).isBefore(LocalDateTime.now())) {
-                forumService.unlockAll();
-            }
-        }
-
-    }
 
     public boolean isRunning() {
         return isRunning;

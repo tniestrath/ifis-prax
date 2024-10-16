@@ -24,4 +24,8 @@ public class SubscriptionsController {
     public boolean sendMailTest() {
         return subService.sendMailsNotifications();
     }
+
+    @GetMapping("/unsubscribeAll")
+    public String unsubscribeAll(long userId) {return subService.unsubscribeAll(userId);}
+
 }

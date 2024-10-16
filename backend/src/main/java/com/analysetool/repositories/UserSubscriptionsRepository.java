@@ -17,6 +17,9 @@ public interface UserSubscriptionsRepository extends JpaRepository<UserSubscript
     @Query("SELECT us FROM UserSubscriptions us WHERE us.subId=:subId")
     List<UserSubscriptions> findBySubId(long subId);
 
+    @Query("SELECT us FROM UserSubscriptions us WHERE us.userId=:userId")
+    List<UserSubscriptions> findByUserId(long userId);
+
     @Query("SELECT COUNT(u) FROM UserSubscriptions u JOIN Subscriptions s ON u.subId=s.id WHERE s.tag=:tagId")
     Integer getCountUserSubsInTag(long tagId);
 

@@ -254,13 +254,6 @@ public class LogService {
     private final String anbieterVerzeichnisPatter = "^.*GET /anbieterverzeichnis/";
 
     private final String tagCatPatter = "GET \\/themenfeld\\/([^\\/]+)\\/";
-
-   private final String forumDiskussionsthemen = "^.*GET /marktplatz-forum/([^/]+)/ HTTP.*";
-
-   private final String forumTopic = "^.*GET /marktplatz-forum/[^/]+/([^/]+)/.* HTTP.*";
-
-   private final String forumSearch= "^.*GET /marktplatz-forum/\\?wpfs=(.*?)&wpfin=(.*?)&wpfd=(.*?)&wpfob=(.*?)&wpfo=(.*?)&wpfpaged=(.*?)(?:\\s|$)";
-
    private final String itNotfall= "^.*GET /ratgeber/(it-notfall)/";
    private final String itNotfallSub = "^.*GET /ratgeber/it-notfall/(?!\\s)([^ ]+)";
 
@@ -274,8 +267,6 @@ public class LogService {
 
     final Pattern itPenTestPattern = Pattern.compile(itPenTest);
     final Pattern referrerForRedirectsPattern = Pattern.compile(referrerForRedirects);
-    final Pattern forumDiskussionsthemenPattern = Pattern.compile(forumDiskussionsthemen);
-    final Pattern forumTopicPattern = Pattern.compile(forumTopic);
     final Pattern articleViewPattern = Pattern.compile(ArtikelViewPattern);
 
     final Pattern blackHoleTrapPattern = Pattern.compile(BlackHolePattern);
@@ -328,8 +319,6 @@ public class LogService {
     final Pattern eventCatPattern = Pattern.compile(eventCatView);
     final Pattern anbieterCatPattern = Pattern.compile(anbieterVerzeichnisPatter);
     final Pattern tagCatPattern = Pattern.compile(tagCatPatter);
-
-    final Pattern forumSearchPattern= Pattern.compile(forumSearch);
     final Pattern itNotfallPattern = Pattern.compile(itNotfall);
     final Pattern itNotfallSubPattern = Pattern.compile(itNotfallSub);
     final Pattern ratgeberSelfSub = Pattern.compile(ratgeberSelfSubView);
@@ -393,8 +382,6 @@ public class LogService {
 
     @Autowired
     private UserRedirectsHourlyRepository userRedirectRepo;
-    @Autowired
-    private ForumService forumService;
 
     private final Map<String, UserViewsByHourDLC> userViewsHourDLCMap = new HashMap<>();
     private final Map<String, ContentDownloadsHourly> contentDownloadsMap = new HashMap<>();
@@ -403,10 +390,6 @@ public class LogService {
     private final Map<String,UserRedirectsHourly> userRedirectsMap = new HashMap<>();
 
     private final Map<String, List<FinalSearchStatDLC>> searchDLCMap = new ConcurrentHashMap<>();
-
-    private final Map<Integer,ForumDiskussionsthemenClicksByHour> forumDiscussionClicksMap = new ConcurrentHashMap<>();
-
-    private final Map<Integer,ForumTopicsClicksByHour> forumTopicsClicksMap = new ConcurrentHashMap<>();
 
     private boolean isRunning = false;
 
@@ -692,12 +675,6 @@ public class LogService {
 
                     sysVar.setLastTimeStamp(dateFormatter.format(dateLog));
 
-                    //Does it match a forum discussion view
-                    Matcher matched_forum_topic_view = forumTopicPattern.matcher(request);
-
-                    //Does it match a forum discussion view
-                    Matcher matched_forum_discussion_view = forumDiskussionsthemenPattern.matcher(request);
-
                     //Does it match an article-type?
                     Matcher matched_articleView = articleViewPattern.matcher(request);
                     Matcher matched_articleSearchSuccess = articleSearchSuccessPattern.matcher(line);
@@ -812,8 +789,6 @@ public class LogService {
 
                     //Does it match a tag-category view? (/themenfeld/)
                     Matcher matched_tagcat_view = tagCatPattern.matcher(request);
-                    //Does it match a forum search?
-                    Matcher matched_forum_search = forumSearchPattern.matcher(request);
                     //Does it match it-notfall ?
                     Matcher matched_it_notfall = itNotfallPattern.matcher(request);
                     //Does it match it-notfall-sub ?
@@ -970,15 +945,6 @@ public class LogService {
                     } else if(matched_tagcat_view.find()) {
                         whatMatched = "tagCat";
                         patternMatcher = matched_tagcat_view;
-                    } else if(matched_forum_topic_view.find()) {
-                        whatMatched = "forumTopicView";
-                        patternMatcher = matched_forum_topic_view;
-                    } else if(matched_forum_discussion_view.find()) {
-                        whatMatched = "forumDiscussionView";
-                        patternMatcher = matched_forum_discussion_view;
-                    } else if(matched_forum_search.find()) {
-                        whatMatched = "forumSearch";
-                        patternMatcher = matched_forum_search;
                     } else if (matched_it_notfall_sub.find()) {
                         whatMatched = "notfallSub";
                         patternMatcher = matched_it_notfall_sub;
@@ -1037,10 +1003,6 @@ public class LogService {
         userViewsByHourDLCService.persistAllUserViewsHour(userViewsHourDLCMap);
         postClicksByHourDLCService.persistAllPostClicksHour(postClicksMap);
         userRedirectService.persistAllUserRedirectsHourly(userRedirectsMap);
-
-        //decomment to enable tracking
-        forumService.persistAllForumDiscussionsClicksHour(forumDiscussionClicksMap);
-        forumService.persistAllForumTopicsClicksHour(forumTopicsClicksMap);
 
         //maps clearen nur um sicher zu gehen
         cleanMaps();
@@ -1305,45 +1267,6 @@ public class LogService {
             case "tagCat" -> {
                 updateTagCatStat(patternMatcher.group(1));
             }
-
-            case "forumDiscussionView" ->{
-                try {
-                    //decomment to enable
-                    updateForumDiscussionClicksMap(patternMatcher.group(1),dateLog);
-                }catch(Exception e){
-                    System.out.println("FORUM DISCUSSION VIEW EXCEPTION BEI: " + line);
-                    e.printStackTrace();
-                }
-            }
-            case "forumTopicView" ->{
-                //decomment to enable
-                try {
-                    updateForumTopicClicksMap(patternMatcher.group(1),dateLog);
-                }catch(Exception e){
-                    System.out.println("FORUM TOPIC VIEW EXCEPTION BEI: " + line);
-                    e.printStackTrace();
-                }
-            }
-            case "forumSearch" -> {
-                try{
-                System.out.println(line);
-                System.out.println(patternMatcher.group(1)+" "+patternMatcher.group(2)+" "+patternMatcher.group(3)+" "+patternMatcher.group(4)+" "+patternMatcher.group(5)+" "+patternMatcher.group(6));
-                String land = IPHelper.getCountryISO(ip);
-                String region = IPHelper.getSubISO(ip);
-                String stadt = IPHelper.getCityName(ip);
-                Integer stunde = dateLog.getHour();
-                Integer uniId = uniRepo.getLatestUniStat().getId();
-                Integer suchZeitraum = Integer.parseInt(patternMatcher.group(3));
-                Integer seitenAnzahl = Integer.parseInt(patternMatcher.group(6));
-
-                ForumSearch search = new ForumSearch(patternMatcher.group(1),patternMatcher.group(2),suchZeitraum ,patternMatcher.group(4),patternMatcher.group(5),seitenAnzahl,uniId,stunde,land,region,stadt);
-
-                forumService.saveSearchData(search);}catch(Exception e){
-                    System.out.println("FORUM SEARCH EXCEPTION BEI: " + line);
-                    e.printStackTrace();
-                }
-
-            }
             // page views
             case "notfall","notfallSub","ratgeberSelfSub"->{
                 try {
@@ -1365,56 +1288,6 @@ public class LogService {
         }
 
     }
-
-    private void updateForumDiscussionClicksMap(String slug,LocalDateTime logDate){
-       Integer forumId = forumService.getForumIdBySlug(slug);
-
-        if (forumId == null) {
-            System.out.println("Warning: forumId is null for slug: " + slug);
-            return;
-        }
-
-       if(forumDiscussionClicksMap.containsKey(forumId)){
-          ForumDiskussionsthemenClicksByHour clicks = forumDiscussionClicksMap.get(forumId);
-          Long counter = clicks.getClicks() + 1;
-          clicks.setClicks(counter);
-          forumDiscussionClicksMap.put(forumId,clicks);
-       }else{
-           ForumDiskussionsthemenClicksByHour clicks = new ForumDiskussionsthemenClicksByHour();
-           Integer uniId = uniRepo.getLatestUniStat().getId();
-           Integer hour = logDate.getHour();
-           clicks.setClicks(1L);
-           clicks.setForumIdInteger(forumId);
-           clicks.setUniId(uniId);
-           clicks.setHour(hour);
-           forumDiscussionClicksMap.put(forumId,clicks);
-       }
-    }
-    private void updateForumTopicClicksMap(String slug,LocalDateTime logDate){
-        Integer topicId = forumService.getTopicIdBySlug(slug);
-
-        if (topicId == null) {
-            System.out.println("Warning: topicId is null for slug: " + slug);
-            return;
-        }
-
-        if(forumTopicsClicksMap.containsKey(topicId)){
-            ForumTopicsClicksByHour clicks = forumTopicsClicksMap.get(topicId);
-            Long counter = clicks.getClicks() + 1;
-            clicks.setClicks(counter);
-            forumTopicsClicksMap.put(topicId,clicks);
-        }else{
-            ForumTopicsClicksByHour clicks = new ForumTopicsClicksByHour();
-            Integer uniId = uniRepo.getLatestUniStat().getId();
-            Integer hour = logDate.getHour();
-            clicks.setClicks(1L);
-            clicks.setTopicIdInteger(topicId);
-            clicks.setUniId(uniId);
-            clicks.setHour(hour);
-            forumTopicsClicksMap.put(topicId,clicks);
-        }
-    }
-
 
     private void updateUniSingleLine(String updateColumn, boolean isUnique, LocalDateTime dateLog) {
         Date normalDate = java.sql.Date.valueOf(dateLog.toLocalDate());

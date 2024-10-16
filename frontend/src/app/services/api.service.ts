@@ -22,6 +22,7 @@ import {Environment} from "../../environment";
 import {UserPlanLogItem} from "../component/user/user-plan-log/user-plan-log-item/user-plan-log-item.component";
 import {ForumStats} from "../component/forum/forum-stats/forum-stats.component";
 import {PostType} from "../component/post/post-type/post-type.component";
+import {FilteredSub} from "../component/user/Sub";
 
 /**
  * @enum apiUrl
@@ -61,6 +62,7 @@ export enum apiUrl {
 
   GET_USERS_SUBS_ALL = "/users/getUsersSubsAll",
   GET_USERS_SUBS_COUNT = "/users/getCountUsersSubsAll",
+  GET_USERS_SUBS_FILTERED = "/users/getUserSubsFiltered?filter=FILTER",
 
   /**
    * Single User related requests
@@ -700,6 +702,10 @@ export class ApiService {
   async getUsersSubsCount() : Promise<{change : number, countToday : number}> {
     this.setLoading();
     return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_SUBS_COUNT), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_SUBS_COUNT)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getUsersSubsFiltered(filter : string) : Promise<FilteredSub[]> {
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.GET_USERS_SUBS_FILTERED).replace("FILTER", filter), {credentials: "include", signal: ApiService.setupController(apiUrl.GET_USERS_SUBS_FILTERED)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
 

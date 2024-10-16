@@ -13,4 +13,8 @@ export class DbObject {
       .replace(/[\W_]+/g,"")
       .localeCompare(other.name.toLowerCase());
   }
+
+  toString() : string {
+    return "id : " + this.id + "| name : " + this.name;
+  }
 }

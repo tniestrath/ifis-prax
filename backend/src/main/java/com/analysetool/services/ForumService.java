@@ -1161,11 +1161,24 @@ public class ForumService {
         }
     }
 
+    /**
+     * Checks whether the given user has moderator rights on the given forum.
+     * @param userId the users id.
+     * @param forumId the forums id.
+     * @return true if user has rights to forum.
+     */
     public boolean isUserModOfForum(int userId, int forumId) {
 
         return wpForoModsRepo.getAllForumByUser(userId).contains(forumId) || userService.getType(userId).equals("admin");
     }
 
+    /**
+     * Attempts to add a new moderator to a forum, respecting role rights.
+     * @param newModId the userId of the mod to add.
+     * @param forumId the forum to allow the moderator on.
+     * @param request automatic, for user-right scanning.
+     * @return true on success.
+     */
     public boolean addModToForum(int newModId, int forumId, HttpServletRequest request) {
         String result = loginService.validateCookie(request);
         int userid;

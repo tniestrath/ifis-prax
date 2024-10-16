@@ -6,7 +6,7 @@ import {SysVars} from "../../../services/sys-vars-service";
 import {Tag} from "../../tag/Tag";
 import Util from "../../../util/Util";
 import {Context} from "chartjs-plugin-datalabels";
-import {SubWithCount} from "../../user/Sub";
+import {FilteredSub, SubWithCount} from "../../user/Sub";
 
 @Component({
   selector: 'dash-visitor-subscription-chart',
@@ -16,38 +16,44 @@ import {SubWithCount} from "../../user/Sub";
 export class VisitorSubscriptionChartComponent extends  DashBaseComponent implements OnInit{
 
   colors : string[] = ["#5A7995", "#354657", "rgb(148,28,62)", "rgb(84, 16, 35)", "#000"];
-  labels : string[] = ["IT-Sicherheit", "Datenschutz", "Penetrationstests", "Blockchain"];
-  data : number[] = [1,2,5,1];
+  labels : any[] = [];
+  data : any[] = [];
+  details : any[] = [];
 
-  databaseMockup : SubWithCount[] = [
-    new SubWithCount("0", 1, "Artikel"),
-    new SubWithCount("0", 2, "Artikel", "IT-Sicherheit"),
-    new SubWithCount("0", 1, "Artikel", "IT-Sicherheit", "IFIS"),
-    new SubWithCount("0", 5, "Artikel", "Datenschutz"),
-    new SubWithCount("0", 3, "News"),
-    new SubWithCount("0", 1, "News", "IT-Sicherheit", "ESET"),
-    new SubWithCount("0", 2, "News", "Blockchain"),
-    new SubWithCount("0", 1, "News", "Blockchain", "ESET", "DANGER!"),
-    new SubWithCount("0", 1, "Blog"),
-    new SubWithCount("0", 1, "Blog", "Penetrationstests", "IFIS", "teekesselchen"),
-    new SubWithCount("0", 4, "Blog"),
-    new SubWithCount("0", 3, undefined, "Penetrationstests"),
-    new SubWithCount("0", 2, undefined, "Datenschutz"),
-    new SubWithCount("0", 1, undefined, "Blockchain"),
-    new SubWithCount("0", 1, undefined, "IT-Sicherheit", "FIFAFUM"),
-    new SubWithCount("0", 1, undefined, "Datenschutz", "FIFAFUM"),
-    new SubWithCount("0", 2, undefined, undefined, "IFIS"),
-    new SubWithCount("0", 1, undefined, undefined, "FIFAFUM"),
-    new SubWithCount("0", 3, undefined, undefined, "ESET"),
-    new SubWithCount("0", 2, "News", undefined, "IFIS"),
-    new SubWithCount("0", 1, "Blog", undefined, "ESET"),
+  databaseMockup : FilteredSub[] = [
+    new FilteredSub("Artikel", 9, [
+      new SubWithCount("0", 1, "Artikel"),
+      new SubWithCount("0", 2, "Artikel", "IT-Sicherheit"),
+      new SubWithCount("0", 1, "Artikel", "IT-Sicherheit", "IFIS"),
+      new SubWithCount("0", 5, "Artikel", "Datenschutz")
+    ]),
+    new FilteredSub("News", 7, [
+      new SubWithCount("0", 3, "News"),
+      new SubWithCount("0", 1, "News", "IT-Sicherheit", "ESET"),
+      new SubWithCount("0", 2, "News", "Blockchain"),
+      new SubWithCount("0", 1, "News", "Blockchain", "ESET", "DANGER!"),
+      new SubWithCount("0", 2, "News", undefined, "IFIS")
+    ]),
+    new FilteredSub("Blog", 7, [
+      new SubWithCount("0", 1, "Blog"),
+      new SubWithCount("0", 1, "Blog", "Penetrationstests", "IFIS", "teekesselchen"),
+      new SubWithCount("0", 4, "Blog"),
+      new SubWithCount("0", 1, "Blog", undefined, "ESET"),
+    ]),
   ];
 
   ngOnInit(): void {
-    this.createChart(this.labels, this.data);
+    this.api.getUsersSubsFiltered("tag").then(value => {
+      value.forEach(value1 => {
+        this.labels.push(value1.filter);
+        this.data.push(value1.total);
+        this.details.push(value1.filterDetails);
+      });
+    });
+    this.createChart(this.labels, this.data, this.details);
   }
 
-  createChart(labels : string[], data : number[]){
+  createChart(labels : string[], data : number[], details : SubWithCount[]){
     if (this.chart){
       this.chart.destroy();
     }
@@ -77,12 +83,6 @@ export class VisitorSubscriptionChartComponent extends  DashBaseComponent implem
           }
         },
         plugins: {
-          datalabels: {
-            formatter: (value: any, context: Context) => {
-              // @ts-ignore
-              return "";
-            }
-          },
           title: {
             display: false,
             text: "",
@@ -96,7 +96,8 @@ export class VisitorSubscriptionChartComponent extends  DashBaseComponent implem
           },
           legend: {
             onClick: (e) => null,
-            display: false
+            display: true,
+            position: "bottom"
           },
           tooltip: {
             displayColors: false,
@@ -108,7 +109,8 @@ export class VisitorSubscriptionChartComponent extends  DashBaseComponent implem
             },
             callbacks:{
               beforeBody(tooltipItems: TooltipItem<any>[]): string | string[] | void {
-
+                  // @ts-ignore
+                return details.at(tooltipItems.at(0).dataIndex).toString();
               }
             }
           },

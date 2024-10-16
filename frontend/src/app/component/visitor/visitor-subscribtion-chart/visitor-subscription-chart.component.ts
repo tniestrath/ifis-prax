@@ -16,9 +16,9 @@ import {FilteredSub, SubWithCount} from "../../user/Sub";
 export class VisitorSubscriptionChartComponent extends  DashBaseComponent implements OnInit{
 
   colors : string[] = ["#5A7995", "#354657", "rgb(148,28,62)", "rgb(84, 16, 35)", "#000"];
-  labels : any[] = [];
-  data : any[] = [];
-  details : any[] = [];
+  labels : string[] = [];
+  data : number[] = [];
+  details : SubWithCount[][] = [];
 
   selectedFilter : string = "tag";
 
@@ -45,7 +45,33 @@ export class VisitorSubscriptionChartComponent extends  DashBaseComponent implem
   ];
 
   ngOnInit(): void {
+    this.setToolTip("Hier werden die von den angemeldeten Besuchern eingerichteten Benachrichtigungen angezeigt</br>" +
+                         "</br>" +
+                         "Sie können nach Thema, Anbieter, Art des Beitrags und Wortfilter sortieren", 2);
     this.api.getUsersSubsFiltered(this.selectedFilter).then(value => {
+      value.forEach(value1 => {
+        this.labels.push(value1.filter);
+        this.data.push(value1.count);
+        this.details.push(value1.list);
+      });
+      this.createChart(this.labels, this.data, this.details, this.selectedFilter);
+    });
+
+    /*this.databaseMockup.forEach(value1 => {
+      this.labels.push(value1.filter);
+      this.data.push(value1.count);
+      this.details.push(value1.list);
+    });
+    this.createChart(this.labels, this.data, this.details, this.selectedFilter);*/
+
+  }
+
+  onFilterChange(event? : Event){
+    this.selectedFilter = (event?.target as HTMLInputElement).value;
+    this.api.getUsersSubsFiltered(this.selectedFilter).then(value => {
+      this.labels = [];
+      this.data = [];
+      this.details = [];
       value.forEach(value1 => {
         this.labels.push(value1.filter);
         this.data.push(value1.count);
@@ -55,7 +81,7 @@ export class VisitorSubscriptionChartComponent extends  DashBaseComponent implem
     });
   }
 
-  createChart(labels : string[], data : number[], details : SubWithCount[], filter : string){
+  createChart(labels : string[], data : number[], details : SubWithCount[][], filter : string){
     if (this.chart){
       this.chart.destroy();
     }
@@ -111,27 +137,20 @@ export class VisitorSubscriptionChartComponent extends  DashBaseComponent implem
             },
             callbacks:{
               beforeBody(tooltipItems: TooltipItem<any>[]): string | string[] | void {
-                let result : string = "";
+                let result : string[] = [];
+
+                result.push("Enthaltende Kombinationen:");
+                result.push("");
+
                   // @ts-ignore
                 for(let detail : SubWithCount of details.at(tooltipItems.at(0).dataIndex)){
-                  switch (filter) {
-                    case "type":
-                      result += "Thema: " + detail.tag + " Autor: " + detail.author + " Wort: " + detail.word + " Anzahl: " + detail.count + "\n";
-                      break;
-                    case "tag":
-                      result += "Typ: " + detail.type + " Autor: " + detail.author + " Wort: " + detail.word + " Anzahl: " + detail.count + "\n";
-                      break;
-                    case "author":
-                      result += "Typ: " + detail.type + "Thema: " + detail.tag + " Wort: " + detail.word + " Anzahl: " + detail.count + "\n";
-                      break;
-                    case "word":
-                      result += "Typ: " + detail.type + "Thema: " + detail.tag + " Autor: " + detail.author + " Anzahl: " + detail.count + "\n";
-                      break;
-                    default:
-                      result += "Typ: " + detail.type + " Thema: " + detail.tag + " Autor: " + detail.author + " Wort: " + detail.word + " Anzahl: " + detail.count + "\n";
-                  }
+                  result.push(SubWithCount.getPrettyString(detail, filter));
                 }
+                result.push("");
                 return result;
+              },
+              label(tooltipItem: TooltipItem<any>): string | string[] | void {
+                return "Gesamt: " + tooltipItem.formattedValue;
               }
             }
           },

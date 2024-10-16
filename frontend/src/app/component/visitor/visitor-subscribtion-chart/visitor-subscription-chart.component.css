@@ -51,10 +51,10 @@ input[type="radio"]::after{
   content: "Anbieter";
 }
 #sub-sort-type::before{
-  content: "Typ";
+  content: "Art";
 }
 #sub-sort-type::after{
-  content: "Typ";
+  content: "Art";
 }
 #sub-sort-word::before{
   content: "Wort";

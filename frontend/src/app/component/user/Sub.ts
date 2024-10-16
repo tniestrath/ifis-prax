@@ -15,8 +15,37 @@ export class SubWithCount extends Sub{
     super(id, type, tag, author, word);
   }
 
-  public override toString() : string{
-    return "Typ: " + this.type + " Thema: " + this.tag + " Autor: " + this.author + " Wort: " + this.word + " Anzahl: " + this.count + "\n";
+  public static getPrettyString(subWithCount : SubWithCount, filter : string) : string {
+    let text : string = "";
+
+    if (subWithCount.tag && filter != "tag"){
+      if (subWithCount.tag != "none") {
+        text += "Thema: " + subWithCount.tag + " ";
+      }
+    }
+    if (subWithCount.author && filter != "author"){
+      if (subWithCount.author != "none"){
+        text += "Anbieter: " + subWithCount.author + " ";
+      }
+    }
+    if (subWithCount.type && filter != "type"){
+      if (subWithCount.type != "none"){
+      text += "Art: " + subWithCount.type + " ";
+      }
+    }
+    if (subWithCount.word && filter != "word"){
+      if (subWithCount.word != "none"){
+        text += "Wort: " + subWithCount.word + " ";
+      }
+    }
+    if (text.length > 0 && subWithCount.count && subWithCount.count > 0){
+      text += ":: " + subWithCount.count;
+    }
+    if (text.length <= 0){
+      text += "-";
+    }
+
+    return text;
   }
 }
 

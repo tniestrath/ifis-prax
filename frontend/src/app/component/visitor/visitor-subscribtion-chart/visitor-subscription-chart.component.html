@@ -3,10 +3,10 @@
     <div class="visitors-subs-title">
       <p>Benachrichtigungen</p>
     </div>
-    <input type="radio" id="sub-sort-tag" name="sort" value="Tag" checked>
-    <input type="radio" id="sub-sort-user" name="sort" value="Anbieter">
-    <input type="radio" id="sub-sort-type" name="sort" value="Typ">
-    <input type="radio" id="sub-sort-word" name="sort" value="Wort">
+    <input type="radio" id="sub-sort-tag" name="sort" value="tag" checked (change)="onFilterChange($event)">
+    <input type="radio" id="sub-sort-user" name="sort" value="author" (change)="onFilterChange($event)">
+    <input type="radio" id="sub-sort-type" name="sort" value="type" (change)="onFilterChange($event)">
+    <input type="radio" id="sub-sort-word" name="sort" value="word" (change)="onFilterChange($event)">
   </form>
   <div class="visitors-subs-chart-box">
     <canvas id="visitors-subs-chart">{{chart}}</canvas>

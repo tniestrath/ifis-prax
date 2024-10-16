@@ -32,4 +32,7 @@ public interface UserSubscriptionsRepository extends JpaRepository<UserSubscript
     @Query("SELECT COUNT(u) FROM UserSubscriptions u")
     Integer getCountSubsTotal();
 
+    @Query("SELECT COUNT(u) FROM UserSubscriptions u WHERE u.subId IN :subIds")
+    Integer getCountSubsBySubId(List<Long> subIds);
+
 }

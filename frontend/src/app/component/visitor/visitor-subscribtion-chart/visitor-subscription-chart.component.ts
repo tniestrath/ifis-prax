@@ -20,6 +20,8 @@ export class VisitorSubscriptionChartComponent extends  DashBaseComponent implem
   data : any[] = [];
   details : any[] = [];
 
+  selectedFilter : string = "tag";
+
   databaseMockup : FilteredSub[] = [
     new FilteredSub("Artikel", 9, [
       new SubWithCount("0", 1, "Artikel"),
@@ -43,17 +45,17 @@ export class VisitorSubscriptionChartComponent extends  DashBaseComponent implem
   ];
 
   ngOnInit(): void {
-    this.api.getUsersSubsFiltered("tag").then(value => {
+    this.api.getUsersSubsFiltered(this.selectedFilter).then(value => {
       value.forEach(value1 => {
         this.labels.push(value1.filter);
-        this.data.push(value1.total);
-        this.details.push(value1.filterDetails);
+        this.data.push(value1.count);
+        this.details.push(value1.list);
       });
+      this.createChart(this.labels, this.data, this.details, this.selectedFilter);
     });
-    this.createChart(this.labels, this.data, this.details);
   }
 
-  createChart(labels : string[], data : number[], details : SubWithCount[]){
+  createChart(labels : string[], data : number[], details : SubWithCount[], filter : string){
     if (this.chart){
       this.chart.destroy();
     }
@@ -109,8 +111,27 @@ export class VisitorSubscriptionChartComponent extends  DashBaseComponent implem
             },
             callbacks:{
               beforeBody(tooltipItems: TooltipItem<any>[]): string | string[] | void {
+                let result : string = "";
                   // @ts-ignore
-                return details.at(tooltipItems.at(0).dataIndex).toString();
+                for(let detail : SubWithCount of details.at(tooltipItems.at(0).dataIndex)){
+                  switch (filter) {
+                    case "type":
+                      result += "Thema: " + detail.tag + " Autor: " + detail.author + " Wort: " + detail.word + " Anzahl: " + detail.count + "\n";
+                      break;
+                    case "tag":
+                      result += "Typ: " + detail.type + " Autor: " + detail.author + " Wort: " + detail.word + " Anzahl: " + detail.count + "\n";
+                      break;
+                    case "author":
+                      result += "Typ: " + detail.type + "Thema: " + detail.tag + " Wort: " + detail.word + " Anzahl: " + detail.count + "\n";
+                      break;
+                    case "word":
+                      result += "Typ: " + detail.type + "Thema: " + detail.tag + " Autor: " + detail.author + " Anzahl: " + detail.count + "\n";
+                      break;
+                    default:
+                      result += "Typ: " + detail.type + " Thema: " + detail.tag + " Autor: " + detail.author + " Wort: " + detail.word + " Anzahl: " + detail.count + "\n";
+                  }
+                }
+                return result;
               }
             }
           },

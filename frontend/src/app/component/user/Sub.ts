@@ -21,7 +21,7 @@ export class SubWithCount extends Sub{
 }
 
 export class FilteredSub extends DbObject{
-  constructor(public filter : string, public total : number, public filterDetails : SubWithCount[]) {
+  constructor(public filter : string, public count : number, public list : SubWithCount[]) {
     super(filter, filter);
   }
 }

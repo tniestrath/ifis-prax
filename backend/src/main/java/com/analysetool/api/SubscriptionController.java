@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin(originPatterns = "*" , allowCredentials = "true")
 @RequestMapping(value = {"/subscribe", "/0wB4P2mly-xaRmeeDOj0_g/subscribe"}, method = RequestMethod.GET, produces = "application/json")
-public class SubscriptionsController {
+public class SubscriptionController {
 
     @Autowired
     private SubscriptionService subService;

@@ -92,13 +92,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT e.id FROM Post e WHERE e.status = 'publish' AND e.type = 'post' AND e.title LIKE '%'+:title+'%' ORDER BY e.date DESC")
    List<Long> findByTitle(String title);
 
-   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND (pt.type='blog' OR pt.type='news' OR pt.type='artikel' OR pt.type LIKE '%podcast%' OR pt.type='whitepaper')")
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND (pt.type='blog' OR pt.type='news' OR pt.type='artikel' OR pt.type LIKE '%podcast%' OR pt.type='whitepaper' OR pt.type='it-sicherheitsstudien')")
    List<Post> pageByTitleWithTypeQuery(String title, String status, String type, Pageable pageable);
 
-   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND (pt.type='blog' OR pt.type='news' OR pt.type='artikel' OR pt.type LIKE '%podcast%' OR pt.type='whitepaper') ORDER BY p.id ASC")
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND (pt.type='blog' OR pt.type='news' OR pt.type='artikel' OR pt.type LIKE '%podcast%' OR pt.type='whitepaper' OR pt.type='it-sicherheitsstudien') ORDER BY p.id ASC")
    List<Post> pageByTitleWithTypeQueryByIdASC(String title, String status, String type, Pageable pageable);
 
-   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND (pt.type='blog' OR pt.type='news' OR pt.type='artikel' OR pt.type LIKE '%podcast%' OR pt.type='whitepaper') ORDER BY p.id DESC")
+   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND (pt.type='blog' OR pt.type='news' OR pt.type='artikel' OR pt.type LIKE '%podcast%' OR pt.type='whitepaper' OR pt.type='it-sicherheitsstudien') ORDER BY p.id DESC")
    List<Post> pageByTitleWithTypeQueryByIdDESC(String title, String status, String type, Pageable pageable);
 
    @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter%")

@@ -2992,7 +2992,7 @@ public class UserService {
             case "tag" -> response =  getCountUserSubsTag();
             case "type" -> response = getCountUserSubsType();
             case "word" -> response = getCountUserSubsWord();
-            case "anbieter" -> response = getCountUserSubsAuthor();
+            case "author" -> response = getCountUserSubsAuthor();
             default -> response =  getCountUserSubsTag();
         }
         return response;

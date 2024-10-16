@@ -51,16 +51,16 @@ public interface SubscriptionsRepository extends JpaRepository<Subscriptions, Lo
     List<Long> findAllByAuthor(long author);
 
 
-    @Query("SELECT DISTINCT s.tag FROM Subscriptions s")
+    @Query("SELECT DISTINCT s.tag FROM Subscriptions s WHERE s.tag IS NOT NULL")
     List<Integer> findAllTags();
 
-    @Query("SELECT DISTINCT s.type FROM Subscriptions s")
+    @Query("SELECT DISTINCT s.type FROM Subscriptions s WHERE s.type IS NOT NULL")
     List<String> findAllTypes();
 
-    @Query("SELECT DISTINCT s.word FROM Subscriptions s")
+    @Query("SELECT DISTINCT s.word FROM Subscriptions s WHERE s.word IS NOT NULL")
     List<String> findAllWords();
 
-    @Query("SELECT DISTINCT s.author FROM Subscriptions s")
+    @Query("SELECT DISTINCT s.author FROM Subscriptions s WHERE s.author IS NOT NULL")
     List<Long> findAllAuthors();
 
 }

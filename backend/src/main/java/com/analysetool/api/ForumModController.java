@@ -2,6 +2,7 @@ package com.analysetool.api;
 
 
 import com.analysetool.services.ForumService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -276,5 +277,10 @@ public class ForumModController {
      */
     @GetMapping("/getModCounts")
     public String getModCounts(Integer userId) throws JSONException {return forumService.getModCounts(userId);}
+
+    @GetMapping("/addModeratorToForum")
+    public boolean addModToForum(int newModId, int forumId, HttpServletRequest request) {
+        return forumService.addModToForum(newModId, forumId, request);
+    }
 
 }

@@ -46,6 +46,8 @@ public class SubscriptionService {
 
     private final DashConfig config;
 
+    private String subSucc = "Sie haben erfolgreich abonniert!";
+    private String subNotSucc = "Sie haben nicht erfolgreich abonniert.";
 
     private String mailPlaceholder = "<!DOCTYPE html>\n" +
             "<html lang=\"de\">\n" +
@@ -245,25 +247,32 @@ public class SubscriptionService {
      * @param request not manually filled, used to validate userid.
      * @return true if successful, otherwise false.
      */
-    public boolean subCustom(String type, String thema, String author, String word, HttpServletRequest request) {
+    public String subCustom(String type, String thema, String author, String word, HttpServletRequest request) {
         String result = loginService.validateCookie(request);
         int userid;
         try {
             userid = new JSONObject(result).getInt("user_id");
         } catch (JSONException e) {
-            return false;
+            return subNotSucc + " Es scheint das wir Ihre Nutzer-Id nicht richtig verbinden konnten. Versuchen Sie es gerne später erneut.";
         }
 
 
         if(type != null) {
             if (!(type.equals("Artikel") || type.equals("Blog") || type.equals("News") || type.equals("Whitepaper") || type.equals("Video") || type.equals("Podcast"))) {
                 if (type.equals("none") || type.isBlank()) type = null;
-                else return false;
+                else return subNotSucc + " Der von Ihnen angegebene Typ ist nicht gültig. Gültig sind: Artikel, Blog, News, Whitepaper, Video oder Podcast.";
             }
         }
 
         Integer tagId = null;
-        if(thema != null && !thema.isBlank())  tagId = Math.toIntExact(termTaxRepo.getPostTagBySlug(thema).getTermId());
+        if(thema != null && !thema.isBlank())  {
+            try {
+                tagId = Math.toIntExact(termTaxRepo.getPostTagBySlug(thema).getTermId());
+            }
+            catch (Exception e) {
+                return subNotSucc + " Das von Ihnen angegebene Thema gibt es nicht, Ihr Abonnement wurde deshalb nicht übernommen.";
+            }
+        }
 
         Long authorId = 0L;
         if(authorRelRepo.findByAuthorSlugFirst(author).isPresent()) {
@@ -276,7 +285,7 @@ public class SubscriptionService {
         if(subRepo.findByAll(type, tagId, authorId, word).isPresent()) {
             if(userSubRepo.findByUserIdAndSubId(userid, subRepo.findByAll(type, tagId, authorId, word).get().getId()).isPresent()) {
                 //User already subscribed
-                return true;
+                return subSucc;
             } else {
                 //Sub exists, sub user
                 UserSubscriptions userSub = new UserSubscriptions();
@@ -300,7 +309,7 @@ public class SubscriptionService {
             userSub.setUserId(userid);
             userSubRepo.save(userSub);
         }
-        return true;
+        return subSucc;
     }
 
     public boolean unsubscribe(String type, String thema, String author, String word, HttpServletRequest request) {

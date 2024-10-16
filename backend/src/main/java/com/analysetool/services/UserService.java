@@ -3011,8 +3011,8 @@ public class UserService {
                 detailRow.put("id", sub.getId());
                 detailRow.put("count", userSubRepo.getCountSubsBySubId(subRepo.findAllByAuthor(author)));
                 detailRow.put("type", sub.getType() == null ? "none" : sub.getType());
-                detailRow.put("tag", sub.getTag() == null ? "none" : sub.getTag());
-                detailRow.put("author", sub.getAuthor() == null ? "none" : sub.getAuthor());
+                detailRow.put("tag", sub.getTag() == null ? "none" : termRepo.getNameById(sub.getTag()));
+                detailRow.put("author", sub.getAuthor() == null ? "none" : termRepo.getNameById(Math.toIntExact(sub.getAuthor())));
                 detailRow.put("word", sub.getWord());
                 filterDetails.put(detailRow);
 
@@ -3039,8 +3039,8 @@ public class UserService {
                 detailRow.put("id", sub.getId());
                 detailRow.put("count", userSubRepo.getCountSubsBySubId(subRepo.findAllByWord(word)));
                 detailRow.put("type", sub.getType() == null ? "none" : sub.getType());
-                detailRow.put("tag", sub.getTag() == null ? "none" : sub.getTag());
-                detailRow.put("author", sub.getAuthor() == null ? "none" : sub.getAuthor());
+                detailRow.put("tag", sub.getTag() == null ? "none" : termRepo.getNameById(sub.getTag()));
+                detailRow.put("author", sub.getAuthor() == null ? "none" : termRepo.getNameById(Math.toIntExact(sub.getAuthor())));
                 detailRow.put("word", sub.getWord());
                 filterDetails.put(detailRow);
 
@@ -3067,8 +3067,8 @@ public class UserService {
                 detailRow.put("id", sub.getId());
                 detailRow.put("count", userSubRepo.getCountSubsBySubId(subRepo.findAllByType(type)));
                 detailRow.put("type", sub.getType() == null ? "none" : sub.getType());
-                detailRow.put("tag", sub.getTag() == null ? "none" : sub.getTag());
-                detailRow.put("author", sub.getAuthor() == null ? "none" : sub.getAuthor());
+                detailRow.put("tag", sub.getTag() == null ? "none" : termRepo.getNameById(sub.getTag()));
+                detailRow.put("author", sub.getAuthor() == null ? "none" : termRepo.getNameById(Math.toIntExact(sub.getAuthor())));
                 detailRow.put("word", sub.getWord());
                 filterDetails.put(detailRow);
 
@@ -3095,8 +3095,8 @@ public class UserService {
                 detailRow.put("id", sub.getId());
                 detailRow.put("count", userSubRepo.getCountSubsBySubId(subRepo.findAllByTag(tag)));
                 detailRow.put("type", sub.getType() == null ? "none" : sub.getType());
-                detailRow.put("tag", sub.getTag() == null ? "none" : sub.getTag());
-                detailRow.put("author", sub.getAuthor() == null ? "none" : sub.getAuthor());
+                detailRow.put("tag", sub.getTag() == null ? "none" : termRepo.getNameById(sub.getTag()));
+                detailRow.put("author", sub.getAuthor() == null ? "none" : termRepo.getNameById(Math.toIntExact(sub.getAuthor())));
                 detailRow.put("word", sub.getWord());
                 filterDetails.put(detailRow);
 

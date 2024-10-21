@@ -1,12 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
 import {ActiveElement, Chart, ChartEvent, TooltipItem} from "chart.js/auto";
-import {EmptyObject} from "chart.js/dist/types/basic";
-import {SysVars} from "../../../services/sys-vars-service";
-import {Tag} from "../../tag/Tag";
-import Util from "../../../util/Util";
-import {Context} from "chartjs-plugin-datalabels";
 import {FilteredSub, SubWithCount} from "../../user/Sub";
+import Util from "../../../util/Util";
 
 @Component({
   selector: 'dash-visitor-subscription-chart',
@@ -93,7 +89,11 @@ export class VisitorSubscriptionChartComponent extends  DashBaseComponent implem
         datasets: [{
           label: "",
           data: data,
-          backgroundColor: this.colors,
+          backgroundColor: this.labels.map((value, index) => {
+            if (filter == "type"){
+              return Util.getColor("post", value);
+            } return this.colors[index];
+          }),
           borderRadius: 5,
           borderWidth: 5,
         }]

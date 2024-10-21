@@ -1,0 +1,13 @@
+<div class="component-box forum-add-moderator-box">
+  <div class="forum-add-moderator-title"><p>Moderator hinzufügen</p></div>
+  <div class="forum-add-moderator-container">
+    <form name="addMod" class="forum-add-moderator-form" (ngSubmit)="onSubmit()">
+      <input class="forum-add-moderator-text-input" id="moderator-name-input" name="addMod" type="text" placeholder="Nutzername / ID" autocomplete="off" required minlength="2">
+      <input class="forum-add-moderator-text-input" id="moderator-forum-input" name="addMod" type="text" placeholder="Forum" autocomplete="off">
+      <div class="forum-add-moderator-checkbox-input-box">
+        <input class="forum-add-moderator-checkbox-input" id="moderator-copy-rights-input" name="addMod" type="checkbox" title="Ihre eigenen Berechtigungen anwenden" (change)="onRightsCheckboxChange($event)">
+      </div>
+      <input id="moderator-forum-submit" name="addMod" type="submit" value="Hinzufügen">
+    </form>
+  </div>
+</div>

@@ -168,6 +168,7 @@ export enum apiUrl {
   FORUM_MODIFY_POST = "/forum/updatePost?accepted=ACCEPTED&userId=USERID",
   FORUM_ADD_BAD_WORD = "/forum/addBadWord?word=WORD",
   FORUM_REMOVE_BAD_WORD = "/forum/removeBadWord?word=WORD",
+  FORUM_ADD_MODERATOR = "/forum/addModeratorToForum?newModId=MODID&forumId=FORUMID",
 
   GET_SOCIALS_SUMS = "/socials/getSumAllTime",
 
@@ -944,6 +945,11 @@ export class ApiService {
   async removeForumBadWord(word: string) : Promise<boolean> {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.FORUM_REMOVE_BAD_WORD).replace("WORD", word)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
+  async addForumModerator(modId: string, forumId : string) : Promise<boolean> {
+    this.setLoading();
+    return await fetch((ApiService.setupRequest(apiUrl.FORUM_ADD_MODERATOR).replace("MODID", modId).replace("FORUMID", forumId)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
 
   async getSocialsSums() {

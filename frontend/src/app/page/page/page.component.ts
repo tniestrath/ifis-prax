@@ -76,6 +76,7 @@ import {UserSubsComponent} from "../../component/user/user-subs/user-subs.compon
 import {
   VisitorSubscriptionChartComponent
 } from "../../component/visitor/visitor-subscribtion-chart/visitor-subscription-chart.component";
+import {ForumAddModeratorComponent} from "../../component/forum/forum-add-moderator/forum-add-moderator.component";
 @Component({
   selector: 'dash-page',
   templateUrl: './page.component.html',
@@ -213,6 +214,7 @@ export class PageComponent implements OnInit {
       {type: ForumStatsComponent, row: 1, col: 1, height: 4, width: 1},
       {type: ForumModeratorComponent, row: 1, col: 2, height: 2, width: 5},
       {type: ForumProfanityFilterAdderComponent, row: 3, col: 6, height: 2, width: 1},
+      {type: ForumAddModeratorComponent, row: 3, col: 5, height: 1, width: 1}
     ]
   }
   getVisitorPageCards() {

@@ -1191,6 +1191,10 @@ public class ForumService {
         } catch (JSONException e) {
             return false;
         }
+        //TODO: WISHLIST FRONTEND-DEV:
+        //add moderator forum self check
+        //so if no forumId is given the new moderator should be added to all forums the requesting moderator is in
+        //forumId could be a invalid value like -1 to identify this case
 
         if(isUserModOfForum(userid, forumId)) {
             //User has the right to add a moderator to this forum.

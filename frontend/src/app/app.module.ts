@@ -125,6 +125,7 @@ import { BounceComponent } from './component/bounce/bounce.component';
 import { PostComparatorComponent } from './component/post/post-comparator/post-comparator.component';
 import { UserSubsComponent } from './component/user/user-subs/user-subs.component';
 import { VisitorSubscriptionChartComponent } from './component/visitor/visitor-subscribtion-chart/visitor-subscription-chart.component';
+import { ForumAddModeratorComponent } from './component/forum/forum-add-moderator/forum-add-moderator.component';
 
 @NgModule({
     declarations: [
@@ -233,7 +234,8 @@ import { VisitorSubscriptionChartComponent } from './component/visitor/visitor-s
         PostSearchbarComponent,
         BhListDirective,
         UserSubsComponent,
-        VisitorSubscriptionChartComponent
+        VisitorSubscriptionChartComponent,
+        ForumAddModeratorComponent
     ],
     imports: [
         BrowserModule,

@@ -1,0 +1,64 @@
+.forum-add-moderator-title{
+  display: flex;
+  position: relative;
+  top: 5px;
+  left: 5px;
+  width: calc(100% - 45px);
+  height: 30px;
+  padding: 5px;
+  border: 1px solid #808080;
+  border-radius: 5px;
+  box-sizing: border-box;
+  justify-content: center;
+}
+.forum-add-moderator-title p{
+  margin: 0;
+}
+.forum-add-moderator-container{
+  display: flex;
+  flex-direction: column;
+  padding: 15px 5px 0 5px;
+  width: 100%;
+  box-sizing: border-box;
+  height: calc(100% - 35px);
+}
+.forum-add-moderator-form{
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 30px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.forum-add-moderator-text-input{
+  grid-column: 1 / 3;
+  border-radius: 5px 5px 0 0;
+  border: 1px solid #808080;
+  border-bottom: none;
+}
+#moderator-forum-input{
+  grid-column: 1;
+  border-radius: 0;
+  border-bottom: none;
+  border-right: none;
+}
+.forum-add-moderator-checkbox-input-box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-column: 2;
+  border-radius: 0;
+  border: 1px solid #808080;
+  border-bottom: none;
+}
+
+#moderator-forum-submit{
+  grid-column: 1 / 3;
+  border-radius: 0 0 5px 5px;
+  border: 1px solid #808080;
+}
+#moderator-forum-submit:hover{
+  background-color: #E5E5E5;
+  cursor: pointer;
+}

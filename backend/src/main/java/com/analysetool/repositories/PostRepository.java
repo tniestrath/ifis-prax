@@ -110,10 +110,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY p.id DESC")
    List<Post> pageByTitleWithTypeQueryWithFilterIdDESC(String title, String status, String type, String filter, Pageable pageable);
 
-   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY ps.clicks ASC")
+   @Query("SELECT p, SUM(ps.clicks) AS totalClicks FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% GROUP BY p ORDER BY totalClicks ASC")
    List<Post> postPageByClicksASC(String title, String status, String type, String filter, Pageable pageable);
 
-   @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY ps.clicks DESC")
+   @Query("SELECT p, SUM(ps.clicks) AS totalClicks FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% GROUP BY p ORDER BY totalClicks DESC")
    List<Post> postPageByClicksDESC(String title, String status, String type, String filter, Pageable pageable);
 
    @Query("SELECT p FROM Post p LEFT JOIN PostTypes pt ON pt.post_id=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type AND pt.type LIKE %:filter% ORDER BY p.id ASC")
@@ -123,7 +123,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
    List<Post> postPageByCreationByIdDESC(String title, String status, String type, String filter, Pageable pageable);
 
 
-   @Query("SELECT p FROM Post p JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type ORDER BY ps.clicks ASC")
+   @Query("SELECT p, SUM(ps.clicks) AS totalClicks FROM Post p JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type GROUP BY p ORDER BY totalClicks ASC")
    List<Post> postPageByClicksASC(String title, String status, String type, Pageable pageable);
 
    @Query("SELECT p, SUM(ps.clicks) AS totalClicks FROM Post p JOIN PostStats ps ON ps.artId=p.id WHERE p.title LIKE %:title% AND p.status=:status AND p.type=:type GROUP BY p ORDER BY totalClicks DESC")

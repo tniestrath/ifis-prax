@@ -169,6 +169,8 @@ export enum apiUrl {
   FORUM_ADD_BAD_WORD = "/forum/addBadWord?word=WORD",
   FORUM_REMOVE_BAD_WORD = "/forum/removeBadWord?word=WORD",
   FORUM_ADD_MODERATOR = "/forum/addModeratorToForum?newModId=MODID&forumId=FORUMID",
+  FORUM_GET_MOD_SUGGESTIONS = "/forum/modSuggestions?start=START",
+  FORUM_GET_FORUM_SUGGESTIONS = "/forum/forumSuggestions?start=START",
 
   GET_SOCIALS_SUMS = "/socials/getSumAllTime",
 
@@ -951,6 +953,16 @@ export class ApiService {
     this.setLoading();
     return await fetch((ApiService.setupRequest(apiUrl.FORUM_ADD_MODERATOR).replace("MODID", modId).replace("FORUMID", forumId)) , {credentials: "include", method: "post"}).then(res => {this.setFinished(res.status, res.url); return res.json()});
   }
+
+  async getModeratorSuggestions(start: string) : Promise<string[]>{
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.FORUM_GET_MOD_SUGGESTIONS).replace("START", start), {credentials: "include", signal: ApiService.setupController(apiUrl.FORUM_GET_MOD_SUGGESTIONS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+  async getForumSuggestions(start: string) : Promise<string[]>{
+    this.setLoading();
+    return await fetch(ApiService.setupRequest(apiUrl.FORUM_GET_FORUM_SUGGESTIONS).replace("START", start), {credentials: "include", signal: ApiService.setupController(apiUrl.FORUM_GET_FORUM_SUGGESTIONS)}).then(res => {this.setFinished(res.status, res.url); return res.json()});
+  }
+
 
   async getSocialsSums() {
     this.setLoading();

@@ -62,3 +62,27 @@
   background-color: #E5E5E5;
   cursor: pointer;
 }
+
+#modSuggestions, #forumSuggestions{
+  position: absolute;
+  display: grid;
+  grid-template-columns: auto;
+  grid-auto-rows: 50px;
+  margin: 0;
+  z-index: 10;
+  max-height: 250px;
+  left: 0;
+  right: 50%;
+  top: 50px;
+  border-radius: 5px;
+  background-color: #FFFFFF;
+  box-shadow: 5px 5px 5px rgba(0,0,0,.2);
+}
+.searchSuggestion{
+  padding-left: 5px;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.selected{
+  border: 1px solid black;
+}

@@ -1178,12 +1178,12 @@ public class ForumService {
 
     /**
      * Attempts to add a new moderator to a forum, respecting role rights.
-     * @param newModId the userId of the mod to add.
-     * @param forumId the forum to allow the moderator on.
+     * @param modName the displayName of the mod to add.
+     * @param forumName the forums name to allow the moderator on.
      * @param request automatic, for user-right scanning.
      * @return true on success.
      */
-    public boolean addModToForum(int newModId, int forumId, HttpServletRequest request) {
+    public boolean addModToForum(String modName, String forumName, HttpServletRequest request) {
         String result = loginService.validateCookie(request);
         int userid;
         try {
@@ -1191,10 +1191,21 @@ public class ForumService {
         } catch (JSONException e) {
             return false;
         }
-        //TODO: WISHLIST FRONTEND-DEV:
-        //add moderator forum self check
-        //so if no forumId is given the new moderator should be added to all forums the requesting moderator is in
-        //forumId could be a invalid value like -1 to identify this case
+
+        Integer newModId;
+        newModId = userRepo.findByDisplayName(modName).isPresent() ? Math.toIntExact(userRepo.findByDisplayName(modName).get().getId()) : null;
+        if(newModId == null) return false;
+
+        if(forumName == null || forumName.equals("-1")) {
+            for(String forum : wpForoForumRepo.getAllForumNames()) {
+                if(isUserModOfForum(userid, wpForoForumRepo.getForumIdByTitle(forum))) {
+                    addModToForum(modName, forumName, request);
+                }
+            }
+            return true;
+        }
+
+        int forumId = wpForoForumRepo.getForumIdByTitle(forumName);
 
         if(isUserModOfForum(userid, forumId)) {
             //User has the right to add a moderator to this forum.
@@ -1244,6 +1255,15 @@ public class ForumService {
             }
         }
 
+    }
+
+
+    public String getModSuggestions(String start) {
+        return new JSONArray(wpForoModsRepo.fetchAllModeratorSuggestions(start)).toString();
+    }
+
+    public String getForumSuggestions(String start) {
+        return new JSONArray(wpForoForumRepo.getAllForumNamesStartingWith(start)).toString();
     }
 
 }

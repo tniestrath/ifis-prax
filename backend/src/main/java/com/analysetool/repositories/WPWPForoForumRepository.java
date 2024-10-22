@@ -13,6 +13,9 @@ public interface WPWPForoForumRepository extends JpaRepository<WPWPForoForum, Lo
     @Query("Select f.forumId FROM WPWPForoForum f  where f.slug =:slug")
     Integer getForumIdBySlug(String slug);
 
+    @Query("SELECT f.forumId FROM WPWPForoForum f WHERE f.title =:title")
+    Integer getForumIdByTitle(String title);
+
     WPWPForoForum findBySlug(String slug);
 
     @Query("SELECT COUNT(w) FROM WPWPForoForum w")
@@ -32,5 +35,11 @@ public interface WPWPForoForumRepository extends JpaRepository<WPWPForoForum, Lo
 
     @Query("SELECT w.forumId FROM WPWPForoForum w WHERE w.forumId!=17")
     List<Integer> getAllForumIds();
+
+    @Query("SELECT w.title FROM WPWPForoForum w WHERE w.forumId!=17")
+    List<String> getAllForumNames();
+
+    @Query("SELECT w.title FROM WPWPForoForum w WHERE w.forumId!=17 AND w.title LIKE %:start% LIMIT 5")
+    List<String> getAllForumNamesStartingWith(String start);
 
 }

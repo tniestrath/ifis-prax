@@ -39,7 +39,7 @@ public interface WPWPForoForumRepository extends JpaRepository<WPWPForoForum, Lo
     @Query("SELECT w.title FROM WPWPForoForum w WHERE w.forumId!=17")
     List<String> getAllForumNames();
 
-    @Query("SELECT w.title FROM WPWPForoForum w WHERE w.forumId!=17 AND w.title LIKE %:start% LIMIT 5")
+    @Query("SELECT w.title FROM WPWPForoForum w WHERE w.forumId!=17 AND w.title LIKE %:start% ORDER BY w.title LIMIT 5")
     List<String> getAllForumNamesStartingWith(String start);
 
 }

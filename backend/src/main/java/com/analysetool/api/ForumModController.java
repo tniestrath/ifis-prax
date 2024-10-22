@@ -277,8 +277,8 @@ public class ForumModController {
 
     /**
      * Attempts to add a new moderator to a forum, respecting role rights.
-     * @param newModId the userId of the mod to add.
-     * @param forumId the forum to allow the moderator on.
+     * @param modName the user displayname of the mod to add.
+     * @param forumName the forums title to allow the moderator on.
      * @param request automatic, for user-right scanning.
      * @return true on success.
      */

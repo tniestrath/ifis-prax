@@ -17,6 +17,6 @@ public interface WPWPForoModsModsRepositoryRepo extends JpaRepository<WPWPForoMo
     @Query("SELECT w.forum_id FROM WPWPForoModsMods w")
     List<Integer> getAllForumForAdmin();
 
-    @Query("SELECT u.displayName FROM WPWPForoModsMods w JOIN WPUser u ON w.userId=u.id WHERE u.displayName LIKE %:start% ORDER BY u.displayName LIMIT 5")
+    @Query("SELECT DISTINCT u.displayName FROM WPWPForoModsMods w JOIN WPUser u ON w.userId=u.id WHERE u.displayName LIKE %:start% ORDER BY u.displayName LIMIT 5")
     List<String> fetchAllModeratorSuggestions(String start);
 }

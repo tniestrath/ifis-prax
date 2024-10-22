@@ -1192,9 +1192,13 @@ public class ForumService {
             return false;
         }
 
+        System.out.println(userid);
+
         Integer newModId;
         newModId = userRepo.findByDisplayName(modName).isPresent() ? Math.toIntExact(userRepo.findByDisplayName(modName).get().getId()) : null;
         if(newModId == null) return false;
+
+        System.out.println(newModId);
 
         if(forumName == null || forumName.equals("-1")) {
             for(String forum : wpForoForumRepo.getAllForumNames()) {
@@ -1206,6 +1210,7 @@ public class ForumService {
         }
 
         int forumId = wpForoForumRepo.getForumIdByTitle(forumName);
+        System.out.println(forumId);
 
         if(isUserModOfForum(userid, forumId)) {
             //User has the right to add a moderator to this forum.
@@ -1221,16 +1226,20 @@ public class ForumService {
                         return true;
                     } catch (Exception e) {
                         //Something went wrong idk shouldn't happen.
+                        System.out.println("Waddafak");
+                        e.printStackTrace();
                         return false;
                     }
                 }
             } else {
                 //New moderator does not exist.
+                System.out.println("Mod doesnt exist");
                 return false;
             }
 
         } else {
             //User does not have the right to give access.
+            System.out.println("You hold no power here");
             return false;
         }
 

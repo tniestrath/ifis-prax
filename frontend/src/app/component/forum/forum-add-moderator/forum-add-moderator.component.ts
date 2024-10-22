@@ -40,12 +40,13 @@ export class ForumAddModeratorComponent extends DashBaseComponent implements OnI
       this.forumName = "-1"
     }
     this.api.addForumModerator(this.modName, this.forumName).then(value => {
-
+      console.log("addModerator: " + value);
     });
   }
 
   onRightsCheckboxChange($event: Event) {
     (this.input_forum as HTMLInputElement).disabled = ($event.target as HTMLInputElement).checked;
+    (this.input_forum as HTMLInputElement).required = !($event.target as HTMLInputElement).checked;
   }
 
   onModKey(value: any){
@@ -55,6 +56,7 @@ export class ForumAddModeratorComponent extends DashBaseComponent implements OnI
       }
       else {
         this.modName = this.modSuggestions[this.selectedModIndex+1];
+        (this.input_username as HTMLInputElement).value = this.modSuggestions[this.selectedModIndex+1];
         this.selectedModIndex = 0;
       }
       this.modSuggestions = [];
@@ -82,10 +84,12 @@ export class ForumAddModeratorComponent extends DashBaseComponent implements OnI
       }
       else {
         this.forumName = this.forumSuggestions[this.selectedForumIndex+1];
+        (this.input_forum as HTMLInputElement).value = this.forumSuggestions[this.selectedForumIndex+1];
         this.selectedForumIndex = 0;
       }
       this.forumSuggestions = [];
       this.cdr.detectChanges();
+      value.preventDefault();
     }
     if (value.key == "Delete" || value.key == "Backspace"){
       value.preventDefault();
@@ -140,11 +144,13 @@ export class ForumAddModeratorComponent extends DashBaseComponent implements OnI
 
   onModeratorSuggestionClick(mod : string){
     this.modName = mod;
+    (this.input_username as HTMLInputElement).value = this.modSuggestions[this.selectedModIndex+1];
     this.modSuggestions = [];
   }
 
   onForumSuggestionClick(forum : string){
     this.forumName = forum;
+    (this.input_forum as HTMLInputElement).value = this.forumSuggestions[this.selectedForumIndex+1];
     this.forumSuggestions = [];
   }
 
@@ -156,14 +162,4 @@ export class ForumAddModeratorComponent extends DashBaseComponent implements OnI
     this.selectedForumIndex = i;
   }
 
-  onInput(value: string, mod : boolean) {
-    if (mod){
-      if (value == null){this.modName = ""; return}
-      this.modName = value;
-    } else {
-      if (value == null){this.forumName = ""; return}
-      this.forumName = value;
-    }
-
-  }
 }

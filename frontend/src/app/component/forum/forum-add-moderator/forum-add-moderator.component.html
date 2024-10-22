@@ -2,12 +2,12 @@
   <div class="forum-add-moderator-title"><p>Moderator hinzufügen</p></div>
   <div class="forum-add-moderator-container">
     <form name="addMod" class="forum-add-moderator-form" (ngSubmit)="onSubmit()">
-      <input #modSearch (keydown)="onModKey($event)" (input)="onInput(modSearch.value, true)" class="forum-add-moderator-text-input" id="moderator-name-input" name="addMod" type="text" placeholder="Nutzername / ID" autocomplete="off" required minlength="2">
+      <input #modSearch (keydown)="onModKey($event)" class="forum-add-moderator-text-input" id="moderator-name-input" name="addMod" type="text" placeholder="Nutzername / ID" autocomplete="off" required minlength="2">
       <div id="modSuggestions">
         <div class="searchSuggestion" (click)="onModeratorSuggestionClick(mod)" *ngFor="let mod of getModeratorSuggestions(modSearch.value); let i = index;"
              (mouseover)="onMouseOverMod(i)" [ngClass]="{'selected' : i === selectedModIndex}">{{mod}}</div>
       </div>
-      <input #forumSearch (keydown)="onForumKey($event)" (input)="onInput(forumSearch.value, false)" class="forum-add-moderator-text-input" id="moderator-forum-input" name="addMod" type="text" placeholder="Forum" autocomplete="off">
+      <input #forumSearch (keydown)="onForumKey($event)" class="forum-add-moderator-text-input" id="moderator-forum-input" name="addMod" type="text" placeholder="Forum" autocomplete="off" required>
       <div id="forumSuggestions">
         <div class="searchSuggestion" (click)="onForumSuggestionClick(forum)" *ngFor="let forum of getForumSuggestions(forumSearch.value); let i = index;"
              (mouseover)="onMouseOverForum(i)" [ngClass]="{'selected' : i === selectedForumIndex}">{{forum}}</div>

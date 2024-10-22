@@ -513,7 +513,7 @@ public class PostService {
                     top.sort((o1, o2) -> Float.compare(o2.getPerformance(), o1.getPerformance()));
                 }
                 case "clicks" -> {
-                    top.sort((o1, o2) -> (int) (o2.getClicks() - o1.getClicks()));
+                    top.sort((o1, o2) -> (int) (statsRepo.getSumClicks(o2.getArtId()) - statsRepo.getSumClicks(o1.getArtId())));
                 }
             }
 

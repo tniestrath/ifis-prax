@@ -277,14 +277,19 @@ public class ForumModController {
 
     /**
      * Attempts to add a new moderator to a forum, respecting role rights.
-     * @param newModId the userId of the mod to add.
-     * @param forumId the forum to allow the moderator on.
+     * @param modName the user displayname of the mod to add.
+     * @param forumName the forums title to allow the moderator on.
      * @param request automatic, for user-right scanning.
      * @return true on success.
      */
     @GetMapping("/addModeratorToForum")
-    public boolean addModToForum(int newModId, int forumId, HttpServletRequest request) {
-        return forumService.addModToForum(newModId, forumId, request);
+    public boolean addModToForum(String modName, String forumName, HttpServletRequest request) {
+        return forumService.addModToForum(modName, forumName, request);
     }
 
+    @GetMapping("/modSuggestions")
+    public String getModSuggestions(String start) {return forumService.getModSuggestions(start);}
+
+    @GetMapping("/forumSuggestions")
+    public String getForumSuggestions(String start) {return forumService.getForumSuggestions(start);}
 }

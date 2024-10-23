@@ -1192,13 +1192,10 @@ public class ForumService {
             return false;
         }
 
-        System.out.println(userid);
-
         Integer newModId;
         newModId = userRepo.findByDisplayName(modName).isPresent() ? Math.toIntExact(userRepo.findByDisplayName(modName).get().getId()) : null;
         if(newModId == null) return false;
 
-        System.out.println(newModId);
 
         if(forumName == null || forumName.equals("-1")) {
             for(String forum : wpForoForumRepo.getAllForumNames()) {
@@ -1210,7 +1207,6 @@ public class ForumService {
         }
 
         int forumId = wpForoForumRepo.getForumIdByTitle(forumName);
-        System.out.println(forumId);
 
         if(isUserModOfForum(userid, forumId)) {
             //User has the right to add a moderator to this forum.
@@ -1271,8 +1267,19 @@ public class ForumService {
         return new JSONArray(wpForoModsRepo.fetchAllModeratorSuggestions(start)).toString();
     }
 
-    public String getForumSuggestions(String start) {
-        return new JSONArray(wpForoForumRepo.getAllForumNamesStartingWith(start)).toString();
+    public String getForumSuggestions(String start, HttpServletRequest request) {
+        String result = loginService.validateCookie(request);
+        int userid;
+        try {
+            userid = new JSONObject(result).getInt("user_id");
+        } catch (JSONException e) {
+            return "";
+        }
+        if(!isAdmin(userid)) {
+            return new JSONArray(wpForoForumRepo.getAllForumNamesStartingWith(start, userid)).toString();
+        } else {
+            return new JSONArray(wpForoForumRepo.getAllForumNamesStartingWith(start)).toString();
+        }
     }
 
 }

@@ -610,12 +610,16 @@ public class PostService {
         } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equals("event")){
             String type = "Event: ";
             //noinspection OptionalGetWithoutIsPresent
-            switch(eventsService.getEventType(eventsRepo.findByPostID(id).get())) {
-                case "o", "r" ->  type += "Sonstige";
-                case "k" -> type += "Kongress";
-                case "m" -> type += "Messe";
-                case "s" -> type += "Schulung/Seminar";
-                case "w" -> type += "Workshop";
+            try {
+                switch (eventsService.getEventType(eventsRepo.findByPostID(id).get())) {
+                    case "o", "r" -> type += "Sonstige";
+                    case "k" -> type += "Kongress";
+                    case "m" -> type += "Messe";
+                    case "s" -> type += "Schulung/Seminar";
+                    case "w" -> type += "Workshop";
+                }
+            } catch(Exception e) {
+                type += ", aber nicht korrekt als Event eingetragen";
             }
             return type;
         } else if(postRepo.findById(id).isPresent() && postRepo.findById(id).get().getType().equalsIgnoreCase("video")) {

@@ -1279,8 +1279,11 @@ public class ForumService {
         } catch (JSONException e) {
             return "";
         }
-
-        return new JSONArray(wpForoForumRepo.getAllForumNamesStartingWith(start, userid)).toString();
+        if(!isAdmin(userid)) {
+            return new JSONArray(wpForoForumRepo.getAllForumNamesStartingWith(start, userid)).toString();
+        } else {
+            return new JSONArray(wpForoForumRepo.getAllForumNamesStartingWith(start)).toString();
+        }
     }
 
 }

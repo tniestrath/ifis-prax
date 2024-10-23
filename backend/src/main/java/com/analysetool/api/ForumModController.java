@@ -291,5 +291,5 @@ public class ForumModController {
     public String getModSuggestions(String start) {return forumService.getModSuggestions(start);}
 
     @GetMapping("/forumSuggestions")
-    public String getForumSuggestions(String start) {return forumService.getForumSuggestions(start);}
+    public String getForumSuggestions(String start, HttpServletRequest request) {return forumService.getForumSuggestions(start, request);}
 }

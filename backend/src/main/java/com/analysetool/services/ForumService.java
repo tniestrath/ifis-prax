@@ -1271,8 +1271,16 @@ public class ForumService {
         return new JSONArray(wpForoModsRepo.fetchAllModeratorSuggestions(start)).toString();
     }
 
-    public String getForumSuggestions(String start) {
-        return new JSONArray(wpForoForumRepo.getAllForumNamesStartingWith(start)).toString();
+    public String getForumSuggestions(String start, HttpServletRequest request) {
+        String result = loginService.validateCookie(request);
+        int userid;
+        try {
+            userid = new JSONObject(result).getInt("user_id");
+        } catch (JSONException e) {
+            return "";
+        }
+
+        return new JSONArray(wpForoForumRepo.getAllForumNamesStartingWith(start, userid)).toString();
     }
 
 }

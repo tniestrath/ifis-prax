@@ -1200,7 +1200,7 @@ public class ForumService {
         if(forumName == null || forumName.equals("-1")) {
             for(String forum : wpForoForumRepo.getAllForumNames()) {
                 if(isUserModOfForum(userid, wpForoForumRepo.getForumIdByTitle(forum))) {
-                    addModToForum(modName, forumName, request);
+                    addModToForum(modName, forum, request);
                 }
             }
             return true;

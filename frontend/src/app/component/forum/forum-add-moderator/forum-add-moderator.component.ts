@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {DashBaseComponent} from "../../dash-base/dash-base.component";
+import {DashColors} from "../../../util/Util";
 
 @Component({
   selector: 'dash-forum-add-moderator',
@@ -37,9 +38,22 @@ export class ForumAddModeratorComponent extends DashBaseComponent implements OnI
 
   onSubmit() {
     let use_own_rights = (this.input_rights_checkbox as HTMLInputElement).checked;
-
+    if ((this.input_username as HTMLInputElement).value.length == 0){
+      (this.input_username as HTMLInputElement).style.border = "2px solid " + DashColors.RED;
+    }else {
+      (this.input_username as HTMLInputElement).style.border = "1px solid #808080";
+    }
     if (use_own_rights) {
-      this.forumName = "-1"
+      this.forumName = "-1";
+      (this.input_forum as HTMLInputElement).style.border = "1px solid #808080";
+      (this.input_forum as HTMLInputElement).style.borderStyle = "none solid solid solid";
+    } else if ((this.input_forum as HTMLInputElement).value.length == 0){
+      (this.input_forum as HTMLInputElement).style.border = "2px solid " + DashColors.RED;
+      (this.input_forum as HTMLInputElement).style.borderStyle = "none solid solid solid";
+      return;
+    } else {
+      (this.input_forum as HTMLInputElement).style.border = "1px solid #808080";
+      (this.input_forum as HTMLInputElement).style.borderStyle = "none solid solid solid";
     }
     this.api.addForumModerator(this.modName, this.forumName).then(value => {
       console.log("addModerator: " + value);
